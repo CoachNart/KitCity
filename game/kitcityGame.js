@@ -1382,19 +1382,24 @@ export function mountKitCityGame(THREE) {
         bindHold($('hop'), () => { touch.hop = true; }, () => { touch.hop = false; });
         bindHold($('horn'), () => { touch.horn = true; }, () => { touch.horn = false; });
 
-        // Swipe once = move exactly one lane; the danfo then steers itself and settles in the lane centre
+        // Mobile steering is continuous: a short drag creates a small, sharp bend.
+        // Releasing the steering zone immediately returns the wheel to centre.
         (function () {
-            const zone = $('steer-zone'); let pid = null, sx = 0, fired = false; const SWIPE = 28;
+            const zone = $('steer-zone'); let pid = null, sx = 0;
             zone.addEventListener('pointerdown', e => {
-                e.preventDefault(); pid = e.pointerId; sx = e.clientX; fired = false;
+                e.preventDefault(); pid = e.pointerId; sx = e.clientX; touch.steerActive = true; touch.steer = 0;
                 try { zone.setPointerCapture(e.pointerId); } catch (_) {}
             });
             zone.addEventListener('pointermove', e => {
-                if (e.pointerId !== pid || fired) return;
+                if (e.pointerId !== pid) return;
                 const dx = e.clientX - sx;
-                if (Math.abs(dx) >= SWIPE) { fired = true; changeLane(dx > 0 ? 1 : -1); }
+                // 35px is enough for full steering; tiny movements remain tiny steering inputs.
+                touch.steer = clamp(dx / 35, -1, 1);
             });
-            const end = e => { if (e.pointerId !== pid) return; pid = null; fired = false; };
+            const end = e => {
+                if (e.pointerId !== pid) return;
+                pid = null; touch.steer = 0; touch.steerActive = false;
+            };
             ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(ev => zone.addEventListener(ev, end));
         })();
 
@@ -1992,7 +1997,7 @@ export function mountKitCityGame(THREE) {
         // 11. CAR PHYSICS
         // ============================================================
         let throttleIn = 0, brakeIn = 0, handbrake = false, hornOn = false, braking = false;
-        // lane assist (touch): swipe picks the lane, the car aligns itself
+        // Touch steering supports direct short bends; lane helpers remain available for keyboard/fallback.
         const PLAYER_LANES = [...(ROAD_PROFILE.opp || [-4.5, -11.5]).slice().reverse(), ...(ROAD_PROFILE.lanes || [4.5, 11.5])];
         let laneX = null;
         function nearestLane(x) { let b = 0; PLAYER_LANES.forEach((l, i) => { if (Math.abs(l - x) < Math.abs(PLAYER_LANES[b] - x)) b = i; }); return b; }
@@ -2018,9 +2023,10 @@ export function mountKitCityGame(THREE) {
             handbrake = !!keys[' '];
             throttleIn = up && !down && !reverse ? 1 : 0; brakeIn = down ? 1 : 0; reverseIn = reverse && !down ? 1 : 0;
             let tgt;
-            if (isTouch && laneX !== null) tgt = laneSteer();
+            if (isTouch && touch.steerActive) tgt = touch.steer;
+            else if (isTouch && laneX !== null) tgt = laneSteer();
             else tgt = ((keys['d'] || keys['arrowright']) ? 1 : 0) - ((keys['a'] || keys['arrowleft']) ? 1 : 0);
-            car.steerIn += (tgt - car.steerIn) * Math.min(1, dt * ((isTouch && laneX !== null) ? 20 : (tgt === 0 ? 10 : 5)));
+            car.steerIn += (tgt - car.steerIn) * Math.min(1, dt * ((isTouch && touch.steerActive) ? 28 : (isTouch && laneX !== null ? 20 : (tgt === 0 ? 10 : 5))));
             hornOn = kbHorn || touch.horn;
         }
 
@@ -2394,31 +2400,64 @@ export function mountKitCityGame(THREE) {
         }
 
         // ============================================================
-        // Jumpable roadside barriers — placed in the drivable lanes with nearby coin trails.
-        const barrierMat = new THREE.MeshStandardMaterial({ color: 0xf39c12, roughness: 0.65 });
-        const barrierGeo = new THREE.BoxGeometry(2.2, 0.9, 1.2);
-        const barriers = [];
-        for (let z = START_Z - 240; z > END_Z + 120; z -= rand(115, 175)) {
-            const x = pick([4.5, 8, 11.5]);
-            const g = new THREE.Mesh(barrierGeo, barrierMat); g.position.set(x, 0.45, z); g.castShadow = true; scene.add(g);
-            barriers.push({ x, z, g, hit: false });
-            coinSpots.push({ x, z: z - 10, got:false, mesh:null, ph:Math.random()*6 });
-            coinSpots.push({ x: x === 4.5 ? 8 : 4.5, z: z - 18, got:false, mesh:null, ph:Math.random()*6 });
-        }
-        function updateBarriers(active) {
-            for (const b of barriers) {
-                b.g.visible = b.z > car.z - 260 && b.z < car.z + 55;
-                if (!active || b.hit) continue;
-                const dx = b.x - car.x, dz = b.z - car.z;
-                if (Math.abs(dx) < 2.4 && Math.abs(dz) < 3.1 && hopY < 0.28) {
-                    b.hit = true; b.g.visible = false; car.speed *= 0.45; impactScore = Math.max(0, impactScore - 12); shake = 0.35;
-                    toast('Barrier hit! Hop over the road blocks. -12 pts');
-                    sfxThump(); updateHud();
+        // ============================================================
+        // Road speed bumps — visual road furniture, never lane-blocking.
+        // Sparse and placed near natural slow-down points rather than as obstacles.
+        const bumpMat = new THREE.MeshStandardMaterial({ color: 0x343a40, roughness: 0.82, metalness: 0.05 });
+        const bumpStripeMat = new THREE.MeshStandardMaterial({ color: 0xf5b014, roughness: 0.62 });
+        const bumpGeo = new THREE.BoxGeometry(1.65, 0.10, 0.62);
+        const bumpStripeGeo = new THREE.BoxGeometry(1.66, 0.12, 0.10);
+        const roadBumps = [];
+        (function genRoadBumps() {
+            const spots = [];
+            for (let z = START_Z - 260; z > END_Z + 180; z -= rand(190, 260)) spots.push(z);
+            STOPS.forEach(sz => spots.push(sz - 34));
+            const used = new Set();
+            spots.forEach(z => {
+                const key = Math.round(z / 5);
+                if (used.has(key)) return;
+                used.add(key);
+                const g = new THREE.Group();
+                for (const x of ROAD_PROFILE.lanes || [4.5, 8, 11.5]) {
+                    const bump = new THREE.Mesh(bumpGeo, bumpMat);
+                    bump.position.set(x, 0.055, 0);
+                    const stripe = new THREE.Mesh(bumpStripeGeo, bumpStripeMat);
+                    stripe.position.set(x, 0.12, 0);
+                    g.add(bump, stripe);
+                }
+                // Opposite carriageway lanes use the same physical bump, so traffic sees one road feature.
+                for (const x of ROAD_PROFILE.opp || [-4.5, -8, -11.5]) {
+                    const bump = new THREE.Mesh(bumpGeo, bumpMat);
+                    bump.position.set(x, 0.055, 0);
+                    const stripe = new THREE.Mesh(bumpStripeGeo, bumpStripeMat);
+                    stripe.position.set(x, 0.12, 0);
+                    g.add(bump, stripe);
+                }
+                g.position.z = z;
+                scene.add(g);
+                roadBumps.push({ z, g, crossed: false });
+            });
+        })();
+
+        function updateRoadBumps(active) {
+            for (const b of roadBumps) {
+                b.g.visible = b.z > car.z - 220 && b.z < car.z + 70;
+                if (!active || b.crossed) continue;
+                const dz = Math.abs(b.z - car.z);
+                if (dz < 2.5) {
+                    b.crossed = true;
+                    // A bump should encourage controlled driving, not punish the player with a collision.
+                    if (Math.abs(car.speed) > 14) {
+                        car.speed *= 0.90;
+                        shake = Math.max(shake, 0.12);
+                        toast('Speed bump — ease off the throttle');
+                    }
                 }
             }
+            // Allow the road furniture to recycle naturally during long drives.
+            for (const b of roadBumps) if (b.z < car.z - 300) b.crossed = false;
         }
 
-        // ============================================================
         // Crossing pedestrians and truck pushers
         // ============================================================
         function makeCart() {
@@ -2699,7 +2738,7 @@ export function mountKitCityGame(THREE) {
             if (peopleCD > 0) peopleCD -= dt;
             if (jamHornT > 0) jamHornT -= dt;
             updateCoins(dt, active);
-            updateBarriers(active);
+            updateRoadBumps(active);
             updateCrossers(dt, active);
             updateHawkers(dt, active);
         }
