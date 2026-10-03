@@ -401,7 +401,7 @@ export function mountKitCityGame(THREE) {
             sel.addEventListener('change', () => goState(sel.value));
             $('state-progress').textContent = 'States completed: ' + seen.length + ' / ' + NG_LIST.length;
             $('start-chapter').textContent = 'CHAPTER 1  -  ' + NGS.label.toUpperCase();
-            $('start-sub').textContent = 'Drive your danfo through ' + NGS.city + ' to KitCity. Pick up 5 passengers along the way and help each one understand Web3 safely, the T3Kit way.';
+            $('start-sub').textContent = 'Drive your danfo through ' + NGS.city + ' to KitCity. Complete 5 graded Web3 Academy lessons, meet local learners and apply each lesson on the road.';
             $('hud-state').textContent = NGS.name + ' (' + NGS.city + ' Hub)';
             $('end-chapter').textContent = 'KITCITY ARRIVAL  ·  ' + NGS.label.toUpperCase();
             $('btn-next').addEventListener('click', () => {
@@ -1813,7 +1813,7 @@ export function mountKitCityGame(THREE) {
             releaseTouch();
             const mins = Math.floor(elapsed / 60), secs = Math.floor(elapsed % 60);
             $('e-score').textContent = impactScore;
-            $('e-learners').textContent = onboarded;
+            $('e-learners').textContent = academyLetter + ' · ' + academyGrade + '%';
             $('e-kit').textContent = kitCoins;
             $('e-time').textContent = mins + ':' + (secs < 10 ? '0' : '') + secs;
             $('e-crash').textContent = collisions;
