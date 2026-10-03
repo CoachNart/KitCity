@@ -30,11 +30,11 @@ export function mountKitCityGame(THREE) {
         // ============================================================
         const ROAD_HALF = 17;
         const START_Z = 40;
-        const END_Z = -3200;
-        const TERMINAL_Z = -3150;
+        const END_Z = -3900;
+        const TERMINAL_Z = -3850;
         const ZONE_X = 14.5;
         const ZONE_R = 9;
-        const STOPS = [-500, -1150, -1800, -2450, -3050];
+        const STOPS = [-520, -1320, -2120, -2920, -3720];
         const MAX_V = 42; // m/s, about 150 km/h
 
         const PASSENGERS = [
@@ -1082,7 +1082,8 @@ export function mountKitCityGame(THREE) {
         // 8. INPUT
         // ============================================================
         const keys = {};
-        const touch = { gas: false, brake: false, reverse: false, horn: false, steer: 0, steerActive: false };
+        const touch = { gas: false, brake: false, reverse: false, hop: false, horn: false, steer: 0, steerActive: false };
+        let hopT = 0, hopY = 0, hopCooldown = 0;
         let kbHorn = false, reverseIn = 0;
 
         addEventListener('keydown', e => {
@@ -1097,9 +1098,10 @@ export function mountKitCityGame(THREE) {
             if (k === 'm') toggleMute();
             if (k === 'f') fmToggle();
             if (k === 'h') kbHorn = true;
+            if (k === 'j') touch.hop = true;
         });
-        addEventListener('keyup', e => { const k = e.key.toLowerCase(); keys[k] = false; if (k === 'h') kbHorn = false; });
-        addEventListener('blur', () => { for (const k in keys) keys[k] = false; kbHorn = false; });
+        addEventListener('keyup', e => { const k = e.key.toLowerCase(); keys[k] = false; if (k === 'h') kbHorn = false; if (k === 'j') touch.hop = false; });
+        addEventListener('blur', () => { for (const k in keys) keys[k] = false; kbHorn = false; touch.hop = false; });
         addEventListener('contextmenu', e => e.preventDefault());
 
         function bindHold(el, down, up) {
@@ -1112,8 +1114,9 @@ export function mountKitCityGame(THREE) {
             ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(ev => el.addEventListener(ev, end));
         }
         bindHold($('gas'), () => { touch.gas = true; }, () => { touch.gas = false; });
-        bindHold($('brake'), () => { touch.brake = true; }, () => { touch.brake = false; });
-        bindHold($('reverse'), () => { touch.reverse = true; }, () => { touch.reverse = false; });
+        bindHold($('brake'), () => { touch.brake = true; touch.reverse = false; }, () => { touch.brake = false; });
+        bindHold($('reverse'), () => { touch.reverse = true; touch.gas = false; }, () => { touch.reverse = false; });
+        bindHold($('hop'), () => { touch.hop = true; }, () => { touch.hop = false; });
         bindHold($('horn'), () => { touch.horn = true; }, () => { touch.horn = false; });
 
         // Swipe once = move exactly one lane; the danfo then steers itself and settles in the lane centre
@@ -1133,7 +1136,7 @@ export function mountKitCityGame(THREE) {
         })();
 
         function releaseTouch() {
-            touch.gas = touch.brake = touch.reverse = touch.horn = false; touch.steer = 0; touch.steerActive = false;
+            touch.gas = touch.brake = touch.reverse = touch.hop = touch.horn = false; touch.steer = 0; touch.steerActive = false;
             document.querySelectorAll('.pedal, #horn').forEach(el => el.classList.remove('active'));
         }
         const lifted = e => { if (e.touches && e.touches.length === 0) releaseTouch(); };
@@ -1662,7 +1665,7 @@ export function mountKitCityGame(THREE) {
             const down = keys['s'] || keys['arrowdown'] || touch.brake;
             const reverse = keys['v'] || touch.reverse;
             handbrake = !!keys[' '];
-            throttleIn = up ? 1 : 0; brakeIn = down ? 1 : 0; reverseIn = reverse ? 1 : 0;
+            throttleIn = up && !down && !reverse ? 1 : 0; brakeIn = down ? 1 : 0; reverseIn = reverse && !down ? 1 : 0;
             let tgt;
             if (isTouch && laneX !== null) tgt = laneSteer();
             else tgt = ((keys['d'] || keys['arrowright']) ? 1 : 0) - ((keys['a'] || keys['arrowleft']) ? 1 : 0);
@@ -1675,16 +1678,17 @@ export function mountKitCityGame(THREE) {
             car.prevSpeed = car.speed;
             braking = false;
 
-            if (reverseIn) {
-                if (car.speed > 0.4) { car.speed -= 52 * dt; braking = true; }
-                else car.speed = Math.max(maxR, car.speed - 18 * dt);
+            if (brakeIn) {
+                if (car.speed > 0.4) { car.speed -= 48 * dt; braking = true; }
+                else if (car.speed < 0) car.speed = Math.min(0, car.speed + 58 * dt);
+                else car.speed = 0;
+            } else if (reverseIn) {
+                if (car.speed > 0.4) { car.speed -= 58 * dt; braking = true; }
+                else car.speed = Math.max(maxR, car.speed - 20 * dt);
             } else if (handbrake) {
                 braking = car.speed > 0.4;
                 if (car.speed > 0) car.speed = Math.max(0, car.speed - 50 * dt);
                 else car.speed = Math.min(0, car.speed + 50 * dt);
-            } else if (brakeIn) {
-                if (car.speed > 0.4) { car.speed -= 38 * dt; braking = true; }
-                else car.speed = Math.max(maxR, car.speed - 6 * dt);
             } else if (throttleIn) {
                 if (car.speed < 0) car.speed += 42 * dt;
                 else car.speed += (24 * Math.pow(1 - car.speed / MAX_V, 0.7) + 2) * dt;
@@ -1704,6 +1708,11 @@ export function mountKitCityGame(THREE) {
 
             car.x += -Math.sin(car.h) * car.speed * dt;
             car.z += -Math.cos(car.h) * car.speed * dt;
+
+            if (hopCooldown > 0) hopCooldown -= dt;
+            const hopPressed = touch.hop || keys['j'];
+            if (hopPressed && hopCooldown <= 0 && Math.abs(car.speed) > 3 && !state.dialogue) { hopT = 0.58; hopCooldown = 0.85; }
+            if (hopT > 0) { hopT -= dt; const p = 1 - hopT / 0.58; hopY = Math.sin(p * Math.PI) * 0.9; } else hopY = 0;
 
             const lim = roadLimit(car.z);
             if (car.x > lim) { car.x = lim; car.speed *= (1 - 1.2 * dt); }
@@ -1937,6 +1946,17 @@ export function mountKitCityGame(THREE) {
             const ex = Math.max(Math.abs(lx) - 1.3, 0), ez = Math.max(Math.abs(lz) - 3.2, 0);
             return ex * ex + ez * ez < r * r;
         }
+        function pedestrianAbuse(speed) {
+            const fast = Math.abs(speed) > 12;
+            const lines = fast
+                ? ['Oga! You wan finish person?!', 'Driver! Abeg watch road na!', 'Ah-ah! You dey drive like this?!', 'Omo! You no see person?']
+                : ['Oga, easy now!', 'Driver, abeg watch yourself!', 'Chai! My leg o!', 'You dey hurry for where?'];
+            const line = pick(lines);
+            if (typeof speechSynthesis !== 'undefined' && typeof SpeechSynthesisUtterance !== 'undefined' && !muted) {
+                try { const u = new SpeechSynthesisUtterance(line); u.lang = 'en-NG'; u.volume = 0.12; u.rate = rand(1.0, 1.12); u.pitch = rand(0.85, 1.12); speechSynthesis.cancel(); speechSynthesis.speak(u); } catch (_) {}
+            }
+            return line;
+        }
         function peopleImpact(pts, speedMul, msg) {
             peopleCD = 1.2; collisions++; mHit(6);
             impactScore = Math.max(0, impactScore - pts);
@@ -1967,15 +1987,14 @@ export function mountKitCityGame(THREE) {
 
         const coinSpots = [];
         (function genCoins() {
-            const lanes = [4.5, 11.5, 4.5, 11.5, -4.5, -11.5];      // mostly your own direction, sometimes the risky oncoming lanes
-            let z = START_Z - 70;
+            const lanes = [4.5, 8, 11.5, -4.5, -8, -11.5];
+            let z = START_Z - 55;
             const add = (x, zz) => coinSpots.push({ x: x, z: zz, got: false, mesh: null, ph: Math.random() * 6 });
             while (z > END_Z + 60) {
-                const k = Math.random();
-                if (k < 0.5) { const x = pick(lanes); for (let i = 0; i < 5; i++) add(x, z - i * 5); z -= 25; }
-                else if (k < 0.85) { for (let i = 0; i < 7; i++) add(8 + Math.sin(i * 0.95) * 3.6, z - i * 5.5); z -= 38; }
-                else { [4.5, 8, 11.5].forEach(x => { add(x, z); add(x, z - 6); }); z -= 12; }
-                z -= rand(22, 55);
+                const x = pick([4.5, 8, 11.5]);
+                for (let i = 0; i < 9; i++) add(x + Math.sin(i * 0.7) * 0.7, z - i * 5);
+                z -= rand(18, 28);
+                if (Math.random() < 0.55) { for (let i = 0; i < 5; i++) add(pick(lanes), z - i * 5); z -= 25; }
             }
         })();
 
@@ -2001,6 +2020,31 @@ export function mountKitCityGame(THREE) {
                     const dx = c.x - car.x;
                     const lx = dx * ch - dz * sh, lz = -dx * sh - dz * ch;
                     if (Math.abs(lx) < 2.1 && Math.abs(lz) < 3.8) collectCoin(c);
+                }
+            }
+        }
+
+        // ============================================================
+        // Jumpable roadside barriers — placed in the drivable lanes with nearby coin trails.
+        const barrierMat = new THREE.MeshStandardMaterial({ color: 0xf39c12, roughness: 0.65 });
+        const barrierGeo = new THREE.BoxGeometry(2.2, 0.9, 1.2);
+        const barriers = [];
+        for (let z = START_Z - 240; z > END_Z + 120; z -= rand(115, 175)) {
+            const x = pick([4.5, 8, 11.5]);
+            const g = new THREE.Mesh(barrierGeo, barrierMat); g.position.set(x, 0.45, z); g.castShadow = true; scene.add(g);
+            barriers.push({ x, z, g, hit: false });
+            const laneCoins = [x, x, x];
+            laneCoins.forEach((cx, k) => coinSpots.push({ x: cx, z: z - 7 - k * 5, got:false, mesh:null, ph:Math.random()*6 }));
+        }
+        function updateBarriers(active) {
+            for (const b of barriers) {
+                b.g.visible = b.z > car.z - 260 && b.z < car.z + 55;
+                if (!active || b.hit) continue;
+                const dx = b.x - car.x, dz = b.z - car.z;
+                if (Math.abs(dx) < 2.4 && Math.abs(dz) < 3.1 && hopY < 0.28) {
+                    b.hit = true; b.g.visible = false; car.speed *= 0.45; impactScore = Math.max(0, impactScore - 12); shake = 0.35;
+                    toast('Barrier hit! Hop over the road blocks. -12 pts');
+                    sfxThump(); updateHud();
                 }
             }
         }
@@ -2116,7 +2160,7 @@ export function mountKitCityGame(THREE) {
                             const sh = Math.sin(car.h), ch = Math.cos(car.h);
                             c.down = 2.3; setDown(ud, true, Math.random() < 0.5 ? 1 : -1);
                             c.x += -sh * 2; c.z += -ch * 2.5;
-                            peopleImpact(40, 0.55, pick(['Ah! Pedestrian! -40 pts', 'Watch the pedestrians! -40 pts']));
+                            peopleImpact(40, 0.55, pedestrianAbuse(car.speed) + ' -40 pts');
                         }
                     } else if (c.grace <= 0) {
                         for (let k = 0; k < CART_HIT.length; k++) {
@@ -2173,10 +2217,10 @@ export function mountKitCityGame(THREE) {
             if (typeof speechSynthesis === 'undefined' || typeof SpeechSynthesisUtterance === 'undefined') return;
             try {
                 if (speechSynthesis.speaking || speechSynthesis.pending) return;
-                if (fmOn && fmPlayer && fmPlayer.setVolume) { try { fmPlayer.setVolume(Math.round(radioVol * 100 * 0.22)); } catch (_) {} }
+                if (fmOn && fmPlayer && fmPlayer.setVolume) { try { fmPlayer.setVolume(Math.round(radioVol * 100 * 0.78)); } catch (_) {} }
                 const u = new SpeechSynthesisUtterance(text);
                 if (ttsVoice) { u.voice = ttsVoice; u.lang = ttsVoice.lang; } else u.lang = 'en-NG';
-                u.volume = clamp(Math.max(0.45, vol), 0, 1); u.rate = h.rate; u.pitch = h.pitch;
+                u.volume = clamp(Math.min(0.16, Math.max(0.06, vol)), 0, 1); u.rate = h.rate; u.pitch = h.pitch;
                 u.lang = ['en-NG', 'yo-NG', 'ig-NG', 'ha-NG'][idx % 4];
                 try { speechSynthesis.resume(); } catch (_) {}
                 u.onend = () => { if (fmOn && fmPlayer && fmPlayer.setVolume) { try { fmPlayer.setVolume(Math.round(radioVol * 100 * (state.dialogue ? 0.18 : 1))); } catch (_) {} } };
@@ -2191,7 +2235,7 @@ export function mountKitCityGame(THREE) {
             const sp = new THREE.Sprite(bubbleMat(kind.phrase)); sp.scale.set(4.6, 1.0, 1); sp.position.set(0, 3.1, 0); sp.renderOrder = 5;
             g.add(sp); g.userData.sprite = sp; scene.add(g);
             hawkers.push({ g: g, kind: kind, idx: i, x: 0, z: 0, hx: 0, hz: 0, state: 'idle', down: 0, ph: Math.random() * 6, off: Math.random() * 6,
-                callT: rand(1, 5), pitch: [1.35, 1.2, 0.85, 1.0][i % 4] + rand(-0.08, 0.08), rate: rand(0.92, 1.06) });
+                callT: rand(2, 5), called: false, pitch: [1.35, 1.2, 0.85, 1.0][i % 4] + rand(-0.08, 0.08), rate: rand(0.92, 1.06) });
         }
         function placeHawker(h, nearD, farD) {
             let x = 0, z = 0;
@@ -2255,12 +2299,12 @@ export function mountKitCityGame(THREE) {
                 }
                 h.g.position.set(h.x, 0.03 + (spd > 0 ? Math.abs(Math.sin(h.ph * 2)) * 0.04 : 0), h.z);
 
-                h.callT -= dt;
-                if (h.callT <= 0 && active && dist < 80) {
-                    const chasing = h.state === 'chase' && dist < 14;
-                    const vol = Math.pow(clamp(1 - dist / 80, 0, 1), 1.2) * (state.dialogue ? 0.4 : 1);
-                    hawkSpeak(h, h.idx, chasing ? 'Oga, buy am! Oga!' : h.kind.phrase, vol);
-                    h.callT = chasing ? rand(2.8, 4.2) : rand(3.8, 7.5);
+                if (dist > 32) h.called = false;
+                if (!h.called && active && dist < 24) {
+                    const chasing = h.state === 'chase' && dist < 10;
+                    const vol = Math.min(0.14, Math.pow(clamp(1 - dist / 24, 0, 1), 1.8) * 0.14) * (state.dialogue ? 0.5 : 1);
+                    hawkSpeak(h, h.idx, chasing ? 'Oga, buy am!' : h.kind.phrase, vol);
+                    h.called = true;
                 }
                 const showBubble = dist < 72 && lz > -10;
                 ud.sprite.visible = showBubble;
@@ -2281,6 +2325,7 @@ export function mountKitCityGame(THREE) {
             if (peopleCD > 0) peopleCD -= dt;
             if (jamHornT > 0) jamHornT -= dt;
             updateCoins(dt, active);
+            updateBarriers(active);
             updateCrossers(dt, active);
             updateHawkers(dt, active);
         }
@@ -2386,7 +2431,7 @@ export function mountKitCityGame(THREE) {
             const accel = dt > 0 ? (car.speed - car.prevSpeed) / dt : 0;
             pitch += (clamp(accel * 0.0025, -0.05, 0.04) - pitch) * Math.min(1, dt * 6);
             roll += (clamp(-car.yawRate * car.speed * 0.0035, -0.06, 0.06) - roll) * Math.min(1, dt * 6);
-            danfo.position.set(car.x, 0, car.z);
+            danfo.position.set(car.x, hopY, car.z);
             danfo.rotation.y = car.h;
             rig.rotation.x = pitch; rig.rotation.z = roll;
             wheels.forEach(w => {
