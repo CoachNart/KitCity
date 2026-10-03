@@ -1235,22 +1235,28 @@ export function mountKitCityGame(THREE) {
         });
 
         function primeTrafficCorridor() {
-            // Rebuild the visible corridor from the active city's real lane profile.
-            // Keep the first vehicles close enough to be unmistakably visible from chase
-            // and driver cameras without changing the city's road or scenery.
-            const slots = Array.from({ length: 16 }, (_, i) => {
-                const lane = trafficLanePool[i % trafficLanePool.length];
-                const row = Math.floor(i / trafficLanePool.length);
-                return [lane, 24 + row * 48 + (i % 2) * 12];
-            });
+            // Seed a real mixed road stream into the player's forward view.
+            // The road itself remains untouched: traffic uses the active city's
+            // lane profile and each vehicle stays on its correct direction.
+            const sameSlots = [24, 58, 96, 142, 196, 258, 328, 406];
+            const oppSlots = [38, 78, 122, 172, 226, 292, 366, 448];
+            const sameLanes = LANES_SAME.slice();
+            const oppLanes = LANES_OPP.slice();
+            let sameN = 0, oppN = 0;
             traffic.forEach((t, i) => {
-                const slot = slots[i % slots.length];
-                t.x = slot[0];
-                t.z = car.z - slot[1];
+                const same = t.same;
+                const lanes = same ? sameLanes : oppLanes;
+                const distances = same ? sameSlots : oppSlots;
+                const n = same ? sameN++ : oppN++;
+                const lane = lanes[n % lanes.length];
+                const distance = distances[n % distances.length];
+                t.x = lane;
+                t.z = car.z - distance;
                 t.prevDz = undefined;
-                t.g.position.set(t.x, 0.72, t.z);
+                t.g.rotation.y = same ? 0 : Math.PI;
                 t.g.visible = true;
                 t.g.frustumCulled = false;
+                t.g.position.set(t.x, 0.72, t.z);
                 t.g.updateMatrixWorld(true);
             });
         }
@@ -1902,7 +1908,7 @@ export function mountKitCityGame(THREE) {
         // ============================================================
         let throttleIn = 0, brakeIn = 0, handbrake = false, hornOn = false, braking = false;
         // lane assist (touch): swipe picks the lane, the car aligns itself
-        const PLAYER_LANES = [-11.5, -4.5, 4.5, 11.5];
+        const PLAYER_LANES = [...(ROAD_PROFILE.opp || [-4.5, -11.5]).slice().reverse(), ...(ROAD_PROFILE.lanes || [4.5, 11.5])];
         let laneX = null;
         function nearestLane(x) { let b = 0; PLAYER_LANES.forEach((l, i) => { if (Math.abs(l - x) < Math.abs(PLAYER_LANES[b] - x)) b = i; }); return b; }
         function changeLane(dir) {
