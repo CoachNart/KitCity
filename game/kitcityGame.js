@@ -390,9 +390,9 @@ export function mountKitCityGame(THREE) {
             sel.addEventListener('change', () => goState(sel.value));
             $('state-progress').textContent = 'States completed: ' + seen.length + ' / ' + NG_LIST.length;
             $('start-chapter').textContent = 'CHAPTER 1  -  ' + NGS.label.toUpperCase();
-            $('start-sub').textContent = 'Drive your yellow danfo from ' + NGS.city + ' to ' + NGS.term + ' Terminal. Pick up 5 passengers along the way and help each one understand Web3 safely, the T3Kit way.';
+            $('start-sub').textContent = 'Drive your danfo through ' + NGS.city + ' to KitCity. Pick up 5 passengers along the way and help each one understand Web3 safely, the T3Kit way.';
             $('hud-state').textContent = NGS.name + ' (' + NGS.city + ' Hub)';
-            $('end-chapter').textContent = NGS.term.toUpperCase() + ' TERMINAL  -  ' + NGS.label.toUpperCase();
+            $('end-chapter').textContent = 'KITCITY ARRIVAL  ·  ' + NGS.label.toUpperCase();
             $('btn-next').addEventListener('click', () => {
                 const i = NG_LIST.findIndex(r => slugState(r[0]) === NGS.id);
                 goState(slugState(NG_LIST[(i + 1) % NG_LIST.length][0]));
@@ -415,14 +415,14 @@ export function mountKitCityGame(THREE) {
         // 3. RENDERER / SCENE
         // ============================================================
         const scene = new THREE.Scene();
-        const FOG0 = SK.fd * (1 + (V.wxi || 0) * (V.wx === 'dust' ? 1.4 : V.wx === 'mist' ? 1.1 : V.wx === 'rain' ? 0.5 : 0));
+        const FOG0 = SK.fd * 0.58 * (1 + (V.wxi || 0) * (V.wx === 'dust' ? 1.4 : V.wx === 'mist' ? 1.1 : V.wx === 'rain' ? 0.5 : 0));
         scene.background = new THREE.Color(SK.hor);
         scene.fog = new THREE.FogExp2(SK.fog, FOG0);
 
-        const camera = new THREE.PerspectiveCamera(62, innerWidth / innerHeight, 0.3, 1500);
-        const renderer = new THREE.WebGLRenderer({ antialias: !isTouch, powerPreference: 'high-performance' });
+        const camera = new THREE.PerspectiveCamera(62, innerWidth / innerHeight, 0.3, 2400);
+        const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance', precision: 'highp' });
         renderer.setSize(innerWidth, innerHeight);
-        let pixelRatio = Math.min(devicePixelRatio || 1, isTouch ? 1.25 : 2);
+        let pixelRatio = Math.min(devicePixelRatio || 1, isTouch ? 1.75 : 2.25);
         renderer.setPixelRatio(pixelRatio);
         renderer.shadowMap.enabled = true;
         renderer.shadowMap.type = isTouch ? THREE.PCFShadowMap : THREE.PCFSoftShadowMap;
@@ -431,7 +431,7 @@ export function mountKitCityGame(THREE) {
         scene.add(new THREE.HemisphereLight(SK.hs[0], SK.hs[1], SK.hs[2]));
         const sun = new THREE.DirectionalLight(SK.sun, SK.si);
         sun.castShadow = true;
-        const SM = isTouch ? 1024 : 2048;
+        const SM = isTouch ? 1536 : 2048;
         sun.shadow.mapSize.set(SM, SM);
         sun.shadow.camera.near = 1; sun.shadow.camera.far = 260;
         const SD = 45;
@@ -814,7 +814,7 @@ export function mountKitCityGame(THREE) {
             const sgn = signMesh(text, 34, 2.6, bg, fg); sgn.position.set(0, 9.2, z + 0.55); scene.add(sgn);
         }
         gantry(0, NGS.city.toUpperCase() + '  >>  ' + NGS.term.toUpperCase(), '#00e5ff', '#111111');
-        gantry(TERMINAL_Z + 760, NGS.term.toUpperCase() + ' · T3KIT ARRIVAL', '#27ae60', '#ffffff');
+        gantry(TERMINAL_Z + 760, 'KITCITY ARRIVAL · ' + NGS.city.toUpperCase(), '#07161c', '#00e5ff');
         const depot = new THREE.Mesh(new THREE.BoxGeometry(30, 9, 40), new THREE.MeshStandardMaterial({ color: 0xdcd6c8 }));
         depot.position.set(52, 4.5, TERMINAL_Z + 770); depot.castShadow = true; scene.add(depot);
         const endWall = new THREE.Mesh(new THREE.BoxGeometry(80, 5, 2), new THREE.MeshStandardMaterial({ color: 0xc0392b }));
@@ -890,7 +890,7 @@ export function mountKitCityGame(THREE) {
             });
             const gate = new THREE.Mesh(new THREE.BoxGeometry(38, 2.4, 1), gateMat);
             gate.position.set(0, 8.3, TERMINAL_Z - 62); scene.add(gate);
-            const gateSign = signMesh('ARRIVAL · T3KIT', 34, 2.4, '#001a1f', '#00e5ff');
+            const gateSign = signMesh('ARRIVAL · KITCITY', 34, 2.4, '#001a1f', '#00e5ff');
             gateSign.position.set(0, 8.3, TERMINAL_Z - 61.35); scene.add(gateSign);
         })();
 
@@ -922,9 +922,13 @@ export function mountKitCityGame(THREE) {
             add(new THREE.BoxGeometry(2.2, 0.1, 4), black, 0, 3.0, 0.3);
             add(new THREE.BoxGeometry(2.7, 0.3, 0.25), black, 0, 0.75, -3.3);
             add(new THREE.BoxGeometry(2.7, 0.3, 0.25), black, 0, 0.75, 3.3);
-            const rearLblMat = new THREE.MeshBasicMaterial({ map: textTexture('KITCITY AGENT', 768, 128, '#00e5ff', '#111111', 70), transparent: true });
-            const rearLbl = new THREE.Mesh(new THREE.PlaneGeometry(2.45, 0.42), rearLblMat);
-            rearLbl.position.set(0, 1.72, 3.34); rearLbl.rotation.y = 0; rig.add(rearLbl);
+            const rearPanel = add(new THREE.BoxGeometry(2.18, 0.46, 0.08), black, 0, 1.72, 3.31, true);
+            const rearLblMat = new THREE.MeshBasicMaterial({ map: textTexture('T3kit', 768, 128, '#07161c', '#00e5ff', 82), transparent: false });
+            const rearLbl = new THREE.Mesh(new THREE.PlaneGeometry(1.92, 0.32), rearLblMat);
+            rearLbl.position.set(0, 1.72, 3.36); rearLbl.rotation.y = 0; rig.add(rearLbl);
+            // Refined rear finish: dark lower valance, crisp lamps, and restrained cyan accent.
+            add(new THREE.BoxGeometry(2.45, 0.09, 0.09), new THREE.MeshStandardMaterial({ color: 0x00e5ff, metalness: 0.35, roughness: 0.3, emissive: 0x00343a }), 0, 1.42, 3.36);
+            add(new THREE.BoxGeometry(2.45, 0.12, 0.12), black, 0, 0.62, 3.34);
 
             const head = new THREE.MeshStandardMaterial({ color: 0xffffcc, emissive: 0xffffaa, emissiveIntensity: 0.9 });
             tailMat = new THREE.MeshStandardMaterial({ color: 0x8a0000, emissive: 0xff0000, emissiveIntensity: 0.5 });
@@ -996,7 +1000,7 @@ export function mountKitCityGame(THREE) {
                 target = { type: 'pax', x: ZONE_X, z: p.z, title: 'Pick up ' + p.name, sub: p.stop };
                 [beamMat, ringMat, fillMat, gemMat].forEach(m => m.color.setHex(0x00e5ff));
             } else {
-                target = { type: 'terminal', x: 18, z: TERMINAL_Z, title: 'Arrive at T3kit', sub: NGS.city + ' KitCity Hub · Drop everyone off' };
+                target = { type: 'terminal', x: 18, z: TERMINAL_Z, title: 'Arrive at KitCity', sub: NGS.city + ' · KitCity destination · Drop everyone off' };
                 [beamMat, ringMat, fillMat, gemMat].forEach(m => m.color.setHex(0x2ecc71));
             }
             beacon.position.set(target.x, 0, target.z);
@@ -1033,6 +1037,42 @@ export function mountKitCityGame(THREE) {
                 [[-0.7, -0.4], [0.7, -0.4], [-0.7, 0.9], [0.7, 0.9]].forEach(a => part(bxg(0.06, 0.8, 0.06), 0x222222, a[0], 1.4, a[1]));
                 part(bxg(0.3, 0.55, 0.55), 0x111111, 0, 0.28, -1.0);
                 halfW = 0.75; halfL = 1.3; const h = new THREE.Mesh(lightG, headM); h.position.set(0, 0.9, -1.0); g.add(h);
+            } else if (kind === 'brt') {
+                // Modern city BRT: long red/white body, dark continuous window band and route stripe.
+                part(bxg(2.65, 2.8, 10.8), c0 == null ? 0xc9343a : c0, 0, 1.78, 0);
+                part(bxg(2.68, 0.95, 9.1), DARK, 0, 2.35, 0.15);
+                part(bxg(2.7, 0.16, 10.85), 0xf4f5f7, 0, 1.25, 0);
+                part(bxg(2.72, 0.12, 10.4), 0x00a8b5, 0, 1.43, 0);
+                halfW = 1.35; halfL = 5.4; lamps(5.42, 5.42, 1.0, 0.9);
+            } else if (kind === 'bicycle') {
+                const tire = new THREE.MeshStandardMaterial({ color: 0x17191c, roughness: 0.92 });
+                const metal = new THREE.MeshStandardMaterial({ color: 0xc4d0d5, metalness: 0.72, roughness: 0.32 });
+                const wheel = (z) => {
+                    const w = new THREE.Mesh(new THREE.TorusGeometry(0.42, 0.055, 8, 20), tire);
+                    w.rotation.x = Math.PI / 2; w.position.set(0, 0.47, z); g.add(w);
+                    const hub = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.055, 0.12, 10), metal);
+                    hub.rotation.x = Math.PI / 2; hub.position.set(0, 0.47, z); g.add(hub);
+                };
+                wheel(-0.82); wheel(0.82);
+                const tube = (a, b, radius, color) => {
+                    const va = new THREE.Vector3(a[0], a[1], a[2]), vb = new THREE.Vector3(b[0], b[1], b[2]);
+                    const delta = new THREE.Vector3().subVectors(vb, va);
+                    const mesh = new THREE.Mesh(new THREE.CylinderGeometry(radius, radius, delta.length(), 7), color);
+                    mesh.position.copy(va).add(vb).multiplyScalar(0.5);
+                    mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), delta.normalize());
+                    g.add(mesh);
+                };
+                const frame = metal;
+                tube([0,0.47,-0.82],[0,0.92,-0.18],0.045,frame);
+                tube([0,0.92,-0.18],[0,0.47,0.82],0.045,frame);
+                tube([0,0.47,0.82],[0,0.47,-0.82],0.045,frame);
+                tube([0,0.92,-0.18],[0,1.05,0.2],0.045,frame);
+                tube([0,1.05,0.2],[0,0.47,0.82],0.045,frame);
+                // Compact rider silhouette so bicycles read clearly at road scale.
+                part(bxg(0.25,0.55,0.28), c0 == null ? 0x2767a8 : c0, 0, 1.32, 0.02);
+                part(new THREE.SphereGeometry(0.17, 10, 8), 0x4a3020, 0, 1.72, 0.03);
+                part(bxg(0.12,0.52,0.12), 0x2b3540, 0, 0.92, -0.12);
+                halfW = 0.62; halfL = 1.0;
             } else if (kind === 'okada') {
                 part(bxg(0.35, 0.5, 1.7), c0 == null ? pick([0xc0392b, 0x2c3e50, 0x16a085, 0xe67e22]) : c0, 0, 0.6, 0);
                 part(bxg(0.45, 0.8, 0.35), pick([0xe74c3c, 0x3498db, 0xf1c40f, 0xecf0f1, 0x2ecc71]), 0, 1.25, 0.1); part(bxg(0.3, 0.3, 0.3), 0x4a3020, 0, 1.8, 0.1);
@@ -1063,10 +1103,11 @@ export function mountKitCityGame(THREE) {
 
         const traffic = [];
         const LANES_SAME = [4.5, 11.5], LANES_OPP = [-4.5, -11.5];
-        const SPEEDK = { truck: 0.8, tanker: 0.78, bus: 0.9, okada: 1.15, keke: 0.85, danfo: 1, sedan: 1, cab: 1 };
+        const SPEEDK = { truck: 0.8, tanker: 0.78, brt: 0.82, bus: 0.9, bicycle: 0.55, okada: 1.15, keke: 0.85, danfo: 1, sedan: 1, cab: 1 };
         const mixList = []; Object.keys(V.veh || { danfo: 1, sedan: 1 }).forEach(k => { for (let i = 0; i < V.veh[k]; i++) mixList.push(k); });
-        if (!mixList.length) mixList.push('sedan');
-        const NT = V.tn || 11;
+        // Guarantee visible variety even when a state's visual profile has a sparse traffic preset.
+        ['bicycle', 'brt', 'keke', 'truck', 'danfo', 'bus', 'okada', 'sedan'].forEach(k => { if (!mixList.includes(k)) mixList.push(k); });
+        const NT = Math.max(22, Math.min(26, V.tn || 11));
         for (let i = 0; i < NT; i++) {
             const same = i < Math.round(NT * 0.45);
             const kind = pick(mixList);
@@ -1698,7 +1739,7 @@ export function mountKitCityGame(THREE) {
             $('e-pax').textContent = delivered; $('e-vibe').textContent = '+' + vibeBonus;
             const stars = (mr.ok && impactScore >= 1900) ? 3 : impactScore >= 1200 ? 2 : 1;
             $('end-stars').textContent = '★'.repeat(stars) + '☆'.repeat(3 - stars);
-            $('end-msg').textContent = 'You arrived at T3kit — the ' + NGS.city + ' KitCity Hub. You delivered ' + delivered + ' passengers and helped ' + onboarded + ' people take their first safe steps into Web3. This hub is where the city journey continues.';
+            $('end-msg').textContent = 'You arrived at KitCity from ' + NGS.city + '. You delivered ' + delivered + ' passengers and helped ' + onboarded + ' people take their first safe steps into Web3. Your next city journey starts here.';
             markVisited(NGS.id);
             sfxGood();
             setTimeout(() => { $('end').style.display = 'flex'; }, 900);
@@ -2021,6 +2062,8 @@ export function mountKitCityGame(THREE) {
             return ex * ex + ez * ez < r * r;
         }
         function pedestrianCall(c) {
+            // Ambient pedestrian voices intentionally disabled; keep the visual crossing behavior.
+            return false;
             if (typeof speechSynthesis === 'undefined' || typeof SpeechSynthesisUtterance === 'undefined' || muted) return false;
             if (speechSynthesis.speaking || speechSynthesis.pending) return false;
             const lines = [
@@ -2044,15 +2087,8 @@ export function mountKitCityGame(THREE) {
         }
 
         function pedestrianAbuse(speed) {
-            const fast = Math.abs(speed) > 12;
-            const lines = fast
-                ? ['Oga! You wan finish person?!', 'Driver! Abeg watch road na!', 'Ah-ah! You dey drive like this?!', 'Omo! You no see person?']
-                : ['Oga, easy now!', 'Driver, abeg watch yourself!', 'Chai! My leg o!', 'You dey hurry for where?'];
-            const line = pick(lines);
-            if (typeof speechSynthesis !== 'undefined' && typeof SpeechSynthesisUtterance !== 'undefined' && !muted) {
-                try { const u = new SpeechSynthesisUtterance(line); u.lang = 'en-NG'; u.volume = fmOn && radioPlaying ? 0.42 : 0.62; u.rate = rand(0.96, 1.06); u.pitch = rand(0.85, 1.12); speechSynthesis.cancel(); speechSynthesis.speak(u); } catch (_) {}
-            }
-            return line;
+            // No spoken pedestrian reactions; preserve the on-screen collision feedback.
+            return Math.abs(speed) > 12 ? 'Watch the road!' : 'Drive carefully!';
         }
         function peopleImpact(pts, speedMul, msg) {
             peopleCD = 1.2; collisions++; mHit(6);
@@ -2313,6 +2349,8 @@ export function mountKitCityGame(THREE) {
         }
         if (typeof speechSynthesis !== 'undefined') { pickVoice(); try { speechSynthesis.addEventListener('voiceschanged', pickVoice); } catch (e) {} }
         function hawkSpeak(h, idx, text, vol) {
+            // Ambient hawker voices intentionally disabled; hawkers remain visible and interactive.
+            return false;
             if (muted || !ambOn || !state.started || vol < 0.015) return false;
             if (typeof speechSynthesis === 'undefined' || typeof SpeechSynthesisUtterance === 'undefined') return false;
             try {
@@ -2489,9 +2527,9 @@ export function mountKitCityGame(THREE) {
         const clock = new THREE.Clock();
         let time = 0, pitch = 0, roll = 0, hudAcc = 0, radarAcc = 0, qLevel = 0, fpsAcc = 0, fpsN = 0;
         function applyQuality(l) {
-            if (l === 1) pixelRatio = Math.min(pixelRatio, 1);
+            if (l === 1) pixelRatio = Math.min(pixelRatio, 1.5);
             if (l === 2) sun.castShadow = false;
-            if (l === 3) pixelRatio = 0.75;
+            if (l === 3) pixelRatio = Math.max(pixelRatio, 1.25);
             renderer.setPixelRatio(pixelRatio);
             renderer.setSize(innerWidth, innerHeight);
         }
