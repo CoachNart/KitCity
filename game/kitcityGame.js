@@ -1824,6 +1824,7 @@ export function mountKitCityGame(THREE) {
         // 10. WEB3 LITERACY JOURNEY & PICK-UP
         // ============================================================
         let toastTimer = null;
+        let pickupDialogue = false, arrivalPrep = false, prepIndex = 0, prepChoice = false, arrivalComplete = false;
         function toast(msg) {
             const t = $('toast'); t.textContent = msg; t.classList.add('show');
             clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
@@ -1833,15 +1834,9 @@ export function mountKitCityGame(THREE) {
             return SESSION_RANGES.findIndex(([a,b]) => index >= a && index < b);
         }
         function syncCurriculumSession() {
-            if (curriculumState.finished) {
-                delivered = PASSENGERS.length;
-                curIdx = PASSENGERS.length;
-            } else {
-                const session = Math.max(0, Math.min(SESSION_RANGES.length - 1, sessionIndexForChapter(curriculumState.chapterIndex)));
-                delivered = Math.min(PASSENGERS.length, session);
-                curIdx = Math.min(PASSENGERS.length - 1, session);
-            }
-            PASSENGERS.forEach((p, i) => { if (p.mesh) p.mesh.visible = i >= curIdx && !curriculumState.finished; p.leaving = i < curIdx; });
+            // Passenger routing is its own five-stop mission. Saved literacy no longer skips passengers.
+            delivered = 0; curIdx = 0;
+            PASSENGERS.forEach((p, i) => { if (p.mesh) p.mesh.visible = true; p.leaving = false; });
             curriculumState.started = true;
             saveState(localStorage, curriculumState);
             updateHud();
@@ -1864,7 +1859,49 @@ export function mountKitCityGame(THREE) {
             document.body.classList.add('in-dialogue');
             $('prompt').style.display = 'none';
             $('dialogue').style.display = 'block';
-            renderCurriculumBeat();
+            if (arrivalPrep) renderPrepLesson();
+            else { pickupDialogue = true; renderPassengerPickup(); }
+        }
+
+        function renderPassengerPickup() {
+            const p = PASSENGERS[curIdx];
+            $('dlg-badge').textContent = 'BUS STOP · ' + NGS.city.toUpperCase();
+            $('dlg-name').textContent = p.name + ' · ' + p.role;
+            $('dlg-meta').textContent = p.stop + ' · Passenger ' + (curIdx + 1) + ' of ' + PASSENGERS.length;
+            $('dlg-progress').style.width = ((curIdx + 1) / PASSENGERS.length * 100) + '%';
+            $('dlg-text').textContent = 'Agent Kit: “Welcome aboard, ' + p.name + '. We are heading to KitCity.”\n\n' + p.name + ': “Thanks, driver. I have a lot of questions about what we are going to learn.”';
+            const box = $('dlg-choices'); box.innerHTML = '';
+            addPrepContinue(box, curIdx === PASSENGERS.length - 1 ? 'ALL ABOARD · HEAD TO KITCITY' : 'PASSENGER ABOARD');
+        }
+
+        function addPrepContinue(box, label) {
+            const b=document.createElement('button'); b.className='choice-btn primary'; b.textContent=label;
+            b.addEventListener('click', () => {
+                if (pickupDialogue) {
+                    pickupDialogue=false; $('dialogue').style.display='none'; document.body.classList.remove('in-dialogue'); state.dialogue=false;
+                    const p=PASSENGERS[curIdx]; p.leaving=true; if(p.mesh) p.mesh.visible=false; delivered++; curIdx++; sfxDoor(); updateHud(); setTarget();
+                    toast(delivered < PASSENGERS.length ? 'Next bus stop: ' + PASSENGERS[curIdx].stop : 'All 5 passengers aboard. Drive to KitCity parking.');
+                } else if (arrivalPrep) advancePrep();
+            });
+            box.appendChild(b);
+        }
+
+        function renderPrepLesson() {
+            const l=PREP_LESSONS[prepIndex]; if(!l) return;
+            $('dlg-badge').textContent='AGENT KIT · PREPARE FOR KITCITY';
+            $('dlg-name').textContent='Agent Kit · Driver';
+            $('dlg-meta').textContent=l.title+' · '+l.topic;
+            $('dlg-progress').style.width=((prepIndex+1)/PREP_LESSONS.length*100)+'%';
+            $('dlg-text').textContent=l.teach+'\n\n'+l.question+'\n\n'+l.answer;
+            const box=$('dlg-choices'); box.innerHTML='';
+            const b=document.createElement('div'); b.className='prep-check'; b.textContent=l.check; box.appendChild(b);
+            l.options.forEach((o,i)=>{ const x=document.createElement('button'); x.className='choice-btn'; x.textContent=String.fromCharCode(65+i)+'. '+o; x.addEventListener('click',()=>{ prepChoice=i; box.querySelectorAll('button').forEach(q=>q.disabled=true); if(i===l.correct){ x.classList.add('correct'); sfxGood(); const n=document.createElement('button'); n.className='choice-btn primary'; n.textContent=prepIndex===PREP_LESSONS.length-1?'FINISH PREP · SHOW REWARD':'NEXT LESSON'; n.addEventListener('click',advancePrep); box.appendChild(n); } else { x.classList.add('wrong'); sfxBad(); const n=document.createElement('button'); n.className='choice-btn primary'; n.textContent='TRY AGAIN'; n.addEventListener('click',()=>renderPrepLesson()); box.appendChild(n); }}); box.appendChild(x); });
+        }
+
+        function advancePrep() {
+            if (prepIndex < PREP_LESSONS.length-1) { prepIndex++; renderPrepLesson(); return; }
+            arrivalPrep=false; arrivalComplete=true; state.dialogue=false; document.body.classList.remove('in-dialogue'); $('dialogue').style.display='none';
+            const reward=500; kitCoins += reward; impactScore += reward; updateHud(); sfxGood(); finishGame();
         }
 
         function showDialogueText(text) {
@@ -2007,7 +2044,7 @@ export function mountKitCityGame(THREE) {
             $('e-pax').textContent = delivered; $('e-vibe').textContent = '+' + vibeBonus;
             const stars = (mr.ok && impactScore >= 1900) ? 3 : impactScore >= 1200 ? 2 : 1;
             $('end-stars').textContent = '★'.repeat(stars) + '☆'.repeat(3 - stars);
-            $('end-msg').textContent = curriculumState.finished ? 'You started with the question “What is Web3?” and finished with a working literacy toolkit. The next destination is KitCity, where T3kit turns the foundations into deeper practice.' : 'You reached KitCity with your Web3 literacy journey still in progress. Resume the curriculum to continue learning.';
+            $('end-msg').textContent = 'Agent Kit has prepared all five passengers for KitCity. Reward unlocked: +500 $KIT. Next stop: ' + (NG_LIST[(NG_LIST.findIndex(r => slugState(r[0]) === NGS.id) + 1) % NG_LIST.length][1]) + '.';
             markVisited(NGS.id);
             sfxGood();
             setTimeout(() => { $('end').style.display = 'flex'; }, 900);
@@ -2022,6 +2059,11 @@ export function mountKitCityGame(THREE) {
             toast('Follow the arrow to your first passenger');
         });
         $('btn-again').addEventListener('click', () => restartGame(NGS.id));
+        $('btn-next').addEventListener('click', () => {
+            const idx=NG_LIST.findIndex(r => slugState(r[0])===NGS.id);
+            const next=NG_LIST[(idx+1+NG_LIST.length)%NG_LIST.length];
+            window.location.hash=slugState(next[0]); location.reload();
+        });
 
         // ============================================================
         // 11. CAR PHYSICS
@@ -2214,7 +2256,9 @@ export function mountKitCityGame(THREE) {
                 if (pr.textContent !== label) pr.textContent = label;
             } else pr.style.display = 'none';
 
-            if (state.started && !state.ended && target.type === 'terminal' && dist < 16 && Math.abs(car.speed) < 5) finishGame();
+            if (state.started && !state.ended && target.type === 'terminal' && dist < 16 && Math.abs(car.speed) < 5) {
+                if (!arrivalComplete && !arrivalPrep) { arrivalPrep=true; prepIndex=0; openDialogue(); toast('Parking barrier open — Agent Kit is ready for the five-minute briefing.'); }
+            }
 
             missedCD -= dt;
             if (state.started && !state.dialogue && target.type === 'pax' && car.z < target.z - 50 && missedCD <= 0) {
@@ -2811,14 +2855,14 @@ export function mountKitCityGame(THREE) {
         function inBridge(z) { return false; }
         function mHit(a) {}
         function sfxThump() { if (!actx) return; tone(90, 0.2, 'sine', 0.35, 0, 40); noiseHit(master, actx.currentTime, 'lowpass', 700, 0.15, 0.25); }
-        const missionOf = () => ['Complete ' + CHAPTERS.length + ' connected Web3 literacy chapters', 'Reach KitCity and continue into T3kit'];
+        const missionOf = () => ['Pick up 5 passengers at named ' + NGS.city + ' bus stops', 'Enter the KitCity parking barrier', 'Complete Agent Kit’s 5 interactive preparation lessons'];
         function updateMission(dt, active) { if (active) updateHud(); }
         function missionHud() {
             $('mission').innerHTML = '<div class="m-title">WEB3 LITERACY</div><div class="m-row">Chapter ' + Math.min(CHAPTERS.length, curriculumState.chapterIndex + 1) + ' / ' + CHAPTERS.length + '</div><div class="m-row">Literacy ' + curriculumState.literacy + '%</div>';
         }
         function missionResult() {
-            const ok = curriculumState.finished && delivered >= PASSENGERS.length;
-            return { ok: ok, bonus: ok ? 300 : 0, notes: ['Completed ' + curriculumState.completed.length + '/' + CHAPTERS.length + ' chapters', 'Passengers completed ' + delivered + '/' + PASSENGERS.length] };
+            const ok = arrivalComplete && delivered >= PASSENGERS.length;
+            return { ok: ok, bonus: ok ? 300 : 0, notes: ['5 passenger bus-stop pickups completed', 'Agent Kit preparation completed', 'Passengers completed ' + delivered + '/' + PASSENGERS.length] };
         }
 
         // ---- people by culture ----
