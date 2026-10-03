@@ -1798,10 +1798,15 @@ export function mountKitCityGame(THREE) {
             return SESSION_RANGES.findIndex(([a,b]) => index >= a && index < b);
         }
         function syncCurriculumSession() {
-            const session = Math.max(0, Math.min(SESSION_RANGES.length - 1, sessionIndexForChapter(curriculumState.chapterIndex)));
-            delivered = Math.min(PASSENGERS.length, session);
-            curIdx = Math.min(PASSENGERS.length - 1, session);
-            PASSENGERS.forEach((p, i) => { if (p.mesh) p.mesh.visible = i >= curIdx; p.leaving = i < curIdx; });
+            if (curriculumState.finished) {
+                delivered = PASSENGERS.length;
+                curIdx = PASSENGERS.length;
+            } else {
+                const session = Math.max(0, Math.min(SESSION_RANGES.length - 1, sessionIndexForChapter(curriculumState.chapterIndex)));
+                delivered = Math.min(PASSENGERS.length, session);
+                curIdx = Math.min(PASSENGERS.length - 1, session);
+            }
+            PASSENGERS.forEach((p, i) => { if (p.mesh) p.mesh.visible = i >= curIdx && !curriculumState.finished; p.leaving = i < curIdx; });
             curriculumState.started = true;
             saveState(localStorage, curriculumState);
             updateHud();
