@@ -1146,7 +1146,7 @@ export function mountKitCityGame(THREE) {
                     m.renderOrder = 100;
                     m.castShadow = true;
                     m.receiveShadow = true;
-                    if (m.material) { m.material.depthTest = false; m.material.depthWrite = false; }
+                    if (m.material) { m.material.depthTest = true; m.material.depthWrite = true; m.material.fog = false; m.material.transparent = false; m.material.opacity = 1; }
                 }
             });
             // Slightly larger traffic makes the requested road variety readable on phones.
@@ -1230,7 +1230,9 @@ export function mountKitCityGame(THREE) {
                 t.prevDz = dz;
                 if (dz > 140) placeTraffic(t, car.z - 620, car.z - 400, false);
                 else if (dz < -320) placeTraffic(t, car.z + 80, car.z + 190, false);
-                t.g.position.set(t.x, 0, t.z);
+                t.g.position.set(t.x, 0.42, t.z);
+                t.g.visible = true;
+                t.g.frustumCulled = false;
                 // Traffic is part of the road world and must remain renderable on every road section.
                 // The old bridge-distance visibility gate could hide entire classes of vehicles.
                 t.g.visible = true;
