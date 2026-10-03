@@ -1132,19 +1132,27 @@ export function mountKitCityGame(THREE) {
             }
             t.x = pick(t.lanes); t.z = rand(zMin, zMax); t.g.position.set(t.x, 0, t.z);
         }
-        // Seed a real near-field traffic corridor. The old stagger was technically spawning vehicles,
-        // but several of the new models could immediately sit outside the chase camera's useful depth.
-        // Keep every showcase type inside the first few hundred metres, spread across all four lanes.
+        // Seed traffic directly into the player's visible forward corridor.
+        // Every requested road type gets an explicit near-field slot; no type relies on random presets.
+        const TRAFFIC_SLOTS = [
+            [4.5,  -35], [-4.5, -58], [11.5, -82], [-11.5, -106],
+            [4.5, -132], [-4.5, -158], [11.5, -184], [-11.5, -210],
+            [4.5, -236], [-4.5, -262], [11.5, -288], [-11.5, -314]
+        ];
         traffic.forEach((t, i) => {
-            const lane = t.lanes[i % t.lanes.length];
-            const band = i % 4;
-            const row = Math.floor(i / 4);
-            const z = START_Z - 58 - row * 42 - band * 9;
+            const slot = TRAFFIC_SLOTS[i % TRAFFIC_SLOTS.length];
+            const lane = slot[0], z = slot[1];
             t.x = lane; t.z = z; t.prevDz = undefined;
             t.g.visible = true;
             t.g.frustumCulled = false;
             t.g.position.set(lane, 0, z);
-            t.g.traverse(m => { if (m.isMesh) { m.frustumCulled = false; m.castShadow = true; m.receiveShadow = true; } });
+            t.g.traverse(m => {
+                if (m.isMesh) {
+                    m.frustumCulled = false;
+                    m.castShadow = true;
+                    m.receiveShadow = true;
+                }
+            });
         });
 
         function updateTraffic(dt) {
@@ -1166,7 +1174,10 @@ export function mountKitCityGame(THREE) {
                 if (dz > 140) placeTraffic(t, car.z - 620, car.z - 400, false);
                 else if (dz < -320) placeTraffic(t, car.z + 80, car.z + 190, false);
                 t.g.position.set(t.x, 0, t.z);
-                t.g.visible = !(Math.abs(t.x) > 8 && inBridge(t.z));
+                // Traffic is part of the road world and must remain renderable on every road section.
+                // The old bridge-distance visibility gate could hide entire classes of vehicles.
+                t.g.visible = true;
+                t.g.frustumCulled = false;
             });
         }
 
