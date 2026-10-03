@@ -548,7 +548,9 @@ export function mountKitCityGame(THREE) {
         const roadMat = V.rd === 'wet'
             ? new THREE.MeshPhongMaterial({ map: roadTex, shininess: 90, specular: 0x556677, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 })
             : new THREE.MeshLambertMaterial({ map: roadTex, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 });
-        const road = new THREE.Mesh(new THREE.PlaneGeometry(ROAD_HALF * 2, ROAD_LEN), roadMat);
+        const ROAD_PROFILE = V.road || { half: 17, lanes: [4.5, 11.5], opp: [-4.5, -11.5] };
+        const ACTIVE_ROAD_HALF = ROAD_PROFILE.half || ROAD_HALF;
+        const road = new THREE.Mesh(new THREE.PlaneGeometry(ACTIVE_ROAD_HALF * 2, ROAD_LEN), roadMat);
         road.rotation.x = -Math.PI / 2; road.position.set(0, 0.02, ROAD_CZ); road.receiveShadow = true;
         scene.add(road);
 
@@ -1118,7 +1120,8 @@ export function mountKitCityGame(THREE) {
         const trafficWorld = scene; // Traffic is attached directly to the live scene; no nested render layer.
 
         const traffic = [];
-        const LANES_SAME = [4.5, 11.5], LANES_OPP = [-4.5, -11.5];
+        const LANES_SAME = (ROAD_PROFILE.lanes || [4.5, 11.5]).slice();
+        const LANES_OPP = (ROAD_PROFILE.opp || [-4.5, -11.5]).slice();
         const SPEEDK = { truck: 0.8, tanker: 0.78, brt: 0.82, bus: 0.9, bicycle: 0.55, okada: 1.15, keke: 0.85, danfo: 1, sedan: 1, cab: 1 };
         const mixList = []; Object.keys(V.veh || { danfo: 1, sedan: 1 }).forEach(k => { for (let i = 0; i < V.veh[k]; i++) mixList.push(k); });
         ['bicycle', 'brt', 'keke', 'truck', 'danfo', 'bus', 'okada', 'sedan'].forEach(k => { if (!mixList.includes(k)) mixList.push(k); });
