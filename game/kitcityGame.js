@@ -938,7 +938,7 @@ export function mountKitCityGame(THREE) {
             const gateMat = new THREE.MeshStandardMaterial({ color: 0x111c22 });
             [-1, 1].forEach(side => {
                 const p = new THREE.Mesh(new THREE.BoxGeometry(1, 8, 1), gateMat);
-                p.position.set(side * 18, 4, TERMINAL_Z - 62); scene.add(p);
+                p.position.set(side * 18, 4, TERMINAL_Z + 22); scene.add(p);
             });
             const gate = new THREE.Mesh(new THREE.BoxGeometry(38, 2.4, 1), gateMat);
             gate.position.set(0, 8.3, TERMINAL_Z - 62); scene.add(gate);
@@ -2283,7 +2283,7 @@ export function mountKitCityGame(THREE) {
                 if (pr.textContent !== label) pr.textContent = label;
             } else pr.style.display = 'none';
 
-            if (state.started && !state.ended && target.type === 'terminal' && dist < 16 && Math.abs(car.speed) < 5) {
+            if (state.started && !state.ended && target.type === 'terminal' && dist < 28 && Math.abs(car.speed) < 5) {
                 if (!arrivalComplete && !arrivalPrep) { arrivalPrep=true; prepIndex=0; openDialogue(); toast('Parking barrier open — Agent Kit is ready for the five-minute briefing.'); }
             }
 
