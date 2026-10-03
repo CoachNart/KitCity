@@ -1023,7 +1023,7 @@ export function mountKitCityGame(THREE) {
         // ============================================================
         const _gm = {}, _mm = {};
         const bxg = (a, b, c) => _gm[a + '|' + b + '|' + c] || (_gm[a + '|' + b + '|' + c] = new THREE.BoxGeometry(a, b, c));
-        const mtl = c => _mm[c] || (_mm[c] = new THREE.MeshLambertMaterial({ color: c }));
+        const mtl = c => _mm[c] || (_mm[c] = new THREE.MeshBasicMaterial({ color: c, fog: false }));
         const lightG = new THREE.BoxGeometry(0.4, 0.25, 0.08);
         const headM = new THREE.MeshBasicMaterial({ color: 0xffffcc });
         const tailM = new THREE.MeshBasicMaterial({ color: 0xff2200 });
@@ -1146,7 +1146,7 @@ export function mountKitCityGame(THREE) {
                     m.renderOrder = 100;
                     m.castShadow = true;
                     m.receiveShadow = true;
-                    if (m.material) { m.material.depthTest = true; m.material.depthWrite = true; m.material.fog = false; m.material.transparent = false; m.material.opacity = 1; }
+                    if (m.material) { m.material.depthTest = false; m.material.depthWrite = false; m.material.fog = false; m.material.transparent = false; m.material.opacity = 1; }
                 }
             });
             // Slightly larger traffic makes the requested road variety readable on phones.
