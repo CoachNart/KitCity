@@ -9,12 +9,12 @@ export function mountKitCityGame(THREE) {
 
         $('start-list').innerHTML = isTouch
             ? '<li><b>Swipe left or right once</b> anywhere on the screen. Your danfo glides into the next lane by itself. Use your other thumb for the pedals.</li>' +
-              '<li><b>GAS</b> to go, <b>BRAKE</b> to stop (hold at a standstill to reverse).</li>' +
+              '<li><b>GAS</b> to go, <b>BRAKE</b> to stop, <b>REVERSE</b> to back up.</li>' +
               '<li><b>📯</b> is your horn. <b>📷</b> switches camera. <b>↺</b> puts you back on the road.</li>' +
               '<li>Follow the <b>yellow arrow</b> and the <b>light beam</b>. Pull into the curb lane, slow down, then tap <b>PICK UP</b>.</li>' +
               '<li>Drive through the <b>$KIT</b> coins to earn. Watch out for pedestrians, hawkers and truck pushers.</li>' +
               '<li>Landscape mode works best.</li>'
-            : '<li><b>W A S D</b> or arrow keys to drive. <b>S</b> brakes, then reverses. <b>Space</b> is the handbrake.</li>' +
+            : '<li><b>W A S D</b> or arrow keys to drive. <b>S</b> brakes. <b>V</b> reverses. <b>Space</b> is the handbrake.</li>' +
               '<li><b>H</b> horn, <b>C</b> camera, <b>R</b> back on road, <b>M</b> mute.</li>' +
               '<li>Follow the <b>yellow arrow</b> and the <b>light beam</b>. Pull into the curb lane, slow down, then press <b>E</b> to pick up.</li>' +
               '<li>Drive through the <b>$KIT</b> coins to earn. Watch out for pedestrians, hawkers and truck pushers.</li>';
@@ -34,7 +34,7 @@ export function mountKitCityGame(THREE) {
         const TERMINAL_Z = -2600;
         const ZONE_X = 14.5;
         const ZONE_R = 9;
-        const STOPS = [-380, -830, -1280, -2730, -2180];
+        const STOPS = [-400, -900, -1400, -1900, -2400];
         const MAX_V = 42; // m/s, about 150 km/h
 
         const PASSENGERS = [
@@ -848,6 +848,9 @@ export function mountKitCityGame(THREE) {
             add(new THREE.BoxGeometry(2.2, 0.1, 4), black, 0, 3.0, 0.3);
             add(new THREE.BoxGeometry(2.7, 0.3, 0.25), black, 0, 0.75, -3.3);
             add(new THREE.BoxGeometry(2.7, 0.3, 0.25), black, 0, 0.75, 3.3);
+            const rearLblMat = new THREE.MeshBasicMaterial({ map: textTexture('KITCITY AGENT', 768, 128, '#00e5ff', '#111111', 70), transparent: true });
+            const rearLbl = new THREE.Mesh(new THREE.PlaneGeometry(2.45, 0.42), rearLblMat);
+            rearLbl.position.set(0, 1.72, 3.34); rearLbl.rotation.y = 0; rig.add(rearLbl);
 
             const head = new THREE.MeshStandardMaterial({ color: 0xffffcc, emissive: 0xffffaa, emissiveIntensity: 0.9 });
             tailMat = new THREE.MeshStandardMaterial({ color: 0x8a0000, emissive: 0xff0000, emissiveIntensity: 0.5 });
@@ -1079,8 +1082,8 @@ export function mountKitCityGame(THREE) {
         // 8. INPUT
         // ============================================================
         const keys = {};
-        const touch = { gas: false, brake: false, horn: false, steer: 0, steerActive: false };
-        let kbHorn = false;
+        const touch = { gas: false, brake: false, reverse: false, horn: false, steer: 0, steerActive: false };
+        let kbHorn = false, reverseIn = 0;
 
         addEventListener('keydown', e => {
             const k = e.key.toLowerCase();
@@ -1110,6 +1113,7 @@ export function mountKitCityGame(THREE) {
         }
         bindHold($('gas'), () => { touch.gas = true; }, () => { touch.gas = false; });
         bindHold($('brake'), () => { touch.brake = true; }, () => { touch.brake = false; });
+        bindHold($('reverse'), () => { touch.reverse = true; }, () => { touch.reverse = false; });
         bindHold($('horn'), () => { touch.horn = true; }, () => { touch.horn = false; });
 
         // Swipe once = move exactly one lane; the danfo then steers itself and settles in the lane centre
@@ -1129,7 +1133,7 @@ export function mountKitCityGame(THREE) {
         })();
 
         function releaseTouch() {
-            touch.gas = touch.brake = touch.horn = false; touch.steer = 0; touch.steerActive = false;
+            touch.gas = touch.brake = touch.reverse = touch.horn = false; touch.steer = 0; touch.steerActive = false;
             document.querySelectorAll('.pedal, #horn').forEach(el => el.classList.remove('active'));
         }
         const lifted = e => { if (e.touches && e.touches.length === 0) releaseTouch(); };
@@ -1349,9 +1353,9 @@ export function mountKitCityGame(THREE) {
             chain(e.oB, gainNode(0.3), e.am);
             chain(e.oC, gainNode(0.16), e.am);
             chain(e.am, shaper, e.lp, e.bus);
-            e.lump = actx.createOscillator(); e.lumpG = gainNode(0.3);     // uneven cylinders, lumpy at idle
+            e.lump = actx.createOscillator(); e.lumpG = gainNode(0.18);     // uneven cylinders, lumpy at idle
             chain(e.lump, e.lumpG); e.lumpG.connect(e.am.gain);
-            e.knockF = filt('bandpass', 1700, 1.1); e.knockAm = gainNode(0.5); e.knock = gainNode(0);   // diesel clatter
+            e.knockF = filt('bandpass', 1700, 1.1); e.knockAm = gainNode(0.32); e.knock = gainNode(0);   // diesel clatter
             e.knockLfo = actx.createOscillator(); e.knockLfo.type = 'square';
             const kg = gainNode(0.5); chain(e.knockLfo, kg); kg.connect(e.knockAm.gain);
             chain(noiseSrc(), e.knockF, e.knockAm, e.knock, e.bus);
@@ -1400,13 +1404,13 @@ export function mountKitCityGame(THREE) {
                 const rate = eng.shift > 0 ? 14 : (target > eng.rpm ? 6 : 3.5);
                 eng.rpm += (target - eng.rpm) * Math.min(1, dt * rate);
                 frac = clamp((eng.rpm - IDLE_RPM) / (REDLINE_RPM - IDLE_RPM), 0, 1);
-                lvl = (0.085 + 0.12 * thr * (0.5 + 0.5 * frac) + 0.06 * frac) * (eng.shift > 0 ? 0.55 : 1);
+                lvl = (0.052 + 0.072 * thr * (0.5 + 0.5 * frac) + 0.035 * frac) * (eng.shift > 0 ? 0.55 : 1);
             } else {
                 eng.rpm *= Math.max(0, 1 - dt * 3);
             }
             if (state.dialogue) lvl *= 0.45;
             if (state.ended) lvl *= 0.6;
-            if (inside) lvl *= 1.35;
+            if (inside) lvl *= 1.12;
             e.bus.gain.setTargetAtTime(lvl, t, 0.05);
 
             const wob = 1 + 0.012 * Math.sin(time * 37) + 0.01 * Math.sin(time * 23.7);
@@ -1434,12 +1438,12 @@ export function mountKitCityGame(THREE) {
 
         // ----- FM: tap to play, back / next. Hidden audio-only player, no video card -----
         const FM_STATIONS = [
-            ['Afrobeats Party', 'dKyUubdzotg'],
-            ['Igbo Highlife', 'nls7xSuD23U'],
-            ['Naija Gospel Praise', 'I2ulWtybyKA'],
-            ['Afrobeats + Amapiano', 'qbefFtgUVTY'],
-            ['Afrobeats Hits 2026', 'usF8yI9B33M'],
-            ['Afro Party Vibes', 'bGgjIvWj2I0']
+            ['Naija Hits 2026 · Real Artists', 'usF8yI9B33M'],
+            ['Afrobeats Hits · Asake / Wizkid / Victony', 'usF8yI9B33M'],
+            ['Afro Road Mix · BNXN / Ayra Starr / Rema', 'usF8yI9B33M'],
+            ['Naija Street Mix · Seyi Vibez / Ruger / Muyeez', 'usF8yI9B33M'],
+            ['Afrobeats · Omah Lay / Young Jonn / Joeboy', 'usF8yI9B33M'],
+            ['Afro Party · 2026 Nigerian Hits', 'usF8yI9B33M']
         ];
         let fmIdx = 0, fmPlayer = null, fmLoaded = -1, fmLoading = false, fmQueue = null, fmErr = 0, fmTimer = null;
         function fmUI() {
@@ -1648,8 +1652,9 @@ export function mountKitCityGame(THREE) {
         function readInput(dt) {
             const up = keys['w'] || keys['arrowup'] || touch.gas;
             const down = keys['s'] || keys['arrowdown'] || touch.brake;
+            const reverse = keys['v'] || touch.reverse;
             handbrake = !!keys[' '];
-            throttleIn = up ? 1 : 0; brakeIn = down ? 1 : 0;
+            throttleIn = up ? 1 : 0; brakeIn = down ? 1 : 0; reverseIn = reverse ? 1 : 0;
             let tgt;
             if (isTouch && laneX !== null) tgt = laneSteer();
             else tgt = ((keys['d'] || keys['arrowright']) ? 1 : 0) - ((keys['a'] || keys['arrowleft']) ? 1 : 0);
@@ -1662,7 +1667,10 @@ export function mountKitCityGame(THREE) {
             car.prevSpeed = car.speed;
             braking = false;
 
-            if (handbrake) {
+            if (reverseIn) {
+                if (car.speed > 0.4) { car.speed -= 42 * dt; braking = true; }
+                else car.speed = Math.max(maxR, car.speed - 10 * dt);
+            } else if (handbrake) {
                 braking = car.speed > 0.4;
                 if (car.speed > 0) car.speed = Math.max(0, car.speed - 50 * dt);
                 else car.speed = Math.min(0, car.speed + 50 * dt);
@@ -2120,10 +2128,10 @@ export function mountKitCityGame(THREE) {
         // Hawkers: roadside and in the middle of the road
         // ============================================================
         const HAWK_KINDS = [
-            { prop: 'bowl', goods: 'water', phrase: 'Pure water! Pure water!' },
-            { prop: 'bowl', goods: 'orange', phrase: 'Oranges! Sweet oranges!' },
-            { prop: 'rack', goods: 'snack', phrase: 'Gala! Hot gala!' },
-            { prop: 'bottles', goods: 'drink', phrase: 'Cold zobo! Chapman!' }
+            { prop: 'bowl', goods: 'water', phrase: 'Pure water! Omi tutu! Mmiri oyi! Ruwan sanyi! Oya buy am!' },
+            { prop: 'bowl', goods: 'orange', phrase: 'Sweet oranges! Osan! Oroma di nma! Lemu mai dadi! Buy am!' },
+            { prop: 'rack', goods: 'snack', phrase: 'Gala! Hot gala! Ewa, snack wa! Nri di oku! Abinci mai dadi!' },
+            { prop: 'bottles', goods: 'drink', phrase: 'Cold zobo! Chapman! Mu mu zobo! Mmiri oyi! Oya take one!' }
         ];
         if (V.hawk) V.hawk.forEach((ph, i) => { if (ph) HAWK_KINDS[i].phrase = ph; });
         const HAWK_X = [0, 8, -8, 14.8, -14.8, 8, -8];       // median line, lane dividers, road edges
@@ -2181,7 +2189,7 @@ export function mountKitCityGame(THREE) {
             const sp = new THREE.Sprite(bubbleMat(kind.phrase)); sp.scale.set(4.6, 1.0, 1); sp.position.set(0, 3.1, 0); sp.renderOrder = 5;
             g.add(sp); g.userData.sprite = sp; scene.add(g);
             hawkers.push({ g: g, kind: kind, idx: i, x: 0, z: 0, hx: 0, hz: 0, state: 'idle', down: 0, ph: Math.random() * 6, off: Math.random() * 6,
-                callT: rand(1, 5), pitch: [1.35, 1.2, 0.85, 1.0][i % 4] + rand(-0.08, 0.08), rate: rand(1.0, 1.18) });
+                callT: rand(1, 5), pitch: [1.35, 1.2, 0.85, 1.0][i % 4] + rand(-0.08, 0.08), rate: rand(0.92, 1.06) });
         }
         function placeHawker(h, nearD, farD) {
             let x = 0, z = 0;
