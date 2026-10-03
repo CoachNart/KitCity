@@ -1189,19 +1189,17 @@ export function mountKitCityGame(THREE) {
         });
 
         function primeTrafficCorridor() {
-            // Do not let the start-screen idle loop consume the traffic simulation.
-            // Seed a visible mix relative to the player's initial world position.
             const slots = [
-                [4.5, 18], [11.5, 34], [-4.5, 48], [-11.5, 66],
-                [4.5, 86], [11.5, 108], [-4.5, 132], [-11.5, 158],
-                [4.5, 190], [-4.5, 224], [11.5, 260], [-11.5, 300]
+                [4.5, 22], [11.5, 34], [-4.5, 46], [-11.5, 60],
+                [4.5, 78], [-4.5, 98], [11.5, 122], [-11.5, 148],
+                [4.5, 176], [-4.5, 208], [11.5, 242], [-11.5, 278]
             ];
             traffic.forEach((t, i) => {
                 const slot = slots[i % slots.length];
                 t.x = slot[0];
                 t.z = car.z - slot[1];
                 t.prevDz = undefined;
-                t.g.position.set(t.x, 0.42, t.z);
+                t.g.position.set(t.x, 0.72, t.z);
                 t.g.visible = true;
                 t.g.frustumCulled = false;
                 t.g.updateMatrixWorld(true);
@@ -1230,13 +1228,10 @@ export function mountKitCityGame(THREE) {
                 t.prevDz = dz;
                 if (dz > 140) placeTraffic(t, car.z - 620, car.z - 400, false);
                 else if (dz < -320) placeTraffic(t, car.z + 80, car.z + 190, false);
-                t.g.position.set(t.x, 0.42, t.z);
+                t.g.position.set(t.x, 0.72, t.z);
                 t.g.visible = true;
                 t.g.frustumCulled = false;
-                // Traffic is part of the road world and must remain renderable on every road section.
-                // The old bridge-distance visibility gate could hide entire classes of vehicles.
-                t.g.visible = true;
-                t.g.frustumCulled = false;
+                t.g.updateMatrixWorld(true);
             });
         }
 
