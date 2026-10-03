@@ -39,11 +39,41 @@ export function mountKitCityGame(THREE) {
         const MAX_V = 42; // m/s, about 150 km/h
 
         const PASSENGERS = [
-            { name:'Tunde', role:'University Student', stop:'Computer Village', g:'m' },
-            { name:'Aisha', role:'Creator / Freelancer', stop:'Allen Avenue', g:'f' },
-            { name:'Mama Ngozi', role:'Market Trader', stop:'Ikeja Along', g:'f' },
-            { name:'Emeka', role:'Developer / Builder', stop:'Mende', g:'m' },
-            { name:'Mr. Bola', role:'Skeptical Teacher', stop:'Anthony', g:'m' }
+            { name:'Tunde', role:'University Student', g:'m' },
+            { name:'Aisha', role:'Creator / Freelancer', g:'f' },
+            { name:'Mama Ngozi', role:'Market Trader', g:'f' },
+            { name:'Emeka', role:'Developer / Builder', g:'m' },
+            { name:'Mr. Bola', role:'Skeptical Teacher', g:'m' }
+        ];
+
+        // Agent Kit's five arrival lessons. Every passenger gets a voice and a real question;
+        // the driver explains the idea in plain language, then the passenger checks understanding.
+        const PREP_LESSONS = [
+            { title:'01 · From the web we know to the web we can own', topic:'Web1 → Web2 → Web3',
+              teach:'Agent Kit: “Web1 mostly let us read. Web2 made the web interactive, but platforms usually control the accounts, data and distribution. Web3 explores a different model: people can hold digital assets and prove ownership directly, instead of relying only on one platform.”',
+              question:'Tunde: “So Web3 means every website is decentralised?”',
+              answer:'Agent Kit: “No. Web3 is not a magic label for every app. It is about using open networks and user-held ownership where that actually adds value. A normal website can still be part of a Web3 product.”',
+              check:'Which idea is central to Web3?', options:['The user can hold and use digital ownership across supported networks.','Every app must run without a company.'], correct:0 },
+            { title:'02 · What a blockchain actually does', topic:'Blockchain',
+              teach:'Agent Kit: “Think of a blockchain as a shared record book. Many independent computers keep and verify copies of the record. New entries are accepted according to network rules, and earlier entries are designed to be difficult to alter unnoticed.”',
+              question:'Aisha: “Then who is the bank changing the balance?”',
+              answer:'Agent Kit: “On a public blockchain, no single bank has to be the source of truth. The network’s rules and participants verify transactions. Your wallet controls the credentials that let you authorise actions for your assets.”',
+              check:'What is the useful mental model?', options:['A shared, rule-driven ledger verified by a network.','A private spreadsheet controlled by one website.'], correct:0 },
+            { title:'03 · Wallets, keys and staying safe', topic:'Wallets & security',
+              teach:'Agent Kit: “A wallet is better understood as a tool for managing blockchain credentials and interacting with networks. The most important secret is the private key or recovery phrase. Whoever controls it may control the assets it authorises.”',
+              question:'Mama Ngozi: “If someone asks me to send my recovery phrase so they can activate my wallet, should I send it?”',
+              answer:'Agent Kit: “Never. A legitimate support person should not need your recovery phrase or private key. Treat it like the master key to the wallet. If someone asks for it, stop.”',
+              check:'Someone claiming to be support asks for your recovery phrase. What do you do?', options:['Refuse, stop the interaction and verify through an official channel.','Send it because they say the wallet will expire.'], correct:0 },
+            { title:'04 · Transactions and smart contracts', topic:'Transactions & contracts',
+              teach:'Agent Kit: “A transaction is an instruction you sign and submit to a network. A smart contract is software deployed on a blockchain that follows its programmed rules. It can hold assets or coordinate actions, but code can still contain bugs or dangerous permissions.”',
+              question:'Emeka: “Does a smart contract mean a person is legally guaranteeing the deal?”',
+              answer:'Agent Kit: “Not automatically. ‘Smart contract’ here means blockchain software. Whether something is legally enforceable is a separate question involving people, organisations and local law.”',
+              check:'Before approving a smart-contract transaction, what should you consider?', options:['The destination, permissions, network, fees and whether you trust the application.','Only the logo and how urgent the message sounds.'], correct:0 },
+            { title:'05 · Tokens, real use and real risks', topic:'Tokens & judgement',
+              teach:'Agent Kit: “Tokens can represent many things: value, access, governance rights, collectibles or other digital records. A token is not automatically an investment, and price can fall to zero. Good Web3 use starts with the real problem being solved, not the token hype.”',
+              question:'Mr. Bola: “So how do I know whether a Web3 product is worth trusting?”',
+              answer:'Agent Kit: “Ask what it actually does, who controls critical permissions, what you are signing, what can go wrong, and whether the claims can be independently checked. Never confuse a token price with proof that a product is useful.”',
+              check:'What should come before trusting a Web3 product?', options:['Understand the use case, permissions, risks and claims.','Buy first because everyone online says it is going up.'], correct:0 }
         ];
 
         // ============================================================
@@ -2814,6 +2844,7 @@ export function mountKitCityGame(THREE) {
             const p = makePerson(o); if (p.userData.armR) p.userData.arm = p.userData.armR; return p;
         }
         function initPassengerMeshes() {
+            PASSENGERS.forEach((p, i) => { p.z = STOPS[i]; p.stop = NGS.stops[i] || (NGS.city + ' Bus Stop ' + (i + 1)); });
             $('start-sub').textContent = 'Drive through ' + NGS.city + ' while a connected Web3 literacy journey unfolds through the people you meet. Learn from zero, practice the ideas, and arrive ready for T3kit.';
             $('start-mission').innerHTML = '<b style="color:#00e5ff">WEB3 LITERACY JOURNEY</b><br>Discover → Understand → Practice → Apply → Explore<br><small style="color:#8fdcec">' + missionOf().join(' · ') + '</small>';
             PASSENGERS.forEach(p => {
