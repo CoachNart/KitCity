@@ -443,10 +443,38 @@ export function mountKitCityGame(THREE) {
         scene.fog = new THREE.FogExp2(SK.fog, FOG0);
 
         const camera = new THREE.PerspectiveCamera(62, innerWidth / innerHeight, 0.3, 2400);
-        const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance', precision: 'highp' });
-        renderer.outputColorSpace = THREE.SRGBColorSpace;
+        // Mobile browsers can reject an aggressive WebGL context (especially high-performance + MSAA).
+        // Keep the game on the same Three.js engine, but create the renderer with mobile-safe settings
+        // and a second conservative attempt before allowing the app to fail.
+        let renderer = null, rendererError = null;
+        const rendererAttempts = isTouch
+            ? [
+                { antialias: false, powerPreference: 'default', precision: 'mediump' },
+                { antialias: false, powerPreference: 'low-power', precision: 'mediump' }
+              ]
+            : [
+                { antialias: true, powerPreference: 'default', precision: 'highp' },
+                { antialias: false, powerPreference: 'default', precision: 'mediump' }
+              ];
+        for (const opts of rendererAttempts) {
+            try {
+                renderer = new THREE.WebGLRenderer({ ...opts, failIfMajorPerformanceCaveat: false });
+                break;
+            } catch (e) {
+                rendererError = e;
+            }
+        }
+        if (!renderer) {
+            const message = rendererError && rendererError.message ? rendererError.message : 'WebGL could not be initialized on this device.';
+            console.error('[KitCity] WebGL renderer failed:', rendererError);
+            $('start-sub').textContent = 'KitCity could not start its 3D engine on this browser. Please close other 3D-heavy tabs/apps and reload. (' + message + ')';
+            $('btn-start').style.display = 'none';
+            return teardown;
+        }
+        // KitCity uses Three.js r128, where outputEncoding/sRGBEncoding is the compatible API.
+        if ('outputEncoding' in renderer && typeof THREE.sRGBEncoding !== 'undefined') renderer.outputEncoding = THREE.sRGBEncoding;
         renderer.setSize(innerWidth, innerHeight);
-        let pixelRatio = Math.min(devicePixelRatio || 1, isTouch ? 1.75 : 2.25);
+        let pixelRatio = Math.min(devicePixelRatio || 1, isTouch ? 1.5 : 2.0);
         renderer.setPixelRatio(pixelRatio);
         renderer.shadowMap.enabled = true;
         renderer.shadowMap.type = isTouch ? THREE.PCFShadowMap : THREE.PCFSoftShadowMap;
