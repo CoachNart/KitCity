@@ -679,6 +679,33 @@ export function mountKitCityGame(THREE) {
             mangrove(x, z) { Pw('dome', x, 0.5, z, rand(3, 5), rand(2, 3), rand(3, 5), 0x2f5a35); for (let i = 0; i < 4; i++) Pw('cyl', x + (i - 1.5) * 0.7, 0, z, 0.18, 1.6, 0.18, 0x4a3a28); },
             termite(x, z) { Pw('cone', x, 0, z, rand(1.6, 2.6), rand(2, 3.4), rand(1.6, 2.6), 0xb88a5a); }
         };
+        (function buildBusStops() {
+            const postMat = new THREE.MeshStandardMaterial({ color: 0x1a252b, roughness: 0.72 });
+            const roofMat = new THREE.MeshStandardMaterial({ color: 0x10252b, roughness: 0.62, metalness: 0.12 });
+            const seatMat = new THREE.MeshStandardMaterial({ color: 0x00a9bd, roughness: 0.5, metalness: 0.12 });
+            const curbMat = new THREE.MeshStandardMaterial({ color: 0xf5b014, roughness: 0.7 });
+            const stopNames = NGS.stops.slice(0, 5);
+            function stopLabel(text) {
+                const cv=document.createElement('canvas'); cv.width=768; cv.height=160;
+                const g=cv.getContext('2d'); g.fillStyle='#07161c'; g.fillRect(0,0,768,160);
+                g.strokeStyle='#00e5ff'; g.lineWidth=8; g.strokeRect(6,6,756,148);
+                g.fillStyle='#00e5ff'; g.font='800 54px Arial'; g.textAlign='center'; g.textBaseline='middle';
+                g.fillText(text.toUpperCase(),384,76);
+                g.fillStyle='#ffffff'; g.font='700 22px Arial'; g.fillText('KITCITY BUS STOP · '+NGS.city.toUpperCase(),384,125);
+                return new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(cv), transparent:true, side:THREE.DoubleSide});
+            }
+            stopNames.forEach((name,i)=>{
+                const z=STOPS[i], g=new THREE.Group();
+                [-1,1].forEach(s=>{ const p=new THREE.Mesh(new THREE.CylinderGeometry(0.08,0.1,2.7,8),postMat); p.position.set(18.7+s*1.35,1.35,0); g.add(p); });
+                const roof=new THREE.Mesh(new THREE.BoxGeometry(3.5,0.16,2.4),roofMat); roof.position.set(18.7,2.75,0); g.add(roof);
+                const bench=new THREE.Mesh(new THREE.BoxGeometry(2.3,0.18,0.52),seatMat); bench.position.set(18.7,0.95,0.55); g.add(bench);
+                const back=new THREE.Mesh(new THREE.BoxGeometry(2.3,0.65,0.12),seatMat); back.position.set(18.7,1.2,0.78); g.add(back);
+                const curb=new THREE.Mesh(new THREE.BoxGeometry(5.4,0.08,5.8),curbMat); curb.position.set(14.8,0.06,0); g.add(curb);
+                const sign=new THREE.Mesh(new THREE.PlaneGeometry(5.0,1.05),stopLabel(name)); sign.position.set(18.7,3.55,-0.05); sign.rotation.y=Math.PI; g.add(sign);
+                g.position.z=z; scene.add(g);
+            });
+        })();
+
         (function genProps() {
             const road = wlist(V.tr || ['shade:1']), back = wlist(V.bk || V.tr || ['shade:1']);
             const nearStop = z => STOPS.some(s => Math.abs(s - z) < 14);
