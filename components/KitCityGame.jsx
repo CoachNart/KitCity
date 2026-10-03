@@ -37,10 +37,11 @@ export default function KitCityGame() {
           <button className="icon-btn" id="btn-recover" title="Back on road (R)">↺</button>
           <button className="icon-btn" id="btn-fm" title="FM radio (F)" style={{fontSize:'13px',fontWeight:800}}>FM</button>
           <button className="icon-btn" id="btn-mute" title="Sound (M)">🔊</button>
+          <button className="icon-btn" id="btn-pause" title="Pause driving (P)" aria-label="Pause driving (P)">Ⅱ</button>
         </div>
         <div id="fm-bar"><button className="icon-btn fm-b" id="fm-prev" title="Back">⏮</button><span id="fm-name">Naija Drive</span><button className="icon-btn fm-b" id="fm-next" title="Next">⏭</button></div>
       </div>
-      <div id="controls-hint">Drive: <span>W A S D</span> / <span>Arrows</span><br />Brake: <span>S</span> &nbsp; Reverse: <span>V</span> &nbsp; Handbrake: <span>Space</span><br />Horn: <span>H</span> &nbsp; Camera: <span>C</span> &nbsp; Back on road: <span>R</span><br />Pick up passenger: <span>E</span> &nbsp; FM: <span>F</span></div>
+      <div id="controls-hint">Pause: <span>P</span> &nbsp; Resume: <span>P</span><br />Drive: <span>W A S D</span> / <span>Arrows</span><br />Brake: <span>S</span> &nbsp; Reverse: <span>V</span> &nbsp; Handbrake: <span>Space</span><br />Horn: <span>H</span> &nbsp; Camera: <span>C</span> &nbsp; Back on road: <span>R</span><br />Pick up passenger: <span>E</span> &nbsp; FM: <span>F</span></div>
       <div id="speedo"><div id="speed-val">0</div><div id="speed-unit">KM/H</div><div id="speed-bar"><div /></div></div>
       <div id="toast" /><div id="yt-hidden"><div id="yt-player" /></div><button id="prompt">PICK UP PASSENGER</button>
       <div id="controls"><div id="steer-zone" /><div id="steer-ind"><div id="steer-dot" /></div><div id="pedals"><div id="left-pedals"><div className="pedal pedal-hop" id="hop">HOP</div><div className="pedal pedal-brake" id="brake">BRAKE</div></div><div id="right-pedals"><div className="pedal pedal-gas" id="gas">GAS</div><div className="pedal pedal-reverse" id="reverse">REVERSE</div><div id="horn">📯</div></div></div></div>
