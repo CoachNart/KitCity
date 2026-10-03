@@ -421,6 +421,7 @@ export function mountKitCityGame(THREE) {
 
         const camera = new THREE.PerspectiveCamera(62, innerWidth / innerHeight, 0.3, 2400);
         const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance', precision: 'highp' });
+        renderer.outputColorSpace = THREE.SRGBColorSpace;
         renderer.setSize(innerWidth, innerHeight);
         let pixelRatio = Math.min(devicePixelRatio || 1, isTouch ? 1.75 : 2.25);
         renderer.setPixelRatio(pixelRatio);
@@ -938,7 +939,7 @@ export function mountKitCityGame(THREE) {
                 add(new THREE.BoxGeometry(0.12, 0.35, 0.3), black, x * 1.7, 2.0, -2.4);
             });
 
-            const lblMat = new THREE.MeshBasicMaterial({ map: textTexture('T3KIT EXPRESS  -  ' + NGS.city.toUpperCase() + ' / ' + NGS.term.toUpperCase(), 1024, 128, '#00e5ff', '#001014', 64) });
+            const lblMat = new THREE.MeshBasicMaterial({ map: textTexture('KITCITY  ·  ' + NGS.city.toUpperCase(), 1024, 128, '#07161c', '#00e5ff', 64) });
             const lr = new THREE.Mesh(new THREE.PlaneGeometry(4.6, 0.55), lblMat); lr.position.set(1.33, 1.55, 0.2); lr.rotation.y = Math.PI / 2; rig.add(lr);
             const ll = new THREE.Mesh(new THREE.PlaneGeometry(4.6, 0.55), lblMat); ll.position.set(-1.33, 1.55, 0.2); ll.rotation.y = -Math.PI / 2; rig.add(ll);
 
@@ -1706,7 +1707,7 @@ export function mountKitCityGame(THREE) {
                 PASSENGERS[curIdx].leaving = true; sfxDoor();
                 delivered++; curIdx++;
                 updateHud(); setTarget();
-                toast(curIdx < PASSENGERS.length ? 'Next: ' + PASSENGERS[curIdx].name + ' at ' + PASSENGERS[curIdx].stop : 'All aboard! Head to ' + NGS.term + ' Terminal');
+                toast(curIdx < PASSENGERS.length ? 'Next: ' + PASSENGERS[curIdx].name + ' at ' + PASSENGERS[curIdx].stop : 'All aboard! Head to KitCity');
             }
         }
 
