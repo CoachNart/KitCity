@@ -10,7 +10,6 @@ export default function KitCityGame() {
   useEffect(() => {
     if (mounted.current) return;
     mounted.current = true;
-    // Guard the imperative Three.js game mount so a device-specific startup error cannot unmount the Next.js page.
     let teardown = null;
     try {
       teardown = mountKitCityGame(THREE);
