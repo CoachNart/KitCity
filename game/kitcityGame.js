@@ -377,7 +377,7 @@ export function mountKitCityGame(THREE) {
         if (TH.st) NGS.stops = TH.st.slice(0, 5);
         if (TH.term) NGS.term = TH.term;
         // Passenger identities are physical game actors. Educational content is owned entirely by curriculum.js.
-        PASSENGERS.forEach((p, i) => { p.z = STOPS[i]; });
+        PASSENGERS.forEach((p, i) => { p.z = STOPS[i]; p.stop = NGS.stops[i] || (NGS.city + ' Bus Stop ' + (i + 1)); });
         const VKEY = 'kitcity_states_v1';
         function getVisited() { try { return JSON.parse(localStorage.getItem(VKEY) || '[]'); } catch (e) { return []; } }
         function markVisited(id) { try { const v = getVisited(); if (v.indexOf(id) < 0) { v.push(id); localStorage.setItem(VKEY, JSON.stringify(v)); } } catch (e) {} }
