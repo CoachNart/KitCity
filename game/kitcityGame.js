@@ -1190,9 +1190,10 @@ export function mountKitCityGame(THREE) {
 
         function primeTrafficCorridor() {
             const slots = [
-                [4.5, 22], [11.5, 34], [-4.5, 46], [-11.5, 60],
-                [4.5, 78], [-4.5, 98], [11.5, 122], [-11.5, 148],
-                [4.5, 176], [-4.5, 208], [11.5, 242], [-11.5, 278]
+                // First vehicles sit directly in the driver's forward view.
+                [11.5, 24], [4.5, 38], [11.5, 54], [-4.5, 70],
+                [-11.5, 88], [4.5, 110], [11.5, 136], [-4.5, 164],
+                [-11.5, 196], [4.5, 232], [11.5, 272], [-11.5, 318]
             ];
             traffic.forEach((t, i) => {
                 const slot = slots[i % slots.length];
