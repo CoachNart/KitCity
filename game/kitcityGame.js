@@ -464,7 +464,7 @@ export function mountKitCityGame(THREE) {
         // 4. ENVIRONMENT
         // ============================================================
         const AM = V.amb || [1, 1, 1, 0];
-        const ROAD_LEN = 2840, ROAD_CZ = -1320;
+        const ROAD_LEN = (START_Z - END_Z) + 180, ROAD_CZ = (START_Z + END_Z) / 2;
 
         // ---- sky dome with gradient + sun disc ----
         const skyDome = (function () {
@@ -494,7 +494,7 @@ export function mountKitCityGame(THREE) {
             const o = new THREE.Object3D(), col = new THREE.Color(), a = new THREE.Color(V.gr2), b = new THREE.Color(V.gr);
             for (let i = 0; i < N; i++) {
                 const r = rand(10, 46);
-                o.position.set((Math.random() < 0.5 ? -1 : 1) * rand(48, 300), 0.04, rand(80, -2740));
+                o.position.set((Math.random() < 0.5 ? -1 : 1) * rand(48, 300), 0.04, rand(80, END_Z - 70));
                 o.rotation.set(-Math.PI / 2, 0, 0); o.scale.set(r, r * rand(0.5, 1), 1); o.updateMatrix();
                 im.setMatrixAt(i, o.matrix); im.setColorAt(i, col.copy(a).lerp(b, rand(0, 0.5)));
             }
@@ -636,7 +636,7 @@ export function mountKitCityGame(THREE) {
 
         (function genBuildings() {
             const list = wlist(V.bl), dens = V.dens || 0.92;
-            for (let z = 80; z > -2720; z -= 24) [-1, 1].forEach(s => {
+            for (let z = 80; z > END_Z - 70; z -= 24) [-1, 1].forEach(s => {
                 curS = s; curZ = z;
                 if (Math.random() > dens) return;
                 (ARC[pick(list)] || ARC.lowblock)();
@@ -662,14 +662,14 @@ export function mountKitCityGame(THREE) {
                 (PROPF[pick(road)] || PROPF.shade)(s * rand(26.5, 30), z + rand(-4, 4));
             });
             const N = Math.round(300 * (V.dens || 0.92));
-            for (let i = 0; i < N; i++) (PROPF[pick(back)] || PROPF.shade)((Math.random() < 0.5 ? -1 : 1) * rand(47, 170), rand(80, -2740));
+            for (let i = 0; i < N; i++) (PROPF[pick(back)] || PROPF.shade)((Math.random() < 0.5 ? -1 : 1) * rand(47, 170), rand(80, END_Z - 70));
             // wooden or steel lamp poles
             const lamp = V.sh === 'walk' ? 'steel' : (V.sh === 'water' ? null : 'wood');
             for (let z = 70; z > -2720; z -= (lamp === 'steel' ? 45 : 70)) [-1, 1].forEach(s => {
                 if (lamp === 'steel') { Pw('cyl', s * 19.2, 0, z, 0.22, 8, 0.22, 0x555a60); Pw('box', s * 18.4, 8, z, 1.4, 0.2, 0.5, 0xfff2c0); }
                 else if (lamp === 'wood') { Pw('cyl', s * 19.2, 0, z, 0.3, 7.5, 0.3, 0x6a4a2a); Pw('box', s * 19.2, 7, z, 0.15, 0.15, 2.4, 0x5a3f26); }
             });
-            if (V.fld) for (let i = 0; i < 130; i++) Pw('box', (Math.random() < 0.5 ? -1 : 1) * rand(52, 150), 0, rand(60, -2740), rand(18, 42), 0.14, rand(14, 30), pick(V.fld));
+            if (V.fld) for (let i = 0; i < 130; i++) Pw('box', (Math.random() < 0.5 ? -1 : 1) * rand(52, 150), 0, rand(60, END_Z - 70), rand(18, 42), 0.14, rand(14, 30), pick(V.fld));
             // far backdrop
             if (V.far === 'hills' || V.far === 'rock') for (let z = 100; z > -2760; z -= 70) [-1, 1].forEach(s => {
                 const d = rand(180, 320), h = rand(35, V.far === 'rock' ? 130 : 95);
@@ -820,6 +820,78 @@ export function mountKitCityGame(THREE) {
         const endWall = new THREE.Mesh(new THREE.BoxGeometry(80, 5, 2), new THREE.MeshStandardMaterial({ color: 0xc0392b }));
         endWall.position.set(0, 2.5, END_Z - 6); scene.add(endWall);
 
+        // ---- Final destination: T3Kit Web3 House, the KitCity hub for every city ----
+        (function buildT3KitHub() {
+            const z = TERMINAL_Z - 18, x = 43;
+            const dark = new THREE.MeshStandardMaterial({ color: 0x07161c, roughness: 0.3, metalness: 0.35 });
+            const cyan = new THREE.MeshStandardMaterial({ color: 0x00e5ff, emissive: 0x003b45, roughness: 0.25, metalness: 0.35 });
+            const glass = new THREE.MeshStandardMaterial({ color: 0x102f39, emissive: 0x001820, transparent: true, opacity: 0.9 });
+            const white = new THREE.MeshStandardMaterial({ color: 0xeaf7f8, roughness: 0.45 });
+            const red = new THREE.MeshStandardMaterial({ color: 0xc0392b, roughness: 0.5 });
+
+            const base = new THREE.Mesh(new THREE.BoxGeometry(34, 12, 46), dark);
+            base.position.set(x, 6, z); base.castShadow = true; base.receiveShadow = true; scene.add(base);
+
+            const roof = new THREE.Mesh(new THREE.BoxGeometry(37, 1.2, 49), cyan);
+            roof.position.set(x, 12.6, z); roof.castShadow = true; scene.add(roof);
+
+            const crown = new THREE.Mesh(new THREE.BoxGeometry(22, 2.6, 6), dark);
+            crown.position.set(x, 14.2, z - 4); scene.add(crown);
+
+            // Road-facing glass entrance wall.
+            const facade = new THREE.Mesh(new THREE.BoxGeometry(0.55, 8.4, 25), glass);
+            facade.position.set(x - 17.25, 4.4, z); scene.add(facade);
+            for (let zz = z - 9; zz <= z + 9; zz += 6) {
+                const mullion = new THREE.Mesh(new THREE.BoxGeometry(0.7, 8.8, 0.28), cyan);
+                mullion.position.set(x - 17.65, 4.5, zz); scene.add(mullion);
+            }
+
+            // Main entrance canopy / arrival portico.
+            const canopy = new THREE.Mesh(new THREE.BoxGeometry(5.5, 0.65, 13), cyan);
+            canopy.position.set(x - 20.2, 8.2, z); canopy.castShadow = true; scene.add(canopy);
+            [-5, 5].forEach(zz => {
+                const col = new THREE.Mesh(new THREE.BoxGeometry(0.7, 7.6, 0.7), white);
+                col.position.set(x - 20.4, 4, z + zz); scene.add(col);
+            });
+            const steps = new THREE.Mesh(new THREE.BoxGeometry(5.8, 0.35, 15), white);
+            steps.position.set(x - 20.8, 0.18, z); scene.add(steps);
+
+            // City-specific hero sign.
+            const sign = signMesh('T3KIT WEB3 HOUSE', 18, 3.2, '#001a1f', '#00e5ff');
+            sign.position.set(x - 17.75, 11.0, z - 1.5); sign.rotation.y = -Math.PI / 2; scene.add(sign);
+            const citySign = signMesh(NGS.city.toUpperCase() + ' · KITCITY HUB', 15, 2.2, '#c0392b', '#ffffff');
+            citySign.position.set(x - 18.0, 7.1, z + 1.5); citySign.rotation.y = -Math.PI / 2; scene.add(citySign);
+
+            // Tall glowing hub beacon visible from the final approach.
+            const beacon = new THREE.Mesh(new THREE.CylinderGeometry(1.1, 1.8, 18, 16),
+                new THREE.MeshStandardMaterial({ color: 0x00e5ff, emissive: 0x00a9bd, emissiveIntensity: 1.2 }));
+            beacon.position.set(x + 2, 18, z - 10); scene.add(beacon);
+            const cap = new THREE.Mesh(new THREE.SphereGeometry(2.3, 16, 10),
+                new THREE.MeshBasicMaterial({ color: 0x00e5ff }));
+            cap.position.set(x + 2, 27, z - 10); scene.add(cap);
+
+            // Arrival forecourt and directional lights.
+            const plaza = new THREE.Mesh(new THREE.BoxGeometry(30, 0.18, 42),
+                new THREE.MeshStandardMaterial({ color: 0x25323a, roughness: 0.8 }));
+            plaza.position.set(26, 0.09, z); scene.add(plaza);
+            for (let zz = z - 15; zz <= z + 15; zz += 10) {
+                const strip = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.08, 0.35),
+                    new THREE.MeshBasicMaterial({ color: 0x00e5ff }));
+                strip.position.set(17.5, 0.15, zz); scene.add(strip);
+            }
+
+            // Arrival gantry tells the player what this destination is.
+            const gateMat = new THREE.MeshStandardMaterial({ color: 0x111c22 });
+            [-1, 1].forEach(side => {
+                const p = new THREE.Mesh(new THREE.BoxGeometry(1, 8, 1), gateMat);
+                p.position.set(side * 18, 4, TERMINAL_Z - 62); scene.add(p);
+            });
+            const gate = new THREE.Mesh(new THREE.BoxGeometry(38, 2.4, 1), gateMat);
+            gate.position.set(0, 8.3, TERMINAL_Z - 62); scene.add(gate);
+            const gateSign = signMesh('ARRIVAL · T3KIT WEB3 HOUSE', 34, 2.4, '#001a1f', '#00e5ff');
+            gateSign.position.set(0, 8.3, TERMINAL_Z - 61.35); scene.add(gateSign);
+        })();
+
         // ============================================================
         // 5. DANFO
         // ============================================================
@@ -922,7 +994,7 @@ export function mountKitCityGame(THREE) {
                 target = { type: 'pax', x: ZONE_X, z: p.z, title: 'Pick up ' + p.name, sub: p.stop };
                 [beamMat, ringMat, fillMat, gemMat].forEach(m => m.color.setHex(0x00e5ff));
             } else {
-                target = { type: 'terminal', x: ZONE_X, z: TERMINAL_Z, title: 'Go to ' + NGS.term + ' Terminal', sub: 'Drop everyone off' };
+                target = { type: 'terminal', x: 18, z: TERMINAL_Z, title: 'Arrive at T3Kit Web3 House', sub: NGS.city + ' KitCity Hub · Drop everyone off' };
                 [beamMat, ringMat, fillMat, gemMat].forEach(m => m.color.setHex(0x2ecc71));
             }
             beacon.position.set(target.x, 0, target.z);
@@ -1450,7 +1522,7 @@ export function mountKitCityGame(THREE) {
             ['Afro Gold', 'qbefFtgUVTY'],
             ['Praise Nigeria', '36cBGrwfuwQ'],
             ['Igbo Highlife', '9YJRzqD_cSE'],
-            ['Yoruba Fuji', 'ZZhmuhXTB7M'],
+            ['Yoruba Fuji', 'SPmRi1lieYQ'],
             ['Fuji Road', 'IQJ6dz9K4LA'],
             ['Naija Classics', 'DDgBek2xV0k']
         ];
@@ -1624,7 +1696,7 @@ export function mountKitCityGame(THREE) {
             $('e-pax').textContent = delivered; $('e-vibe').textContent = '+' + vibeBonus;
             const stars = (mr.ok && impactScore >= 1900) ? 3 : impactScore >= 1200 ? 2 : 1;
             $('end-stars').textContent = '★'.repeat(stars) + '☆'.repeat(3 - stars);
-            $('end-msg').textContent = 'You delivered ' + delivered + ' passengers and helped ' + onboarded + ' people take their first safe steps into Web3 with T3Kit in ' + NGS.label + '.';
+            $('end-msg').textContent = 'You arrived at T3Kit Web3 House — the ' + NGS.city + ' KitCity Hub. You delivered ' + delivered + ' passengers and helped ' + onboarded + ' people take their first safe steps into Web3. This hub is where the city journey continues.';
             markVisited(NGS.id);
             sfxGood();
             setTimeout(() => { $('end').style.display = 'flex'; }, 900);
@@ -1800,7 +1872,7 @@ export function mountKitCityGame(THREE) {
                 if (pr.textContent !== label) pr.textContent = label;
             } else pr.style.display = 'none';
 
-            if (state.started && !state.ended && target.type === 'terminal' && dist < ZONE_R && Math.abs(car.speed) < 5) finishGame();
+            if (state.started && !state.ended && target.type === 'terminal' && dist < 16 && Math.abs(car.speed) < 5) finishGame();
 
             missedCD -= dt;
             if (state.started && !state.dialogue && target.type === 'pax' && car.z < target.z - 50 && missedCD <= 0) {
@@ -1953,7 +2025,7 @@ export function mountKitCityGame(THREE) {
                 : ['Oga, easy now!', 'Driver, abeg watch yourself!', 'Chai! My leg o!', 'You dey hurry for where?'];
             const line = pick(lines);
             if (typeof speechSynthesis !== 'undefined' && typeof SpeechSynthesisUtterance !== 'undefined' && !muted) {
-                try { const u = new SpeechSynthesisUtterance(line); u.lang = 'en-NG'; u.volume = fmOn && radioPlaying ? 0.035 : 0.05; u.rate = rand(0.96, 1.06); u.pitch = rand(0.85, 1.12); speechSynthesis.cancel(); speechSynthesis.speak(u); } catch (_) {}
+                try { const u = new SpeechSynthesisUtterance(line); u.lang = 'en-NG'; u.volume = fmOn && radioPlaying ? 0.075 : 0.11; u.rate = rand(0.96, 1.06); u.pitch = rand(0.85, 1.12); speechSynthesis.cancel(); speechSynthesis.speak(u); } catch (_) {}
             }
             return line;
         }
@@ -1987,15 +2059,15 @@ export function mountKitCityGame(THREE) {
 
         const coinSpots = [];
         (function genCoins() {
-            const lanes = [4.5, 8, 11.5, -4.5, -8, -11.5];
-            let z = START_Z - 55;
-            const add = (x, zz) => coinSpots.push({ x: x, z: zz, got: false, mesh: null, ph: Math.random() * 6 });
-            while (z > END_Z + 60) {
-                const x = pick([4.5, 8, 11.5]);
-                for (let i = 0; i < 9; i++) add(x + Math.sin(i * 0.7) * 0.7, z - i * 5);
-                z -= rand(18, 28);
-                if (Math.random() < 0.55) { for (let i = 0; i < 5; i++) add(pick(lanes), z - i * 5); z -= 25; }
+            // Sparse rewards: one easy-to-read coin roughly every 55–70m.
+            // Extra coins are reserved for passenger stops and jump barriers.
+            let z = START_Z - 90;
+            const add = (x, zz) => coinSpots.push({ x, z: zz, got: false, mesh: null, ph: Math.random() * 6 });
+            while (z > END_Z + 90) {
+                add(pick([4.5, 8, 11.5]), z);
+                z -= rand(55, 70);
             }
+            STOPS.forEach(sz => add(11.5, sz - 24));
         })();
 
         function collectCoin(c) {
@@ -2033,8 +2105,8 @@ export function mountKitCityGame(THREE) {
             const x = pick([4.5, 8, 11.5]);
             const g = new THREE.Mesh(barrierGeo, barrierMat); g.position.set(x, 0.45, z); g.castShadow = true; scene.add(g);
             barriers.push({ x, z, g, hit: false });
-            const laneCoins = [x, x, x];
-            laneCoins.forEach((cx, k) => coinSpots.push({ x: cx, z: z - 7 - k * 5, got:false, mesh:null, ph:Math.random()*6 }));
+            coinSpots.push({ x, z: z - 10, got:false, mesh:null, ph:Math.random()*6 });
+            coinSpots.push({ x: x === 4.5 ? 8 : 4.5, z: z - 18, got:false, mesh:null, ph:Math.random()*6 });
         }
         function updateBarriers(active) {
             for (const b of barriers) {
@@ -2213,14 +2285,14 @@ export function mountKitCityGame(THREE) {
         }
         if (typeof speechSynthesis !== 'undefined') { pickVoice(); try { speechSynthesis.addEventListener('voiceschanged', pickVoice); } catch (e) {} }
         function hawkSpeak(h, idx, text, vol) {
-            if (muted || !ambOn || !state.started || vol < 0.08) return;
+            if (muted || !ambOn || !state.started || vol < 0.025) return;
             if (typeof speechSynthesis === 'undefined' || typeof SpeechSynthesisUtterance === 'undefined') return;
             try {
                 if (speechSynthesis.speaking || speechSynthesis.pending) return;
                 if (fmOn && fmPlayer && fmPlayer.setVolume) { try { fmPlayer.setVolume(Math.round(radioVol * 100 * 0.78)); } catch (_) {} }
                 const u = new SpeechSynthesisUtterance(text);
                 if (ttsVoice) { u.voice = ttsVoice; u.lang = ttsVoice.lang; } else u.lang = 'en-NG';
-                u.volume = clamp(Math.min(0.16, Math.max(0.06, vol)), 0, 1); u.rate = h.rate; u.pitch = h.pitch;
+                u.volume = clamp(Math.min(0.095, Math.max(0.045, vol)), 0, 1); u.rate = h.rate; u.pitch = h.pitch;
                 u.lang = ['en-NG', 'yo-NG', 'ig-NG', 'ha-NG'][idx % 4];
                 try { speechSynthesis.resume(); } catch (_) {}
                 u.onend = () => { if (fmOn && fmPlayer && fmPlayer.setVolume) { try { fmPlayer.setVolume(Math.round(radioVol * 100 * (state.dialogue ? 0.18 : 1))); } catch (_) {} } };
@@ -2302,7 +2374,7 @@ export function mountKitCityGame(THREE) {
                 if (dist > 32) h.called = false;
                 if (!h.called && active && dist < 24) {
                     const chasing = h.state === 'chase' && dist < 10;
-                    const vol = Math.min(0.14, Math.pow(clamp(1 - dist / 24, 0, 1), 1.8) * 0.14) * (state.dialogue ? 0.5 : 1);
+                    const vol = Math.min(0.095, (0.045 + Math.pow(clamp(1 - dist / 24, 0, 1), 1.5) * 0.05)) * (state.dialogue ? 0.45 : 1);
                     hawkSpeak(h, h.idx, chasing ? 'Oga, buy am!' : h.kind.phrase, vol);
                     h.called = true;
                 }
