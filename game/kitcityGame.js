@@ -1178,7 +1178,7 @@ export function mountKitCityGame(THREE) {
             t.x = lane; t.z = z; t.prevDz = undefined;
             t.g.visible = true;
             t.g.frustumCulled = false;
-            t.g.position.set(lane, 0, z);
+            t.g.position.set(lane, 0.42, z);
             t.g.traverse(m => {
                 if (m.isMesh) {
                     m.frustumCulled = false;
@@ -1188,7 +1188,31 @@ export function mountKitCityGame(THREE) {
             });
         });
 
+        function primeTrafficCorridor() {
+            // Do not let the start-screen idle loop consume the traffic simulation.
+            // Seed a visible mix relative to the player's initial world position.
+            const slots = [
+                [4.5, 18], [11.5, 34], [-4.5, 48], [-11.5, 66],
+                [4.5, 86], [11.5, 108], [-4.5, 132], [-11.5, 158],
+                [4.5, 190], [-4.5, 224], [11.5, 260], [-11.5, 300]
+            ];
+            traffic.forEach((t, i) => {
+                const slot = slots[i % slots.length];
+                t.x = slot[0];
+                t.z = car.z - slot[1];
+                t.prevDz = undefined;
+                t.g.position.set(t.x, 0.42, t.z);
+                t.g.visible = true;
+                t.g.frustumCulled = false;
+                t.g.updateMatrixWorld(true);
+            });
+        }
+
         function updateTraffic(dt) {
+            // Traffic is a gameplay system, not background animation. Keep it frozen
+            // while the start/lesson overlays are up so the initial traffic corridor
+            // cannot drain away before the player starts driving.
+            if (!state.started && !state.ended) return;
             traffic.forEach(t => {
                 if (t.boost > 0) t.boost = Math.max(0, t.boost - dt * 2);
                 const base = t.same ? t.vz - t.boost : t.vz;
@@ -1822,6 +1846,7 @@ export function mountKitCityGame(THREE) {
             initAudio(); initStreet();
             $('start').style.display = 'none';
             state.started = true;
+            primeTrafficCorridor();
             toast('Follow the arrow to your first passenger');
         });
         $('btn-again').addEventListener('click', () => restartGame(NGS.id));
