@@ -1438,12 +1438,12 @@ export function mountKitCityGame(THREE) {
 
         // ----- FM: tap to play, back / next. Hidden audio-only player, no video card -----
         const FM_STATIONS = [
-            ['Naija Hits 2026 · Real Artists', 'usF8yI9B33M'],
-            ['Afrobeats Hits · Asake / Wizkid / Victony', 'usF8yI9B33M'],
-            ['Afro Road Mix · BNXN / Ayra Starr / Rema', 'usF8yI9B33M'],
-            ['Naija Street Mix · Seyi Vibez / Ruger / Muyeez', 'usF8yI9B33M'],
-            ['Afrobeats · Omah Lay / Young Jonn / Joeboy', 'usF8yI9B33M'],
-            ['Afro Party · 2026 Nigerian Hits', 'usF8yI9B33M']
+            ['Africa Now September · DJ Boat', 'bGgjIvWj2I0'],
+            ['Naija Party 2026 · DJ Music Hub', 'pT5TaX6fN2c'],
+            ['Afrobeats 2026 · DJ Boat', 'qbefFtgUVTY'],
+            ['Naija Hits 2026 · Supremacy Sounds', 'usF8yI9B33M'],
+            ['Afrobeats 2026 · DJ Hol Up', '6iN6ha2yu14'],
+            ['Afro Party · Real Artist Mix', 'bGgjIvWj2I0']
         ];
         let fmIdx = 0, fmPlayer = null, fmLoaded = -1, fmLoading = false, fmQueue = null, fmErr = 0, fmTimer = null;
         function fmUI() {
