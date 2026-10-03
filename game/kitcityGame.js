@@ -1448,6 +1448,7 @@ export function mountKitCityGame(THREE) {
             ['Praise Nigeria', '36cBGrwfuwQ'],
             ['Igbo Highlife', '9YJRzqD_cSE'],
             ['Yoruba Energy', 'wg3yMxyhWZk'],
+            ['Fuji Road', 'IQJ6dz9K4LA'],
             ['Naija Classics', 'DDgBek2xV0k']
         ];
         let fmIdx = 0, fmPlayer = null, fmLoaded = -1, fmLoading = false, fmQueue = null, fmErr = 0, fmTimer = null;
@@ -2176,6 +2177,8 @@ export function mountKitCityGame(THREE) {
                 const u = new SpeechSynthesisUtterance(text);
                 if (ttsVoice) { u.voice = ttsVoice; u.lang = ttsVoice.lang; } else u.lang = 'en-NG';
                 u.volume = clamp(Math.max(0.45, vol), 0, 1); u.rate = h.rate; u.pitch = h.pitch;
+                u.lang = ['en-NG', 'yo-NG', 'ig-NG', 'ha-NG'][idx % 4];
+                try { speechSynthesis.resume(); } catch (_) {}
                 u.onend = () => { if (fmOn && fmPlayer && fmPlayer.setVolume) { try { fmPlayer.setVolume(Math.round(radioVol * 100 * (state.dialogue ? 0.18 : 1))); } catch (_) {} } };
                 speechSynthesis.speak(u);
             } catch (e) {}
@@ -2210,7 +2213,7 @@ export function mountKitCityGame(THREE) {
                 const h = hawkers[i], ud = h.g.userData;
                 if (h.z > car.z + 90 || h.z < car.z - 520) placeHawker(h, 130, 420);
                 const dxC = car.x - h.x, dzC = car.z - h.z, dist = Math.hypot(dxC, dzC);
-                h.g.visible = dist < 280;
+                h.g.visible = dist < 320;
                 if (!h.g.visible) continue;
                 const lx = (h.x - car.x) * ch - (h.z - car.z) * sh;      // + = on my right
                 const lz = -(h.x - car.x) * sh - (h.z - car.z) * ch;     // + = ahead of me
@@ -2253,13 +2256,13 @@ export function mountKitCityGame(THREE) {
                 h.g.position.set(h.x, 0.03 + (spd > 0 ? Math.abs(Math.sin(h.ph * 2)) * 0.04 : 0), h.z);
 
                 h.callT -= dt;
-                if (h.callT <= 0 && active && dist < 45) {
+                if (h.callT <= 0 && active && dist < 80) {
                     const chasing = h.state === 'chase' && dist < 14;
-                    const vol = Math.pow(clamp(1 - dist / 45, 0, 1), 1.2) * (state.dialogue ? 0.4 : 1);
+                    const vol = Math.pow(clamp(1 - dist / 80, 0, 1), 1.2) * (state.dialogue ? 0.4 : 1);
                     hawkSpeak(h, h.idx, chasing ? 'Oga, buy am! Oga!' : h.kind.phrase, vol);
-                    h.callT = chasing ? rand(3.2, 4.6) : rand(5, 10);
+                    h.callT = chasing ? rand(2.8, 4.2) : rand(3.8, 7.5);
                 }
-                const showBubble = dist < 42 && lz > -6;
+                const showBubble = dist < 72 && lz > -10;
                 ud.sprite.visible = showBubble;
                 if (showBubble) {
                     const near = h.state === 'chase' && dist < 12;
