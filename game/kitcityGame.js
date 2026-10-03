@@ -1108,16 +1108,21 @@ export function mountKitCityGame(THREE) {
         trafficWorld.name = 'KitCityTraffic';
         trafficWorld.visible = true;
         trafficWorld.frustumCulled = false;
-        trafficWorld.renderOrder = 2;
+        trafficWorld.renderOrder = 20;
+        // Lift the whole traffic layer above the road/decal planes. The road sits at y=0.02
+        // and several vehicles have low geometry; this prevents the road surface from visually
+        // swallowing the lower half of the new traffic models on mobile GPUs.
+        trafficWorld.position.y = 0.16;
         scene.add(trafficWorld);
 
         const traffic = [];
         const LANES_SAME = [4.5, 11.5], LANES_OPP = [-4.5, -11.5];
         const SPEEDK = { truck: 0.8, tanker: 0.78, brt: 0.82, bus: 0.9, bicycle: 0.55, okada: 1.15, keke: 0.85, danfo: 1, sedan: 1, cab: 1 };
         const mixList = []; Object.keys(V.veh || { danfo: 1, sedan: 1 }).forEach(k => { for (let i = 0; i < V.veh[k]; i++) mixList.push(k); });
-        // Guarantee visible variety even when a state's visual profile has a sparse traffic preset.
         ['bicycle', 'brt', 'keke', 'truck', 'danfo', 'bus', 'okada', 'sedan'].forEach(k => { if (!mixList.includes(k)) mixList.push(k); });
-        const NT = Math.max(28, Math.min(34, V.tn ? V.tn + 18 : 30));
+        const NT = Math.max(30, Math.min(36, V.tn ? V.tn + 20 : 32));
+        // These are deliberately close to the starting camera and deliberately mixed.
+        // They are not dependent on the state's random vehicle profile.
         const ROAD_SHOWCASE = ['danfo', 'keke', 'bicycle', 'truck', 'brt', 'bus', 'okada', 'sedan', 'danfo', 'keke', 'truck', 'brt'];
         for (let i = 0; i < NT; i++) {
             const same = i < Math.round(NT * 0.45);
@@ -1130,14 +1135,20 @@ export function mountKitCityGame(THREE) {
             if (!same) t.g.rotation.y = Math.PI;
             t.g.visible = true;
             t.g.frustumCulled = false;
-            t.g.renderOrder = 2;
+            t.g.renderOrder = 20;
+            // Make every traffic mesh independently renderable.
             t.g.traverse(m => {
                 if (m.isMesh) {
                     m.visible = true;
                     m.frustumCulled = false;
-                    m.renderOrder = 2;
+                    m.renderOrder = 20;
+                    m.castShadow = true;
+                    m.receiveShadow = true;
                 }
             });
+            // Slightly larger traffic makes the requested road variety readable on phones.
+            const visualScale = kind === 'bicycle' || kind === 'okada' ? 1.65 : 1.28;
+            t.g.scale.setScalar(visualScale);
             trafficWorld.add(t.g);
             traffic.push(t);
         }
@@ -1154,9 +1165,9 @@ export function mountKitCityGame(THREE) {
         // Seed traffic directly into the player's visible forward corridor.
         // Every requested road type gets an explicit near-field slot; no type relies on random presets.
         const TRAFFIC_SLOTS = [
-            [4.5,  -18], [-4.5, -32], [11.5, -48], [-11.5, -66],
-            [4.5,  -88], [-4.5, -112], [11.5, -138], [-11.5, -166],
-            [4.5, -196], [-4.5, -228], [11.5, -260], [-11.5, -294]
+            [4.5, -12], [-4.5, -22], [11.5, -34], [-11.5, -48],
+            [4.5, -62], [-4.5, -78], [11.5, -96], [-11.5, -116],
+            [4.5, -140], [-4.5, -168], [11.5, -198], [-11.5, -232]
         ];
         traffic.forEach((t, i) => {
             const slot = TRAFFIC_SLOTS[i % TRAFFIC_SLOTS.length];
