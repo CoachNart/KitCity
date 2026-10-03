@@ -2313,10 +2313,10 @@ export function mountKitCityGame(THREE) {
         }
         if (typeof speechSynthesis !== 'undefined') { pickVoice(); try { speechSynthesis.addEventListener('voiceschanged', pickVoice); } catch (e) {} }
         function hawkSpeak(h, idx, text, vol) {
-            if (muted || !ambOn || !state.started || vol < 0.015) return;
-            if (typeof speechSynthesis === 'undefined' || typeof SpeechSynthesisUtterance === 'undefined') return;
+            if (muted || !ambOn || !state.started || vol < 0.015) return false;
+            if (typeof speechSynthesis === 'undefined' || typeof SpeechSynthesisUtterance === 'undefined') return false;
             try {
-                if (speechSynthesis.speaking || speechSynthesis.pending) return;
+                if (speechSynthesis.speaking || speechSynthesis.pending) return false;
                 if (fmOn && fmPlayer && fmPlayer.setVolume) { try { fmPlayer.setVolume(Math.round(radioVol * 100 * 0.42)); } catch (_) {} }
                 const u = new SpeechSynthesisUtterance(text);
                 if (ttsVoice) { u.voice = ttsVoice; u.lang = ttsVoice.lang; } else u.lang = 'en-NG';
@@ -2325,7 +2325,8 @@ export function mountKitCityGame(THREE) {
                 try { speechSynthesis.resume(); } catch (_) {}
                 u.onend = () => { if (fmOn && fmPlayer && fmPlayer.setVolume) { try { fmPlayer.setVolume(Math.round(radioVol * 100 * (state.dialogue ? 0.18 : 1))); } catch (_) {} } };
                 speechSynthesis.speak(u);
-            } catch (e) {}
+                return true;
+            } catch (e) { return false; }
         }
 
         const hawkers = [];
@@ -2403,8 +2404,7 @@ export function mountKitCityGame(THREE) {
                 if (!h.called && active && dist < 24) {
                     const chasing = h.state === 'chase' && dist < 10;
                     const vol = Math.min(0.58, (0.34 + Math.pow(clamp(1 - dist / 24, 0, 1), 1.5) * 0.24)) * (state.dialogue ? 0.55 : 1);
-                    hawkSpeak(h, h.idx, chasing ? 'Oga, buy am!' : h.kind.phrase, vol);
-                    h.called = true;
+                    if (hawkSpeak(h, h.idx, chasing ? 'Oga, buy am!' : h.kind.phrase, vol)) h.called = true;
                 }
                 const showBubble = dist < 72 && lz > -10;
                 ud.sprite.visible = showBubble;
