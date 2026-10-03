@@ -1132,11 +1132,19 @@ export function mountKitCityGame(THREE) {
             }
             t.x = pick(t.lanes); t.z = rand(zMin, zMax); t.g.position.set(t.x, 0, t.z);
         }
+        // Seed a real near-field traffic corridor. The old stagger was technically spawning vehicles,
+        // but several of the new models could immediately sit outside the chase camera's useful depth.
+        // Keep every showcase type inside the first few hundred metres, spread across all four lanes.
         traffic.forEach((t, i) => {
-            // Keep the road populated inside the player's actual view instead of parking every vehicle hundreds of metres away.
             const lane = t.lanes[i % t.lanes.length];
-            const z = START_Z - 48 - i * 24;
-            t.x = lane; t.z = z; t.prevDz = undefined; t.g.position.set(lane, 0, z);
+            const band = i % 4;
+            const row = Math.floor(i / 4);
+            const z = START_Z - 58 - row * 42 - band * 9;
+            t.x = lane; t.z = z; t.prevDz = undefined;
+            t.g.visible = true;
+            t.g.frustumCulled = false;
+            t.g.position.set(lane, 0, z);
+            t.g.traverse(m => { if (m.isMesh) { m.frustumCulled = false; m.castShadow = true; m.receiveShadow = true; } });
         });
 
         function updateTraffic(dt) {
