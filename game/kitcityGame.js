@@ -2593,7 +2593,7 @@ export function mountKitCityGame(THREE) {
             const p = makePerson(o); if (p.userData.armR) p.userData.arm = p.userData.armR; return p;
         }
         function initPassengerMeshes() {
-            $('start-sub').textContent = 'Drive your danfo from ' + NGS.city + ' to ' + NGS.term + '. Pick up 5 passengers and help each one understand Web3 safely, the T3Kit way.';
+            $('start-sub').textContent = 'Drive your danfo from ' + NGS.city + ' to KitCity. Complete 5 graded Web3 Academy lessons, meet local learners and apply each lesson on the road.';
             $('start-mission').innerHTML = '<b style="color:#00e5ff">MISSION: ' + (MC.name || '') + '</b><br>' + (MC.brief || '') + '<br><small style="color:#8fdcec">' + missionOf().join(' · ') + '</small>';
             PASSENGERS.forEach(p => {
                 p.mesh = makePassengerKit(V.kit, p.g || 'm');
