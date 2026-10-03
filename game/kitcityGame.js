@@ -356,6 +356,48 @@ export function mountKitCityGame(THREE) {
         
 
         const TH = STATES[NGS.id] || STATES.lagos, V = TH.v, SK = SKY[V.sk] || SKY.noon;
+
+        // Road geometry is state-specific. The old engine used one 34m road and
+        // four hard-coded lanes for every city, which made traffic detach from
+        // the actual road design. Keep profiles here so road + traffic share one source.
+        const ROAD_PROFILES = {
+            lagos:{half:18, lanes:[4.5,11.5], opp:[-4.5,-11.5]},
+            ogun:{half:17, lanes:[4.5,11.5], opp:[-4.5,-11.5]},
+            oyo:{half:17, lanes:[4.5,11.5], opp:[-4.5,-11.5]},
+            ondo:{half:16, lanes:[4,10.5], opp:[-4,-10.5]},
+            osun:{half:16, lanes:[4,10.5], opp:[-4,-10.5]},
+            ekiti:{half:15, lanes:[3.8,9.8], opp:[-3.8,-9.8]},
+            edo:{half:17, lanes:[4.5,11.5], opp:[-4.5,-11.5]},
+            delta:{half:16, lanes:[4,10.5], opp:[-4,-10.5]},
+            bayelsa:{half:15, lanes:[3.8,9.8], opp:[-3.8,-9.8]},
+            rivers:{half:18, lanes:[4.5,11.5], opp:[-4.5,-11.5]},
+            akwaibom:{half:17, lanes:[4.5,11.5], opp:[-4.5,-11.5]},
+            crossriver:{half:16, lanes:[4,10.5], opp:[-4,-10.5]},
+            abia:{half:17, lanes:[4.5,11.5], opp:[-4.5,-11.5]},
+            imo:{half:16, lanes:[4,10.5], opp:[-4,-10.5]},
+            anambra:{half:18, lanes:[4.5,11.5], opp:[-4.5,-11.5]},
+            enugu:{half:17, lanes:[4.5,11.5], opp:[-4.5,-11.5]},
+            ebonyi:{half:15, lanes:[3.8,9.8], opp:[-3.8,-9.8]},
+            kogi:{half:17, lanes:[4.5,11.5], opp:[-4.5,-11.5]},
+            kwara:{half:17, lanes:[4.5,11.5], opp:[-4.5,-11.5]},
+            niger:{half:16, lanes:[4,10.5], opp:[-4,-10.5]},
+            benue:{half:16, lanes:[4,10.5], opp:[-4,-10.5]},
+            nasarawa:{half:16, lanes:[4,10.5], opp:[-4,-10.5]},
+            plateau:{half:16, lanes:[4,10.5], opp:[-4,-10.5]},
+            taraba:{half:15, lanes:[3.8,9.8], opp:[-3.8,-9.8]},
+            adamawa:{half:15, lanes:[3.8,9.8], opp:[-3.8,-9.8]},
+            borno:{half:17, lanes:[4.5,11.5], opp:[-4.5,-11.5]},
+            yobe:{half:16, lanes:[4,10.5], opp:[-4,-10.5]},
+            kaduna:{half:18, lanes:[4.5,11.5], opp:[-4.5,-11.5]},
+            kano:{half:18, lanes:[4.5,11.5], opp:[-4.5,-11.5]},
+            katsina:{half:17, lanes:[4.5,11.5], opp:[-4.5,-11.5]},
+            jigawa:{half:16, lanes:[4,10.5], opp:[-4,-10.5]},
+            kebbi:{half:16, lanes:[4,10.5], opp:[-4,-10.5]},
+            sokoto:{half:17, lanes:[4.5,11.5], opp:[-4.5,-11.5]},
+            zamfara:{half:16, lanes:[4,10.5], opp:[-4,-10.5]},
+            fct:{half:19, lanes:[5,12.5], opp:[-5,-12.5]}
+        };
+        const ROAD_PROFILE = ROAD_PROFILES[NGS.id] || {half:17, lanes:[4.5,11.5], opp:[-4.5,-11.5]};
         if (TH.st) NGS.stops = TH.st.slice(0, 5);
         if (TH.term) NGS.term = TH.term;
         const subC = (t, c) => t.replace(/\{c\}/g, c);
@@ -548,7 +590,6 @@ export function mountKitCityGame(THREE) {
         const roadMat = V.rd === 'wet'
             ? new THREE.MeshPhongMaterial({ map: roadTex, shininess: 90, specular: 0x556677, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 })
             : new THREE.MeshLambertMaterial({ map: roadTex, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 });
-        const ROAD_PROFILE = V.road || { half: 17, lanes: [4.5, 11.5], opp: [-4.5, -11.5] };
         const ACTIVE_ROAD_HALF = ROAD_PROFILE.half || ROAD_HALF;
         const road = new THREE.Mesh(new THREE.PlaneGeometry(ACTIVE_ROAD_HALF * 2, ROAD_LEN), roadMat);
         road.rotation.x = -Math.PI / 2; road.position.set(0, 0.02, ROAD_CZ); road.receiveShadow = true;
