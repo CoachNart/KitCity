@@ -455,7 +455,7 @@ export function mountKitCityGame(THREE) {
         // ============================================================
         // 2. STATE
         // ============================================================
-        const state = { started: false, ended: false, dialogue: false, radio: false };
+        const state = { started: false, ended: false, dialogue: false, radio: false, paused: false };
         let impactScore = 0, onboarded = 0, delivered = 0, collisions = 0, streak = 0, lessonMisses = 0;
         let curIdx = 0, attemptWrong = false, vibe = 50;
         let elapsed = 0, camMode = 'chase', shake = 0, collideCD = 0, missedCD = 0;
@@ -1108,7 +1108,7 @@ export function mountKitCityGame(THREE) {
         });
         const ROAD_SHOWCASE = [
             'danfo', 'keke', 'okada', 'bicycle', 'sedan', 'truck',
-            'tanker', 'bus', 'brt'
+            'tanker', 'bus'
         ];
         const NT = Math.max(24, Math.min(34, V.tn ? V.tn + 16 : 28));
 
@@ -1267,7 +1267,9 @@ export function mountKitCityGame(THREE) {
         const SPEED_JITTER = [0.88, 0.96, 1.0, 1.05, 1.12];
         for (let i = 0; i < NT; i++) {
             const same = i % 2 === 0;
-            const kind = i < ROAD_SHOWCASE.length ? ROAD_SHOWCASE[i] : pick(mixList);
+            const kind = i < ROAD_SHOWCASE.length
+                ? ROAD_SHOWCASE[i]
+                : (i === NT - 1 ? 'brt' : pick(mixList.filter(k => k !== 'brt')));
             const t = makeTraffic(kind, V.vc && V.vc[kind]);
             t.same = same;
             t.kind = kind;
@@ -1383,6 +1385,24 @@ export function mountKitCityGame(THREE) {
         // 8. INPUT
         // ============================================================
         const keys = {};
+
+        function setPaused(next) {
+            if (!state.started || state.ended || state.dialogue) return;
+            state.paused = !!next;
+            const btn = $('btn-pause');
+            if (btn) {
+                btn.textContent = state.paused ? '▶' : 'Ⅱ';
+                btn.title = state.paused ? 'Resume driving (P)' : 'Pause driving (P)';
+                btn.setAttribute('aria-label', btn.title);
+                btn.classList.toggle('on', state.paused);
+            }
+            document.body.classList.toggle('game-paused', state.paused);
+            if (state.paused) {
+                for (const k in keys) keys[k] = false;
+                kbHorn = false;
+                touch.gas = false; touch.brake = false; touch.reverse = false; touch.hop = false;
+            }
+        }
         const touch = { gas: false, brake: false, reverse: false, hop: false, horn: false, steer: 0, steerActive: false };
         let hopT = 0, hopY = 0, hopCooldown = 0;
         let kbHorn = false, reverseIn = 0;
@@ -1397,6 +1417,7 @@ export function mountKitCityGame(THREE) {
             if (k === 'c') toggleCam();
             if (k === 'r') recover();
             if (k === 'm') toggleMute();
+            if (k === 'p') setPaused(!state.paused);
             if (k === 'f') fmToggle();
             if (k === 'h') kbHorn = true;
             if (k === 'j') touch.hop = true;
@@ -1977,6 +1998,7 @@ export function mountKitCityGame(THREE) {
         }
 
         function readInput(dt) {
+            if (state.paused) return;
             const up = keys['w'] || keys['arrowup'] || touch.gas;
             const down = keys['s'] || keys['arrowdown'] || touch.brake;
             const reverse = keys['v'] || touch.reverse;
@@ -2750,16 +2772,16 @@ export function mountKitCityGame(THREE) {
             }
             hudAcc += dt; radarAcc += dt;
 
-            const active = state.started && !state.ended && !state.dialogue;
+            const active = state.started && !state.ended && !state.dialogue && !state.paused;
             readInput(dt);
             if (active) { elapsed += dt; updateCar(dt); }
             else if (state.ended) {
                 car.speed *= Math.pow(0.1, dt);
                 car.x += -Math.sin(car.h) * car.speed * dt; car.z += -Math.cos(car.h) * car.speed * dt;
             }
-            if (!state.dialogue) updateTraffic(dt);
+            if (!state.dialogue && !state.paused) updateTraffic(dt);
             if (active) checkCollisions(dt);
-            if (!state.dialogue) updateRoadLife(dt, active);
+            if (!state.dialogue && !state.paused) updateRoadLife(dt, active);
 
             if (hornOn && active) {
                 traffic.forEach(t => {
