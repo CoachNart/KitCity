@@ -1467,6 +1467,7 @@ export function mountKitCityGame(THREE) {
         $('btn-cam').addEventListener('click', toggleCam);
         $('btn-recover').addEventListener('click', recover);
         $('btn-mute').addEventListener('click', toggleMute);
+        $('btn-pause').addEventListener('click', () => setPaused(!state.paused));
         $('prompt').addEventListener('click', tryInteract);
 
         function toggleCam() {
