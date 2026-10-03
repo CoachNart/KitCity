@@ -10,7 +10,19 @@ export default function KitCityGame() {
   useEffect(() => {
     if (mounted.current) return;
     mounted.current = true;
-    const teardown = mountKitCityGame(THREE);
+    let teardown = null;
+    try {
+      teardown = mountKitCityGame(THREE);
+    } catch (error) {
+      console.error('[KitCity] client initialization failed:', error);
+      const root = document.getElementById('kitcity-game');
+      const start = document.getElementById('start-sub');
+      if (start) start.textContent = 'KitCity could not start on this browser. Reload after closing other 3D-heavy tabs/apps.';
+      const button = document.getElementById('btn-start');
+      if (button) button.style.display = 'none';
+      if (root) root.dataset.initError = error?.message || 'unknown';
+      teardown = null;
+    }
     return () => {
       try { teardown?.(); } finally { mounted.current = false; }
     };
