@@ -2553,14 +2553,14 @@ export function mountKitCityGame(THREE) {
         // 12b. STATE MISSIONS + PEOPLE KITS
         // ============================================================
         // Single core mission: ONBOARD NIGERIA (every state, same mission)
-        const MC = { name: 'Onboard Nigeria', brief: 'Pick up 5 passengers and onboard each one into Web3 safely, the T3Kit way. Then reach the terminal.' };
+        const MC = { name: 'Web3 Academy · Onboard Nigeria', brief: 'Complete 5 graded Web3 lessons with local passengers, apply what you learn, then reach KitCity.' };
         const MS = { noPower: false };
         const hexs = h => '#' + ('000000' + h.toString(16)).slice(-6);
         function roadLimit(z) { return ROAD_HALF + 1.5; }
         function inBridge(z) { return false; }
         function mHit(a) {}
         function sfxThump() { if (!actx) return; tone(90, 0.2, 'sine', 0.35, 0, 40); noiseHit(master, actx.currentTime, 'lowpass', 700, 0.15, 0.25); }
-        const missionOf = () => ['Onboard ' + PASSENGERS.length + ' passengers to Web3', 'Reach ' + NGS.term + ' Terminal'];
+        const missionOf = () => ['Complete ' + WEB3_LESSONS.length + ' graded Web3 Academy lessons', 'Reach KitCity after the final lesson'];
         function updateMission(dt, active) { if (active) updateHud(); }
         function missionHud() {
             $('mission').innerHTML = '<div class="m-title">Onboard Nigeria</div><div class="m-row">👥 Onboarded ' + onboarded + '/' + PASSENGERS.length + '</div>';
