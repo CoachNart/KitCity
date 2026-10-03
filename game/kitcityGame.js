@@ -2363,7 +2363,7 @@ export function mountKitCityGame(THREE) {
         const coinSpots = [];
         (function genCoins() {
             // Sparse rewards: one easy-to-read coin roughly every 55–70m.
-            // Extra coins are reserved for passenger stops and jump barriers.
+            // Extra coins are reserved for passenger stops and road features.
             let z = START_Z - 90;
             const add = (x, zz) => coinSpots.push({ x, z: zz, got: false, mesh: null, ph: Math.random() * 6 });
             while (z > END_Z + 90) {
