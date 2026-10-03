@@ -1210,12 +1210,14 @@ export function mountKitCityGame(THREE) {
             t.x = pick(t.lanes); t.z = rand(zMin, zMax); t.g.position.set(t.x, 0.42, t.z);
         }
         // Seed traffic directly into the player's visible forward corridor.
-        // Every requested road type gets an explicit near-field slot; no type relies on random presets.
-        const TRAFFIC_SLOTS = [
-            [4.5, 18], [-4.5, 6], [11.5, -12], [-11.5, -26],
-            [4.5, -42], [-4.5, -58], [11.5, -76], [-11.5, -94],
-            [4.5, -116], [-4.5, -138], [11.5, -162], [-11.5, -188]
-        ];
+        // Lane positions come from the active state's ROAD_PROFILE so traffic always
+        // sits on the road that is actually rendered for that city.
+        const trafficLanePool = [...LANES_SAME, ...LANES_OPP];
+        const TRAFFIC_SLOTS = Array.from({ length: 16 }, (_, i) => {
+            const lane = trafficLanePool[i % trafficLanePool.length];
+            const row = Math.floor(i / trafficLanePool.length);
+            return [lane, 18 + row * 46 + (i % 2) * 12];
+        });
         traffic.forEach((t, i) => {
             const slot = TRAFFIC_SLOTS[i % TRAFFIC_SLOTS.length];
             const lane = slot[0], z = slot[1];
@@ -1233,12 +1235,14 @@ export function mountKitCityGame(THREE) {
         });
 
         function primeTrafficCorridor() {
-            const slots = [
-                // First vehicles sit directly in the driver's forward view.
-                [11.5, 24], [4.5, 38], [11.5, 54], [-4.5, 70],
-                [-11.5, 88], [4.5, 110], [11.5, 136], [-4.5, 164],
-                [-11.5, 196], [4.5, 232], [11.5, 272], [-11.5, 318]
-            ];
+            // Rebuild the visible corridor from the active city's real lane profile.
+            // Keep the first vehicles close enough to be unmistakably visible from chase
+            // and driver cameras without changing the city's road or scenery.
+            const slots = Array.from({ length: 16 }, (_, i) => {
+                const lane = trafficLanePool[i % trafficLanePool.length];
+                const row = Math.floor(i / trafficLanePool.length);
+                return [lane, 24 + row * 48 + (i % 2) * 12];
+            });
             traffic.forEach((t, i) => {
                 const slot = slots[i % slots.length];
                 t.x = slot[0];
