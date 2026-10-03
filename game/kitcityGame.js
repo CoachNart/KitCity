@@ -30,8 +30,8 @@ export function mountKitCityGame(THREE) {
         // ============================================================
         const ROAD_HALF = 17;
         const START_Z = 40;
-        const END_Z = -3900;
-        const TERMINAL_Z = -3850;
+        const END_Z = -6500;
+        const TERMINAL_Z = -6450;
         const ZONE_X = 14.5;
         const ZONE_R = 9;
         const STOPS = [-520, -1320, -2120, -2920, -3720];
@@ -551,7 +551,7 @@ export function mountKitCityGame(THREE) {
             else { flatPlane(0.22, ROAD_LEN, -0.28, ROAD_CZ, 0xf5b014); flatPlane(0.22, ROAD_LEN, 0.28, ROAD_CZ, 0xf5b014); }
             flatPlane(0.25, ROAD_LEN, -16, ROAD_CZ, 0xffffff);
             flatPlane(0.25, ROAD_LEN, 16, ROAD_CZ, 0xffffff);
-            const zs = []; for (let z = 90; z > -2730; z -= 12) zs.push(z);
+            const zs = []; for (let z = 90; z > END_Z - 70; z -= 12) zs.push(z);
             const dash = new THREE.InstancedMesh(new THREE.PlaneGeometry(0.22, 4.5),
                 new THREE.MeshBasicMaterial({ color: 0xffffff, polygonOffset: true, polygonOffsetFactor: -3, polygonOffsetUnits: -3 }), zs.length * 2);
             const o = new THREE.Object3D(); let di = 0;
@@ -657,7 +657,7 @@ export function mountKitCityGame(THREE) {
         (function genProps() {
             const road = wlist(V.tr || ['shade:1']), back = wlist(V.bk || V.tr || ['shade:1']);
             const nearStop = z => STOPS.some(s => Math.abs(s - z) < 14);
-            if (V.sh !== 'water') for (let z = 70; z > -2720; z -= 18) [-1, 1].forEach(s => {
+            if (V.sh !== 'water') for (let z = 70; z > END_Z - 70; z -= 18) [-1, 1].forEach(s => {
                 if (Math.random() > 0.7 || (s > 0 && nearStop(z))) return;
                 (PROPF[pick(road)] || PROPF.shade)(s * rand(26.5, 30), z + rand(-4, 4));
             });
@@ -665,19 +665,19 @@ export function mountKitCityGame(THREE) {
             for (let i = 0; i < N; i++) (PROPF[pick(back)] || PROPF.shade)((Math.random() < 0.5 ? -1 : 1) * rand(47, 170), rand(80, END_Z - 70));
             // wooden or steel lamp poles
             const lamp = V.sh === 'walk' ? 'steel' : (V.sh === 'water' ? null : 'wood');
-            for (let z = 70; z > -2720; z -= (lamp === 'steel' ? 45 : 70)) [-1, 1].forEach(s => {
+            for (let z = 70; z > END_Z - 70; z -= (lamp === 'steel' ? 45 : 70)) [-1, 1].forEach(s => {
                 if (lamp === 'steel') { Pw('cyl', s * 19.2, 0, z, 0.22, 8, 0.22, 0x555a60); Pw('box', s * 18.4, 8, z, 1.4, 0.2, 0.5, 0xfff2c0); }
                 else if (lamp === 'wood') { Pw('cyl', s * 19.2, 0, z, 0.3, 7.5, 0.3, 0x6a4a2a); Pw('box', s * 19.2, 7, z, 0.15, 0.15, 2.4, 0x5a3f26); }
             });
             if (V.fld) for (let i = 0; i < 130; i++) Pw('box', (Math.random() < 0.5 ? -1 : 1) * rand(52, 150), 0, rand(60, END_Z - 70), rand(18, 42), 0.14, rand(14, 30), pick(V.fld));
             // far backdrop
-            if (V.far === 'hills' || V.far === 'rock') for (let z = 100; z > -2760; z -= 70) [-1, 1].forEach(s => {
+            if (V.far === 'hills' || V.far === 'rock') for (let z = 100; z > END_Z - 70; z -= 70) [-1, 1].forEach(s => {
                 const d = rand(180, 320), h = rand(35, V.far === 'rock' ? 130 : 95);
                 const c = new THREE.Color(V.farc).lerp(new THREE.Color(SK.fog), rand(0.05, 0.4)).getHex();
                 if (V.far === 'rock' && Math.random() < 0.45) Pw('fdome', s * rand(260, 520), 0, z, d, h * 0.9, d * 0.8, 0x7a7468 + (Math.random() < 0.5 ? 0x080808 : 0));
                 else Pw('fcone', s * rand(260, 560), 0, z, d, h, d, c);
             });
-            else if (V.far === 'dunes') for (let z = 100; z > -2760; z -= 55) [-1, 1].forEach(s => {
+            else if (V.far === 'dunes') for (let z = 100; z > END_Z - 70; z -= 55) [-1, 1].forEach(s => {
                 Pw('fdome', s * rand(120, 520), 0, z, rand(220, 380), rand(12, 36), rand(160, 260), new THREE.Color(V.farc).lerp(new THREE.Color(SK.fog), rand(0, 0.3)).getHex());
             });
         })();
@@ -814,13 +814,13 @@ export function mountKitCityGame(THREE) {
             const sgn = signMesh(text, 34, 2.6, bg, fg); sgn.position.set(0, 9.2, z + 0.55); scene.add(sgn);
         }
         gantry(0, NGS.city.toUpperCase() + '  >>  ' + NGS.term.toUpperCase(), '#00e5ff', '#111111');
-        gantry(-3100, NGS.term.toUpperCase() + ' TERMINAL', '#27ae60', '#ffffff');
+        gantry(TERMINAL_Z + 760, NGS.term.toUpperCase() + ' · T3KIT ARRIVAL', '#27ae60', '#ffffff');
         const depot = new THREE.Mesh(new THREE.BoxGeometry(30, 9, 40), new THREE.MeshStandardMaterial({ color: 0xdcd6c8 }));
-        depot.position.set(52, 4.5, -3080); depot.castShadow = true; scene.add(depot);
+        depot.position.set(52, 4.5, TERMINAL_Z + 770); depot.castShadow = true; scene.add(depot);
         const endWall = new THREE.Mesh(new THREE.BoxGeometry(80, 5, 2), new THREE.MeshStandardMaterial({ color: 0xc0392b }));
         endWall.position.set(0, 2.5, END_Z - 6); scene.add(endWall);
 
-        // ---- Final destination: T3Kit Web3 House, the KitCity hub for every city ----
+        // ---- Final destination: T3kit, the KitCity hub for every city ----
         (function buildT3KitHub() {
             const z = TERMINAL_Z - 18, x = 43;
             const dark = new THREE.MeshStandardMaterial({ color: 0x07161c, roughness: 0.3, metalness: 0.35 });
@@ -856,9 +856,11 @@ export function mountKitCityGame(THREE) {
             const steps = new THREE.Mesh(new THREE.BoxGeometry(5.8, 0.35, 15), white);
             steps.position.set(x - 20.8, 0.18, z); scene.add(steps);
 
-            // City-specific hero sign.
-            const sign = signMesh('T3KIT WEB3 HOUSE', 18, 3.2, '#001a1f', '#00e5ff');
+            // City-specific hero sign + brand tagline.
+            const sign = signMesh('T3KIT', 18, 3.2, '#001a1f', '#00e5ff');
             sign.position.set(x - 17.75, 11.0, z - 1.5); sign.rotation.y = -Math.PI / 2; scene.add(sign);
+            const tagline = signMesh('YOUR WEB3 JOURNEY, REIMAGINED', 15, 1.45, '#001a1f', '#ffffff');
+            tagline.position.set(x - 17.82, 8.95, z - 1.5); tagline.rotation.y = -Math.PI / 2; scene.add(tagline);
             const citySign = signMesh(NGS.city.toUpperCase() + ' · KITCITY HUB', 15, 2.2, '#c0392b', '#ffffff');
             citySign.position.set(x - 18.0, 7.1, z + 1.5); citySign.rotation.y = -Math.PI / 2; scene.add(citySign);
 
@@ -888,7 +890,7 @@ export function mountKitCityGame(THREE) {
             });
             const gate = new THREE.Mesh(new THREE.BoxGeometry(38, 2.4, 1), gateMat);
             gate.position.set(0, 8.3, TERMINAL_Z - 62); scene.add(gate);
-            const gateSign = signMesh('ARRIVAL · T3KIT WEB3 HOUSE', 34, 2.4, '#001a1f', '#00e5ff');
+            const gateSign = signMesh('ARRIVAL · T3KIT', 34, 2.4, '#001a1f', '#00e5ff');
             gateSign.position.set(0, 8.3, TERMINAL_Z - 61.35); scene.add(gateSign);
         })();
 
@@ -994,7 +996,7 @@ export function mountKitCityGame(THREE) {
                 target = { type: 'pax', x: ZONE_X, z: p.z, title: 'Pick up ' + p.name, sub: p.stop };
                 [beamMat, ringMat, fillMat, gemMat].forEach(m => m.color.setHex(0x00e5ff));
             } else {
-                target = { type: 'terminal', x: 18, z: TERMINAL_Z, title: 'Arrive at T3Kit Web3 House', sub: NGS.city + ' KitCity Hub · Drop everyone off' };
+                target = { type: 'terminal', x: 18, z: TERMINAL_Z, title: 'Arrive at T3kit', sub: NGS.city + ' KitCity Hub · Drop everyone off' };
                 [beamMat, ringMat, fillMat, gemMat].forEach(m => m.color.setHex(0x2ecc71));
             }
             beacon.position.set(target.x, 0, target.z);
@@ -1696,7 +1698,7 @@ export function mountKitCityGame(THREE) {
             $('e-pax').textContent = delivered; $('e-vibe').textContent = '+' + vibeBonus;
             const stars = (mr.ok && impactScore >= 1900) ? 3 : impactScore >= 1200 ? 2 : 1;
             $('end-stars').textContent = '★'.repeat(stars) + '☆'.repeat(3 - stars);
-            $('end-msg').textContent = 'You arrived at T3Kit Web3 House — the ' + NGS.city + ' KitCity Hub. You delivered ' + delivered + ' passengers and helped ' + onboarded + ' people take their first safe steps into Web3. This hub is where the city journey continues.';
+            $('end-msg').textContent = 'You arrived at T3kit — the ' + NGS.city + ' KitCity Hub. You delivered ' + delivered + ' passengers and helped ' + onboarded + ' people take their first safe steps into Web3. This hub is where the city journey continues.';
             markVisited(NGS.id);
             sfxGood();
             setTimeout(() => { $('end').style.display = 'flex'; }, 900);
@@ -2018,6 +2020,29 @@ export function mountKitCityGame(THREE) {
             const ex = Math.max(Math.abs(lx) - 1.3, 0), ez = Math.max(Math.abs(lz) - 3.2, 0);
             return ex * ex + ez * ez < r * r;
         }
+        function pedestrianCall(c) {
+            if (typeof speechSynthesis === 'undefined' || typeof SpeechSynthesisUtterance === 'undefined' || muted) return false;
+            if (speechSynthesis.speaking || speechSynthesis.pending) return false;
+            const lines = [
+                'Oga, easy! Watch the road!',
+                'Driver, abeg! Give me small space!',
+                'Omo! Make I cross first!',
+                'Abeg, slow down!'
+            ];
+            try {
+                const u = new SpeechSynthesisUtterance(pick(lines));
+                u.lang = ttsVoice ? ttsVoice.lang : 'en-NG';
+                u.volume = fmOn && radioPlaying ? 0.48 : 0.58;
+                u.rate = rand(0.94, 1.04);
+                u.pitch = rand(0.9, 1.08);
+                if (fmOn && fmPlayer && fmPlayer.setVolume) { try { fmPlayer.setVolume(Math.round(radioVol * 100 * 0.42)); } catch (_) {} }
+                u.onend = () => { if (fmOn && fmPlayer && fmPlayer.setVolume) { try { fmPlayer.setVolume(Math.round(radioVol * 100)); } catch (_) {} } };
+                speechSynthesis.resume();
+                speechSynthesis.speak(u);
+                return true;
+            } catch (_) { return false; }
+        }
+
         function pedestrianAbuse(speed) {
             const fast = Math.abs(speed) > 12;
             const lines = fast
@@ -2025,7 +2050,7 @@ export function mountKitCityGame(THREE) {
                 : ['Oga, easy now!', 'Driver, abeg watch yourself!', 'Chai! My leg o!', 'You dey hurry for where?'];
             const line = pick(lines);
             if (typeof speechSynthesis !== 'undefined' && typeof SpeechSynthesisUtterance !== 'undefined' && !muted) {
-                try { const u = new SpeechSynthesisUtterance(line); u.lang = 'en-NG'; u.volume = fmOn && radioPlaying ? 0.075 : 0.11; u.rate = rand(0.96, 1.06); u.pitch = rand(0.85, 1.12); speechSynthesis.cancel(); speechSynthesis.speak(u); } catch (_) {}
+                try { const u = new SpeechSynthesisUtterance(line); u.lang = 'en-NG'; u.volume = fmOn && radioPlaying ? 0.42 : 0.62; u.rate = rand(0.96, 1.06); u.pitch = rand(0.85, 1.12); speechSynthesis.cancel(); speechSynthesis.speak(u); } catch (_) {}
             }
             return line;
         }
@@ -2153,7 +2178,7 @@ export function mountKitCityGame(THREE) {
         function addCrosser(type) {
             const g = type === 'cart' ? makeCart() : randPerson(null);
             g.visible = false; scene.add(g);
-            crossers.push({ type: type, g: g, active: false, dir: 1, v: 1.5, x: 0, z: 0, ph: 0, down: 0, hurry: 1, stun: 0, grace: 0, side: 1 });
+            crossers.push({ type: type, g: g, active: false, dir: 1, v: 1.5, x: 0, z: 0, ph: 0, down: 0, hurry: 1, stun: 0, grace: 0, called: false, side: 1 });
         }
         for (let i = 0; i < 5; i++) addCrosser('ped');
         addCrosser('cart');
@@ -2163,7 +2188,7 @@ export function mountKitCityGame(THREE) {
             const r = Math.random();
             if (c.type === 'cart') c.v = rand(0.95, 1.35);
             else c.v = r < 0.65 ? rand(1.4, 1.9) : r < 0.9 ? rand(2.4, 3.0) : rand(4.0, 5.0);
-            c.down = 0; c.hurry = 1; c.stun = 0; c.grace = 0; c.ph = Math.random() * 6;
+            c.down = 0; c.hurry = 1; c.stun = 0; c.grace = 0; c.called = false; c.ph = Math.random() * 6;
             setDown(c.g.userData, false);
             c.g.rotation.y = dir > 0 ? Math.PI / 2 : -Math.PI / 2;
             c.g.visible = true;
@@ -2226,6 +2251,9 @@ export function mountKitCityGame(THREE) {
                     c.active = false; c.g.visible = false; setDown(ud, false);
                     continue;
                 }
+                if (active && c.type === 'ped' && !c.called && Math.hypot(c.x - car.x, c.z - car.z) < 15) {
+                    if (pedestrianCall(c)) c.called = true;
+                }
                 if (active && peopleCD <= 0) {
                     if (c.type === 'ped') {
                         if (c.down <= 0 && carRectHit(c.x, c.z, 0.42)) {
@@ -2285,15 +2313,15 @@ export function mountKitCityGame(THREE) {
         }
         if (typeof speechSynthesis !== 'undefined') { pickVoice(); try { speechSynthesis.addEventListener('voiceschanged', pickVoice); } catch (e) {} }
         function hawkSpeak(h, idx, text, vol) {
-            if (muted || !ambOn || !state.started || vol < 0.025) return;
+            if (muted || !ambOn || !state.started || vol < 0.015) return;
             if (typeof speechSynthesis === 'undefined' || typeof SpeechSynthesisUtterance === 'undefined') return;
             try {
                 if (speechSynthesis.speaking || speechSynthesis.pending) return;
-                if (fmOn && fmPlayer && fmPlayer.setVolume) { try { fmPlayer.setVolume(Math.round(radioVol * 100 * 0.78)); } catch (_) {} }
+                if (fmOn && fmPlayer && fmPlayer.setVolume) { try { fmPlayer.setVolume(Math.round(radioVol * 100 * 0.42)); } catch (_) {} }
                 const u = new SpeechSynthesisUtterance(text);
                 if (ttsVoice) { u.voice = ttsVoice; u.lang = ttsVoice.lang; } else u.lang = 'en-NG';
-                u.volume = clamp(Math.min(0.095, Math.max(0.045, vol)), 0, 1); u.rate = h.rate; u.pitch = h.pitch;
-                u.lang = ['en-NG', 'yo-NG', 'ig-NG', 'ha-NG'][idx % 4];
+                u.volume = clamp(Math.min(0.62, Math.max(0.32, vol)), 0, 1); u.rate = h.rate; u.pitch = h.pitch;
+                // Keep the selected installed voice language; forcing unsupported locale codes can silence speech on mobile.
                 try { speechSynthesis.resume(); } catch (_) {}
                 u.onend = () => { if (fmOn && fmPlayer && fmPlayer.setVolume) { try { fmPlayer.setVolume(Math.round(radioVol * 100 * (state.dialogue ? 0.18 : 1))); } catch (_) {} } };
                 speechSynthesis.speak(u);
@@ -2374,7 +2402,7 @@ export function mountKitCityGame(THREE) {
                 if (dist > 32) h.called = false;
                 if (!h.called && active && dist < 24) {
                     const chasing = h.state === 'chase' && dist < 10;
-                    const vol = Math.min(0.095, (0.045 + Math.pow(clamp(1 - dist / 24, 0, 1), 1.5) * 0.05)) * (state.dialogue ? 0.45 : 1);
+                    const vol = Math.min(0.58, (0.34 + Math.pow(clamp(1 - dist / 24, 0, 1), 1.5) * 0.24)) * (state.dialogue ? 0.55 : 1);
                     hawkSpeak(h, h.idx, chasing ? 'Oga, buy am!' : h.kind.phrase, vol);
                     h.called = true;
                 }
