@@ -21,7 +21,6 @@ export default function KitCityGame() {
       <div id="canvas-container" />
       <div id="flash" />
       <div id="hud">
-        <h2>KitCity 3D <span>v3.0</span></h2>
         <div className="hud-row"><span>State/City:</span> <span className="hud-value" id="hud-state">Lagos (Ikeja Hub)</span></div>
         <div className="hud-row"><span>Danfo Passengers:</span> <span className="hud-value" id="passenger-count">0 / 5</span></div>
         <div className="hud-row"><span>Impact Score:</span> <span className="hud-value" id="impact-score">0 pts</span></div>
@@ -39,7 +38,7 @@ export default function KitCityGame() {
           <button className="icon-btn" id="btn-fm" title="FM radio (F)" style={{fontSize:'13px',fontWeight:800}}>FM</button>
           <button className="icon-btn" id="btn-mute" title="Sound (M)">🔊</button>
         </div>
-        <div id="fm-bar"><button className="icon-btn fm-b" id="fm-prev" title="Back">⏮</button><span id="fm-name">Afrobeats Party</span><button className="icon-btn fm-b" id="fm-next" title="Next">⏭</button></div>
+        <div id="fm-bar"><button className="icon-btn fm-b" id="fm-prev" title="Back">⏮</button><span id="fm-name">Naija Drive</span><button className="icon-btn fm-b" id="fm-next" title="Next">⏭</button></div>
       </div>
       <div id="controls-hint">Drive: <span>W A S D</span> / <span>Arrows</span><br />Brake: <span>S</span> &nbsp; Reverse: <span>V</span> &nbsp; Handbrake: <span>Space</span><br />Horn: <span>H</span> &nbsp; Camera: <span>C</span> &nbsp; Back on road: <span>R</span><br />Pick up passenger: <span>E</span> &nbsp; FM: <span>F</span></div>
       <div id="speedo"><div id="speed-val">0</div><div id="speed-unit">KM/H</div><div id="speed-bar"><div /></div></div>
