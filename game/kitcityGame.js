@@ -1047,7 +1047,7 @@ export function mountKitCityGame(THREE) {
         scene.add(beacon);
 
         function setTarget() {
-            if (delivered < PASSENGERS.length && !curriculumState.finished) {
+            if (delivered < PASSENGERS.length) {
                 const p = PASSENGERS[curIdx];
                 if (p.mesh) p.mesh.visible = true;
                 target = { type: 'pax', x: ZONE_X, z: p.z, title: 'Meet ' + p.name, sub: p.role + ' · ' + p.stop };
@@ -2040,9 +2040,9 @@ export function mountKitCityGame(THREE) {
         }
 
         function updateHud() {
-            $('passenger-count').textContent = curriculumState.completed.length + ' / ' + CHAPTERS.length;
+            $('passenger-count').textContent = delivered + ' / ' + PASSENGERS.length;
             $('impact-score').textContent = impactScore + ' pts';
-            $('learner-count').textContent = curriculumState.literacy + '% literacy';
+            $('learner-count').textContent = arrivalComplete ? '100%' : arrivalPrep ? Math.round((prepIndex / PREP_LESSONS.length) * 100) + '%' : '0%';
             $('kit-count').textContent = kitCoins;
         }
 
@@ -2060,11 +2060,11 @@ export function mountKitCityGame(THREE) {
             const mr = missionResult(); impactScore += mr.bonus; updateHud();
             const academyGrade = curriculumState.literacy;
             const academyLetter = curriculumState.finished ? 'READY' : 'IN PROGRESS';
-            $('end-mission').innerHTML = '<b style="color:#00e5ff">WEB3 LITERACY JOURNEY COMPLETE</b><br>' + mr.notes.join(' · ') + '<br>Literacy ' + curriculumState.literacy + '% · Security awareness ' + curriculumState.securityAwareness + '%';
+            $('end-mission').innerHTML = '<b style="color:#00e5ff">KITCITY PREPARATION COMPLETE</b><br>' + mr.notes.join(' · ') + '<br>Agent Kit preparation 100% · Reward +500 $KIT';
             releaseTouch();
             const mins = Math.floor(elapsed / 60), secs = Math.floor(elapsed % 60);
             $('e-score').textContent = impactScore;
-            $('e-learners').textContent = academyLetter + ' · ' + academyGrade + '% literacy';
+            $('e-learners').textContent = arrivalComplete ? 'READY · 100% preparation' : 'IN PROGRESS';
             $('e-kit').textContent = kitCoins;
             $('e-time').textContent = mins + ':' + (secs < 10 ? '0' : '') + secs;
             $('e-crash').textContent = collisions;
@@ -2885,7 +2885,7 @@ export function mountKitCityGame(THREE) {
         const missionOf = () => ['Pick up 5 passengers at named ' + NGS.city + ' bus stops', 'Enter the KitCity parking barrier', 'Complete Agent Kit’s 5 interactive preparation lessons'];
         function updateMission(dt, active) { if (active) updateHud(); }
         function missionHud() {
-            $('mission').innerHTML = '<div class="m-title">WEB3 LITERACY</div><div class="m-row">Chapter ' + Math.min(CHAPTERS.length, curriculumState.chapterIndex + 1) + ' / ' + CHAPTERS.length + '</div><div class="m-row">Literacy ' + curriculumState.literacy + '%</div>';
+            $('mission').innerHTML = '<div class="m-title">ONBOARD NIGERIA · ' + NGS.city.toUpperCase() + '</div><div class="m-row">Passengers ' + delivered + ' / ' + PASSENGERS.length + '</div><div class="m-row">' + (arrivalPrep ? 'Agent Kit lesson ' + Math.min(PREP_LESSONS.length, prepIndex + 1) + ' / ' + PREP_LESSONS.length : delivered < PASSENGERS.length ? 'Next stop: ' + (PASSENGERS[curIdx] ? PASSENGERS[curIdx].stop : '') : 'Drive to KitCity parking') + '</div>';
         }
         function missionResult() {
             const ok = arrivalComplete && delivered >= PASSENGERS.length;
