@@ -449,12 +449,12 @@ export function mountKitCityGame(THREE) {
         let renderer = null, rendererError = null;
         const rendererAttempts = isTouch
             ? [
-                { antialias: false, powerPreference: 'default', precision: 'mediump' },
-                { antialias: false, powerPreference: 'low-power', precision: 'mediump' }
+                { antialias: false, powerPreference: 'default', precision: 'mediump', logarithmicDepthBuffer: true },
+                { antialias: false, powerPreference: 'low-power', precision: 'mediump', logarithmicDepthBuffer: true }
               ]
             : [
-                { antialias: true, powerPreference: 'default', precision: 'highp' },
-                { antialias: false, powerPreference: 'default', precision: 'mediump' }
+                { antialias: true, powerPreference: 'default', precision: 'highp', logarithmicDepthBuffer: true },
+                { antialias: false, powerPreference: 'default', precision: 'mediump', logarithmicDepthBuffer: true }
               ];
         for (const opts of rendererAttempts) {
             try {
@@ -586,17 +586,17 @@ export function mountKitCityGame(THREE) {
         }
         const roadTex = roadTexture(V.rd, V.rc);
         const roadMat = V.rd === 'wet'
-            ? new THREE.MeshPhongMaterial({ map: roadTex, shininess: 90, specular: 0x556677, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 })
-            : new THREE.MeshLambertMaterial({ map: roadTex, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 });
+            ? new THREE.MeshPhongMaterial({ map: roadTex, shininess: 90, specular: 0x556677 })
+            : new THREE.MeshLambertMaterial({ map: roadTex });
         const ACTIVE_ROAD_HALF = ROAD_PROFILE.half || ROAD_HALF;
         const road = new THREE.Mesh(new THREE.PlaneGeometry(ACTIVE_ROAD_HALF * 2, ROAD_LEN), roadMat);
-        road.rotation.x = -Math.PI / 2; road.position.set(0, 0.02, ROAD_CZ); road.receiveShadow = true;
+        road.rotation.x = -Math.PI / 2; road.position.set(0, 0.08, ROAD_CZ); road.receiveShadow = false;
         scene.add(road);
 
         function flatPlane(w, l, x, z, color) {
             const m = new THREE.Mesh(new THREE.PlaneGeometry(w, l),
-                new THREE.MeshBasicMaterial({ color: color, polygonOffset: true, polygonOffsetFactor: -3, polygonOffsetUnits: -3 }));
-            m.rotation.x = -Math.PI / 2; m.position.set(x, 0.04, z); scene.add(m); return m;
+                new THREE.MeshBasicMaterial({ color: color }));
+            m.rotation.x = -Math.PI / 2; m.position.set(x, 0.12, z); scene.add(m); return m;
         }
         const MARKED = (V.rd === 'asphalt' || V.rd === 'wet' || V.rd === 'concrete');
         if (MARKED) {
@@ -608,7 +608,7 @@ export function mountKitCityGame(THREE) {
             const dash = new THREE.InstancedMesh(new THREE.PlaneGeometry(0.22, 4.5),
                 new THREE.MeshBasicMaterial({ color: 0xffffff, polygonOffset: true, polygonOffsetFactor: -3, polygonOffsetUnits: -3 }), zs.length * 2);
             const o = new THREE.Object3D(); let di = 0;
-            zs.forEach(z => [-ROAD_PROFILE.lanes[0], ROAD_PROFILE.lanes[0]].forEach(x => { o.position.set(x, 0.04, z); o.rotation.set(-Math.PI / 2, 0, 0); o.updateMatrix(); dash.setMatrixAt(di++, o.matrix); }));
+            zs.forEach(z => [-ROAD_PROFILE.lanes[0], ROAD_PROFILE.lanes[0]].forEach(x => { o.position.set(x, 0.12, z); o.rotation.set(-Math.PI / 2, 0, 0); o.updateMatrix(); dash.setMatrixAt(di++, o.matrix); }));
             dash.frustumCulled = false; scene.add(dash);
         } else if (V.med) flatPlane(1.4, ROAD_LEN, 0, ROAD_CZ, V.med);
 
@@ -619,7 +619,7 @@ export function mountKitCityGame(THREE) {
                 const deck = new THREE.Mesh(new THREE.BoxGeometry(7, 0.3, ROAD_LEN), new THREE.MeshLambertMaterial({ color: V.shc }));
                 deck.position.set(s * 21, 0.15, ROAD_CZ); deck.receiveShadow = true; scene.add(deck);
                 const w = new THREE.Mesh(new THREE.PlaneGeometry(260, ROAD_LEN), new THREE.MeshPhongMaterial({ color: 0x2f7fa8, shininess: 80, specular: 0x88aabb }));
-                w.rotation.x = -Math.PI / 2; w.position.set(s * (24.5 + 130), 0.06, ROAD_CZ); scene.add(w);
+                w.rotation.x = -Math.PI / 2; w.position.set(s * (24.5 + 130), 0.035, ROAD_CZ); scene.add(w);
             } else {
                 const h = SH_Y;
                 const w = new THREE.Mesh(new THREE.BoxGeometry(14, h, ROAD_LEN), new THREE.MeshLambertMaterial({ color: V.shc }));
