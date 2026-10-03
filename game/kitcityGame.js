@@ -486,8 +486,8 @@ export function mountKitCityGame(THREE) {
         sunDisc.renderOrder = -9; sunDisc.frustumCulled = false; scene.add(sunDisc);
 
         // ---- ground ----
-        const ground = new THREE.Mesh(new THREE.PlaneGeometry(2400, 3800), new THREE.MeshLambertMaterial({ color: V.gr }));
-        ground.rotation.x = -Math.PI / 2; ground.position.set(0, 0, -1320); ground.receiveShadow = true;
+        const ground = new THREE.Mesh(new THREE.PlaneGeometry(2400, ROAD_LEN), new THREE.MeshLambertMaterial({ color: V.gr }));
+        ground.rotation.x = -Math.PI / 2; ground.position.set(0, 0, ROAD_CZ); ground.receiveShadow = true;
         scene.add(ground);
         if (V.gr2) {
             const N = 110, im = new THREE.InstancedMesh(new THREE.CircleGeometry(1, 12), new THREE.MeshLambertMaterial(), N);
