@@ -461,7 +461,7 @@ export function mountKitCityGame(THREE) {
         let elapsed = 0, camMode = 'chase', shake = 0, collideCD = 0, missedCD = 0;
         let snapCamera = true;
 
-        const car = { x: 11.5, z: START_Z, h: 0, speed: 0, steer: 0, steerIn: 0, prevSpeed: 0, yawRate: 0 };
+        const car = { x: (ROAD_PROFILE.lanes || [4.5, 11.5])[1], z: START_Z, h: 0, speed: 0, steer: 0, steerIn: 0, prevSpeed: 0, yawRate: 0 };
         let target = null;
 
         // ============================================================
@@ -604,13 +604,13 @@ export function mountKitCityGame(THREE) {
         if (MARKED) {
             if (V.med) flatPlane(1.6, ROAD_LEN, 0, ROAD_CZ, V.med);
             else { flatPlane(0.22, ROAD_LEN, -0.28, ROAD_CZ, 0xf5b014); flatPlane(0.22, ROAD_LEN, 0.28, ROAD_CZ, 0xf5b014); }
-            flatPlane(0.25, ROAD_LEN, -16, ROAD_CZ, 0xffffff);
-            flatPlane(0.25, ROAD_LEN, 16, ROAD_CZ, 0xffffff);
+            flatPlane(0.25, ROAD_LEN, -ACTIVE_ROAD_HALF + 1, ROAD_CZ, 0xffffff);
+            flatPlane(0.25, ROAD_LEN, ACTIVE_ROAD_HALF - 1, ROAD_CZ, 0xffffff);
             const zs = []; for (let z = 90; z > END_Z - 70; z -= 12) zs.push(z);
             const dash = new THREE.InstancedMesh(new THREE.PlaneGeometry(0.22, 4.5),
                 new THREE.MeshBasicMaterial({ color: 0xffffff, polygonOffset: true, polygonOffsetFactor: -3, polygonOffsetUnits: -3 }), zs.length * 2);
             const o = new THREE.Object3D(); let di = 0;
-            zs.forEach(z => [-8, 8].forEach(x => { o.position.set(x, 0.04, z); o.rotation.set(-Math.PI / 2, 0, 0); o.updateMatrix(); dash.setMatrixAt(di++, o.matrix); }));
+            zs.forEach(z => [-ROAD_PROFILE.lanes[0], ROAD_PROFILE.lanes[0]].forEach(x => { o.position.set(x, 0.04, z); o.rotation.set(-Math.PI / 2, 0, 0); o.updateMatrix(); dash.setMatrixAt(di++, o.matrix); }));
             dash.frustumCulled = false; scene.add(dash);
         } else if (V.med) flatPlane(1.4, ROAD_LEN, 0, ROAD_CZ, V.med);
 
