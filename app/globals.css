@@ -138,6 +138,7 @@
         transition: transform .06s, filter .06s;
     }
     .pedal.active { transform: scale(.94); filter: brightness(1.4); }
+    #reverse { width: clamp(58px, 15vh, 88px); height: clamp(72px, 18vh, 108px); background-color: #34495e; font-size: 10px; }
     #brake { width: clamp(66px, 17vh, 100px); height: clamp(84px, 21vh, 124px); background-color: #c0392b; }
     #gas   { width: clamp(70px, 18vh, 106px); height: clamp(120px, 31vh, 182px); background-color: #27ae60; }
     #horn  {
