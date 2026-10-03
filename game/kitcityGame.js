@@ -1,4 +1,5 @@
-import { STDATA, WEB3_LESSONS, hornOf, skyFor, skyNow, transTo, transAlpha } from './stateData.js';
+import { STDATA, hornOf, skyFor, skyNow, transTo, transAlpha } from './stateData.js';
+import { CHAPTERS, loadState, saveState, currentChapter } from './curriculum.js';
 
 export function mountKitCityGame(THREE) {
 'use strict';
@@ -38,66 +39,11 @@ export function mountKitCityGame(THREE) {
         const MAX_V = 42; // m/s, about 150 km/h
 
         const PASSENGERS = [
-            {
-                name: 'Tunde', role: 'University Student', stop: 'Computer Village',
-                shirt: 0x2980b9, skin: 0x4a3525,
-                line: '"Omo driver, I don tire for crypto! Someone promised me ₦500k giveaway yesterday, but my wallet got drained completely. Web3 na pure scam!"',
-                options: [
-                    { text: 'Sorry about that! A giveaway that asks for your seed phrase or a wallet connection is phishing, not Web3. Real Web3 means you hold your own keys.', correct: true },
-                    { text: 'Ah, crypto is pure luck my brother! Just buy the next coin and hope you get rich.', feedback: 'Crypto is not a lottery. Treating it like gambling is exactly how people lose money.' },
-                    { text: 'E don happen! Next time just click the link again and approve everything quick quick.', feedback: 'Approving unknown links and transactions is how wallets get drained in the first place.' }
-                ],
-                thanks: '"Wow, I didn\'t know the difference between phishing links and real self-custody! Thank you driver. I\'m ready to learn properly through T3Kit!"',
-                tip: 'Never connect your wallet to a site you reached from a random giveaway message.'
-            },
-            {
-                name: 'Mama Ngozi', role: 'Market Trader', stop: 'Allen Avenue',
-                shirt: 0xc0392b, skin: 0x5a3a28,
-                line: '"Driver, my neighbour showed me one app wey go double my money in 7 days. Dem say na Web3. I wan put my shop money inside."',
-                options: [
-                    { text: 'Mama, anybody who guarantees to double your money is a red flag. Real investments carry risk. Keep your shop money safe and check who is behind it.', correct: true },
-                    { text: 'Try am sharp sharp before the offer finish!', feedback: 'Pressure to hurry and guaranteed returns are classic signs of a Ponzi scheme.' },
-                    { text: 'As long as dem show plenty screenshots of profit, e must be legit.', feedback: 'Screenshots are very easy to fake. They prove nothing.' }
-                ],
-                thanks: '"Ah! Thank you o. I go keep my shop money and first learn how this thing really works."',
-                tip: 'Only use money you can afford to lose, and be suspicious of guaranteed profits.'
-            },
-            {
-                name: 'Chidi', role: 'Fresh Wallet Owner', stop: 'Ikeja Along',
-                shirt: 0x27ae60, skin: 0x6b4630,
-                line: '"Bros, I just opened a wallet. One \'support agent\' for Telegram say make I send my 12 words so dem fit verify am."',
-                options: [
-                    { text: 'Never send those 12 words to anyone. Real support will never ask for them. Write them on paper and keep them offline.', correct: true },
-                    { text: 'Send am, support people dey help!', feedback: 'Anyone with your seed phrase can empty your wallet. Support never needs it.' },
-                    { text: 'Take a screenshot and keep it in your phone gallery, e safe there.', feedback: 'Screenshots can be synced, hacked or leaked. Keep seed phrases offline.' }
-                ],
-                thanks: '"Chai! You just save me! I don block that fake agent. I go learn wallet safety on T3Kit."',
-                tip: 'Your seed phrase is the master key. Nobody legitimate will ever ask for it.'
-            },
-            {
-                name: 'Aisha', role: 'Fresh Graduate', stop: 'Mende',
-                shirt: 0x8e44ad, skin: 0x4e3322,
-                line: '"I graduated last year, still no job. I hear say Web3 get opportunities, but I no know where to start."',
-                options: [
-                    { text: 'Start with the basics: wallets, blockchain and staying safe. Then build small projects and join a community. T3Kit gives you a guided path.', correct: true },
-                    { text: 'Buy one expensive guru course that guarantees you $5,000 a month.', feedback: 'Guaranteed income claims are a warning sign. Skills and projects matter more than hype.' },
-                    { text: 'Just learn to read trading charts, that is the only skill you need.', feedback: 'Trading is not the same as building skills. Web3 needs developers, designers, writers and community builders too.' }
-                ],
-                thanks: '"This is exactly what I needed, a clear starting point. Abeg, how do I join T3Kit?"',
-                tip: 'Learn the basics first, build in public, and join learning communities.'
-            },
-            {
-                name: 'Mr. Bola', role: 'Banker', stop: 'Anthony',
-                shirt: 0x34495e, skin: 0x3d2a1c,
-                line: '"Abeg, crypto na only for yahoo boys. Banks and real business no dey use am."',
-                options: [
-                    { text: 'Some people misuse it, like any tool. But blockchain is also used for cross-border payments, stablecoins and digital ownership. The key is to verify and stay safe.', correct: true },
-                    { text: 'You are right sir, all crypto na scam, no need to learn anything.', feedback: 'Writing off a whole technology means you also miss how to spot the scams that do exist.' },
-                    { text: 'Every coin go 100x. Na bank wey no wan make you know.', feedback: 'No coin is guaranteed to 100x. Hype is not a reason to ignore risk.' }
-                ],
-                thanks: '"Hmm, fair point. Maybe I should understand it before I judge it. Let me look at T3Kit."',
-                tip: 'Be curious but careful: understand a technology before dismissing or hyping it.'
-            }
+            { name:'Tunde', role:'University Student', stop:'Computer Village', g:'m' },
+            { name:'Aisha', role:'Creator / Freelancer', stop:'Allen Avenue', g:'f' },
+            { name:'Mama Ngozi', role:'Market Trader', stop:'Ikeja Along', g:'f' },
+            { name:'Emeka', role:'Developer / Builder', stop:'Mende', g:'m' },
+            { name:'Mr. Bola', role:'Skeptical Teacher', stop:'Anthony', g:'m' }
         ];
 
         // ============================================================
@@ -400,16 +346,8 @@ export function mountKitCityGame(THREE) {
         const ROAD_PROFILE = ROAD_PROFILES[NGS.id] || {half:17, lanes:[4.5,11.5], opp:[-4.5,-11.5]};
         if (TH.st) NGS.stops = TH.st.slice(0, 5);
         if (TH.term) NGS.term = TH.term;
-        const subC = (t, c) => t.replace(/\{c\}/g, c);
-        if (TH.p) {
-            PASSENGERS.length = 0;
-            TH.p.forEach((a, i) => {
-                const T = TOPICS[a[2]], c = a[3];
-                PASSENGERS.push({ name: a[0], role: a[1], stop: NGS.stops[i], g: a[4], line: '"' + a[5] + '"',
-                    options: [{ text: subC(T[0], c), correct: true }, { text: subC(T[1], c), feedback: subC(T[2], c) }, { text: subC(T[3], c), feedback: subC(T[4], c) }],
-                    thanks: subC(T[5], c), tip: T[6] });
-            });
-        } else PASSENGERS.forEach(p => { p.g = /Ngozi|Aisha/.test(p.name) ? 'f' : 'm'; });
+        // Passenger identities are physical game actors. Educational content is owned entirely by curriculum.js.
+        PASSENGERS.forEach((p, i) => { p.z = STOPS[i]; });
         const VKEY = 'kitcity_states_v1';
         function getVisited() { try { return JSON.parse(localStorage.getItem(VKEY) || '[]'); } catch (e) { return []; } }
         function markVisited(id) { try { const v = getVisited(); if (v.indexOf(id) < 0) { v.push(id); localStorage.setItem(VKEY, JSON.stringify(v)); } } catch (e) {} }
@@ -442,8 +380,8 @@ export function mountKitCityGame(THREE) {
             });
             sel.addEventListener('change', () => goState(sel.value));
             $('state-progress').textContent = 'States completed: ' + seen.length + ' / ' + NG_LIST.length;
-            $('start-chapter').textContent = 'CHAPTER 1  -  ' + NGS.label.toUpperCase();
-            $('start-sub').textContent = 'Drive your danfo through ' + NGS.city + ' to KitCity. Complete 5 graded Web3 Academy lessons, meet local learners and apply each lesson on the road.';
+            $('start-chapter').textContent = 'WEB3 LITERACY  ·  ' + NGS.label.toUpperCase();
+            $('start-sub').textContent = 'Drive through ' + NGS.city + ' and build Web3 literacy one connected conversation at a time. Your progress can be resumed across rides.';
             $('hud-state').textContent = NGS.name + ' (' + NGS.city + ' Hub)';
             $('end-chapter').textContent = 'KITCITY ARRIVAL  ·  ' + NGS.label.toUpperCase();
             $('btn-next').addEventListener('click', () => {
@@ -456,8 +394,10 @@ export function mountKitCityGame(THREE) {
         // 2. STATE
         // ============================================================
         const state = { started: false, ended: false, dialogue: false, radio: false, paused: false };
-        let impactScore = 0, onboarded = 0, delivered = 0, collisions = 0, streak = 0, lessonMisses = 0;
-        let curIdx = 0, attemptWrong = false, vibe = 50;
+        const curriculumState = loadState(localStorage);
+        const SESSION_RANGES = [[0,3],[3,5],[5,8],[8,10],[10,12]];
+        let impactScore = 0, onboarded = 0, delivered = 0, collisions = 0;
+        let curIdx = 0, vibe = 50;
         let elapsed = 0, camMode = 'chase', shake = 0, collideCD = 0, missedCD = 0;
         let snapCamera = true;
 
@@ -1050,12 +990,13 @@ export function mountKitCityGame(THREE) {
         scene.add(beacon);
 
         function setTarget() {
-            if (curIdx < PASSENGERS.length) {
+            if (delivered < PASSENGERS.length && !curriculumState.finished) {
                 const p = PASSENGERS[curIdx];
-                target = { type: 'pax', x: ZONE_X, z: p.z, title: 'Pick up ' + p.name, sub: p.stop };
+                if (p.mesh) p.mesh.visible = true;
+                target = { type: 'pax', x: ZONE_X, z: p.z, title: 'Meet ' + p.name, sub: p.role + ' · ' + p.stop };
                 [beamMat, ringMat, fillMat, gemMat].forEach(m => m.color.setHex(0x00e5ff));
             } else {
-                target = { type: 'terminal', x: 18, z: TERMINAL_Z, title: 'Arrive at KitCity', sub: NGS.city + ' · KitCity destination · Drop everyone off' };
+                target = { type: 'terminal', x: 18, z: TERMINAL_Z, title: 'Arrive at KitCity', sub: NGS.city + ' · T3kit destination · Continue learning by doing' };
                 [beamMat, ringMat, fillMat, gemMat].forEach(m => m.color.setHex(0x2ecc71));
             }
             beacon.position.set(target.x, 0, target.z);
@@ -1845,7 +1786,7 @@ export function mountKitCityGame(THREE) {
 
 
         // ============================================================
-        // 10. DIALOGUE & PICK-UP
+        // 10. WEB3 LITERACY JOURNEY & PICK-UP
         // ============================================================
         let toastTimer = null;
         function toast(msg) {
@@ -1853,10 +1794,27 @@ export function mountKitCityGame(THREE) {
             clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
         }
 
+        function sessionIndexForChapter(index) {
+            return SESSION_RANGES.findIndex(([a,b]) => index >= a && index < b);
+        }
+        function syncCurriculumSession() {
+            const session = Math.max(0, Math.min(SESSION_RANGES.length - 1, sessionIndexForChapter(curriculumState.chapterIndex)));
+            delivered = Math.min(PASSENGERS.length, session);
+            curIdx = Math.min(PASSENGERS.length - 1, session);
+            PASSENGERS.forEach((p, i) => { if (p.mesh) p.mesh.visible = i >= curIdx; p.leaving = i < curIdx; });
+            curriculumState.started = true;
+            saveState(localStorage, curriculumState);
+            updateHud();
+        }
+
+        function curriculumProgress() {
+            return Math.round((curriculumState.completed.length / CHAPTERS.length) * 100);
+        }
+
         function tryInteract() {
             if (!state.started || state.dialogue || state.ended || !target || target.type !== 'pax') return;
             if (Math.hypot(car.x - target.x, car.z - target.z) >= ZONE_R) return;
-            if (Math.abs(car.speed) > 5) { toast('Slow down to pick up!'); return; }
+            if (Math.abs(car.speed) > 5) { toast('Slow down to start the conversation'); return; }
             openDialogue();
         }
 
@@ -1866,73 +1824,121 @@ export function mountKitCityGame(THREE) {
             document.body.classList.add('in-dialogue');
             $('prompt').style.display = 'none';
             $('dialogue').style.display = 'block';
-            attemptWrong = false;
-            renderQuestion();
+            renderCurriculumBeat();
         }
-        function renderQuestion() {
-            const p = PASSENGERS[curIdx];
-            const lesson = WEB3_LESSONS[curIdx % WEB3_LESSONS.length];
-            const local = STATE_WORLD.landmark + ' in ' + NGS.city;
-            $('dlg-badge').textContent = 'WEB3 ACADEMY · LESSON ' + (curIdx + 1) + ' / ' + WEB3_LESSONS.length + '  ·  ' + NGS.label;
-            $('dlg-name').textContent = lesson.title + '  ·  ' + p.name + ' (' + p.role + ')';
-            $('dlg-text').textContent =
-                lesson.lesson +
-                '\n\nLOCAL LENS · ' + NGS.name + ': ' + localWeb3Focus + '. Think about how the lesson could matter around ' + local + '.' +
-                '\n\nQUIZ · ' + lesson.question;
-            const box = $('dlg-choices'); box.innerHTML = '';
-            shuffle(lesson.options.slice()).forEach((o, i) => {
-                const b = document.createElement('button'); b.className = 'choice-btn';
-                const tag = document.createElement('b'); tag.textContent = String.fromCharCode(65 + i) + '. ';
-                b.appendChild(tag); b.appendChild(document.createTextNode(o.text));
-                b.addEventListener('click', () => choose(o));
-                box.appendChild(b);
-            });
+
+        function showDialogueText(text) {
+            $('dlg-text').textContent = text;
             $('dialogue').scrollTop = 0;
         }
-        function choose(o) {
-            const p = PASSENGERS[curIdx];
-            const lesson = WEB3_LESSONS[curIdx % WEB3_LESSONS.length];
+
+        function renderCurriculumBeat() {
+            const chapter = currentChapter(curriculumState);
+            if (!chapter) return;
+            const beat = chapter.beats[curriculumState.beatIndex] || chapter.beats[0];
+            const person = chapter.passenger;
+            $('dlg-badge').textContent = 'WEB3 LITERACY · ' + String(chapter.number).padStart(2,'0') + ' / ' + CHAPTERS.length + ' · ' + chapter.phase.toUpperCase();
+            $('dlg-name').textContent = person.name + ' · ' + person.role;
+            const pct = Math.round(((chapter.number - 1 + curriculumState.beatIndex / chapter.beats.length) / CHAPTERS.length) * 100);
+            const prog = $('dlg-progress'); if (prog) prog.style.width = Math.max(3, pct) + '%';
+            const meta = $('dlg-meta'); if (meta) meta.textContent = chapter.title + ' · ' + chapter.objective;
             const box = $('dlg-choices'); box.innerHTML = '';
-            const btn = document.createElement('button');
-            if (o.correct) {
-                const bonus = attemptWrong ? 100 : 250 + Math.min(streak, 3) * 50;
-                if (!attemptWrong) streak++;
-                impactScore += bonus; onboarded++; kitCoins += 25;
-                updateHud(); sfxGood();
-                const gradePreview = Math.max(0, 100 - lessonMisses * 10);
-                $('dlg-text').textContent =
-                    'LESSON PASSED · ' + lesson.title +
-                    '\n\n' + p.thanks +
-                    '\n\n+' + bonus + ' pts · +25 $KIT · Current Academy grade: ' + gradePreview + '%' +
-                    '\n\nT3KIT PRINCIPLE · ' + p.tip;
-                btn.className = 'choice-btn primary'; btn.textContent = 'LESSON PASSED · CONTINUE DRIVING';
-                btn.addEventListener('click', () => closeDialogue(true));
-            } else {
-                streak = 0; attemptWrong = true; lessonMisses++;
-                sfxBad();
-                $('dlg-text').textContent = 'NOT QUITE · ' + lesson.title + '\n\n' + o.feedback + '\n\nReview the lesson and try again. This miss reduces your final Academy grade by 10 points.';
-                btn.className = 'choice-btn primary'; btn.textContent = 'REVIEW LESSON & TRY AGAIN';
-                btn.addEventListener('click', renderQuestion);
+
+            if (beat.type === 'teach') {
+                showDialogueText((beat.title ? beat.title + '\n\n' : '') + beat.text);
+                addContinue(box, 'CONTINUE');
+            } else if (beat.type === 'dialogue') {
+                showDialogueText(beat.text);
+                addContinue(box, 'KEEP LISTENING');
+            } else if (beat.type === 'scenario' || beat.type === 'choice') {
+                showDialogueText(beat.prompt);
+                beat.options.forEach((o, i) => {
+                    const b = document.createElement('button'); b.className = 'choice-btn';
+                    const tag = document.createElement('b'); tag.textContent = String.fromCharCode(65 + i) + '. ';
+                    b.appendChild(tag); b.appendChild(document.createTextNode(o.text));
+                    b.addEventListener('click', () => chooseCurriculum(o, chapter));
+                    box.appendChild(b);
+                });
+            } else if (beat.type === 'final') {
+                showDialogueText((beat.title ? beat.title + '\n\n' : '') + beat.text);
+                addContinue(box, 'ENTER KITCITY →');
             }
-            box.appendChild(btn);
         }
+
+        function addContinue(box, label) {
+            const b = document.createElement('button'); b.className = 'choice-btn primary'; b.textContent = label;
+            b.addEventListener('click', advanceCurriculumBeat); box.appendChild(b);
+        }
+
+        function chooseCurriculum(option, chapter) {
+            const box = $('dlg-choices'); box.innerHTML = '';
+            curriculumState.decisions.push({ chapter: chapter.id, correct: !!option.correct, at: Date.now() });
+            if (option.correct) {
+                curriculumState.mastery[chapter.id] = Math.min(100, (curriculumState.mastery[chapter.id] || 0) + 25);
+                curriculumState.securityAwareness += chapter.id === 'security' ? 20 : 0;
+                sfxGood();
+                showDialogueText('Good call.\n\n' + (option.feedback || 'You identified the principle correctly.') + '\n\nThe goal is understanding, not guessing perfectly on the first try.');
+                addContinue(box, 'CONTINUE');
+            } else {
+                sfxBad();
+                showDialogueText('Take another look.\n\n' + (option.feedback || 'That choice misses an important part of the situation.') + '\n\nNothing is lost. Re-read the scenario and choose again.');
+                const b = document.createElement('button'); b.className = 'choice-btn primary'; b.textContent = 'TRY AGAIN';
+                b.addEventListener('click', renderCurriculumBeat); box.appendChild(b);
+            }
+            curriculumState.literacy = curriculumProgress();
+            saveState(localStorage, curriculumState);
+        }
+
+        function advanceCurriculumBeat() {
+            const chapterIndex = curriculumState.chapterIndex;
+            const chapter = CHAPTERS[chapterIndex];
+            if (!chapter) return;
+            curriculumState.beatIndex += 1;
+            if (curriculumState.beatIndex < chapter.beats.length) {
+                saveState(localStorage, curriculumState);
+                renderCurriculumBeat();
+                return;
+            }
+
+            if (!curriculumState.completed.includes(chapter.id)) curriculumState.completed.push(chapter.id);
+            curriculumState.mastery[chapter.id] = Math.max(100, curriculumState.mastery[chapter.id] || 0);
+            curriculumState.chapterIndex += 1;
+            curriculumState.beatIndex = 0;
+            curriculumState.literacy = curriculumProgress();
+            if (curriculumState.chapterIndex >= CHAPTERS.length) curriculumState.finished = true;
+            saveState(localStorage, curriculumState);
+
+            const [, sessionEnd] = SESSION_RANGES[Math.max(0, sessionIndexForChapter(chapterIndex))] || [0, CHAPTERS.length];
+            if (curriculumState.finished || curriculumState.chapterIndex >= sessionEnd) {
+                closeDialogue(true);
+            } else {
+                renderCurriculumBeat();
+            }
+        }
+
         function closeDialogue(ok) {
             if (fmOn && fmPlayer && fmPlayer.setVolume) { try { fmPlayer.setVolume(Math.round(radioVol * 100)); } catch (_) {} }
             $('dialogue').style.display = 'none';
             document.body.classList.remove('in-dialogue');
             state.dialogue = false;
             if (ok) {
-                PASSENGERS[curIdx].leaving = true; sfxDoor();
+                const p = PASSENGERS[curIdx];
+                p.leaving = true; if (p.mesh) p.mesh.visible = false; sfxDoor();
                 delivered++; curIdx++;
-                updateHud(); setTarget();
-                toast(curIdx < PASSENGERS.length ? 'Next: ' + PASSENGERS[curIdx].name + ' at ' + PASSENGERS[curIdx].stop : 'All aboard! Head to KitCity');
+                if (curriculumState.finished) {
+                    setTarget();
+                    toast('Foundations complete. Continue to KitCity.');
+                } else {
+                    updateHud(); setTarget();
+                    toast(curIdx < PASSENGERS.length ? 'Next passenger: ' + PASSENGERS[curIdx].name : 'All passengers aboard. Continue to KitCity.');
+                }
             }
         }
 
         function updateHud() {
-            $('passenger-count').textContent = delivered + ' / ' + PASSENGERS.length;
+            $('passenger-count').textContent = curriculumState.completed.length + ' / ' + CHAPTERS.length;
             $('impact-score').textContent = impactScore + ' pts';
-            $('learner-count').textContent = onboarded;
+            $('learner-count').textContent = curriculumState.literacy + '% literacy';
             $('kit-count').textContent = kitCoins;
         }
 
@@ -1948,20 +1954,20 @@ export function mountKitCityGame(THREE) {
             state.ended = true;
             const vibeBonus = Math.round(vibe) * 2; impactScore += vibeBonus;
             const mr = missionResult(); impactScore += mr.bonus; updateHud();
-            const academyGrade = Math.max(0, 100 - lessonMisses * 10);
-            const academyLetter = academyGrade >= 90 ? 'A' : academyGrade >= 80 ? 'B' : academyGrade >= 70 ? 'C' : academyGrade >= 60 ? 'D' : 'F';
-            $('end-mission').innerHTML = '<b style="color:' + (mr.ok ? '#2ecc71' : '#e67e22') + '">' + (mr.ok ? 'MISSION COMPLETE' : 'MISSION INCOMPLETE') + ': ' + (MC.name || '') + '</b><br>' + mr.notes.join(' · ') + '<br>Mission bonus +' + mr.bonus;
+            const academyGrade = curriculumState.literacy;
+            const academyLetter = curriculumState.finished ? 'READY' : 'IN PROGRESS';
+            $('end-mission').innerHTML = '<b style="color:#00e5ff">WEB3 LITERACY JOURNEY COMPLETE</b><br>' + mr.notes.join(' · ') + '<br>Literacy ' + curriculumState.literacy + '% · Security awareness ' + curriculumState.securityAwareness + '%';
             releaseTouch();
             const mins = Math.floor(elapsed / 60), secs = Math.floor(elapsed % 60);
             $('e-score').textContent = impactScore;
-            $('e-learners').textContent = academyLetter + ' · ' + academyGrade + '%';
+            $('e-learners').textContent = academyLetter + ' · ' + academyGrade + '% literacy';
             $('e-kit').textContent = kitCoins;
             $('e-time').textContent = mins + ':' + (secs < 10 ? '0' : '') + secs;
             $('e-crash').textContent = collisions;
             $('e-pax').textContent = delivered; $('e-vibe').textContent = '+' + vibeBonus;
             const stars = (mr.ok && impactScore >= 1900) ? 3 : impactScore >= 1200 ? 2 : 1;
             $('end-stars').textContent = '★'.repeat(stars) + '☆'.repeat(3 - stars);
-            $('end-msg').textContent = 'You arrived at KitCity from ' + NGS.city + '. Academy grade: ' + academyLetter + ' (' + academyGrade + '%). You completed ' + onboarded + '/' + WEB3_LESSONS.length + ' graded Web3 lessons. Next state, next lesson.';
+            $('end-msg').textContent = curriculumState.finished ? 'You started with the question “What is Web3?” and finished with a working literacy toolkit. The next destination is KitCity, where T3kit turns the foundations into deeper practice.' : 'You reached KitCity with your Web3 literacy journey still in progress. Resume the curriculum to continue learning.';
             markVisited(NGS.id);
             sfxGood();
             setTimeout(() => { $('end').style.display = 'flex'; }, 900);
@@ -1971,6 +1977,7 @@ export function mountKitCityGame(THREE) {
             initAudio(); initStreet();
             $('start').style.display = 'none';
             state.started = true;
+            syncCurriculumSession();
             seedTrafficCorridor();
             toast('Follow the arrow to your first passenger');
         });
@@ -2696,21 +2703,21 @@ export function mountKitCityGame(THREE) {
         // 12b. STATE MISSIONS + PEOPLE KITS
         // ============================================================
         // Single core mission: ONBOARD NIGERIA (every state, same mission)
-        const MC = { name: 'Web3 Academy · Onboard Nigeria', brief: 'Complete 5 graded Web3 lessons with local passengers, apply what you learn, then reach KitCity.' };
+        const MC = { name: 'Web3 Literacy Journey · Onboard Nigeria', brief: 'Build foundational Web3 literacy through connected conversations, scenarios and practical decisions, then reach KitCity.' };
         const MS = { noPower: false };
         const hexs = h => '#' + ('000000' + h.toString(16)).slice(-6);
         function roadLimit(z) { return ROAD_HALF + 1.5; }
         function inBridge(z) { return false; }
         function mHit(a) {}
         function sfxThump() { if (!actx) return; tone(90, 0.2, 'sine', 0.35, 0, 40); noiseHit(master, actx.currentTime, 'lowpass', 700, 0.15, 0.25); }
-        const missionOf = () => ['Complete ' + WEB3_LESSONS.length + ' graded Web3 Academy lessons', 'Reach KitCity after the final lesson'];
+        const missionOf = () => ['Complete ' + CHAPTERS.length + ' connected Web3 literacy chapters', 'Reach KitCity and continue into T3kit'];
         function updateMission(dt, active) { if (active) updateHud(); }
         function missionHud() {
-            $('mission').innerHTML = '<div class="m-title">Onboard Nigeria</div><div class="m-row">👥 Onboarded ' + onboarded + '/' + PASSENGERS.length + '</div>';
+            $('mission').innerHTML = '<div class="m-title">WEB3 LITERACY</div><div class="m-row">Chapter ' + Math.min(CHAPTERS.length, curriculumState.chapterIndex + 1) + ' / ' + CHAPTERS.length + '</div><div class="m-row">Literacy ' + curriculumState.literacy + '%</div>';
         }
         function missionResult() {
-            const ok = onboarded >= PASSENGERS.length;
-            return { ok: ok, bonus: onboarded * 100 + (ok ? 300 : 0), notes: ['Onboarded ' + onboarded + '/' + PASSENGERS.length] };
+            const ok = curriculumState.finished && delivered >= PASSENGERS.length;
+            return { ok: ok, bonus: ok ? 300 : 0, notes: ['Completed ' + curriculumState.completed.length + '/' + CHAPTERS.length + ' chapters', 'Passengers completed ' + delivered + '/' + PASSENGERS.length] };
         }
 
         // ---- people by culture ----
@@ -2736,8 +2743,8 @@ export function mountKitCityGame(THREE) {
             const p = makePerson(o); if (p.userData.armR) p.userData.arm = p.userData.armR; return p;
         }
         function initPassengerMeshes() {
-            $('start-sub').textContent = 'Drive your danfo from ' + NGS.city + ' to KitCity. Complete 5 graded Web3 Academy lessons, meet local learners and apply each lesson on the road.';
-            $('start-mission').innerHTML = '<b style="color:#00e5ff">MISSION: ' + (MC.name || '') + '</b><br>' + (MC.brief || '') + '<br><small style="color:#8fdcec">' + missionOf().join(' · ') + '</small>';
+            $('start-sub').textContent = 'Drive through ' + NGS.city + ' while a connected Web3 literacy journey unfolds through the people you meet. Learn from zero, practice the ideas, and arrive ready for T3kit.';
+            $('start-mission').innerHTML = '<b style="color:#00e5ff">WEB3 LITERACY JOURNEY</b><br>Discover → Understand → Practice → Apply → Explore<br><small style="color:#8fdcec">' + missionOf().join(' · ') + '</small>';
             PASSENGERS.forEach(p => {
                 p.mesh = makePassengerKit(V.kit, p.g || 'm');
                 p.mesh.position.set(21, SH_Y, p.z); p.mesh.rotation.y = -Math.PI / 2; p.leaving = false;
@@ -2834,7 +2841,7 @@ export function mountKitCityGame(THREE) {
 
             if (hornOn) { hornHeld += dt; if (hornHeld > 2.5) { hornOn = false; touch.horn = false; kbHorn = false; } } else hornHeld = 0;
             if (actx) { if (hornOn && !state.dialogue) hornStart(); else hornStop(); }
-            if (active) vibe = clamp(vibe + ((radioPlaying || streak > 0) ? 2 : -0.4) * dt, 0, 100);
+            if (active) vibe = clamp(vibe + ((radioPlaying || curriculumState.literacy > 0) ? 2 : -0.4) * dt, 0, 100);
             farHornT -= dt;
             if (farHornT <= 0) { farHornT = rand(22, 45); if (active) sfxFarHorn(); }
             updateAmbience(Math.abs(car.speed), throttleIn);
