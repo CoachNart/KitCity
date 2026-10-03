@@ -1418,7 +1418,7 @@ export function mountKitCityGame(THREE) {
             if (state.dialogue) lvl *= 0.22;
             if (state.ended) lvl *= 0.6;
             if (inside) lvl *= 0.92;
-            e.bus.gain.setTargetAtTime(lvl, t, 0.05);
+            e.bus.gain.setTargetAtTime(lvl * 0.52, t, 0.05);
 
             const wob = 1 + 0.012 * Math.sin(time * 37) + 0.01 * Math.sin(time * 23.7);
             const f0 = Math.max(4, eng.rpm * wob / 30);          // 4-cylinder, 4-stroke: two firings per turn
@@ -1450,7 +1450,7 @@ export function mountKitCityGame(THREE) {
             ['Afro Gold', 'qbefFtgUVTY'],
             ['Praise Nigeria', '36cBGrwfuwQ'],
             ['Igbo Highlife', '9YJRzqD_cSE'],
-            ['Yoruba Energy', 'wg3yMxyhWZk'],
+            ['Yoruba Fuji', 'ZZhmuhXTB7M'],
             ['Fuji Road', 'IQJ6dz9K4LA'],
             ['Naija Classics', 'DDgBek2xV0k']
         ];
@@ -1953,7 +1953,7 @@ export function mountKitCityGame(THREE) {
                 : ['Oga, easy now!', 'Driver, abeg watch yourself!', 'Chai! My leg o!', 'You dey hurry for where?'];
             const line = pick(lines);
             if (typeof speechSynthesis !== 'undefined' && typeof SpeechSynthesisUtterance !== 'undefined' && !muted) {
-                try { const u = new SpeechSynthesisUtterance(line); u.lang = 'en-NG'; u.volume = 0.12; u.rate = rand(1.0, 1.12); u.pitch = rand(0.85, 1.12); speechSynthesis.cancel(); speechSynthesis.speak(u); } catch (_) {}
+                try { const u = new SpeechSynthesisUtterance(line); u.lang = 'en-NG'; u.volume = fmOn && radioPlaying ? 0.035 : 0.05; u.rate = rand(0.96, 1.06); u.pitch = rand(0.85, 1.12); speechSynthesis.cancel(); speechSynthesis.speak(u); } catch (_) {}
             }
             return line;
         }
