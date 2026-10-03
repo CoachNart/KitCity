@@ -1108,8 +1108,8 @@ export function mountKitCityGame(THREE) {
         const mixList = []; Object.keys(V.veh || { danfo: 1, sedan: 1 }).forEach(k => { for (let i = 0; i < V.veh[k]; i++) mixList.push(k); });
         // Guarantee visible variety even when a state's visual profile has a sparse traffic preset.
         ['bicycle', 'brt', 'keke', 'truck', 'danfo', 'bus', 'okada', 'sedan'].forEach(k => { if (!mixList.includes(k)) mixList.push(k); });
-        const NT = Math.max(22, Math.min(26, V.tn || 11));
-        const ROAD_SHOWCASE = ['danfo', 'keke', 'bicycle', 'truck', 'brt', 'bus', 'okada', 'sedan'];
+        const NT = Math.max(28, Math.min(34, V.tn ? V.tn + 18 : 30));
+        const ROAD_SHOWCASE = ['danfo', 'keke', 'bicycle', 'truck', 'brt', 'bus', 'okada', 'sedan', 'danfo', 'keke', 'truck', 'brt'];
         for (let i = 0; i < NT; i++) {
             const same = i < Math.round(NT * 0.45);
             const kind = i < ROAD_SHOWCASE.length ? ROAD_SHOWCASE[i] : pick(mixList);
@@ -1124,7 +1124,7 @@ export function mountKitCityGame(THREE) {
         }
 
         function placeTraffic(t, zMin, zMax, safe) {
-            for (let k = 0; k < 10; k++) {
+            for (let k = 0; k < 18; k++) {
                 const lane = pick(t.lanes), z = rand(zMin, zMax);
                 if (safe && Math.abs(lane - car.x) < 4 && Math.abs(z - car.z) < 30) continue;
                 if (traffic.some(o => o !== t && o.x === lane && Math.abs(o.z - z) < 55)) continue;
@@ -1132,7 +1132,12 @@ export function mountKitCityGame(THREE) {
             }
             t.x = pick(t.lanes); t.z = rand(zMin, zMax); t.g.position.set(t.x, 0, t.z);
         }
-        traffic.forEach(t => placeTraffic(t, START_Z - 420, START_Z - 40, true));
+        traffic.forEach((t, i) => {
+            // Keep the road populated inside the player's actual view instead of parking every vehicle hundreds of metres away.
+            const lane = t.lanes[i % t.lanes.length];
+            const z = START_Z - 48 - i * 24;
+            t.x = lane; t.z = z; t.prevDz = undefined; t.g.position.set(lane, 0, z);
+        });
 
         function updateTraffic(dt) {
             traffic.forEach(t => {
@@ -1150,8 +1155,8 @@ export function mountKitCityGame(THREE) {
                     sfxWhoosh(clamp((t.x - car.x) / 10, -1, 1), clamp(rel / 45, 0.15, 1));
                 }
                 t.prevDz = dz;
-                if (dz > 160) placeTraffic(t, car.z - 420, car.z - 260, false);
-                else if (dz < -480) placeTraffic(t, car.z + 100, car.z + 170, false);
+                if (dz > 140) placeTraffic(t, car.z - 620, car.z - 400, false);
+                else if (dz < -320) placeTraffic(t, car.z + 80, car.z + 190, false);
                 t.g.position.set(t.x, 0, t.z);
                 t.g.visible = !(Math.abs(t.x) > 8 && inBridge(t.z));
             });
