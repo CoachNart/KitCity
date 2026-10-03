@@ -1102,6 +1102,15 @@ export function mountKitCityGame(THREE) {
             return { g, halfW, halfL };
         }
 
+        // Dedicated render layer for all road traffic. Keeping traffic in its own world group
+        // prevents later environment objects from obscuring/replacing the vehicle layer.
+        const trafficWorld = new THREE.Group();
+        trafficWorld.name = 'KitCityTraffic';
+        trafficWorld.visible = true;
+        trafficWorld.frustumCulled = false;
+        trafficWorld.renderOrder = 2;
+        scene.add(trafficWorld);
+
         const traffic = [];
         const LANES_SAME = [4.5, 11.5], LANES_OPP = [-4.5, -11.5];
         const SPEEDK = { truck: 0.8, tanker: 0.78, brt: 0.82, bus: 0.9, bicycle: 0.55, okada: 1.15, keke: 0.85, danfo: 1, sedan: 1, cab: 1 };
@@ -1119,7 +1128,17 @@ export function mountKitCityGame(THREE) {
             t.vz = (same ? -rand(7, 13) : rand(12, 19)) * (SPEEDK[kind] || 1);
             t.boost = 0; t.x = 999; t.z = 999;
             if (!same) t.g.rotation.y = Math.PI;
-            scene.add(t.g);
+            t.g.visible = true;
+            t.g.frustumCulled = false;
+            t.g.renderOrder = 2;
+            t.g.traverse(m => {
+                if (m.isMesh) {
+                    m.visible = true;
+                    m.frustumCulled = false;
+                    m.renderOrder = 2;
+                }
+            });
+            trafficWorld.add(t.g);
             traffic.push(t);
         }
 
@@ -1135,9 +1154,9 @@ export function mountKitCityGame(THREE) {
         // Seed traffic directly into the player's visible forward corridor.
         // Every requested road type gets an explicit near-field slot; no type relies on random presets.
         const TRAFFIC_SLOTS = [
-            [4.5,  -35], [-4.5, -58], [11.5, -82], [-11.5, -106],
-            [4.5, -132], [-4.5, -158], [11.5, -184], [-11.5, -210],
-            [4.5, -236], [-4.5, -262], [11.5, -288], [-11.5, -314]
+            [4.5,  -18], [-4.5, -32], [11.5, -48], [-11.5, -66],
+            [4.5,  -88], [-4.5, -112], [11.5, -138], [-11.5, -166],
+            [4.5, -196], [-4.5, -228], [11.5, -260], [-11.5, -294]
         ];
         traffic.forEach((t, i) => {
             const slot = TRAFFIC_SLOTS[i % TRAFFIC_SLOTS.length];
