@@ -30,11 +30,11 @@ export function mountKitCityGame(THREE) {
         // ============================================================
         const ROAD_HALF = 17;
         const START_Z = 40;
-        const END_Z = -2700;
-        const TERMINAL_Z = -2600;
+        const END_Z = -3200;
+        const TERMINAL_Z = -3150;
         const ZONE_X = 14.5;
         const ZONE_R = 9;
-        const STOPS = [-400, -900, -1400, -1900, -2400];
+        const STOPS = [-500, -1150, -1800, -2450, -3050];
         const MAX_V = 42; // m/s, about 150 km/h
 
         const PASSENGERS = [
@@ -814,9 +814,9 @@ export function mountKitCityGame(THREE) {
             const sgn = signMesh(text, 34, 2.6, bg, fg); sgn.position.set(0, 9.2, z + 0.55); scene.add(sgn);
         }
         gantry(0, NGS.city.toUpperCase() + '  >>  ' + NGS.term.toUpperCase(), '#00e5ff', '#111111');
-        gantry(-2650, NGS.term.toUpperCase() + ' TERMINAL', '#27ae60', '#ffffff');
+        gantry(-3100, NGS.term.toUpperCase() + ' TERMINAL', '#27ae60', '#ffffff');
         const depot = new THREE.Mesh(new THREE.BoxGeometry(30, 9, 40), new THREE.MeshStandardMaterial({ color: 0xdcd6c8 }));
-        depot.position.set(52, 4.5, -2630); depot.castShadow = true; scene.add(depot);
+        depot.position.set(52, 4.5, -3080); depot.castShadow = true; scene.add(depot);
         const endWall = new THREE.Mesh(new THREE.BoxGeometry(80, 5, 2), new THREE.MeshStandardMaterial({ color: 0xc0392b }));
         endWall.position.set(0, 2.5, END_Z - 6); scene.add(endWall);
 
@@ -1212,6 +1212,8 @@ export function mountKitCityGame(THREE) {
             amb.rain = gainNode(0); chain(noiseSrc(), filt('highpass', 2800), filt('lowpass', 9000), amb.rain, ambGain);
             amb.rat = gainNode(0); amb.ratF = filt('bandpass', 1100, 1.2);    // loose body rattle
             chain(noiseSrc(), amb.ratF, amb.rat, ambGain);
+            amb.radio = gainNode(0); amb.radioF = filt('bandpass', 2600, 0.8);
+            chain(noiseSrc(), amb.radioF, amb.radio, ambGain);
         }
 
         function updateAmbience(sp, thr) {
@@ -1229,6 +1231,8 @@ export function mountKitCityGame(THREE) {
             const sqT = (braking && sp > 8) ? Math.min(1, (sp - 8) / 20) * 0.03 : 0;
             amb.sq.gain.setTargetAtTime(sqT, t, 0.05);
             amb.rat.gain.setTargetAtTime(0, t, 0.1);
+            const radioDuck = state.dialogue ? 0.18 : 1;
+            amb.radio.gain.setTargetAtTime(fmOn && radioPlaying && !muted ? 0.0065 * radioDuck : 0, t, 0.12);
         }
 
         function panTo(node, pan) {
@@ -1349,15 +1353,15 @@ export function mountKitCityGame(THREE) {
             e.oA = actx.createOscillator(); e.oA.type = 'sawtooth';        // firing pulses
             e.oB = actx.createOscillator(); e.oB.type = 'square';          // low block thump
             e.oC = actx.createOscillator(); e.oC.type = 'sawtooth';        // rough upper growl
-            chain(e.oA, gainNode(0.5), e.am);
-            chain(e.oB, gainNode(0.3), e.am);
-            chain(e.oC, gainNode(0.16), e.am);
+            chain(e.oA, gainNode(0.28), e.am);
+            chain(e.oB, gainNode(0.16), e.am);
+            chain(e.oC, gainNode(0.09), e.am);
             chain(e.am, shaper, e.lp, e.bus);
-            e.lump = actx.createOscillator(); e.lumpG = gainNode(0.18);     // uneven cylinders, lumpy at idle
+            e.lump = actx.createOscillator(); e.lumpG = gainNode(0.08);     // uneven cylinders, lumpy at idle
             chain(e.lump, e.lumpG); e.lumpG.connect(e.am.gain);
-            e.knockF = filt('bandpass', 1700, 1.1); e.knockAm = gainNode(0.32); e.knock = gainNode(0);   // diesel clatter
+            e.knockF = filt('bandpass', 1700, 1.1); e.knockAm = gainNode(0.13); e.knock = gainNode(0);   // diesel clatter
             e.knockLfo = actx.createOscillator(); e.knockLfo.type = 'square';
-            const kg = gainNode(0.5); chain(e.knockLfo, kg); kg.connect(e.knockAm.gain);
+            const kg = gainNode(0.28); chain(e.knockLfo, kg); kg.connect(e.knockAm.gain);
             chain(noiseSrc(), e.knockF, e.knockAm, e.knock, e.bus);
             e.rumF = filt('lowpass', 160); e.rum = gainNode(0);            // loose exhaust rumble
             chain(noiseSrc(), e.rumF, e.rum, e.bus);
@@ -1382,7 +1386,7 @@ export function mountKitCityGame(THREE) {
                 eng.rpm = 230 + Math.sin(eng.t * 22) * 55;
                 e.starter.frequency.setTargetAtTime(95 + eng.t * 55, t, 0.05);
                 e.starterG.gain.setTargetAtTime(0.05, t, 0.03);
-                lvl = 0.14;
+                lvl = 0.07;
                 if (eng.t > 0.95) { eng.phase = 'run'; eng.rpm = 1650; e.starterG.gain.setTargetAtTime(0, t, 0.03); }
             } else if (eng.phase === 'run') {
                 // gear selection
@@ -1404,13 +1408,13 @@ export function mountKitCityGame(THREE) {
                 const rate = eng.shift > 0 ? 14 : (target > eng.rpm ? 6 : 3.5);
                 eng.rpm += (target - eng.rpm) * Math.min(1, dt * rate);
                 frac = clamp((eng.rpm - IDLE_RPM) / (REDLINE_RPM - IDLE_RPM), 0, 1);
-                lvl = (0.052 + 0.072 * thr * (0.5 + 0.5 * frac) + 0.035 * frac) * (eng.shift > 0 ? 0.55 : 1);
+                lvl = (0.026 + 0.038 * thr * (0.5 + 0.5 * frac) + 0.018 * frac) * (eng.shift > 0 ? 0.55 : 1);
             } else {
                 eng.rpm *= Math.max(0, 1 - dt * 3);
             }
-            if (state.dialogue) lvl *= 0.45;
+            if (state.dialogue) lvl *= 0.22;
             if (state.ended) lvl *= 0.6;
-            if (inside) lvl *= 1.12;
+            if (inside) lvl *= 0.92;
             e.bus.gain.setTargetAtTime(lvl, t, 0.05);
 
             const wob = 1 + 0.012 * Math.sin(time * 37) + 0.01 * Math.sin(time * 23.7);
@@ -1420,11 +1424,11 @@ export function mountKitCityGame(THREE) {
             e.oC.frequency.setTargetAtTime(f0 * 3.02, t, 0.03);
             e.lump.frequency.setTargetAtTime(f0 / 4, t, 0.03);
             e.knockLfo.frequency.setTargetAtTime(f0, t, 0.03);
-            e.lumpG.gain.setTargetAtTime(0.05 + 0.3 * (1 - frac), t, 0.1);
+            e.lumpG.gain.setTargetAtTime(0.025 + 0.12 * (1 - frac), t, 0.1);
             e.lp.frequency.setTargetAtTime(420 + frac * 1100 + thr * 450, t, 0.06);
-            e.knock.gain.setTargetAtTime(Math.max(0.03, 0.09 + thr * 0.05 - frac * 0.05), t, 0.1);
+            e.knock.gain.setTargetAtTime(Math.max(0.012, 0.035 + thr * 0.02 - frac * 0.02), t, 0.1);
             e.rumF.frequency.setTargetAtTime(120 + frac * 220, t, 0.08);
-            e.rum.gain.setTargetAtTime(0.12 + thr * 0.12 + frac * 0.1, t, 0.1);
+            e.rum.gain.setTargetAtTime(0.045 + thr * 0.045 + frac * 0.035, t, 0.1);
             e.whine.frequency.setTargetAtTime(140 + asp * 14, t, 0.05);
             e.whineG.gain.setTargetAtTime(clamp(asp / MAX_V, 0, 1) * (eng.gear === 0 ? 0.05 : 0.025), t, 0.1);
         }
@@ -1438,12 +1442,13 @@ export function mountKitCityGame(THREE) {
 
         // ----- FM: tap to play, back / next. Hidden audio-only player, no video card -----
         const FM_STATIONS = [
-            ['Africa Now September · DJ Boat', 'bGgjIvWj2I0'],
-            ['Naija Party 2026 · DJ Music Hub', 'pT5TaX6fN2c'],
-            ['Afrobeats 2026 · DJ Boat', 'qbefFtgUVTY'],
-            ['Naija Hits 2026 · Supremacy Sounds', 'usF8yI9B33M'],
-            ['Afrobeats 2026 · DJ Hol Up', '6iN6ha2yu14'],
-            ['Afro Party · Real Artist Mix', 'bGgjIvWj2I0']
+            ['Naija Drive', 'bGgjIvWj2I0'],
+            ['Naija Pulse', 'pT5TaX6fN2c'],
+            ['Afro Gold', 'qbefFtgUVTY'],
+            ['Praise Nigeria', '36cBGrwfuwQ'],
+            ['Igbo Highlife', '9YJRzqD_cSE'],
+            ['Yoruba Energy', 'wg3yMxyhWZk'],
+            ['Naija Classics', 'DDgBek2xV0k']
         ];
         let fmIdx = 0, fmPlayer = null, fmLoaded = -1, fmLoading = false, fmQueue = null, fmErr = 0, fmTimer = null;
         function fmUI() {
@@ -1530,6 +1535,7 @@ export function mountKitCityGame(THREE) {
 
         function openDialogue() {
             state.dialogue = true; car.speed = 0; releaseTouch();
+            if (fmOn && fmPlayer && fmPlayer.setVolume) { try { fmPlayer.setVolume(Math.round(radioVol * 18)); } catch (_) {} }
             document.body.classList.add('in-dialogue');
             $('prompt').style.display = 'none';
             $('dialogue').style.display = 'block';
@@ -1572,6 +1578,7 @@ export function mountKitCityGame(THREE) {
             box.appendChild(btn);
         }
         function closeDialogue(ok) {
+            if (fmOn && fmPlayer && fmPlayer.setVolume) { try { fmPlayer.setVolume(Math.round(radioVol * 100)); } catch (_) {} }
             $('dialogue').style.display = 'none';
             document.body.classList.remove('in-dialogue');
             state.dialogue = false;
@@ -1663,13 +1670,13 @@ export function mountKitCityGame(THREE) {
         }
 
         function updateCar(dt) {
-            const maxR = -6;
+            const maxR = -12;
             car.prevSpeed = car.speed;
             braking = false;
 
             if (reverseIn) {
-                if (car.speed > 0.4) { car.speed -= 42 * dt; braking = true; }
-                else car.speed = Math.max(maxR, car.speed - 10 * dt);
+                if (car.speed > 0.4) { car.speed -= 52 * dt; braking = true; }
+                else car.speed = Math.max(maxR, car.speed - 18 * dt);
             } else if (handbrake) {
                 braking = car.speed > 0.4;
                 if (car.speed > 0) car.speed = Math.max(0, car.speed - 50 * dt);
@@ -1678,7 +1685,7 @@ export function mountKitCityGame(THREE) {
                 if (car.speed > 0.4) { car.speed -= 38 * dt; braking = true; }
                 else car.speed = Math.max(maxR, car.speed - 6 * dt);
             } else if (throttleIn) {
-                if (car.speed < 0) car.speed += 30 * dt;
+                if (car.speed < 0) car.speed += 42 * dt;
                 else car.speed += (24 * Math.pow(1 - car.speed / MAX_V, 0.7) + 2) * dt;
             } else {
                 const drag = (1.4 + car.speed * car.speed * 0.004) * dt;
@@ -2161,23 +2168,15 @@ export function mountKitCityGame(THREE) {
         }
         if (typeof speechSynthesis !== 'undefined') { pickVoice(); try { speechSynthesis.addEventListener('voiceschanged', pickVoice); } catch (e) {} }
         function hawkSpeak(h, idx, text, vol) {
-            if (muted || !ambOn || fmOn || !state.started || vol < 0.08) return;
-            const k = idx % HAWK_CLIPS.length;
-            if (hawkClip[k] === null) {
-                try {
-                    const a = new Audio(HAWK_CLIPS[k]); hawkClip[k] = false; a.preload = 'auto';
-                    a.addEventListener('canplaythrough', () => { hawkClip[k] = a; });
-                    a.addEventListener('error', () => { hawkClip[k] = false; });
-                } catch (e) { hawkClip[k] = false; }
-            }
-            const clip = hawkClip[k];
-            if (clip) { try { clip.volume = clamp(vol, 0, 1); clip.currentTime = 0; const p = clip.play(); if (p && p.catch) p.catch(() => {}); } catch (e) {} return; }
+            if (muted || !ambOn || !state.started || vol < 0.08) return;
             if (typeof speechSynthesis === 'undefined' || typeof SpeechSynthesisUtterance === 'undefined') return;
             try {
                 if (speechSynthesis.speaking || speechSynthesis.pending) return;
+                if (fmOn && fmPlayer && fmPlayer.setVolume) { try { fmPlayer.setVolume(Math.round(radioVol * 100 * 0.22)); } catch (_) {} }
                 const u = new SpeechSynthesisUtterance(text);
                 if (ttsVoice) { u.voice = ttsVoice; u.lang = ttsVoice.lang; } else u.lang = 'en-NG';
-                u.volume = clamp(vol, 0, 1); u.rate = h.rate; u.pitch = h.pitch;
+                u.volume = clamp(Math.max(0.45, vol), 0, 1); u.rate = h.rate; u.pitch = h.pitch;
+                u.onend = () => { if (fmOn && fmPlayer && fmPlayer.setVolume) { try { fmPlayer.setVolume(Math.round(radioVol * 100 * (state.dialogue ? 0.18 : 1))); } catch (_) {} } };
                 speechSynthesis.speak(u);
             } catch (e) {}
         }
