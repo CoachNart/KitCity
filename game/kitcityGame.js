@@ -1275,6 +1275,7 @@ export function mountKitCityGame(THREE) {
             t.laneIndex = Math.floor(i / 2) % t.lanes.length;
             t.vz = (same ? -rand(7, 13) : rand(12, 19)) * (SPEEDK[kind] || 1) * pick(SPEED_JITTER);
             t.boost = 0;
+            t.slow = 1;
             t.x = 0;
             t.z = 0;
             t.g.visible = true;
@@ -1948,7 +1949,7 @@ export function mountKitCityGame(THREE) {
             initAudio(); initStreet();
             $('start').style.display = 'none';
             state.started = true;
-            primeTrafficCorridor();
+            seedTrafficCorridor();
             toast('Follow the arrow to your first passenger');
         });
         $('btn-again').addEventListener('click', () => restartGame(NGS.id));
