@@ -1115,16 +1115,7 @@ export function mountKitCityGame(THREE) {
 
         // Dedicated render layer for all road traffic. Keeping traffic in its own world group
         // prevents later environment objects from obscuring/replacing the vehicle layer.
-        const trafficWorld = new THREE.Group();
-        trafficWorld.name = 'KitCityTraffic';
-        trafficWorld.visible = true;
-        trafficWorld.frustumCulled = false;
-        trafficWorld.renderOrder = 20;
-        // Lift the whole traffic layer above the road/decal planes. The road sits at y=0.02
-        // and several vehicles have low geometry; this prevents the road surface from visually
-        // swallowing the lower half of the new traffic models on mobile GPUs.
-        trafficWorld.position.y = 0.16;
-        scene.add(trafficWorld);
+        const trafficWorld = scene; // Traffic is attached directly to the live scene; no nested render layer.
 
         const traffic = [];
         const LANES_SAME = [4.5, 11.5], LANES_OPP = [-4.5, -11.5];
@@ -1146,21 +1137,22 @@ export function mountKitCityGame(THREE) {
             if (!same) t.g.rotation.y = Math.PI;
             t.g.visible = true;
             t.g.frustumCulled = false;
-            t.g.renderOrder = 20;
+            t.g.renderOrder = 100;
             // Make every traffic mesh independently renderable.
             t.g.traverse(m => {
                 if (m.isMesh) {
                     m.visible = true;
                     m.frustumCulled = false;
-                    m.renderOrder = 20;
+                    m.renderOrder = 100;
                     m.castShadow = true;
                     m.receiveShadow = true;
+                    if (m.material) { m.material.depthTest = false; m.material.depthWrite = false; }
                 }
             });
             // Slightly larger traffic makes the requested road variety readable on phones.
             const visualScale = kind === 'bicycle' || kind === 'okada' ? 1.65 : 1.28;
             t.g.scale.setScalar(visualScale);
-            trafficWorld.add(t.g);
+            scene.add(t.g);
             traffic.push(t);
         }
 
@@ -1169,16 +1161,16 @@ export function mountKitCityGame(THREE) {
                 const lane = pick(t.lanes), z = rand(zMin, zMax);
                 if (safe && Math.abs(lane - car.x) < 4 && Math.abs(z - car.z) < 30) continue;
                 if (traffic.some(o => o !== t && o.x === lane && Math.abs(o.z - z) < 55)) continue;
-                t.x = lane; t.z = z; t.prevDz = undefined; t.g.position.set(lane, 0, z); return;
+                t.x = lane; t.z = z; t.prevDz = undefined; t.g.position.set(lane, 0.42, z); return;
             }
-            t.x = pick(t.lanes); t.z = rand(zMin, zMax); t.g.position.set(t.x, 0, t.z);
+            t.x = pick(t.lanes); t.z = rand(zMin, zMax); t.g.position.set(t.x, 0.42, t.z);
         }
         // Seed traffic directly into the player's visible forward corridor.
         // Every requested road type gets an explicit near-field slot; no type relies on random presets.
         const TRAFFIC_SLOTS = [
-            [4.5, -12], [-4.5, -22], [11.5, -34], [-11.5, -48],
-            [4.5, -62], [-4.5, -78], [11.5, -96], [-11.5, -116],
-            [4.5, -140], [-4.5, -168], [11.5, -198], [-11.5, -232]
+            [4.5, 18], [-4.5, 6], [11.5, -12], [-11.5, -26],
+            [4.5, -42], [-4.5, -58], [11.5, -76], [-11.5, -94],
+            [4.5, -116], [-4.5, -138], [11.5, -162], [-11.5, -188]
         ];
         traffic.forEach((t, i) => {
             const slot = TRAFFIC_SLOTS[i % TRAFFIC_SLOTS.length];
