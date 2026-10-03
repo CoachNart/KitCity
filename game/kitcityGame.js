@@ -1156,137 +1156,271 @@ export function mountKitCityGame(THREE) {
             return { g, halfW, halfL };
         }
 
-        // Dedicated render layer for all road traffic. Keeping traffic in its own world group
-        // prevents later environment objects from obscuring/replacing the vehicle layer.
-        const trafficWorld = scene; // Traffic is attached directly to the live scene; no nested render layer.
-
+        // ============================================================
+        // ROAD TRAFFIC SYSTEM
+        // ============================================================
+        // Audit result: every playable state currently uses the same straight
+        // world-road axis (the road is a PlaneGeometry rotated onto XZ).
+        // State-specific road profiles change width/lane centers; scenery and
+        // landmarks change around that road. Traffic therefore follows this
+        // single road axis while taking lane positions from ROAD_PROFILE.
         const traffic = [];
+        const TRAFFIC_Y = 0.46;
+        const ROAD_DIRECTION = new THREE.Vector3(0, 0, -1);
+        const ROAD_UP = new THREE.Vector3(0, 1, 0);
+        const TRAFFIC_STREAM = {
+            ahead: 520,
+            behind: 260,
+            spawnAheadMin: 34,
+            spawnAheadMax: 500,
+            spawnBehindMin: 48,
+            spawnBehindMax: 235
+        };
         const LANES_SAME = (ROAD_PROFILE.lanes || [4.5, 11.5]).slice();
         const LANES_OPP = (ROAD_PROFILE.opp || [-4.5, -11.5]).slice();
-        const SPEEDK = { truck: 0.8, tanker: 0.78, brt: 0.82, bus: 0.9, bicycle: 0.55, okada: 1.15, keke: 0.85, danfo: 1, sedan: 1, cab: 1 };
-        const mixList = []; Object.keys(V.veh || { danfo: 1, sedan: 1 }).forEach(k => { for (let i = 0; i < V.veh[k]; i++) mixList.push(k); });
-        ['bicycle', 'brt', 'keke', 'truck', 'danfo', 'bus', 'okada', 'sedan'].forEach(k => { if (!mixList.includes(k)) mixList.push(k); });
-        const NT = Math.max(30, Math.min(36, V.tn ? V.tn + 20 : 32));
-        // These are deliberately close to the starting camera and deliberately mixed.
-        // They are not dependent on the state's random vehicle profile.
-        const ROAD_SHOWCASE = ['danfo', 'keke', 'bicycle', 'truck', 'brt', 'bus', 'okada', 'sedan', 'danfo', 'keke', 'truck', 'brt'];
+        const SPEEDK = {
+            truck: 0.8, tanker: 0.78, brt: 0.82, bus: 0.9,
+            bicycle: 0.55, okada: 1.15, keke: 0.85,
+            danfo: 1, sedan: 1, cab: 1
+        };
+        const mixList = [];
+        Object.keys(V.veh || { danfo: 1, sedan: 1 }).forEach(k => {
+            for (let i = 0; i < V.veh[k]; i++) mixList.push(k);
+        });
+        ['bicycle', 'brt', 'keke', 'truck', 'tanker', 'danfo', 'bus', 'okada', 'sedan'].forEach(k => {
+            if (!mixList.includes(k)) mixList.push(k);
+        });
+        const ROAD_SHOWCASE = [
+            'danfo', 'keke', 'okada', 'bicycle', 'sedan', 'truck',
+            'tanker', 'bus', 'brt'
+        ];
+        const NT = Math.max(24, Math.min(34, V.tn ? V.tn + 16 : 28));
+
+        function roadPointFromPlayer(distance, lane) {
+            // Positive distance is physically ahead along the actual road axis.
+            const p = new THREE.Vector3(car.x, 0, car.z).addScaledVector(ROAD_DIRECTION, distance);
+            p.x = lane;
+            return p;
+        }
+
+        function roadDistanceFromPlayer(t) {
+            const p = new THREE.Vector3(t.x, 0, t.z);
+            return p.sub(new THREE.Vector3(car.x, 0, car.z)).dot(ROAD_DIRECTION);
+        }
+
+        function setTrafficTransform(t) {
+            t.g.position.set(t.x, TRAFFIC_Y, t.z);
+            t.g.rotation.y = t.same ? 0 : Math.PI;
+        }
+
+        function trafficSpawnDistance(t, min, max) {
+            return rand(min, max);
+        }
+
+        function spawnTrafficAt(t, distance, lane) {
+            const p = roadPointFromPlayer(distance, lane);
+            t.x = p.x;
+            t.z = p.z;
+            t.prevRoadDistance = undefined;
+            setTrafficTransform(t);
+            t.g.updateMatrixWorld(true);
+        }
+
+        function makeTraffic(kind, cols) {
+            const g = new THREE.Group();
+            let halfW = 1, halfL = 2.1;
+            const c0 = cols && cols[0] != null ? cols[0] : null;
+            const c1 = cols && cols[1] != null ? cols[1] : 0x111111;
+            const part = (geo, c, x, y, z) => {
+                const m = new THREE.Mesh(geo, mtl(c));
+                m.position.set(x, y, z);
+                g.add(m);
+                return m;
+            };
+            const lamps = (zf, zr, y, dx) => [-dx, dx].forEach(x => {
+                const h = new THREE.Mesh(lightG, headM);
+                h.position.set(x, y, -zf);
+                g.add(h);
+                const t = new THREE.Mesh(lightG, tailM);
+                t.position.set(x, y, zr);
+                g.add(t);
+            });
+            if (kind === 'danfo') {
+                part(bxg(2.4, 2.1, 5.4), c0 == null ? 0xf5b014 : c0, 0, 1.5, 0);
+                part(bxg(2.44, 0.3, 5.44), c1, 0, 1.0, 0);
+                part(bxg(2.46, 0.6, 3.6), DARK, 0, 1.95, 0.3);
+                halfW = 1.2; halfL = 2.7;
+                lamps(2.72, 2.72, 1.0, 0.8);
+            } else if (kind === 'bus') {
+                part(bxg(2.6, 2.6, 9), c0 == null ? 0x2f6dd0 : c0, 0, 1.7, 0);
+                part(bxg(2.64, 0.9, 7.6), DARK, 0, 2.2, 0);
+                part(bxg(2.62, 0.25, 9.02), 0xffffff, 0, 1.2, 0);
+                halfW = 1.3; halfL = 4.5;
+                lamps(4.52, 4.52, 1.0, 0.9);
+            } else if (kind === 'keke') {
+                part(bxg(1.4, 1.1, 2.2), c0 == null ? 0xe0a020 : c0, 0, 0.9, 0.1);
+                part(bxg(1.5, 0.12, 1.9), 0x111111, 0, 1.85, 0.2);
+                [[-0.7, -0.4], [0.7, -0.4], [-0.7, 0.9], [0.7, 0.9]].forEach(a =>
+                    part(bxg(0.06, 0.8, 0.06), 0x222222, a[0], 1.4, a[1])
+                );
+                part(bxg(0.3, 0.55, 0.55), 0x111111, 0, 0.28, -1.0);
+                halfW = 0.75; halfL = 1.3;
+                const h = new THREE.Mesh(lightG, headM);
+                h.position.set(0, 0.9, -1.0);
+                g.add(h);
+            } else if (kind === 'brt') {
+                part(bxg(2.65, 2.8, 10.8), c0 == null ? 0xc9343a : c0, 0, 1.78, 0);
+                part(bxg(2.68, 0.95, 9.1), DARK, 0, 2.35, 0.15);
+                part(bxg(2.7, 0.16, 10.85), 0xf4f5f7, 0, 1.25, 0);
+                part(bxg(2.72, 0.12, 10.4), 0x00a8b5, 0, 1.43, 0);
+                halfW = 1.35; halfL = 5.4;
+                lamps(5.42, 5.42, 1.0, 0.9);
+            } else if (kind === 'bicycle') {
+                const tire = new THREE.MeshStandardMaterial({ color: 0x17191c, roughness: 0.92 });
+                const metal = new THREE.MeshStandardMaterial({ color: 0xc4d0d5, metalness: 0.72, roughness: 0.32 });
+                const wheel = z => {
+                    const w = new THREE.Mesh(new THREE.TorusGeometry(0.42, 0.055, 8, 20), tire);
+                    w.rotation.x = Math.PI / 2;
+                    w.position.set(0, 0.47, z);
+                    g.add(w);
+                };
+                wheel(-0.82); wheel(0.82);
+                part(bxg(0.25, 0.55, 0.28), c0 == null ? 0x2767a8 : c0, 0, 1.32, 0.02);
+                part(new THREE.SphereGeometry(0.17, 10, 8), 0x4a3020, 0, 1.72, 0.03);
+                halfW = 0.62; halfL = 1.0;
+            } else if (kind === 'okada') {
+                part(bxg(0.35, 0.5, 1.7), c0 == null ? pick([0xc0392b, 0x2c3e50, 0x16a085, 0xe67e22]) : c0, 0, 0.6, 0);
+                part(bxg(0.45, 0.8, 0.35), pick([0xe74c3c, 0x3498db, 0xf1c40f, 0xecf0f1, 0x2ecc71]), 0, 1.25, 0.1);
+                part(bxg(0.3, 0.3, 0.3), 0x4a3020, 0, 1.8, 0.1);
+                halfW = 0.45; halfL = 1.0;
+            } else if (kind === 'truck') {
+                part(bxg(2.4, 2.0, 2.0), c0 == null ? pick([0x2c6fbb, 0xc0392b, 0x2e8b57, 0xe67e22]) : c0, 0, 1.3, -2.7);
+                part(bxg(2.5, 0.4, 6.2), 0x333333, 0, 0.8, 1.0);
+                part(bxg(2.2, 1.6, 4.6), pick([0x8a6a3a, 0x9a7a4a, 0xb89a60, 0x7a8a6a]), 0, 1.8, 1.2);
+                halfW = 1.3; halfL = 3.9;
+                const h = new THREE.Mesh(lightG, headM);
+                h.position.set(-0.8, 0.9, -3.72); g.add(h);
+                const h2 = h.clone(); h2.position.x = 0.8; g.add(h2);
+                const t = new THREE.Mesh(lightG, tailM);
+                t.position.set(-0.8, 0.9, 4.12); g.add(t);
+                const t2 = t.clone(); t2.position.x = 0.8; g.add(t2);
+            } else if (kind === 'tanker') {
+                part(bxg(2.4, 2.0, 2.0), pick([0x2c6fbb, 0xc0392b, 0x2e8b57]), 0, 1.3, -2.7);
+                part(bxg(2.5, 0.4, 6.2), 0x333333, 0, 0.8, 1.0);
+                const tk = new THREE.Mesh(tankG, mtl(c0 == null ? 0xdddddd : c0));
+                tk.position.set(0, 1.95, 1.1); g.add(tk);
+                halfW = 1.3; halfL = 3.9;
+                const h = new THREE.Mesh(lightG, headM);
+                h.position.set(0, 0.9, -3.72); g.add(h);
+                const t = new THREE.Mesh(lightG, tailM);
+                t.position.set(0, 0.9, 4.12); g.add(t);
+            } else {
+                const isCab = kind === 'cab';
+                const body = isCab
+                    ? (c0 == null ? 0x2e8b57 : c0)
+                    : (cols && cols.length && !isCab
+                        ? pick(cols)
+                        : pick([0xffffff, 0xc0392b, 0x2c3e50, 0x7f8c8d, 0x27ae60, 0x2980b9]));
+                part(bxg(2.0, 0.9, 4.2), body, 0, 0.75, 0);
+                part(bxg(1.7, 0.75, 2.2), DARK, 0, 1.5, 0.2);
+                if (isCab) {
+                    part(bxg(1.72, 0.12, 2.22), c1 === 0x111111 ? 0xffffff : c1, 0, 1.93, 0.2);
+                    part(bxg(0.6, 0.25, 0.3), 0xffe08a, 0, 2.1, 0.2);
+                }
+                halfW = 1.0; halfL = 2.1;
+                lamps(2.12, 2.12, 0.85, 0.65);
+            }
+
+            // Shared wheels make every road vehicle read as a grounded vehicle,
+            // without changing the existing world scale or road geometry.
+            if (!['bicycle', 'okada', 'keke'].includes(kind)) {
+                const wheelMat = mtl(0x151515);
+                const wheelG = new THREE.CylinderGeometry(0.38, 0.38, 0.16, 12).rotateZ(Math.PI / 2);
+                const wheelZ = Math.max(1.1, Math.min(2.9, halfL - 0.8));
+                [-halfW * 0.78, halfW * 0.78].forEach(x => {
+                    [-wheelZ, wheelZ].forEach(z => {
+                        const w = new THREE.Mesh(wheelG, wheelMat);
+                        w.position.set(x, 0.43, z);
+                        g.add(w);
+                    });
+                });
+            }
+            return { g, halfW, halfL };
+        }
+
+        const SPEED_JITTER = [0.88, 0.96, 1.0, 1.05, 1.12];
         for (let i = 0; i < NT; i++) {
-            const same = i < Math.round(NT * 0.45);
+            const same = i % 2 === 0;
             const kind = i < ROAD_SHOWCASE.length ? ROAD_SHOWCASE[i] : pick(mixList);
             const t = makeTraffic(kind, V.vc && V.vc[kind]);
-            t.same = same; t.kind = kind;
+            t.same = same;
+            t.kind = kind;
             t.lanes = same ? LANES_SAME : LANES_OPP;
-            t.vz = (same ? -rand(7, 13) : rand(12, 19)) * (SPEEDK[kind] || 1);
-            t.boost = 0; t.x = 999; t.z = 999;
-            if (!same) t.g.rotation.y = Math.PI;
+            t.laneIndex = Math.floor(i / 2) % t.lanes.length;
+            t.vz = (same ? -rand(7, 13) : rand(12, 19)) * (SPEEDK[kind] || 1) * pick(SPEED_JITTER);
+            t.boost = 0;
+            t.x = 0;
+            t.z = 0;
             t.g.visible = true;
-            t.g.frustumCulled = false;
-            t.g.renderOrder = 100;
-            // Make every traffic mesh independently renderable.
-            t.g.traverse(m => {
-                if (m.isMesh) {
-                    m.visible = true;
-                    m.frustumCulled = false;
-                    m.renderOrder = 100;
-                    m.castShadow = true;
-                    m.receiveShadow = true;
-                    if (m.material) { m.material.depthTest = false; m.material.depthWrite = false; m.material.fog = false; m.material.transparent = false; m.material.opacity = 1; }
-                }
-            });
-            // Slightly larger traffic makes the requested road variety readable on phones.
-            const visualScale = kind === 'bicycle' || kind === 'okada' ? 1.65 : 1.28;
-            t.g.scale.setScalar(visualScale);
             scene.add(t.g);
             traffic.push(t);
         }
 
-        function placeTraffic(t, zMin, zMax, safe) {
-            for (let k = 0; k < 18; k++) {
-                const lane = pick(t.lanes), z = rand(zMin, zMax);
-                if (safe && Math.abs(lane - car.x) < 4 && Math.abs(z - car.z) < 30) continue;
-                if (traffic.some(o => o !== t && o.x === lane && Math.abs(o.z - z) < 55)) continue;
-                t.x = lane; t.z = z; t.prevDz = undefined; t.g.position.set(lane, 0.42, z); return;
-            }
-            t.x = pick(t.lanes); t.z = rand(zMin, zMax); t.g.position.set(t.x, 0.42, t.z);
-        }
-        // Seed traffic directly into the player's visible forward corridor.
-        // Lane positions come from the active state's ROAD_PROFILE so traffic always
-        // sits on the road that is actually rendered for that city.
-        const trafficLanePool = [...LANES_SAME, ...LANES_OPP];
-        const TRAFFIC_SLOTS = Array.from({ length: 16 }, (_, i) => {
-            const lane = trafficLanePool[i % trafficLanePool.length];
-            const row = Math.floor(i / trafficLanePool.length);
-            return [lane, 18 + row * 46 + (i % 2) * 12];
-        });
-        traffic.forEach((t, i) => {
-            const slot = TRAFFIC_SLOTS[i % TRAFFIC_SLOTS.length];
-            const lane = slot[0], z = slot[1];
-            t.x = lane; t.z = z; t.prevDz = undefined;
-            t.g.visible = true;
-            t.g.frustumCulled = false;
-            t.g.position.set(lane, 0.42, z);
-            t.g.traverse(m => {
-                if (m.isMesh) {
-                    m.frustumCulled = false;
-                    m.castShadow = true;
-                    m.receiveShadow = true;
-                }
-            });
-        });
-
-        function primeTrafficCorridor() {
-            // Seed a real mixed road stream into the player's forward view.
-            // The road itself remains untouched: traffic uses the active city's
-            // lane profile and each vehicle stays on its correct direction.
-            const sameSlots = [24, 58, 96, 142, 196, 258, 328, 406];
-            const oppSlots = [38, 78, 122, 172, 226, 292, 366, 448];
-            const sameLanes = LANES_SAME.slice();
-            const oppLanes = LANES_OPP.slice();
+        function seedTrafficCorridor() {
+            const sameDistances = [38, 78, 126, 184, 252, 336, 428];
+            const oppDistances = [58, 102, 154, 214, 286, 368, 452];
             let sameN = 0, oppN = 0;
-            traffic.forEach((t, i) => {
-                const same = t.same;
-                const lanes = same ? sameLanes : oppLanes;
-                const distances = same ? sameSlots : oppSlots;
-                const n = same ? sameN++ : oppN++;
+            traffic.forEach(t => {
+                const lanes = t.same ? LANES_SAME : LANES_OPP;
+                const distances = t.same ? sameDistances : oppDistances;
+                const n = t.same ? sameN++ : oppN++;
                 const lane = lanes[n % lanes.length];
-                const distance = distances[n % distances.length];
-                t.x = lane;
-                t.z = car.z - distance;
-                t.prevDz = undefined;
-                t.g.rotation.y = same ? 0 : Math.PI;
-                t.g.visible = true;
-                t.g.frustumCulled = false;
-                t.g.position.set(t.x, 0.72, t.z);
-                t.g.updateMatrixWorld(true);
+                spawnTrafficAt(t, distances[n % distances.length], lane);
             });
+        }
+
+        function recycleTraffic(t, roadDistance) {
+            const lanes = t.same ? LANES_SAME : LANES_OPP;
+            if (roadDistance > TRAFFIC_STREAM.ahead) {
+                spawnTrafficAt(
+                    t,
+                    -rand(TRAFFIC_STREAM.spawnBehindMin, TRAFFIC_STREAM.spawnBehindMax),
+                    pick(lanes)
+                );
+            } else if (roadDistance < -TRAFFIC_STREAM.behind) {
+                spawnTrafficAt(
+                    t,
+                    rand(TRAFFIC_STREAM.spawnAheadMin, TRAFFIC_STREAM.spawnAheadMax),
+                    pick(lanes)
+                );
+            }
         }
 
         function updateTraffic(dt) {
-            // Traffic is a gameplay system, not background animation. Keep it frozen
-            // while the start/lesson overlays are up so the initial traffic corridor
-            // cannot drain away before the player starts driving.
             if (!state.started && !state.ended) return;
             traffic.forEach(t => {
                 if (t.boost > 0) t.boost = Math.max(0, t.boost - dt * 2);
                 const base = t.same ? t.vz - t.boost : t.vz;
                 let blocked = false;
-                for (let k = 0; k < crossers.length && !blocked; k++) { const c = crossers[k]; if (c.active && crosserBlocks(c, t)) blocked = true; }
+                for (let k = 0; k < crossers.length && !blocked; k++) {
+                    const c = crossers[k];
+                    if (c.active && crosserBlocks(c, t)) blocked = true;
+                }
                 t.slow += ((blocked ? 0 : 1) - t.slow) * Math.min(1, dt * (blocked ? 4 : 1.2));
-                if (blocked && t.slow < 0.4 && jamHornT <= 0 && state.started && Math.random() < dt * 0.5) { jamHornT = rand(4, 8); sfxFarHorn(); }
+                if (blocked && t.slow < 0.4 && jamHornT <= 0 && state.started && Math.random() < dt * 0.5) {
+                    jamHornT = rand(4, 8);
+                    sfxFarHorn();
+                }
                 const sv = base * t.slow;
                 t.z += sv * dt;
-                const dz = t.z - car.z;
-                if (t.prevDz !== undefined && t.prevDz < 0 && dz >= 0 && Math.abs(t.x - car.x) < 16 && state.started) {
+                const roadDistance = roadDistanceFromPlayer(t);
+                if (t.prevRoadDistance !== undefined && t.prevRoadDistance > 0 && roadDistance <= 0 && Math.abs(t.x - car.x) < 16 && state.started) {
                     const rel = Math.abs(sv + Math.cos(car.h) * car.speed);
                     sfxWhoosh(clamp((t.x - car.x) / 10, -1, 1), clamp(rel / 45, 0.15, 1));
                 }
-                t.prevDz = dz;
-                if (dz > 140) placeTraffic(t, car.z - 620, car.z - 400, false);
-                else if (dz < -320) placeTraffic(t, car.z + 80, car.z + 190, false);
-                t.g.position.set(t.x, 0.72, t.z);
-                t.g.visible = true;
-                t.g.frustumCulled = false;
-                t.g.updateMatrixWorld(true);
+                t.prevRoadDistance = roadDistance;
+                recycleTraffic(t, roadDistance);
+                setTrafficTransform(t);
             });
         }
 
