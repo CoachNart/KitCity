@@ -1108,9 +1108,10 @@ export function mountKitCityGame(THREE) {
         // Guarantee visible variety even when a state's visual profile has a sparse traffic preset.
         ['bicycle', 'brt', 'keke', 'truck', 'danfo', 'bus', 'okada', 'sedan'].forEach(k => { if (!mixList.includes(k)) mixList.push(k); });
         const NT = Math.max(22, Math.min(26, V.tn || 11));
+        const ROAD_SHOWCASE = ['danfo', 'keke', 'bicycle', 'truck', 'brt', 'bus', 'okada', 'sedan'];
         for (let i = 0; i < NT; i++) {
             const same = i < Math.round(NT * 0.45);
-            const kind = pick(mixList);
+            const kind = i < ROAD_SHOWCASE.length ? ROAD_SHOWCASE[i] : pick(mixList);
             const t = makeTraffic(kind, V.vc && V.vc[kind]);
             t.same = same; t.kind = kind;
             t.lanes = same ? LANES_SAME : LANES_OPP;
