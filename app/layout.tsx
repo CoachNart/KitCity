@@ -1,6 +1,8 @@
 import './globals.css';
 import type { Metadata, Viewport } from 'next';
 
+const logo = 'https://i.postimg.cc/YSWjkDmR/file-0000000092c88210b809f0dd8cdeaac1.png';
+
 export const metadata: Metadata = {
   title: 'KitCity — Learn Web3 on the Streets',
   description: 'A realistic Nigerian city game that teaches Web3 through missions.',
@@ -8,10 +10,9 @@ export const metadata: Metadata = {
   manifest: '/manifest.webmanifest',
   icons: {
     icon: [
-      { url: '/icon-192.svg', type: 'image/svg+xml' },
-      { url: '/icon-512.svg', type: 'image/svg+xml' },
+      { url: logo, type: 'image/png' },
     ],
-    apple: '/icon-192.svg',
+    apple: logo,
   },
   appleWebApp: {
     capable: true,
