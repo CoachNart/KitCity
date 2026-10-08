@@ -3,6 +3,12 @@ import * as THREE from 'three';
 export default function initKitCity(){
 'use strict';
 const $=s=>document.querySelector(s);
+const bootLoading=$('#bootLoading');
+const bootStatus=$('#bootStatus');
+const bootProgress=$('#bootProgress');
+const bootDone=()=>{ if(bootLoading){ bootLoading.classList.add('done'); setTimeout(()=>bootLoading.remove(),550); } };
+const bootStep=(pct,msg)=>{ if(bootProgress) bootProgress.style.width=pct+'%'; if(bootStatus&&msg) bootStatus.textContent=msg; };
+bootStep(18,'Loading 3D engine…');
 if(typeof THREE==='undefined'){ $('#err').classList.remove('hidden'); return; }
 
 /* =====================  helpers  ===================== */
@@ -2423,8 +2429,12 @@ function tick(){
   if(GR) GR.render(); else renderer.render(scene,camera);
 }
 initGrade();
+bootStep(42,'Building Lagos…');
 setShadows();
 buildCity('lagos');
+bootStep(78,'Setting up your city…');
 applyLang();
+bootStep(94,'Almost ready…');
 tick();
+requestAnimationFrame(()=>bootDone());
 }
