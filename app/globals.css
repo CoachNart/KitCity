@@ -156,3 +156,17 @@ html,body{height:100%;overflow:hidden;background:var(--ink);color:var(--ink);fon
 }
 
 .brand-lockup{display:flex;justify-content:center;align-items:center;margin-bottom:2px;filter:drop-shadow(0 5px 12px rgba(0,0,0,.35))}.brand-logo{display:block;width:min(230px,58vw);height:auto;max-height:150px;object-fit:contain;border-radius:18px}.wm{display:flex;align-items:center;gap:8px}.wm:before{content:'';display:block;width:30px;height:30px;border-radius:7px;background:url('https://i.postimg.cc/YSWjkDmR/file-0000000092c88210b809f0dd8cdeaac1.png') center/cover no-repeat;flex:none}@media(min-width:760px){.brand-logo{width:260px;max-height:170px}}
+
+/* Boot loading screen */
+#bootLoading{position:fixed;inset:0;z-index:120;background:var(--ink);color:#fff;display:grid;place-items:center;padding:28px;transition:opacity .45s ease,visibility .45s ease}
+#bootLoading.done{opacity:0;visibility:hidden;pointer-events:none}
+.boot-inner{width:min(360px,88vw);display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px}
+.boot-logo{display:block;width:min(210px,62vw);max-height:150px;object-fit:contain;border-radius:18px;filter:drop-shadow(0 8px 20px rgba(0,0,0,.4));animation:bootLogo 1.8s ease-in-out infinite}
+.boot-title{font:900 30px/1 var(--display);letter-spacing:-.02em;color:var(--brand)}
+#bootStatus{margin-top:5px;font:800 14px/1.3 system-ui;opacity:.9}
+.boot-track{width:100%;height:7px;margin-top:9px;background:rgba(255,255,255,.15);border-radius:99px;overflow:hidden;border:1px solid rgba(255,255,255,.18)}
+#bootProgress{display:block;width:12%;height:100%;background:var(--brand);border-radius:inherit;animation:bootProgress 2.2s ease-in-out infinite}
+.boot-inner small{font-size:11px;opacity:.55}
+@keyframes bootLogo{0%,100%{transform:scale(.98);opacity:.88}50%{transform:scale(1.02);opacity:1}}
+@keyframes bootProgress{0%{width:8%}55%{width:72%}100%{width:92%}}
+@media (prefers-reduced-motion:reduce){#bootProgress{animation:none;width:55%}.boot-logo{animation:none}}
