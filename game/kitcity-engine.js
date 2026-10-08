@@ -20,7 +20,7 @@ const hex=n=>Array.from(rbytes(n),b=>b.toString(16).padStart(2,'0')).join('');
 const short=a=>a.slice(0,6)+'\u2026'+a.slice(-4);
 const lam=(c,o)=>new THREE.MeshLambertMaterial(Object.assign({color:c},o||{}));
 const fmtN=n=>'\u20A6'+Math.round(n).toLocaleString('en-US');
-const BRAND='#10C8DC',YELLOW='#F6B21A',INK='#1B1C20',GREEN='#0B7A43',EMBER='#E4572E';
+const BRAND='#00E5FF',YELLOW='#F6B21A',INK='#1B1C20',GREEN='#0B7A43',EMBER='#E4572E';
 function mulberry(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return((t^t>>>14)>>>0)/4294967296; }; }
 
 /* =====================  saved progress  ===================== */
@@ -42,17 +42,17 @@ function save(){ Store.set(KEY,{wallet:P.wallet,usdc:P.usdc,ngn:P.ngn,xp:P.xp,do
 
 /* =====================  YouTube soundtrack  ===================== */
 const MUSIC_QUEUES={
-  lagos:{label:'Lagos · Afrobeats',videos:['ulmVmlNoSL8','qbefFtgUVTY']},
-  abuja:{label:'Abuja · Naija Afrobeats',videos:['ulmVmlNoSL8','qbefFtgUVTY']},
-  ph:{label:'Port Harcourt · Afrobeats',videos:['ulmVmlNoSL8','qbefFtgUVTY']},
-  benin:{label:'Benin City · Edo/Naija',videos:['ulmVmlNoSL8','qbefFtgUVTY']},
-  calabar:{label:'Calabar · Afrobeats',videos:['ulmVmlNoSL8','qbefFtgUVTY']},
-  jos:{label:'Jos · Plateau/Naija',videos:['ulmVmlNoSL8','qbefFtgUVTY']},
-  ibadan:{label:'Ibadan · Yoruba',videos:['zzhKmRovdMY','SBxQsKkPvik']},
-  enugu:{label:'Enugu · Igbo',videos:['W41TT8g3MnQ','VfLiqasATb0']},
-  kano:{label:'Kano · Hausa',videos:['UuumEqJKQ9I','ULjXLxJa74w']},
-  kaduna:{label:'Kaduna · Hausa',videos:['UuumEqJKQ9I','ULjXLxJa74w']},
-  maiduguri:{label:'Maiduguri · Hausa',videos:['UuumEqJKQ9I','ULjXLxJa74w']}
+  lagos:{label:'Lagos · Afrobeats',videos:['kc4PfiRWpog','ulmVmlNoSL8']},
+  abuja:{label:'Abuja · Naija Afrobeats',videos:['LZ6B1xACdxM','qbefFtgUVTY']},
+  ph:{label:'Port Harcourt · Afro-fusion',videos:['l-_FcHIS4Yo','k6eE3c70hgg']},
+  benin:{label:'Benin City · Edo / Naija',videos:['qbefFtgUVTY','kc4PfiRWpog']},
+  calabar:{label:'Calabar · Afrobeats',videos:['ulmVmlNoSL8','LZ6B1xACdxM']},
+  jos:{label:'Jos · Plateau / Naija',videos:['DqUd72pK15Y','l-_FcHIS4Yo']},
+  ibadan:{label:'Ibadan · Yoruba / Fuji',videos:['bcs_jFdPQn4','zzhKmRovdMY']},
+  enugu:{label:'Enugu · Igbo',videos:['Uyr1c0pkpas','W41TT8g3MnQ']},
+  kano:{label:'Kano · Hausa',videos:['qseIbxXwlmg','UuumEqJKQ9I']},
+  kaduna:{label:'Kaduna · Hausa',videos:['i1uEVNMSalo','ULjXLxJa74w']},
+  maiduguri:{label:'Maiduguri · Hausa',videos:['ddXZE34DFbQ','UuumEqJKQ9I']}
 };
 const CITY_MUSIC={
   lagos:'lagos', abuja:'abuja', ph:'ph', benin:'benin', calabar:'calabar',
