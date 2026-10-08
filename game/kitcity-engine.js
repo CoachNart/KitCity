@@ -37,20 +37,20 @@ function save(){ Store.set(KEY,{wallet:P.wallet,usdc:P.usdc,ngn:P.ngn,xp:P.xp,do
 /* =====================  YouTube soundtrack  ===================== */
 const MUSIC_QUEUES={
   afrobeat:{
-    label:'Naija Afrobeats',
-    videos:['kc4PfiRWpog','LZ6B1xACdxM','l-_FcHIS4Yo']
+    label:'Naija Afrobeats · Trending 2026',
+    videos:['x1A-ylUFO1I','2QRPMtnUSJM']
   },
   hausa:{
-    label:'Hausa',
-    videos:['qseIbxXwlmg','i1uEVNMSalo']
+    label:'Hausa · Trending 2026',
+    videos:['lBURoYDF3-A']
   },
   igbo:{
-    label:'Igbo',
-    videos:['tmqoPjXCrtk','jw9NGzr4QmU']
+    label:'Igbo · Trending 2026',
+    videos:['qXJWyahkmCc','QZpjUnq5xGw']
   },
   yoruba:{
-    label:'Yoruba / Fuji',
-    videos:['bcs_jFdPQn4','cLkk7Qn3QS0']
+    label:'Yoruba / Street · Trending 2026',
+    videos:['qFP7Q9YEoQU']
   }
 };
 const CITY_MUSIC={
