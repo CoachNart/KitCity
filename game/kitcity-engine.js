@@ -42,28 +42,21 @@ function save(){ Store.set(KEY,{wallet:P.wallet,usdc:P.usdc,ngn:P.ngn,xp:P.xp,do
 
 /* =====================  YouTube soundtrack  ===================== */
 const MUSIC_QUEUES={
-  afrobeat:{
-    label:'Naija Afrobeats · DJ BOAT 2026',
-    videos:['ulmVmlNoSL8','qbefFtgUVTY']
-  },
-  hausa:{
-    label:'Hausa · Ado Gwanja / Nazifi Asnanic',
-    videos:['UuumEqJKQ9I','ULjXLxJa74w']
-  },
-  igbo:{
-    label:'Igbo · Flavour & Phyno',
-    videos:['W41TT8g3MnQ','VfLiqasATb0']
-  },
-  yoruba:{
-    label:'Yoruba · Seyi Vibez',
-    videos:['zzhKmRovdMY','SBxQsKkPvik']
-  }
+  lagos:{label:'Lagos · Afrobeats',videos:['ulmVmlNoSL8','qbefFtgUVTY']},
+  abuja:{label:'Abuja · Naija Afrobeats',videos:['ulmVmlNoSL8','qbefFtgUVTY']},
+  ph:{label:'Port Harcourt · Afrobeats',videos:['ulmVmlNoSL8','qbefFtgUVTY']},
+  benin:{label:'Benin City · Edo/Naija',videos:['ulmVmlNoSL8','qbefFtgUVTY']},
+  calabar:{label:'Calabar · Afrobeats',videos:['ulmVmlNoSL8','qbefFtgUVTY']},
+  jos:{label:'Jos · Plateau/Naija',videos:['ulmVmlNoSL8','qbefFtgUVTY']},
+  ibadan:{label:'Ibadan · Yoruba',videos:['zzhKmRovdMY','SBxQsKkPvik']},
+  enugu:{label:'Enugu · Igbo',videos:['W41TT8g3MnQ','VfLiqasATb0']},
+  kano:{label:'Kano · Hausa',videos:['UuumEqJKQ9I','ULjXLxJa74w']},
+  kaduna:{label:'Kaduna · Hausa',videos:['UuumEqJKQ9I','ULjXLxJa74w']},
+  maiduguri:{label:'Maiduguri · Hausa',videos:['UuumEqJKQ9I','ULjXLxJa74w']}
 };
 const CITY_MUSIC={
-  lagos:'afrobeat', abuja:'afrobeat', ph:'afrobeat', benin:'afrobeat', calabar:'afrobeat',
-  jos:'afrobeat', ibadan:'yoruba',
-  enugu:'igbo',
-  kano:'hausa', kaduna:'hausa', maiduguri:'hausa'
+  lagos:'lagos', abuja:'abuja', ph:'ph', benin:'benin', calabar:'calabar',
+  jos:'jos', ibadan:'ibadan', enugu:'enugu', kano:'kano', kaduna:'kaduna', maiduguri:'maiduguri'
 };
 const DEFAULT_PLAYLIST='PLtZ6yiYzu2i3UoRZM3wmw2xpBRM9zYrwP';
 const YT=(function(){
@@ -77,7 +70,7 @@ const YT=(function(){
   function queue(){
     const custom=parseId(P.pl);
     if(custom) return {label:'Custom YouTube playlist',list:custom,videos:null};
-    return MUSIC_QUEUES[currentKey]||MUSIC_QUEUES.afrobeat;
+    return MUSIC_QUEUES[currentKey]||MUSIC_QUEUES.lagos;
   }
   function vol(){ if(ready) try{ player.setVolume(duck?22:55); }catch(e){} }
   function mount(){
