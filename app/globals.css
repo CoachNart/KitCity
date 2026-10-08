@@ -155,7 +155,7 @@ html,body{height:100%;overflow:hidden;background:var(--ink);color:var(--ink);fon
   #sheet{max-width:560px}
 }
 
-.brand-lockup{display:flex;justify-content:center;align-items:center;margin-bottom:2px;filter:drop-shadow(0 5px 12px rgba(0,0,0,.35))}.brand-logo{display:block;width:min(230px,58vw);height:auto;max-height:150px;object-fit:contain;border-radius:18px}.wm{display:flex;align-items:center;gap:8px}.wm:before{content:'';display:block;width:30px;height:30px;border-radius:7px;background:url('https://i.postimg.cc/YSWjkDmR/file-0000000092c88210b809f0dd8cdeaac1.png') center/cover no-repeat;flex:none}@media(min-width:760px){.brand-logo{width:260px;max-height:170px}}
+.brand-lockup{display:flex;justify-content:center;align-items:center;margin-bottom:2px;filter:drop-shadow(0 5px 12px rgba(0,0,0,.35))}.brand-logo{display:block;width:min(230px,58vw);height:auto;max-height:150px;object-fit:contain;border-radius:18px}.wm{display:flex;align-items:center;gap:8px}.wm:before{content:'';display:block;width:30px;height:30px;border-radius:7px;background:url('https://i.postimg.cc/6pLt0sn3/file-000000006e348210b7a8c70bc4ed899d.png') center/cover no-repeat;flex:none}@media(min-width:760px){.brand-logo{width:260px;max-height:170px}}
 
 /* Boot loading screen */
 #bootLoading{position:fixed;inset:0;z-index:120;background:var(--ink);color:#fff;display:grid;place-items:center;padding:28px;transition:opacity .45s ease,visibility .45s ease}
