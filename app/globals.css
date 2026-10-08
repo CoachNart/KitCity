@@ -30,7 +30,7 @@ html,body{height:100%;overflow:hidden;background:var(--ink);color:var(--ink);fon
 #knob{position:absolute;left:50%;top:50%;width:52px;height:52px;margin:-26px 0 0 -26px;border-radius:50%;background:var(--brand);border:3px solid var(--ink);pointer-events:none}
 .round{border:3px solid var(--ink);background:var(--brand);color:var(--ink);font:900 15px var(--display);border-radius:50%;box-shadow:3px 3px 0 var(--ink);touch-action:none;cursor:pointer;z-index:5}
 .round:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
-#runBtn{right:calc(20px + env(safe-area-inset-right));bottom:calc(30px + env(safe-area-inset-bottom));width:76px;height:76px}
+#runBtn{right:calc(20px + env(safe-area-inset-right));bottom:calc(30px + env(safe-area-inset-bottom));width:76px;height:76px;background:#D9A441;color:var(--ink)}
 #talkBtn{right:calc(14px + env(safe-area-inset-right));bottom:calc(122px + env(safe-area-inset-bottom));width:90px;height:90px;background:var(--green);color:#fff}
 
 /* Sheet */
