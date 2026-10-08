@@ -132,3 +132,25 @@ html,body{height:100%;overflow:hidden;background:var(--ink);color:var(--ink);fon
 .typing .dots{display:flex}
 #loc{font-size:12px;font-weight:700;opacity:.85;margin:-3px 0 7px;line-height:1.2}
 @media (prefers-reduced-motion:reduce){.spin{animation-duration:2s}}
+
+/* launch-ready install surface */
+.install-prompt{
+  position:fixed;left:50%;top:calc(14px + env(safe-area-inset-top));transform:translateX(-50%);
+  width:min(92vw,440px);z-index:80;display:flex;align-items:center;gap:10px;
+  padding:12px 12px 12px 14px;background:rgba(27,28,32,.96);color:#fff;
+  border:2px solid var(--brand);border-radius:14px;box-shadow:0 12px 32px rgba(0,0,0,.35);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+}
+.install-prompt>div{min-width:0;flex:1}
+.install-prompt b{display:block;font:900 15px/1.15 var(--display);color:var(--brand)}
+.install-prompt small{display:block;margin-top:3px;font-size:12px;line-height:1.3;opacity:.8}
+.install-prompt button{border:2px solid var(--brand);border-radius:9px;min-height:42px;padding:0 13px;background:var(--brand);color:var(--ink);font:900 13px system-ui;cursor:pointer}
+.install-prompt #installClose{background:transparent;color:#fff;border-color:rgba(255,255,255,.25);font-size:20px;padding:0 10px}
+.install-prompt button:active{transform:translateY(1px)}
+@media (min-width:760px){
+  #title .wrap{max-width:620px}
+  #hubBody{max-width:900px;width:100%;margin:0 auto}
+  #hubTop{padding-left:max(14px,calc((100vw - 900px)/2));padding-right:max(14px,calc((100vw - 900px)/2))}
+  #nav{padding-left:max(14px,calc((100vw - 900px)/2));padding-right:max(14px,calc((100vw - 900px)/2))}
+  #sheet{max-width:560px}
+}
