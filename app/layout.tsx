@@ -1,7 +1,7 @@
 import './globals.css';
 import type { Metadata, Viewport } from 'next';
 
-const logo = 'https://i.postimg.cc/YSWjkDmR/file-0000000092c88210b809f0dd8cdeaac1.png';
+const logo = 'https://i.postimg.cc/6pLt0sn3/file-000000006e348210b7a8c70bc4ed899d.png';
 
 export const metadata: Metadata = {
   title: 'KitCity — Learn Web3 on the Streets',
