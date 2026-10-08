@@ -1531,7 +1531,7 @@ function updateHUD(){
 const NPC=(name,role,color,look,stall,sign)=>({name,role,color,look,stall,sign});
 const MAMA=NPC('Softstorm','KitCity wallet kiosk','#0897A8',LK.mama,{body:'#0897A8',a:'#ffffff',b:BRAND,sub:'KitCity wallet'});
 const SUYA=NPC('Dark','Best suya on the street',EMBER,LK.suya,{body:'#8E2F1B',a:'#ffffff',b:EMBER,grill:true});
-const GUY=NPC('Joseph','Says he is your friend','#6a3fb5',LK.guy,null,'Free USDC giveaway!'); GUY.signBg='#6a3fb5'; GUY.signFg='#ffffff';
+const GUY=NPC('Joseph','Says they are your friend','#6a3fb5',LK.guy,null,'Free USDC giveaway!'); GUY.signBg='#6a3fb5'; GUY.signFg='#ffffff';
 const ALHAJA=NPC('Tessa','Bureau de Change','#2D6FB3',LK.trader,{body:'#2D6FB3',a:'#ffffff',b:'#2D6FB3',sub:'Bureau de Change'});
 const CLERK=NPC('Unique','Swap counter','#1f4f82',LK.clerk,{body:'#1f4f82',a:'#ffffff',b:YELLOW,sub:'Swap counter'});
 const BRIGHT=NPC('Smrt huntr','Shows you a text message','#6a3fb5',LK.guy,null,'Check this text'); BRIGHT.signBg='#6a3fb5'; BRIGHT.signFg='#ffffff';
@@ -1576,7 +1576,7 @@ const STEP_OXNIGHT=askStep({label:'Ask OxNight what is safe to share',spot:'b',n
   opts:[['My wallet address',1],['My recovery phrase',0],['My phone password',0]],
   good:'Right. An address only lets people send to you. Keep your phrase and passwords to yourself, always.',
   bad:'No. Your phrase or password gives full control of your money. All anyone needs to pay you is your address.'});
-const STEP_MOON=askStep({label:'Check the quote with Moon',spot:'g',npc:MOON,
+const STEP_MOON=askStep({label:'Check the quote with John Jonathan',spot:'g',npc:MOON,
   intro:'Rates move all day, and every swap has a fee. Compare the quote with the rate before you confirm anything.',
   q:'The swap screen shows far fewer naira than the rate you were told. What is the smart move?',
   opts:[['Cancel and check the quote and fee',1],['Confirm anyway, it is probably fine',0],['Raise slippage so it goes through',0]],
@@ -1600,13 +1600,13 @@ const STEP_DON=askStep({label:'Hear The Don on test payments',spot:'b',npc:DON,
   opts:[['Send a small test and check it arrives',1],['Send everything, blockchains are fast',0],['Trust the address because it came in a message',0]],
   good:'Right. A small test proves the address works before you risk the full amount.',
   bad:'Too risky. A wrong or fake address cannot be fixed afterwards. Test small first, and compare the whole address.'});
-const STEP_PRAISE=askStep({label:'Learn from Praise what to check before signing',spot:'c',npc:PRAISE,
+const STEP_PRAISE=askStep({label:'Learn from Mcbond what to check before signing',spot:'c',npc:PRAISE,
   intro:'Signing feels harmless because it is quick. But what you sign decides what a site can do.',
   q:'A site asks you to sign. What should you check?',
   opts:[['That it only proves I own the wallet and mentions no transfers or permissions',1],['Nothing, signing is always free and safe',0],['Only how nice the site looks',0]],
   good:'Right. Read it first. Be careful with anything that mentions transfers, approvals or unlimited access.',
   bad:'Some signatures give a site permission over your tokens. If you cannot understand it, do not sign it.'});
-const STEP_BIGSAM=askStep({label:'Talk to BigSam before you vote',spot:'e',npc:BIGSAM,
+const STEP_BIGSAM=askStep({label:'Talk to K before you vote',spot:'e',npc:BIGSAM,
   intro:'A vote only means something if people know what they are voting for.',
   q:'What should you do before voting on a proposal?',
   opts:[['Read the full proposal and see who benefits',1],['Vote the way the loudest person says',0],['Vote fast before time runs out',0]],
@@ -1614,7 +1614,7 @@ const STEP_BIGSAM=askStep({label:'Talk to BigSam before you vote',spot:'e',npc:B
   bad:'Following the crowd or rushing is how bad proposals pass. Take your time and read it properly.'});
 const STEP_LUNAX=askStep({label:'Check the buyer with LunaX',spot:'h',npc:LUNAX,
   intro:'In a peer trade, the buyer should pay from an account in their own name. That is how you know the money is really theirs.',
-  q:'Your buyer says they will pay from his cousin\u2019s account, and the name does not match. What do you do?',
+  q:'Your buyer says they will pay from their cousin\u2019s account, and the name does not match. What do you do?',
   opts:[['Keep the USDC in escrow and ask for payment from their own account, or cancel',1],['Release as soon as the money shows',0],['Accept a screenshot of the transfer',0]],
   good:'Right. Third-party payments are a common cover for stolen money and chargebacks. Stay in escrow until it is clean.',
   bad:'That puts you at risk. Payments from other people can be reversed or flagged later. Keep the USDC in escrow.'});
@@ -1678,18 +1678,18 @@ const MISSIONS=[
       [{t:'Create my wallet',f:createWallet},{t:'Not now',g:1,f:closeSheet}]);
   }},
   STEP_OXNIGHT,
-  {label:'Pay IamAbdul 1 USDC',spot:'j',npc:SUYA,run(){
+  {label:'Pay Dark 1 USDC',spot:'j',npc:SUYA,run(){
     needFunds(1);
     confirmTx(SUYA,{title:'Pay for suya',rows:[['Pay to',short(SUYA_ADDR),1],['Amount','1.00 USDC'],['Network fee',FEE0]],note:'Payments on a blockchain cannot be undone. Always check the address before you pay.',btn:'Pay 1 USDC',
       after:h=>{ P.usdc=Math.max(0,P.usdc-1); save(); updateHUD();
-        talk(SUYA,'<h3>Payment confirmed</h3><div class="kv"><span>Receipt</span><b class="mono">'+short(h)+'</b></div><div class="kv"><span>Balance</span><b>'+P.usdc.toFixed(2)+' USDC</b></div><p>IamAbdul hands you a hot stick. Your receipt is permanent and public, so anyone can check that you paid.</p>',[{t:'Continue',f:finishStep}]); }});
+        talk(SUYA,'<h3>Payment confirmed</h3><div class="kv"><span>Receipt</span><b class="mono">'+short(h)+'</b></div><div class="kv"><span>Balance</span><b>'+P.usdc.toFixed(2)+' USDC</b></div><p>Dark hands you a hot stick. Your receipt is permanent and public, so anyone can check that you paid.</p>',[{t:'Continue',f:finishStep}]); }});
   }}
  ],
  extras:[{id:'guy',spot:SPOTS.x1,npc:GUY,run:giveawayGuy}]
 },
 {id:'m2',n:2,city:'lagos',title:'Bureau de Change',goal:'Learn rates, fees and slippage by swapping USDC for a naira token.',xp:120,
  steps:[
-  {label:'Ask Larai for today\u2019s rate',spot:'e',npc:ALHAJA,run(){
+  {label:'Ask Tessa for today\u2019s rate',spot:'e',npc:ALHAJA,run(){
     talk(ALHAJA,'<p>A Bureau de Change swaps one money for another. On KitCity you can swap USDC for a naira token. Three words to know:</p><ul class="pts"><li><b>Rate:</b> how many naira you get for 1 USDC. It moves through the day.</li><li><b>Fee:</b> the part the service keeps.</li><li><b>Slippage:</b> how far the price can move before your swap is cancelled.</li></ul>',
       [{t:'Show me today\u2019s rate',f:()=>talk(ALHAJA,'<h3>Today\u2019s rate</h3><div class="kv"><span>1 USDC</span><b>'+fmtN(RATE)+'</b></div><div class="kv"><span>Fee</span><b>0.5%</b></div><p class="note">Sample rate for this prototype. Real rates change all day, so always check the quote before you confirm.</p>',[{t:'Got it',f:finishStep}])}]);
   }},
@@ -1716,7 +1716,7 @@ const MISSIONS=[
     opts:[['Enter my recovery phrase to keep my wallet',0],['Ignore the link and open the official app myself',1],['Reply and ask them to hold my wallet',0]],
     good:'Nobody real will ever ask for your recovery phrase. Not support, not the app, not a bank. Fake urgency like \u201C1 hour\u201D is how scammers rush you.',
     bad:'That is phishing. Anyone with your recovery phrase can empty your wallet and nothing can be reversed. Real services never ask for it.'}),
-  scamStep({label:'Answer the stranger\u2019s DM',spot:'n',npc:HASSAN,from:'Goodness (not verified)',msg:'Hi, I am KitCity support. I saw your problem. Connect your wallet to my site and share your screen so I can fix it.',
+  scamStep({label:'Answer the stranger\u2019s DM',spot:'n',npc:HASSAN,from:'Web3 Esta (not verified)',msg:'Hi, I am KitCity support. I saw your problem. Connect your wallet to my site and share your screen so I can fix it.',
     opts:[['Connect and share my screen',0],['Block and report. Real support never messages first',1],['Send a small amount to prove I am real',0]],
     good:'Scammers pose as support in DMs. Only use the help links inside the official app or website, and never share your screen or connect to a stranger\u2019s site.',
     bad:'Fake support is common. Connecting your wallet or sharing your screen can give them what they need to drain your funds.'}),
@@ -1758,17 +1758,17 @@ const MISSIONS=[
 },
 {id:'m5',n:5,city:'kano',title:'Pay a friend, safely',goal:'Check addresses properly and send a small test first.',xp:140,
  steps:[
-  {label:'Get Laloba\u2019s address at the motor park',spot:'i',npc:MUSA,run(){
+  {label:'Get Essa\u2019s address at the motor park',spot:'i',npc:MUSA,run(){
     if(!G.addr) G.addr='0x'+hex(20);
     talk(MUSA,'<p>Boss, I am rushing to my stall in the market across town. Take my address, then bring my 1 USDC for the yam there:</p><span class="addr">'+G.addr+'</span><p class="note">Address mistakes cannot be undone. Funds sent to the wrong address are lost.</p>',[{t:'Copy their address',f:()=>{ toast('Address copied'); finishStep(); }}]);
   }},
   STEP_DON,
-  {label:'Pay Laloba at their market stall',spot:'o',npc:MUSA,run(){
+  {label:'Pay Essa at their market stall',spot:'o',npc:MUSA,run(){
     if(!G.addr) G.addr='0x'+hex(20);
     needFunds(1);
     const fakeA=addrMutate(G.addr,12,16),fakeB=addrMutate(G.addr,36,40);
     const opts=shuffle([[G.addr,1],[fakeA,0],[fakeB,0]]);
-    talk(MUSA,'<p>You find Laloba at their stall. their phone shows:</p><span class="addr">'+G.addr+'</span><p>Your clipboard has an address. <b>Which one matches his, character for character?</b></p>',
+    talk(MUSA,'<p>You find Essa at their stall. Their phone shows:</p><span class="addr">'+G.addr+'</span><p>Your clipboard has an address. <b>which one matches their, character for character?</b></p>',
       opts.map(o=>({t:o[0],m:1,f:()=>{
         if(o[1]!==1){ talk(MUSA,'<h3>Close, but wrong</h3><p>That address looks similar but is not the same. Scammers make lookalike addresses that match the start and end. Compare the whole address, not just the edges.</p>',[{t:'Try again',f:()=>MISSIONS[4].steps[2].run()}]); return; }
         talk(MUSA,'<h3>Right address</h3><p>Now decide how to send. A small test payment proves the address works before you risk the full amount.</p>',[
@@ -1782,7 +1782,7 @@ const MISSIONS=[
           P.usdc=Math.max(0,P.usdc-amt); save(); updateHUD();
           if(test){
             G.bonus+=10;
-            talk(MUSA,'<h3>Laloba got it</h3><p>They confirm the test arrived. Now send the rest.</p>',[{t:'Send remaining 0.90 USDC',f:()=>sendRest()}]);
+            talk(MUSA,'<h3>Essa got it</h3><p>They confirm the test arrived. Now send the rest.</p>',[{t:'Send remaining 0.90 USDC',f:()=>sendRest()}]);
           } else {
             talk(MUSA,'<h3>Sent</h3><p>It worked this time. For larger amounts, always send a small test first.</p>',[{t:'Continue',f:finishStep}]);
           }
@@ -1790,7 +1790,7 @@ const MISSIONS=[
     }
     function sendRest(){
       confirmTx(MUSA,{title:'Send the rest',rows:[['To',short(G.addr),1],['Amount','0.90 USDC'],['Network fee',FEE0]],btn:'Send 0.90 USDC',
-        after:()=>{ P.usdc=Math.max(0,P.usdc-0.9); save(); updateHUD(); talk(MUSA,'<h3>All paid</h3><p>Laloba thanks you. Test first, then send the rest. That habit saves money.</p>',[{t:'Continue',f:finishStep}]); }});
+        after:()=>{ P.usdc=Math.max(0,P.usdc-0.9); save(); updateHUD(); talk(MUSA,'<h3>All paid</h3><p>Essa thanks you. Test first, then send the rest. That habit saves money.</p>',[{t:'Continue',f:finishStep}]); }});
     }
   }}
  ]
@@ -1915,67 +1915,67 @@ const MODS=[
           ['Which best describes most blockchain addresses?',['Fully anonymous','Pseudonymous: unnamed, but can be linked to you through activity','Always tied to your passport','Hidden by default'],1,'No name is attached, but your activity can still be traced back to you.'],
           ['You want to confirm a payment reached an address. Where can you check?',['A block explorer for that network','Your phone\u2019s call log','The wallet\u2019s logo','Social media'],0,'A block explorer reads the public ledger directly.']])}}]},
  {city:'kaduna',title:'Networks, gas, layer 2s and bridges',goal:'Learn why fees change, why layer 2s are cheaper, and how bridges move value.',steps:[
-  {label:'Learn from Moon',spot:'e',npc:loc('John Jonathan','Tea and bread seller','#0B7A43',LK.suya,'Shayi da burodi'),L:{t:'Gas and layer 2 networks',intro:'Sannu! Kaduna is a railway crossroads. The main line gets crowded, so side lines carry the extra load. Blockchains do the same.',
+  {label:'Learn from John Jonathan',spot:'e',npc:loc('John Jonathan','Tea and bread seller','#0B7A43',LK.suya,'Shayi da burodi'),L:{t:'Gas and layer 2 networks',intro:'Sannu! Kaduna is a railway crossroads. The main line gets crowded, so side lines carry the extra load. Blockchains do the same.',
     pts:['Gas is the fee for using a network, usually paid in its native token, and it rises when the network is busy.','Layer 2 networks such as Base or Arbitrum bundle many transactions and settle them on a main chain, so fees are usually much lower.','The same token can exist on several networks, so always match the network when sending or receiving.'],
     q:Q3([['Why do layer 2 networks usually have lower fees?',['They skip security entirely','They bundle many transactions and settle them together on a main chain','Banks run them','They use no computers'],1,'Sharing the cost of one main-chain settlement across many transactions cuts the fee per transaction.'],
           ['Fees on a network suddenly jump. Most likely reason?',['Your wallet is broken','The network is busy, so demand for space is high','Your address expired','Your phone is old'],1,'Fees rise when many people compete for limited space.'],
           ['You hold USDC on Network A but an app only works on Network B. What is needed?',['Nothing, it works everywhere','Move the funds to Network B, for example through a bridge or an exchange','Rename the token','Restart your phone'],1,'Networks are separate. Funds must be moved across before you can use them there.']])}},
-  {label:'Learn from Praise',spot:'i',npc:loc('Mcbond','Textile trader','#C7457E',LK.trader,'Kaduna textiles'),L:{t:'Bridges and their risks',intro:'Goods cross state lines at the border, and every crossing is a risk. Bridges between networks are the same.',
+  {label:'Learn from Mcbond',spot:'i',npc:loc('Mcbond','Textile trader','#C7457E',LK.trader,'Kaduna textiles'),L:{t:'Bridges and their risks',intro:'Goods cross state lines at the border, and every crossing is a risk. Bridges between networks are the same.',
     pts:['A bridge moves value between networks, often by locking tokens on one side and issuing a copy on the other.','Bridges hold large pools of funds, which makes them frequent hacking targets. Use well-known ones and bridge a small test amount first.','Double-check the destination network and address, and expect to need gas on the destination too.'],
     q:Q3([['Why are bridges a common hacking target?',['They are slow','They hold large pools of locked funds','They have no users','They are free'],1,'Big pools of locked funds attract attackers, so bridge hacks have been among the largest in crypto.'],
           ['Before bridging a large amount for the first time, you should...',['Send everything at once','Bridge a small test amount first and verify it arrives','Share your phrase with the bridge','Skip checking the network'],1,'A small test reveals mistakes cheaply.'],
           ['After bridging, your tokens arrive but you cannot move them. A likely missing piece?',['A phone upgrade','A little of the destination network\u2019s native token for gas','Your bank\u2019s approval','A new recovery phrase'],1,'Every network needs its own gas token to move funds.']])}}]},
  {city:'enugu',title:'Stablecoins in depth',goal:'Know what backs a stablecoin, how depegs happen, and how to compare on and off-ramps.',steps:[
-  {label:'Learn from IamAbdul',spot:'c',npc:loc('Dark','Coal City guide','#2D6FB3',LK.man,'Coal City tours'),L:{t:'How stablecoins hold their price',intro:'Welcome to Enugu, the Coal City! A coal seam is only as good as what is under the ground. A stablecoin is only as good as what is behind it.',
+  {label:'Learn from Dark',spot:'c',npc:loc('Dark','Coal City guide','#2D6FB3',LK.man,'Coal City tours'),L:{t:'How stablecoins hold their price',intro:'Welcome to Enugu, the Coal City! A coal seam is only as good as what is under the ground. A stablecoin is only as good as what is behind it.',
     pts:['Fiat-backed stablecoins such as USDC hold reserves like cash and short-term government securities to back each token.','Crypto-backed ones are backed by other crypto, usually over-collateralised. Algorithmic ones rely on code and incentives instead of full reserves, and have failed badly before.','A depeg is when the price drifts away from one dollar. Check what backs a stablecoin before you trust it.'],
     q:Q3([['What typically backs a fiat-backed stablecoin like USDC?',['Nothing, only trust','Reserves such as cash and short-term government securities','Hype on social media','The coin\u2019s logo'],1,'Reserves held by the issuer are what let each token be redeemed for a dollar.'],
           ['Which type of stablecoin has the poorest track record under stress?',['Fiat-backed with published reserves','Algorithmic ones that rely on incentives instead of full reserves','All are equally safe','Those with famous logos'],1,'Without real reserves, confidence can collapse quickly and the peg breaks.'],
           ['What is a depeg?',['A new wallet feature','When a stablecoin\u2019s price drifts away from its target, such as $1','A type of fee','A wallet update'],1,'Depegs can be small and brief or large and permanent. Know the backing.']])}},
-  {label:'Learn from Kenny',spot:'m',npc:loc('White Coach','Bitterleaf soup cook','#C7457E',LK.mama,'Ofe onugbu'),L:{t:'On-ramps, off-ramps and real rates',intro:'At market I know the real price is what I take home, not what the board says. Same for converting naira and crypto.',
+  {label:'Learn from White Coach',spot:'m',npc:loc('White Coach','Bitterleaf soup cook','#C7457E',LK.mama,'Ofe onugbu'),L:{t:'On-ramps, off-ramps and real rates',intro:'At market I know the real price is what I take home, not what the board says. Same for converting naira and crypto.',
     pts:['An on-ramp turns naira into crypto and an off-ramp turns crypto into naira. Each charges fees and sets its own rate.','Compare the effective rate: the naira you actually receive after fees and the spread between buying and selling prices.','Rules about crypto and foreign currency can change. Check current guidance and use regulated platforms where you can.'],
     q:Q3([['Platform A offers 1,500 naira per USDC with a 2% fee. Platform B offers 1,480 with no fee. You are selling 100 USDC. Which pays more? (example numbers)',['A, about 147,000','B, 148,000','They are equal','You cannot tell'],1,'A pays 150,000 minus 2%, which is 147,000. B pays 148,000. Always work out the final amount.'],
           ['What is the spread?',['The gap between the buying price and the selling price','A type of token','A bank holiday','A wallet backup'],0,'A wide spread is a hidden cost, because you buy high and sell low.'],
           ['Why check current rules before moving large sums?',['Rules never change','Rules and platform limits can change, and not knowing can cost you money or access','Only banks care','To pay more tax'],1,'Staying informed protects your funds and your access to platforms.']])}}]},
  {city:'benin',title:'Tokens, NFTs and market basics',goal:'Tell coins from tokens, read market cap and liquidity, and spot hype traps.',steps:[
-  {label:'Learn from BigSam',spot:'b',npc:loc('K','Bronze craft seller','#8E2F1B',LK.man,'Benin bronzes'),L:{t:'Coins, tokens and NFTs',intro:'Every Benin bronze is unique, and that is what makes it valuable. An NFT is meant to capture that idea in digital form.',
+  {label:'Learn from K',spot:'b',npc:loc('K','Bronze craft seller','#8E2F1B',LK.man,'Benin bronzes'),L:{t:'Coins, tokens and NFTs',intro:'Every Benin bronze is unique, and that is what makes it valuable. An NFT is meant to capture that idea in digital form.',
     pts:['A coin is a network\u2019s native asset, like ETH on Ethereum. A token is an asset built on top of a network through a contract. An NFT is a token that stands for one unique item.','Owning an NFT means owning the token. It does not automatically mean owning the copyright of the artwork.','Token contracts define supply and rules, so two tokens with the same name can be very different.'],
     q:Q3([['What is an NFT?',['A coin that always rises in value','A unique token that represents one specific item or record','A type of wallet','A stablecoin'],1,'Non-fungible means each token is unique, unlike one naira note that equals another.'],
           ['What is the difference between a coin and a token?',['There is none','A coin is a network\u2019s native asset, and a token is built on a network through a contract','Tokens are older','Coins are always stable'],1,'Coins power the network itself. Tokens live on top of it.'],
           ['You buy an NFT of an image. What do you automatically own?',['The full copyright','The token, while rights depend on the project\u2019s terms','All similar images','The artist\u2019s wallet'],1,'Rights depend on the terms of the project, not on holding the token alone.']])}},
-  {label:'Learn from Larai',spot:'l',npc:loc('Tessa','Pounded yam seller','#C7457E',LK.woman,'Pounded yam'),L:{t:'Price, market cap and memecoins',intro:'A big plate of cheap food is not always a good meal. A low token price is not always a bargain.',
+  {label:'Learn from Tessa',spot:'l',npc:loc('Tessa','Pounded yam seller','#C7457E',LK.woman,'Pounded yam'),L:{t:'Price, market cap and memecoins',intro:'A big plate of cheap food is not always a good meal. A low token price is not always a bargain.',
     pts:['A low price per token does not mean cheap. Market cap is price times circulating supply and shows size better.','Liquidity is how easily you can sell without moving the price. Thin liquidity can trap you in a token you cannot sell.','Memecoins run on hype and most lose most of their value. A honeypot token lets you buy but blocks you from selling.'],
     q:Q3([['Token X costs 0.0001 and token Y costs 50. Which statement is sound?',['X is cheaper so it must have more room to grow','Price alone says nothing, so compare market cap and supply','Y is overpriced','Both are guaranteed to rise'],1,'A tiny price can come with a huge supply, so market cap is the useful number.'],
           ['What does low liquidity mean for a token holder?',['Fees are free','It may be hard to sell without a big price drop, or at all','The price is stable','Easier exits'],1,'Few buyers means your sale can crash the price, or fail.'],
           ['A token lets you buy but every attempt to sell fails. This is called...',['A honeypot','A stablecoin','A bridge','A node'],0,'Honeypots are built to trap buyers. Test with tiny amounts and check liquidity.']])}}]},
  {city:'calabar',title:'DeFi: lending, pools and staking',goal:'Understand collateral, liquidation, liquidity pools and staking, before you ever deposit.',steps:[
-  {label:'Learn from Toza',spot:'f',npc:loc('David','Afang soup cook','#0B7A43',LK.mama,'Afang soup'),L:{t:'Lending, borrowing and liquidation',intro:'In Calabar, a trader who borrows stock puts something down as a guarantee. DeFi lending works on the same idea.',
+  {label:'Learn from David',spot:'f',npc:loc('David','Afang soup cook','#0B7A43',LK.mama,'Afang soup'),L:{t:'Lending, borrowing and liquidation',intro:'In Calabar, a trader who borrows stock puts something down as a guarantee. DeFi lending works on the same idea.',
     pts:['In DeFi lending you can deposit tokens to earn interest, or borrow by locking collateral worth more than the loan.','If your collateral\u2019s value falls too close to the loan value, the system can liquidate it: sell it and charge a penalty.','Borrowing adds risk. Keep a safe buffer and monitor your position, because prices can move fast.'],
     q:Q3([['Why does DeFi lending ask for collateral worth more than the loan?',['To be unfair','To protect lenders when prices move','Because gas is high','It is only a tradition'],1,'Over-collateralisation covers the lender if the collateral loses value.'],
           ['Your collateral value drops close to the loan value. What can happen?',['Interest is waived','The position can be liquidated and you lose part of the collateral','Nothing, loans are fixed','Your phrase changes'],1,'Liquidations are automatic and come with a penalty.'],
           ['Which habit reduces liquidation risk?',['Borrowing the maximum allowed','Keeping a safe buffer and watching your position','Ignoring price moves','Using someone else\u2019s wallet'],1,'A bigger buffer gives you time to react before a liquidation.']])}},
-  {label:'Learn from Goodness',spot:'g',npc:loc('Web3 Esta','Carnival fan','#6a3fb5',LK.elder,'Carnival Calabar'),L:{t:'Liquidity pools and staking',intro:'At carnival, everyone chips in for the float. Liquidity pools are people chipping in tokens so others can trade.',
+  {label:'Learn from Web3 Esta',spot:'g',npc:loc('Web3 Esta','Carnival fan','#6a3fb5',LK.elder,'Carnival Calabar'),L:{t:'Liquidity pools and staking',intro:'At carnival, everyone chips in for the float. Liquidity pools are people chipping in tokens so others can trade.',
     pts:['Liquidity pools hold two or more tokens so people can swap. Providers earn a share of the trading fees.','Impermanent loss: if the prices of the pooled tokens move apart, you can end up with less value than if you had simply held them.','Staking locks tokens to help secure a network or protocol for rewards, often with lock-up periods or penalty risks.'],
     q:Q3([['What is impermanent loss?',['A fee for using a wallet','When pooled token prices diverge, so your pool share can be worth less than simply holding','A scam type','A bridge feature'],1,'Fees may or may not make up for it, so check before you provide liquidity.'],
           ['Why do liquidity providers earn rewards?',['They run banks','They supply the tokens that make swaps possible, and earn a share of fees','They own the network','They pay everyone\u2019s gas'],1,'Traders pay fees, and providers are paid for making trades possible.'],
           ['Before staking, what should you check?',['Lock-up period, source of rewards and penalty risks','Only the highest percentage','Nothing','The app\u2019s colour'],0,'Know how long funds are locked and where the rewards come from.']])}}]},
  {city:'jos',title:'Smarter custody',goal:'Learn hardware wallets, multisig, social recovery and recovery planning.',steps:[
-  {label:'Learn from Kodavic',spot:'d',npc:loc('Abdul','Irish potato farmer','#0B7A43',LK.man,'Fresh potatoes'),L:{t:'Hardware and multisig wallets',intro:'Welcome to Jos! A farmer keeps the best seed in a locked store, and the farm tools in the shed. Wallets can be split the same way.',
+  {label:'Learn from Abdul',spot:'d',npc:loc('Abdul','Irish potato farmer','#0B7A43',LK.man,'Fresh potatoes'),L:{t:'Hardware and multisig wallets',intro:'Welcome to Jos! A farmer keeps the best seed in a locked store, and the farm tools in the shed. Wallets can be split the same way.',
     pts:['A hardware wallet keeps keys on a dedicated offline device and asks you to confirm transactions on its own screen.','A multisig wallet needs more than one approval, for example 2 of 3 keys, so one stolen key is not enough.','Buy hardware wallets from the maker or authorised sellers only, never from a stranger, and set up your own phrase.'],
     q:Q3([['Why is a hardware wallet safer against phone malware?',['It is faster','Keys stay on the offline device, and you confirm on its own screen','It is free','It has no phrase'],1,'Malware on your phone cannot reach keys that never leave the device.'],
           ['A 2-of-3 multisig wallet means...',['Two wallets are the same','Two of the three key holders must approve a transaction','You pay twice','Three people see your phrase'],1,'One compromised key is not enough to move the funds.'],
           ['Where should you buy a hardware wallet?',['From a stranger offering a discount','From the maker or an authorised seller','From a social media ad','From whoever is cheapest'],1,'Tampered devices sold by strangers are a known trick.']])}},
-  {label:'Learn from Blockqueen',spot:'k',npc:loc('Kore','Museum guide','#2D6FB3',LK.woman,'Culture guide'),L:{t:'Recovery planning',intro:'Museums keep records so that the next generation can find what matters. Plan so your wallet can be found too.',
+  {label:'Learn from Kore',spot:'k',npc:loc('Kore','Museum guide','#2D6FB3',LK.woman,'Culture guide'),L:{t:'Recovery planning',intro:'Museums keep records so that the next generation can find what matters. Plan so your wallet can be found too.',
     pts:['Test your recovery: restore the wallet from your backup with a small amount, before you need it.','Some wallets offer social recovery, where trusted contacts can help you regain access without being able to take your funds alone.','Plan for emergencies. Clear instructions and secure backups, kept with a trusted person or in a safe, help family without exposing your phrase.'],
     q:Q3([['What is the purpose of testing a restore with a small amount?',['To waste money','To confirm your backup actually works before you need it','To get rewards','To change networks'],1,'A backup you have never tested is only a hope.'],
           ['In social recovery, trusted contacts can...',['Take your funds alone','Help you regain access but cannot move funds on their own','See your private key','Reset your bank'],1,'The design limits any one person\u2019s power over your funds.'],
           ['What best prepares family for an emergency without exposing your phrase publicly?',['Post it online','Store clear instructions and backups securely, for example in a safe or with a trusted professional','Tell everyone','Do nothing'],1,'Secure and findable, but not public.']])}}]},
  {city:'maiduguri',title:'Privacy, records and rules',goal:'Understand on-chain privacy, record-keeping, identity checks and staying on the right side of the rules.',steps:[
-  {label:'Learn from Christol',spot:'a',npc:loc('Love','Tea seller','#7a4a2e',LK.elder,'Shayi'),L:{t:'Privacy on a public chain',intro:'Maiduguri is known for hospitality, but a wise host does not announce what is in the safe. On-chain, the safe is open to view.',
+  {label:'Learn from Love',spot:'a',npc:loc('Love','Tea seller','#7a4a2e',LK.elder,'Shayi'),L:{t:'Privacy on a public chain',intro:'Maiduguri is known for hospitality, but a wise host does not announce what is in the safe. On-chain, the safe is open to view.',
     pts:['Because the ledger is public, anyone who learns your address can see its history. Sharing an address with a stranger links them to that history.','Using one address for everything makes tracking easy. Separate wallets for different purposes reduce exposure.','Posting your address or balance publicly can attract scammers and targeted attacks.'],
     q:Q3([['Why can sharing your main address widely be a privacy risk?',['It uses gas','Anyone can view its history and balance','It changes your phrase','It locks your wallet'],1,'Everyone who has the address can look at everything it has done.'],
           ['How can separate wallets help?',['They are faster','They limit what is linked and exposed','They remove fees','They merge balances'],1,'Splitting activity makes it harder to build one full picture of you.'],
           ['Why avoid bragging about your balance online?',['It uses data','It can attract scammers and targeted attacks','It slows the network','It is illegal everywhere'],1,'Visible wealth makes you a target.']])}},
-  {label:'Learn from Laloba',spot:'e',npc:loc('Essa','Fabric trader','#C7457E',LK.trader,'Fabric and cloth'),L:{t:'Records, rules and staying legal',intro:'In my trade I keep a ledger of every sale. When questions come, my book answers for me. Do the same with crypto.',
+  {label:'Learn from Essa',spot:'e',npc:loc('Essa','Fabric trader','#C7457E',LK.trader,'Fabric and cloth'),L:{t:'Records, rules and staying legal',intro:'In my trade I keep a ledger of every sale. When questions come, my book answers for me. Do the same with crypto.',
     pts:['Keep records of what you bought, sold, sent and received, with dates, amounts and transaction hashes. They help with disputes and tax questions.','Regulated platforms ask for identity checks (KYC). This guards against fraud but links your identity to your activity there.','Laws and tax rules on crypto change. Check current official guidance or ask a qualified professional, and avoid anyone who offers to help you hide funds.'],
     q:Q3([['Why keep records of your crypto transactions?',['For fun','To handle disputes, track gains and answer tax or compliance questions','Because wallets require it','To lower gas'],1,'Good records protect you when questions arise.'],
           ['What does KYC mean on a regulated platform?',['Keep your coins','Know your customer: identity checks to reduce fraud and meet rules','Key your cash','Kill your card'],1,'KYC is a legal and safety measure, but it ties your identity to your account.'],
