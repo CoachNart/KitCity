@@ -9,7 +9,7 @@ const bootProgress=$('#bootProgress');
 const bootDone=()=>{ if(bootLoading){ bootLoading.classList.add('done'); setTimeout(()=>bootLoading.remove(),550); } };
 const bootStep=(pct,msg)=>{ if(bootProgress) bootProgress.style.width=pct+'%'; if(bootStatus&&msg) bootStatus.textContent=msg; };
 bootStep(18,'Loading 3D engine…');
-if(typeof THREE==='undefined'){ $('#err').classList.remove('hidden'); return; }
+if(typeof THREE==='undefined'){ bootDone(); $('#err').classList.remove('hidden'); return; }
 
 /* =====================  helpers  ===================== */
 const rand=(a,b)=>a+Math.random()*(b-a);
