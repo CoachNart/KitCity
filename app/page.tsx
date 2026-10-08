@@ -1,0 +1,14 @@
+'use client';
+
+import { useEffect } from 'react';
+import initKitCity from '../game/kitcity-engine';
+
+const GAME_MARKUP = "\n<canvas id=\"gl\"></canvas>\n\n<div id=\"hud\" class=\"hidden\">\n  <div id=\"mission\" class=\"panel\">\n    <div class=\"mh\"><h2 id=\"mTitle\">Mission</h2><button id=\"pauseBtn\" type=\"button\" aria-label=\"Pause menu\">II</button></div>\n    <div id=\"loc\"></div>\n    <ol id=\"steps\"></ol>\n  </div>\n  <div id=\"side\">\n    <div id=\"wallet\" class=\"panel\">No wallet yet</div>\n    <div id=\"compass\"><svg id=\"arrow\" viewBox=\"0 0 24 24\"><path d=\"M12 2 L20 21 L12 16 L4 21 Z\" fill=\"#10C8DC\"/></svg><span id=\"dist\"></span></div>\n  </div>\n  <div id=\"toast\"></div>\n  <div id=\"joy\"><div id=\"knob\"></div></div>\n  <button id=\"runBtn\" class=\"round\" type=\"button\">Run</button>\n  <button id=\"talkBtn\" class=\"round hidden\" type=\"button\">Talk</button>\n</div>\n\n<div id=\"modal\" class=\"hidden\"><div id=\"sheet\" class=\"panel\"></div></div>\n\n<div id=\"title\" class=\"screen\">\n  <div class=\"wrap\">\n    <div class=\"band\">\n      <h1>KitCity</h1>\n      <p data-t data-pcm=\"Learn web3 before e cost you.\">Learn web3 before it costs you.</p>\n    </div>\n    <div class=\"cta\">\n      <button id=\"startBtn\" class=\"btn\" type=\"button\">Play</button>\n      <div class=\"langs\"><button type=\"button\" data-lang=\"en\">English</button><button type=\"button\" data-lang=\"pcm\">Naija Pidgin</button></div>\n    </div>\n    <p class=\"line\" data-t data-pcm=\"Every city go teach you something new.\">Every city teaches you something new.</p>\n    <p class=\"credit\"><a href=\"https://t3kit.xyz\" target=\"_blank\" rel=\"noopener\" data-t data-pcm=\"Na T3Kit game.\">A T3Kit game.</a> <span data-t data-pcm=\"Easy way enter everything for web3.\">Easy access to everything in web3.</span></p>\n  </div>\n</div>\n\n<div id=\"hub\" class=\"screen hidden\">\n  <div id=\"hubTop\"></div>\n  <div id=\"hubBody\"></div>\n  <div id=\"nav\">\n    <button type=\"button\" data-a=\"tab\" data-v=\"missions\">Missions</button>\n    <button type=\"button\" data-a=\"tab\" data-v=\"passport\">Passport</button>\n    <button type=\"button\" data-a=\"tab\" data-v=\"settings\">Settings</button>\n  </div>\n</div>\n\n<div id=\"loading\" class=\"hidden\"><span id=\"loadTxt\">Loading</span></div>\n<div id=\"err\" class=\"hidden\">The 3D engine did not load. Check your connection and reload the page.</div>\n\n";
+
+export default function KitCityPage() {
+  useEffect(() => {
+    initKitCity();
+  }, []);
+
+  return <main dangerouslySetInnerHTML={{ __html: GAME_MARKUP }} />;
+}
