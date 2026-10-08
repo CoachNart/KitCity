@@ -114,7 +114,7 @@ html,body{height:100%;overflow:hidden;background:var(--ink);color:var(--ink);fon
 .h2{font:900 18px var(--display);margin:16px 0 6px}
 .soft{opacity:.8;font-size:14px;margin:6px 0}
 #loading{position:fixed;inset:0;z-index:50;background:var(--ink);color:var(--brand);display:grid;place-items:center;font:900 28px var(--display)}
-#err{position:fixed;inset:0;display:grid;place-items:center;padding:30px;text-align:center;background:var(--brand);z-index:99;font-weight:800}
+#err{position:fixed;inset:0;display:grid;place-items:center;padding:30px;text-align:center;background:var(--brand);z-index:130;font-weight:800}
 /* chat */
 .chat{display:flex;flex-direction:column;gap:8px;margin:10px 0 2px}
 .b{max-width:94%;padding:10px 12px;border-radius:14px;font-size:15px;line-height:1.4}
