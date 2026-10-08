@@ -2,8 +2,6 @@ import * as THREE from 'three';
 
 export default function initKitCity(){
 'use strict';
-
-'use strict';
 const $=s=>document.querySelector(s);
 if(typeof THREE==='undefined'){ $('#err').classList.remove('hidden'); return; }
 
