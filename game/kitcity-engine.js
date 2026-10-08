@@ -37,20 +37,20 @@ function save(){ Store.set(KEY,{wallet:P.wallet,usdc:P.usdc,ngn:P.ngn,xp:P.xp,do
 /* =====================  YouTube soundtrack  ===================== */
 const MUSIC_QUEUES={
   afrobeat:{
-    label:'Naija Afrobeats · Trending 2026',
-    videos:['x1A-ylUFO1I','2QRPMtnUSJM']
+    label:'Naija Afrobeats · DJ BOAT 2026',
+    videos:['ulmVmlNoSL8','qbefFtgUVTY']
   },
   hausa:{
-    label:'Hausa · Trending 2026',
-    videos:['lBURoYDF3-A']
+    label:'Hausa · Ado Gwanja / Nazifi Asnanic',
+    videos:['UuumEqJKQ9I','ULjXLxJa74w']
   },
   igbo:{
-    label:'Igbo · Trending 2026',
-    videos:['qXJWyahkmCc','QZpjUnq5xGw']
+    label:'Igbo · Flavour & Phyno',
+    videos:['W41TT8g3MnQ','VfLiqasATb0']
   },
   yoruba:{
-    label:'Yoruba / Street · Trending 2026',
-    videos:['qFP7Q9YEoQU']
+    label:'Yoruba · Seyi Vibez',
+    videos:['zzhKmRovdMY','SBxQsKkPvik']
   }
 };
 const CITY_MUSIC={
@@ -1614,8 +1614,8 @@ const STEP_BIGSAM=askStep({label:'Talk to BigSam before you vote',spot:'e',npc:B
   bad:'Following the crowd or rushing is how bad proposals pass. Take your time and read it properly.'});
 const STEP_LUNAX=askStep({label:'Check the buyer with LunaX',spot:'h',npc:LUNAX,
   intro:'In a peer trade, the buyer should pay from an account in their own name. That is how you know the money is really theirs.',
-  q:'Your buyer says he will pay from his cousin\u2019s account, and the name does not match. What do you do?',
-  opts:[['Keep the USDC in escrow and ask for payment from his own account, or cancel',1],['Release as soon as the money shows',0],['Accept a screenshot of the transfer',0]],
+  q:'Your buyer says they will pay from his cousin\u2019s account, and the name does not match. What do you do?',
+  opts:[['Keep the USDC in escrow and ask for payment from their own account, or cancel',1],['Release as soon as the money shows',0],['Accept a screenshot of the transfer',0]],
   good:'Right. Third-party payments are a common cover for stolen money and chargebacks. Stay in escrow until it is clean.',
   bad:'That puts you at risk. Payments from other people can be reversed or flagged later. Keep the USDC in escrow.'});
 
@@ -1760,15 +1760,15 @@ const MISSIONS=[
  steps:[
   {label:'Get Laloba\u2019s address at the motor park',spot:'i',npc:MUSA,run(){
     if(!G.addr) G.addr='0x'+hex(20);
-    talk(MUSA,'<p>Boss, I am rushing to my stall in the market across town. Take my address, then bring my 1 USDC for the yam there:</p><span class="addr">'+G.addr+'</span><p class="note">Address mistakes cannot be undone. Funds sent to the wrong address are lost.</p>',[{t:'Copy his address',f:()=>{ toast('Address copied'); finishStep(); }}]);
+    talk(MUSA,'<p>Boss, I am rushing to my stall in the market across town. Take my address, then bring my 1 USDC for the yam there:</p><span class="addr">'+G.addr+'</span><p class="note">Address mistakes cannot be undone. Funds sent to the wrong address are lost.</p>',[{t:'Copy their address',f:()=>{ toast('Address copied'); finishStep(); }}]);
   }},
   STEP_DON,
-  {label:'Pay Laloba at his market stall',spot:'o',npc:MUSA,run(){
+  {label:'Pay Laloba at their market stall',spot:'o',npc:MUSA,run(){
     if(!G.addr) G.addr='0x'+hex(20);
     needFunds(1);
     const fakeA=addrMutate(G.addr,12,16),fakeB=addrMutate(G.addr,36,40);
     const opts=shuffle([[G.addr,1],[fakeA,0],[fakeB,0]]);
-    talk(MUSA,'<p>You find Laloba at his stall. His phone shows:</p><span class="addr">'+G.addr+'</span><p>Your clipboard has an address. <b>Which one matches his, character for character?</b></p>',
+    talk(MUSA,'<p>You find Laloba at their stall. their phone shows:</p><span class="addr">'+G.addr+'</span><p>Your clipboard has an address. <b>Which one matches his, character for character?</b></p>',
       opts.map(o=>({t:o[0],m:1,f:()=>{
         if(o[1]!==1){ talk(MUSA,'<h3>Close, but wrong</h3><p>That address looks similar but is not the same. Scammers make lookalike addresses that match the start and end. Compare the whole address, not just the edges.</p>',[{t:'Try again',f:()=>MISSIONS[4].steps[2].run()}]); return; }
         talk(MUSA,'<h3>Right address</h3><p>Now decide how to send. A small test payment proves the address works before you risk the full amount.</p>',[
@@ -1782,7 +1782,7 @@ const MISSIONS=[
           P.usdc=Math.max(0,P.usdc-amt); save(); updateHUD();
           if(test){
             G.bonus+=10;
-            talk(MUSA,'<h3>Laloba got it</h3><p>He confirms the test arrived. Now send the rest.</p>',[{t:'Send remaining 0.90 USDC',f:()=>sendRest()}]);
+            talk(MUSA,'<h3>Laloba got it</h3><p>They confirm the test arrived. Now send the rest.</p>',[{t:'Send remaining 0.90 USDC',f:()=>sendRest()}]);
           } else {
             talk(MUSA,'<h3>Sent</h3><p>It worked this time. For larger amounts, always send a small test first.</p>',[{t:'Continue',f:finishStep}]);
           }
@@ -1836,7 +1836,7 @@ const MISSIONS=[
  steps:[
   {label:'Post your sell offer',spot:'l',npc:ADA,run(){
     talk(ADA,'<p>Peer-to-peer means you trade with another person. The platform holds your USDC in escrow while they pay your bank. You release only after you see the money.</p><div class="kv"><span>You sell</span><b>1.00 USDC</b></div><div class="kv"><span>Price</span><b>'+fmtN(1480)+'</b></div>',[
-      {t:'Post my offer',f:()=>busy(ADA,'Finding a buyer\u2026',1400,()=>talk(ADA,'<h3>Buyer found</h3><p>Chidi accepted your offer. Your USDC is locked in escrow. He has 15 minutes to pay your bank account.</p>',[{t:'Continue',f:finishStep}]))}
+      {t:'Post my offer',f:()=>busy(ADA,'Finding a buyer\u2026',1400,()=>talk(ADA,'<h3>Buyer found</h3><p>Chidi accepted your offer. Your USDC is locked in escrow. They have 15 minutes to pay your bank account.</p>',[{t:'Continue',f:finishStep}]))}
     ]);
   }},
   STEP_LUNAX,
