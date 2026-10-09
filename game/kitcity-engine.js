@@ -1966,112 +1966,120 @@ const cityHandoffs=Object.assign({lagos:'The trust built around Lagos payments o
 CITY_JOURNEYS.forEach((cityData,ci)=>{
   cityData.missions.forEach((data,mi)=>{
     const n=9+ci*2+mi;
-    const mentor=loc(cityData.name,cityData.role,['#00A6B8','#C77937','#6A65B8','#268A66'][ci%4],ci%3===0?LK.mama:(ci%3===1?LK.trader:LK.man),cityData.site);
-    const spot=routeSpots[(ci*7+mi*11+3)%routeSpots.length];
+    const palette=['#00A6B8','#C77937','#6A65B8','#268A66'];
+    const looks=[LK.mama,LK.trader,LK.man];
+    const mentor=loc(cityData.name,cityData.role,palette[ci%4],looks[ci%3],cityData.site);
     const caseText=[data[0],data[1],...(data[2]||[])].join(' ').toLowerCase();
     const taskKind=/escrow|p2p|buyer|seller|release|bank app|payment sent|paid the seller/.test(caseText)?5:
       /governance|vote|proposal|community decision|street-light|allocate|budget/.test(caseText)?4:
-      /address|recipient|invoice|lookalike|supplier|destination|wallet address/.test(caseText)?1:
+      /address|recipient|invoice|lookalike|supplier|destination|wallet address|contract address/.test(caseText)?1:
       /approval|permission|signing|sign message|mint|allowance|access scope/.test(caseText)?2:
       /network|bridge|chain|route|wrong network/.test(caseText)?6:
       /screenshot|proof|receipt|pending|transaction status|explorer|scam|phishing|fake support|airdrop|giveaway/.test(caseText)?3:
       /transfer|payment|swap|fee|rate|settle|transaction/.test(caseText)?0:(ci*2+mi)%8;
-    const taskNames=[
-      'Transaction settlement','Recipient verification','Permission configuration','Evidence reconciliation',
-      'Community decision','Escrow release check','Network route validation','Operational handover'
+    const taskNames=['Transfer review','Recipient check','Wallet access review','Transaction evidence check','Community decision','Payment release check','Network and destination check','Accountable handover'];
+    const taskIntro=[
+      'Compare the request with the original agreement. The amount, recipient and total cost must all match before anyone acts.',
+      'The requester and the trusted record do not fully agree. Verify the exact destination through a channel already known to the parties.',
+      'The requested wallet access may exceed what this task needs. Inspect who receives permission and how much control it grants.',
+      'The people involved have different versions of the transaction. Check the underlying record rather than relying on a forwarded image.',
+      'People are waiting for a decision that affects shared resources. Review the actual proposal and use the agreed decision process.',
+      'One party says the payment is complete, but the other party still bears the risk. Verify receipt independently before releasing anything.',
+      'A transaction can appear plausible and still be on the wrong chain or sent to the wrong destination. Match both before proceeding.',
+      'The handover needs an accountable record. Confirm who is authorised, what was agreed and what the next person must verify.'
     ];
-    const actionLabels=[
-      ['Review transfer details','Check the recipient record','Configure the permission','Reconcile the transaction evidence','Cast the community vote','Verify the payment before release','Select the verified network route','Prepare the safe handover']
-    ][0];
+    const taskSuccess=[
+      'The transfer details were checked before the simulated action was recorded.',
+      'The destination was verified against a trusted record before any payment was approved.',
+      'The wallet was not given broader access than the task required.',
+      'The underlying transaction record was checked instead of accepting a screenshot as proof.',
+      'The decision was recorded through the agreed process.',
+      'The payment condition was independently checked before release.',
+      'The network and destination were matched before proceeding.',
+      'The handover now has a clear owner and a verifiable next step.'
+    ];
+    const taskRetry=[
+      'That skips an important check. Revisit the agreement and verify the details before acting.',
+      'The destination has not been independently verified. Use a known contact route, not the suspicious request itself.',
+      'That permission is too broad or does not match the task. Choose the minimum access needed.',
+      'That evidence does not prove the outcome. Check the transaction record on the correct network.',
+      'That does not follow the agreed decision process. Review the proposal and record an intentional decision.',
+      'A message saying “paid” is not proof of receipt. Keep the funds protected until the record confirms payment.',
+      'The network or destination does not match the verified details. Check both before continuing.',
+      'That leaves an accountability gap. Confirm the authorised person and preserve a verifiable record.'
+    ];
     const evidenceHtml=()=>{
       const evidence=[
-        '<div class="kv"><span>Transfer request</span><b>Pending review</b></div><div class="kv"><span>Required check</span><b>Recipient, amount and fee</b></div>',
-        '<div class="kv"><span>Supplier record</span><b class="mono">0x8a71…c920</b></div><div class="kv"><span>New request</span><b class="mono">0x8a71…c902</b></div><p class="note">A shortened address can hide a mismatch. Compare the full destination through a trusted record.</p>',
-        '<div class="kv"><span>Requested access</span><b>Wallet permission</b></div><div class="kv"><span>Risk to inspect</span><b>Scope and duration</b></div>',
-        '<div class="kv"><span>Explorer record</span><b>Check network and recipient</b></div><div class="kv"><span>Submitted proof</span><b>Screenshot supplied by sender</b></div>',
-        '<div class="kv"><span>Proposal</span><b>Community decision</b></div><div class="kv"><span>Before voting</span><b>Review impact and allocation</b></div>',
-        '<div class="kv"><span>Buyer claim</span><b>“Payment sent”</b></div><div class="kv"><span>Release condition</span><b>Independent payment verification</b></div>',
-        '<div class="kv"><span>Transaction</span><b>Network-specific record</b></div><div class="kv"><span>Required match</span><b>Chain, destination and status</b></div>',
-        '<div class="kv"><span>Local request</span><b>Shared funds or access</b></div><div class="kv"><span>Required output</span><b>Clear record and accountable next step</b></div>'
+        '<div class="kv"><span>Request</span><b>Amount, recipient and total debit</b></div><div class="kv"><span>Evidence</span><b>Original agreement and transaction preview</b></div>',
+        '<div class="kv"><span>Trusted record</span><b class="mono">0x8a71…c920</b></div><div class="kv"><span>New request</span><b class="mono">0x8a71…c902</b></div><p class="note">Compare the full destination with the supplier's previously verified details.</p>',
+        '<div class="kv"><span>Requested access</span><b>Wallet permission</b></div><div class="kv"><span>Check</span><b>Scope, recipient and duration</b></div>',
+        '<div class="kv"><span>Transaction record</span><b>Network, recipient and status</b></div><div class="kv"><span>Submitted proof</span><b>Image or forwarded message</b></div>',
+        '<div class="kv"><span>Proposal</span><b>Terms and intended outcome</b></div><div class="kv"><span>Decision record</span><b>Agreed voting process</b></div>',
+        '<div class="kv"><span>Payment claim</span><b>“Payment sent”</b></div><div class="kv"><span>Release condition</span><b>Independently confirmed receipt</b></div>',
+        '<div class="kv"><span>Transaction</span><b>Network-specific record</b></div><div class="kv"><span>Required match</span><b>Chain, recipient and status</b></div>',
+        '<div class="kv"><span>Authority</span><b>Named owner and approved process</b></div><div class="kv"><span>Required output</span><b>Clear record and next action</b></div>'
       ];
       return evidence[taskKind];
     };
-    const taskIntro=[
-      'You are at the transaction desk. Inspect the transfer details, then carry out the safest settlement action.',
-      'A recipient record and a new request are on the counter. Compare the destination before deciding what to do.',
-      'A wallet permission is being requested. Configure access deliberately; do not grant more control than the task requires.',
-      'Two pieces of evidence are being presented. Reconcile the underlying record rather than treating a screenshot as proof.',
-      'The community has a live proposal. Review the issue and record a deliberate vote instead of leaving the decision to someone else.',
-      'A buyer says payment has been sent. Check the payment state before deciding whether escrow can be released.',
-      'A transaction is being prepared. Verify that the network and destination match before routing it.',
-      'A local group needs a safe operational handover. Complete the action that leaves a clear, verifiable record.'
-    ];
-    const taskSuccess=[
-      'The transfer was reviewed and the simulated settlement was recorded.',
-      'You checked the destination against the trusted record before acting.',
-      'The permission was limited to the required scope instead of granting open-ended access.',
-      'The evidence was reconciled against the underlying record, not just the submitted screenshot.',
-      'Your vote was recorded and the proposal now has an accountable outcome.',
-      'Escrow stayed protected until the payment condition was independently checked.',
-      'The route was checked against the correct network and destination before proceeding.',
-      'The handover now has a documented action and a clear next step.'
-    ];
-    const taskRetry=[
-      'That action skips a necessary transaction check. Review the transfer details and try again.',
-      'The destinations do not match. Do not rely on the logo or shortened address; compare against the trusted record.',
-      'That setting grants too much access or does not meet the task. Choose the least privilege needed.',
-      'That evidence does not independently establish the transaction outcome. Reconcile the actual record.',
-      'That action does not create an accountable decision. Review the proposal and record an intentional choice.',
-      'A payment claim is not proof of receipt. Keep the escrow protected until the account or transaction record confirms it.',
-      'The selected route does not match the verified transaction details. Re-check the network and destination.',
-      'That handover leaves a gap in accountability. Choose the action that preserves a verifiable record.'
-    ];
+    const actorFor=()=>{
+      if(/radio|broadcast|giveaway|caller|listeners/.test(caseText)) return {name:['Kelechi','Nneka','Chisom'][ci%3],role:'Station producer',site:'the station office'};
+      if(/shoe|leather|supplier|invoice|artisan|workshop|cooperative|craft|fabric/.test(caseText)) return {name:['Emeka','Ngozi','Chika'][ci%3],role:'Supplier representative',site:'the supplier counter'};
+      if(/customer|vendor|refund|preorder|shop|order|token/.test(caseText)) return {name:['Amaka','Ifeanyi','Somto'][ci%3],role:'Customer and payment witness',site:'the customer desk'};
+      if(/campus|student|club|demo|prototype/.test(caseText)) return {name:['Tochukwu','Ada','Obi'][ci%3],role:'Project coordinator',site:'the project desk'};
+      if(/driver|dispatch|delivery|fuel|shipment|container|exporter|boat|cold-store/.test(caseText)) return {name:['Boma','Ebi','Timi'][ci%3],role:'Operations coordinator',site:'the dispatch point'};
+      if(/treasurer|fund|vote|proposal|committee|savings circle|contribution/.test(caseText)) return {name:['Zainab','Halima','Musa'][ci%3],role:'Committee recorder',site:'the community desk'};
+      if(/grain|quote|swap|price|market/.test(caseText)) return {name:['Amina','Sani','Bello'][ci%3],role:'Market accounts clerk',site:'the accounts stall'};
+      return {name:['Damilola','Favour','Ibrahim'][ci%3],role:'Independent verifier',site:'the verification point'};
+    };
+    const actorInfo=actorFor();
+    const actor=loc(actorInfo.name,actorInfo.role,palette[(ci+1)%4],looks[(ci+1)%3],actorInfo.site);
+    const witnessName=['Uche','Fatima','Tobi','Zara','Chinedu','Mariam','Kunle','Efe'][(ci+mi)%8];
+    const witness=loc(witnessName,'Community witness',palette[(ci+2)%4],looks[(ci+2)%3],cityData.site+' · follow-up point');
+    const routeStart=routeSpots[(ci*3+mi*5)%routeSpots.length];
+    const routeAction=routeSpots[(ci*3+mi*5+4)%routeSpots.length];
+    const routeVerify=routeSpots[(ci*3+mi*5+8)%routeSpots.length];
     const m={
       id:'journey_'+cityData.city+'_'+(mi+1),n,city:cityData.city,title:data[0],
-      goal:data[1].split('. ')[0]+'.',xp:95+mi*15,explore:true,
+      goal:data[1],xp:95+mi*15,explore:true,
       steps:[
-        {label:'Inspect the case records',spot,npc:mentor,run(){
-          talk(mentor,'<p><b>'+cityData.name+' · '+cityData.site+'</b></p><p>'+data[1]+'</p><p>Before you act, inspect the records attached to this case.</p>'+evidenceHtml(),[
-            {t:'Inspect records',f:finishStep},
+        {label:'Hear the problem at '+cityData.site,spot:routeStart,npc:mentor,run(){
+          talk(mentor,'<p><b>'+cityData.name+' · '+cityData.site+'</b></p><p>'+data[1]+'</p><p>'+cityData.name+' needs you to establish what happened before anyone takes action. I am sending you to '+actorInfo.name+' at '+actorInfo.site+' to check the details.</p>',[
+            {t:'Go check the details',f:finishStep},
             {t:'Leave the case for now',g:1,f:closeSheet}
           ]);
         }},
-        {label:actionLabels[taskKind],spot,npc:mentor,run(){
-          const options=data[2].map((choice,choiceIndex)=>({
+        {label:'Check the case with '+actorInfo.name,spot:routeAction,npc:actor,run(){
+          talk(actor,'<p><b>'+taskNames[taskKind]+'</b></p><p>'+data[1]+'</p><p>'+taskIntro[taskKind]+'</p>'+evidenceHtml()+'<p><b>What should happen next?</b></p>',data[2].map((choice,choiceIndex)=>({
             t:choice,
             g:choiceIndex!==data[3],
             f:()=>{
               if(choiceIndex!==data[3]){
-                talk(mentor,'<h3>Action not accepted</h3><p>'+taskRetry[taskKind]+'</p><p>Review the case evidence and perform the operation again.</p>',[
-                  {t:'Rework the task',f:()=>{closeSheet();loadStep();}}
+                talk(actor,'<h3>That does not resolve it</h3><p>'+taskRetry[taskKind]+'</p><p>'+data[5]+'</p>',[
+                  {t:'Review the evidence again',f:()=>{closeSheet();loadStep();}}
                 ]);
                 return;
               }
               const finishTask=()=>{
-                talk(mentor,'<h3>Task completed</h3><p>'+taskSuccess[taskKind]+'</p><p><b>Recorded action:</b> '+choice+'</p>',[
-                  {t:'Verify the result',f:finishStep}
+                talk(actor,'<h3>Decision recorded</h3><p>'+data[4]+'</p><p><b>Agreed action:</b> '+choice+'</p><p>Take this outcome to '+witnessName+' at the follow-up point so the result can be checked independently.</p>',[
+                  {t:'Take the result for verification',f:finishStep}
                 ]);
               };
               if([0,2,5,6,7].includes(taskKind)){
-                const txTitle=['Settle the reviewed transfer','Verify recipient before transfer','Apply wallet permission','Reconcile transaction','Record community decision','Release only after verification','Confirm transaction route','Record operational handover'][taskKind];
-                confirmTx(mentor,{
+                const txTitle=['Review transfer details','Verify recipient','Limit wallet permission','Reconcile transaction evidence','Record community decision','Verify payment before release','Confirm network and destination','Record accountable handover'][taskKind];
+                confirmTx(actor,{
                   title:txTitle,
                   rows:[['Case',data[0]],['Action',choice],['Network','KitCity practice network'],['Fee',FEE0]],
                   note:'This is a simulated in-game operation. Check the details before confirming.',
-                  btn:'Confirm task action',
-                  busyText:'Recording the task action…',
+                  btn:'Confirm case action',
+                  busyText:'Recording the case action…',
                   after:()=>{save();finishTask();}
                 });
-              } else {
-                finishTask();
-              }
+              } else finishTask();
             }
-          }));
-          talk(mentor,'<p><b>'+taskNames[taskKind]+'</b></p><p>'+taskIntro[taskKind]+'</p>'+evidenceHtml()+'<p><b>Perform the operation:</b></p>',options);
+          })));
         }},
-        {label:'Verify outcome and next lead',spot,npc:mentor,run(){
-          const nextLine=cityData.handoff||'Your work is complete, and the next local challenge is ready.';
-          talk(mentor,'<h3>Outcome verified</h3><p>'+taskSuccess[taskKind]+'</p><p>'+nextLine+'</p><p>The result is recorded in your KitCity journey. No external task submission is required.</p>',[
+        {label:'Verify the outcome with '+witnessName,spot:routeVerify,npc:witness,run(){
+          talk(witness,'<p><b>Independent follow-up · '+cityData.name+'</b></p><p>'+data[4]+'</p><p>'+data[5]+'</p><p>'+((cityData.handoff||'The next local challenge is ready.') )+'</p><p>The outcome is now checked at a separate location and recorded in your KitCity journey. No external task submission is required.</p>',[
             {t:'Complete mission',f:finishStep}
           ]);
         }}
@@ -2169,8 +2177,9 @@ function startMission(id){
 }
 function briefing(){
   const m=G.m,C=CITIES[m.city];
-  openSheet('<div class="who"><span class="av" style="background:'+INK+'">'+m.n+'</span><div><b>'+(m.explore?'':'Mission '+m.n+': ')+m.title+'</b><small>'+C.name+', '+C.tag+'</small></div></div><p>'+m.goal+'</p><ul class="pts">'+m.steps.map(s=>'<li>'+s.label+'</li>').join('')+'</ul>'+(m.explore?'<p class="note">Move with the left stick or WASD. Hold Run or Shift to run. Tap Talk or press E near a person. Follow the arrow to your next conversation.</p>':'<p class="note">Follow the arrow to the next person. Watch for traffic.</p>'),
-    [{t:'Start conversations',f:closeSheet},{t:'Back to hub',g:1,f:exitToHub}]);
+  const route=m.explore?'<div class="route-brief"><p><b>Your route</b></p><ol><li><b>'+m.steps[0].npc.name+'</b> · '+m.steps[0].npc.role+'<small>'+m.steps[0].npc.sub+'</small></li><li><b>'+m.steps[1].npc.name+'</b> · '+m.steps[1].npc.role+'<small>'+m.steps[1].npc.sub+'</small></li><li><b>'+m.steps[2].npc.name+'</b> · '+m.steps[2].npc.role+'<small>'+m.steps[2].npc.sub+'</small></li></ol><p class="note">Travel to each marked location. Hear the local account, check the evidence with the relevant person, then take the outcome to an independent witness.</p></div>':'<ul class="pts">'+m.steps.map(s=>'<li>'+s.label+'</li>').join('')+'</ul>';
+  openSheet('<div class="who"><span class="av" style="background:'+INK+'">'+m.n+'</span><div><b>'+(m.explore?'':'Mission '+m.n+': ')+m.title+'</b><small>'+C.name+', '+C.tag+'</small></div></div><p>'+m.goal+'</p>'+route+'<p class="note">Move with the left stick or WASD. Hold Run or Shift to run. Tap Talk or press E near a person. Follow the arrow to your next conversation.</p>',
+    [{t:'Begin journey',f:closeSheet},{t:'Back to hub',g:1,f:exitToHub}]);
 }
 function finishStep(){
   closeSheet(); if(!G) return;
