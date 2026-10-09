@@ -53,7 +53,7 @@ assert.ok(world.PLANNED_SETTLEMENT_LOCATIONS.every(location => !location.environ
 assert.ok(world.NIGERIAN_STATES.filter(item => item.id !== "lagos").every(item => !world.WORLD_LOCATIONS.some(location => location.jurisdictionId === item.id && location.status === "playable")), "states without map assets are registered without fabricated playable worlds");
 assert.ok(world.SECTOR_REGISTRY.length >= 21, "the sector registry covers all requested sectors");
 assert.ok(distribution.NPC_REGISTRY.length >= 22, "social and educational NPCs share a structured registry");
-assert.equal(distribution.MISSION_REWARD_REGISTRY.length, 16);
+assert.equal(distribution.MISSION_REWARD_REGISTRY.length, 24, "the reward registry includes the legacy lessons and eight prototype missions");
 assert.equal(distribution.LOCATION_EVENT_REGISTRY.some(item => item.id === "pothole-awareness"), true);
 const developmentReport = distribution.getDevelopmentReport();
 assert.equal(developmentReport.states, 36);
