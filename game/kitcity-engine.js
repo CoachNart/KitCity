@@ -2557,7 +2557,7 @@ function spawnAdventureHazards(){
    if(Math.hypot(h.x-SPAWN.x,h.z-SPAWN.z)<25)continue;
    const rim=new THREE.Mesh(new THREE.CylinderGeometry(1.15,1.3,.08,12),lam('#33383d'));rim.position.set(h.x,.04,h.z);missionGroup.add(rim);
    const pit=new THREE.Mesh(new THREE.CircleGeometry(.85,12),lam('#18191c'));pit.rotation.x=-Math.PI/2;pit.position.set(h.x,.09,h.z);missionGroup.add(pit);
-   adventureHazards.push({x:h.x,z:h.z,r:2.2});
+   adventureHazards.push({x:h.x,z:h.z,r:2.2});colliders.push({x0:h.x-1.05,x1:h.x+1.05,z0:h.z-1.05,z1:h.z+1.05});
  }
 }
 function adventureTick(dt){
