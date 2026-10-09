@@ -12,6 +12,8 @@ assert.match(engineSource, /adventureComplete\(mapped,choiceIndex\)/, "mission-e
 assert.match(engineSource, /adventureSave\(\);adventureAfterActivity\(\);/, "a non-mission exit must return to free roam");
 assert.match(engineSource, /function adventureAfterActivity\(\)[\s\S]*?freeRoam:true/, "return-to-gameplay restores the free-roam state");
 assert.doesNotMatch(engineSource, /function adventureConversation\(/, "the old hardcoded linear dialogue handler must stay removed");
+assert.match(engineSource, /getWorldLocation\('lagos-free-roam'\)/, "invalid/unbuilt persisted locations fall back to the known playable scene");
+assert.match(engineSource, /activeLocation\.status!=='playable'/, "the runtime does not spawn encounters in a registry-only settlement");
 
 
 const worldErrors = distribution.validateWorldSystem();
@@ -81,10 +83,19 @@ const invalidLocation = {
   environmentalEncounterIds:[], educationalConceptIds:["missing-concept"], storyArcId:"missing-arc",
   unlockRequirement:null, contentStatus:"registry-only"
 };
-const invalidRegistryErrors = distribution.validateWorldSystem({additionalLocations:[invalidLocation]});
+const invalidAssetLocation = {
+  id:"__invalid-test-asset-location", jurisdictionId:"lagos", settlementName:"Test Asset",
+  locationType:"city-environment", status:"playable", environmentAssetId:"missing-asset", engineCityId:"missing-city",
+  environmentProfileIds:[], sectorIds:[], npcProfileIds:[], npcSpawnPoints:[], environmentSettings:{},
+  occupationTags:[], communityTags:[], mainMissionIds:[], sideMissionIds:[], environmentalEncounterIds:[],
+  educationalConceptIds:[], storyArcId:null, unlockRequirement:null, contentStatus:"test",
+  regionalContext:{geopoliticalZone:"South West",researchStatus:"not-yet-researched",evidenceRefs:[],contextNotes:[]}
+};
+const invalidRegistryErrors = distribution.validateWorldSystem({additionalLocations:[invalidLocation,invalidAssetLocation]});
 assert.ok(invalidRegistryErrors.some(error => error.includes("missing-jurisdiction")), "validator catches missing jurisdiction references");
 assert.ok(invalidRegistryErrors.some(error => error.includes("missing-environment")), "validator catches missing environment references");
 assert.ok(invalidRegistryErrors.some(error => error.includes("missing-mission")), "validator catches missing mission references");
+assert.ok(invalidRegistryErrors.some(error => error.includes("not registered as available")), "validator rejects playable locations without a registered environment asset");
 assert.equal(new Set(distributed.map(item => item.conceptId)).size, distributed.length, "initial mission distribution avoids repeated concepts");
 assert.ok(distributed.every(item => distribution.MISSION_DISTRIBUTION.some(entry => entry.missionId === item.id && entry.locationIds.includes("lagos-free-roam"))), "only missions matched to the current playable environment are selected");
 const doneState = {completedMissions:Object.fromEntries(distributed.map(item => [item.missionId,true])),knowledge:Object.fromEntries(distributed.map(item => [item.conceptId,true]))};
