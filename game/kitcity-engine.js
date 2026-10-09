@@ -2026,7 +2026,7 @@ function completeExplore(){
  const nextJourney=nextCity?cityMissions(nextCity)[0]:null;
  const btns=nextJourney?[{t:'Continue to '+CITIES[nextCity].name,f:()=>startMission(nextJourney.id)}]:[{t:'Finish journey',f:exitToHub}];
  openSheet('<div class="badge">'+badgeSVG('★',true,96)+'<div><h3 style="margin-top:0">Street mission complete</h3><small>'+CITIES[m.city].name+' · Task complete</small></div></div>'+
- '<p>You helped '+m.steps[0].npc.name+' sort out a real problem.</p>'+
+ '<p>You learned a practical street skill from '+m.steps[0].npc.name+' in '+CITIES[m.city].name+'.</p>'+
  (gain?'<div class="kv"><span>Mission XP</span><b>+'+gain+'</b></div>':'<p class="note">Mission already completed.</p>')+
  (gain&&after.n>before?'<p><b>Level up! You are now '+after.title+'.</b></p>':''),btns);
 }
