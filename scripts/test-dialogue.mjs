@@ -50,8 +50,13 @@ assert.equal(world.NIGERIAN_TERRITORIES.length, 1);
 assert.equal(world.NIGERIAN_TERRITORIES[0].id, "fct");
 assert.equal(world.NIGERIAN_TERRITORIES[0].administrativeCapital, "Abuja");
 assert.equal(world.NIGERIAN_JURISDICTIONS.length, 37);
+assert.equal(world.PLANNED_SETTLEMENT_LOCATIONS.length, 37, "each state and FCT has an administrative-capital settlement record");
+assert.equal(world.WORLD_LOCATIONS.length, 38, "the one existing scene plus 37 registry-only settlements are represented");
 assert.equal(world.WORLD_LOCATIONS.filter(item => item.status === "playable").length, 1, "only the existing free-roam environment is marked playable");
-assert.ok(world.NIGERIAN_STATES.filter(item => item.id !== "lagos").every(item => item.content.locationIds.length === 0), "states without map assets remain registered, not fabricated as playable");
+assert.equal(world.WORLD_LOCATIONS.filter(item => item.status === "planned").length, 37, "unbuilt settlements are registry-only, never presented as playable");
+assert.ok(world.NIGERIAN_JURISDICTIONS.every(jurisdiction => world.WORLD_LOCATIONS.some(location => location.jurisdictionId === jurisdiction.id && location.status === "planned")), "every jurisdiction has a planned settlement record");
+assert.ok(world.PLANNED_SETTLEMENT_LOCATIONS.every(location => !location.environmentAssetId && !location.engineCityId && location.contentStatus === "registry-only"), "registry-only settlements do not claim nonexistent map assets");
+assert.ok(world.NIGERIAN_STATES.filter(item => item.id !== "lagos").every(item => !world.WORLD_LOCATIONS.some(location => location.jurisdictionId === item.id && location.status === "playable")), "states without map assets are registered without fabricated playable worlds");
 assert.ok(world.SECTOR_REGISTRY.length >= 21, "the sector registry covers all requested sectors");
 assert.ok(distribution.NPC_REGISTRY.length >= 22, "social and educational NPCs share a structured registry");
 assert.equal(distribution.MISSION_REWARD_REGISTRY.length, 15);
@@ -60,11 +65,31 @@ const developmentReport = distribution.getDevelopmentReport();
 assert.equal(developmentReport.states, 36);
 assert.equal(developmentReport.territories, 1);
 assert.equal(developmentReport.jurisdictions, 37);
+assert.equal(developmentReport.configuredLocations, 38);
+assert.equal(developmentReport.settlementRecords, 37);
+assert.equal(developmentReport.registryOnlyLocations, 37);
 assert.equal(developmentReport.playableLocations, 1);
+assert.equal(developmentReport.jurisdictionsWithLocationRecords, 37);
+assert.equal(developmentReport.jurisdictionsWithPlayableLocations, 1);
+assert.equal(developmentReport.jurisdictionsAwaitingPlayableEnvironment, 36);
 assert.equal(developmentReport.educationalMissions, 15);
 assert.ok(developmentReport.missionsWithPlayableLocation > 0 && developmentReport.missionsWithPlayableLocation < developmentReport.educationalMissions, "the report distinguishes assigned content from content awaiting suitable environments");
 const distributed = distribution.selectEducationalMissions({locationId:"lagos-free-roam",dialogueState:{},limit:6,allowDeepening:true});
 assert.ok(distributed.length > 0 && distributed.length <= 6);
+const invalidLocation = {
+  id:"__invalid-test-location", jurisdictionId:"missing-jurisdiction", settlementName:"Test",
+  locationType:"test", status:"planned", environmentAssetId:null, engineCityId:null,
+  environmentProfileIds:["missing-environment"], sectorIds:["missing-sector"], npcProfileIds:["missing-npc"],
+  occupationTags:[], communityTags:[], mainMissionIds:["missing-mission"], sideMissionIds:[],
+  environmentalEncounterIds:[], educationalConceptIds:["missing-concept"], storyArcId:"missing-arc",
+  unlockRequirement:null, contentStatus:"registry-only"
+};
+world.WORLD_LOCATIONS.push(invalidLocation);
+const invalidRegistryErrors = distribution.validateWorldSystem();
+assert.ok(invalidRegistryErrors.some(error => error.includes("missing-jurisdiction")), "validator catches missing jurisdiction references");
+assert.ok(invalidRegistryErrors.some(error => error.includes("missing-environment")), "validator catches missing environment references");
+assert.ok(invalidRegistryErrors.some(error => error.includes("missing-mission")), "validator catches missing mission references");
+world.WORLD_LOCATIONS.pop();
 assert.equal(new Set(distributed.map(item => item.conceptId)).size, distributed.length, "initial mission distribution avoids repeated concepts");
 assert.ok(distributed.every(item => distribution.MISSION_DISTRIBUTION.some(entry => entry.missionId === item.id && entry.locationIds.includes("lagos-free-roam"))), "only missions matched to the current playable environment are selected");
 const doneState = {completedMissions:Object.fromEntries(distributed.map(item => [item.missionId,true])),knowledge:Object.fromEntries(distributed.map(item => [item.conceptId,true]))};
