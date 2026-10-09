@@ -2243,10 +2243,12 @@ function levelInfo(xp){
   const lo=LEVELS[n],hi=LEVELS[n+1];
   return {n:n+1,title:LTITLES[n],pct:hi?Math.min(100,Math.round((xp-lo)/(hi-lo)*100)):100};
 }
-const cityOrder=Object.keys(CITIES).filter(city=>EXPLORE.some(m=>m.city===city));
+const cityOrder=Object.keys(CITIES).filter(city=>EXPLORE.some(m=>m.city===city)||MISSIONS.some(m=>m.city===city));
 EXPLORE.sort((a,b)=>cityOrder.indexOf(a.city)-cityOrder.indexOf(b.city));
 EXPLORE.forEach((m,i)=>{ m.mod=i+1; });
-const isCityUnlocked=city=>{ const i=cityOrder.indexOf(city); return i>=0&&(i===0||!!P.done[EXPLORE.find(m=>m.city===cityOrder[i-1])?.id]); };
+const cityMissions=city=>{ const explore=EXPLORE.filter(m=>m.city===city); return explore.length?explore:MISSIONS.filter(m=>m.city===city); };
+const isCityComplete=city=>{ const missions=cityMissions(city); return missions.length>0&&missions.every(m=>!!P.done[m.id]); };
+const isCityUnlocked=city=>{ const i=cityOrder.indexOf(city); return i>=0&&(i===0||isCityComplete(cityOrder[i-1])); };
 const isUnlocked=m=>{ if(m.explore) return isCityUnlocked(m.city); const k=MISSIONS.indexOf(m); return k===0||!!P.done[MISSIONS[k-1].id]; };
 
 /* =====================  mission flow  ===================== */
@@ -2333,7 +2335,7 @@ function completeMission(){
   clearGroup(missionGroup); colliders.length=cityCols; smoke=[]; ents=[]; goal=null; beacon.visible=false;
   const btns=[];
   if(all&&first) btns.push({t:'See my certificate',f:()=>certificate()});
-  if(next) btns.push({t:'Next: '+next.title,f:()=>startMission(next.id)});
+  if(next) btns.push({t:next.city!==m.city?'Next city: '+CITIES[next.city].name:'Next: '+next.title,f:()=>startMission(next.id)});
   btns.push({t:'Back to hub',g:1,f:exitToHub});
   openSheet('<div class="badge">'+badgeSVG(m.n,true,96)+'<div><h3 style="margin-top:0">'+BADGES[idx]+' badge</h3><small>Mission '+m.n+' complete</small></div></div>'+
     (first?'<div class="kv"><span>Mission XP</span><b>+'+m.xp+'</b></div>'+(G.bonus?'<div class="kv"><span>Bonus XP</span><b>+'+G.bonus+'</b></div>':'')+'<div class="kv"><span>Total XP</span><b>'+P.xp+'</b></div>':'<p class="note">Replay complete. XP is only awarded the first time.</p>')+
@@ -2366,7 +2368,7 @@ function mapSVG(){
   const pts=NG.map(p=>mx(p[0]).toFixed(1)+','+my(p[1]).toFixed(1)).join(' ');
   let pins='';
   for(const k in CITIES){
-    const c=CITIES[k],x=mx(c.lon),y=my(c.lat),ms=EXPLORE.filter(m=>m.city===k),d=ms.filter(m=>P.done[m.id]).length,open=isCityUnlocked(k),sel=k===hubCity;
+    const c=CITIES[k],x=mx(c.lon),y=my(c.lat),ms=cityMissions(k),d=ms.filter(m=>P.done[m.id]).length,open=isCityUnlocked(k),sel=k===hubCity;
     pins+='<g data-a="city" data-v="'+k+'" style="cursor:'+(open?'pointer':'not-allowed')+'"><circle cx="'+x+'" cy="'+y+'" r="'+(sel?12:9)+'" fill="'+(open?BRAND:'#6b6f78')+'" stroke="#fff" stroke-width="'+(sel?3:2)+'"/><text x="'+x+'" y="'+(y+3.5)+'" text-anchor="middle" font-size="10" font-weight="800" fill="'+INK+'">'+d+'/'+ms.length+'</text><text x="'+x+'" y="'+(y+25)+'" text-anchor="middle" font-size="11" font-weight="800" fill="#fff">'+c.name+(open?'':' · LOCKED')+'</text></g>';
   }
   return '<svg viewBox="0 0 270 220" class="map" role="img" aria-label="Map of Nigeria with mission cities"><polygon points="'+pts+'" fill="rgba(16,200,220,.18)" stroke="'+BRAND+'" stroke-width="2.5" stroke-linejoin="round"/>'+pins+'</svg>';
@@ -2389,7 +2391,7 @@ function renderHub(){
   } else if(hubTab==='cityhub'){
     hubTab='missions';
     const C=CITIES[hubCity];
-    h+=mapSVG()+'<p class="soft"><b>'+C.name+'</b>, '+C.tag+'</p>'+EXPLORE.filter(m=>m.city===hubCity).map(moduleCard).join('');
+    h+=mapSVG()+'<p class="soft"><b>'+C.name+'</b>, '+C.tag+'</p>'+cityMissions(hubCity).map(m=>m.explore?moduleCard(m):missionCard(m)).join('');
   } else if(hubTab==='passport'){
     const done=EXPLORE.filter(m=>P.done[m.id]).length,all=done===EXPLORE.length;
     h+='<div class="h2">City journeys</div><div class="grid2">'+EXPLORE.map((m,i)=>'<div class="bd'+(P.done[m.id]?'':' off')+'">'+badgeSVG(m.mod,!!P.done[m.id],56)+'<b>'+m.title.replace('Agent Kit in ','')+'</b></div>').join('')+'</div>';
