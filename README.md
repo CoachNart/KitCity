@@ -20,6 +20,14 @@ The active game entry point is free roam. Encounters are optional and contextual
 - NPC profiles record age range, economic circumstances, technical fluency and stance rather than treating residents as interchangeable or making the protagonist the only expert. Regional content remains marked for research until grounded in location-specific sources.
 - Run `npm run report:world` for a machine-checked development report. It shows the number of states, territories, registered/playable locations, sectors, NPC profiles, educational concepts/missions, dialogue trees, rewards, events and missions still awaiting suitable environments.
 
+### First eight interactive prototype missions
+
+- `game/prototype-missions.js` authors eight complete branching mission trees: market payment records, student portfolio evidence, agricultural batch traceability, legal review of a smart contract, music collaboration rights, clinic appointment privacy, community budget governance, and a Web3 architecture reality check.
+- Each mission has a distinct NPC perspective, natural opening branches, a practical task briefing, in-world objective markers with meaningful decisions, a return/debrief stage, concept knowledge, completion flags, an in-game reward, and returning-NPC dialogue.
+- Objective progress is saved under the adventure dialogue state. Multi-check activities require all evidence markers to be inspected before the debrief can complete the mission. The final reward path is protected from dialogue-only completion and duplicate rewards.
+- The eight NPCs and their objective markers are encounter overlays in the **existing Lagos free-roam environment**. The student, farm, law, studio, clinic, community and meetup scenarios are not claims that separate campus/farm/office/clinic maps have been built. Their dedicated environments remain future content.
+- Missions are optional and can be tackled in any order. Starting a mission returns control to free roam; players travel to objective markers and then return to the NPC rather than sitting through eight consecutive lectures.
+
 ### Conversation engine
 
 - `game/conversation-engine.js`: reusable, data-only conversation state machine. Supports branching nodes, conditional choices, mission requirements, optional follow-ups, state changes, trust and knowledge flags, mission completion, natural exit, and persistent state snapshots.
