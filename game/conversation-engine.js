@@ -75,7 +75,7 @@ export class ConversationEngine {
     this.state.metNpcs[this.npcId] = true;
     rel.meetings = (rel.meetings || 0) + 1;
     const startNode = this.content.nodes[this.nodeId];
-    if (startNode && startNode.returningText && returning) this._openingOverride = startNode.returningText;
+    if (returning && startNode) this._openingOverride = startNode.returningText || (this.content.educational ? "You came back. Last time we explored " + this.content.title + ". What part should we look at now?" : null);
     return { node: this.currentNode(), returning, state: this.state };
   }
 
