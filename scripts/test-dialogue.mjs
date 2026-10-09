@@ -59,4 +59,4 @@ const left = leaveSession.choose("__leave_conversation");
 assert.equal(left.ended, true);
 assert.equal(left.missionCompleted, false, "leaving early must not complete the mission");
 
-console.log("PASS: 7 dialogue trees validate; branching, multi-turn follow-ups, mission gates, early exit, mission completion, knowledge/trust state, and returning-NPC dialogue all work.");
+console.log("PASS: 7 dialogue trees validate; branching, multi-turn follow-ups, mission gates, early exit, mission completion, knowledge/trust state, and returning-NPC dialogue, mission gates, and early exits all work.");
