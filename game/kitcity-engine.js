@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { ConversationEngine, createDialogueState } from './conversation-engine.js';
 import { getDialogue } from './dialogue-content.js';
 import { EDUCATIONAL_NPCS } from './educational-content.js';
+import { selectEducationalMissions } from './mission-distribution.js';
 
 export default function initKitCity(){
 'use strict';
@@ -2483,7 +2484,10 @@ function interact(){ if(S.phase!=='play'||S.modal||!nearEnt) return; nearEnt.tal
 
 /* =====================  open-world adventure runtime  ===================== */
 const ADVENTURE_KEY='kitcity_adventure_v1';
-const adventure=Object.assign({travel:0,activityCount:0,exploreScore:0,completed:[],relationships:{},lastMajorAt:0,lastMajorId:null,encounterCooldowns:{},rewarded:{}},Store.get(ADVENTURE_KEY,{}));
+const adventure=Object.assign({stateId:'lagos',locationId:'lagos-free-roam',travel:0,activityCount:0,exploreScore:0,completed:[],relationships:{},lastMajorAt:0,lastMajorId:null,encounterCooldowns:{},rewarded:{},dialogueState:{}},Store.get(ADVENTURE_KEY,{}));
+if(!adventure.stateId) adventure.stateId='lagos';
+if(!adventure.locationId) adventure.locationId='lagos-free-roam';
+if(!adventure.dialogueState||typeof adventure.dialogueState!=='object') adventure.dialogueState={};
 const adventureSave=()=>Store.set(ADVENTURE_KEY,adventure);
 let adventureLastX=SPAWN.x,adventureLastZ=SPAWN.z,adventureMeters=0,adventureHazards=[],adventureEncounterIds=new Set(),adventureToastCd=0;
 const ADVENTURE_NPCS=[
@@ -2500,7 +2504,9 @@ function adventureBegin(){
  closeSheet(); G={m:{id:'free-roam',title:'Explore KitCity',n:'',explore:true,steps:[]},i:0,bonus:0,used:{},freeRoam:true};
  clearGroup(missionGroup); colliders.length=cityCols; smoke=[]; ents=[]; goal=null; beacon.visible=false;
  adventureEncounterIds.clear(); adventureHazards=[];
- for(const def of [...ADVENTURE_NPCS,...EDUCATIONAL_NPCS]){
+ const selectedEducationalIds=new Set(selectEducationalMissions({locationId:adventure.locationId,dialogueState:adventure.dialogueState,limit:6,allowDeepening:true}).map(mission=>mission.id));
+ const locationEducationalNpcs=EDUCATIONAL_NPCS.filter(def=>selectedEducationalIds.has(def.id));
+ for(const def of [...ADVENTURE_NPCS,...locationEducationalNpcs]){
    const spot=SPOTS[def.spot]||def.position; if(!spot) continue;
    const look=typeof def.look==='string'?(LK[def.look]||LK.guy):def.look;
    const npc=NPC(def.name,def.role,def.color,look,null,def.sign); npc.signBg=def.color;npc.signFg='#fff';
