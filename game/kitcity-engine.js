@@ -1583,7 +1583,7 @@ function talk(def,html,btns){
   const prev=chat.log.slice(-3).map(m=>'<div class="b '+(m.me?'me':'npc old')+'">'+m.html+'</div>').join('');
   const pl=plain(html);
   chat.log.push({html:pl.slice(0,80)+(pl.length>80?'\u2026':'')});
-  const wrapped=(btns||[]).map(b=>({t:tr(b.t),g:b.g,m:b.m,f:()=>{ chat.log.push({me:1,html:tr(b.t)}); b.f(); }}));
+  const wrapped=(btns||[]).map(b=>({t:tr(b.t),g:b.g,m:b.m,f:()=>{ chat.log.push({me:1,html:'<b>Agent Kit</b> · '+tr(b.t)}); b.f(); }}));
   openSheet(whoOf(def)+'<div class="chat">'+prev+'<div class="b npc dots"><i></i><i></i><i></i></div><div class="b npc new">'+html+'</div></div>',wrapped,Math.min(1100,320+pl.length*4));
 }
 function busy(def,txt,ms,next){ openSheet(whoOf(def)+'<div class="busy"><span class="spin"></span><p>'+txt+'</p></div>',[]); setTimeout(next,ms); }
@@ -2156,7 +2156,7 @@ const MODS=[
   {label:"Learn with Amina",spot:'j',npc:loc("Amina Modu","grain seller",'#10C8DC',LK.trader,"damboa community"),L:{t:"Understand lending collateral",intro:"In damboa, understand lending collateral matters because a small mistake can cost real money. Learn the checks first, then practise them before using real assets.",pts:["Understand the protocol's rules, collateral requirements, liquidation conditions, and fees before supplying assets or borrowing.","Review the official documentation and contract address, and remember that audits reduce some risks but do not guarantee safety.","Track changing rates and collateral values; smart-contract failures, oracle errors, and volatile markets can cause losses even without a scam."],q:Q3([["Which action is the safest first step?",["Trust a screenshot instead of checking the actual record","Understand the protocol's rules, collateral requirements, liquidation conditions, and fees before supplying assets or borrowing.","Ignore fees and network details if the amount looks right"],1,"Remember: Understand the protocol's rules, collateral requirements, liquidation conditions, and fees before supplying assets or borrowing."],["What should you check before proceeding?",["Approve every request because it appears familiar","Let a stranger handle the wallet to save time","Review the official documentation and contract address, and remember that audits reduce some risks but do not guarantee safety."],2,"Remember: Review the official documentation and contract address, and remember that audits reduce some risks but do not guarantee safety."],["Which warning sign means you should stop?",["Track changing rates and collateral values; smart-contract failures, oracle errors, and volatile markets can cause losses even without a scam.","Assume a popular service cannot make mistakes","Treat a promise of guaranteed returns as proof"],0,"Remember: Track changing rates and collateral values; smart-contract failures, oracle errors, and volatile markets can cause losses even without a scam."]])}}
  ]}
 ];
-const AGENT_KIT_GUIDE=NPC('Agent Kit','Web3 guide & community builder',BRAND,LK.clerk,null,'Ask Agent Kit');
+const AGENT_KIT_GUIDE=NPC('Aunty Nneka','KitLab mentor & community guide',BRAND,LK.clerk,null,'KitLab guide');
 const AK_SECTORS=[
 ['market traders & small businesses','Market trader and small-business owner','Market association','small businesses face opaque fees, paper records and limited customer reach','transparent trade records, digital marketplaces and cooperative tools','commerce operations, payments design and customer support',1],
 ['farmers & food systems','Farmer and cooperative organiser','Farmers cooperative','farmers struggle to prove produce origin and coordinate buyers','traceability, cooperative records and supply-chain milestones','AgriTech, supply-chain data and cooperative coordination',1],
@@ -2204,7 +2204,7 @@ function akLesson(cityName,sector,npc,part){
   ['What is a sensible first step?',['Start with a small pilot and listen to users','Launch a token before talking to anyone','Put private records on a public ledger'],0,'Small pilots reveal what helps before scaling.']
  ];
  return {agentKit:true,t:part===0?'Why Web3 began — and what it is for':'Web3 in '+sector.name,intro,
- opening:part===0?'Agent Kit: “Before I explain anything, what digital problem do people here face most—access, control, trust, cost or opportunity?”':'Agent Kit: “We have heard the problem. Let us explore a possible improvement without pretending technology can fix everything.”',
+ opening:part===0?'“People keep saying Web3 is just crypto. What is the story behind it, and why did it begin?”':'“I see how this affects our work. Could Web3 help here, and what opportunities might it create?”',
  question:part===0?'Which starting point sounds most useful to you?':'What should guide a solution for this community?',
  options:part===0?['More choice over digital identity and work','We just need a new coin','Technology matters more than people']:['Start with local needs and compare tools','Put every record on-chain','Promise quick profits'],
  responses:part===0?[
@@ -2225,9 +2225,9 @@ function akLesson(cityName,sector,npc,part){
 const EXPLORE=[];
 MODS.forEach((e,i)=>{
  const sector=AK_SECTORS[i%AK_SECTORS.length],cityName=(CITIES[e.city]&&CITIES[e.city].name)||e.city,a=e.steps[0],b=e.steps[1];
- [a,b].forEach(t=>{t.npc.role=sector.role;t.npc.sign=sector.sign;t.npc.signBg=t.npc.color||BRAND;t.npc.signFg='#fff';if(!sector.stall)t.npc.stall=null;});
+ a.npc.role='Local resident and community member';a.npc.sign='Community conversation';a.npc.signBg=a.npc.color||BRAND;a.npc.signFg='#fff';a.npc.stall=null;b.npc.role=sector.role;b.npc.sign=sector.sign;b.npc.signBg=b.npc.color||BRAND;b.npc.signFg='#fff';if(!sector.stall)b.npc.stall=null;
  const l1=akLesson(cityName,sector,a.npc,0),l2=akLesson(cityName,sector,b.npc,1);
- const hubStep={label:'Meet Agent Kit at KitCity Hub',spot:'d',npc:AGENT_KIT_GUIDE,run(){
+ const hubStep={label:'Meet the KitLab guide at KitCity Hub',spot:'d',npc:AGENT_KIT_GUIDE,run(){
   talk(AGENT_KIT_GUIDE,'<p>We have listened to people in '+cityName+' and explored how Web3 may serve real needs. Welcome to <b>KitCity Hub — '+cityName+'</b>, where the community can meet, share ideas and keep growing.</p><p>Inside is <b>KitLab</b>: the history and vision of Web3, its ecosystem, careers, building, local industries, governance and responsible impact. You do not need to be a trader or developer to belong here.</p>',[
    {t:'Enter KitCity Hub',f:()=>{hubCity=e.city;hubTab='cityhub';finishStep();}},
    {t:'What is KitLab?',g:1,f:()=>talk(AGENT_KIT_GUIDE,'<p>KitLab turns curiosity into a path: learn the story, meet the ecosystem, discover a career route, build something useful, then share what you learn with your community.</p>',[{t:'Enter KitCity Hub',f:()=>{hubCity=e.city;hubTab='cityhub';finishStep();}}])}
