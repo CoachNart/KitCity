@@ -6,6 +6,12 @@ KitCity is a mobile-first Nigerian open-world adventure built with Next.js, Reac
 
 The active game entry point is free roam. Encounters are optional and contextual; dialogue and rewards do not force a linear lesson sequence. Rendering, movement, collision resolution, traffic, pedestrians and city generation remain in the existing Three.js engine.
 
+### Educational content framework
+
+- `game/educational-content.js`: structured, offline-first library of 15 Web3 concepts and 15 playable story missions spanning digital ownership, education, agriculture, commerce, healthcare, law and public records, employment, creative industries, governance, identity/privacy, decentralized infrastructure, real-world asset tokenization, AI provenance, security, and open internet protocols.
+- Each concept includes a plain-language explanation, sectors, suitable NPC profiles, scenario, complexity, prerequisites, example application, limitations and a practical takeaway. Each mission is an interactive branching dialogue that moves from a character's problem to a possible application, a skeptical question, a limitation and a useful discovery.
+- Educational encounters are registered with the shared dialogue resolver and spawned as optional NPCs in free roam. Prerequisites gate advanced missions; completing a lesson persists its concept knowledge and mission state. The authored content is available offline and avoids presenting proposed use cases as universal deployments.
+
 ### Conversation engine
 
 - `game/conversation-engine.js`: reusable, data-only conversation state machine. Supports branching nodes, conditional choices, mission requirements, optional follow-ups, state changes, trust and knowledge flags, mission completion, natural exit, and persistent state snapshots.
@@ -18,6 +24,6 @@ Dialogue is authored locally. No external AI API or paid runtime service is need
 
 ## Verification
 
-Run `npm run test:dialogue` to validate the dialogue registry and exercise branching paths, mission completion, saved knowledge/relationship state, mission requirements, early exit and returning-NPC dialogue. The GitHub Actions workflow also runs the production build.
+Run `npm run test:dialogue` to validate the social dialogue registry, all 15 educational concepts and mission trees, a complete path through every lesson, prerequisite locks/unlocks, saved knowledge/relationship state, mission completion, early exit and returning-NPC dialogue. The GitHub Actions workflow also runs the production build.
 
 The game’s digital asset, wallet and blockchain scenarios are fictional simulations unless a future integration is explicitly implemented and disclosed.
