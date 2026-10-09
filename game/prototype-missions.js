@@ -7,7 +7,7 @@ const flag = (kind, id) => "prototype:" + kind + ":" + id;
 
 const missionRows = [
   {
-    id:"kitcity-market-ledger", conceptId:"commerce-payments", title:"The Market Woman",
+    id:"kitcity-market-ledger", sectors:["commerce","small-business"], conceptId:"commerce-payments", title:"The Market Woman",
     npcId:"amaka-market-trader", npcName:"Amaka", role:"Market trader",
     personality:"Fast-thinking, practical, dry humour",
     ageRange:"30s-40s", economicContext:"independent produce trader managing stock and daily cash flow",
@@ -36,7 +36,7 @@ const missionRows = [
     ]
   },
   {
-    id:"kitcity-student-portfolio", conceptId:"portable-credentials", title:"The University Student",
+    id:"kitcity-student-portfolio", sectors:["education","employment","technology"], conceptId:"portable-credentials", title:"The University Student",
     npcId:"tomi-final-year-student", npcName:"Tomi", role:"Final-year student and aspiring developer",
     personality:"Ambitious, tired of gatekeeping, quick to challenge empty promises",
     ageRange:"early 20s", economicContext:"final-year student with limited time and money",
@@ -65,7 +65,7 @@ const missionRows = [
     ]
   },
   {
-    id:"kitcity-farm-trace", conceptId:"agriculture-traceability", title:"The Farmer's Problem",
+    id:"kitcity-farm-trace", sectors:["agriculture","commerce"], conceptId:"agriculture-traceability", title:"The Farmer's Problem",
     npcId:"musa-cooperative-farmer", npcName:"Musa", role:"Farmer and cooperative member",
     personality:"Observant, patient, evidence-first",
     ageRange:"40s-50s", economicContext:"smallholder farmer facing seasonal risk and buyer disputes",
@@ -102,7 +102,7 @@ const missionRows = [
     ]
   },
   {
-    id:"kitcity-lawyer-review", conceptId:"smart-contracts", title:"The Lawyer Who Isn't Convinced",
+    id:"kitcity-lawyer-review", sectors:["law","professional-services"], conceptId:"smart-contracts", title:"The Lawyer Who Isn't Convinced",
     npcId:"eze-contract-lawyer", npcName:"Barrister Eze", role:"Commercial lawyer",
     personality:"Skeptical, precise, dryly funny",
     ageRange:"40s-50s", economicContext:"small-practice lawyer advising clients who cannot absorb avoidable disputes",
@@ -139,7 +139,7 @@ const missionRows = [
     ]
   },
   {
-    id:"kitcity-music-rights", conceptId:"creative-rights", title:"The Music Producer",
+    id:"kitcity-music-rights", sectors:["music","media"], conceptId:"creative-rights", title:"The Music Producer",
     npcId:"tayo-independent-producer", npcName:"Tayo", role:"Independent music producer",
     personality:"Creative, collaborative, protective of attribution",
     ageRange:"late 20s-30s", economicContext:"independent producer balancing studio costs, collaborators and uncertain royalties",
@@ -172,7 +172,7 @@ const missionRows = [
     ]
   },
   {
-    id:"kitcity-clinic-schedule", conceptId:"health-data-rights", title:"The Clinic Records Officer",
+    id:"kitcity-clinic-schedule", sectors:["healthcare","government"], conceptId:"health-data-rights", title:"The Clinic Records Officer",
     npcId:"halima-clinic-records", npcName:"Halima", role:"Clinic records officer",
     personality:"Calm, organized, privacy-first",
     ageRange:"30s-40s", economicContext:"busy clinic team with limited staff and a need to coordinate appointments",
@@ -209,7 +209,7 @@ const missionRows = [
     ]
   },
   {
-    id:"kitcity-community-budget", conceptId:"community-governance", title:"The Community Leader",
+    id:"kitcity-community-budget", sectors:["community","government"], conceptId:"community-governance", title:"The Community Leader",
     npcId:"aisha-community-organizer", npcName:"Aisha", role:"Community project organizer",
     personality:"Facilitates disagreement, asks for evidence, values accountability",
     ageRange:"30s-50s", economicContext:"volunteer organizer coordinating limited funds and competing local needs",
@@ -249,7 +249,7 @@ const missionRows = [
     ]
   },
   {
-    id:"kitcity-web3-reality-check", conceptId:"security-and-limits", title:"The Web3 Maximalist",
+    id:"kitcity-web3-reality-check", sectors:["technology","finance"], conceptId:"security-and-limits", title:"The Web3 Maximalist",
     npcId:"dayo-web3-builder", npcName:"Dayo", role:"Experienced Web3 builder",
     personality:"Fast, confident, technically curious; capable of revising a position",
     ageRange:"late 20s-30s", economicContext:"builder working with early-stage products and limited engineering budgets",
@@ -410,6 +410,7 @@ export function validatePrototypeMissionPack(){
     while(pending.length){
       const id=pending.pop();if(seen.has(id))continue;seen.add(id);
       const node=nodes[id];if(!node){errors.push(mission.id+": unreachable dialogue reference "+id);continue;}
+      if(node.fallback)pending.push(node.fallback);
       for(const choice of node.choices||[]){
         if(choice.end)continue;
         if(!choice.next||!nodes[choice.next])errors.push(mission.id+"/"+id+": invalid next node "+choice.next);
