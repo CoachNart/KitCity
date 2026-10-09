@@ -2140,7 +2140,7 @@ function bannerSprite(text,sub){
 function loadStep(){
   clearGroup(missionGroup); colliders.length=cityCols; smoke=[]; ents=[]; goal=null;
   const m=G.m,st=m.steps[G.i];
-  const routeKey=(G.routeSpots&&G.routeSpots[G.i%G.routeSpots.length])||st.spot; const e=placeNPC(st.npc,SPOTS[routeKey]||SPOTS[st.spot]); e.talk=()=>st.run(); e.active=()=>true; ents.push(e); goal=e;
+  const routeKey=G.m.explore?st.spot:((G.routeSpots&&G.routeSpots[G.i%G.routeSpots.length])||st.spot); const e=placeNPC(st.npc,SPOTS[routeKey]||SPOTS[st.spot]); e.talk=()=>st.run(); e.active=()=>true; ents.push(e); goal=e;
   for(const ex of (m.extras||[])){
     if(G.used[ex.id]) continue;
     const e2=placeNPC(ex.npc,ex.spot); e2.ex=ex; e2.talk=()=>ex.run(e2); e2.active=()=>!G.used[ex.id]; ents.push(e2);
