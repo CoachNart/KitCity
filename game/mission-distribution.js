@@ -265,6 +265,7 @@ export function validateWorldSystem({ additionalLocations = [] } = {}) {
     if (!stateIds.has(location.jurisdictionId) && !territoryIds.has(location.jurisdictionId)) errors.push(location.id + ": references missing jurisdiction " + location.jurisdictionId);
     if (!validLocationStatuses.has(location.status)) errors.push(location.id + ": invalid location status " + location.status);
     if (!location.settlementName || !location.locationType) errors.push(location.id + ": missing location identity fields");
+    if (!location.regionalContext || !location.regionalContext.geopoliticalZone || !location.regionalContext.researchStatus || !Array.isArray(location.regionalContext.evidenceRefs)) errors.push(location.id + ": missing regional research context");
     for (const slot of ["environmentProfileIds","sectorIds","npcProfileIds","npcSpawnPoints","occupationTags","communityTags","mainMissionIds","sideMissionIds","environmentalEncounterIds","educationalConceptIds"]) {
       if (!Array.isArray(location[slot])) errors.push(location.id + ": " + slot + " must be an array");
     }
@@ -302,6 +303,7 @@ export function validateWorldSystem({ additionalLocations = [] } = {}) {
       if (!Array.isArray(jurisdiction.content[slot])) errors.push(jurisdiction.id + ": content." + slot + " must be an array");
     }
     if (!jurisdiction.content.environmentSettings || typeof jurisdiction.content.environmentSettings !== "object" || Array.isArray(jurisdiction.content.environmentSettings)) errors.push(jurisdiction.id + ": content.environmentSettings must be an object");
+    if (!jurisdiction.regionalContext || !jurisdiction.regionalContext.geopoliticalZone || !jurisdiction.regionalContext.researchStatus || !Array.isArray(jurisdiction.regionalContext.evidenceRefs)) errors.push(jurisdiction.id + ": missing regional research context");
     for (const profileId of jurisdiction.content.environmentProfileIds || []) if (!ENVIRONMENT_PROFILES.some(profile => profile.id === profileId)) errors.push(jurisdiction.id + ": unknown indexed environment profile " + profileId);
     for (const sectorId of jurisdiction.content.sectorIds || []) if (!sectorIds.has(sectorId)) errors.push(jurisdiction.id + ": unknown indexed sector " + sectorId);
     for (const locationId of jurisdiction.content.locationIds || []) {
