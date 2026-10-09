@@ -2352,10 +2352,9 @@ function exitToHub(){
 }
 $('#pauseBtn').addEventListener('click',()=>{
   if(S.phase!=='play'||S.modal) return;
-  openSheet('<h3>Paused</h3><p class="note">'+(G.m.explore?'Module '+G.m.mod:'Mission '+G.m.n)+': '+G.m.title+'</p>',[
-    {t:'Resume',f:closeSheet},
-    {t:'Restart mission',g:1,f:()=>startMission(G.m.id)},
-    {t:'Back to hub',g:1,f:exitToHub}
+  openSheet('<h3>Paused</h3><p class="note">Take a breath. KitCity is yours to explore.</p>',[
+    {t:'Resume exploring',f:closeSheet},
+    {t:'Return to title',g:1,f:()=>{closeSheet();S.phase='title';$('#hud').classList.add('hidden');$('#title').classList.remove('hidden');}}
   ]);
 });
 
@@ -2432,10 +2431,9 @@ $('#hub').addEventListener('click',e=>{
   }
 });
 $('#startBtn').addEventListener('click',()=>{
-  Snd.unlock(); Snd.setMode('hub'); Snd.sfx('click');
-  S.phase='hub'; $('#title').classList.add('hidden'); $('#hub').classList.remove('hidden');
-  const next=EXPLORE.find(m=>m.city==='lagos'&&!P.done[m.id])||EXPLORE.find(m=>!P.done[m.id]); if(next) hubCity=next.city;
-  renderHub();
+  Snd.unlock(); Snd.setMode('play'); Snd.sfx('click');
+  if(curCity!=='lagos') buildCity('lagos');
+  adventureBegin();
 });
 function applyLang(){
   document.documentElement.lang=P.lang==='pcm'?'pcm':'en';
@@ -2479,6 +2477,100 @@ window.addEventListener('blur',()=>{ for(const k in keys) keys[k]=false; });
 document.addEventListener('contextmenu',e=>e.preventDefault());
 talkBtn.addEventListener('click',()=>interact());
 function interact(){ if(S.phase!=='play'||S.modal||!nearEnt) return; nearEnt.talk(); }
+
+/* =====================  open-world adventure runtime  ===================== */
+const ADVENTURE_KEY='kitcity_adventure_v1';
+const adventure=Object.assign({travel:0,activityCount:0,exploreScore:0,completed:[],relationships:{},lastMajorAt:0,lastMajorId:null,encounterCooldowns:{},rewarded:{}},Store.get(ADVENTURE_KEY,{}));
+const adventureSave=()=>Store.set(ADVENTURE_KEY,adventure);
+let adventureLastX=SPAWN.x,adventureLastZ=SPAWN.z,adventureMeters=0,adventureHazards=[],adventureEncounterIds=new Set(),adventureToastCd=0;
+const ADVENTURE_NPCS=[
+ {id:'trader-spill',name:'Mama Kemi',role:'Market trader',color:'#C7457E',look:LK.woman,spot:'a',sign:'Help pick up the oranges',kind:'activity',major:false,opening:'Ah! My basket don turn over. Help me gather these oranges before danfo scatter them.',choices:[['Help collect the oranges','You try! Thank you, my child. Market no easy, but we help each other.'],['Ask where they came from','Na from my stall around the corner. Please help first, we fit talk after.']],reward:{xp:8,ngn:35,item:'market-kindness'}},
+ {id:'driver-directions',name:'Bode',role:'Commercial driver',color:'#2D6FB3',look:LK.guy,spot:'c',sign:'Driver needs directions',kind:'activity',major:false,opening:'Oga, I dey find the community clinic. This junction dey confuse person. You sabi the way?',choices:[['Point him toward the clinic','Correct! Thank you. I go follow that road and ask again if I need to.'],['Tell him to check the signboard','Good idea. Make I look well before I enter wrong street.']],reward:{xp:10,ngn:25,item:'helpful-neighbour'}},
+ {id:'student-directions',name:'Tomi',role:'Student',color:'#0B7A43',look:LK.woman,spot:'e',sign:'Student looking for campus',kind:'activity',major:false,opening:'Please, I dey look for the school gate. I don pass this junction twice. Which side be am?',choices:[['Walk a little way and point it out','Thank you! First week for new place fit be like this.'],['Give clear directions','I understand now. I go watch the junction and follow the sign.']],reward:{xp:8,ngn:20,item:'campus-helper'}},
+ {id:'wrong-delivery',name:'Sani',role:'Delivery rider',color:'#E4572E',look:LK.man,spot:'g',sign:'Delivery at the wrong address',kind:'activity',major:false,opening:'This parcel address no match the shop. I fit return am, but customer don dey call. You fit help me find the right street?',choices:[['Read the street signs together','We don find am! I go confirm the name with the customer before handing over.'],['Call the customer to verify','Correct move. Better confirm than leave parcel with the wrong person.']],reward:{xp:12,ngn:30,item:'trusted-runner'}},
+ {id:'lost-keys',name:'Aunty Bose',role:'Resident',color:'#8C6AC8',look:LK.elder,spot:'i',sign:'Lost keys nearby',kind:'activity',major:false,opening:'My keys fall somewhere between the bus stop and this kiosk. I don check my bag tire. You fit help me look?',choices:[['Search the path with her','Ehen! Na here e dey. Thank you for not passing me by.'],['Ask her to retrace her steps','That helped. I remember stopping beside that blue kiosk!']],reward:{xp:10,ngn:20,item:'found-keys'}},
+ {id:'street-challenge',name:'Kunle',role:'Local football fan',color:'#D28A20',look:LK.guy,spot:'j',sign:'Quick street challenge',kind:'challenge',major:false,opening:'Small challenge? Reach the painted junction marker and come back. No need to run into traffic o!',choices:[['Accept the challenge','You do am! Sharp movement, but you still watch road. Respect.'],['Pass and keep exploring','No wahala. City no be race. Enjoy your movement.']],reward:{xp:6,ngn:15,item:'street-challenge'}},
+ {id:'coop-record',name:'Musa',role:'Smallholder farmer',color:'#0B7A43',look:LK.man,spot:'b',sign:'Farmer has a question',kind:'education',major:true,opening:'I sell produce to buyers in different towns. Sometimes dem argue about where a bag came from. How person fit keep a record both sides can check?',choices:[['Keep a shared record with evidence','That could help track who entered each update. But the first person still has to give honest information.'],['Say a blockchain guarantees truth','I no sure say any technology fit guarantee the first person no lie. We still need checks.']],follow:['Who is allowed to see the record?','What happens if the first entry is wrong?'],reward:{xp:15,ngn:30,item:'supply-chain-note'}}
+];
+function adventureBegin(){
+ closeSheet(); G={m:{id:'free-roam',title:'Explore KitCity',n:'',explore:true,steps:[]},i:0,bonus:0,used:{},freeRoam:true};
+ clearGroup(missionGroup); colliders.length=cityCols; smoke=[]; ents=[]; goal=null; beacon.visible=false;
+ adventureEncounterIds.clear(); adventureHazards=[];
+ for(const def of ADVENTURE_NPCS){
+   if(adventure.completed.includes(def.id)&&def.id!=='street-challenge') continue;
+   const spot=SPOTS[def.spot]; if(!spot) continue;
+   const npc=NPC(def.name,def.role,def.color,def.look,null,def.sign); npc.signBg=def.color;npc.signFg='#fff';
+   const p=buildPerson({top:def.color,bottom:'#343746',shoe:'#eee',skin:'#7a4a2e',detail:true});
+   p.position.set(spot.x,.05,spot.z);p.rotation.y=spot.f>0?Math.PI/2:-Math.PI/2;missionGroup.add(p);
+   const sign=label(def.sign,def.color,'#fff');sign.position.set(spot.x,5.8,spot.z);missionGroup.add(sign);
+   const e={x:spot.x,z:spot.z,r:6.8,def,npc,active:()=>!adventure.completed.includes(def.id)||def.id==='street-challenge',talk:()=>adventureTalk(def)};
+   ents.push(e); adventureEncounterIds.add(def.id);
+ }
+ spawnAdventureHazards();
+ S.phase='play';S.modal=false;$('#hub').classList.add('hidden');$('#title').classList.add('hidden');$('#hud').classList.remove('hidden');
+ $('#mTitle').textContent='Explore KitCity';$('#steps').innerHTML='<li class="now">Explore freely</li><li>Find people and activities</li><li>Earn rewards and keep going</li>';
+ Snd.setMode('play');resetPlayer();adventureLastX=player.position.x;adventureLastZ=player.position.z;
+ $('#loading').classList.add('hidden');updateHUD();toast('Oya! Explore the streets. Talk to people when you choose.');
+}
+function adventureTalk(def){
+ if(S.modal)return;
+ const d=def,hasDone=adventure.completed.includes(d.id);
+ if(hasDone&&d.id!=='street-challenge'){toast('You already helped '+d.name+'. Keep exploring!');return;}
+ if(d.major&&adventure.lastMajorId&&adventure.activityCount-adventure.lastMajorAt<3){
+   // Never block the player with a pacing timer; keep this encounter available for later.
+   openSheet('<div class="who"><div><b>'+d.name+'</b><small>'+d.role+'</small></div></div><p>'+d.opening+'</p><p class="note">You can chat now if you like. There is no rush.</p>',[{t:'Continue talking',f:()=>adventureConversation(d)},{t:'Maybe later',g:1,f:closeSheet}]);return;
+ }
+ adventureConversation(d);
+}
+function adventureConversation(d){
+ const isEducation=d.major,opts=d.choices.map((c,i)=>({t:c[0],f:()=>{
+   const reply=c[1];closeSheet();
+   openSheet('<div class="who"><div><b>'+d.name+'</b><small>'+d.role+'</small></div></div><p>'+reply+'</p>'+
+   (isEducation?'<p class="note">A shared record can help people check changes, but it cannot make false information true. Privacy, consent and fair access still matter.</p>':'')+
+   (isEducation?'<p>'+d.follow[0]+'</p>':''),
+   [{t:isEducation?'Ask about access':'Finish activity',f:()=>{
+     if(isEducation){closeSheet();openSheet('<div class="who"><div><b>'+d.name+'</b><small>'+d.role+'</small></div></div><p>'+d.follow[0]+'</p><p>Only people who need the information should see it. Public proof does not mean every personal detail belongs in public.</p><p>'+d.follow[1]+'</p><p>A record can show later changes, but people still need a way to correct mistakes and challenge dishonest entries.</p>',[{t:'That makes sense',f:()=>adventureComplete(d,i)}]);}
+     else adventureComplete(d,i);
+   }},{t:'End conversation',g:1,f:()=>adventureComplete(d,i)}]);
+ }}));
+ opts.push({t:'Not now',g:1,f:closeSheet});
+ openSheet('<div class="who"><div><b>'+d.name+'</b><small>'+d.role+'</small></div></div><p>'+d.opening+'</p>',opts);
+}
+function adventureComplete(d,choiceIndex){
+ closeSheet();const first=!adventure.completed.includes(d.id);
+ if(first){adventure.completed.push(d.id);adventure.activityCount++;adventure.exploreScore+=10;adventure.rewarded[d.id]=true;
+   const r=d.reward||{};P.xp+=r.xp||0;P.ngn+=r.ngn||0;P.done['adventure_'+d.id]=true;
+   if(d.major){adventure.lastMajorId=d.id;adventure.lastMajorAt=adventure.activityCount;}
+   adventure.relationships[d.name]=(adventure.relationships[d.name]||0)+1;
+   adventureSave();save();Snd.sfx('done');updateHUD();
+   openSheet('<div class="who"><div><b>Activity complete</b><small>'+d.name+' · '+d.role+'</small></div></div><div class="kv"><span>XP earned</span><b>+'+(r.xp||0)+'</b></div><div class="kv"><span>Street reward</span><b>'+fmtN(r.ngn||0)+'</b></div><p>'+ (r.item?'Found / earned: '+r.item.replace(/-/g,' ')+'.':'You helped someone in KitCity.')+'</p><p class="note">You’re free to continue exploring. No next mission is required.</p>',[{t:'Back to the streets',f:()=>{closeSheet();adventureAfterActivity();}}]);
+ }else{closeSheet();adventureAfterActivity();}
+}
+function adventureAfterActivity(){
+ G={m:{id:'free-roam',title:'Explore KitCity',n:'',explore:true,steps:[]},i:0,bonus:0,used:{},freeRoam:true};
+ $('#mTitle').textContent='Explore KitCity';$('#steps').innerHTML='<li class="now">Explore freely</li><li>Find people and activities</li><li>Earn rewards and keep going</li>';
+}
+function spawnAdventureHazards(){
+ // Visual-only, low-profile potholes are placed on open road margins, never in the spawn area.
+ const spots=[{x:24,z:-42},{x:-24,z:-92},{x:92,z:-48},{x:-92,z:-132}];
+ for(const h of spots){
+   if(Math.hypot(h.x-SPAWN.x,h.z-SPAWN.z)<25)continue;
+   const rim=new THREE.Mesh(new THREE.CylinderGeometry(1.15,1.3,.08,12),lam('#33383d'));rim.position.set(h.x,.04,h.z);missionGroup.add(rim);
+   const pit=new THREE.Mesh(new THREE.CircleGeometry(.85,12),lam('#18191c'));pit.rotation.x=-Math.PI/2;pit.position.set(h.x,.09,h.z);missionGroup.add(pit);
+   adventureHazards.push({x:h.x,z:h.z,r:2.2});
+ }
+}
+function adventureTick(dt){
+ if(S.phase!=='play'||!G||!G.freeRoam)return;
+ const p=player.position,dx=p.x-adventureLastX,dz=p.z-adventureLastZ,dist=Math.hypot(dx,dz);
+ if(dist>.01){adventureMeters+=dist;adventure.travel+=dist;adventure.exploreScore+=dist*.03;adventureLastX=p.x;adventureLastZ=p.z;}
+ adventureToastCd=Math.max(0,adventureToastCd-dt);
+ // Encourage careful navigation without damage or forced movement.
+ for(const h of adventureHazards){if(Math.hypot(p.x-h.x,p.z-h.z)<h.r&&adventureToastCd<=0){toast('Watch the pothole — steer around it.');adventureToastCd=4;}}
+ if(adventureMeters>45){adventureMeters=0;adventure.activityCount++;adventureSave();}
+}
+
+function interact(){ if(S.phase!=='play'||S.modal||!nearEnt) return; if(nearEnt.def) { nearEnt.talk(); return; } nearEnt.talk(); }
 
 /* =====================  collisions  ===================== */
 function resolve(p,r){
@@ -2608,6 +2700,7 @@ function updateWalkers(dt,time){
 }
 function update(dt,time){
   updateCars(dt);
+  adventureTick(dt);
   updateWalkers(dt,time);
   { const play=S.phase==='play',fx=play?player.position.x:25,fz=play?player.position.z:-55;
     sun.position.set(fx+LKS.sx,LKS.sy,fz+LKS.sz); sun.target.position.set(fx,0,fz); sun.target.updateMatrixWorld(); atmoUpdate(dt,time,fx,fz);
