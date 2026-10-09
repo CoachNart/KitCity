@@ -31,7 +31,7 @@ assert.equal(education.EDUCATIONAL_MISSIONS.length, 15, "each educational domain
 for (const mission of education.EDUCATIONAL_MISSIONS) {
   assert.equal(content.getDialogue(mission.id).id, mission.id, mission.id + " is registered in the game dialogue resolver");
   assert.ok(mission.scenario && mission.explanation && mission.application && mission.limitations && mission.takeaway, mission.id + " has a story, plain-language explanation, application, limitation and takeaway");
-  const state = engine.createDialogueState();
+  const state = engine.createDialogueState({ knowledge: Object.fromEntries(mission.prerequisites.map(id => [id, true])) });
   const lesson = new engine.ConversationEngine({ content: mission, state });
   assert.equal(lesson.start().node.id, "opening");
   assert.equal(lesson.choose("ask-practical").node.id, "application");
