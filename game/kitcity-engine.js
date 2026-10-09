@@ -2243,10 +2243,9 @@ function completeExplore(){
   let gain=0;if(!prev){gain=m.xp+10*ft;P.xp+=gain;}
   if(!prev||ft>prev.ft)P.scores[m.id]={ft:ft,grade:g[0]};
   P.done[m.id]=true;save();updateHUD();Snd.sfx('done');
-  const after=levelInfo(P.xp),allGraded=EXPLORE.every(x=>P.scores[x.id]);
+  const after=levelInfo(P.xp);
   clearGroup(missionGroup);colliders.length=cityCols;smoke=[];ents=[];goal=null;beacon.visible=false;hubCity=m.city;
   const btns=[{t:'Enter KitCity Hub',f:()=>{hubCity=m.city;hubTab='cityhub';exitToHub();}}];
-  if(allGraded)btns.push({t:'Take the final exam',g:1,f:()=>{exitToHub();startExam();}});
   btns.push({t:'Back to missions',g:1,f:()=>{hubTab='missions';exitToHub();}});
   openSheet('<div class="badge">'+badgeSVG('★',true,96)+'<div><h3 style="margin-top:0">Arrived at KitCity Hub</h3><small>'+CITIES[m.city].name+' · Agent Kit city journey complete</small></div></div>'+
     '<p>Agent Kit has met local people, explored how Web3 may serve real needs and brought the conversation to the city Hub. Continue growing in KitLab, meet other learners and explore a career or project path.</p>'+
@@ -2262,18 +2261,18 @@ function moduleCard(m){
 }
 function startExam(){
   const qs=[]; AK_TRACKS.forEach(t=>shuffle(Q3(t.qs)).slice(0,2).forEach(q=>qs.push(q)));
-  const head=who('\u2605','Final exam','Web3 onboarding, 14 questions','#1B1C20');
+  const head=who('\u2605','Final exam','KitLab final review, 18 questions','#1B1C20');
   const review=ms=>ms.length?'<p class="note">Review these:</p><ul class="pts">'+ms.map(i=>'<li><b>'+qs[i].q+'</b> '+qs[i].o[qs[i].a]+'. '+qs[i].w+'</li>').join('')+'</ul>':'';
   openSheet(head+'<p>This is the final check. It has 18 questions drawn from the KitLab learning paths. There is no feedback until the end. You need <b>14 of 18</b> to pass.</p>',[{t:'Start exam',f:()=>runQuiz({head:head,qs:qs,pass:14,exam:true,onExit:closeSheet,
     onPass:r=>{ const first=!P.web3; P.web3={score:Math.max(r.ok,(P.web3&&P.web3.score)||0),n:r.n}; let gain=0; if(first){ gain=150; P.xp+=gain; } save(); updateHUD(); Snd.sfx('done');
-      openSheet(head+'<h3>Passed: '+r.ok+' of '+r.n+'</h3>'+(gain?'<div class="kv"><span>Exam XP</span><b>+'+gain+'</b></div>':'')+'<p>You are now Web3 onboarding certified in KitCity.</p>'+review(r.miss),[{t:'View certificate',f:webCert},{t:'Back to hub',g:1,f:()=>{ closeSheet(); renderHub(); }}]); },
-    onFail:r=>{ openSheet(head+'<h3>'+r.ok+' of '+r.n+'. Not yet.</h3><p>You need 11 to pass. Here is what to review, then try again with a fresh set of questions.</p>'+review(r.miss),[{t:'Try again',f:startExam},{t:'Back to hub',g:1,f:()=>{ closeSheet(); renderHub(); }}]); }})},
+      openSheet(head+'<h3>Passed: '+r.ok+' of '+r.n+'</h3>'+(gain?'<div class="kv"><span>Exam XP</span><b>+'+gain+'</b></div>':'')+'<p>You are now Web3 learning-path certified in KitCity.</p>'+review(r.miss),[{t:'View certificate',f:webCert},{t:'Back to hub',g:1,f:()=>{ closeSheet(); renderHub(); }}]); },
+    onFail:r=>{ openSheet(head+'<h3>'+r.ok+' of '+r.n+'. Not yet.</h3><p>You need 14 to pass. Here is what to review, then try again with a fresh set of questions.</p>'+review(r.miss),[{t:'Try again',f:startExam},{t:'Back to hub',g:1,f:()=>{ closeSheet(); renderHub(); }}]); }})},
    {t:'Not now',g:1,f:closeSheet}]);
 }
 function webCert(){
   const tot=EXPLORE.reduce((a,x)=>a+(P.scores[x.id]?P.scores[x.id].ft:0),0),pct=Math.round(tot/(EXPLORE.length*6)*100);
   const msg=encodeURIComponent(L('I passed the KitCity Web3 learning review ('+(P.web3?P.web3.score:'')+' of '+(P.web3?P.web3.n:'')+'). I can now use a wallet, spot scams and cash out safely. Can you?','I don pass KitCity Web3 onboarding exam. I sabi use wallet, spot scam and cash out well. You fit?'));
-  openSheet('<div class="badge">'+badgeSVG('\u2605',true,96)+'<div><h3 style="margin-top:0">Web3 Onboarding Certified</h3><small>Final exam '+(P.web3?P.web3.score+'/'+P.web3.n:'')+', first-try accuracy '+pct+'%</small></div></div><p>You covered wallets and keys, networks and gas, stablecoins, safe sending, approvals, scams, swaps and risk, backups and cashing out.</p>',[{t:'Back to hub',f:()=>{ closeSheet(); renderHub(); }}]);
+  openSheet('<div class="badge">'+badgeSVG('\u2605',true,96)+'<div><h3 style="margin-top:0">KitCity Web3 Learning Certified</h3><small>Final exam '+(P.web3?P.web3.score+'/'+P.web3.n:'')+', first-try accuracy '+pct+'%</small></div></div><p>You covered wallets and keys, networks and gas, stablecoins, safe sending, approvals, scams, swaps and risk, backups and cashing out.</p>',[{t:'Back to hub',f:()=>{ closeSheet(); renderHub(); }}]);
   sheetEl.insertAdjacentHTML('beforeend',tx('<div class="row"><a class="btn" href="https://wa.me/?text='+msg+'" target="_blank" rel="noopener">Share on WhatsApp</a></div>'));
 }
 function web3Section(){
