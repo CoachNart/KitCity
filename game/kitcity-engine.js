@@ -2219,11 +2219,15 @@ function submitPlayerName(){
 }
 function beginGame(){
   Snd.unlock(); Snd.setMode('hub'); Snd.sfx('click');
+  $('#title').classList.add('hidden');
+  $('#hub').classList.remove('hidden');
+  $('#hub').setAttribute('aria-hidden','false');
+  $('#hud').classList.add('hidden');
+  S.phase='hub'; G=null;
   const nextCity=cityOrder.find(city=>!isCityComplete(city));
-  const nextJourney=nextCity?cityMissions(nextCity)[0]:null;
-  if(!nextJourney){ openSheet('<h3>All cities completed!</h3><p>You have completed every city journey across Nigeria.</p>',[{t:'Back to title',f:exitToHub}]); return; }
-  $('#title').classList.add('hidden'); $('#hub').classList.add('hidden');
-  startMission(nextJourney.id);
+  if(nextCity) hubCity=nextCity;
+  hubTab='missions';
+  renderHub();
 }
 $('#startBtn').addEventListener('click',submitPlayerName);
 if(playerNameInput){
