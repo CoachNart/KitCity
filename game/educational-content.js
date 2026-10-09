@@ -3830,9 +3830,7 @@ export const EDUCATIONAL_MISSIONS = [
       "f": 1
     },
     "domain": "Open internet and digital infrastructure"
-  }
-
-  ,
+  },
   {
     "id": "learn-agriculture-cooperative-audit",
     "conceptId": "agriculture-traceability",
