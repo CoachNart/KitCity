@@ -2224,8 +2224,8 @@ function completeExplore(){
  if(first){gain=m.xp;P.xp+=gain;}P.done[m.id]=true;save();updateHUD();Snd.sfx('done');
  const after=levelInfo(P.xp);clearGroup(missionGroup);colliders.length=cityCols;smoke=[];ents=[];goal=null;beacon.visible=false;hubCity=m.city;
  const idx=cityOrder.indexOf(m.city),nextCity=cityOrder[idx+1];
- const btns=nextCity?[{t:'Next city: '+CITIES[nextCity].name,f:()=>{hubCity=nextCity;hubTab='missions';exitToHub();}}]:[];
- btns.push({t:'Back to cities',g:1,f:()=>{hubTab='missions';exitToHub();}});
+ const nextJourney=nextCity?cityMissions(nextCity)[0]:null;
+ const btns=nextJourney?[{t:'Continue to '+CITIES[nextCity].name,f:()=>startMission(nextJourney.id)}]:[{t:'Finish journey',f:exitToHub}];
  openSheet('<div class="badge">'+badgeSVG('★',true,96)+'<div><h3 style="margin-top:0">City journey complete</h3><small>'+CITIES[m.city].name+' · Journey passed</small></div></div>'+
  '<p>You completed this city journey. The next city is now unlocked.</p>'+
  (gain?'<div class="kv"><span>Journey XP</span><b>+'+gain+'</b></div>':'<p class="note">Your city journey is already saved.</p>')+
