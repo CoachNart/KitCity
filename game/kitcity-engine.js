@@ -2215,30 +2215,37 @@ function akLesson(cityName,sector,npc,part){
 function streetMissionRun(def,Lz,stage,missionTitle,taskLabel){
   return function(){
     const qs=(Lz&&Array.isArray(Lz.q))?Lz.q:[];
-    const q=qs[0];
-    const rawOpening=(Lz&&Lz.intro)||'';
-    const repeatedOpening=rawOpening.includes('matters because a small mistake can cost real money')&&rawOpening.includes('Learn the checks first');
-    const opening=repeatedOpening&&Lz.pts&&Lz.pts[0]?Lz.pts[0]:(rawOpening||('A local problem needs solving in '+missionTitle+'.'));
     const topic=(Lz&&Lz.t)||missionTitle;
-    const setup='<p>'+opening+'</p><h3>'+topic+'</h3><p>'+whoOf(def)+' needs your help: '+taskLabel+'. Listen, make the call, and see what happens.</p>';
-    if(!q||!Array.isArray(q.o)||!q.o.length){
-      talk(def,setup,[{t:'Help '+whoOf(def),f:()=>finishStep}]);
+    const rawOpening=(Lz&&Lz.intro)||('A local problem in '+CITIES[G.m.city].name+' needs a practical solution.');
+    const notes=(Lz&&Array.isArray(Lz.pts)?Lz.pts:[]).slice(0,3);
+    const web2='<p><b>Web2 connection:</b> Most Web2 services use company-managed accounts and databases. Web3 can add shared verification, open participation or portable ownership when useful; it does not mean every record should go on-chain or that existing tools must be replaced.</p>';
+    const noteList=notes.length?'<h3>Field notes</h3><ul class="pts">'+notes.map(x=>'<li>'+x+'</li>').join('')+'</ul>':'';
+    const setup='<p>'+rawOpening+'</p><h3>'+topic+'</h3><p><b>Your street task:</b> '+(taskLabel||('Work with '+whoOf(def)))+'. Listen to the person, assess the trade-offs and choose what to do next.</p>'+web2+noteList;
+    if(!qs.length){
+      talk(def,setup,[{t:'Finish street task',f:finishStep},{t:'I need a moment',g:1,f:closeSheet}]);
       return;
     }
-    const rawPrompt=String(q.q||'What is the safest move?');
-    const genericPrompt=rawPrompt==="Which action is the safest first step?"||rawPrompt==="Which habit best protects a wallet?"||rawPrompt==="A stranger pressures you to act immediately. What should you do?";
-    const prompt=genericPrompt
-      ? 'For '+topic.toLowerCase()+', what is the best move in this situation?'
-      : rawPrompt;
-    const ask=()=>talk(def,'<p>'+prompt+'</p><p class="note">Choose the move you would make out on the street.</p>',
-      q.o.map((choice,j)=>({t:choice,f:()=>{
-        if(j===q.a){
-          talk(def,'<h3>Good move</h3><p>'+(q.w||'That choice gets the job moving safely.')+'</p>',[{t:'Carry on',f:finishStep}]);
-        }else{
-          talk(def,'<p>That move could put the job at risk. '+(q.w||'Check the details before you act.')+'</p>',[{t:'Try a different move',f:ask}]);
-        }
-      }})));
-    talk(def,setup,[{t:'Let’s handle it',f:ask},{t:'I need a moment',g:1,f:closeSheet}]);
+    let qi=0;
+    const ask=()=>{
+      const q=qs[qi];
+      if(!q||!Array.isArray(q.o)||!q.o.length){ finishStep(); return; }
+      const prompt=String(q.q||('How should you handle '+topic.toLowerCase()+'?'));
+      talk(def,'<p><b>Challenge '+(qi+1)+' of '+qs.length+'</b></p><p>'+prompt+'</p><p class="note">Choose the most responsible practical move.</p>',
+        q.o.map((choice,j)=>({t:choice,f:()=>{
+          if(j===q.a){
+            talk(def,'<h3>Good decision</h3><p>'+(q.w||'You checked the details and chose a safer, more useful next step.')+'</p>',
+              [{t:qi+1<qs.length?'Next challenge':'Complete street task',f:()=>{
+                qi++;
+                if(qi<qs.length) ask();
+                else finishStep();
+              }}]);
+          }else{
+            talk(def,'<h3>Think it through</h3><p>'+(q.w||'Check the evidence, understand the trade-offs and try again before committing.')+'</p>',
+              [{t:'Review the choices',f:ask}]);
+          }
+        }})));
+    };
+    talk(def,setup,[{t:'Start the street task',f:ask},{t:'I need a moment',g:1,f:closeSheet}]);
   };
 }
 const EXPLORE=[];
@@ -2312,8 +2319,6 @@ function loadStep(){
   clearGroup(missionGroup); colliders.length=cityCols; smoke=[]; ents=[]; goal=null;
   const m=G.m,st=m.steps[G.i];
   const e=placeNPC(st.npc,SPOTS[st.spot]); e.talk=()=>st.run(); e.active=()=>true; ents.push(e); goal=e;
-  if(G.m.explore && G.i<G.m.steps.length-1) missionCentre(SPOTS[st.spot],CITIES[G.m.city].name,G.m.title.replace('Agent Kit in ','').toUpperCase());
-  if(G.m.explore && G.i<G.m.steps.length-1) missionCentre(SPOTS[st.spot],CITIES[G.m.city].name,G.m.title.replace('Agent Kit in ','').toUpperCase());
   for(const ex of (m.extras||[])){
     if(G.used[ex.id]) continue;
     const e2=placeNPC(ex.npc,ex.spot); e2.ex=ex; e2.talk=()=>ex.run(e2); e2.active=()=>!G.used[ex.id]; ents.push(e2);
