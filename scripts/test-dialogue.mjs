@@ -29,7 +29,7 @@ assert.match(engineSource, /mobileCrowd\?12:20/, "mobile builds fewer ambient wa
 assert.match(engineSource, /mobileCrowd\?3:6/, "mobile builds fewer pedestrian pairs");
 assert.match(engineSource, /made<\(mobileCrowd\?4:10\)/, "mobile builds fewer road-crossing pedestrians");
 assert.match(engineSource, /window\.innerWidth<760\?\(\(k===0\|\|k===-1\)\?1:/, "mobile traffic generation is reduced");
-assert.match(engineSource, /if\(joy\.active\)\{ x=joy\.x; z=-joy\.y; \}/, "touch joystick vertical direction matches WASD and forward movement");
+assert.match(engineSource, /if\(joy\.active\)\{ x=joy\.x; z=joy\.y; \}/, "touch joystick vertical direction matches WASD and forward movement");
 assert.match(engineSource, /adventure\.playerPosition=\{x:Number\(player\.position\.x\.toFixed\(2\)\),z:Number\(player\.position\.z\.toFixed\(2\)\)\}/, "free-roam checkpoint stores a bounded-precision player position");
 assert.match(engineSource, /window\.addEventListener\('pagehide',\(\)=>\{saveAdventureCheckpoint\(\);save\(\);\}\)/, "leaving the page saves the current free-roam checkpoint");
 assert.match(engineSource, /const checkpoint=adventure\.playerPosition[\s\S]*?camera\.position\.set\(player\.position\.x,35,player\.position\.z\+20\)/, "the free-roam checkpoint restores player and camera on re-entry");
