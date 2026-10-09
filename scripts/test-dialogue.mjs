@@ -219,6 +219,7 @@ const engineSourceForMissions = await readFile(path.join(root, "game/kitcity-eng
 assert.match(engineSourceForMissions, /PROTOTYPE_MISSION_NPCS/, "prototype NPCs are wired into the actual free-roam encounter spawn");
 assert.match(engineSourceForMissions, /refreshPrototypeObjectives\(\)/, "accepted missions spawn and refresh in-world activity objects");
 assert.match(engineSourceForMissions, /collectPrototypeObjective\(objective,choice\)/, "activity choices record progress in the live game");
+assert.match(engineSourceForMissions, /recordPrototypeObjectiveChoice\(adventure,objective\.missionId,objective\.id,choice\.id\)/, "the live game uses the tested objective progress function");
 assert.match(engineSourceForMissions, /prototypeDecisions/, "objective decisions are persisted with adventure progress");
 for (const mission of prototypePack) {
   const state = engine.createDialogueState();
@@ -234,11 +235,15 @@ for (const mission of prototypePack) {
   assert.equal(started.ended,true,mission.id+" returns control to exploration when task begins");
   assert.equal(started.missionCompleted,false,mission.id+" cannot be completed by dialogue alone");
   assert.equal(started.state.flags[mission.startedFlag],true,mission.id+" persists its started state");
-  for (const objective of mission.objectives) {
-    const objectiveFlag = "prototype:objective:"+mission.id+":"+objective.id;
-    started.state.flags[objectiveFlag] = true;
+  const activityState = {dialogueState:started.state};
+  for (const [objectiveIndex,objective] of mission.objectives.entries()) {
+    const recorded = prototypeMissions.recordPrototypeObjectiveChoice(activityState,mission.id,objective.id,objective.choices[0].id);
+    assert.equal(recorded.error,undefined,mission.id+"/"+objective.id+" records a valid field decision");
+    assert.equal(recorded.allDone,objectiveIndex===mission.objectives.length-1,mission.id+" cannot unlock debrief before every activity step is inspected");
   }
-  started.state.flags[mission.objectiveCompleteFlag] = true;
+  const duplicate = prototypeMissions.recordPrototypeObjectiveChoice(activityState,mission.id,mission.objectives[0].id,mission.objectives[0].choices[0].id);
+  assert.equal(duplicate.error,"already-recorded",mission.id+" cannot record the same objective twice");
+  assert.equal(activityState.prototypeDecisions[mission.id][mission.objectives[0].id].choiceId,mission.objectives[0].choices[0].id,mission.id+" persists the player's objective decision");
   const returnSession = new engine.ConversationEngine({content:mission.dialogue,state:started.state});
   step = returnSession.start();
   assert.equal(step.node.id,"return",mission.id+" requires the player to finish its practical task before debrief");
