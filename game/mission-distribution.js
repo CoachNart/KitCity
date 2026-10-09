@@ -4,7 +4,7 @@
  */
 import {
   NIGERIAN_STATES, NIGERIAN_TERRITORIES, NIGERIAN_JURISDICTIONS,
-  WORLD_LOCATIONS, PLANNED_SETTLEMENT_LOCATIONS, ENVIRONMENT_PROFILES, SECTOR_REGISTRY
+  WORLD_LOCATIONS, PLANNED_SETTLEMENT_LOCATIONS, ENVIRONMENT_ASSET_REGISTRY, ENVIRONMENT_PROFILES, SECTOR_REGISTRY
 } from "./world-registry.js";
 import {
   EDUCATIONAL_CONCEPTS, EDUCATIONAL_MISSIONS, EDUCATIONAL_PROFILES,
@@ -233,6 +233,7 @@ export function validateWorldSystem({ additionalLocations = [] } = {}) {
   const stateIds = unique(NIGERIAN_STATES, "state");
   const territoryIds = unique(NIGERIAN_TERRITORIES, "territory");
   const locationIds = unique(locations, "location");
+  const environmentAssetIds = unique(ENVIRONMENT_ASSET_REGISTRY, "environment asset");
   const sectorIds = unique(SECTOR_REGISTRY, "sector");
   const eventIds = unique(LOCATION_EVENT_REGISTRY, "location event");
   const storyArcIds = unique(STORY_ARCS, "story arc");
@@ -255,8 +256,16 @@ export function validateWorldSystem({ additionalLocations = [] } = {}) {
     if (!stateIds.has(location.jurisdictionId) && !territoryIds.has(location.jurisdictionId)) errors.push(location.id + ": references missing jurisdiction " + location.jurisdictionId);
     if (!validLocationStatuses.has(location.status)) errors.push(location.id + ": invalid location status " + location.status);
     if (!location.settlementName || !location.locationType) errors.push(location.id + ": missing location identity fields");
-    for (const slot of ["environmentProfileIds","sectorIds","npcProfileIds","occupationTags","communityTags","mainMissionIds","sideMissionIds","environmentalEncounterIds","educationalConceptIds"]) {
+    for (const slot of ["environmentProfileIds","sectorIds","npcProfileIds","npcSpawnPoints","occupationTags","communityTags","mainMissionIds","sideMissionIds","environmentalEncounterIds","educationalConceptIds"]) {
       if (!Array.isArray(location[slot])) errors.push(location.id + ": " + slot + " must be an array");
+    }
+    if (!location.environmentSettings || typeof location.environmentSettings !== "object" || Array.isArray(location.environmentSettings)) errors.push(location.id + ": environmentSettings must be an object");
+    for (const spawnPoint of location.npcSpawnPoints || []) {
+      if (!spawnPoint.position || !Number.isFinite(spawnPoint.position.x) || !Number.isFinite(spawnPoint.position.z)) errors.push(location.id + ": NPC spawn point requires numeric x/z coordinates");
+      if (!spawnPoint.missionId && !spawnPoint.npcProfileId && !spawnPoint.encounterId) errors.push(location.id + ": NPC spawn point must identify a mission, NPC profile or encounter");
+      if (spawnPoint.missionId && !knownMissionRefs.has(spawnPoint.missionId)) errors.push(location.id + ": NPC spawn point references missing mission " + spawnPoint.missionId);
+      if (spawnPoint.npcProfileId && !npcIds.has(spawnPoint.npcProfileId)) errors.push(location.id + ": NPC spawn point references missing NPC profile " + spawnPoint.npcProfileId);
+      if (spawnPoint.encounterId && !SOCIAL_ADVENTURE_NPCS.some(encounter => encounter.id === spawnPoint.encounterId)) errors.push(location.id + ": NPC spawn point references missing encounter " + spawnPoint.encounterId);
     }
     for (const profileId of location.environmentProfileIds || []) if (!ENVIRONMENT_PROFILES.some(profile => profile.id === profileId)) errors.push(location.id + ": unknown environment profile " + profileId);
     for (const sectorId of location.sectorIds || []) if (!sectorIds.has(sectorId)) errors.push(location.id + ": unknown sector " + sectorId);
@@ -264,6 +273,11 @@ export function validateWorldSystem({ additionalLocations = [] } = {}) {
     for (const missionRef of [...(location.mainMissionIds || []), ...(location.sideMissionIds || [])]) if (!knownMissionRefs.has(missionRef)) errors.push(location.id + ": unknown mission " + missionRef);
     for (const conceptId of location.educationalConceptIds || []) if (!conceptIds.has(conceptId)) errors.push(location.id + ": unknown educational concept " + conceptId);
     if (location.status === "playable" && (!location.environmentAssetId || !location.engineCityId)) errors.push(location.id + ": playable location must reference an existing environment asset and engine city");
+    if (location.status === "playable") {
+      const asset = ENVIRONMENT_ASSET_REGISTRY.find(item => item.id === location.environmentAssetId && item.status === "available");
+      if (!asset) errors.push(location.id + ": references an environment asset that is not registered as available");
+      else if (asset.engineCityId !== location.engineCityId) errors.push(location.id + ": environment asset and engine city do not match");
+    }
     if (location.status === "planned" && (location.environmentAssetId || location.engineCityId)) errors.push(location.id + ": planned location must not claim a wired environment asset");
     if (location.storyArcId && !storyArcIds.has(location.storyArcId)) errors.push(location.id + ": references missing story arc " + location.storyArcId);
     for (const eventId of location.environmentalEncounterIds || []) if (!eventIds.has(eventId)) errors.push(location.id + ": references missing location event " + eventId);
@@ -350,7 +364,10 @@ export function getDevelopmentReport() {
       return counts;
     }, {}),
     sectors: SECTOR_REGISTRY.length,
+    environmentAssets: ENVIRONMENT_ASSET_REGISTRY.length,
+    availableEnvironmentAssets: ENVIRONMENT_ASSET_REGISTRY.filter(asset => asset.status === "available").length,
     npcProfiles: NPC_REGISTRY.length,
+    npcSpawnPoints: WORLD_LOCATIONS.reduce((count, location) => count + (location.npcSpawnPoints || []).length, 0),
     rewards: REWARD_REGISTRY.length,
     educationalConcepts: EDUCATIONAL_CONCEPTS.length,
     educationalMissions: EDUCATIONAL_MISSIONS.length,
