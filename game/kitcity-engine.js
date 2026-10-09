@@ -2559,6 +2559,12 @@ function chooseDialogue(choiceId){
  }
  const def=activeDialogueDef,choiceIndex=result.choiceIndex;
  const shouldReward=Boolean(result.missionCompleted);
+ if(shouldReward&&def.conceptId){
+   const history=adventure.dialogueState.conceptHistory||(adventure.dialogueState.conceptHistory={});
+   const entries=history[def.conceptId]||(history[def.conceptId]=[]);
+   if(!entries.some(entry=>entry.missionId===def.id))entries.push({missionId:def.id,locationId:adventure.locationId||'lagos-free-roam'});
+   adventureSave();
+ }
  activeDialogueSession=null;activeDialogueDef=null;activeDialogueNode=null;activeDialogueLog=[];
  closeSheet();
  if(shouldReward){
