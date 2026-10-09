@@ -2432,7 +2432,7 @@ $('#hub').addEventListener('click',e=>{
 $('#startBtn').addEventListener('click',()=>{
   Snd.unlock(); Snd.setMode('hub'); Snd.sfx('click');
   S.phase='hub'; $('#title').classList.add('hidden'); $('#hub').classList.remove('hidden');
-  const next=EXPLORE.find(m=>m.city==='lagos'&&!P.done[m.id])||EXPLORE.find(m=>!P.done[m.id]); if(next) hubCity=next.city;
+  const nextCity=cityOrder.find(city=>!isCityComplete(city)); if(nextCity) hubCity=nextCity;
   renderHub();
 });
 function applyLang(){
