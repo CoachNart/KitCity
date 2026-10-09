@@ -2597,7 +2597,7 @@ function refreshExplorationDiscoveries(){
    make(new THREE.BoxGeometry(1.9,1.12,.16),visited?'#9AA4AE':'#2D6FB3',0,1.25,0);
    make(new THREE.BoxGeometry(.38,.32,.06),'#F6B21A',-.48,1.35,.12);
    make(new THREE.BoxGeometry(.38,.42,.06),'#E8D7B8',0,1.3,.12);
-   make(new THREE.BoxGeometry(.38,.26,.06','#C7457E',.48,1.38,.12);
+   make(new THREE.BoxGeometry(.38,.26,.06),'#C7457E',.48,1.38,.12);
   }
   missionGroup.add(root);
   const tag=label(visited?discovery.name+' · remembered':discovery.name,color,'#fff');tag.position.set(discovery.position.x,3.25,discovery.position.z);missionGroup.add(tag);
