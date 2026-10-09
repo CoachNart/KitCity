@@ -2261,10 +2261,10 @@ function moduleCard(m){
   return '<div class="card"><div class="ch">'+badgeSVG(m.n,dn,46)+'<div><b>Module '+m.mod+': '+m.title+'</b><small>'+m.goal+'</small></div></div><div class="cf"><span>'+foot+'</span><button class="btn brand" data-a="play" data-v="'+m.id+'" type="button">'+(dn?'Replay':'Play')+'</button></div></div>';
 }
 function startExam(){
-  const qs=[]; EXPLORE.forEach(m=>{ const all=[]; m.lessons.forEach(l=>l.q.forEach(q=>all.push(q))); shuffle(all).slice(0,2).forEach(q=>qs.push(q)); });
+  const qs=[]; AK_TRACKS.forEach(t=>shuffle(Q3(t.qs)).slice(0,2).forEach(q=>qs.push(q)));
   const head=who('\u2605','Final exam','Web3 onboarding, 14 questions','#1B1C20');
   const review=ms=>ms.length?'<p class="note">Review these:</p><ul class="pts">'+ms.map(i=>'<li><b>'+qs[i].q+'</b> '+qs[i].o[qs[i].a]+'. '+qs[i].w+'</li>').join('')+'</ul>':'';
-  openSheet(head+'<p>This is the final check. It has 14 questions drawn from all 7 modules. There is no feedback until the end. You need <b>11 of 14</b> to pass.</p>',[{t:'Start exam',f:()=>runQuiz({head:head,qs:qs,pass:11,exam:true,onExit:closeSheet,
+  openSheet(head+'<p>This is the final check. It has 18 questions drawn from the KitLab learning paths. There is no feedback until the end. You need <b>14 of 18</b> to pass.</p>',[{t:'Start exam',f:()=>runQuiz({head:head,qs:qs,pass:14,exam:true,onExit:closeSheet,
     onPass:r=>{ const first=!P.web3; P.web3={score:Math.max(r.ok,(P.web3&&P.web3.score)||0),n:r.n}; let gain=0; if(first){ gain=150; P.xp+=gain; } save(); updateHUD(); Snd.sfx('done');
       openSheet(head+'<h3>Passed: '+r.ok+' of '+r.n+'</h3>'+(gain?'<div class="kv"><span>Exam XP</span><b>+'+gain+'</b></div>':'')+'<p>You are now Web3 onboarding certified in KitCity.</p>'+review(r.miss),[{t:'View certificate',f:webCert},{t:'Back to hub',g:1,f:()=>{ closeSheet(); renderHub(); }}]); },
     onFail:r=>{ openSheet(head+'<h3>'+r.ok+' of '+r.n+'. Not yet.</h3><p>You need 11 to pass. Here is what to review, then try again with a fresh set of questions.</p>'+review(r.miss),[{t:'Try again',f:startExam},{t:'Back to hub',g:1,f:()=>{ closeSheet(); renderHub(); }}]); }})},
@@ -2272,17 +2272,17 @@ function startExam(){
 }
 function webCert(){
   const tot=EXPLORE.reduce((a,x)=>a+(P.scores[x.id]?P.scores[x.id].ft:0),0),pct=Math.round(tot/(EXPLORE.length*6)*100);
-  const msg=encodeURIComponent(L('I passed the KitCity Web3 onboarding exam ('+(P.web3?P.web3.score:'')+' of '+(P.web3?P.web3.n:'')+'). I can now use a wallet, spot scams and cash out safely. Can you?','I don pass KitCity Web3 onboarding exam. I sabi use wallet, spot scam and cash out well. You fit?'));
+  const msg=encodeURIComponent(L('I passed the KitCity Web3 learning review ('+(P.web3?P.web3.score:'')+' of '+(P.web3?P.web3.n:'')+'). I can now use a wallet, spot scams and cash out safely. Can you?','I don pass KitCity Web3 onboarding exam. I sabi use wallet, spot scam and cash out well. You fit?'));
   openSheet('<div class="badge">'+badgeSVG('\u2605',true,96)+'<div><h3 style="margin-top:0">Web3 Onboarding Certified</h3><small>Final exam '+(P.web3?P.web3.score+'/'+P.web3.n:'')+', first-try accuracy '+pct+'%</small></div></div><p>You covered wallets and keys, networks and gas, stablecoins, safe sending, approvals, scams, swaps and risk, backups and cashing out.</p>',[{t:'Back to hub',f:()=>{ closeSheet(); renderHub(); }}]);
   sheetEl.insertAdjacentHTML('beforeend',tx('<div class="row"><a class="btn" href="https://wa.me/?text='+msg+'" target="_blank" rel="noopener">Share on WhatsApp</a></div>'));
 }
 function web3Section(){
-  const sc=EXPLORE.map(m=>P.scores[m.id]),done=sc.filter(Boolean).length,tot=sc.reduce((a,x)=>a+(x?x.ft:0),0);
-  let h='<div class="h2">Web3 onboarding</div><div class="stat"><span>Modules graded</span><b>'+done+' of '+EXPLORE.length+'</b></div>';
-  if(done) h+='<div class="stat"><span>First-try accuracy</span><b>'+Math.round(tot/(done*6)*100)+'%</b></div>';
-  h+=EXPLORE.map(m=>'<div class="stat"><span>'+m.mod+'. '+m.title+'</span><b>'+(P.scores[m.id]?P.scores[m.id].grade+' ('+P.scores[m.id].ft+'/6)':'Not yet')+'</b></div>').join('');
-  if(done===EXPLORE.length) h+=P.web3?'<div class="stat"><span>Final exam</span><b>'+P.web3.score+'/'+P.web3.n+'</b></div><div class="row"><button class="btn brand" data-a="webcert" type="button">View certificate</button><button class="btn line" data-a="exam" type="button">Retake exam</button></div>':'<div class="row"><button class="btn brand" data-a="exam" type="button">Take the final exam</button></div>';
-  else h+='<p class="soft">Finish all 7 modules to unlock the final exam.</p>';
+  P.labDone=P.labDone||{}; const done=AK_TRACKS.filter(t=>P.labDone[t.id]).length;
+  let h='<div class="h2">KitLab learning</div><div class="stat"><span>Learning paths completed</span><b>'+done+' of '+AK_TRACKS.length+'</b></div>';
+  
+  h+=AK_TRACKS.map(t=>'<div class="stat"><span>'+t.title+'</span><b>'+(P.labDone[t.id]?'Complete':'Not yet')+'</b></div>').join('');
+  if(done===AK_TRACKS.length) h+=P.web3?'<div class="stat"><span>Final exam</span><b>'+P.web3.score+'/'+P.web3.n+'</b></div><div class="row"><button class="btn brand" data-a="webcert" type="button">View certificate</button><button class="btn line" data-a="exam" type="button">Retake exam</button></div>':'<div class="row"><button class="btn brand" data-a="exam" type="button">Take the final exam</button></div>';
+  else h+='<p class="soft">Complete all KitLab learning paths to unlock the final review.</p>';
   return h;
 }
 const BADGES=['Wallet Starter','Swap Smart','Scam Spotter','Key Keeper','Safe Sender','Passport Holder','Community Voice','Cash-out Pro'];
@@ -2377,7 +2377,7 @@ function mapSVG(){
   const pts=NG.map(p=>mx(p[0]).toFixed(1)+','+my(p[1]).toFixed(1)).join(' ');
   let pins='';
   for(const k in CITIES){
-    const c=CITIES[k],x=mx(c.lon),y=my(c.lat),ms=MISSIONS.concat(EXPLORE).filter(m=>m.city===k),d=ms.filter(m=>P.done[m.id]).length,open=ms.some(isUnlocked),sel=k===hubCity;
+    const c=CITIES[k],x=mx(c.lon),y=my(c.lat),ms=EXPLORE.filter(m=>m.city===k),d=ms.filter(m=>P.done[m.id]).length,open=ms.some(isUnlocked),sel=k===hubCity;
     pins+='<g data-a="city" data-v="'+k+'" style="cursor:pointer"><circle cx="'+x+'" cy="'+y+'" r="'+(sel?12:9)+'" fill="'+(open?BRAND:'#6b6f78')+'" stroke="#fff" stroke-width="'+(sel?3:2)+'"/><text x="'+x+'" y="'+(y+3.5)+'" text-anchor="middle" font-size="10" font-weight="800" fill="'+INK+'">'+d+'/'+ms.length+'</text><text x="'+x+'" y="'+(y+25)+'" text-anchor="middle" font-size="11" font-weight="800" fill="#fff">'+c.name+'</text></g>';
   }
   return '<svg viewBox="0 0 270 220" class="map" role="img" aria-label="Map of Nigeria with mission cities"><polygon points="'+pts+'" fill="rgba(16,200,220,.18)" stroke="'+BRAND+'" stroke-width="2.5" stroke-linejoin="round"/>'+pins+'</svg>';
@@ -2409,7 +2409,7 @@ function renderHub(){
   if(hubTab==='missions'){
     const C=CITIES[hubCity];
     h+=mapSVG()+'<div class="chips">'+Object.keys(CITIES).map(k=>'<button class="chip'+(k===hubCity?' on':'')+'" data-a="city" data-v="'+k+'" type="button">'+CITIES[k].name+'</button>').join('')+'</div>';
-    h+='<p class="soft"><b>'+C.name+'</b>, '+C.tag+'</p>'+MISSIONS.concat(EXPLORE).filter(m=>m.city===hubCity).map(m=>m.explore?moduleCard(m):missionCard(m)).join('');
+    h+='<p class="soft"><b>'+C.name+'</b>, '+C.tag+'</p>'+EXPLORE.filter(m=>m.city===hubCity).map(moduleCard).join('');
     const journey=P.done['x_'+hubCity];
     h+='<div class="card"><div class="ch"><div><b>KitCity Hub · '+C.name+'</b><small>'+(journey?'Agent Kit has completed the local onboarding journey. Enter the Hub to keep learning and meet the wider Web3 ecosystem.':'Your city journey ends at this Hub. Meet local people with Agent Kit to unlock the community learning space.')+'</small></div></div><div class="cf"><span>'+(journey?'Hub unlocked':'Complete the city journey first')+'</span>'+(journey?'<button class="btn brand" data-a="cityhub" type="button">Enter Hub</button>':'<span>Locked</span>')+'</div></div>';
   } else if(hubTab==='cityhub'){
@@ -2424,9 +2424,9 @@ function renderHub(){
     h+='<div class="h2">Choose your path</div>'+AK_TRACKS.map(t=>'<div class="card"><div class="ch"><div><b>'+t.title+'</b><small>'+t.tag+' · '+t.desc+'</small></div></div><div class="cf"><span>'+(P.labDone[t.id]?'Completed · +15 XP':'Conversation + knowledge check')+'</span><button class="btn brand" data-a="lab" data-v="'+t.id+'" type="button">'+(P.labDone[t.id]?'Revisit':'Start track')+'</button></div></div>').join('');
     h+='<p class="soft">KitLab teaches opportunities and trade-offs—not investment promises. Choose a path based on your interests and the problems you want to solve.</p>';
   } else if(hubTab==='passport'){
-    const done=MISSIONS.filter(m=>P.done[m.id]).length,all=done===MISSIONS.length;
-    h+='<div class="h2">Badges</div><div class="grid2">'+MISSIONS.map((m,i)=>'<div class="bd'+(P.done[m.id]?'':' off')+'">'+badgeSVG(m.n,!!P.done[m.id],56)+'<b>'+BADGES[i]+'</b></div>').join('')+'</div>';
-    h+='<div class="h2">Progress</div><div class="stat"><span>Missions complete</span><b>'+done+' of '+MISSIONS.length+'</b></div><div class="stat"><span>Scams dodged</span><b>'+P.dodged+'</b></div><div class="stat"><span>Scams fallen for</span><b>'+P.fell+'</b></div>';
+    const done=EXPLORE.filter(m=>P.done[m.id]).length,all=done===EXPLORE.length;
+    h+='<div class="h2">Badges</div><div class="grid2">'+EXPLORE.map((m,i)=>'<div class="bd'+(P.done[m.id]?'':' off')+'">'+badgeSVG(m.n,!!P.done[m.id],56)+'<b>'+m.title.replace('Agent Kit in ','')+'</b></div>').join('')+'</div>';
+    h+='<div class="h2">Journey progress</div><div class="stat"><span>City journeys complete</span><b>'+done+' of '+EXPLORE.length+'</b></div><div class="stat"><span>KitLab paths complete</span><b>'+(P.labDone?AK_TRACKS.filter(t=>P.labDone[t.id]).length:0)+' of '+AK_TRACKS.length+'</b></div>';
     h+=web3Section(); h+='<div class="h2">Wallet</div>'+(P.wallet?'<div class="stat"><span>Address</span><b style="font-family:ui-monospace,Menlo,monospace;font-size:13px">'+short(P.wallet)+'</b></div><div class="stat"><span>USDC</span><b>'+P.usdc.toFixed(2)+'</b></div><div class="stat"><span>Naira token</span><b>'+fmtN(P.ngn)+'</b></div>':'<p class="soft">No wallet yet. Finish mission 1 to open one.</p>');
     if(all) h+='<div class="row"><button class="btn brand" data-a="cert" type="button">View certificate</button></div>';
   } else {
