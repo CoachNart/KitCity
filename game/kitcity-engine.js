@@ -2285,35 +2285,6 @@ function addKitCityHubBuilding(cityName){
  add(new THREE.BoxGeometry(4,5,.6),dark,cx,2.6,cz+9.5);add(new THREE.BoxGeometry(19,.35,7),dark,cx,.2,cz+14);
  const fore=bannerSprite('WELCOME TO '+cityName,'Agent Kit brings the city together');fore.position.set(cx,4.6,cz+15);fore.scale.set(13,3.25,1);group.add(fore);
 }
-function bannerSprite(text,sub){
- const c=document.createElement('canvas');c.width=768;c.height=192;const g=c.getContext('2d');
- g.fillStyle='#111820';g.fillRect(0,0,c.width,c.height);g.fillStyle='#10C8DC';g.fillRect(0,0,14,c.height);g.fillRect(c.width-14,0,14,c.height);
- g.fillStyle='#ffffff';g.font='900 43px Arial';g.textAlign='center';g.textBaseline='middle';g.fillText(text.toUpperCase(),c.width/2,72,700);
- g.fillStyle='#9deef5';g.font='700 24px Arial';g.fillText(sub.toUpperCase(),c.width/2,132,700);
- const t=new THREE.CanvasTexture(c);t.needsUpdate=true;const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:t,transparent:true,depthTest:true}));sp.scale.set(12,3,1);return sp;
-}
-function missionCentre(spot,cityName,title){
- const f=spot.f>0?1:-1,cx=spot.x-f*13,cz=spot.z;
- const add=(geo,mat,x,y,z)=>{const o=new THREE.Mesh(geo,mat);o.position.set(x,y,z);o.userData.nomerge=true;missionGroup.add(o);return o;};
- const wall=new THREE.MeshStandardMaterial({color:'#d8d4c8',roughness:.9}),trim=new THREE.MeshStandardMaterial({color:'#24303b',roughness:.75}),cyan=new THREE.MeshStandardMaterial({color:'#10C8DC',roughness:.6}),glass=new THREE.MeshStandardMaterial({color:'#8ddbe5',roughness:.25,metalness:.12});
- add(new THREE.BoxGeometry(19,9,12),wall,cx,4.5,cz);add(new THREE.BoxGeometry(20,1,13),trim,cx,9.1,cz);add(new THREE.BoxGeometry(19.5,.5,12.5),cyan,cx,9.8,cz);
- for(let i=-1;i<=1;i++){add(new THREE.BoxGeometry(3.5,3.2,.22),glass,cx+i*5,4.7,cz+f*6.12);add(new THREE.BoxGeometry(3.8,.25,.28),trim,cx+i*5,6.4,cz+f*6.16);}
- add(new THREE.BoxGeometry(7,2.1,.35),trim,cx,7.6,cz+f*6.22);
- const sign=bannerSprite(title,cityName+' · Community Mission Centre');sign.position.set(cx,7.6,cz+f*6.55);sign.scale.set(10.5,2.65,1);missionGroup.add(sign);
- const bx=spot.x+f*1.5,bz=spot.z+f*2.6;add(new THREE.BoxGeometry(5.8,2.2,.28),trim,bx,4,bz);
- const banner=bannerSprite(title,cityName+' · Meet Agent Kit');banner.position.set(bx,4,bz+f*.22);banner.scale.set(5.4,1.8,1);missionGroup.add(banner);
-}
-function addKitCityHubBuilding(cityName){
- const cx=60,cz=-130,group=cityGroup;
- const add=(geo,mat,x,y,z)=>{const o=new THREE.Mesh(geo,mat);o.position.set(x,y,z);o.userData.nomerge=true;group.add(o);return o;};
- const wall=new THREE.MeshStandardMaterial({color:'#d7e0e4',roughness:.75}),dark=new THREE.MeshStandardMaterial({color:'#17232d',roughness:.7}),cyan=new THREE.MeshStandardMaterial({color:'#10C8DC',roughness:.45,metalness:.12}),glass=new THREE.MeshStandardMaterial({color:'#62b9cb',roughness:.22,metalness:.1});
- add(new THREE.BoxGeometry(27,13,18),wall,cx,6.5,cz);add(new THREE.BoxGeometry(28,1.1,19),dark,cx,13.2,cz);add(new THREE.BoxGeometry(28,1,19),cyan,cx,14,cz);
- for(let i=-2;i<=2;i++)add(new THREE.BoxGeometry(3.2,5,.25),glass,cx+i*4.8,6.5,cz+9.12);
- add(new THREE.BoxGeometry(10,3.2,.5),dark,cx,3.5,cz+9.4);
- const sign=bannerSprite('KITCITY HUB',cityName+' · Community · Learning · Building');sign.position.set(cx,11.1,cz+10);sign.scale.set(18,4.5,1);group.add(sign);
- add(new THREE.BoxGeometry(4,5,.6),dark,cx,2.6,cz+9.5);add(new THREE.BoxGeometry(19,.35,7),dark,cx,.2,cz+14);
- const fore=bannerSprite('WELCOME TO '+cityName,'Agent Kit brings the city together');fore.position.set(cx,4.6,cz+15);fore.scale.set(13,3.25,1);group.add(fore);
-}
 function loadStep(){
   clearGroup(missionGroup); colliders.length=cityCols; smoke=[]; ents=[]; goal=null;
   const m=G.m,st=m.steps[G.i];
