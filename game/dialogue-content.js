@@ -264,6 +264,7 @@ export const DIALOGUE_FOLLOW_UPS = {
 };
 
 export function getDialogue(id) {
-  return KITCITY_DIALOGUES.find(dialogue => dialogue.id === id) ||
-    EDUCATIONAL_MISSIONS.find(dialogue => dialogue.id === id) || null;
+  return PROTOTYPE_MISSIONS.find(mission => mission.id === id)?.dialogue ||
+    KITCITY_DIALOGUES.find(dialogue => dialogue.id === id) ||
+    EDUCATIONAL_MISSIONS.find(mission => mission.id === id) || null;
 }
