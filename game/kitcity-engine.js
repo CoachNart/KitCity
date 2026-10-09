@@ -2241,9 +2241,172 @@ function moduleCard(m){
   const foot=dn?'Journey complete':'Street conversations · Community Hub destination';
   return '<div class="card"><div class="ch">'+badgeSVG(m.n,dn,46)+'<div><b>'+m.title+'</b><small>'+m.goal+'</small></div></div><div class="cf"><span>'+foot+'</span><button class="btn brand" data-a="play" data-v="'+m.id+'" type="button">'+(dn?'Replay journey':'Begin journey')+'</button></div></div>';
 }
+const BADGES=['Wallet Starter','Swap Smart','Scam Spotter','Key Keeper','Safe Sender','Passport Holder','Community Voice','Cash-out Pro'];
+const LEVELS=[0,150,400,700,1000,1400],LTITLES=['Newcomer','Hustler','Street smart','Wallet pro','Onchain Oga','Naija legend'];
+function levelInfo(xp){
+  let n=0; for(let i=0;i<LEVELS.length;i++) if(xp>=LEVELS[i]) n=i;
+  const lo=LEVELS[n],hi=LEVELS[n+1];
+  return {n:n+1,title:LTITLES[n],pct:hi?Math.min(100,Math.round((xp-lo)/(hi-lo)*100)):100};
+}
+const isUnlocked=m=>{ if(m.explore) return true; const k=MISSIONS.indexOf(m); return k===0||!!P.done[MISSIONS[k-1].id]; };
+
+/* =====================  mission flow  ===================== */
+function hideEnt(e){ e.hidden=true; loadStep(); }
+function resetPlayer(){
+  player.position.set(SPAWN.x,.05,SPAWN.z); faceAng=0; player.rotation.y=0;
+  camera.position.set(SPAWN.x,35,SPAWN.z+20);
+}
+function bannerSprite(text,sub){
+ const c=document.createElement('canvas');c.width=768;c.height=192;const g=c.getContext('2d');
+ g.fillStyle='#111820';g.fillRect(0,0,c.width,c.height);g.fillStyle='#10C8DC';g.fillRect(0,0,14,c.height);g.fillRect(c.width-14,0,14,c.height);
+ g.fillStyle='#ffffff';g.font='900 43px Arial';g.textAlign='center';g.textBaseline='middle';g.fillText(text.toUpperCase(),c.width/2,72,700);
+ g.fillStyle='#9deef5';g.font='700 24px Arial';g.fillText(sub.toUpperCase(),c.width/2,132,700);
+ const t=new THREE.CanvasTexture(c);t.needsUpdate=true;const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:t,transparent:true,depthTest:true}));sp.scale.set(12,3,1);return sp;
+}
+function missionCentre(spot,cityName,title){
+ const f=spot.f>0?1:-1,cx=spot.x-f*13,cz=spot.z;
+ const add=(geo,mat,x,y,z)=>{const o=new THREE.Mesh(geo,mat);o.position.set(x,y,z);o.userData.nomerge=true;missionGroup.add(o);return o;};
+ const wall=new THREE.MeshStandardMaterial({color:'#d8d4c8',roughness:.9}),trim=new THREE.MeshStandardMaterial({color:'#24303b',roughness:.75}),cyan=new THREE.MeshStandardMaterial({color:'#10C8DC',roughness:.6}),glass=new THREE.MeshStandardMaterial({color:'#8ddbe5',roughness:.25,metalness:.12});
+ add(new THREE.BoxGeometry(19,9,12),wall,cx,4.5,cz);add(new THREE.BoxGeometry(20,1,13),trim,cx,9.1,cz);add(new THREE.BoxGeometry(19.5,.5,12.5),cyan,cx,9.8,cz);
+ for(let i=-1;i<=1;i++){add(new THREE.BoxGeometry(3.5,3.2,.22),glass,cx+i*5,4.7,cz+f*6.12);add(new THREE.BoxGeometry(3.8,.25,.28),trim,cx+i*5,6.4,cz+f*6.16);}
+ add(new THREE.BoxGeometry(7,2.1,.35),trim,cx,7.6,cz+f*6.22);
+ const sign=bannerSprite(title,cityName+' · Community Mission Centre');sign.position.set(cx,7.6,cz+f*6.55);sign.scale.set(10.5,2.65,1);missionGroup.add(sign);
+ const bx=spot.x+f*1.5,bz=spot.z+f*2.6;add(new THREE.BoxGeometry(5.8,2.2,.28),trim,bx,4,bz);
+ const banner=bannerSprite(title,cityName+' · Meet Agent Kit');banner.position.set(bx,4,bz+f*.22);banner.scale.set(5.4,1.8,1);missionGroup.add(banner);
+}
+function addKitCityHubBuilding(cityName){
+ const cx=60,cz=-130,group=cityGroup;
+ const add=(geo,mat,x,y,z)=>{const o=new THREE.Mesh(geo,mat);o.position.set(x,y,z);o.userData.nomerge=true;group.add(o);return o;};
+ const wall=new THREE.MeshStandardMaterial({color:'#d7e0e4',roughness:.75}),dark=new THREE.MeshStandardMaterial({color:'#17232d',roughness:.7}),cyan=new THREE.MeshStandardMaterial({color:'#10C8DC',roughness:.45,metalness:.12}),glass=new THREE.MeshStandardMaterial({color:'#62b9cb',roughness:.22,metalness:.1});
+ add(new THREE.BoxGeometry(27,13,18),wall,cx,6.5,cz);add(new THREE.BoxGeometry(28,1.1,19),dark,cx,13.2,cz);add(new THREE.BoxGeometry(28,1,19),cyan,cx,14,cz);
+ for(let i=-2;i<=2;i++)add(new THREE.BoxGeometry(3.2,5,.25),glass,cx+i*4.8,6.5,cz+9.12);
+ add(new THREE.BoxGeometry(10,3.2,.5),dark,cx,3.5,cz+9.4);
+ const sign=bannerSprite('KITCITY HUB',cityName+' · Community · Learning · Building');sign.position.set(cx,11.1,cz+10);sign.scale.set(18,4.5,1);group.add(sign);
+ add(new THREE.BoxGeometry(4,5,.6),dark,cx,2.6,cz+9.5);add(new THREE.BoxGeometry(19,.35,7),dark,cx,.2,cz+14);
+ const fore=bannerSprite('WELCOME TO '+cityName,'Agent Kit brings the city together');fore.position.set(cx,4.6,cz+15);fore.scale.set(13,3.25,1);group.add(fore);
+}
+function bannerSprite(text,sub){
+ const c=document.createElement('canvas');c.width=768;c.height=192;const g=c.getContext('2d');
+ g.fillStyle='#111820';g.fillRect(0,0,c.width,c.height);g.fillStyle='#10C8DC';g.fillRect(0,0,14,c.height);g.fillRect(c.width-14,0,14,c.height);
+ g.fillStyle='#ffffff';g.font='900 43px Arial';g.textAlign='center';g.textBaseline='middle';g.fillText(text.toUpperCase(),c.width/2,72,700);
+ g.fillStyle='#9deef5';g.font='700 24px Arial';g.fillText(sub.toUpperCase(),c.width/2,132,700);
+ const t=new THREE.CanvasTexture(c);t.needsUpdate=true;const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:t,transparent:true,depthTest:true}));sp.scale.set(12,3,1);return sp;
+}
+function missionCentre(spot,cityName,title){
+ const f=spot.f>0?1:-1,cx=spot.x-f*13,cz=spot.z;
+ const add=(geo,mat,x,y,z)=>{const o=new THREE.Mesh(geo,mat);o.position.set(x,y,z);o.userData.nomerge=true;missionGroup.add(o);return o;};
+ const wall=new THREE.MeshStandardMaterial({color:'#d8d4c8',roughness:.9}),trim=new THREE.MeshStandardMaterial({color:'#24303b',roughness:.75}),cyan=new THREE.MeshStandardMaterial({color:'#10C8DC',roughness:.6}),glass=new THREE.MeshStandardMaterial({color:'#8ddbe5',roughness:.25,metalness:.12});
+ add(new THREE.BoxGeometry(19,9,12),wall,cx,4.5,cz);add(new THREE.BoxGeometry(20,1,13),trim,cx,9.1,cz);add(new THREE.BoxGeometry(19.5,.5,12.5),cyan,cx,9.8,cz);
+ for(let i=-1;i<=1;i++){add(new THREE.BoxGeometry(3.5,3.2,.22),glass,cx+i*5,4.7,cz+f*6.12);add(new THREE.BoxGeometry(3.8,.25,.28),trim,cx+i*5,6.4,cz+f*6.16);}
+ add(new THREE.BoxGeometry(7,2.1,.35),trim,cx,7.6,cz+f*6.22);
+ const sign=bannerSprite(title,cityName+' · Community Mission Centre');sign.position.set(cx,7.6,cz+f*6.55);sign.scale.set(10.5,2.65,1);missionGroup.add(sign);
+ const bx=spot.x+f*1.5,bz=spot.z+f*2.6;add(new THREE.BoxGeometry(5.8,2.2,.28),trim,bx,4,bz);
+ const banner=bannerSprite(title,cityName+' · Meet Agent Kit');banner.position.set(bx,4,bz+f*.22);banner.scale.set(5.4,1.8,1);missionGroup.add(banner);
+}
+function addKitCityHubBuilding(cityName){
+ const cx=60,cz=-130,group=cityGroup;
+ const add=(geo,mat,x,y,z)=>{const o=new THREE.Mesh(geo,mat);o.position.set(x,y,z);o.userData.nomerge=true;group.add(o);return o;};
+ const wall=new THREE.MeshStandardMaterial({color:'#d7e0e4',roughness:.75}),dark=new THREE.MeshStandardMaterial({color:'#17232d',roughness:.7}),cyan=new THREE.MeshStandardMaterial({color:'#10C8DC',roughness:.45,metalness:.12}),glass=new THREE.MeshStandardMaterial({color:'#62b9cb',roughness:.22,metalness:.1});
+ add(new THREE.BoxGeometry(27,13,18),wall,cx,6.5,cz);add(new THREE.BoxGeometry(28,1.1,19),dark,cx,13.2,cz);add(new THREE.BoxGeometry(28,1,19),cyan,cx,14,cz);
+ for(let i=-2;i<=2;i++)add(new THREE.BoxGeometry(3.2,5,.25),glass,cx+i*4.8,6.5,cz+9.12);
+ add(new THREE.BoxGeometry(10,3.2,.5),dark,cx,3.5,cz+9.4);
+ const sign=bannerSprite('KITCITY HUB',cityName+' · Community · Learning · Building');sign.position.set(cx,11.1,cz+10);sign.scale.set(18,4.5,1);group.add(sign);
+ add(new THREE.BoxGeometry(4,5,.6),dark,cx,2.6,cz+9.5);add(new THREE.BoxGeometry(19,.35,7),dark,cx,.2,cz+14);
+ const fore=bannerSprite('WELCOME TO '+cityName,'Agent Kit brings the city together');fore.position.set(cx,4.6,cz+15);fore.scale.set(13,3.25,1);group.add(fore);
+}
+function loadStep(){
+  clearGroup(missionGroup); colliders.length=cityCols; smoke=[]; ents=[]; goal=null;
+  const m=G.m,st=m.steps[G.i];
+  const e=placeNPC(st.npc,SPOTS[st.spot]); e.talk=()=>st.run(); e.active=()=>true; ents.push(e); goal=e;
+  if(G.m.explore && G.i<G.m.steps.length-1) missionCentre(SPOTS[st.spot],CITIES[G.m.city].name,G.m.title.replace('Agent Kit in ','').toUpperCase());
+  if(G.m.explore && G.i<G.m.steps.length-1) missionCentre(SPOTS[st.spot],CITIES[G.m.city].name,G.m.title.replace('Agent Kit in ','').toUpperCase());
+  for(const ex of (m.extras||[])){
+    if(G.used[ex.id]) continue;
+    const e2=placeNPC(ex.npc,ex.spot); e2.ex=ex; e2.talk=()=>ex.run(e2); e2.active=()=>!G.used[ex.id]; ents.push(e2);
+  }
+  updateHUD();
+}
+function startMission(id){
+  const m=MBY[id];
+  $('#loadTxt').textContent=L('Loading '+CITIES[m.city].name+'\u2026','We dey load '+CITIES[m.city].name+'\u2026'); $('#loading').classList.remove('hidden');
+  setTimeout(()=>{
+    if(curCity!==m.city) buildCity(m.city); else setupBarks(CITIES[curCity]);
+    G={m,i:0,bonus:0,correct:0,used:{},words:null,addr:null,slip:null};
+    $('#hub').classList.add('hidden'); $('#title').classList.add('hidden'); $('#hud').classList.remove('hidden');
+    S.phase='play'; closeSheet(); Snd.setMode('play'); lastLoc=''; resetPlayer(); loadStep();
+    $('#loading').classList.add('hidden');
+    briefing();
+  },60);
+}
+function briefing(){
+  const m=G.m,C=CITIES[m.city];
+  openSheet('<div class="who"><span class="av" style="background:'+INK+'">'+m.n+'</span><div><b>'+(m.explore?'':'Mission '+m.n+': ')+m.title+'</b><small>'+C.name+', '+C.tag+'</small></div></div><p>'+m.goal+'</p><ul class="pts">'+m.steps.map(s=>'<li>'+s.label+'</li>').join('')+'</ul>'+(m.explore?'<p class="note">Move with the left stick or WASD. Hold Run or Shift to run. Tap Talk or press E near a person. Follow the arrow to your next conversation.</p>':'<p class="note">Follow the arrow to the next person. Watch for traffic.</p>'),
+    [{t:'Start conversations',f:closeSheet},{t:'Back to city selection',g:1,f:exitToHub}]);
+}
+function finishStep(){
+  closeSheet(); if(!G) return;
+  G.i++;
+  if(G.i>=G.m.steps.length){ completeMission(); return; }
+  Snd.sfx('chime'); toast('Step complete'); loadStep();
+}
+function completeMission(){
+  if(G.m.explore){ completeExplore(); return; }
+  const m=G.m,first=!P.done[m.id],before=levelInfo(P.xp).n;
+  let gain=0; if(first){ gain=m.xp+G.bonus; P.xp+=gain; }
+  P.done[m.id]=true; save(); updateHUD(); Snd.sfx('done');
+  const after=levelInfo(P.xp),idx=MISSIONS.indexOf(m),next=MISSIONS[idx+1];
+  const all=MISSIONS.every(x=>P.done[x.id]);
+  hubCity=next?next.city:m.city;
+  clearGroup(missionGroup); colliders.length=cityCols; smoke=[]; ents=[]; goal=null; beacon.visible=false;
+  const btns=[];
+  if(all&&first) btns.push({t:'See my certificate',f:()=>certificate()});
+  if(next) btns.push({t:'Next: '+next.title,f:()=>startMission(next.id)});
+  btns.push({t:'Back to hub',g:1,f:exitToHub});
+  openSheet('<div class="badge">'+badgeSVG(m.n,true,96)+'<div><h3 style="margin-top:0">'+BADGES[idx]+' badge</h3><small>Mission '+m.n+' complete</small></div></div>'+
+    (first?'<div class="kv"><span>Mission XP</span><b>+'+m.xp+'</b></div>'+(G.bonus?'<div class="kv"><span>Bonus XP</span><b>+'+G.bonus+'</b></div>':'')+'<div class="kv"><span>Total XP</span><b>'+P.xp+'</b></div>':'<p class="note">Replay complete. XP is only awarded the first time.</p>')+
+    (first&&after.n>before?'<p><b>Level up! You are now '+after.title+'.</b></p>':''),btns);
+}
+function certificate(){
+  const msg=encodeURIComponent(L('I finished all 8 KitCity missions and learned how to use a crypto wallet safely. Can you survive Naija with your wallet?','I don finish all 8 KitCity missions and I don learn how to use crypto wallet safely. You fit survive Naija with your wallet?'));
+  openSheet('<div class="badge">'+badgeSVG('\u2605',true,96)+'<div><h3 style="margin-top:0">KitCity Graduate</h3><small>All 8 missions complete</small></div></div><p>You can create a wallet, swap, spot scams, back up your keys, send safely, sign messages, vote and cash out without getting caught out. Total XP: <b>'+P.xp+'</b>.</p>',
+    [{t:'Back to hub',f:exitToHub}]);
+  sheetEl.insertAdjacentHTML('beforeend',tx('<div class="row"><a class="btn" href="https://wa.me/?text='+msg+'" target="_blank" rel="noopener">Share on WhatsApp</a></div>'));
+}
+function exitToHub(){
+  closeSheet(); S.phase='hub'; Snd.setMode('hub'); G=null;
+  clearGroup(missionGroup); colliders.length=cityCols; smoke=[]; ents=[]; goal=null; beacon.visible=false;
+  $('#hud').classList.add('hidden'); $('#hub').classList.remove('hidden'); renderHub();
+}
+$('#pauseBtn').addEventListener('click',()=>{
+  if(S.phase!=='play'||S.modal) return;
+  openSheet('<h3>Paused</h3><p class="note">'+(G.m.explore?'Module '+G.m.mod:'Mission '+G.m.n)+': '+G.m.title+'</p>',[
+    {t:'Resume',f:closeSheet},
+    {t:'Restart mission',g:1,f:()=>startMission(G.m.id)},
+    {t:'Back to hub',g:1,f:exitToHub}
+  ]);
+});
+
+/* =====================  hub  ===================== */
+const NG=[[2.7,6.4],[4.0,6.4],[5.0,5.4],[5.6,4.4],[6.8,4.3],[7.6,4.5],[8.3,4.6],[8.5,4.9],[9.0,5.8],[9.9,6.7],[10.6,7.0],[11.2,6.6],[11.8,7.2],[12.8,7.8],[13.2,9.0],[12.2,10.0],[11.7,10.9],[12.5,11.5],[13.7,11.9],[14.6,12.2],[14.2,13.0],[13.6,13.6],[12.0,13.5],[10.0,13.3],[8.5,13.0],[7.0,13.0],[5.5,13.6],[4.2,13.4],[3.6,11.9],[3.8,11.0],[3.7,10.0],[3.1,9.0],[2.8,7.9]];
+const mx=lon=>(lon-2.2)*20,my=lat=>(14.2-lat)*20;
+function mapSVG(){
+  const pts=NG.map(p=>mx(p[0]).toFixed(1)+','+my(p[1]).toFixed(1)).join(' ');
+  let pins='';
+  for(const k in CITIES){
+    const c=CITIES[k],x=mx(c.lon),y=my(c.lat),ms=EXPLORE.filter(m=>m.city===k),d=ms.filter(m=>P.done[m.id]).length,open=ms.some(isUnlocked),sel=k===hubCity;
+    pins+='<g data-a="city" data-v="'+k+'" style="cursor:pointer"><circle cx="'+x+'" cy="'+y+'" r="'+(sel?12:9)+'" fill="'+(open?BRAND:'#6b6f78')+'" stroke="#fff" stroke-width="'+(sel?3:2)+'"/><text x="'+x+'" y="'+(y+3.5)+'" text-anchor="middle" font-size="10" font-weight="800" fill="'+INK+'">'+d+'/'+ms.length+'</text><text x="'+x+'" y="'+(y+25)+'" text-anchor="middle" font-size="11" font-weight="800" fill="#fff">'+c.name+'</text></g>';
+  }
+  return '<svg viewBox="0 0 270 220" class="map" role="img" aria-label="Map of Nigeria with mission cities"><polygon points="'+pts+'" fill="rgba(16,200,220,.18)" stroke="'+BRAND+'" stroke-width="2.5" stroke-linejoin="round"/>'+pins+'</svg>';
+}
+function missionCard(m){
+  const un=isUnlocked(m),dn=!!P.done[m.id];
+  return '<div class="card'+(un?'':' lock')+'"><div class="ch">'+badgeSVG(m.n,dn,46)+'<div><b>'+(m.explore?'Module '+m.mod+': ':'Mission '+m.n+': ')+m.title+'</b><small>'+m.goal+'</small></div></div><div class="cf"><span>'+m.xp+' XP'+(dn?', done':'')+'</span>'+(un?'<button class="btn brand" data-a="play" data-v="'+m.id+'" type="button">'+(dn?'Replay':'Play')+'</button>':'<span>Finish mission '+(m.n-1)+' first</span>')+'</div></div>';
+}
 function renderHub(){
   const L=levelInfo(P.xp);
   $('#hubTop').innerHTML=tx('<span class="wm"><img class="header-logo" src="https://i.postimg.cc/6pLt0sn3/file-000000006e348210b7a8c70bc4ed899d.png" alt="KitCity" /></span><div class="lvl"><b>Level '+L.n+': '+L.title+'</b><div class="bar"><i style="width:'+L.pct+'%"></i></div>'+P.xp+' XP</div>');
+  document.querySelectorAll('#nav [data-v="kitlab"]').forEach(b=>b.remove());
+  if(hubTab==='kitlab') hubTab='cityhub';
   document.querySelectorAll('#nav [data-v="kitlab"]').forEach(b=>b.remove());
   if(hubTab==='kitlab') hubTab='cityhub';
   document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===hubTab));
