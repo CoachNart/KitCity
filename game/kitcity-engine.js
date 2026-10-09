@@ -2946,7 +2946,9 @@ if(location.hostname==='127.0.0.1'||location.hostname==='localhost'){
   position:()=>({x:Number(player.position.x.toFixed(2)),z:Number(player.position.z.toFixed(2))}),
   phase:()=>S.phase,
   nearby:()=>nearEnt?(nearEnt.def?.name||nearEnt.explorationDiscovery?.name||nearEnt.objective?.label||null):null,
-  controls:()=>inputVec()
+  controls:()=>inputVec(),
+  keys:()=>Object.keys(keys).filter(key=>keys[key]),
+  modal:()=>S.modal
  })});
 }
 }
