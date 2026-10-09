@@ -23,7 +23,7 @@ assert.equal(discoveryState.exploreScore, 56, "discoveries reward free explorati
 assert.match(engineSource, /refreshExplorationDiscoveries\(\)/, "the actual free-roam engine creates in-world discovery markers");
 assert.match(engineSource, /recordExplorationDiscovery\(adventure,discovery\.id\)/, "the live interaction uses the tested persistent discovery helper");
 assert.match(engineSource, /nearEnt\.kind==='discovery'\?'Look':'Talk'/, "mobile interaction feedback distinguishes looking at places from talking to people");
-assert.match(engineSource, /window\.innerWidth<760\?1\.25:1\.5/, "render pixel ratio is capped more conservatively on mobile");
+assert.match(engineSource, /mobile\?1\.25:1\.5/, "render pixel ratio is capped more conservatively on mobile and low-memory devices");
 assert.match(engineSource, /window\.innerWidth<760\?768:1536/, "mobile shadow maps are smaller to reduce GPU cost");
 assert.match(engineSource, /mobileCrowd\?12:20/, "mobile builds fewer ambient walkers than desktop");
 assert.match(engineSource, /mobileCrowd\?3:6/, "mobile builds fewer pedestrian pairs");
