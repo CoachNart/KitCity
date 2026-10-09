@@ -45,7 +45,7 @@ const Store=(function(){
 const KEY='kitnaija_v1';
 const savedPlayer=Store.get(KEY,{})||{};
 const P=Object.assign({wallet:null,usdc:0,ngn:0,xp:0,done:{},dodged:0,fell:0,low:false,music:true,sfx:true,lang:'en',pl:'',scores:{},web3:null,skills:{},relationships:{},reputation:0,coins:0,sideDone:{},jobCounts:{},projects:{}},savedPlayer);
-if(!P.skills||typeof P.skills!=='object')P.skills={};if(!P.relationships||typeof P.relationships!=='object')P.relationships={};if(!P.sideDone||typeof P.sideDone!=='object')P.sideDone={};if(!P.jobCounts||typeof P.jobCounts!=='object')P.jobCounts={};if(!P.projects||typeof P.projects!=='object')P.projects={};if(!Number.isFinite(P.reputation)P.reputation=0;if(!Number.isFinite(P.coins))P.coins=0;
+if(!P.skills||typeof P.skills!=='object')P.skills={};if(!P.relationships||typeof P.relationships!=='object')P.relationships={};if(!P.sideDone||typeof P.sideDone!=='object')P.sideDone={};if(!P.jobCounts||typeof P.jobCounts!=='object')P.jobCounts={};if(!P.projects||typeof P.projects!=='object')P.projects={};if(!Number.isFinite(P.reputation))P.reputation=0;if(!Number.isFinite(P.coins))P.coins=0;
 if(!Object.prototype.hasOwnProperty.call(savedPlayer,'low')&&(window.innerWidth<760||(navigator.deviceMemory||8)<=4))P.low=true;
 if(!P.done||typeof P.done!=='object') P.done={};
 function save(){ Store.set(KEY,{wallet:P.wallet,usdc:P.usdc,ngn:P.ngn,xp:P.xp,done:P.done,dodged:P.dodged,fell:P.fell,low:P.low,music:P.music,sfx:P.sfx,lang:P.lang,pl:P.pl,scores:P.scores,web3:P.web3,skills:P.skills,relationships:P.relationships,reputation:P.reputation,coins:P.coins,sideDone:P.sideDone,jobCounts:P.jobCounts,projects:P.projects}); }
