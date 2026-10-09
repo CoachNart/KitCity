@@ -35,10 +35,10 @@ const Store=(function(){
   };
 })();
 const KEY='kitnaija_v1';
-const P=Object.assign({wallet:null,usdc:0,ngn:0,xp:0,done:{},dodged:0,fell:0,low:false,music:true,sfx:true,lang:'en',pl:'',name:'',scores:{},web3:null,skills:{},relationships:{},reputation:0,coins:0},Store.get(KEY,{}));
-if(!P.skills||typeof P.skills!=='object')P.skills={};if(!P.relationships||typeof P.relationships!=='object')P.relationships={};if(!Number.isFinite(P.reputation))P.reputation=0;if(!Number.isFinite(P.coins))P.coins=0;
+const P=Object.assign({wallet:null,usdc:0,ngn:0,xp:0,done:{},dodged:0,fell:0,low:false,music:true,sfx:true,lang:'en',pl:'',name:'',scores:{},web3:null,skills:{},relationships:{},reputation:0,coins:0,sideDone:{},jobCounts:{}},Store.get(KEY,{}));
+if(!P.skills||typeof P.skills!=='object')P.skills={};if(!P.relationships||typeof P.relationships!=='object')P.relationships={};if(!P.sideDone||typeof P.sideDone!=='object')P.sideDone={};if(!P.jobCounts||typeof P.jobCounts!=='object')P.jobCounts={};if(!Number.isFinite(P.reputation))P.reputation=0;if(!Number.isFinite(P.coins))P.coins=0;
 if(!P.done||typeof P.done!=='object') P.done={};
-function save(){ Store.set(KEY,{wallet:P.wallet,usdc:P.usdc,ngn:P.ngn,xp:P.xp,done:P.done,dodged:P.dodged,fell:P.fell,low:P.low,music:P.music,sfx:P.sfx,lang:P.lang,pl:P.pl,name:P.name,scores:P.scores,web3:P.web3,skills:P.skills,relationships:P.relationships,reputation:P.reputation,coins:P.coins}); }
+function save(){ Store.set(KEY,{wallet:P.wallet,usdc:P.usdc,ngn:P.ngn,xp:P.xp,done:P.done,dodged:P.dodged,fell:P.fell,low:P.low,music:P.music,sfx:P.sfx,lang:P.lang,pl:P.pl,name:P.name,scores:P.scores,web3:P.web3,skills:P.skills,relationships:P.relationships,reputation:P.reputation,coins:P.coins,sideDone:P.sideDone,jobCounts:P.jobCounts}); }
 function playerName(){ return (P.name||'Player').trim(); }
 function personalize(html){ return String(html==null?'':html).replace(/Agent Kit/g,playerName()).replace(/agent kit/g,playerName()); }
 
@@ -1977,6 +1977,13 @@ streetProfiles.forEach((p,i)=>{
   {label:'Solve it · '+p.concept,spot:routeSpots[(i*7+5)%routeSpots.length],npc:mentor,run(){const buttons=p.choices.map((choice,idx)=>({t:choice,f:()=>{if(idx===p.correct){G.bonus+=15;G.decisionPassed=true;talk(mentor,'<h3>Good call.</h3><p>'+esc(p.success)+'</p><p>Your choice improves the outcome in this simulated situation.</p>',[{t:'See what happens next',f:finishStep}]);}else{G.mistakes=(G.mistakes||0)+1;talk(mentor,'<h3>That could go wrong.</h3><p>'+esc(p.consequence)+'</p><p>'+esc(p.recovery)+'</p>',[{t:'Try another approach',f:()=>m.steps[1].run()},{t:'Get a clue',g:1,f:()=>talk(mentor,'<p>'+teach+'</p><p>Look for the option that protects the user, checks evidence and solves the actual problem.</p>',[{t:'Retry challenge',f:()=>m.steps[1].run()}])}]);}}}));talk(mentor,'<h3>'+title+'</h3><p>'+challenge+'</p><p><small>Choose an action. A wrong move teaches you what to watch for; you can always recover.</small></p>',buttons);}},
   {label:'Deliver the result · debrief',spot:routeSpots[(i*7+9)%routeSpots.length],npc:reviewer,run(){talk(reviewer,'<p><b>Debrief:</b> '+esc(p.teach)+'</p><p>'+esc(p.localName)+' can now use the result. Your practical skill is <b>'+esc(p.skill)+'</b>.</p><p>Want to do one extra bit of help for the neighbourhood?</p>',[{t:'Help with the follow-up · bonus',f:()=>{G.bonus+=10;G.sideQuestDone=true;talk(local,'<p>That extra help makes the result easier for the next person to use. Nice one.</p>',[{t:'Hand it over',f:finishStep}]);}},{t:'Wrap up the job',g:1,f:finishStep}]);}}
  ]};
+ if(p.number%5===0){
+  const hiddenCast=REQUIRED_CAST[(i+13)%REQUIRED_CAST.length],hiddenNpc=loc(hiddenCast.name,hiddenCast.role,'#C7457E',LK.guy,p.site),hiddenId='hidden_'+p.id;
+  m.extras=[{id:hiddenId,once:true,npc:hiddenNpc,spot:routeSpots[(i*11+13)%routeSpots.length],run(){talk(hiddenNpc,'<h3>Hidden street discovery</h3><p>'+esc(hiddenCast.style)+'. '+esc(p.localName)+' mentioned a side problem linked to '+concept.toLowerCase()+'. Help them make the safer call.</p><p>'+esc(p.challenge)+'</p>',p.choices.map((choice,idx)=>({t:choice,f:()=>{if(idx===p.correct){P.sideDone[hiddenId]=true;P.coins+=12;P.reputation+=1;P.relationships[hiddenCast.name]=(P.relationships[hiddenCast.name]||0)+1;P.xp+=8;G.bonus+=5;G.used[hiddenId]=true;save();updateHUD();Snd.sfx('coin');talk(hiddenNpc,'<p>Hidden job complete. +12 KitCoins, +8 XP and +1 reputation. You found something most players walk past.</p>',[{t:'Back to the street',f:closeSheet}]);}else{talk(hiddenNpc,'<p>That would expose the neighbourhood to an avoidable risk. '+esc(p.teach)+'</p>',[{t:'Try another option',f:()=>m.extras[0].run()},{t:'Leave it for now',g:1,f:closeSheet}]);}}})));}}];
+ } else if(p.number%7===0){
+  const jobCast=REQUIRED_CAST[(i+19)%REQUIRED_CAST.length],jobNpc=loc(jobCast.name,jobCast.role,'#D08A25',LK.trader,p.site),jobId='job_'+p.id;
+  m.extras=[{id:jobId,repeatable:true,npc:jobNpc,spot:routeSpots[(i*9+17)%routeSpots.length],run(){const count=P.jobCounts[jobId]||0;if(count>=3){talk(jobNpc,'<p>You have completed this local job three times. The neighbourhood board will refresh with future content.</p>',[{t:'Got it',g:1,f:closeSheet}]);return;}talk(jobNpc,'<h3>Repeatable street job · '+(count+1)+'/3</h3><p>'+esc(jobCast.role)+': '+esc(p.localName)+' needs one quick practical check related to '+concept.toLowerCase()+'.</p><p>'+esc(p.challenge)+'</p>',p.choices.map((choice,idx)=>({t:choice,f:()=>{if(idx===p.correct){P.jobCounts[jobId]=count+1;P.coins+=8;P.reputation+=1;P.relationships[jobCast.name]=(P.relationships[jobCast.name]||0)+1;if(count===0)P.xp+=5;G.used[jobId]=true;save();updateHUD();Snd.sfx('coin');talk(jobNpc,'<p>Job delivered. +8 KitCoins and +1 reputation'+(count===0?', plus +5 XP':'')+'. You can repeat this job up to three times.</p>',[{t:'Done',f:closeSheet}]);}else{talk(jobNpc,'<p>Not quite. '+esc(p.teach)+'</p>',[{t:'Try again',f:()=>m.extras[0].run()},{t:'Leave job',g:1,f:closeSheet}]);}}})));}}];
+ }
  EXPLORE.push(m);MBY[m.id]=m;
 });
 function completeExplore(){
@@ -2032,8 +2039,8 @@ function loadStep(){
   const m=G.m,st=m.steps[G.i];
   const routeKey=(G.routeSpots&&G.routeSpots[G.i%G.routeSpots.length])||st.spot; const e=placeNPC(st.npc,SPOTS[routeKey]||SPOTS[st.spot]); e.talk=()=>st.run(); e.active=()=>true; ents.push(e); goal=e;
   for(const ex of (m.extras||[])){
-    if(G.used[ex.id]) continue;
-    const e2=placeNPC(ex.npc,ex.spot); e2.ex=ex; e2.talk=()=>ex.run(e2); e2.active=()=>!G.used[ex.id]; ents.push(e2);
+    if(G.used[ex.id]||(ex.once&&P.sideDone[ex.id])) continue;
+    const e2=placeNPC(ex.npc,ex.spot); e2.ex=ex; e2.talk=()=>ex.run(e2); e2.active=()=>!G.used[ex.id]&&!(ex.once&&P.sideDone[ex.id]); ents.push(e2);
   }
   updateHUD();
 }
@@ -2133,7 +2140,7 @@ function renderHub(){
   } else if(hubTab==='passport'){
     const done=EXPLORE.filter(m=>P.done[m.id]).length,all=done===EXPLORE.length;
     h+='<div class="h2">City journeys</div><div class="grid2">'+EXPLORE.map((m,i)=>'<div class="bd'+(P.done[m.id]?'':' off')+'">'+badgeSVG(m.mod,!!P.done[m.id],56)+'<b>'+m.title.replace('Agent Kit in ','')+'</b></div>').join('')+'</div>';
-    h+='<div class="h2">Journey progress</div><div class="stat"><span>City journeys complete</span><b>'+done+' of '+EXPLORE.length+'</b></div><div class="stat"><span>KitCoins</span><b>'+P.coins+'</b></div><div class="stat"><span>Neighbourhood reputation</span><b>'+P.reputation+'</b></div><div class="h2">Practical skills</div>'+(Object.keys(P.skills).length?Object.entries(P.skills).map(([skill,count])=>'<div class="stat"><span>'+skill.replace(/&/g,'&amp;').replace(/</g,'&lt;')+'</span><b>Level '+count+'</b></div>').join(''):'<p class="soft">Complete street missions to build practical skills and unlock career pathways.</p>')+'<div class="h2">Character relationships</div>'+(Object.keys(P.relationships).length?Object.entries(P.relationships).map(([character,count])=>'<div class="stat"><span>'+character+'</span><b>Trust '+count+'</b></div>').join(''):'<p class="soft">Your choices build trust with local characters.</p>');
+    h+='<div class="h2">Journey progress</div><div class="stat"><span>City journeys complete</span><b>'+done+' of '+EXPLORE.length+'</b></div><div class="stat"><span>KitCoins</span><b>'+P.coins+'</b></div><div class="stat"><span>Neighbourhood reputation</span><b>'+P.reputation+'</b></div><div class="h2">Practical skills</div>'+(Object.keys(P.skills).length?Object.entries(P.skills).map(([skill,count])=>'<div class="stat"><span>'+skill.replace(/&/g,'&amp;').replace(/</g,'&lt;')+'</span><b>Level '+count+'</b></div>').join(''):'<p class="soft">Complete street missions to build practical skills and unlock career pathways.</p>')+'<div class="h2">Character relationships</div>'+(Object.keys(P.relationships).length?Object.entries(P.relationships).map(([character,count])=>'<div class="stat"><span>'+character+'</span><b>Trust '+count+'</b></div>').join(''):'<p class="soft">Your choices build trust with local characters.</p>')+'<div class="h2">Career pathways</div>'+(CAMPAIGN_BLUEPRINTS.filter(m=>m.stage===7&&P.done[m.id]).length===8?'<p class="soft">Unlocked: development, security, research, design, analytics, content, education, marketing, community operations, business development, product management, trading analysis, game development and AI infrastructure. Use your practical skills and portfolio evidence to explore a path; no job outcome is guaranteed.</p>':'<p class="soft">Complete the Stage 7 street missions to explore role-fit, portfolios and practical career paths. Career success is never guaranteed.</p>');
     h+='<div class="h2">Wallet</div>'+(P.wallet?'<div class="stat"><span>Address</span><b style="font-family:ui-monospace,Menlo,monospace;font-size:13px">'+short(P.wallet)+'</b></div><div class="stat"><span>USDC</span><b>'+P.usdc.toFixed(2)+'</b></div><div class="stat"><span>Naira token</span><b>'+fmtN(P.ngn)+'</b></div>':'<p class="soft">No wallet yet. Finish mission 1 to open one.</p>');
     if(all) h+='<div class="row"><button class="btn brand" data-a="cert" type="button">View certificate</button></div>';
   } else {
@@ -2164,7 +2171,7 @@ $('#hub').addEventListener('click',e=>{
   else if(a==='snd'){ P[v]=!P[v]; save(); Snd.set(v,P[v]); Snd.sfx('click'); renderHub(); }
   else if(a==='reset'){
     if(!resetArm){ resetArm=true; renderHub(); return; }
-    Store.del(KEY); Object.assign(P,{wallet:null,usdc:0,ngn:0,xp:0,done:{},dodged:0,fell:0,scores:{},web3:null,skills:{},relationships:{},reputation:0,coins:0}); save(); resetArm=false; hubCity='lagos'; hubTab='missions'; renderHub(); toast('Progress erased');
+    Store.del(KEY); Object.assign(P,{wallet:null,usdc:0,ngn:0,xp:0,done:{},dodged:0,fell:0,scores:{},web3:null,skills:{},relationships:{},reputation:0,coins:0,sideDone:{},jobCounts:{}}); save(); resetArm=false; hubCity='lagos'; hubTab='missions'; renderHub(); toast('Progress erased');
   }
 });
 const playerNameInput=$('#playerName');
