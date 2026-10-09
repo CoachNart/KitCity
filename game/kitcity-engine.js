@@ -261,12 +261,12 @@ const Snd=(function(){
     click(t){ tone(560,t,.06,'triangle',.12,gSfx,{to:420}); },
     /* footstep: heel thud + shoe scuff + crisp tap. side alternates left/right, run is heavier and snappier */
     foot(t,a){
-      const run=!!(a&&a.run),side=(a&&a.side)?1:-1,v=((a&&a.vol)||1)*(run?1.15:.85);
+      const run=!!(a&&a.run),side=(a&&a.side)?1:-1,v=((a&&a.vol)||1)*(run?.42:.32);
       const p=.9+Math.random()*.2+side*.03;
       tone(150*p,t,.1,'sine',.55*v,gSfx,{to:55*p});
-      burst(t,run?.09:.12,'bandpass',(run?1700:1250)*p,.32*v,gSfx,.8);
-      burst(t,.03,'highpass',3200,.14*v,gSfx);
-      if(run) burst(t+.045,.05,'bandpass',900*p,.16*v,gSfx,.9);
+      burst(t,run?.09:.12,'bandpass',(run?1700:1250)*p,.12*v,gSfx,.8);
+      burst(t,.03,'highpass',3200,.05*v,gSfx);
+      if(run) burst(t+.045,.05,'bandpass',900*p,.06*v,gSfx,.9);
     },
     chime(t){ tone(784,t,.18,'sine',.16,gSfx); tone(1175,t+.12,.3,'sine',.14,gSfx); },
     done(t){ [523,659,784,1047].forEach((f,i)=>tone(f,t+i*.11,.3,'triangle',.16,gSfx)); tone(1568,t+.5,.6,'sine',.12,gSfx); },
