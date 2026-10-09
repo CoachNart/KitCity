@@ -29,6 +29,10 @@ assert.match(engineSource, /mobileCrowd\?12:20/, "mobile builds fewer ambient wa
 assert.match(engineSource, /mobileCrowd\?3:6/, "mobile builds fewer pedestrian pairs");
 assert.match(engineSource, /made<\(mobileCrowd\?4:10\)/, "mobile builds fewer road-crossing pedestrians");
 assert.match(engineSource, /window\.innerWidth<760\?\(\(k===0\|\|k===-1\)\?1:/, "mobile traffic generation is reduced");
+assert.match(engineSource, /const SPAWN=\{x:0,z:0\}/, "the initial spawn is clear of the previous building-corner trap");
+assert.match(engineSource, /!Object\.prototype\.hasOwnProperty\.call\(savedPlayer,'low'\)&&\(window\.innerWidth<760\|\|\(navigator\.deviceMemory\|\|8\)<=4\)/, "new mobile and low-memory players default to low graphics unless they chose a setting");
+assert.match(engineSource, /const dt=Math\.min\(clock\.getDelta\(\),\.2\)/, "player movement does not crawl when frame time exceeds the old 50ms cap");
+
 assert.match(engineSource, /if\(joy\.active\)\{ x=joy\.x; z=joy\.y; \}/, "touch joystick vertical direction matches WASD and forward movement");
 assert.match(engineSource, /adventure\.playerPosition=\{x:Number\(player\.position\.x\.toFixed\(2\)\),z:Number\(player\.position\.z\.toFixed\(2\)\)\}/, "free-roam checkpoint stores a bounded-precision player position");
 assert.match(engineSource, /window\.addEventListener\('pagehide',\(\)=>\{saveAdventureCheckpoint\(\);save\(\);\}\)/, "leaving the page saves the current free-roam checkpoint");
