@@ -46,7 +46,7 @@ function applyEffects(effects, state, context = {}) {
 
 export function createDialogueState(saved = {}) {
   return Object.assign({
-    metNpcs: {}, relationships: {}, choices: {}, knowledge: {}, flags: {},
+    metNpcs: {}, relationships: {}, choices: {}, knowledge: {}, conceptHistory: {}, flags: {},
     completedMissions: {}, unlockedFollowUps: {}, completedConversations: {}
   }, clone(saved) || {});
 }
