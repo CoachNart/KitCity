@@ -244,3 +244,13 @@ html,body{height:100%;overflow:hidden;background:var(--ink);color:var(--ink);fon
 #nav{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));flex:0 0 auto;position:relative;z-index:60;width:100%;min-height:74px;visibility:visible;opacity:1}
 #nav button{display:block;min-width:0;white-space:normal;overflow-wrap:anywhere;color:#d9e5ec}
 #nav button.on{color:#00E5FF}
+
+
+/* Hub navigation must remain visible even when the mission list is long.
+   The game shell is a viewport-height flex column; only the content scrolls. */
+#hub:not(.hidden){display:flex!important;flex-direction:column;height:100vh;height:100dvh;min-height:0;overflow:hidden}
+#hubTop{flex:0 0 auto}
+#hubBody{flex:1 1 0;min-height:0;overflow-x:hidden;overflow-y:auto}
+#nav{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));flex:0 0 auto;position:relative;inset:auto;z-index:90;width:100%;min-height:76px;visibility:visible;opacity:1;align-items:stretch}
+#nav button{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:0;min-height:54px;line-height:1.15;white-space:normal;overflow-wrap:anywhere}
+@media(max-height:520px){#nav{min-height:60px;padding-top:5px;padding-bottom:calc(5px + env(safe-area-inset-bottom))}#nav button{min-height:46px;padding:5px 3px}#nav button::before{margin-bottom:3px}}
