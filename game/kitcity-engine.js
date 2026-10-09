@@ -1993,6 +1993,17 @@ function levelInfo(xp){
 const cityOrder=['lagos','abuja','kano','ph',...streetCityProfiles.map(c=>c[0])];
 EXPLORE.sort((a,b)=>cityOrder.indexOf(a.city)-cityOrder.indexOf(b.city));
 EXPLORE.forEach((m,i)=>{ m.mod=i+1; });
+const cityMissions=city=>{ const explore=EXPLORE.filter(m=>m.city===city); return explore.length?explore:MISSIONS.filter(m=>m.city===city); };
+const isCityComplete=city=>{ const missions=cityMissions(city); return missions.length>0&&missions.every(m=>!!P.done[m.id]); };
+const isCityUnlocked=city=>{ const i=cityOrder.indexOf(city); return i>=0&&(i===0||isCityComplete(cityOrder[i-1])); };
+const isUnlocked=m=>{
+  if(m.explore){
+    if(!isCityUnlocked(m.city)) return false;
+    const pack=cityMissions(m.city),at=pack.indexOf(m);
+    return at<=0||!!P.done[pack[at-1].id];
+  }
+  const k=MISSIONS.indexOf(m); return k===0||!!P.done[MISSIONS[k-1].id];
+};
 /* Guard the intended two-mission-per-city route and globally unique titles. */
 const ALL_MISSIONS=[...MISSIONS,...EXPLORE];
 const missionTitles=new Set();
@@ -2009,17 +2020,6 @@ for(let ci=0;ci<cityOrder.length;ci++){
   }
 }
 
-const cityMissions=city=>{ const explore=EXPLORE.filter(m=>m.city===city); return explore.length?explore:MISSIONS.filter(m=>m.city===city); };
-const isCityComplete=city=>{ const missions=cityMissions(city); return missions.length>0&&missions.every(m=>!!P.done[m.id]); };
-const isCityUnlocked=city=>{ const i=cityOrder.indexOf(city); return i>=0&&(i===0||isCityComplete(cityOrder[i-1])); };
-const isUnlocked=m=>{
-  if(m.explore){
-    if(!isCityUnlocked(m.city)) return false;
-    const pack=cityMissions(m.city),at=pack.indexOf(m);
-    return at<=0||!!P.done[pack[at-1].id];
-  }
-  const k=MISSIONS.indexOf(m); return k===0||!!P.done[MISSIONS[k-1].id];
-};
 
 /* =====================  mission flow  ===================== */
 function hideEnt(e){ e.hidden=true; loadStep(); }
