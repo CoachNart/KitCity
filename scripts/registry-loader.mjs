@@ -29,7 +29,7 @@ export async function loadKitCityModules() {
       await writeFile(path.join(directory, file.replace(/\.js$/, ".mjs")), source, "utf8");
     }
     const load = file => import(pathToFileURL(path.join(directory, file + ".mjs")).href);
-    const [engine, world, education, content, distribution, prototypeMissions, explorationLife, explorationLife] = await Promise.all([
+    const [engine, world, education, content, distribution, prototypeMissions, explorationLife] = await Promise.all([
       load("conversation-engine"),
       load("world-registry"),
       load("educational-content"),
@@ -39,7 +39,7 @@ export async function loadKitCityModules() {
       load("exploration-life")
     ]);
     return {
-      engine, world, education, content, distribution, prototypeMissions,
+      engine, world, education, content, distribution, prototypeMissions, explorationLife,
       cleanup: () => rm(directory, { recursive: true, force: true })
     };
   } catch (error) {
