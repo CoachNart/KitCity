@@ -47,17 +47,17 @@ try {
   assert.ok(await page.locator("#gl").evaluate(canvas => Boolean(canvas.getContext("webgl2") || canvas.getContext("webgl"))), "browser provides a WebGL context");
 
   await page.locator("#startBtn").click();
-  await page.waitForFunction(() => !document.querySelector("#hud").classList.contains("hidden"), { timeout: 15000 });
+  await page.waitForFunction(() => !document.querySelector("#hud").classList.contains("hidden"), undefined, { timeout: 15000 });
   await page.waitForTimeout(400);
 
   // Travel through the existing Lagos street grid to Amaka's actual in-world encounter.
   await hold(page, ["ShiftLeft", "KeyW"], 6300);
   await hold(page, ["ShiftLeft", "KeyD"], 3900);
   await hold(page, ["ShiftLeft", "KeyW"], 900);
-  await page.waitForFunction(() => !document.querySelector("#talkBtn").classList.contains("hidden"), { timeout: 12000 });
+  await page.waitForFunction(() => !document.querySelector("#talkBtn").classList.contains("hidden"), undefined, { timeout: 12000 });
   assert.equal(await page.locator("#talkBtn").innerText(), "Talk", "nearby NPC interaction appears after walking through the world");
   await page.locator("#talkBtn").click();
-  await page.waitForFunction(() => !document.querySelector("#modal").classList.contains("hidden"), { timeout: 10000 });
+  await page.waitForFunction(() => !document.querySelector("#modal").classList.contains("hidden"), undefined, { timeout: 10000 });
   assert.match(await page.locator("#sheet").innerText(), /Amaka|Market Woman/i, "the prototype NPC opens the correct dialogue");
 
   await clickChoice(page, /Ask how she tracks payments/i);
@@ -69,9 +69,9 @@ try {
   // Reach the real marked receipt, make a choice, then return to the same NPC for debrief.
   await hold(page, ["ShiftLeft", "KeyS"], 3200);
   await hold(page, ["ShiftLeft", "KeyA"], 2500);
-  await page.waitForFunction(() => !document.querySelector("#talkBtn").classList.contains("hidden"), { timeout: 10000 });
+  await page.waitForFunction(() => !document.querySelector("#talkBtn").classList.contains("hidden"), undefined, { timeout: 10000 });
   await page.locator("#talkBtn").click();
-  await page.waitForFunction(() => /Supplier delivery receipt/.test(document.querySelector("#sheet")?.innerText || ""), { timeout: 10000 });
+  await page.waitForFunction(() => /Supplier delivery receipt/.test(document.querySelector("#sheet")?.innerText || ""), undefined, { timeout: 10000 });
   await clickChoice(page, /Match the order number/i);
   saved = await page.evaluate(() => JSON.parse(localStorage.getItem("kitcity_adventure_v1") || "{}"));
   assert.equal(saved.dialogueState.flags["prototype:objective:kitcity-market-ledger:receipt"], true, "the in-world objective choice persists");
@@ -79,14 +79,14 @@ try {
 
   await hold(page, ["ShiftLeft", "KeyD"], 2500);
   await hold(page, ["ShiftLeft", "KeyW"], 3200);
-  await page.waitForFunction(() => !document.querySelector("#talkBtn").classList.contains("hidden"), { timeout: 10000 });
+  await page.waitForFunction(() => !document.querySelector("#talkBtn").classList.contains("hidden"), undefined, { timeout: 10000 });
   await page.locator("#talkBtn").click();
   await clickChoice(page, /Share what I found/i);
   await clickChoice(page, /Complete the task/i);
-  await page.waitForFunction(() => /Activity complete/.test(document.querySelector("#sheet")?.innerText || ""), { timeout: 10000 });
+  await page.waitForFunction(() => /Activity complete/.test(document.querySelector("#sheet")?.innerText || ""), undefined, { timeout: 10000 });
   assert.match(await page.locator("#sheet").innerText(), /XP earned/i, "mission completion displays its reward");
   await clickChoice(page, /Back to the streets/i);
-  await page.waitForFunction(() => document.querySelector("#modal").classList.contains("hidden"), { timeout: 10000 });
+  await page.waitForFunction(() => document.querySelector("#modal").classList.contains("hidden"), undefined, { timeout: 10000 });
 
   const progress = await page.evaluate(() => ({
     adventure: JSON.parse(localStorage.getItem("kitcity_adventure_v1") || "{}"),
@@ -100,15 +100,15 @@ try {
   // A real reload must restore the checkpoint and retain the returning NPC's follow-up.
   await page.reload({ waitUntil: "domcontentloaded" });
   await page.waitForSelector("#startBtn");
-  await page.waitForFunction(() => !document.querySelector("#bootLoading") || document.querySelector("#bootLoading").classList.contains("done"), { timeout: 60000 });
+  await page.waitForFunction(() => !document.querySelector("#bootLoading") || document.querySelector("#bootLoading").classList.contains("done"), undefined, { timeout: 60000 });
   await page.locator("#startBtn").click();
-  await page.waitForFunction(() => !document.querySelector("#hud").classList.contains("hidden"), { timeout: 15000 });
-  await page.waitForFunction(() => !document.querySelector("#talkBtn").classList.contains("hidden"), { timeout: 10000 });
+  await page.waitForFunction(() => !document.querySelector("#hud").classList.contains("hidden"), undefined, { timeout: 15000 });
+  await page.waitForFunction(() => !document.querySelector("#talkBtn").classList.contains("hidden"), undefined, { timeout: 10000 });
   await page.locator("#talkBtn").click();
-  await page.waitForFunction(() => /Good to see you again/.test(document.querySelector("#sheet")?.innerText || ""), { timeout: 10000 });
+  await page.waitForFunction(() => /Good to see you again/.test(document.querySelector("#sheet")?.innerText || ""), undefined, { timeout: 10000 });
   const xpBeforeReturn = await page.evaluate(() => JSON.parse(localStorage.getItem("kitnaija_v1") || "{}").xp);
   await clickChoice(page, /I'll keep exploring/i);
-  await page.waitForFunction(() => document.querySelector("#modal").classList.contains("hidden"), { timeout: 10000 });
+  await page.waitForFunction(() => document.querySelector("#modal").classList.contains("hidden"), undefined, { timeout: 10000 });
   const xpAfterReturn = await page.evaluate(() => JSON.parse(localStorage.getItem("kitnaija_v1") || "{}").xp);
   assert.equal(xpAfterReturn, xpBeforeReturn, "returning to a completed NPC does not pay the mission reward again");
 
@@ -120,8 +120,8 @@ try {
   await mobile.addInitScript(entries => { for (const [key, value] of entries) localStorage.setItem(key, value); }, storage);
   await waitForGame(mobile);
   await mobile.locator("#startBtn").click();
-  await mobile.waitForFunction(() => !document.querySelector("#hud").classList.contains("hidden"), { timeout: 15000 });
-  await mobile.waitForFunction(() => !document.querySelector("#talkBtn").classList.contains("hidden"), { timeout: 10000 });
+  await mobile.waitForFunction(() => !document.querySelector("#hud").classList.contains("hidden"), undefined, { timeout: 15000 });
+  await mobile.waitForFunction(() => !document.querySelector("#talkBtn").classList.contains("hidden"), undefined, { timeout: 10000 });
   assert.ok(await mobile.locator("#joy").isVisible(), "mobile joystick is visible");
   assert.ok(await mobile.locator("#runBtn").isVisible(), "mobile sprint control is visible");
 
@@ -134,12 +134,12 @@ try {
   await touch.send("Input.dispatchTouchEvent", { type: "touchMove", touchPoints: [{ x, y: y - 38, id: 1 }] });
   await mobile.waitForTimeout(1800);
   await touch.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
-  await mobile.waitForFunction(() => document.querySelector("#talkBtn").classList.contains("hidden"), { timeout: 8000 });
+  await mobile.waitForFunction(() => document.querySelector("#talkBtn").classList.contains("hidden"), undefined, { timeout: 8000 });
   await touch.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: [{ x, y, id: 2 }] });
   await touch.send("Input.dispatchTouchEvent", { type: "touchMove", touchPoints: [{ x, y: y + 38, id: 2 }] });
   await mobile.waitForTimeout(1800);
   await touch.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
-  await mobile.waitForFunction(() => !document.querySelector("#talkBtn").classList.contains("hidden"), { timeout: 8000 });
+  await mobile.waitForFunction(() => !document.querySelector("#talkBtn").classList.contains("hidden"), undefined, { timeout: 8000 });
   assert.deepEqual(pageErrors, [], "no uncaught JavaScript errors occur during desktop or mobile gameplay");
 
   console.log("PASS: production browser gameplay — WebGL launch, Lagos movement, prototype NPC dialogue, mission acceptance, practical objective, objective gate, debrief, reward, persistent completion, reload/resume, returning-NPC follow-up, no duplicate reward, mobile touch movement and responsive controls.");
