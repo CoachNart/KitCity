@@ -3,27 +3,9 @@
  * Content lives here instead of being embedded in engine control flow.
  * City/location content can be added without changing movement or rendering.
  */
-export const NIGERIAN_STATES = [
-  ["abia","Abia","Umuahia","South East"],["adamawa","Adamawa","Yola","North East"],
-  ["akwa-ibom","Akwa Ibom","Uyo","South South"],["anambra","Anambra","Awka","South East"],
-  ["bauchi","Bauchi","Bauchi","North East"],["bayelsa","Bayelsa","Yenagoa","South South"],
-  ["benue","Benue","Makurdi","North Central"],["borno","Borno","Maiduguri","North East"],
-  ["cross-river","Cross River","Calabar","South South"],["delta","Delta","Asaba","South South"],
-  ["ebonyi","Ebonyi","Abakaliki","South East"],["edo","Edo","Benin City","South South"],
-  ["ekiti","Ekiti","Ado-Ekiti","South West"],["enugu","Enugu","Enugu","South East"],
-  ["gombe","Gombe","Gombe","North East"],["imo","Imo","Owerri","South East"],
-  ["jigawa","Jigawa","Dutse","North West"],["kaduna","Kaduna","Kaduna","North West"],
-  ["kano","Kano","Kano","North West"],["katsina","Katsina","Katsina","North West"],
-  ["kebbi","Kebbi","Birnin Kebbi","North West"],["kogi","Kogi","Lokoja","North Central"],
-  ["kwara","Kwara","Ilorin","North Central"],["lagos","Lagos","Lagos","South West"],
-  ["nasarawa","Nasarawa","Lafia","North Central"],["niger","Niger","Minna","North Central"],
-  ["ogun","Ogun","Abeokuta","South West"],["ondo","Ondo","Akure","South West"],
-  ["osun","Osun","Osogbo","South West"],["oyo","Oyo","Ibadan","South West"],
-  ["plateau","Plateau","Jos","North Central"],["rivers","Rivers","Port Harcourt","South South"],
-  ["sokoto","Sokoto","Sokoto","North West"],["taraba","Taraba","Jalingo","North East"],
-  ["yobe","Yobe","Damaturu","North East"],["zamfara","Zamfara","Gusau","North West"],
-  ["fct","Federal Capital Territory","Abuja","North Central"]
-].map(([id,name,capital,region])=>({id,name,capital,region,locations:[]}));
+import { NIGERIAN_STATES, NIGERIAN_TERRITORIES, getState, getTerritory } from "./world-registry.js";
+export { NIGERIAN_STATES, NIGERIAN_TERRITORIES, getState, getTerritory };
+
 
 export const WEB3_CONCEPTS = [
   "digital-ownership","verifiable-records","decentralized-identity","portable-credentials",
@@ -104,6 +86,5 @@ export const FREE_ROAM_ACTIVITIES = [
   {id:"free-roam",label:"Keep exploring",type:"free-roam",reward:{}}
 ];
 
-export function getState(id) { return NIGERIAN_STATES.find(s => s.id === id) || null; }
 export function getNpc(id) { return NPC_PROFILES[id] || null; }
 export function getEncounter(id) { return STARTER_ENCOUNTERS.find(e => e.id === id) || null; }
