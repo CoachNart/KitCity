@@ -364,7 +364,7 @@ function makeDialogue(mission) {
   });
   return {
     id:mission.id,missionId:mission.id,npcId:mission.npcId,npcName:mission.npcName,role:mission.role,
-    title:mission.title,start:"opening",nodes,conceptId:mission.conceptId,
+    title:mission.title,start:"opening",nodes,
     conceptTags:[mission.conceptId,"kitcity-prototype-missions"],exitLabel:"Back to exploring"
   };
 }
