@@ -27,14 +27,17 @@ const waitForGame = async page => {
   }, undefined, { timeout: 60000 });
   await page.waitForTimeout(600);
 };
-const hold = async (page, keys, ms) => {
+const moveUntil = async (page, keys, axis, target, operator, timeout = 30000) => {
   for (const key of keys) await page.keyboard.down(key);
-  const before = await page.evaluate(() => window.__KITCITY_E2E__ ? ({ controls: window.__KITCITY_E2E__.controls(), keys: window.__KITCITY_E2E__.keys(), modal: window.__KITCITY_E2E__.modal() }) : null);
-  console.log("Input while holding", keys.join("+"), JSON.stringify(before));
-  await page.waitForTimeout(ms);
-  const after = await page.evaluate(() => window.__KITCITY_E2E__ ? ({ position: window.__KITCITY_E2E__.position(), controls: window.__KITCITY_E2E__.controls(), keys: window.__KITCITY_E2E__.keys(), modal: window.__KITCITY_E2E__.modal() }) : null);
-  console.log("Input before release", keys.join("+"), JSON.stringify(after));
-  for (const key of keys.slice().reverse()) await page.keyboard.up(key);
+  try {
+    await page.waitForFunction(({ axis, target, operator }) => {
+      const position = window.__KITCITY_E2E__?.position();
+      if (!position) return false;
+      return operator === "gte" ? position[axis] >= target : position[axis] <= target;
+    }, { axis, target, operator }, { timeout, polling: 100 });
+  } finally {
+    for (const key of keys.slice().reverse()) await page.keyboard.up(key);
+  }
 };
 const clickChoice = async (page, pattern) => {
   const button = page.locator("#sheet button").filter({ hasText: pattern }).first();
@@ -56,9 +59,9 @@ try {
   await page.waitForTimeout(400);
 
   // Travel through the existing Lagos street grid to Amaka's actual in-world encounter.
-  await hold(page, ["Shift", "W"], 5000);
-  await hold(page, ["Shift", "D"], 4600);
-  await hold(page, ["Shift", "W"], 3100);
+  await moveUntil(page, ["Shift", "W"], "z", -65, "lte");
+  await moveUntil(page, ["Shift", "D"], "x", 58, "gte");
+  await moveUntil(page, ["Shift", "W"], "z", -100, "lte");
   const arrival = await page.evaluate(() => ({
     position: window.__KITCITY_E2E__?.position(),
     nearby: window.__KITCITY_E2E__?.nearby(),
@@ -79,8 +82,8 @@ try {
   assert.equal(saved.dialogueState.flags["prototype:started:kitcity-market-ledger"], true, "accepting the mission persists its started state");
 
   // Reach the real marked receipt, make a choice, then return to the same NPC for debrief.
-  await hold(page, ["Shift", "S"], 3200);
-  await hold(page, ["Shift", "A"], 2500);
+  await moveUntil(page, ["Shift", "S"], "z", -65, "gte");
+  await moveUntil(page, ["Shift", "A"], "x", 31, "lte");
   await page.waitForFunction(() => !document.querySelector("#talkBtn").classList.contains("hidden"), undefined, { timeout: 10000 });
   await page.locator("#talkBtn").click();
   await page.waitForFunction(() => /Supplier delivery receipt/.test(document.querySelector("#sheet")?.innerText || ""), undefined, { timeout: 10000 });
@@ -89,8 +92,8 @@ try {
   assert.equal(saved.dialogueState.flags["prototype:objective:kitcity-market-ledger:receipt"], true, "the in-world objective choice persists");
   assert.equal(saved.dialogueState.flags["prototype:objective-complete:kitcity-market-ledger"], true, "the objective completion gate opens only after the required field activity");
 
-  await hold(page, ["Shift", "D"], 2500);
-  await hold(page, ["Shift", "W"], 3200);
+  await moveUntil(page, ["Shift", "D"], "x", 58, "gte");
+  await moveUntil(page, ["Shift", "W"], "z", -100, "lte");
   await page.waitForFunction(() => !document.querySelector("#talkBtn").classList.contains("hidden"), undefined, { timeout: 10000 });
   await page.locator("#talkBtn").click();
   await clickChoice(page, /Share what I found/i);
