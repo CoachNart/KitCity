@@ -109,6 +109,7 @@ test("the live engine wires tested progression, persistence, recovery, side jobs
   assert.match(source,/Hidden street discovery/);
   assert.match(source,/Repeatable street job/);
   assert.match(source,/data-a="fund"/);
+  assert.match(source,/MISSIONS\.filter\(m=>m\.city===hubCity\)\.map\(missionCard\)/,"the eight starter missions remain reachable from the hub");
   assert.match(source,/KITCITY HUB/);
   assert.doesNotMatch(source,/Open your X profile/);
 });
