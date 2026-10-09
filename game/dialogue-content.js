@@ -1,3 +1,5 @@
+import { EDUCATIONAL_MISSIONS } from "./educational-content.js";
+
 /**
  * Authored dialogue pack. Keep each NPC turn compact and specific to their work,
  * priorities, personality and existing understanding. No network or AI service required.
@@ -260,4 +262,7 @@ export const DIALOGUE_FOLLOW_UPS = {
   "street-challenge-2": { title:"Try another safe route", requires:["street-challenge"], conceptTags:["street-safety"] }
 };
 
-export function getDialogue(id) { return KITCITY_DIALOGUES.find(dialogue => dialogue.id === id) || null; }
+export function getDialogue(id) {
+  return KITCITY_DIALOGUES.find(dialogue => dialogue.id === id) ||
+    EDUCATIONAL_MISSIONS.find(dialogue => dialogue.id === id) || null;
+}
