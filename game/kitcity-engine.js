@@ -1450,7 +1450,6 @@ function buildCity(key){
     for(const sx of [-25,25])for(const sz of [-25,25]) if(RN()<C.palm&&!nearSpecial(cx+sx,cz+sz,8)) addTree(cx+sx,cz+sz,C);
   }
   streetDetails(C,blocks); roadDecals(C,blocks);
-  addKitCityHubBuilding(C.name);
   dxFlush(C);
   cityCols=colliders.length;
   for(let k=-3;k<=3;k++)for(const axis of ['x','z'])for(const dir of [1,-1]){
@@ -2213,12 +2212,20 @@ function akLesson(cityName,sector,npc,part){
 }
 const EXPLORE=[];
 MODS.forEach((e,i)=>{
- const sector=AK_SECTORS[i%AK_SECTORS.length],cityName=(CITIES[e.city]&&CITIES[e.city].name)||e.city,a=e.steps[0],b=e.steps[1];
- a.npc.role='Local resident and community member';a.npc.sign='Community conversation';a.npc.signBg=a.npc.color||BRAND;a.npc.signFg='#fff';a.npc.stall=null;b.npc.role=sector.role;b.npc.sign=sector.sign;b.npc.signBg=b.npc.color||BRAND;b.npc.signFg='#fff';if(!sector.stall)b.npc.stall=null;
- const l1=akLesson(cityName,sector,a.npc,0),l2=akLesson(cityName,sector,b.npc,1);
- const m={id:'ak_'+e.city,n:'★',mod:i+1,city:e.city,title:'Agent Kit in '+cityName,goal:'Meet people across '+sector.name+', talk through Web3 in everyday life, then bring the community to KitCity Hub.',xp:70,explore:true,sector,
- steps:[{label:'Hear the Web3 story with '+a.npc.name,spot:a.spot,npc:a.npc,run:lessonRun(a.npc,l1)},{label:'Explore '+sector.name+' opportunities',spot:b.spot,npc:b.npc,run:lessonRun(b.npc,l2)}],lessons:[l1,l2]};
- EXPLORE.push(m);MBY[m.id]=m;
+  // Keep each city's authored mission, NPCs, lesson and dialogue intact.
+  // The former generator replaced all of these with the same generic Web3 conversation.
+  const steps=e.steps.map(step=>({
+    label:step.label,
+    spot:step.spot,
+    npc:step.npc,
+    run:lessonRun(step.npc,step.L)
+  }));
+  const m={
+    id:'ak_'+e.city,n:'★',mod:i+1,city:e.city,
+    title:e.title,goal:e.goal,xp:70,explore:true,
+    steps,lessons:e.steps.map(step=>step.L)
+  };
+  EXPLORE.push(m);MBY[m.id]=m;
 });
 function gradeOf(ft){ return ft>=6?['A','Distinction']:ft===5?['B','Merit']:ft===4?['C','Pass']:['D','Pass with review']; }
 function completeExplore(){
@@ -2277,18 +2284,6 @@ function missionCentre(spot,cityName,title){
  const bx=spot.x+f*1.5,bz=spot.z+f*2.6;add(new THREE.BoxGeometry(5.8,2.2,.28),trim,bx,4,bz);
  const banner=bannerSprite(title,cityName+' · Meet Agent Kit');banner.position.set(bx,4,bz+f*.22);banner.scale.set(5.4,1.8,1);missionGroup.add(banner);
  colliders.push({x0:cx-9.5,x1:cx+9.5,z0:cz-6,z1:cz+6});
-}
-function addKitCityHubBuilding(cityName){
- const cx=60,cz=-130,group=cityGroup;
- const add=(geo,mat,x,y,z)=>{const o=new THREE.Mesh(geo,mat);o.position.set(x,y,z);o.userData.nomerge=true;group.add(o);return o;};
- const wall=new THREE.MeshStandardMaterial({color:'#d7e0e4',roughness:.75}),dark=new THREE.MeshStandardMaterial({color:'#17232d',roughness:.7}),cyan=new THREE.MeshStandardMaterial({color:'#10C8DC',roughness:.45,metalness:.12}),glass=new THREE.MeshStandardMaterial({color:'#62b9cb',roughness:.22,metalness:.1});
- add(new THREE.BoxGeometry(27,13,18),wall,cx,6.5,cz);add(new THREE.BoxGeometry(28,1.1,19),dark,cx,13.2,cz);add(new THREE.BoxGeometry(28,1,19),cyan,cx,14,cz);
- for(let i=-2;i<=2;i++)add(new THREE.BoxGeometry(3.2,5,.25),glass,cx+i*4.8,6.5,cz+9.12);
- add(new THREE.BoxGeometry(10,3.2,.5),dark,cx,3.5,cz+9.4);
- const sign=bannerSprite('KITCITY HUB',cityName+' · Community · Learning · Building');sign.position.set(cx,11.1,cz+10);sign.scale.set(18,4.5,1);group.add(sign);
- add(new THREE.BoxGeometry(4,5,.6),dark,cx,2.6,cz+9.5);add(new THREE.BoxGeometry(19,.35,7),dark,cx,.2,cz+14);
- const fore=bannerSprite('WELCOME TO '+cityName,'Agent Kit brings the city together');fore.position.set(cx,4.6,cz+15);fore.scale.set(13,3.25,1);group.add(fore);
- colliders.push({x0:cx-13.5,x1:cx+13.5,z0:cz-9,z1:cz+9});
 }
 function loadStep(){
   clearGroup(missionGroup); colliders.length=cityCols; smoke=[]; ents=[]; goal=null;
