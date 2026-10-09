@@ -2030,7 +2030,6 @@ CITY_JOURNEYS.forEach((cityData,ci)=>{
                 };
                 if(/vote|proposal|governance/.test(caseText)){
                   busy(character,'Recording the decision…',900,()=>{
-                    G.bonus+=5;
                     save();
                     resolved();
                   });
