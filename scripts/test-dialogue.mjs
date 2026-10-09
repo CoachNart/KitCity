@@ -72,7 +72,9 @@ assert.equal(developmentReport.educationalMissions, 16);
 assert.equal(developmentReport.environmentAssets, 1);
 assert.equal(developmentReport.availableEnvironmentAssets, 1);
 assert.equal(developmentReport.npcSpawnPoints, 0);
-assert.ok(developmentReport.missionsWithPlayableLocation > 0 && developmentReport.missionsWithPlayableLocation < developmentReport.educationalMissions, "the report distinguishes assigned content from content awaiting suitable environments");
+assert.equal(developmentReport.prototypeMissions, 8);
+assert.equal(developmentReport.prototypeObjectives, 19);
+assert.ok(developmentReport.missionsWithPlayableLocation > 0 && developmentReport.missionsWithPlayableLocation < developmentReport.educationalMissions + developmentReport.prototypeMissions, "the report distinguishes assigned content from content awaiting suitable environments");
 const distributed = distribution.selectEducationalMissions({locationId:"lagos-free-roam",dialogueState:{},limit:6,allowDeepening:true});
 assert.ok(distributed.length > 0 && distributed.length <= 6);
 const invalidLocation = {
