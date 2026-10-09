@@ -1582,11 +1582,11 @@ const plain=h=>h.replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim();
 function talk(def,html,btns){
   html=tx(html);
   if(!S.modal||chat.npc!==def.name) chat={npc:def.name,log:[]};
-  const prev=chat.log.slice(-3).map(m=>'<div class="b '+(m.me?'me':'npc old')+'">'+m.html+'</div>').join('');
+  const prev=chat.log.slice(-3).map(m=>'<div class="b '+(m.me?'me':'npc old')+'"><small class="speaker-tag">'+(m.me?'AGENT KIT':def.name.toUpperCase())+'</small>'+m.html+'</div>').join('');
   const pl=plain(html);
   chat.log.push({html:pl.slice(0,80)+(pl.length>80?'\u2026':'')});
-  const wrapped=(btns||[]).map(b=>({t:tr(b.t),g:b.g,m:b.m,f:()=>{ chat.log.push({me:1,html:'<b>Agent Kit</b> · '+tr(b.t)}); b.f(); }}));
-  openSheet(whoOf(def)+'<div class="chat">'+prev+'<div class="b npc dots"><i></i><i></i><i></i></div><div class="b npc new">'+html+'</div></div>',wrapped,Math.min(1100,320+pl.length*4));
+  const wrapped=(btns||[]).map(b=>({t:tr(b.t),g:b.g,m:b.m,f:()=>{ chat.log.push({me:1,html:tr(b.t)}); b.f(); }}));
+  openSheet(whoOf(def)+'<div class="chat">'+prev+'<div class="b npc dots"><i></i><i></i><i></i></div><div class="b npc new"><small class="speaker-tag">'+def.name.toUpperCase()+'</small>'+html+'</div></div>',wrapped,Math.min(1100,320+pl.length*4));
 }
 function busy(def,txt,ms,next){ openSheet(whoOf(def)+'<div class="busy"><span class="spin"></span><p>'+txt+'</p></div>',[]); setTimeout(next,ms); }
 const TX=()=>'0x'+hex(32);
