@@ -55,38 +55,38 @@ const MUSIC_QUEUES={
   'enugu':{label:"Enugu · Igbo highlife / Afrobeat",videos:["Uyr1c0pkpas","W41TT8g3MnQ","kc4PfiRWpog"]},
   'kano':{label:"Kano · Hausa / Arewa",videos:["qseIbxXwlmg","UuumEqJKQ9I","kc4PfiRWpog"]},
   'kaduna':{label:"Kaduna · Hausa / Arewa",videos:["qseIbxXwlmg","UuumEqJKQ9I","ulmVmlNoSL8"]},
-  'maiduguri':{label:"Maiduguri · Hausa / Arewa",videos:["qseIbxXwlmg","UuumEqJKQ9I","LZ6B1xACdxM"]},
+  'maiduguri':{label:"Maiduguri · Kanuri / Hausa",videos:["qseIbxXwlmg","UuumEqJKQ9I","LZ6B1xACdxM"]},
   'owerri':{label:"Owerri · Igbo highlife / Afrobeat",videos:["Uyr1c0pkpas","W41TT8g3MnQ","ulmVmlNoSL8"]},
   'aba':{label:"Aba · Igbo highlife / Afrobeat",videos:["Uyr1c0pkpas","W41TT8g3MnQ","LZ6B1xACdxM"]},
   'umuahia':{label:"Umuahia · Igbo highlife / Afrobeat",videos:["Uyr1c0pkpas","W41TT8g3MnQ","qbefFtgUVTY"]},
   'awka':{label:"Awka · Igbo highlife / Afrobeat",videos:["Uyr1c0pkpas","nMXLMe4_x68","kc4PfiRWpog"]},
   'onitsha':{label:"Onitsha · Igbo highlife / Afrobeat",videos:["Uyr1c0pkpas","nMXLMe4_x68","ulmVmlNoSL8"]},
-  'asaba':{label:"Asaba · Edo / Delta grooves",videos:["l-_FcHIS4Yo","k6eE3c70hgg","LZ6B1xACdxM"]},
+  'asaba':{label:"Asaba · Anioma / Delta",videos:["l-_FcHIS4Yo","k6eE3c70hgg","LZ6B1xACdxM"]},
   'uyo':{label:"Uyo · Efik / Ibibio",videos:["qbefFtgUVTY","ulmVmlNoSL8","LZ6B1xACdxM"]},
   'ikot-ekpene':{label:"Ikot Ekpene · Efik / Ibibio",videos:["qbefFtgUVTY","LZ6B1xACdxM","kc4PfiRWpog"]},
   'yenagoa':{label:"Yenagoa · Niger Delta / Ijaw",videos:["l-_FcHIS4Yo","k6eE3c70hgg","qbefFtgUVTY"]},
-  'warri':{label:"Warri · Niger Delta / Ijaw",videos:["l-_FcHIS4Yo","kc4PfiRWpog","ulmVmlNoSL8"]},
-  'makurdi':{label:"Makurdi · Plateau / regional Naija",videos:["DqUd72pK15Y","l-_FcHIS4Yo","ulmVmlNoSL8"]},
+  'warri':{label:"Warri · Urhobo / Itsekiri",videos:["l-_FcHIS4Yo","kc4PfiRWpog","ulmVmlNoSL8"]},
+  'makurdi':{label:"Makurdi · Tiv / Middle Belt",videos:["DqUd72pK15Y","l-_FcHIS4Yo","ulmVmlNoSL8"]},
   'ilorin':{label:"Ilorin · Yoruba / Fuji",videos:["bcs_jFdPQn4","zzhKmRovdMY","ulmVmlNoSL8"]},
   'akure':{label:"Akure · Yoruba / Fuji",videos:["bcs_jFdPQn4","zzhKmRovdMY","LZ6B1xACdxM"]},
   'ado-ekiti':{label:"Ado-Ekiti · Yoruba / Fuji",videos:["bcs_jFdPQn4","zzhKmRovdMY","qbefFtgUVTY"]},
   'osogbo':{label:"Osogbo · Yoruba / Fuji",videos:["bcs_jFdPQn4","yUUsKekKQLM","kc4PfiRWpog"]},
   'abeokuta':{label:"Abeokuta · Yoruba / Fuji",videos:["bcs_jFdPQn4","yUUsKekKQLM","ulmVmlNoSL8"]},
-  'lokoja':{label:"Lokoja · Plateau / regional Naija",videos:["DqUd72pK15Y","l-_FcHIS4Yo","LZ6B1xACdxM"]},
+  'lokoja':{label:"Lokoja · Igala / Confluence",videos:["DqUd72pK15Y","l-_FcHIS4Yo","LZ6B1xACdxM"]},
   'lafia':{label:"Lafia · Hausa / Arewa",videos:["qseIbxXwlmg","UuumEqJKQ9I","qbefFtgUVTY"]},
   'bauchi':{label:"Bauchi · Hausa / Arewa",videos:["qseIbxXwlmg","i1uEVNMSalo","kc4PfiRWpog"]},
   'gombe':{label:"Gombe · Hausa / Arewa",videos:["qseIbxXwlmg","i1uEVNMSalo","ulmVmlNoSL8"]},
-  'damaturu':{label:"Damaturu · Hausa / Arewa",videos:["qseIbxXwlmg","i1uEVNMSalo","LZ6B1xACdxM"]},
-  'jalingo':{label:"Jalingo · Hausa / Arewa",videos:["qseIbxXwlmg","i1uEVNMSalo","qbefFtgUVTY"]},
-  'yola':{label:"Yola · Hausa / Arewa",videos:["qseIbxXwlmg","ULjXLxJa74w","kc4PfiRWpog"]},
+  'damaturu':{label:"Damaturu · Kanuri / Hausa",videos:["qseIbxXwlmg","i1uEVNMSalo","LZ6B1xACdxM"]},
+  'jalingo':{label:"Jalingo · Fulfulde / North-East",videos:["qseIbxXwlmg","i1uEVNMSalo","qbefFtgUVTY"]},
+  'yola':{label:"Yola · Fulfulde / North-East",videos:["qseIbxXwlmg","ULjXLxJa74w","kc4PfiRWpog"]},
   'sokoto':{label:"Sokoto · Hausa / Arewa",videos:["qseIbxXwlmg","ULjXLxJa74w","ulmVmlNoSL8"]},
   'katsina':{label:"Katsina · Hausa / Arewa",videos:["qseIbxXwlmg","ULjXLxJa74w","LZ6B1xACdxM"]},
   'birnin-kebbi':{label:"Birnin Kebbi · Hausa / Arewa",videos:["qseIbxXwlmg","ULjXLxJa74w","qbefFtgUVTY"]},
-  'minna':{label:"Minna · Hausa / Arewa",videos:["qseIbxXwlmg","ddXZE34DFbQ","kc4PfiRWpog"]},
+  'minna':{label:"Minna · Nupe / Arewa",videos:["qseIbxXwlmg","ddXZE34DFbQ","kc4PfiRWpog"]},
   'dutse':{label:"Dutse · Hausa / Arewa",videos:["qseIbxXwlmg","ddXZE34DFbQ","ulmVmlNoSL8"]},
   'gusau':{label:"Gusau · Hausa / Arewa",videos:["qseIbxXwlmg","ddXZE34DFbQ","LZ6B1xACdxM"]},
-  'kafanchan':{label:"Kafanchan · Hausa / Arewa",videos:["qseIbxXwlmg","ddXZE34DFbQ","qbefFtgUVTY"]},
-  'damboa':{label:"Damboa · Hausa / Arewa",videos:["UuumEqJKQ9I","i1uEVNMSalo","kc4PfiRWpog"]}
+  'kafanchan':{label:"Kafanchan · Southern Kaduna",videos:["qseIbxXwlmg","ddXZE34DFbQ","qbefFtgUVTY"]},
+  'damboa':{label:"Damboa · Kanuri / Hausa",videos:["UuumEqJKQ9I","i1uEVNMSalo","kc4PfiRWpog"]}
 };
 const CITY_MUSIC={
   lagos:'lagos', abuja:'abuja', ph:'ph', benin:'benin', calabar:'calabar',
@@ -1978,7 +1978,7 @@ function completeExplore(){
 }
 function moduleCard(m){
  const un=isUnlocked(m),dn=!!P.done[m.id],foot=dn?'Mission complete':(un?'Practical Web3 task · Meet a local mentor':'Finish the previous mission first');
- return '<div class="card'+(un?'':' lock')+'"><div class="ch">'+badgeSVG(m.n,dn,46)+'<div><b>Mission '+m.n+': '+m.title+'</b><small>'+m.goal+'</small></div></div><div class="cf"><span>'+foot+'</span>'+(un?'<button class="btn brand" data-a="play" data-v="'+m.id+'" type="button">'+(dn?'Replay':'Play mission')+'</button>':'<span>Locked</span>')+'</div></div>';
+ return '<div class="card'+(un?'':' lock')+'"><div class="ch">'+badgeSVG(m.n,false,46)+'<div><b>Mission '+m.n+': '+m.title+'</b><small>'+m.goal+'</small></div></div><div class="cf"><span>'+foot+'</span>'+(un?'<button class="btn brand" data-a="play" data-v="'+m.id+'" type="button">'+(dn?'Replay':'Play mission')+'</button>':'<span>Locked</span>')+'</div></div>';
 }
 const BADGES=['Wallet Starter','Swap Smart','Scam Spotter','Key Keeper','Safe Sender','Passport Holder','Community Voice','Cash-out Pro'];
 const LEVELS=[0,150,400,700,1000,1400],LTITLES=['Newcomer','Hustler','Street smart','Wallet pro','Onchain Oga','Naija legend'];
@@ -2101,7 +2101,7 @@ function mapSVG(){
 }
 function missionCard(m){
   const un=isUnlocked(m),dn=!!P.done[m.id];
-  return '<div class="card'+(un?'':' lock')+'"><div class="ch">'+badgeSVG(m.n,dn,46)+'<div><b>'+'Mission '+m.n+': '+m.title+'</b><small>'+m.goal+'</small></div></div><div class="cf"><span>'+m.xp+' XP'+(dn?', done':'')+'</span>'+(un?'<button class="btn brand" data-a="play" data-v="'+m.id+'" type="button">'+(dn?'Replay':'Play')+'</button>':'<span>Finish mission '+(m.n-1)+' first</span>')+'</div></div>';
+  return '<div class="card'+(un?'':' lock')+'"><div class="ch">'+badgeSVG(m.n,false,46)+'<div><b>'+'Mission '+m.n+': '+m.title+'</b><small>'+m.goal+'</small></div></div><div class="cf"><span>'+m.xp+' XP'+(dn?', done':'')+'</span>'+(un?'<button class="btn brand" data-a="play" data-v="'+m.id+'" type="button">'+(dn?'Replay':'Play')+'</button>':'<span>Finish mission '+(m.n-1)+' first</span>')+'</div></div>';
 }
 function renderHub(){
   const L=levelInfo(P.xp);
