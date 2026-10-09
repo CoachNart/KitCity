@@ -55,10 +55,50 @@ export const MISSION_DISTRIBUTION = EDUCATIONAL_MISSIONS.map(mission => ({
   dialogueId: mission.id,
   sectorIds: mission.sectors.map(sector => sectorToId(sector)),
   preferredEnvironmentProfileIds: MISSION_CONTEXT[mission.id] || [],
-  locationIds: [],
+  locationIds: WORLD_LOCATIONS.filter(location =>
+    location.status === "playable" &&
+    (MISSION_CONTEXT[mission.id] || []).some(profileId => location.environmentProfileIds.includes(profileId))
+  ).map(location => location.id),
   repeatPolicy: "new-context-required",
-  status: "authored-unassigned"
+  status: WORLD_LOCATIONS.some(location => location.status === "playable" &&
+    (MISSION_CONTEXT[mission.id] || []).some(profileId => location.environmentProfileIds.includes(profileId)))
+    ? "available-in-playable-environment" : "authored-awaiting-environment"
 }));
+
+
+export const NPC_REGISTRY = EDUCATIONAL_PROFILES.map(profile => ({
+  ...profile,
+  diversity: NPC_PERSPECTIVES[profile.id] || null,
+  dialogueIds: EDUCATIONAL_MISSIONS.filter(mission => mission.npcId === profile.id).map(mission => mission.id)
+}));
+
+export const DIALOGUE_REGISTRY = [
+  ...KITCITY_DIALOGUES.map(dialogue => ({id:dialogue.id, kind:"social", npcId:dialogue.npcId, missionId:dialogue.missionId || null})),
+  ...EDUCATIONAL_MISSIONS.map(mission => ({id:mission.id, kind:"educational-mission", npcId:mission.npcId, missionId:mission.missionId}))
+];
+
+export const MISSION_REWARD_REGISTRY = EDUCATIONAL_MISSIONS.map(mission => ({
+  id: "reward:" + mission.id, missionId: mission.missionId,
+  xp: mission.reward?.xp || 0, simulatedNgn: mission.reward?.ngn || 0,
+  delivery: "in-game-simulation"
+}));
+
+export const LOCATION_EVENT_REGISTRY = [{
+  id: "pothole-awareness",
+  type: "environmental-hazard",
+  locationIds: ["lagos-free-roam"],
+  status: "implemented",
+  behavior: "visual-warning-and-toast",
+  rewardId: null
+}];
+
+export const STORY_ARCS = [{
+  id: "kitcity-open-world-introduction",
+  title: "KitCity open-world introduction",
+  locationIds: ["lagos-free-roam"],
+  unlockRequirement: null,
+  status: "active"
+}];
 
 function sectorToId(sector) {
   const aliases = {
@@ -151,6 +191,9 @@ export function validateWorldSystem() {
   const territoryIds = unique(NIGERIAN_TERRITORIES, "territory");
   const locationIds = unique(WORLD_LOCATIONS, "location");
   const sectorIds = unique(SECTOR_REGISTRY, "sector");
+  const eventIds = unique(LOCATION_EVENT_REGISTRY, "location event");
+  const storyArcIds = unique(STORY_ARCS, "story arc");
+  const rewardIds = unique(MISSION_REWARD_REGISTRY, "mission reward");
   unique(ENVIRONMENT_PROFILES, "environment profile");
   const conceptIds = unique(EDUCATIONAL_CONCEPTS, "concept");
   const missionIds = unique(EDUCATIONAL_MISSIONS, "mission");
@@ -164,10 +207,17 @@ export function validateWorldSystem() {
     for (const profileId of location.environmentProfileIds || []) if (!ENVIRONMENT_PROFILES.some(profile => profile.id === profileId)) errors.push(location.id + ": unknown environment profile " + profileId);
     for (const sectorId of location.sectorIds || []) if (!sectorIds.has(sectorId)) errors.push(location.id + ": unknown sector " + sectorId);
     if (location.status === "playable" && !location.environmentAssetId) errors.push(location.id + ": playable location has no environment asset");
+    if (location.storyArcId && !storyArcIds.has(location.storyArcId)) errors.push(location.id + ": references missing story arc " + location.storyArcId);
+    for (const eventId of location.environmentalEncounterIds || []) if (!eventIds.has(eventId)) errors.push(location.id + ": references missing location event " + eventId);
   }
+  for (const event of LOCATION_EVENT_REGISTRY) for (const locationId of event.locationIds || []) if (!locationIds.has(locationId)) errors.push(event.id + ": references missing location " + locationId);
+  for (const arc of STORY_ARCS) for (const locationId of arc.locationIds || []) if (!locationIds.has(locationId)) errors.push(arc.id + ": references missing location " + locationId);
+  for (const reward of MISSION_REWARD_REGISTRY) if (!EDUCATIONAL_MISSIONS.some(mission => mission.missionId === reward.missionId)) errors.push(reward.id + ": references missing mission " + reward.missionId);
   for (const mission of EDUCATIONAL_MISSIONS) {
     if (!conceptIds.has(mission.conceptId)) errors.push(mission.id + ": references missing concept " + mission.conceptId);
     if (!npcIds.has(mission.npcId)) errors.push(mission.id + ": references missing NPC profile " + mission.npcId);
+    if (!NPC_REGISTRY.some(npc => npc.id === mission.npcId && npc.dialogueIds.includes(mission.id))) errors.push(mission.id + ": NPC registry is missing its dialogue association");
+    if (!MISSION_REWARD_REGISTRY.some(reward => reward.missionId === mission.missionId)) errors.push(mission.id + ": missing reward registry record");
     if (!getDialogue(mission.id)) errors.push(mission.id + ": NPC mission references missing dialogue");
     for (const prerequisite of mission.prerequisites || []) if (!conceptIds.has(prerequisite)) errors.push(mission.id + ": invalid concept prerequisite " + prerequisite);
     const distribution = MISSION_DISTRIBUTION.find(item => item.missionId === mission.id);
