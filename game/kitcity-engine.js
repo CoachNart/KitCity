@@ -3,6 +3,7 @@ import { ConversationEngine, createDialogueState } from './conversation-engine.j
 import { getDialogue } from './dialogue-content.js';
 import { EDUCATIONAL_NPCS } from './educational-content.js';
 import { selectEducationalMissions } from './mission-distribution.js';
+import { SOCIAL_ADVENTURE_NPCS } from './adventure-data.js';
 
 export default function initKitCity(){
 'use strict';
@@ -2490,15 +2491,7 @@ if(!adventure.locationId) adventure.locationId='lagos-free-roam';
 if(!adventure.dialogueState||typeof adventure.dialogueState!=='object') adventure.dialogueState={};
 const adventureSave=()=>Store.set(ADVENTURE_KEY,adventure);
 let adventureLastX=SPAWN.x,adventureLastZ=SPAWN.z,adventureMeters=0,adventureHazards=[],adventureEncounterIds=new Set(),adventureToastCd=0;
-const ADVENTURE_NPCS=[
- {id:'trader-spill',dialogueId:'trader-spill',name:'Mama Kemi',role:'Market trader',color:'#C7457E',look:LK.woman,spot:'a',sign:'Help pick up the oranges',kind:'activity',major:false,reward:{xp:8,ngn:35,item:'market-kindness'}},
- {id:'driver-directions',dialogueId:'driver-directions',name:'Bode',role:'Commercial driver',color:'#2D6FB3',look:LK.guy,spot:'c',sign:'Driver needs directions',kind:'activity',major:false,reward:{xp:10,ngn:25,item:'helpful-neighbour'}},
- {id:'student-directions',dialogueId:'student-directions',name:'Tomi',role:'Student and aspiring designer',color:'#0B7A43',look:LK.woman,spot:'e',sign:'Student looking for campus',kind:'activity',major:false,reward:{xp:8,ngn:20,item:'campus-helper'}},
- {id:'wrong-delivery',dialogueId:'wrong-delivery',name:'Sani',role:'Delivery rider',color:'#E4572E',look:LK.man,spot:'g',sign:'Delivery at the wrong address',kind:'activity',major:false,reward:{xp:12,ngn:30,item:'trusted-runner'}},
- {id:'lost-keys',dialogueId:'lost-keys',name:'Aunty Bose',role:'Retired seamstress and resident',color:'#8C6AC8',look:LK.elder,spot:'i',sign:'Lost keys nearby',kind:'activity',major:false,reward:{xp:10,ngn:20,item:'found-keys'}},
- {id:'street-challenge',dialogueId:'street-challenge',name:'Kunle',role:'Local football fan',color:'#D28A20',look:LK.guy,spot:'j',sign:'Quick street challenge',kind:'challenge',major:false,reward:{xp:6,ngn:15,item:'street-challenge'}},
- {id:'coop-record',dialogueId:'coop-record',name:'Musa',role:'Smallholder farmer',color:'#0B7A43',look:LK.man,spot:'b',sign:'Farmer has a question',kind:'education',major:true,reward:{xp:15,ngn:30,item:'supply-chain-note'}}
-];
+const ADVENTURE_NPCS=SOCIAL_ADVENTURE_NPCS.map(def=>({...def,look:LK[def.look]||LK.guy}));
 let activeDialogueSession=null,activeDialogueDef=null,activeDialogueLog=[],activeDialogueNode=null;
 function adventureBegin(){
  closeSheet(); G={m:{id:'free-roam',title:'Explore KitCity',n:'',explore:true,steps:[]},i:0,bonus:0,used:{},freeRoam:true};
