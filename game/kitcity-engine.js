@@ -3,6 +3,7 @@ import { ConversationEngine, createDialogueState } from './conversation-engine.j
 import { getDialogue } from './dialogue-content.js';
 import { EDUCATIONAL_NPCS } from './educational-content.js';
 import { selectEducationalMissions } from './mission-distribution.js';
+import { getWorldLocation } from './world-registry.js';
 import { SOCIAL_ADVENTURE_NPCS } from './adventure-data.js';
 
 export default function initKitCity(){
@@ -2497,10 +2498,12 @@ function adventureBegin(){
  closeSheet(); G={m:{id:'free-roam',title:'Explore KitCity',n:'',explore:true,steps:[]},i:0,bonus:0,used:{},freeRoam:true};
  clearGroup(missionGroup); colliders.length=cityCols; smoke=[]; ents=[]; goal=null; beacon.visible=false;
  adventureEncounterIds.clear(); adventureHazards=[];
+ const activeLocation=getWorldLocation(adventure.locationId||'lagos-free-roam');
  const selectedEducationalIds=new Set(selectEducationalMissions({locationId:adventure.locationId,dialogueState:adventure.dialogueState,limit:6,allowDeepening:true}).map(mission=>mission.id));
  const locationEducationalNpcs=EDUCATIONAL_NPCS.filter(def=>selectedEducationalIds.has(def.id));
  for(const def of [...ADVENTURE_NPCS,...locationEducationalNpcs]){
-   const spot=SPOTS[def.spot]||def.position; if(!spot) continue;
+   const spawnPoint=(activeLocation?.npcSpawnPoints||[]).find(point=>(point.missionId&&point.missionId===def.id)||(point.npcProfileId&&point.npcProfileId===def.npcProfileId)||(point.encounterId&&point.encounterId===def.id));
+   const spot=spawnPoint?.position||SPOTS[def.spot]||def.position; if(!spot) continue;
    const look=typeof def.look==='string'?(LK[def.look]||LK.guy):def.look;
    const npc=NPC(def.name,def.role,def.color,look,null,def.sign); npc.signBg=def.color;npc.signFg='#fff';
    const p=buildPerson({top:def.color,bottom:'#343746',shoe:'#eee',skin:'#7a4a2e',detail:true});
