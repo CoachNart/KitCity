@@ -238,3 +238,9 @@ html,body{height:100%;overflow:hidden;background:var(--ink);color:var(--ink);fon
 .player-entry input::placeholder{color:rgba(255,255,255,.45)}
 #playerNameHelp{display:block;margin-top:7px;font-size:11px;line-height:1.4;color:rgba(255,255,255,.72)}
 #playerNameError{min-height:0;margin-top:5px;color:#ffb4a9;font-size:12px;font-weight:700}
+
+/* Keep the three primary hub controls visible on mobile and desktop. */
+#hub{height:100dvh;height:100vh;min-height:0}
+#nav{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));flex:0 0 auto;position:relative;z-index:60;width:100%;min-height:74px;visibility:visible;opacity:1}
+#nav button{display:block;min-width:0;white-space:normal;overflow-wrap:anywhere;color:#d9e5ec}
+#nav button.on{color:#00E5FF}
