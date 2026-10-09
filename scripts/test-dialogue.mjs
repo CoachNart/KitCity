@@ -88,12 +88,10 @@ const invalidLocation = {
   environmentalEncounterIds:[], educationalConceptIds:["missing-concept"], storyArcId:"missing-arc",
   unlockRequirement:null, contentStatus:"registry-only"
 };
-world.WORLD_LOCATIONS.push(invalidLocation);
-const invalidRegistryErrors = distribution.validateWorldSystem();
+const invalidRegistryErrors = distribution.validateWorldSystem({additionalLocations:[invalidLocation]});
 assert.ok(invalidRegistryErrors.some(error => error.includes("missing-jurisdiction")), "validator catches missing jurisdiction references");
 assert.ok(invalidRegistryErrors.some(error => error.includes("missing-environment")), "validator catches missing environment references");
 assert.ok(invalidRegistryErrors.some(error => error.includes("missing-mission")), "validator catches missing mission references");
-world.WORLD_LOCATIONS.pop();
 assert.equal(new Set(distributed.map(item => item.conceptId)).size, distributed.length, "initial mission distribution avoids repeated concepts");
 assert.ok(distributed.every(item => distribution.MISSION_DISTRIBUTION.some(entry => entry.missionId === item.id && entry.locationIds.includes("lagos-free-roam"))), "only missions matched to the current playable environment are selected");
 const doneState = {completedMissions:Object.fromEntries(distributed.map(item => [item.missionId,true])),knowledge:Object.fromEntries(distributed.map(item => [item.conceptId,true]))};
