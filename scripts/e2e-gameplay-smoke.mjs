@@ -51,9 +51,9 @@ try {
   await page.waitForTimeout(400);
 
   // Travel through the existing Lagos street grid to Amaka's actual in-world encounter.
-  await hold(page, ["ShiftLeft", "KeyW"], 6300);
-  await hold(page, ["ShiftLeft", "KeyD"], 3900);
-  await hold(page, ["ShiftLeft", "KeyW"], 900);
+  await hold(page, ["Shift", "W"], 6300);
+  await hold(page, ["Shift", "D"], 3900);
+  await hold(page, ["Shift", "W"], 900);
   await page.waitForFunction(() => !document.querySelector("#talkBtn").classList.contains("hidden"), undefined, { timeout: 12000 });
   assert.equal(await page.locator("#talkBtn").innerText(), "Talk", "nearby NPC interaction appears after walking through the world");
   await page.locator("#talkBtn").click();
@@ -67,8 +67,8 @@ try {
   assert.equal(saved.dialogueState.flags["prototype:started:kitcity-market-ledger"], true, "accepting the mission persists its started state");
 
   // Reach the real marked receipt, make a choice, then return to the same NPC for debrief.
-  await hold(page, ["ShiftLeft", "KeyS"], 3200);
-  await hold(page, ["ShiftLeft", "KeyA"], 2500);
+  await hold(page, ["Shift", "S"], 3200);
+  await hold(page, ["Shift", "A"], 2500);
   await page.waitForFunction(() => !document.querySelector("#talkBtn").classList.contains("hidden"), undefined, { timeout: 10000 });
   await page.locator("#talkBtn").click();
   await page.waitForFunction(() => /Supplier delivery receipt/.test(document.querySelector("#sheet")?.innerText || ""), undefined, { timeout: 10000 });
@@ -77,8 +77,8 @@ try {
   assert.equal(saved.dialogueState.flags["prototype:objective:kitcity-market-ledger:receipt"], true, "the in-world objective choice persists");
   assert.equal(saved.dialogueState.flags["prototype:objective-complete:kitcity-market-ledger"], true, "the objective completion gate opens only after the required field activity");
 
-  await hold(page, ["ShiftLeft", "KeyD"], 2500);
-  await hold(page, ["ShiftLeft", "KeyW"], 3200);
+  await hold(page, ["Shift", "D"], 2500);
+  await hold(page, ["Shift", "W"], 3200);
   await page.waitForFunction(() => !document.querySelector("#talkBtn").classList.contains("hidden"), undefined, { timeout: 10000 });
   await page.locator("#talkBtn").click();
   await clickChoice(page, /Share what I found/i);
