@@ -2794,7 +2794,7 @@ function inputVec(){
   if(keys.KeyA||keys.ArrowLeft) x-=1; if(keys.KeyD||keys.ArrowRight) x+=1;
   if(keys.KeyW||keys.ArrowUp) z-=1; if(keys.KeyS||keys.ArrowDown) z+=1;
   const l=Math.hypot(x,z); if(l>0){ x/=l; z/=l; }
-  if(joy.active){ x=joy.x; z=-joy.y; }
+  if(joy.active){ x=joy.x; z=joy.y; }
   return {x,z};
 }
 /* ---- pedestrians: walking, pairs, crossers, chats, greetings, buying from hawkers ---- */
