@@ -2251,15 +2251,29 @@ function streetMissionRun(def,Lz,stage,missionTitle,taskLabel){
 const EXPLORE=[];
 const routeSpots=Object.keys(SPOTS).filter(k=>k!=='x1');
 MODS.forEach((e,i)=>{
+  const careerSector=AK_SECTORS[i%AK_SECTORS.length];
   const steps=e.steps.map((step,stepIndex)=>{
-    const taskLabel=stepIndex===0
-      ? 'start '+e.title.toLowerCase()+' with '+step.npc.name
-      : 'finish the local job with '+step.npc.name;
+    const lesson=step.L||{};
+    const questions=Array.isArray(lesson.q)?lesson.q.slice():[];
+    if(stepIndex===e.steps.length-1){
+      questions.push({
+        q:'How could a '+careerSector.role.toLowerCase()+' test a Web3 idea alongside the Web2 tools people already use in '+(CITIES[e.city]?.name||e.city)+'?',
+        o:[
+          'Replace every existing tool and put all records on a public blockchain',
+          'Map one real workflow, compare costs and privacy, then pilot a useful improvement with the people affected',
+          'Launch a token first and look for a problem afterwards'
+        ],
+        a:1,
+        w:'Start with the real workflow. In '+careerSector.name+', relevant paths include '+careerSector.career+'. Web3 work can include engineering, product, operations, design, research, security, compliance, community support and training; most useful teams still connect to Web2 systems and keep sensitive data private.'
+      });
+    }
+    const tailoredLesson=Object.assign({},lesson,{q:questions});
+    const taskLabel=step.label||('Work with '+step.npc.name+' on '+e.title);
     return {
-      label:stepIndex===0?'Find '+step.npc.name+' · '+e.title:'Help '+step.npc.name+' finish the job',
-      spot:routeSpots[(i*3+stepIndex*7+1)%routeSpots.length],
+      label:taskLabel,
+      spot:step.spot||routeSpots[(i*3+stepIndex*7+1)%routeSpots.length],
       npc:step.npc,
-      run:streetMissionRun(step.npc,step.L,stepIndex,e.title,taskLabel)
+      run:streetMissionRun(step.npc,tailoredLesson,stepIndex,e.title,taskLabel)
     };
   });
   const m={
@@ -2284,7 +2298,7 @@ function completeExplore(){
 }
 function moduleCard(m){
   const dn=!!P.done[m.id];
-  const foot=dn?'Journey complete':'Street conversations · Community Hub destination';
+  const foot=dn?'Journey complete':'Explore the city · Local street missions';
   return '<div class="card"><div class="ch">'+badgeSVG(m.n,dn,46)+'<div><b>'+m.title+'</b><small>'+m.goal+'</small></div></div><div class="cf"><span>'+foot+'</span><button class="btn brand" data-a="play" data-v="'+m.id+'" type="button">'+(dn?'Replay journey':'Begin journey')+'</button></div></div>';
 }
 const BADGES=['Wallet Starter','Swap Smart','Scam Spotter','Key Keeper','Safe Sender','Passport Holder','Community Voice','Cash-out Pro'];
