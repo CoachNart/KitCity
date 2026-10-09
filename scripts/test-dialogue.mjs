@@ -220,7 +220,7 @@ assert.match(engineSourceForMissions, /PROTOTYPE_MISSION_NPCS/, "prototype NPCs 
 assert.match(engineSourceForMissions, /refreshPrototypeObjectives\(\)/, "accepted missions spawn and refresh in-world activity objects");
 assert.match(engineSourceForMissions, /collectPrototypeObjective\(objective,choice\)/, "activity choices record progress in the live game");
 assert.match(engineSourceForMissions, /recordPrototypeObjectiveChoice\(adventure,objective\.missionId,objective\.id,choice\.id\)/, "the live game uses the tested objective progress function");
-assert.match(engineSourceForMissions, /prototypeDecisions/, "objective decisions are persisted with adventure progress");
+assert.match(engineSourceForMissions, /recordPrototypeObjectiveChoice/, "live field activity delegates persistence to the tested mission helper");
 for (const mission of prototypePack) {
   const state = engine.createDialogueState();
   const session = new engine.ConversationEngine({content:mission.dialogue,state});
