@@ -29,7 +29,11 @@ const waitForGame = async page => {
 };
 const hold = async (page, keys, ms) => {
   for (const key of keys) await page.keyboard.down(key);
+  const before = await page.evaluate(() => window.__KITCITY_E2E__ ? ({ controls: window.__KITCITY_E2E__.controls(), keys: window.__KITCITY_E2E__.keys(), modal: window.__KITCITY_E2E__.modal() }) : null);
+  console.log("Input while holding", keys.join("+"), JSON.stringify(before));
   await page.waitForTimeout(ms);
+  const after = await page.evaluate(() => window.__KITCITY_E2E__ ? ({ position: window.__KITCITY_E2E__.position(), controls: window.__KITCITY_E2E__.controls(), keys: window.__KITCITY_E2E__.keys(), modal: window.__KITCITY_E2E__.modal() }) : null);
+  console.log("Input before release", keys.join("+"), JSON.stringify(after));
   for (const key of keys.slice().reverse()) await page.keyboard.up(key);
 };
 const clickChoice = async (page, pattern) => {
