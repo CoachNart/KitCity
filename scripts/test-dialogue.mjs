@@ -5,8 +5,27 @@ import { fileURLToPath } from "node:url";
 import { loadKitCityModules } from "./registry-loader.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const { engine, world, distribution, content, education, prototypeMissions, cleanup } = await loadKitCityModules();
+const { engine, world, distribution, content, education, prototypeMissions, explorationLife, cleanup } = await loadKitCityModules();
 const engineSource = await readFile(path.join(root, "game/kitcity-engine.js"), "utf8");
+assert.deepEqual(explorationLife.validateExplorationDiscoveries(), [], "optional street discoveries have valid unique IDs, locations, copy and rewards");
+assert.equal(explorationLife.EXPLORATION_DISCOVERIES.length, 4, "the free-roam scene offers four non-educational discovery points");
+assert.equal(new Set(explorationLife.EXPLORATION_DISCOVERIES.map(item=>item.id)).size, 4, "discovery IDs remain unique");
+const discoveryState = { activityCount: 0, exploreScore: 0, discoveries: {} };
+for (const discovery of explorationLife.EXPLORATION_DISCOVERIES) {
+  const firstVisit = explorationLife.recordExplorationDiscovery(discoveryState, discovery.id);
+  assert.equal(firstVisit.error, undefined, discovery.id + " can be discovered");
+  assert.equal(firstVisit.reward.xp, discovery.reward.xp, discovery.id + " returns its authored reward");
+  assert.equal(discoveryState.discoveries[discovery.id], true, discovery.id + " persists completion");
+  assert.equal(explorationLife.recordExplorationDiscovery(discoveryState, discovery.id).error, "already-discovered", discovery.id + " cannot pay a duplicate reward");
+}
+assert.equal(discoveryState.activityCount, 4, "only first-time discoveries increment activity");
+assert.equal(discoveryState.exploreScore, 56, "discoveries reward free exploration, independently of lessons");
+assert.match(engineSource, /refreshExplorationDiscoveries\(\)/, "the actual free-roam engine creates in-world discovery markers");
+assert.match(engineSource, /recordExplorationDiscovery\(adventure,discovery\.id\)/, "the live interaction uses the tested persistent discovery helper");
+assert.match(engineSource, /nearEnt\.kind==='discovery'\?'Look':'Talk'/, "mobile interaction feedback distinguishes looking at places from talking to people");
+assert.match(engineSource, /window\.innerWidth<760\?1\.25:1\.5/, "render pixel ratio is capped more conservatively on mobile");
+assert.match(engineSource, /window\.innerWidth<760\?768:1536/, "mobile shadow maps are smaller to reduce GPU cost");
+
 assert.match(engineSource, /new ConversationEngine\(\{content,state:createDialogueState\(adventure\.dialogueState\)/, "NPC interactions must use the reusable engine");
 assert.match(engineSource, /adventureComplete\(mapped,choiceIndex\)/, "mission-ending dialogue must reach the existing reward/mission handler");
 assert.match(engineSource, /adventureSave\(\);adventureAfterActivity\(\);/, "a non-mission exit must return to free roam");
