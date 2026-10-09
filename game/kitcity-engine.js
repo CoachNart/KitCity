@@ -2572,11 +2572,34 @@ function refreshExplorationDiscoveries(){
  for(const discovery of EXPLORATION_DISCOVERIES){
   const visited=!!adventure.discoveries[discovery.id],root=new THREE.Group();
   root.position.set(discovery.position.x,0,discovery.position.z);
-  const base=new THREE.Mesh(new THREE.CylinderGeometry(.8,.95,.08,14),lam('#18222b'));base.position.y=.06;root.add(base);
   const color=visited?'#9AA4AE':discovery.color;
-  const post=new THREE.Mesh(new THREE.BoxGeometry(.18,1.5,.18),lam(color));post.position.y=.78;root.add(post);
-  const marker=new THREE.Mesh(discovery.kind==='street-art'?new THREE.BoxGeometry(1.15,.85,.12):new THREE.OctahedronGeometry(.58,0),lam(color,{emissive:color,emissiveIntensity:visited ? 0.04 : 0.16}));
-  marker.position.y=1.75;root.add(marker);missionGroup.add(root);
+  const make=(geometry,shade,x,y,z)=>{const mesh=new THREE.Mesh(geometry,lam(shade));mesh.position.set(x,y,z);root.add(mesh);return mesh;};
+  make(new THREE.CylinderGeometry(.8,.95,.08,14),'#18222b',0,.06,0);
+  if(discovery.id==='buka-lunch-stop'){
+   make(new THREE.BoxGeometry(2.2,1.15,.72),visited?'#65706E':'#0B7A43',0,.68,0);
+   make(new THREE.BoxGeometry(2.7,.2,1.0),visited?'#9AA4AE':'#F6B21A',0,1.38,0);
+   make(new THREE.BoxGeometry(1.6,.42,.08),'#E8D7B8',0,1.0,.4);
+   make(new THREE.BoxGeometry(.72,.1,.5),'#C7457E',-.48,.9,.48);
+  }else if(discovery.id==='old-cinema-mural'){
+   make(new THREE.BoxGeometry(2.8,1.8,.14),'#B6A58C',0,1.0,0);
+   make(new THREE.BoxGeometry(2.25,1.28,.08),visited?'#9AA4AE':'#C7457E',0,1.05,.1);
+   make(new THREE.BoxGeometry(.18,1.0,.06),'#F6B21A',-.62,1.05,.16);
+   make(new THREE.BoxGeometry(.18,.76,.06),'#0B7A43',0,1.05,.16);
+   make(new THREE.BoxGeometry(.18,.88,.06),'#2D6FB3',.62,1.05,.16);
+  }else if(discovery.id==='community-football'){
+   make(new THREE.SphereGeometry(.46,10,8),visited?'#9AA4AE':'#F4F1E8',0,.5,0);
+   make(new THREE.ConeGeometry(.24,.48,5),'#1B1C20',-.28,.5,.24);
+   make(new THREE.ConeGeometry(.24,.48,5),'#1B1C20',.28,.5,-.24);
+   make(new THREE.TorusGeometry(1.0,.06,5,18),'#F6B21A',0,.1,0).rotation.x=Math.PI/2;
+  }else{
+   make(new THREE.BoxGeometry(.14,1.5,.14),'#6B4932',-.8,.76,0);
+   make(new THREE.BoxGeometry(.14,1.5,.14),'#6B4932',.8,.76,0);
+   make(new THREE.BoxGeometry(1.9,1.12,.16),visited?'#9AA4AE':'#2D6FB3',0,1.25,0);
+   make(new THREE.BoxGeometry(.38,.32,.06),'#F6B21A',-.48,1.35,.12);
+   make(new THREE.BoxGeometry(.38,.42,.06),'#E8D7B8',0,1.3,.12);
+   make(new THREE.BoxGeometry(.38,.26,.06','#C7457E',.48,1.38,.12);
+  }
+  missionGroup.add(root);
   const tag=label(visited?discovery.name+' · remembered':discovery.name,color,'#fff');tag.position.set(discovery.position.x,3.25,discovery.position.z);missionGroup.add(tag);
   explorationDiscoveryVisuals.push(root,tag);
   ents.push({x:discovery.position.x,z:discovery.position.z,r:6.2,kind:'discovery',explorationDiscovery:discovery,active:()=>true,talk:()=>inspectExplorationDiscovery(discovery)});
