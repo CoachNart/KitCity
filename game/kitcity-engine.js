@@ -1,4 +1,6 @@
 import * as THREE from 'three';
+import { ConversationEngine, createDialogueState } from './conversation-engine.js';
+import { getDialogue } from './dialogue-content.js';
 
 export default function initKitCity(){
 'use strict';
@@ -1570,7 +1572,7 @@ function openSheet(html,btns,typingMs){
     setTimeout(pendingReveal,typingMs);
   } else { sheetEl.classList.remove('typing'); pendingReveal=null; }
 }
-function closeSheet(){ S.modal=false; cbs=[]; sheetTok++; pendingReveal=null; chat={npc:null,log:[]}; sheetEl.classList.remove('typing'); modalEl.classList.add('hidden'); sheetEl.innerHTML=''; Snd.duck(false); }
+function closeSheet(){ S.modal=false; cbs=[]; sheetTok++; pendingReveal=null; chat={npc:null,log:[]}; sheetEl.classList.remove('typing','dialogue-sheet'); modalEl.classList.add('hidden'); sheetEl.innerHTML=''; Snd.duck(false); }
 sheetEl.addEventListener('click',e=>{
   if(pendingReveal){ pendingReveal(); return; }
   const b=e.target.closest('[data-i]'); if(!b) return;
@@ -2484,26 +2486,26 @@ const adventure=Object.assign({travel:0,activityCount:0,exploreScore:0,completed
 const adventureSave=()=>Store.set(ADVENTURE_KEY,adventure);
 let adventureLastX=SPAWN.x,adventureLastZ=SPAWN.z,adventureMeters=0,adventureHazards=[],adventureEncounterIds=new Set(),adventureToastCd=0;
 const ADVENTURE_NPCS=[
- {id:'trader-spill',name:'Mama Kemi',role:'Market trader',color:'#C7457E',look:LK.woman,spot:'a',sign:'Help pick up the oranges',kind:'activity',major:false,opening:'Ah! My basket don turn over. Help me gather these oranges before danfo scatter them.',choices:[['Help collect the oranges','You try! Thank you, my child. Market no easy, but we help each other.'],['Ask where they came from','Na from my stall around the corner. Please help first, we fit talk after.']],reward:{xp:8,ngn:35,item:'market-kindness'}},
- {id:'driver-directions',name:'Bode',role:'Commercial driver',color:'#2D6FB3',look:LK.guy,spot:'c',sign:'Driver needs directions',kind:'activity',major:false,opening:'Oga, I dey find the community clinic. This junction dey confuse person. You sabi the way?',choices:[['Point him toward the clinic','Correct! Thank you. I go follow that road and ask again if I need to.'],['Tell him to check the signboard','Good idea. Make I look well before I enter wrong street.']],reward:{xp:10,ngn:25,item:'helpful-neighbour'}},
- {id:'student-directions',name:'Tomi',role:'Student',color:'#0B7A43',look:LK.woman,spot:'e',sign:'Student looking for campus',kind:'activity',major:false,opening:'Please, I dey look for the school gate. I don pass this junction twice. Which side be am?',choices:[['Walk a little way and point it out','Thank you! First week for new place fit be like this.'],['Give clear directions','I understand now. I go watch the junction and follow the sign.']],reward:{xp:8,ngn:20,item:'campus-helper'}},
- {id:'wrong-delivery',name:'Sani',role:'Delivery rider',color:'#E4572E',look:LK.man,spot:'g',sign:'Delivery at the wrong address',kind:'activity',major:false,opening:'This parcel address no match the shop. I fit return am, but customer don dey call. You fit help me find the right street?',choices:[['Read the street signs together','We don find am! I go confirm the name with the customer before handing over.'],['Call the customer to verify','Correct move. Better confirm than leave parcel with the wrong person.']],reward:{xp:12,ngn:30,item:'trusted-runner'}},
- {id:'lost-keys',name:'Aunty Bose',role:'Resident',color:'#8C6AC8',look:LK.elder,spot:'i',sign:'Lost keys nearby',kind:'activity',major:false,opening:'My keys fall somewhere between the bus stop and this kiosk. I don check my bag tire. You fit help me look?',choices:[['Search the path with her','Ehen! Na here e dey. Thank you for not passing me by.'],['Ask her to retrace her steps','That helped. I remember stopping beside that blue kiosk!']],reward:{xp:10,ngn:20,item:'found-keys'}},
- {id:'street-challenge',name:'Kunle',role:'Local football fan',color:'#D28A20',look:LK.guy,spot:'j',sign:'Quick street challenge',kind:'challenge',major:false,opening:'Small challenge? Reach the painted junction marker and come back. No need to run into traffic o!',choices:[['Accept the challenge','You do am! Sharp movement, but you still watch road. Respect.'],['Pass and keep exploring','No wahala. City no be race. Enjoy your movement.']],reward:{xp:6,ngn:15,item:'street-challenge'}},
- {id:'coop-record',name:'Musa',role:'Smallholder farmer',color:'#0B7A43',look:LK.man,spot:'b',sign:'Farmer has a question',kind:'education',major:true,opening:'I sell produce to buyers in different towns. Sometimes dem argue about where a bag came from. How person fit keep a record both sides can check?',choices:[['Keep a shared record with evidence','That could help track who entered each update. But the first person still has to give honest information.'],['Say a blockchain guarantees truth','I no sure say any technology fit guarantee the first person no lie. We still need checks.']],follow:['Who is allowed to see the record?','What happens if the first entry is wrong?'],reward:{xp:15,ngn:30,item:'supply-chain-note'}}
+ {id:'trader-spill',dialogueId:'trader-spill',name:'Mama Kemi',role:'Market trader',color:'#C7457E',look:LK.woman,spot:'a',sign:'Help pick up the oranges',kind:'activity',major:false,reward:{xp:8,ngn:35,item:'market-kindness'}},
+ {id:'driver-directions',dialogueId:'driver-directions',name:'Bode',role:'Commercial driver',color:'#2D6FB3',look:LK.guy,spot:'c',sign:'Driver needs directions',kind:'activity',major:false,reward:{xp:10,ngn:25,item:'helpful-neighbour'}},
+ {id:'student-directions',dialogueId:'student-directions',name:'Tomi',role:'Student and aspiring designer',color:'#0B7A43',look:LK.woman,spot:'e',sign:'Student looking for campus',kind:'activity',major:false,reward:{xp:8,ngn:20,item:'campus-helper'}},
+ {id:'wrong-delivery',dialogueId:'wrong-delivery',name:'Sani',role:'Delivery rider',color:'#E4572E',look:LK.man,spot:'g',sign:'Delivery at the wrong address',kind:'activity',major:false,reward:{xp:12,ngn:30,item:'trusted-runner'}},
+ {id:'lost-keys',dialogueId:'lost-keys',name:'Aunty Bose',role:'Retired seamstress and resident',color:'#8C6AC8',look:LK.elder,spot:'i',sign:'Lost keys nearby',kind:'activity',major:false,reward:{xp:10,ngn:20,item:'found-keys'}},
+ {id:'street-challenge',dialogueId:'street-challenge',name:'Kunle',role:'Local football fan',color:'#D28A20',look:LK.guy,spot:'j',sign:'Quick street challenge',kind:'challenge',major:false,reward:{xp:6,ngn:15,item:'street-challenge'}},
+ {id:'coop-record',dialogueId:'coop-record',name:'Musa',role:'Smallholder farmer',color:'#0B7A43',look:LK.man,spot:'b',sign:'Farmer has a question',kind:'education',major:true,reward:{xp:15,ngn:30,item:'supply-chain-note'}}
 ];
+let activeDialogueSession=null,activeDialogueDef=null,activeDialogueLog=[],activeDialogueNode=null;
 function adventureBegin(){
  closeSheet(); G={m:{id:'free-roam',title:'Explore KitCity',n:'',explore:true,steps:[]},i:0,bonus:0,used:{},freeRoam:true};
  clearGroup(missionGroup); colliders.length=cityCols; smoke=[]; ents=[]; goal=null; beacon.visible=false;
  adventureEncounterIds.clear(); adventureHazards=[];
  for(const def of ADVENTURE_NPCS){
-   if(adventure.completed.includes(def.id)&&def.id!=='street-challenge') continue;
    const spot=SPOTS[def.spot]; if(!spot) continue;
    const npc=NPC(def.name,def.role,def.color,def.look,null,def.sign); npc.signBg=def.color;npc.signFg='#fff';
    const p=buildPerson({top:def.color,bottom:'#343746',shoe:'#eee',skin:'#7a4a2e',detail:true});
    p.position.set(spot.x,.05,spot.z);p.rotation.y=spot.f>0?Math.PI/2:-Math.PI/2;missionGroup.add(p);
    const sign=label(def.sign,def.color,'#fff');sign.position.set(spot.x,5.8,spot.z);missionGroup.add(sign);
-   const e={x:spot.x,z:spot.z,r:6.8,def,npc,active:()=>!adventure.completed.includes(def.id)||def.id==='street-challenge',talk:()=>adventureTalk(def)};
+   const e={x:spot.x,z:spot.z,r:6.8,def,npc,active:()=>true,talk:()=>adventureTalk(def)};
    ents.push(e); adventureEncounterIds.add(def.id);
  }
  spawnAdventureHazards();
@@ -2512,29 +2514,59 @@ function adventureBegin(){
  Snd.setMode('play');resetPlayer();adventureLastX=player.position.x;adventureLastZ=player.position.z;
  $('#loading').classList.add('hidden');updateHUD();toast('Oya! Explore the streets. Talk to people when you choose.');
 }
+function dialogueEscape(value){
+ return String(value==null?'':value).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function renderDialogueNode(node){
+ if(!node||!activeDialogueDef)return;
+ activeDialogueNode=node;
+ S.modal=true;joy.reset();sheetEl.classList.add('dialogue-sheet');
+ const recent=activeDialogueLog.slice(-5);
+ const bubbles=recent.map(item=>'<div class="dialogue-bubble '+(item.kind==='player'?'player':'')+'"><div class="dialogue-speaker">'+dialogueEscape(item.speaker)+'</div><div class="dialogue-text">'+dialogueEscape(item.text)+'</div></div>').join('');
+ const tag=(node.conceptTags||[])[0];
+ const choices=(node.choices||[]).map(choice=>({t:choice.label,g:choice.style==='quiet',f:()=>chooseDialogue(choice.id)}));
+ const row=choices.length?'<div class="row">'+choices.map((choice,i)=>'<button class="btn'+(choice.g?' ghost':'')+'" data-i="'+i+'" type="button">'+dialogueEscape(choice.t)+'</button>').join('')+'</div>':'<div class="dialogue-footer">No response available. Close to return to the street.</div>';
+ cbs=choices.map(choice=>choice.f);pendingReveal=null;sheetEl.classList.remove('typing');
+ sheetEl.innerHTML='<div class="dialogue-top"><div class="dialogue-avatar">'+dialogueEscape(activeDialogueDef.name.trim().charAt(0).toUpperCase())+'</div><div><div class="dialogue-name">'+dialogueEscape(activeDialogueDef.name)+'</div><div class="dialogue-role">'+dialogueEscape(activeDialogueDef.role)+'</div></div>'+(tag?'<div class="dialogue-tag">'+dialogueEscape(String(tag).replace(/-/g,' '))+'</div>':'')+'</div><div class="dialogue-history" aria-live="polite">'+bubbles+'</div>'+row+'<div class="dialogue-footer">Choose a response · Your choices can shape future conversations</div>';
+ modalEl.classList.remove('hidden');talkBtn.classList.add('hidden');Snd.duck(true);
+ sheetEl.scrollTop=sheetEl.scrollHeight;
+ const historyEl=sheetEl.querySelector('.dialogue-history');if(historyEl)historyEl.scrollTop=historyEl.scrollHeight;
+}
 function adventureTalk(def){
  if(S.modal)return;
- const d=def,hasDone=adventure.completed.includes(d.id);
- if(hasDone&&d.id!=='street-challenge'){toast('You already helped '+d.name+'. Keep exploring!');return;}
- if(d.major&&adventure.lastMajorId&&adventure.activityCount-adventure.lastMajorAt<3){
-   // Never block the player with a pacing timer; keep this encounter available for later.
-   openSheet('<div class="who"><div><b>'+d.name+'</b><small>'+d.role+'</small></div></div><p>'+d.opening+'</p><p class="note">You can chat now if you like. There is no rush.</p>',[{t:'Continue talking',f:()=>adventureConversation(d)},{t:'Maybe later',g:1,f:closeSheet}]);return;
- }
- adventureConversation(d);
+ const content=getDialogue(def.dialogueId);
+ if(!content){toast('This conversation is not available yet.');return;}
+ activeDialogueDef=def;
+ activeDialogueSession=new ConversationEngine({content,state:createDialogueState(adventure.dialogueState),context:{exploreScore:adventure.exploreScore,travelMeters:adventure.travel}});
+ const started=activeDialogueSession.start();
+ adventure.dialogueState=started.state;adventureSave();
+ activeDialogueLog=[{speaker:started.node.speaker||def.name,text:started.node.text,kind:'npc'}];
+ renderDialogueNode(started.node);
 }
-function adventureConversation(d){
- const isEducation=d.major,opts=d.choices.map((c,i)=>({t:c[0],f:()=>{
-   const reply=c[1];closeSheet();
-   openSheet('<div class="who"><div><b>'+d.name+'</b><small>'+d.role+'</small></div></div><p>'+reply+'</p>'+
-   (isEducation?'<p class="note">A shared record can help people check changes, but it cannot make false information true. Privacy, consent and fair access still matter.</p>':'')+
-   (isEducation?'<p>'+d.follow[0]+'</p>':''),
-   [{t:isEducation?'Ask about access':'Finish activity',f:()=>{
-     if(isEducation){closeSheet();openSheet('<div class="who"><div><b>'+d.name+'</b><small>'+d.role+'</small></div></div><p>'+d.follow[0]+'</p><p>Only people who need the information should see it. Public proof does not mean every personal detail belongs in public.</p><p>'+d.follow[1]+'</p><p>A record can show later changes, but people still need a way to correct mistakes and challenge dishonest entries.</p>',[{t:'That makes sense',f:()=>adventureComplete(d,i)}]);}
-     else adventureComplete(d,i);
-   }},{t:'End conversation',g:1,f:()=>adventureComplete(d,i)}]);
- }}));
- opts.push({t:'Not now',g:1,f:closeSheet});
- openSheet('<div class="who"><div><b>'+d.name+'</b><small>'+d.role+'</small></div></div><p>'+d.opening+'</p>',opts);
+function chooseDialogue(choiceId){
+ if(!activeDialogueSession||!activeDialogueNode)return;
+ const selected=(activeDialogueNode.choices||[]).find(choice=>choice.id===choiceId);
+ if(!selected)return;
+ const result=activeDialogueSession.choose(choiceId);
+ if(result.error){toast('That response is no longer available.');return;}
+ adventure.dialogueState=result.state;adventureSave();
+ activeDialogueLog.push({speaker:'You',text:selected.label,kind:'player'});
+ if(result.node){
+   activeDialogueLog.push({speaker:result.node.speaker||activeDialogueDef.name,text:result.node.text,kind:'npc'});
+   renderDialogueNode(result.node);Snd.sfx('click');return;
+ }
+ const def=activeDialogueDef,choiceIndex=result.choiceIndex;
+ const shouldReward=Boolean(result.missionCompleted);
+ activeDialogueSession=null;activeDialogueDef=null;activeDialogueNode=null;activeDialogueLog=[];
+ closeSheet();
+ if(shouldReward){
+   const mapped=ADVENTURE_NPCS.find(item=>item.dialogueId===def.dialogueId)||def;
+   adventureComplete(mapped,choiceIndex);
+ }else{
+   adventureSave();adventureAfterActivity();
+   if(result.ending)toast(result.ending);
+ }
+ Snd.sfx(shouldReward?'done':'click');
 }
 function adventureComplete(d,choiceIndex){
  closeSheet();const first=!adventure.completed.includes(d.id);
