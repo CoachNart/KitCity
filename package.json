@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "test:dialogue": "node scripts/test-dialogue.mjs"
+    "test:dialogue": "node scripts/test-dialogue.mjs",
+    "test:world": "node scripts/world-report.mjs",
+    "report:world": "node scripts/world-report.mjs",
+    "test": "npm run test:dialogue && npm run test:world"
   },
   "dependencies": {
     "next": "16.3.8",
