@@ -28,6 +28,14 @@ The active game entry point is free roam. Encounters are optional and contextual
 - The eight NPCs and their objective markers are encounter overlays in the **existing Lagos free-roam environment**. The student, farm, law, studio, clinic, community and meetup scenarios are not claims that separate campus/farm/office/clinic maps have been built. Their dedicated environments remain future content.
 - Missions are optional and can be tackled in any order. Starting a mission returns control to free roam; players travel to objective markers and then return to the NPC rather than sitting through eight consecutive lectures.
 
+### Optional street life and discoveries
+
+- `game/kitcity-engine.js` already drives pedestrian walkers, pairs who stop for background conversations, road-crossing pedestrians, hawkers, traffic, ambient barks, footsteps and collision feedback. These remain separate from mission dialogue.
+- `game/exploration-life.js` adds four optional non-educational discoveries to the existing Lagos scene: a buka stop, an old cinema mural, a street-football circle and a neighbourhood noticeboard. They are lightweight in-world markers, not separate map claims.
+- Discoveries give a small one-time XP/reward, persist in the adventure save and change to a remembered state on return. They can be revisited without paying the reward again; no Web3 lesson is required.
+- Mobile rendering now caps device pixel ratio more conservatively, disables antialiasing on narrow screens and uses a smaller shadow map on mobile. The existing Low graphics setting remains available.
+- The first free-roam prompt names the movement, sprint and nearby Talk/Look controls. POIs use a distinct **Look** interaction label.
+
 ### Conversation engine
 
 - `game/conversation-engine.js`: reusable, data-only conversation state machine. Supports branching nodes, conditional choices, mission requirements, optional follow-ups, state changes, trust and knowledge flags, mission completion, natural exit, and persistent state snapshots.
