@@ -25,6 +25,10 @@ assert.match(engineSource, /recordExplorationDiscovery\(adventure,discovery\.id\
 assert.match(engineSource, /nearEnt\.kind==='discovery'\?'Look':'Talk'/, "mobile interaction feedback distinguishes looking at places from talking to people");
 assert.match(engineSource, /window\.innerWidth<760\?1\.25:1\.5/, "render pixel ratio is capped more conservatively on mobile");
 assert.match(engineSource, /window\.innerWidth<760\?768:1536/, "mobile shadow maps are smaller to reduce GPU cost");
+assert.match(engineSource, /mobileCrowd\?12:20/, "mobile builds fewer ambient walkers than desktop");
+assert.match(engineSource, /mobileCrowd\?3:6/, "mobile builds fewer pedestrian pairs");
+assert.match(engineSource, /made<\(mobileCrowd\?4:10\)/, "mobile builds fewer road-crossing pedestrians");
+assert.match(engineSource, /window\.innerWidth<760\?\(\(k===0\|\|k===-1\)\?1:/, "mobile traffic generation is reduced");
 
 assert.match(engineSource, /new ConversationEngine\(\{content,state:createDialogueState\(adventure\.dialogueState\)/, "NPC interactions must use the reusable engine");
 assert.match(engineSource, /adventureComplete\(mapped,choiceIndex\)/, "mission-ending dialogue must reach the existing reward/mission handler");
