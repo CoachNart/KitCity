@@ -1,12 +1,17 @@
 import { loadKitCityModules } from "./registry-loader.mjs";
 
-const { world, distribution, cleanup } = await loadKitCityModules();
+const { world, distribution, prototypeMissions, cleanup } = await loadKitCityModules();
 const errors = distribution.validateWorldSystem();
 const report = distribution.getDevelopmentReport();
 const output = {
   generatedAt: new Date().toISOString(),
   counts: report,
   validation: { status: errors.length ? "FAILED" : "PASS", errors },
+  prototypeMissionPack: prototypeMissions.PROTOTYPE_MISSIONS.map(mission => ({
+    id:mission.id,title:mission.title,npc:mission.npcName,role:mission.role,conceptId:mission.conceptId,
+    locationIds:mission.locationIds,status:mission.status,objectiveCount:mission.objectives.length,
+    reward:mission.reward,objectiveLabels:mission.objectives.map(objective=>objective.label)
+  })),
   locations: world.WORLD_LOCATIONS.map(location => ({
     id: location.id,
     jurisdictionId: location.jurisdictionId,
