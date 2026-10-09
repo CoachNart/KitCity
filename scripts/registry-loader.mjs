@@ -8,6 +8,7 @@ const MODULE_FILES = [
   "conversation-engine.js",
   "world-registry.js",
   "educational-content.js",
+  "prototype-missions.js",
   "dialogue-content.js",
   "adventure-data.js",
   "mission-distribution.js"
@@ -27,15 +28,16 @@ export async function loadKitCityModules() {
       await writeFile(path.join(directory, file.replace(/\.js$/, ".mjs")), source, "utf8");
     }
     const load = file => import(pathToFileURL(path.join(directory, file + ".mjs")).href);
-    const [engine, world, education, content, distribution] = await Promise.all([
+    const [engine, world, education, content, distribution, prototypeMissions] = await Promise.all([
       load("conversation-engine"),
       load("world-registry"),
       load("educational-content"),
       load("dialogue-content"),
-      load("mission-distribution")
+      load("mission-distribution"),
+      load("prototype-missions")
     ]);
     return {
-      engine, world, education, content, distribution,
+      engine, world, education, content, distribution, prototypeMissions,
       cleanup: () => rm(directory, { recursive: true, force: true })
     };
   } catch (error) {
