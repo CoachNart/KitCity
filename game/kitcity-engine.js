@@ -1968,7 +1968,14 @@ CITY_JOURNEYS.forEach((cityData,ci)=>{
     const n=9+ci*2+mi;
     const mentor=loc(cityData.name,cityData.role,['#00A6B8','#C77937','#6A65B8','#268A66'][ci%4],ci%3===0?LK.mama:(ci%3===1?LK.trader:LK.man),cityData.site);
     const spot=routeSpots[(ci*7+mi*11+3)%routeSpots.length];
-    const taskKind=(ci*2+mi)%8;
+    const caseText=[data[0],data[1],...(data[2]||[])].join(' ').toLowerCase();
+    const taskKind=/escrow|p2p|buyer|seller|release|bank app|payment sent|paid the seller/.test(caseText)?5:
+      /governance|vote|proposal|community decision|street-light|allocate|budget/.test(caseText)?4:
+      /address|recipient|invoice|lookalike|supplier|destination|wallet address/.test(caseText)?1:
+      /approval|permission|signing|sign message|mint|allowance|access scope/.test(caseText)?2:
+      /network|bridge|chain|route|wrong network/.test(caseText)?6:
+      /screenshot|proof|receipt|pending|transaction status|explorer|scam|phishing|fake support|airdrop|giveaway/.test(caseText)?3:
+      /transfer|payment|swap|fee|rate|settle|transaction/.test(caseText)?0:(ci*2+mi)%8;
     const taskNames=[
       'Transaction settlement','Recipient verification','Permission configuration','Evidence reconciliation',
       'Community decision','Escrow release check','Network route validation','Operational handover'
