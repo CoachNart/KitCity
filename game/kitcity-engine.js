@@ -322,7 +322,7 @@ function tx(html){
 }
 
 /* =====================  renderer / scene  ===================== */
-const renderer=new THREE.WebGLRenderer({canvas:$('#gl'),antialias:true,powerPreference:'high-performance'});
+const renderer=new THREE.WebGLRenderer({canvas:$('#gl'),antialias:window.innerWidth>=760,powerPreference:'high-performance'});
 function setPR(){ const mobile=window.innerWidth<760||((navigator.deviceMemory||8)<=4); renderer.setPixelRatio(P.low?1:Math.min(window.devicePixelRatio||1,mobile?1.25:1.5)); }
 setPR();
 const scene=new THREE.Scene();
@@ -2610,7 +2610,7 @@ function adventureBegin(){
  S.phase='play';S.modal=false;$('#hub').classList.add('hidden');$('#title').classList.add('hidden');$('#hud').classList.remove('hidden');
  $('#mTitle').textContent='Explore KitCity';$('#steps').innerHTML='<li class="now">Explore freely</li><li>Find people and activities</li><li>Earn rewards and keep going</li>';
  Snd.setMode('play');resetPlayer();adventureLastX=player.position.x;adventureLastZ=player.position.z;
- $('#loading').classList.add('hidden');updateHUD();toast('Oya! Explore the streets. Talk to people when you choose.');
+ $('#loading').classList.add('hidden');updateHUD();toast('Explore freely · left stick to move · Run to sprint · tap Talk or Look nearby.');
 }
 function dialogueEscape(value){
  return String(value==null?'':value).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
