@@ -1,0 +1,34 @@
+name: KitCity dialogue tests
+on:
+  push:
+    branches: [main, "rebuild/open-world-adventure"]
+  pull_request:
+    branches: [main]
+jobs:
+  dialogue-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Validate world registry and branching conversations
+        run: npm run test
+  production-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install
+      - name: Build KitCity
+        run: npm run build
+      - name: Install Playwright and Chromium
+        run: |
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+      - name: Start the production server
+        run: npm run start -- --hostname 127.0.0.1 > /tmp/kitcity-next.log 2>&1 &
+      - name: Play through a mission in a real browser
+        run: node scripts/e2e-gameplay-smoke.mjs

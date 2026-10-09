@@ -227,3 +227,21 @@ html,body{height:100%;overflow:hidden;background:var(--ink);color:var(--ink);fon
   #hubBody>.card{padding:18px}
 }
 @media(prefers-reduced-motion:reduce){#nav button,.card,.btn{transition:none}}
+
+/* Interactive NPC dialogue: compact glass panel, distinct turns, comfortable touch targets. */
+#sheet.dialogue-sheet{background:rgba(245,250,251,.96);border:1px solid rgba(255,255,255,.6);box-shadow:0 18px 60px rgba(0,0,0,.34);border-radius:20px 20px 14px 14px;padding:14px 14px calc(14px + env(safe-area-inset-bottom));color:var(--ink);max-height:min(76dvh,620px)}
+.dialogue-top{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.dialogue-avatar{width:42px;height:42px;flex:0 0 42px;display:grid;place-items:center;border-radius:14px;background:var(--ink);color:var(--brand);font:900 18px var(--display);border:2px solid rgba(0,0,0,.08)}
+.dialogue-name{font-weight:900;line-height:1.15}.dialogue-role{font-size:12px;opacity:.7;margin-top:3px}
+.dialogue-tag{margin-left:auto;align-self:flex-start;font-size:10px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;border-radius:20px;padding:5px 8px;background:rgba(0,229,255,.17);color:#075a66}
+.dialogue-history{display:flex;flex-direction:column;gap:7px;max-height:25dvh;overflow:auto;padding:2px 1px 6px;touch-action:pan-y}
+.dialogue-bubble{max-width:94%;align-self:flex-start;background:#fff;border:1px solid rgba(27,28,32,.12);border-radius:4px 15px 15px 15px;padding:10px 12px;font-size:15px;line-height:1.4;overflow-wrap:anywhere;box-shadow:0 2px 8px rgba(0,0,0,.035)}
+.dialogue-bubble.player{align-self:flex-end;background:#13252a;color:#e8fcff;border-color:#13252a;border-radius:15px 4px 15px 15px}
+.dialogue-speaker{font-size:10px;font-weight:900;letter-spacing:.04em;opacity:.66;text-transform:uppercase;margin-bottom:3px}
+.dialogue-text{font-size:15px;line-height:1.42}
+#sheet.dialogue-sheet .row{display:grid;grid-template-columns:1fr;gap:7px;margin-top:10px}
+#sheet.dialogue-sheet .row .btn{min-height:48px;padding:10px 12px;flex:none;width:100%;font-size:14px;line-height:1.25;border-radius:12px;border-width:1px;justify-content:flex-start;text-align:left;white-space:normal}
+#sheet.dialogue-sheet .row .btn.ghost{border-color:rgba(27,28,32,.22);background:rgba(255,255,255,.62);color:var(--ink)}
+#sheet.dialogue-sheet .row .btn:focus-visible{outline:3px solid #00a6b8;outline-offset:2px}
+.dialogue-footer{font-size:11px;opacity:.62;margin-top:9px;text-align:center}
+@media(min-width:700px){#sheet.dialogue-sheet{max-width:520px;max-height:70vh}.dialogue-history{max-height:30vh}}

@@ -1,4 +1,11 @@
 import * as THREE from 'three';
+import { ConversationEngine, createDialogueState } from './conversation-engine.js';
+import { getDialogue } from './dialogue-content.js';
+import { PROTOTYPE_MISSIONS, PROTOTYPE_MISSION_NPCS, recordPrototypeObjectiveChoice } from './prototype-missions.js';
+import './mission-distribution.js';
+import { getWorldLocation } from './world-registry.js';
+import { SOCIAL_ADVENTURE_NPCS } from './adventure-data.js';
+import { EXPLORATION_DISCOVERIES, recordExplorationDiscovery } from './exploration-life.js';
 
 export default function initKitCity(){
 'use strict';
@@ -34,7 +41,9 @@ const Store=(function(){
   };
 })();
 const KEY='kitnaija_v1';
-const P=Object.assign({wallet:null,usdc:0,ngn:0,xp:0,done:{},dodged:0,fell:0,low:false,music:true,sfx:true,lang:'en',pl:'',scores:{},web3:null},Store.get(KEY,{}));
+const savedPlayer=Store.get(KEY,{})||{};
+const P=Object.assign({wallet:null,usdc:0,ngn:0,xp:0,done:{},dodged:0,fell:0,low:false,music:true,sfx:true,lang:'en',pl:'',scores:{},web3:null},savedPlayer);
+if(!Object.prototype.hasOwnProperty.call(savedPlayer,'low')&&(window.innerWidth<760||(navigator.deviceMemory||8)<=4))P.low=true;
 if(!P.done||typeof P.done!=='object') P.done={};
 function save(){ Store.set(KEY,{wallet:P.wallet,usdc:P.usdc,ngn:P.ngn,xp:P.xp,done:P.done,dodged:P.dodged,fell:P.fell,low:P.low,music:P.music,sfx:P.sfx,lang:P.lang,pl:P.pl,scores:P.scores,web3:P.web3}); }
 
@@ -315,8 +324,8 @@ function tx(html){
 }
 
 /* =====================  renderer / scene  ===================== */
-const renderer=new THREE.WebGLRenderer({canvas:$('#gl'),antialias:true,powerPreference:'high-performance'});
-function setPR(){ renderer.setPixelRatio(P.low?1:Math.min(window.devicePixelRatio||1,1.75)); }
+const renderer=new THREE.WebGLRenderer({canvas:$('#gl'),antialias:window.innerWidth>=760,powerPreference:'high-performance'});
+function setPR(){ const mobile=window.innerWidth<760||((navigator.deviceMemory||8)<=4); renderer.setPixelRatio(P.low?1:Math.min(window.devicePixelRatio||1,mobile?1.25:1.5)); }
 setPR();
 const scene=new THREE.Scene();
 const camera=new THREE.PerspectiveCamera(50,1,0.5,700);
@@ -341,7 +350,7 @@ function flagShadows(root){
 }
 function setShadows(){
   const on=!P.low; renderer.shadowMap.enabled=on; renderer.shadowMap.type=THREE.PCFSoftShadowMap; sun.castShadow=on;
-  const sz=on?1536:512; if(sun.shadow.mapSize.x!==sz){ sun.shadow.mapSize.set(sz,sz); if(sun.shadow.map){ sun.shadow.map.dispose(); sun.shadow.map=null; } }
+  const sz=on?(window.innerWidth<760?768:1536):512; if(sun.shadow.mapSize.x!==sz){ sun.shadow.mapSize.set(sz,sz); if(sun.shadow.map){ sun.shadow.map.dispose(); sun.shadow.map=null; } }
   const c=sun.shadow.camera; c.left=-75; c.right=75; c.top=75; c.bottom=-75; c.near=10; c.far=260; c.updateProjectionMatrix();
   sun.shadow.bias=-0.0006; sun.shadow.normalBias=.35;
   scene.traverse(o=>{ if(o.material){ const ms=Array.isArray(o.material)?o.material:[o.material]; ms.forEach(m=>{ m.needsUpdate=true; }); } });
@@ -496,7 +505,7 @@ function label(text,bg,fg,H0){
 /* =====================  world  ===================== */
 const R=70;
 const colliders=[],buildings=[];
-const SPAWN={x:9.5,z:-9.5};
+const SPAWN={x:0,z:0};
 const SPOTS={
   a:{x:10,z:-30,f:-1}, b:{x:-10,z:-105,f:1}, c:{x:80,z:-35,f:-1}, d:{x:60,z:-105,f:1},
   e:{x:-80,z:-35,f:1}, f:{x:-60,z:-105,f:-1}, g:{x:10,z:-175,f:-1}, h:{x:-10,z:-175,f:1},
@@ -1452,7 +1461,7 @@ function buildCity(key){
   dxFlush(C);
   cityCols=colliders.length;
   for(let k=-3;k<=3;k++)for(const axis of ['x','z'])for(const dir of [1,-1]){
-    const n=(k===0||k===-1)?2:(RN()<.5?1:0);
+    const n=window.innerWidth<760?((k===0||k===-1)?1:(RN()<.35?1:0)):((k===0||k===-1)?2:(RN()<.5?1:0));
     for(let q=0;q<n;q++) addCar(axis,k,dir,C);
   }
   const spotWalk=()=>{
@@ -1470,14 +1479,15 @@ function buildCity(key){
     const g=buildPerson(Object.assign({},pk(LOOKSC),{skin:pk(SKINS)})); g.position.set(x,.05,z); trafficGroup.add(g);
     const w=Object.assign({g:g,dir:new THREE.Vector3(dx,0,dz),sp:sp,rem:rr(10,30),ph:rr(0,6),state:'walk',timer:0,cd:rr(0,6),type:'walk',near:true},extra||{}); walkers.push(w); return w;
   };
-  for(let q=0;q<20;q++){ const sp=spotWalk(); if(!sp) continue; const sg=RN()<.5?1:-1; mkW(sp.x,sp.z,sp.dx*sg,sp.dz*sg,rr(2,3.2)); }
-  for(let q=0;q<6;q++){
+  const mobileCrowd=window.innerWidth<760;
+  for(let q=0;q<(mobileCrowd?12:20);q++){ const sp=spotWalk(); if(!sp) continue; const sg=RN()<.5?1:-1; mkW(sp.x,sp.z,sp.dx*sg,sp.dz*sg,rr(2,3.2)); }
+  for(let q=0;q<(mobileCrowd?3:6);q++){
     const sp=spotWalk(); if(!sp) continue; const sg=RN()<.5?1:-1,spd=rr(2,2.7),rem=rr(10,30);
     const a=mkW(sp.x,sp.z,sp.dx*sg,sp.dz*sg,spd,{type:'pair',rem:rem}),b=mkW(sp.x+sp.dz*1.1,sp.z+sp.dx*1.1,sp.dx*sg,sp.dz*sg,spd,{type:'pair',rem:rem,ph:a.ph+.6});
     a.partner=b; b.partner=a;
   }
   let made=0,tr=0;
-  while(made<10&&tr++<120){
+  while(made<(mobileCrowd?4:10)&&tr++<120){
     const i=Math.floor(rr(-3,4)),j=Math.floor(rr(-3,4)),o=RN()<.5?10.5:-10.5; let A,B,axis,coord,cc;
     if(RN()<.5){ const x0=i*R+o,z0=j*R; A={x:x0,z:z0-8.2}; B={x:x0,z:z0+8.2}; axis='x'; coord=z0; cc=x0; }
     else { const z0=j*R+o,x0=i*R; A={x:x0-8.2,z:z0}; B={x:x0+8.2,z:z0}; axis='z'; coord=x0; cc=z0; }
@@ -1570,7 +1580,7 @@ function openSheet(html,btns,typingMs){
     setTimeout(pendingReveal,typingMs);
   } else { sheetEl.classList.remove('typing'); pendingReveal=null; }
 }
-function closeSheet(){ S.modal=false; cbs=[]; sheetTok++; pendingReveal=null; chat={npc:null,log:[]}; sheetEl.classList.remove('typing'); modalEl.classList.add('hidden'); sheetEl.innerHTML=''; Snd.duck(false); }
+function closeSheet(){ S.modal=false; cbs=[]; sheetTok++; pendingReveal=null; chat={npc:null,log:[]}; sheetEl.classList.remove('typing','dialogue-sheet'); modalEl.classList.add('hidden'); sheetEl.innerHTML=''; Snd.duck(false); }
 sheetEl.addEventListener('click',e=>{
   if(pendingReveal){ pendingReveal(); return; }
   const b=e.target.closest('[data-i]'); if(!b) return;
@@ -2352,10 +2362,9 @@ function exitToHub(){
 }
 $('#pauseBtn').addEventListener('click',()=>{
   if(S.phase!=='play'||S.modal) return;
-  openSheet('<h3>Paused</h3><p class="note">'+(G.m.explore?'Module '+G.m.mod:'Mission '+G.m.n)+': '+G.m.title+'</p>',[
-    {t:'Resume',f:closeSheet},
-    {t:'Restart mission',g:1,f:()=>startMission(G.m.id)},
-    {t:'Back to hub',g:1,f:exitToHub}
+  openSheet('<h3>Paused</h3><p class="note">Take a breath. KitCity is yours to explore.</p>',[
+    {t:'Resume exploring',f:closeSheet},
+    {t:'Return to title',g:1,f:()=>{closeSheet();S.phase='title';$('#hud').classList.add('hidden');$('#title').classList.remove('hidden');}}
   ]);
 });
 
@@ -2432,10 +2441,9 @@ $('#hub').addEventListener('click',e=>{
   }
 });
 $('#startBtn').addEventListener('click',()=>{
-  Snd.unlock(); Snd.setMode('hub'); Snd.sfx('click');
-  S.phase='hub'; $('#title').classList.add('hidden'); $('#hub').classList.remove('hidden');
-  const next=EXPLORE.find(m=>m.city==='lagos'&&!P.done[m.id])||EXPLORE.find(m=>!P.done[m.id]); if(next) hubCity=next.city;
-  renderHub();
+  Snd.unlock(); Snd.setMode('play'); Snd.sfx('click');
+  if(curCity!=='lagos') buildCity('lagos');
+  adventureBegin();
 });
 function applyLang(){
   document.documentElement.lang=P.lang==='pcm'?'pcm':'en';
@@ -2479,6 +2487,257 @@ window.addEventListener('blur',()=>{ for(const k in keys) keys[k]=false; });
 document.addEventListener('contextmenu',e=>e.preventDefault());
 talkBtn.addEventListener('click',()=>interact());
 function interact(){ if(S.phase!=='play'||S.modal||!nearEnt) return; nearEnt.talk(); }
+
+/* =====================  open-world adventure runtime  ===================== */
+const ADVENTURE_KEY='kitcity_adventure_v1';
+const adventure=Object.assign({stateId:'lagos',locationId:'lagos-free-roam',travel:0,activityCount:0,exploreScore:0,completed:[],relationships:{},lastMajorAt:0,lastMajorId:null,encounterCooldowns:{},rewarded:{},dialogueState:{},discoveries:{},discoveryHints:{}},Store.get(ADVENTURE_KEY,{}));
+if(!adventure.stateId) adventure.stateId='lagos';
+if(!adventure.locationId) adventure.locationId='lagos-free-roam';
+if(!adventure.dialogueState||typeof adventure.dialogueState!=='object') adventure.dialogueState={};
+if(!adventure.discoveries||typeof adventure.discoveries!=='object') adventure.discoveries={};
+if(!adventure.discoveryHints||typeof adventure.discoveryHints!=='object') adventure.discoveryHints={};
+const adventureSave=()=>Store.set(ADVENTURE_KEY,adventure);
+const saveAdventureCheckpoint=()=>{if(S.phase==='play'&&G?.freeRoam){adventure.playerPosition={x:Number(player.position.x.toFixed(2)),z:Number(player.position.z.toFixed(2))};adventureSave();}};
+let adventureLastX=SPAWN.x,adventureLastZ=SPAWN.z,adventureMeters=0,adventureHazards=[],adventureEncounterIds=new Set(),adventureToastCd=0;
+const ADVENTURE_NPCS=[...SOCIAL_ADVENTURE_NPCS,...PROTOTYPE_MISSION_NPCS].map(def=>({...def,look:LK[def.look]||LK.guy}));
+let prototypeObjectiveVisuals=[];
+let explorationDiscoveryVisuals=[];
+const prototypeFlag=(kind,id)=>'prototype:'+kind+':'+id;
+function clearPrototypeObjectiveVisuals(){
+ for(const visual of prototypeObjectiveVisuals){
+  if(visual.parent)visual.parent.remove(visual);
+  visual.traverse?.(child=>{child.geometry?.dispose();if(Array.isArray(child.material))child.material.forEach(m=>m.dispose());else child.material?.dispose();if(child.material?.map)child.material.map.dispose();});
+ }
+ prototypeObjectiveVisuals=[];ents=ents.filter(entity=>!entity.prototypeObjective);
+}
+function objectiveGeometry(shape){
+ if(shape==='paper')return new THREE.BoxGeometry(.9,.08,.65);
+ if(shape==='usb')return new THREE.BoxGeometry(.42,.18,.82);
+ if(shape==='checkpoint')return new THREE.CylinderGeometry(.32,.48,1.15,10);
+ if(shape==='document')return new THREE.BoxGeometry(.8,.1,.6);
+ if(shape==='audio')return new THREE.BoxGeometry(.9,.2,.42);
+ if(shape==='schedule')return new THREE.BoxGeometry(.68,.12,.72);
+ if(shape==='board')return new THREE.BoxGeometry(.9,.68,.13);
+ return new THREE.BoxGeometry(.82,.52,.24);
+}
+function collectPrototypeObjective(mission,objective,choice){
+ const result=recordPrototypeObjectiveChoice(adventure,mission.id,objective.id,choice.id);
+ if(result.error){closeSheet();toast(result.error==='already-recorded'?'You have already checked this item.':'This activity is not available yet.');return;}
+ const mission=result.mission,completed=result.completed,allDone=result.allDone;
+ adventureSave();closeSheet();clearPrototypeObjectiveVisuals();refreshPrototypeObjectives();adventureAfterActivity();
+ if(allDone)toast(result.choice.feedback+' Objective complete. Return to '+mission.npcName+' to discuss what you found.');
+ else toast(result.choice.feedback+' · '+completed+'/'+result.total+' checks complete. Keep exploring.');
+}
+function inspectPrototypeObjective(mission,objective){
+ const choices=objective.choices.map(choice=>({t:choice.label,f:()=>collectPrototypeObjective(mission,objective,choice)}));
+ choices.push({t:'Not yet',f:()=>{closeSheet();adventureAfterActivity();}});
+ openSheet('<div class="who"><div><b>'+dialogueEscape(objective.label)+'</b><small>'+dialogueEscape(mission.title)+' · practical task</small></div></div><p>'+dialogueEscape(objective.instruction)+'</p><p class="note">Choose how to handle this evidence. Your choice is saved with this mission.</p>',choices);
+}
+function refreshPrototypeObjectives(){
+ clearPrototypeObjectiveVisuals();
+ const state=adventure.dialogueState||(adventure.dialogueState=createDialogueState());state.flags||={};
+ for(const mission of PROTOTYPE_MISSIONS){
+  if(!state.flags[mission.startedFlag]||state.flags[mission.objectiveCompleteFlag]||state.flags[mission.completedFlag])continue;
+  for(const objective of mission.objectives){
+   const stepFlag=prototypeFlag('objective',mission.id+':'+objective.id);if(state.flags[stepFlag])continue;
+   const root=new THREE.Group();root.position.set(objective.position.x,0,objective.position.z);
+   const base=new THREE.Mesh(new THREE.CylinderGeometry(.72,.82,.07,16),lam('#252A31'));base.position.y=.05;root.add(base);
+   const mesh=new THREE.Mesh(objectiveGeometry(objective.shape),lam(objective.color,{emissive:objective.color,emissiveIntensity:.18}));mesh.position.y=objective.shape==='board'||objective.shape==='design'?1.0:.72;root.add(mesh);
+   if(objective.shape==='checkpoint'){const cap=new THREE.Mesh(new THREE.SphereGeometry(.18,10,8),lam('#FFFFFF',{emissive:'#FFFFFF',emissiveIntensity:.4}));cap.position.y=1.42;root.add(cap);}
+   const tag=label(objective.label,objective.color,'#fff');tag.position.set(objective.position.x,3.15,objective.position.z);missionGroup.add(tag);missionGroup.add(root);prototypeObjectiveVisuals.push(root,tag);
+   ents.push({x:objective.position.x,z:objective.position.z,r:5.1,prototypeObjective:true,objective,active:()=>true,talk:()=>inspectPrototypeObjective(mission,objective)});
+  }
+ }
+}
+let activeDialogueSession=null,activeDialogueDef=null,activeDialogueLog=[],activeDialogueNode=null;
+function clearExplorationDiscoveryVisuals(){
+ for(const visual of explorationDiscoveryVisuals){
+  if(visual.parent)visual.parent.remove(visual);
+  visual.traverse?.(child=>{child.geometry?.dispose();if(Array.isArray(child.material))child.material.forEach(m=>m.dispose());else child.material?.dispose();if(child.material?.map)child.material.map.dispose();});
+ }
+ explorationDiscoveryVisuals=[];ents=ents.filter(entity=>!entity.explorationDiscovery);
+}
+function inspectExplorationDiscovery(discovery){
+ const alreadySeen=!!adventure.discoveries[discovery.id];
+ const reward=discovery.reward||{};
+ const memory=alreadySeen?'<p class="msg"><small>YOU REMEMBER</small>'+dialogueEscape(discovery.memory||'A familiar face remembers you.')+'</p>':'';
+ openSheet('<div class="who"><div class="av" style="background:'+discovery.color+'">'+dialogueEscape(discovery.icon.slice(0,1))+'</div><div><b>'+dialogueEscape(discovery.name)+'</b><small>Optional street discovery</small></div></div><p>'+dialogueEscape(discovery.description)+'</p>'+memory+(alreadySeen?'<p class="note">You have already collected this discovery’s reward. Keep wandering; there is no mission to start here.</p>':'<p><b>'+dialogueEscape(discovery.activity)+'</b></p><p class="note">A small local discovery—no lesson required.</p>'),alreadySeen?[{t:'Back to the streets',f:closeSheet}]:[{t:'Explore this spot',f:()=>{
+  if(adventure.discoveries[discovery.id]){closeSheet();return;}
+  const recorded=recordExplorationDiscovery(adventure,discovery.id);
+  if(recorded.error){closeSheet();toast('You have already explored this spot.');return;}
+  adventure.discoveryHints[discovery.id]=true;P.xp+=recorded.reward.xp||0;P.ngn+=recorded.reward.ngn||0;
+  P.done['discovery_'+discovery.id]=true;adventureSave();save();closeSheet();refreshExplorationDiscoveries();updateHUD();Snd.sfx('chime');
+  toast('Discovered '+discovery.name+' · +'+(recorded.reward.xp||0)+' XP'+(recorded.reward.ngn?' · '+fmtN(recorded.reward.ngn):''));
+ }},{t:'Maybe later',g:1,f:closeSheet}]);
+}
+function refreshExplorationDiscoveries(){
+ clearExplorationDiscoveryVisuals();
+ for(const discovery of EXPLORATION_DISCOVERIES){
+  const visited=!!adventure.discoveries[discovery.id],root=new THREE.Group();
+  root.position.set(discovery.position.x,0,discovery.position.z);
+  const color=visited?'#9AA4AE':discovery.color;
+  const make=(geometry,shade,x,y,z)=>{const mesh=new THREE.Mesh(geometry,lam(shade));mesh.position.set(x,y,z);root.add(mesh);return mesh;};
+  make(new THREE.CylinderGeometry(.8,.95,.08,14),'#18222b',0,.06,0);
+  if(discovery.id==='buka-lunch-stop'){
+   make(new THREE.BoxGeometry(2.2,1.15,.72),visited?'#65706E':'#0B7A43',0,.68,0);
+   make(new THREE.BoxGeometry(2.7,.2,1.0),visited?'#9AA4AE':'#F6B21A',0,1.38,0);
+   make(new THREE.BoxGeometry(1.6,.42,.08),'#E8D7B8',0,1.0,.4);
+   make(new THREE.BoxGeometry(.72,.1,.5),'#C7457E',-.48,.9,.48);
+  }else if(discovery.id==='old-cinema-mural'){
+   make(new THREE.BoxGeometry(2.8,1.8,.14),'#B6A58C',0,1.0,0);
+   make(new THREE.BoxGeometry(2.25,1.28,.08),visited?'#9AA4AE':'#C7457E',0,1.05,.1);
+   make(new THREE.BoxGeometry(.18,1.0,.06),'#F6B21A',-.62,1.05,.16);
+   make(new THREE.BoxGeometry(.18,.76,.06),'#0B7A43',0,1.05,.16);
+   make(new THREE.BoxGeometry(.18,.88,.06),'#2D6FB3',.62,1.05,.16);
+  }else if(discovery.id==='community-football'){
+   make(new THREE.SphereGeometry(.46,10,8),visited?'#9AA4AE':'#F4F1E8',0,.5,0);
+   make(new THREE.ConeGeometry(.24,.48,5),'#1B1C20',-.28,.5,.24);
+   make(new THREE.ConeGeometry(.24,.48,5),'#1B1C20',.28,.5,-.24);
+   make(new THREE.TorusGeometry(1.0,.06,5,18),'#F6B21A',0,.1,0).rotation.x=Math.PI/2;
+  }else{
+   make(new THREE.BoxGeometry(.14,1.5,.14),'#6B4932',-.8,.76,0);
+   make(new THREE.BoxGeometry(.14,1.5,.14),'#6B4932',.8,.76,0);
+   make(new THREE.BoxGeometry(1.9,1.12,.16),visited?'#9AA4AE':'#2D6FB3',0,1.25,0);
+   make(new THREE.BoxGeometry(.38,.32,.06),'#F6B21A',-.48,1.35,.12);
+   make(new THREE.BoxGeometry(.38,.42,.06),'#E8D7B8',0,1.3,.12);
+   make(new THREE.BoxGeometry(.38,.26,.06),'#C7457E',.48,1.38,.12);
+  }
+  missionGroup.add(root);
+  const tag=label(visited?discovery.name+' · remembered':discovery.name,color,'#fff');tag.position.set(discovery.position.x,3.25,discovery.position.z);missionGroup.add(tag);
+  explorationDiscoveryVisuals.push(root,tag);
+  ents.push({x:discovery.position.x,z:discovery.position.z,r:6.2,kind:'discovery',explorationDiscovery:discovery,active:()=>true,talk:()=>inspectExplorationDiscovery(discovery)});
+ }
+}
+function adventureBegin(){
+ closeSheet(); G={m:{id:'free-roam',title:'Explore KitCity',n:'',explore:true,steps:[]},i:0,bonus:0,used:{},freeRoam:true};
+ clearGroup(missionGroup); colliders.length=cityCols; smoke=[]; ents=[]; goal=null; beacon.visible=false;
+ adventureEncounterIds.clear(); adventureHazards=[];
+ let activeLocation=getWorldLocation(adventure.locationId||'lagos-free-roam');
+ if(!activeLocation||activeLocation.status!=='playable'){
+   activeLocation=getWorldLocation('lagos-free-roam');
+   adventure.locationId=activeLocation?.id||'lagos-free-roam';
+   adventureSave();
+ }
+ adventure.dialogueState=createDialogueState(adventure.dialogueState);
+ for(const def of ADVENTURE_NPCS){
+   const spawnPoint=(activeLocation?.npcSpawnPoints||[]).find(point=>(point.missionId&&point.missionId===def.id)||(point.npcProfileId&&point.npcProfileId===def.npcProfileId)||(point.encounterId&&point.encounterId===def.id));
+   const spot=spawnPoint?.position||SPOTS[def.spot]||def.position; if(!spot) continue;
+   const look=typeof def.look==='string'?(LK[def.look]||LK.guy):def.look;
+   const npc=NPC(def.name,def.role,def.color,look,null,def.sign); npc.signBg=def.color;npc.signFg='#fff';
+   const p=buildPerson({top:def.color,bottom:'#343746',shoe:'#eee',skin:'#7a4a2e',detail:true});
+   p.position.set(spot.x,.05,spot.z);p.rotation.y=spot.f>0?Math.PI/2:-Math.PI/2;missionGroup.add(p);
+   const sign=label(def.sign,def.color,'#fff');sign.position.set(spot.x,5.8,spot.z);missionGroup.add(sign);
+   const e={x:spot.x,z:spot.z,r:6.8,def,npc,active:()=>true,talk:()=>adventureTalk(def)};
+   ents.push(e); adventureEncounterIds.add(def.id);
+ }
+ refreshPrototypeObjectives();
+ refreshExplorationDiscoveries();
+ spawnAdventureHazards();
+ S.phase='play';S.modal=false;$('#hub').classList.add('hidden');$('#title').classList.add('hidden');$('#hud').classList.remove('hidden');
+ $('#mTitle').textContent='Explore KitCity';$('#steps').innerHTML='<li class="now">Explore freely</li><li>Find people and activities</li><li>Earn rewards and keep going</li>';
+ Snd.setMode('play');resetPlayer();
+ const checkpoint=adventure.playerPosition;
+ if(checkpoint&&Number.isFinite(checkpoint.x)&&Number.isFinite(checkpoint.z)&&Math.abs(checkpoint.x)<=205&&Math.abs(checkpoint.z)<=205){player.position.set(checkpoint.x,.05,checkpoint.z);resolve(player.position,1);resolve(player.position,1);camera.position.set(player.position.x,35,player.position.z+20);}
+ adventureLastX=player.position.x;adventureLastZ=player.position.z;
+ $('#loading').classList.add('hidden');updateHUD();toast('Explore freely · left stick to move · Run to sprint · tap Talk or Look nearby.');
+}
+function dialogueEscape(value){
+ return String(value==null?'':value).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function renderDialogueNode(node){
+ if(!node||!activeDialogueDef)return;
+ activeDialogueNode=node;
+ S.modal=true;joy.reset();sheetEl.classList.add('dialogue-sheet');
+ const recent=activeDialogueLog.slice(-5);
+ const bubbles=recent.map(item=>'<div class="dialogue-bubble '+(item.kind==='player'?'player':'')+'"><div class="dialogue-speaker">'+dialogueEscape(item.speaker)+'</div><div class="dialogue-text">'+dialogueEscape(item.text)+'</div></div>').join('');
+ const tag=(node.conceptTags||[])[0];
+ const choices=(node.choices||[]).map(choice=>({t:choice.label,g:choice.style==='quiet',f:()=>chooseDialogue(choice.id)}));
+ const row=choices.length?'<div class="row">'+choices.map((choice,i)=>'<button class="btn'+(choice.g?' ghost':'')+'" data-i="'+i+'" type="button">'+dialogueEscape(choice.t)+'</button>').join('')+'</div>':'<div class="dialogue-footer">No response available. Close to return to the street.</div>';
+ cbs=choices.map(choice=>choice.f);pendingReveal=null;sheetEl.classList.remove('typing');
+ sheetEl.innerHTML='<div class="dialogue-top"><div class="dialogue-avatar">'+dialogueEscape(activeDialogueDef.name.trim().charAt(0).toUpperCase())+'</div><div><div class="dialogue-name">'+dialogueEscape(activeDialogueDef.name)+'</div><div class="dialogue-role">'+dialogueEscape(activeDialogueDef.role)+'</div></div>'+(tag?'<div class="dialogue-tag">'+dialogueEscape(String(tag).replace(/-/g,' '))+'</div>':'')+'</div><div class="dialogue-history" aria-live="polite">'+bubbles+'</div>'+row+'<div class="dialogue-footer">Choose a response · Your choices can shape future conversations</div>';
+ modalEl.classList.remove('hidden');talkBtn.classList.add('hidden');Snd.duck(true);
+ sheetEl.scrollTop=sheetEl.scrollHeight;
+ const historyEl=sheetEl.querySelector('.dialogue-history');if(historyEl)historyEl.scrollTop=historyEl.scrollHeight;
+}
+function adventureTalk(def){
+ if(S.modal)return;
+ const content=getDialogue(def.dialogueId);
+ if(!content){toast('This conversation is not available yet.');return;}
+ activeDialogueDef=def;
+ activeDialogueSession=new ConversationEngine({content,state:createDialogueState(adventure.dialogueState),context:{exploreScore:adventure.exploreScore,travelMeters:adventure.travel}});
+ const started=activeDialogueSession.start();
+ adventure.dialogueState=started.state;adventureSave();
+ if(started.unavailable){activeDialogueSession=null;activeDialogueDef=null;toast(started.reason||'Come back after exploring the earlier idea.');return;}
+ activeDialogueLog=[{speaker:started.node.speaker||def.name,text:started.node.text,kind:'npc'}];
+ renderDialogueNode(started.node);
+}
+function chooseDialogue(choiceId){
+ if(!activeDialogueSession||!activeDialogueNode)return;
+ const selected=(activeDialogueNode.choices||[]).find(choice=>choice.id===choiceId);
+ if(!selected)return;
+ const result=activeDialogueSession.choose(choiceId);
+ if(result.error){toast('That response is no longer available.');return;}
+ adventure.dialogueState=result.state;adventureSave();
+ activeDialogueLog.push({speaker:'You',text:selected.label,kind:'player'});
+ if(result.node){
+   activeDialogueLog.push({speaker:result.node.speaker||activeDialogueDef.name,text:result.node.text,kind:'npc'});
+   renderDialogueNode(result.node);Snd.sfx('click');return;
+ }
+ const def=activeDialogueDef,choiceIndex=result.choiceIndex;
+ const shouldReward=Boolean(result.missionCompleted);
+ refreshPrototypeObjectives();
+ if(shouldReward&&def.conceptId){
+   const history=adventure.dialogueState.conceptHistory||(adventure.dialogueState.conceptHistory={});
+   const entries=history[def.conceptId]||(history[def.conceptId]=[]);
+   if(!entries.some(entry=>entry.missionId===def.id))entries.push({missionId:def.id,locationId:adventure.locationId||'lagos-free-roam'});
+   adventureSave();
+ }
+ activeDialogueSession=null;activeDialogueDef=null;activeDialogueNode=null;activeDialogueLog=[];
+ closeSheet();
+ if(shouldReward){
+   const mapped=ADVENTURE_NPCS.find(item=>item.dialogueId===def.dialogueId)||def;
+   adventureComplete(mapped,choiceIndex);
+ }else{
+   adventureSave();adventureAfterActivity();
+   if(result.ending)toast(result.ending);
+ }
+ Snd.sfx(shouldReward?'done':'click');
+}
+function adventureComplete(d,choiceIndex){
+ closeSheet();const first=!adventure.completed.includes(d.id);
+ if(first){adventure.completed.push(d.id);adventure.activityCount++;adventure.exploreScore+=10;adventure.rewarded[d.id]=true;
+   const r=d.reward||{};P.xp+=r.xp||0;P.ngn+=r.ngn||0;P.done['adventure_'+d.id]=true;
+   if(d.major){adventure.lastMajorId=d.id;adventure.lastMajorAt=adventure.activityCount;}
+   adventure.relationships[d.name]=(adventure.relationships[d.name]||0)+1;
+   adventureSave();save();Snd.sfx('done');updateHUD();
+   openSheet('<div class="who"><div><b>Activity complete</b><small>'+d.name+' · '+d.role+'</small></div></div><div class="kv"><span>XP earned</span><b>+'+(r.xp||0)+'</b></div><div class="kv"><span>Street reward</span><b>'+fmtN(r.ngn||0)+'</b></div><p>'+ (r.item?'Found / earned: '+r.item.replace(/-/g,' ')+'.':'You helped someone in KitCity.')+'</p><p class="note">You’re free to continue exploring. No next mission is required.</p>',[{t:'Back to the streets',f:()=>{closeSheet();adventureAfterActivity();}}]);
+ }else{closeSheet();adventureAfterActivity();}
+}
+function adventureAfterActivity(){
+ G={m:{id:'free-roam',title:'Explore KitCity',n:'',explore:true,steps:[]},i:0,bonus:0,used:{},freeRoam:true};
+ $('#mTitle').textContent='Explore KitCity';$('#steps').innerHTML='<li class="now">Explore freely</li><li>Find people and activities</li><li>Earn rewards and keep going</li>';
+}
+function spawnAdventureHazards(){
+ // Visual-only, low-profile potholes are placed on open road margins, never in the spawn area.
+ const spots=[{x:24,z:-42},{x:-24,z:-92},{x:92,z:-48},{x:-92,z:-132}];
+ for(const h of spots){
+   if(Math.hypot(h.x-SPAWN.x,h.z-SPAWN.z)<25)continue;
+   const rim=new THREE.Mesh(new THREE.CylinderGeometry(1.15,1.3,.08,12),lam('#33383d'));rim.position.set(h.x,.04,h.z);missionGroup.add(rim);
+   const pit=new THREE.Mesh(new THREE.CircleGeometry(.85,12),lam('#18191c'));pit.rotation.x=-Math.PI/2;pit.position.set(h.x,.09,h.z);missionGroup.add(pit);
+   adventureHazards.push({x:h.x,z:h.z,r:2.2});colliders.push({x0:h.x-1.05,x1:h.x+1.05,z0:h.z-1.05,z1:h.z+1.05});
+ }
+}
+function adventureTick(dt){
+ if(S.phase!=='play'||!G||!G.freeRoam)return;
+ const p=player.position,dx=p.x-adventureLastX,dz=p.z-adventureLastZ,dist=Math.hypot(dx,dz);
+ if(dist>.01){adventureMeters+=dist;adventure.travel+=dist;adventure.exploreScore+=dist*.03;adventureLastX=p.x;adventureLastZ=p.z;}
+ adventureToastCd=Math.max(0,adventureToastCd-dt);
+ // Encourage careful navigation without damage or forced movement.
+ for(const h of adventureHazards){if(Math.hypot(p.x-h.x,p.z-h.z)<h.r&&adventureToastCd<=0){toast('Watch the pothole — steer around it.');adventureToastCd=4;}}
+ if(adventureMeters>45){adventureMeters=0;adventure.activityCount++;saveAdventureCheckpoint();}
+}
+
+function interact(){ if(S.phase!=='play'||S.modal||!nearEnt) return; if(nearEnt.def) { nearEnt.talk(); return; } nearEnt.talk(); }
 
 /* =====================  collisions  ===================== */
 function resolve(p,r){
@@ -2527,6 +2786,7 @@ function fadeBuildings(dt,active){
 }
 
 /* =====================  loop  ===================== */
+window.addEventListener('pagehide',()=>{saveAdventureCheckpoint();save();});
 const clock=new THREE.Clock();
 const camTarget=new THREE.Vector3(),camDesired=new THREE.Vector3();
 let lastDist=-1;
@@ -2608,6 +2868,7 @@ function updateWalkers(dt,time){
 }
 function update(dt,time){
   updateCars(dt);
+  adventureTick(dt);
   updateWalkers(dt,time);
   { const play=S.phase==='play',fx=play?player.position.x:25,fz=play?player.position.z:-55;
     sun.position.set(fx+LKS.sx,LKS.sy,fz+LKS.sz); sun.target.position.set(fx,0,fz); sun.target.updateMatrixWorld(); atmoUpdate(dt,time,fx,fz);
@@ -2646,6 +2907,8 @@ function update(dt,time){
     if(d<e.r&&d<best){ best=d; nearEnt=e; }
   }
   talkBtn.classList.toggle('hidden',!(nearEnt&&!S.modal));
+  if(nearEnt&&!S.modal)talkBtn.textContent=nearEnt.kind==='discovery'?'Look':'Talk';
+  else talkBtn.textContent='Talk';
   const compass=$('#compass');
   if(goal){
     compass.classList.remove('hidden');
@@ -2666,7 +2929,7 @@ function update(dt,time){
 }
 function tick(){
   requestAnimationFrame(tick);
-  const dt=Math.min(clock.getDelta(),.05);
+  const dt=Math.min(clock.getDelta(),.2);
   update(dt,clock.elapsedTime);
   if(GR) GR.render(); else renderer.render(scene,camera);
 }
@@ -2679,4 +2942,14 @@ applyLang();
 bootStep(94,'Almost ready…');
 tick();
 requestAnimationFrame(()=>bootDone());
+if(location.hostname==='127.0.0.1'||location.hostname==='localhost'){
+ Object.defineProperty(window,'__KITCITY_E2E__',{configurable:false,writable:false,value:Object.freeze({
+  position:()=>({x:Number(player.position.x.toFixed(2)),z:Number(player.position.z.toFixed(2))}),
+  phase:()=>S.phase,
+  nearby:()=>nearEnt?(nearEnt.def?.name||nearEnt.explorationDiscovery?.name||nearEnt.objective?.label||null):null,
+  controls:()=>inputVec(),
+  keys:()=>Object.keys(keys).filter(key=>keys[key]),
+  modal:()=>S.modal
+ })});
+}
 }
