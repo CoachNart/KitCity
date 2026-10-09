@@ -96,7 +96,7 @@ export class ConversationEngine {
     const choices = (node.choices || []).filter(choice =>
       matchesCondition(choice.requires, this.state, { ...this.context, npcId: this.npcId }) &&
       (!choice.optional || this.state.unlockedFollowUps[choice.id] || choice.alwaysAvailable)
-    ).slice(0, 4).map(({ id, label, style }) => ({ id, label, style: style || "normal" }));
+    ).slice(0, node.allowExit === false ? 4 : 3).map(({ id, label, style }) => ({ id, label, style: style || "normal" }));
     if (node.allowExit !== false && choices.length < 4) choices.push({ id: "__leave_conversation", label: this.content.exitLabel || "I’ll let you get back to it", style: "quiet" });
     return { id: node.id || this.nodeId, speaker: node.speaker || this.content.npcName || "Resident", role: node.role || this.content.role || "", text: text || "", portrait: node.portrait || this.content.portrait || null, conceptTags: node.conceptTags || this.content.conceptTags || [], choices };
   }
