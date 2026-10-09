@@ -52,8 +52,8 @@ try {
 
   // Travel through the existing Lagos street grid to Amaka's actual in-world encounter.
   await hold(page, ["Shift", "W"], 5000);
-  await hold(page, ["Shift", "D"], 3900);
-  await hold(page, ["Shift", "W"], 2300);
+  await hold(page, ["Shift", "D"], 4600);
+  await hold(page, ["Shift", "W"], 3100);
   const arrival = await page.evaluate(() => ({
     position: window.__KITCITY_E2E__?.position(),
     nearby: window.__KITCITY_E2E__?.nearby(),
