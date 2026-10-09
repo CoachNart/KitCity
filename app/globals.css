@@ -228,3 +228,13 @@ html,body{height:100%;overflow:hidden;background:var(--ink);color:var(--ink);fon
   #hubBody>.card{padding:18px}
 }
 @media(prefers-reduced-motion:reduce){#nav button,.card,.btn{transition:none}}
+
+
+/* Player identity / username entry */
+.player-entry{width:min(100%,390px);margin:0 auto 14px;padding:14px 15px;border:1px solid rgba(255,255,255,.2);border-radius:14px;background:rgba(18,22,27,.62);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);color:#fff;text-align:left}
+.player-entry label{display:block;margin-bottom:8px;font-size:11px;font-weight:900;letter-spacing:.09em;color:var(--brand)}
+.player-entry input{display:block;width:100%;min-height:48px;padding:12px 13px;border:2px solid rgba(0,229,255,.65);border-radius:9px;outline:none;background:#101519;color:#fff;font:700 16px/1.2 system-ui,sans-serif;user-select:text;-webkit-user-select:text}
+.player-entry input:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(0,229,255,.18)}
+.player-entry input::placeholder{color:rgba(255,255,255,.45)}
+#playerNameHelp{display:block;margin-top:7px;font-size:11px;line-height:1.4;color:rgba(255,255,255,.72)}
+#playerNameError{min-height:0;margin-top:5px;color:#ffb4a9;font-size:12px;font-weight:700}
