@@ -24,7 +24,7 @@ const waitForGame = async page => {
   await page.waitForFunction(() => {
     const loader = document.querySelector("#bootLoading");
     return !loader || loader.classList.contains("done");
-  }, { timeout: 60000 });
+  }, undefined, { timeout: 60000 });
   await page.waitForTimeout(600);
 };
 const hold = async (page, keys, ms) => {
