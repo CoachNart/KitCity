@@ -5,7 +5,12 @@ import { fileURLToPath } from "node:url";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 async function importSource(relativePath) {
-  const source = await readFile(path.join(root, relativePath), "utf8");
+  let source = await readFile(path.join(root, relativePath), "utf8");
+  if (relativePath === "game/dialogue-content.js") {
+    const educationalSource = await readFile(path.join(root, "game/educational-content.js"), "utf8");
+    const educationalModule = "data:text/javascript;base64," + Buffer.from(educationalSource).toString("base64");
+    source = source.replace('"./educational-content.js"', JSON.stringify(educationalModule));
+  }
   return import("data:text/javascript;base64," + Buffer.from(source).toString("base64"));
 }
 const engine = await importSource("game/conversation-engine.js");
