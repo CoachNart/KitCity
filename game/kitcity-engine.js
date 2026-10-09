@@ -562,6 +562,18 @@ const CITY_Y={
     more:[['PEPPER SOUP JOINT','#C8402A','#ffffff'],['DIVINE FAVOUR PROVISIONS','#0B7A43','#ffffff'],['NKECHI POS','#F6B21A','#1B1C20'],['FRESH FISH & SNAIL','#2D6FB3','#ffffff'],['TOKUNBO TYRES','#1B1C20','#F6B21A']]}
 };
 Object.keys(CITY_Y).forEach(k=>{ const y=CITY_Y[k]; Object.assign(CITIES[k],y); CITIES[k].signs=CITIES[k].signs.concat(y.more); });
+// Extra cities are declared before the city-specific extension tables. Inherit the
+// full base-city build profile only after both tables exist; otherwise districts,
+// signs and environmental settings are missing and buildCity() crashes on selection.
+EXTRA_CITIES.forEach(([key,, , , , , ,language])=>{
+  const baseKey=['hausa','kanuri','fulfulde','nupe'].includes(language)?'kano':
+    ['igbo','ibibio','ijaw'].includes(language)?'ph':'lagos';
+  const x=CITY_X[baseKey]||{};
+  const y=CITY_Y[baseKey]||CITY_Y.lagos;
+  Object.assign(CITIES[key],x,y);
+  if(x.signs) CITIES[key].signs=x.signs.slice();
+  if(y.more) CITIES[key].signs=(CITIES[key].signs||[]).concat(y.more);
+});
 const NEWC={
   ibadan:{name:'Ibadan',tag:'The city of rusty rooftops',lon:3.9,lat:7.4,seed:61,sky:0xEBC48F,ground:'#2E2D30',slab:'#BDB5A6',
     paint:['#D9B99B','#C98F6B','#E0C9A6','#B7A58F','#9FB7A5','#E7D27A'],market:3,palm:.5,tree:.5,leaf:'#3a7a3f',dirt:'#9a5a38',
