@@ -1,8 +1,7 @@
 import * as THREE from 'three';
 import { ConversationEngine, createDialogueState } from './conversation-engine.js';
 import { getDialogue } from './dialogue-content.js';
-import { EDUCATIONAL_NPCS } from './educational-content.js';
-import { selectEducationalMissions } from './mission-distribution.js';
+import { PROTOTYPE_MISSIONS, PROTOTYPE_MISSION_NPCS } from './prototype-missions.js';
 import { getWorldLocation } from './world-registry.js';
 import { SOCIAL_ADVENTURE_NPCS } from './adventure-data.js';
 
@@ -2492,7 +2491,63 @@ if(!adventure.locationId) adventure.locationId='lagos-free-roam';
 if(!adventure.dialogueState||typeof adventure.dialogueState!=='object') adventure.dialogueState={};
 const adventureSave=()=>Store.set(ADVENTURE_KEY,adventure);
 let adventureLastX=SPAWN.x,adventureLastZ=SPAWN.z,adventureMeters=0,adventureHazards=[],adventureEncounterIds=new Set(),adventureToastCd=0;
-const ADVENTURE_NPCS=SOCIAL_ADVENTURE_NPCS.map(def=>({...def,look:LK[def.look]||LK.guy}));
+const ADVENTURE_NPCS=[...SOCIAL_ADVENTURE_NPCS,...PROTOTYPE_MISSION_NPCS].map(def=>({...def,look:LK[def.look]||LK.guy}));
+let prototypeObjectiveVisuals=[];
+const prototypeFlag=(kind,id)=>'prototype:'+kind+':'+id;
+function clearPrototypeObjectiveVisuals(){
+ for(const visual of prototypeObjectiveVisuals){
+  if(visual.parent)visual.parent.remove(visual);
+  visual.traverse?.(child=>{child.geometry?.dispose();if(Array.isArray(child.material))child.material.forEach(m=>m.dispose());else child.material?.dispose();if(child.material?.map)child.material.map.dispose();});
+ }
+ prototypeObjectiveVisuals=[];ents=ents.filter(entity=>!entity.prototypeObjective);
+}
+function objectiveGeometry(shape){
+ if(shape==='paper')return new THREE.BoxGeometry(.9,.08,.65);
+ if(shape==='usb')return new THREE.BoxGeometry(.42,.18,.82);
+ if(shape==='checkpoint')return new THREE.CylinderGeometry(.32,.48,1.15,10);
+ if(shape==='document')return new THREE.BoxGeometry(.8,.1,.6);
+ if(shape==='audio')return new THREE.BoxGeometry(.9,.2,.42);
+ if(shape==='schedule')return new THREE.BoxGeometry(.68,.12,.72);
+ if(shape==='board')return new THREE.BoxGeometry(.9,.68,.13);
+ return new THREE.BoxGeometry(.82,.52,.24);
+}
+function collectPrototypeObjective(objective,choice){
+ const mission=PROTOTYPE_MISSIONS.find(item=>item.id===objective.missionId);if(!mission)return;
+ const state=adventure.dialogueState||(adventure.dialogueState=createDialogueState());state.flags||={};
+ const stepFlag=prototypeFlag('objective',mission.id+':'+objective.id);
+ if(state.flags[stepFlag]){closeSheet();toast('You have already checked this item.');return;}
+ state.flags[stepFlag]=true;
+ adventure.prototypeDecisions||={};adventure.prototypeDecisions[mission.id]||={};
+ adventure.prototypeDecisions[mission.id][objective.id]={choiceId:choice.id,feedback:choice.feedback};
+ const completed=mission.objectives.filter(item=>state.flags[prototypeFlag('objective',mission.id+':'+item.id)]).length;
+ const allDone=completed===mission.objectives.length;
+ if(allDone)state.flags[mission.objectiveCompleteFlag]=true;
+ adventureSave();closeSheet();clearPrototypeObjectiveVisuals();refreshPrototypeObjectives();adventureAfterActivity();
+ if(allDone)toast('Objective complete. Return to '+mission.npcName+' to discuss what you found.');
+ else toast('Evidence recorded · '+completed+'/'+mission.objectives.length+' checks complete. Keep exploring.');
+}
+function inspectPrototypeObjective(objective){
+ const mission=PROTOTYPE_MISSIONS.find(item=>item.id===objective.missionId);if(!mission)return;
+ const choices=objective.choices.map(choice=>({t:choice.label,f:()=>collectPrototypeObjective(objective,choice)}));
+ choices.push({t:'Not yet',f:()=>{closeSheet();adventureAfterActivity();}});
+ openSheet('<div class="who"><div><b>'+dialogueEscape(objective.label)+'</b><small>'+dialogueEscape(mission.title)+' · practical task</small></div></div><p>'+dialogueEscape(objective.instruction)+'</p><p class="note">Choose how to handle this evidence. Your choice is saved with this mission.</p>',choices);
+}
+function refreshPrototypeObjectives(){
+ clearPrototypeObjectiveVisuals();
+ const state=adventure.dialogueState||(adventure.dialogueState=createDialogueState());state.flags||={};
+ for(const mission of PROTOTYPE_MISSIONS){
+  if(!state.flags[mission.startedFlag]||state.flags[mission.objectiveCompleteFlag]||state.flags[mission.completedFlag])continue;
+  for(const objective of mission.objectives){
+   const stepFlag=prototypeFlag('objective',mission.id+':'+objective.id);if(state.flags[stepFlag])continue;
+   const root=new THREE.Group();root.position.set(objective.position.x,0,objective.position.z);
+   const base=new THREE.Mesh(new THREE.CylinderGeometry(.72,.82,.07,16),lam('#252A31'));base.position.y=.05;root.add(base);
+   const mesh=new THREE.Mesh(objectiveGeometry(objective.shape),lam(objective.color,{emissive:objective.color,emissiveIntensity:.18}));mesh.position.y=objective.shape==='board'||objective.shape==='design'?1.0:.72;root.add(mesh);
+   if(objective.shape==='checkpoint'){const cap=new THREE.Mesh(new THREE.SphereGeometry(.18,10,8),lam('#FFFFFF',{emissive:'#FFFFFF',emissiveIntensity:.4}));cap.position.y=1.42;root.add(cap);}
+   const tag=label(objective.label,objective.color,'#fff');tag.position.set(objective.position.x,3.15,objective.position.z);missionGroup.add(tag);missionGroup.add(root);prototypeObjectiveVisuals.push(root,tag);
+   ents.push({x:objective.position.x,z:objective.position.z,r:5.1,prototypeObjective:true,objective,active:()=>true,talk:()=>inspectPrototypeObjective(objective)});
+  }
+ }
+}
 let activeDialogueSession=null,activeDialogueDef=null,activeDialogueLog=[],activeDialogueNode=null;
 function adventureBegin(){
  closeSheet(); G={m:{id:'free-roam',title:'Explore KitCity',n:'',explore:true,steps:[]},i:0,bonus:0,used:{},freeRoam:true};
@@ -2504,9 +2559,8 @@ function adventureBegin(){
    adventure.locationId=activeLocation?.id||'lagos-free-roam';
    adventureSave();
  }
- const selectedEducationalIds=new Set(selectEducationalMissions({locationId:adventure.locationId,dialogueState:adventure.dialogueState,limit:6,allowDeepening:true}).map(mission=>mission.id));
- const locationEducationalNpcs=EDUCATIONAL_NPCS.filter(def=>selectedEducationalIds.has(def.id));
- for(const def of [...ADVENTURE_NPCS,...locationEducationalNpcs]){
+ adventure.dialogueState=createDialogueState(adventure.dialogueState);
+ for(const def of ADVENTURE_NPCS){
    const spawnPoint=(activeLocation?.npcSpawnPoints||[]).find(point=>(point.missionId&&point.missionId===def.id)||(point.npcProfileId&&point.npcProfileId===def.npcProfileId)||(point.encounterId&&point.encounterId===def.id));
    const spot=spawnPoint?.position||SPOTS[def.spot]||def.position; if(!spot) continue;
    const look=typeof def.look==='string'?(LK[def.look]||LK.guy):def.look;
@@ -2517,6 +2571,7 @@ function adventureBegin(){
    const e={x:spot.x,z:spot.z,r:6.8,def,npc,active:()=>true,talk:()=>adventureTalk(def)};
    ents.push(e); adventureEncounterIds.add(def.id);
  }
+ refreshPrototypeObjectives();
  spawnAdventureHazards();
  S.phase='play';S.modal=false;$('#hub').classList.add('hidden');$('#title').classList.add('hidden');$('#hud').classList.remove('hidden');
  $('#mTitle').textContent='Explore KitCity';$('#steps').innerHTML='<li class="now">Explore freely</li><li>Find people and activities</li><li>Earn rewards and keep going</li>';
@@ -2567,6 +2622,7 @@ function chooseDialogue(choiceId){
  }
  const def=activeDialogueDef,choiceIndex=result.choiceIndex;
  const shouldReward=Boolean(result.missionCompleted);
+ refreshPrototypeObjectives();
  if(shouldReward&&def.conceptId){
    const history=adventure.dialogueState.conceptHistory||(adventure.dialogueState.conceptHistory={});
    const entries=history[def.conceptId]||(history[def.conceptId]=[]);
