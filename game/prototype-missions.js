@@ -172,7 +172,7 @@ const missionRows = [
     ]
   },
   {
-    id:"kitcity-clinic-schedule", sectors:["healthcare","government"], conceptId:"health-data-rights", title:"The Clinic Records Officer",
+    id:"kitcity-clinic-schedule", sectors:["healthcare","public administration"], conceptId:"health-data-rights", title:"The Clinic Records Officer",
     npcId:"halima-clinic-records", npcName:"Halima", role:"Clinic records officer",
     personality:"Calm, organized, privacy-first",
     ageRange:"30s-40s", economicContext:"busy clinic team with limited staff and a need to coordinate appointments",
@@ -209,7 +209,7 @@ const missionRows = [
     ]
   },
   {
-    id:"kitcity-community-budget", sectors:["community","government"], conceptId:"community-governance", title:"The Community Leader",
+    id:"kitcity-community-budget", sectors:["community","governance"], conceptId:"community-governance", title:"The Community Leader",
     npcId:"aisha-community-organizer", npcName:"Aisha", role:"Community project organizer",
     personality:"Facilitates disagreement, asks for evidence, values accountability",
     ageRange:"30s-50s", economicContext:"volunteer organizer coordinating limited funds and competing local needs",
