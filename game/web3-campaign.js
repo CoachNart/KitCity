@@ -450,7 +450,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "The cryptonian",
     "success": "Good call. Legitimate support should never need your recovery phrase.",
     "consequence": "That choice creates an avoidable risk. Legitimate support should never need your recovery phrase. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks.",
+    "city": "owerri",
+    "localName": "Chika",
+    "localRole": "Phone repairer",
+    "site": "Eke Ukwu market"
   },
   {
     "id": "campaign_010",
@@ -473,7 +477,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "Joseph Nnadi",
     "success": "Good call. Unknown tokens and urgency links can be traps.",
     "consequence": "That choice creates an avoidable risk. Unknown tokens and urgency links can be traps. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks.",
+    "city": "owerri",
+    "localName": "Chika",
+    "localRole": "Phone repairer",
+    "site": "Eke Ukwu market"
   },
   {
     "id": "campaign_011",
@@ -496,7 +504,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "The don",
     "success": "Good call. Handles, domains and announcements need independent verification.",
     "consequence": "That choice creates an avoidable risk. Handles, domains and announcements need independent verification. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks.",
+    "city": "aba",
+    "localName": "Uche",
+    "localRole": "Shoe maker",
+    "site": "Ariaria market"
   },
   {
     "id": "campaign_012",
@@ -519,7 +531,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "Praise",
     "success": "Good call. An approval can let a contract move assets within the granted allowance.",
     "consequence": "That choice creates an avoidable risk. An approval can let a contract move assets within the granted allowance. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks.",
+    "city": "aba",
+    "localName": "Uche",
+    "localRole": "Shoe maker",
+    "site": "Ariaria market"
   },
   {
     "id": "campaign_013",
@@ -542,7 +558,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "Toza",
     "success": "Good call. A recovery phrase can restore control; anyone who gets it may take the wallet.",
     "consequence": "That choice creates an avoidable risk. A recovery phrase can restore control; anyone who gets it may take the wallet. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks.",
+    "city": "umuahia",
+    "localName": "Ifeoma",
+    "localRole": "Online seller",
+    "site": "Isi Gate shops"
   },
   {
     "id": "campaign_014",
@@ -565,7 +585,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "Craftore",
     "success": "Good call. A block explorer can show transaction status, but the right network and address matter.",
     "consequence": "That choice creates an avoidable risk. A block explorer can show transaction status, but the right network and address matter. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks.",
+    "city": "umuahia",
+    "localName": "Ifeoma",
+    "localRole": "Online seller",
+    "site": "Isi Gate shops"
   },
   {
     "id": "campaign_015",
@@ -588,7 +612,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "Kodavic",
     "success": "Good call. Bitcoin's 2008 white paper proposed peer-to-peer electronic cash; the network launched in 2009.",
     "consequence": "That choice creates an avoidable risk. Bitcoin's 2008 white paper proposed peer-to-peer electronic cash; the network launched in 2009. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks.",
+    "city": "awka",
+    "localName": "Kene",
+    "localRole": "Campus tech vendor",
+    "site": "Unizik junction"
   },
   {
     "id": "campaign_016",
@@ -611,7 +639,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "Cybersage",
     "success": "Good call. A shared ledger and consensus help participants agree which spend counts.",
     "consequence": "That choice creates an avoidable risk. A shared ledger and consensus help participants agree which spend counts. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks.",
+    "city": "awka",
+    "localName": "Kene",
+    "localRole": "Campus tech vendor",
+    "site": "Unizik junction"
   },
   {
     "id": "campaign_017",
@@ -634,7 +666,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "Reina",
     "success": "Good call. Ethereum popularised a general-purpose blockchain for programmable smart contracts.",
     "consequence": "That choice creates an avoidable risk. Ethereum popularised a general-purpose blockchain for programmable smart contracts. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks.",
+    "city": "onitsha",
+    "localName": "Emeka",
+    "localRole": "Spare-parts dealer",
+    "site": "Main Market"
   },
   {
     "id": "campaign_018",
@@ -657,7 +693,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "Cclya",
     "success": "Good call. A distributed ledger shares updates across participants using agreed rules.",
     "consequence": "That choice creates an avoidable risk. A distributed ledger shares updates across participants using agreed rules. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks.",
+    "city": "onitsha",
+    "localName": "Emeka",
+    "localRole": "Spare-parts dealer",
+    "site": "Main Market"
   },
   {
     "id": "campaign_019",
@@ -680,7 +720,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "Leemah",
     "success": "Good call. Nodes run software to verify, store or relay network data; roles vary by chain.",
     "consequence": "That choice creates an avoidable risk. Nodes run software to verify, store or relay network data; roles vary by chain. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks.",
+    "city": "asaba",
+    "localName": "Oghene",
+    "localRole": "Dispatch operator",
+    "site": "Summit Road"
   },
   {
     "id": "campaign_020",
@@ -703,7 +747,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "Kenny",
     "success": "Good call. Blocks link to prior history; changing old data affects the chain of hashes and consensus.",
     "consequence": "That choice creates an avoidable risk. Blocks link to prior history; changing old data affects the chain of hashes and consensus. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks.",
+    "city": "asaba",
+    "localName": "Oghene",
+    "localRole": "Dispatch operator",
+    "site": "Summit Road"
   },
   {
     "id": "campaign_021",
@@ -726,7 +774,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "Softstorm",
     "success": "Good call. Proof-of-stake validators commit stake and face protocol incentives and penalties.",
     "consequence": "That choice creates an avoidable risk. Proof-of-stake validators commit stake and face protocol incentives and penalties. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks.",
+    "city": "uyo",
+    "localName": "Mfon",
+    "localRole": "Fashion retailer",
+    "site": "Itam market"
   },
   {
     "id": "campaign_022",
@@ -749,7 +801,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "IamAbdul",
     "success": "Good call. Gas measures computational work; fees depend on network rules and conditions.",
     "consequence": "That choice creates an avoidable risk. Gas measures computational work; fees depend on network rules and conditions. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks.",
+    "city": "uyo",
+    "localName": "Mfon",
+    "localRole": "Fashion retailer",
+    "site": "Itam market"
   },
   {
     "id": "campaign_023",
@@ -772,7 +828,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "Joseph",
     "success": "Good call. Confirmation and finality depend on the network; shallow confirmation may be reversible in some contexts.",
     "consequence": "That choice creates an avoidable risk. Confirmation and finality depend on the network; shallow confirmation may be reversible in some contexts. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks.",
+    "city": "ikot-ekpene",
+    "localName": "Anietie",
+    "localRole": "Basket maker",
+    "site": "Craft market"
   },
   {
     "id": "campaign_024",
@@ -795,7 +855,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "Larai",
     "success": "Good call. Layer 1 is a base network; Layer 2 systems aim to scale by processing more activity with different security trade-offs.",
     "consequence": "That choice creates an avoidable risk. Layer 1 is a base network; Layer 2 systems aim to scale by processing more activity with different security trade-offs. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks.",
+    "city": "ikot-ekpene",
+    "localName": "Anietie",
+    "localRole": "Basket maker",
+    "site": "Craft market"
   },
   {
     "id": "campaign_025",
@@ -818,7 +882,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "Unique",
     "success": "Good call. Cross-chain bridges add contracts, relayers or trust assumptions and can be attacked.",
     "consequence": "That choice creates an avoidable risk. Cross-chain bridges add contracts, relayers or trust assumptions and can be attacked. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks.",
+    "city": "yenagoa",
+    "localName": "Tari",
+    "localRole": "Seafood distributor",
+    "site": "Swali market"
   },
   {
     "id": "campaign_026",
@@ -841,7 +909,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "Smrt huntr",
     "success": "Good call. Centralised exchanges manage custody and accounts; they can offer support but introduce counterparty risk.",
     "consequence": "That choice creates an avoidable risk. Centralised exchanges manage custody and accounts; they can offer support but introduce counterparty risk. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks.",
+    "city": "yenagoa",
+    "localName": "Tari",
+    "localRole": "Seafood distributor",
+    "site": "Swali market"
   },
   {
     "id": "campaign_027",
@@ -864,7 +936,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "Goodness",
     "success": "Good call. Liquidity pools let users trade against pooled assets; pricing and loss risks remain.",
     "consequence": "That choice creates an avoidable risk. Liquidity pools let users trade against pooled assets; pricing and loss risks remain. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks.",
+    "city": "warri",
+    "localName": "Efe",
+    "localRole": "Mechanic and savings club member",
+    "site": "Effurun roundabout"
   },
   {
     "id": "campaign_028",
@@ -887,7 +963,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "Semi",
     "success": "Good call. DeFi lending uses collateral and rules; prices can fall and trigger liquidation.",
     "consequence": "That choice creates an avoidable risk. DeFi lending uses collateral and rules; prices can fall and trigger liquidation. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks.",
+    "city": "warri",
+    "localName": "Efe",
+    "localRole": "Mechanic and savings club member",
+    "site": "Effurun roundabout"
   },
   {
     "id": "campaign_029",
@@ -910,7 +990,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "Blockqueen",
     "success": "Good call. An NFT is a token record; it does not automatically grant copyright or guarantee value.",
     "consequence": "That choice creates an avoidable risk. An NFT is a token record; it does not automatically grant copyright or guarantee value. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks.",
+    "city": "makurdi",
+    "localName": "Terna",
+    "localRole": "Grain trader",
+    "site": "Modern Market"
   },
   {
     "id": "campaign_030",
@@ -933,7 +1017,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "Christol",
     "success": "Good call. A DAO coordinates decisions through rules and tools; voting power and participation can be unequal.",
     "consequence": "That choice creates an avoidable risk. A DAO coordinates decisions through rules and tools; voting power and participation can be unequal. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks.",
+    "city": "makurdi",
+    "localName": "Terna",
+    "localRole": "Grain trader",
+    "site": "Modern Market"
   },
   {
     "id": "campaign_031",
@@ -956,7 +1044,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "Laloba",
     "success": "Good call. Tokenomics includes supply, distribution, incentives, utility and unlocks; a token is not proof of product value.",
     "consequence": "That choice creates an avoidable risk. Tokenomics includes supply, distribution, incentives, utility and unlocks; a token is not proof of product value. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks.",
+    "city": "ilorin",
+    "localName": "Sade",
+    "localRole": "Fabric merchant",
+    "site": "Oja-Oba"
   },
   {
     "id": "campaign_032",
@@ -979,7 +1071,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "BigSam",
     "success": "Good call. Start from users' real pain; compare a simple database or messaging service before choosing a chain.",
     "consequence": "That choice creates an avoidable risk. Start from users' real pain; compare a simple database or messaging service before choosing a chain. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks.",
+    "city": "ilorin",
+    "localName": "Sade",
+    "localRole": "Fabric merchant",
+    "site": "Oja-Oba"
   },
   {
     "id": "campaign_033",
@@ -1002,7 +1098,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "LunaX",
     "success": "Good call. Good product design reduces confusion, friction and mistakes.",
     "consequence": "That choice creates an avoidable risk. Good product design reduces confusion, friction and mistakes. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks.",
+    "city": "akure",
+    "localName": "Tunde",
+    "localRole": "Phone repairer",
+    "site": "Oba Adesida Road"
   },
   {
     "id": "campaign_034",
@@ -1025,7 +1125,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "OxNight",
     "success": "Good call. A dApp combines a user interface with smart-contract or blockchain interactions; not every feature belongs onchain.",
     "consequence": "That choice creates an avoidable risk. A dApp combines a user interface with smart-contract or blockchain interactions; not every feature belongs onchain. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks.",
+    "city": "akure",
+    "localName": "Tunde",
+    "localRole": "Phone repairer",
+    "site": "Oba Adesida Road"
   },
   {
     "id": "campaign_035",
@@ -1048,7 +1152,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "Moon",
     "success": "Good call. Contracts execute code and need explicit conditions, error handling and security review.",
     "consequence": "That choice creates an avoidable risk. Contracts execute code and need explicit conditions, error handling and security review. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks.",
+    "city": "ado-ekiti",
+    "localName": "Bisi",
+    "localRole": "Illustrator",
+    "site": "Fajuyi creative corner"
   },
   {
     "id": "campaign_036",
@@ -1071,7 +1179,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "The cryptonian",
     "success": "Good call. Tests cover normal cases, edge cases and failures; reproducible bugs are easier to fix.",
     "consequence": "That choice creates an avoidable risk. Tests cover normal cases, edge cases and failures; reproducible bugs are easier to fix. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks.",
+    "city": "ado-ekiti",
+    "localName": "Bisi",
+    "localRole": "Illustrator",
+    "site": "Fajuyi creative corner"
   },
   {
     "id": "campaign_037",
@@ -1094,7 +1206,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "Joseph Nnadi",
     "success": "Good call. Open source makes code reviewable under a license; contributions need clear scope and tests.",
     "consequence": "That choice creates an avoidable risk. Open source makes code reviewable under a license; contributions need clear scope and tests. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks.",
+    "city": "osogbo",
+    "localName": "Dayo",
+    "localRole": "Festival vendor",
+    "site": "Oja Oba"
   },
   {
     "id": "campaign_038",
@@ -1117,7 +1233,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "The don",
     "success": "Good call. A responsible launch includes testnet rehearsal, monitoring, rollback and user support.",
     "consequence": "That choice creates an avoidable risk. A responsible launch includes testnet rehearsal, monitoring, rollback and user support. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks.",
+    "city": "osogbo",
+    "localName": "Dayo",
+    "localRole": "Festival vendor",
+    "site": "Oja Oba"
   },
   {
     "id": "campaign_039",
@@ -1140,7 +1260,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "Praise",
     "success": "Good call. Roles differ: building, research, design, security, writing, data, operations and partnerships.",
     "consequence": "That choice creates an avoidable risk. Roles differ: building, research, design, security, writing, data, operations and partnerships. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks.",
+    "city": "abeokuta",
+    "localName": "Kemi",
+    "localRole": "Adire designer",
+    "site": "Kuto market"
   },
   {
     "id": "campaign_040",
@@ -1163,7 +1287,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "Toza",
     "success": "Good call. Security work uses threat models, tests, review and responsible disclosure.",
     "consequence": "That choice creates an avoidable risk. Security work uses threat models, tests, review and responsible disclosure. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks.",
+    "city": "abeokuta",
+    "localName": "Kemi",
+    "localRole": "Adire designer",
+    "site": "Kuto market"
   },
   {
     "id": "campaign_041",
@@ -1186,7 +1314,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "Craftore",
     "success": "Good call. Onchain data shows public activity but can be incomplete, sybil-driven or hard to interpret.",
     "consequence": "That choice creates an avoidable risk. Onchain data shows public activity but can be incomplete, sybil-driven or hard to interpret. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks.",
+    "city": "lokoja",
+    "localName": "Ibrahim",
+    "localRole": "Transport ticket agent",
+    "site": "Lagos–Abuja park"
   },
   {
     "id": "campaign_042",
@@ -1209,7 +1341,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "Kodavic",
     "success": "Good call. Good Web3 communication is accurate, sourced, audience-aware and honest about risk.",
     "consequence": "That choice creates an avoidable risk. Good Web3 communication is accurate, sourced, audience-aware and honest about risk. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks.",
+    "city": "lokoja",
+    "localName": "Ibrahim",
+    "localRole": "Transport ticket agent",
+    "site": "Lagos–Abuja park"
   },
   {
     "id": "campaign_043",
@@ -1232,7 +1368,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "Cybersage",
     "success": "Good call. Moderation means clear rules, escalation, privacy and calm incident response.",
     "consequence": "That choice creates an avoidable risk. Moderation means clear rules, escalation, privacy and calm incident response. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks.",
+    "city": "lafia",
+    "localName": "Hauwa",
+    "localRole": "Cooperative treasurer",
+    "site": "Lafia central market"
   },
   {
     "id": "campaign_044",
@@ -1255,7 +1395,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "Reina",
     "success": "Good call. Partnerships need shared goals, responsibilities, costs, data handling and exit terms.",
     "consequence": "That choice creates an avoidable risk. Partnerships need shared goals, responsibilities, costs, data handling and exit terms. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks.",
+    "city": "lafia",
+    "localName": "Hauwa",
+    "localRole": "Cooperative treasurer",
+    "site": "Lafia central market"
   },
   {
     "id": "campaign_045",
@@ -1278,7 +1422,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "Cclya",
     "success": "Good call. Product managers prioritise user impact, risk, effort and evidence.",
     "consequence": "That choice creates an avoidable risk. Product managers prioritise user impact, risk, effort and evidence. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks.",
+    "city": "bauchi",
+    "localName": "Zainab",
+    "localRole": "Pharmacy owner",
+    "site": "Wunti market"
   },
   {
     "id": "campaign_046",
@@ -1301,7 +1449,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "Leemah",
     "success": "Good call. Analysis describes scenarios, liquidity, risk and uncertainty; no setup guarantees profit.",
     "consequence": "That choice creates an avoidable risk. Analysis describes scenarios, liquidity, risk and uncertainty; no setup guarantees profit. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks.",
+    "city": "bauchi",
+    "localName": "Zainab",
+    "localRole": "Pharmacy owner",
+    "site": "Wunti market"
   },
   {
     "id": "campaign_047",
@@ -1324,7 +1476,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "Kenny",
     "success": "Good call. Game systems should use chain only where ownership or shared state benefits; latency and fees matter.",
     "consequence": "That choice creates an avoidable risk. Game systems should use chain only where ownership or shared state benefits; latency and fees matter. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks.",
+    "city": "gombe",
+    "localName": "Musa",
+    "localRole": "Building materials supplier",
+    "site": "Gombe main market"
   },
   {
     "id": "campaign_048",
@@ -1347,7 +1503,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "Softstorm",
     "success": "Good call. AI agents can call tools; blockchain actions need scoped permissions, simulation, limits and human approval.",
     "consequence": "That choice creates an avoidable risk. AI agents can call tools; blockchain actions need scoped permissions, simulation, limits and human approval. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks.",
+    "city": "gombe",
+    "localName": "Musa",
+    "localRole": "Building materials supplier",
+    "site": "Gombe main market"
   },
   {
     "id": "campaign_049",
@@ -1370,7 +1530,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "IamAbdul",
     "success": "Good call. Shared records may help audit handoffs, but connectivity, data quality and incentives still matter.",
     "consequence": "That choice creates an avoidable risk. Shared records may help audit handoffs, but connectivity, data quality and incentives still matter. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks.",
+    "city": "damaturu",
+    "localName": "Fatima",
+    "localRole": "Phone accessories seller",
+    "site": "Monday Market"
   },
   {
     "id": "campaign_050",
@@ -1393,7 +1557,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "Joseph",
     "success": "Good call. Sensitive health data should not be written to a public chain; access control and privacy come first.",
     "consequence": "That choice creates an avoidable risk. Sensitive health data should not be written to a public chain; access control and privacy come first. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks.",
+    "city": "damaturu",
+    "localName": "Fatima",
+    "localRole": "Phone accessories seller",
+    "site": "Monday Market"
   },
   {
     "id": "campaign_051",
@@ -1416,7 +1584,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "Larai",
     "success": "Good call. Verifiable credentials can help prove claims, but issuer trust and revocation still matter.",
     "consequence": "That choice creates an avoidable risk. Verifiable credentials can help prove claims, but issuer trust and revocation still matter. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks.",
+    "city": "jalingo",
+    "localName": "Ladi",
+    "localRole": "Cooperative secretary",
+    "site": "Central market meeting point"
   },
   {
     "id": "campaign_052",
@@ -1439,7 +1611,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "Unique",
     "success": "Good call. Timestamped proofs can help reconcile handoffs; tracking every person publicly creates privacy risks.",
     "consequence": "That choice creates an avoidable risk. Timestamped proofs can help reconcile handoffs; tracking every person publicly creates privacy risks. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks.",
+    "city": "jalingo",
+    "localName": "Ladi",
+    "localRole": "Cooperative secretary",
+    "site": "Central market meeting point"
   },
   {
     "id": "campaign_053",
@@ -1462,7 +1638,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "Smrt huntr",
     "success": "Good call. Shared ledgers can reconcile contributions, but meters and governance remain critical.",
     "consequence": "That choice creates an avoidable risk. Shared ledgers can reconcile contributions, but meters and governance remain critical. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks.",
+    "city": "yola",
+    "localName": "Mariam",
+    "localRole": "Livestock trader",
+    "site": "Jimeta market"
   },
   {
     "id": "campaign_054",
@@ -1485,7 +1665,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "Goodness",
     "success": "Good call. Privacy-preserving credentials can minimise disclosure; identity and recovery remain hard problems.",
     "consequence": "That choice creates an avoidable risk. Privacy-preserving credentials can minimise disclosure; identity and recovery remain hard problems. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks.",
+    "city": "yola",
+    "localName": "Mariam",
+    "localRole": "Livestock trader",
+    "site": "Jimeta market"
   },
   {
     "id": "campaign_055",
@@ -1508,7 +1692,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "Semi",
     "success": "Good call. Tokenised tickets can help track issuance and transfer, but do not stop every scam by themselves.",
     "consequence": "That choice creates an avoidable risk. Tokenised tickets can help track issuance and transfer, but do not stop every scam by themselves. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks.",
+    "city": "sokoto",
+    "localName": "Bello",
+    "localRole": "Leather goods wholesaler",
+    "site": "Kasuwar Kara"
   },
   {
     "id": "campaign_056",
@@ -1531,7 +1719,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "Blockqueen",
     "success": "Good call. A shared trail helps only if real-world inputs are truthful and verified.",
     "consequence": "That choice creates an avoidable risk. A shared trail helps only if real-world inputs are truthful and verified. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks.",
+    "city": "sokoto",
+    "localName": "Bello",
+    "localRole": "Leather goods wholesaler",
+    "site": "Kasuwar Kara"
   },
   {
     "id": "campaign_057",
@@ -1554,7 +1746,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "Christol",
     "success": "Good call. Audit logs may improve traceability, but public blockchains can expose sensitive metadata and do not replace accountable institutions.",
     "consequence": "That choice creates an avoidable risk. Audit logs may improve traceability, but public blockchains can expose sensitive metadata and do not replace accountable institutions. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks.",
+    "city": "katsina",
+    "localName": "Rabi",
+    "localRole": "Farm input retailer",
+    "site": "Central market"
   },
   {
     "id": "campaign_058",
@@ -1577,7 +1773,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "Laloba",
     "success": "Good call. A conventional database is often better when one trusted operator controls the data and fast edits matter.",
     "consequence": "That choice creates an avoidable risk. A conventional database is often better when one trusted operator controls the data and fast edits matter. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks.",
+    "city": "katsina",
+    "localName": "Rabi",
+    "localRole": "Farm input retailer",
+    "site": "Central market"
   },
   {
     "id": "campaign_059",
@@ -1600,7 +1800,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "BigSam",
     "success": "Good call. Product-market fit starts with a painful problem and repeated user value, not token hype.",
     "consequence": "That choice creates an avoidable risk. Product-market fit starts with a painful problem and repeated user value, not token hype. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks.",
+    "city": "birnin-kebbi",
+    "localName": "Yakubu",
+    "localRole": "Rice mill operator",
+    "site": "Central rice market"
   },
   {
     "id": "campaign_060",
@@ -1623,7 +1827,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "LunaX",
     "success": "Good call. Grants and funding require clear scope, milestones, budget and honest reporting.",
     "consequence": "That choice creates an avoidable risk. Grants and funding require clear scope, milestones, budget and honest reporting. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks.",
+    "city": "birnin-kebbi",
+    "localName": "Yakubu",
+    "localRole": "Rice mill operator",
+    "site": "Central rice market"
   },
   {
     "id": "campaign_061",
@@ -1646,7 +1854,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "OxNight",
     "success": "Good call. Treasury policy needs approvals, reporting, reserves and conflict management.",
     "consequence": "That choice creates an avoidable risk. Treasury policy needs approvals, reporting, reserves and conflict management. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks.",
+    "city": "minna",
+    "localName": "Bala",
+    "localRole": "Software trainee",
+    "site": "Bosso campus"
   },
   {
     "id": "campaign_062",
@@ -1669,7 +1881,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "Moon",
     "success": "Good call. A token should serve a clear function and its risks should be disclosed; many products do not need one.",
     "consequence": "That choice creates an avoidable risk. A token should serve a clear function and its risks should be disclosed; many products do not need one. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks.",
+    "city": "minna",
+    "localName": "Bala",
+    "localRole": "Software trainee",
+    "site": "Bosso campus"
   },
   {
     "id": "campaign_063",
@@ -1692,7 +1908,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "The cryptonian",
     "success": "Good call. Sustainable growth measures retained users and real outcomes, not vanity metrics.",
     "consequence": "That choice creates an avoidable risk. Sustainable growth measures retained users and real outcomes, not vanity metrics. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks.",
+    "city": "dutse",
+    "localName": "Nura",
+    "localRole": "Small business owner",
+    "site": "Dutse market"
   },
   {
     "id": "campaign_064",
@@ -1715,7 +1935,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "Joseph Nnadi",
     "success": "Good call. Governance includes execution, accountability, transparency and ways to challenge decisions.",
     "consequence": "That choice creates an avoidable risk. Governance includes execution, accountability, transparency and ways to challenge decisions. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks.",
+    "city": "dutse",
+    "localName": "Nura",
+    "localRole": "Small business owner",
+    "site": "Dutse market"
   },
   {
     "id": "campaign_065",
@@ -1738,7 +1962,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "The don",
     "success": "Good call. Zero-knowledge proofs can prove a statement without revealing the underlying secret, under defined assumptions.",
     "consequence": "That choice creates an avoidable risk. Zero-knowledge proofs can prove a statement without revealing the underlying secret, under defined assumptions. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks.",
+    "city": "gusau",
+    "localName": "Amina",
+    "localRole": "Tailor",
+    "site": "Central market"
   },
   {
     "id": "campaign_066",
@@ -1761,7 +1989,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "Praise",
     "success": "Good call. Account abstraction can enable programmable wallets and recovery or sponsorship patterns, depending on implementation.",
     "consequence": "That choice creates an avoidable risk. Account abstraction can enable programmable wallets and recovery or sponsorship patterns, depending on implementation. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks.",
+    "city": "gusau",
+    "localName": "Amina",
+    "localRole": "Tailor",
+    "site": "Central market"
   },
   {
     "id": "campaign_067",
@@ -1784,7 +2016,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "Toza",
     "success": "Good call. Modular designs separate responsibilities but introduce coordination and trust assumptions.",
     "consequence": "That choice creates an avoidable risk. Modular designs separate responsibilities but introduce coordination and trust assumptions. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks.",
+    "city": "kafanchan",
+    "localName": "Grace",
+    "localRole": "Produce cooperative treasurer",
+    "site": "Station market"
   },
   {
     "id": "campaign_068",
@@ -1807,7 +2043,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "Craftore",
     "success": "Good call. Decentralised storage can improve distribution, but persistence, pinning, cost and privacy still need planning.",
     "consequence": "That choice creates an avoidable risk. Decentralised storage can improve distribution, but persistence, pinning, cost and privacy still need planning. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks.",
+    "city": "kafanchan",
+    "localName": "Grace",
+    "localRole": "Produce cooperative treasurer",
+    "site": "Station market"
   },
   {
     "id": "campaign_069",
@@ -1830,7 +2070,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "Kodavic",
     "success": "Good call. Tokenisation can represent claims, but legal ownership, custody, audits and redemption must work offchain too.",
     "consequence": "That choice creates an avoidable risk. Tokenisation can represent claims, but legal ownership, custody, audits and redemption must work offchain too. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks.",
+    "city": "damboa",
+    "localName": "Hajara",
+    "localRole": "Market trader",
+    "site": "Damboa trading area"
   },
   {
     "id": "campaign_070",
@@ -1853,7 +2097,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "Cybersage",
     "success": "Good call. Interoperability depends on bridges, messaging, verification and trust assumptions.",
     "consequence": "That choice creates an avoidable risk. Interoperability depends on bridges, messaging, verification and trust assumptions. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks.",
+    "city": "damboa",
+    "localName": "Hajara",
+    "localRole": "Market trader",
+    "site": "Damboa trading area"
   },
   {
     "id": "campaign_071",
@@ -1876,7 +2124,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "Reina",
     "success": "Good call. Autonomous agents are emerging; safe design uses limited funds, policies, monitoring, and human override.",
     "consequence": "That choice creates an avoidable risk. Autonomous agents are emerging; safe design uses limited funds, policies, monitoring, and human override. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks.",
+    "city": "ibadan",
+    "localName": "Reina",
+    "localRole": "Dodo seller",
+    "site": "Bodija market"
   },
   {
     "title": "The grant with strings attached",
@@ -1899,7 +2151,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "difficulty": "Advanced",
     "success": "Good call. Funding terms, reporting duties and control rights matter as much as the amount offered.",
     "consequence": "That choice creates an avoidable risk. Funding terms, reporting duties and control rights matter as much as the amount offered. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks.",
+    "city": "ibadan",
+    "localName": "Reina",
+    "localRole": "Dodo seller",
+    "site": "Bodija market"
   },
   {
     "title": "The outage drill",
@@ -1922,7 +2178,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "difficulty": "Advanced",
     "success": "Good call. A real product needs graceful failure, clear status and a safe fallback; blockchain availability is not guaranteed.",
     "consequence": "That choice creates an avoidable risk. A real product needs graceful failure, clear status and a safe fallback; blockchain availability is not guaranteed. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks.",
+    "city": "kaduna",
+    "localName": "Mcbond",
+    "localRole": "Textile trader",
+    "site": "Kasuwan Barci"
   },
   {
     "title": "The privacy-preserving membership",
@@ -1945,7 +2205,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "difficulty": "Advanced",
     "success": "Good call. Zero-knowledge systems can prove defined statements with less disclosure, but setup, implementation and trust assumptions still matter.",
     "consequence": "That choice creates an avoidable risk. Zero-knowledge systems can prove defined statements with less disclosure, but setup, implementation and trust assumptions still matter. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks.",
+    "city": "kaduna",
+    "localName": "Mcbond",
+    "localRole": "Textile trader",
+    "site": "Kasuwan Barci"
   },
   {
     "title": "The launch review",
@@ -1968,7 +2232,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "difficulty": "Advanced",
     "success": "Good call. A launch is successful when users get durable value, risks are managed and the team can support what it ships.",
     "consequence": "That choice creates an avoidable risk. A launch is successful when users get durable value, risks are managed and the team can support what it ships. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks.",
+    "city": "enugu",
+    "localName": "Nneka",
+    "localRole": "Event organiser",
+    "site": "New Haven"
   },
   {
     "title": "The data-availability dilemma",
@@ -1986,7 +2254,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "Softstorm",
     "number": 76,
     "id": "campaign_076",
-    "stage": 10
+    "stage": 10,
+    "city": "enugu",
+    "localName": "Nneka",
+    "localRole": "Event organiser",
+    "site": "New Haven"
   },
   {
     "title": "Who jumped the queue?",
@@ -2004,7 +2276,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "OxNight",
     "number": 77,
     "id": "campaign_077",
-    "stage": 10
+    "stage": 10,
+    "city": "benin",
+    "localName": "Osarobo",
+    "localRole": "Bronze craft seller",
+    "site": "Igun Street"
   },
   {
     "title": "Tell the network what you want",
@@ -2022,7 +2298,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "Toza",
     "number": 78,
     "id": "campaign_078",
-    "stage": 10
+    "stage": 10,
+    "city": "benin",
+    "localName": "Osarobo",
+    "localRole": "Bronze craft seller",
+    "site": "Igun Street"
   },
   {
     "title": "The bridge exit queue",
@@ -2040,7 +2320,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "Cybersage",
     "number": 79,
     "id": "campaign_079",
-    "stage": 10
+    "stage": 10,
+    "city": "calabar",
+    "localName": "Eka",
+    "localRole": "Tour guide",
+    "site": "Marina waterfront"
   },
   {
     "title": "The hotspot incentive",
@@ -2058,7 +2342,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "Kenny",
     "number": 80,
     "id": "campaign_080",
-    "stage": 10
+    "stage": 10,
+    "city": "calabar",
+    "localName": "Eka",
+    "localRole": "Tour guide",
+    "site": "Marina waterfront"
   },
   {
     "title": "The oracle lied",
@@ -2076,7 +2364,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "Kodavic",
     "number": 81,
     "id": "campaign_081",
-    "stage": 10
+    "stage": 10,
+    "city": "jos",
+    "localName": "Danjuma",
+    "localRole": "Potato cooperative lead",
+    "site": "Terminus market"
   },
   {
     "title": "A vote bought in bulk",
@@ -2094,7 +2386,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "Blockqueen",
     "number": 82,
     "id": "campaign_082",
-    "stage": 10
+    "stage": 10,
+    "city": "jos",
+    "localName": "Danjuma",
+    "localRole": "Potato cooperative lead",
+    "site": "Terminus market"
   },
   {
     "title": "The agent's poisoned instruction",
@@ -2112,7 +2408,11 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "Smrt huntr",
     "number": 83,
     "id": "campaign_083",
-    "stage": 10
+    "stage": 10,
+    "city": "maiduguri",
+    "localName": "Aisha",
+    "localRole": "Relief coordinator",
+    "site": "Community supply point"
   },
   {
     "id": "campaign_084",
@@ -2135,9 +2435,13 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "Cclya",
     "success": "Good call. A good solution starts with a real user problem and uses Web3 only where it adds meaningful value.",
     "consequence": "That choice creates an avoidable risk. A good solution starts with a real user problem and uses Web3 only where it adds meaningful value. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks.",
+    "city": "maiduguri",
+    "localName": "Aisha",
+    "localRole": "Relief coordinator",
+    "site": "Community supply point"
   }
 ];
 export function getMissionById(id){return CAMPAIGN_BLUEPRINTS.find(m=>m.id===id)||null;}
 export function canStartMission(mission,completedIds){if(!mission)return false;return mission.number===9||completedIds.includes(CAMPAIGN_BLUEPRINTS[CAMPAIGN_BLUEPRINTS.indexOf(mission)-1]?.id);}
-export function validateCampaign(){const ids=new Set();const errors=[];for(const m of CAMPAIGN_BLUEPRINTS){if(ids.has(m.id))errors.push('duplicate id: '+m.id);ids.add(m.id);if(m.choices.length<2||m.correct<0||m.correct>=m.choices.length)errors.push('invalid choices: '+m.id);if(!m.title||!m.story||!m.teach||!m.challenge)errors.push('missing content: '+m.id);}for(const c of REQUIRED_CAST)if(!CAMPAIGN_BLUEPRINTS.some(m=>m.character===c.name))errors.push('unused character: '+c.name);return errors;}
+export function validateCampaign(){const ids=new Set();const errors=[];for(const m of CAMPAIGN_BLUEPRINTS){if(ids.has(m.id))errors.push('duplicate id: '+m.id);ids.add(m.id);if(m.choices.length<2||m.correct<0||m.correct>=m.choices.length)errors.push('invalid choices: '+m.id);if(!m.title||!m.story||!m.teach||!m.challenge||!m.city||!m.site)errors.push('missing content: '+m.id);}for(const c of REQUIRED_CAST)if(!CAMPAIGN_BLUEPRINTS.some(m=>m.character===c.name))errors.push('unused character: '+c.name);for(const c of STREET_CITIES)if(CAMPAIGN_BLUEPRINTS.filter(m=>m.city===c.id).length!==2)errors.push('expected two missions for city: '+c.id);return errors;}
