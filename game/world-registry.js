@@ -111,6 +111,14 @@ export const WORLD_LOCATIONS = [
   ...PLANNED_SETTLEMENT_LOCATIONS
 ];
 
+// Keep jurisdiction-to-location references available even when mission distribution is not imported.
+for (const location of WORLD_LOCATIONS) {
+  const jurisdiction = NIGERIAN_JURISDICTIONS.find(item => item.id === location.jurisdictionId);
+  if (jurisdiction && !jurisdiction.content.locationIds.includes(location.id)) {
+    jurisdiction.content.locationIds.push(location.id);
+  }
+}
+
 export const ENVIRONMENT_PROFILES = [
   {id:"urban-streets",label:"Urban streets",settingTags:["transport","residential","public-space"]},
   {id:"market-edge",label:"Market and commercial edge", settingTags:["market","commerce","small-business"]},
