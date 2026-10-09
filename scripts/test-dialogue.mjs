@@ -95,6 +95,11 @@ assert.ok(distributed.every(item => distribution.MISSION_DISTRIBUTION.some(entry
 const doneState = {completedMissions:Object.fromEntries(distributed.map(item => [item.missionId,true])),knowledge:Object.fromEntries(distributed.map(item => [item.conceptId,true]))};
 const nextBatch = distribution.selectEducationalMissions({locationId:"lagos-free-roam",dialogueState:doneState,limit:6,allowDeepening:true});
 assert.ok(nextBatch.every(item => !doneState.completedMissions[item.missionId]), "completed missions do not repeat unnecessarily");
+const sameContextKnowledge = {knowledge:{"digital-ownership":true},conceptHistory:{"digital-ownership":[{missionId:"learn-digital-ownership",locationId:"lagos-free-roam"}]}};
+assert.ok(!distribution.selectEducationalMissions({locationId:"lagos-free-roam",dialogueState:sameContextKnowledge,limit:15,allowDeepening:true}).some(item=>item.conceptId==="digital-ownership"), "a known concept is not repeated in the same context");
+const newContextKnowledge = {knowledge:{"digital-ownership":true},conceptHistory:{"digital-ownership":[{missionId:"learn-digital-ownership",locationId:"another-playable-location"}]}};
+assert.ok(distribution.selectEducationalMissions({locationId:"lagos-free-roam",dialogueState:newContextKnowledge,limit:15,allowDeepening:true}).some(item=>item.conceptId==="digital-ownership"), "a known concept may return when the context changes");
+
 assert.deepEqual(distribution.selectEducationalMissions({locationId:"unbuilt-city",dialogueState:{},limit:6}), [], "unbuilt environments do not receive fabricated missions");
 
 const educationErrors = education.validateEducationalLibrary();
