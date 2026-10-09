@@ -29,6 +29,12 @@ assert.match(engineSource, /mobileCrowd\?12:20/, "mobile builds fewer ambient wa
 assert.match(engineSource, /mobileCrowd\?3:6/, "mobile builds fewer pedestrian pairs");
 assert.match(engineSource, /made<\(mobileCrowd\?4:10\)/, "mobile builds fewer road-crossing pedestrians");
 assert.match(engineSource, /window\.innerWidth<760\?\(\(k===0\|\|k===-1\)\?1:/, "mobile traffic generation is reduced");
+assert.match(engineSource, /if\(joy\.active\)\{ x=joy\.x; z=-joy\.y; \}/, "touch joystick vertical direction matches WASD and forward movement");
+assert.match(engineSource, /adventure\.playerPosition=\{x:Number\(player\.position\.x\.toFixed\(2\)\),z:Number\(player\.position\.z\.toFixed\(2\)\)\}/, "free-roam checkpoint stores a bounded-precision player position");
+assert.match(engineSource, /window\.addEventListener\('pagehide',\(\)=>\{saveAdventureCheckpoint\(\);save\(\);\}\)/, "leaving the page saves the current free-roam checkpoint");
+assert.match(engineSource, /const checkpoint=adventure\.playerPosition[\s\S]*?camera\.position\.set\(player\.position\.x,35,player\.position\.z\+20\)/, "the free-roam checkpoint restores player and camera on re-entry");
+assert.match(engineSource, /first=!adventure\.completed\.includes\(d\.id\)/, "mission rewards are only granted on first completion");
+
 
 assert.match(engineSource, /new ConversationEngine\(\{content,state:createDialogueState\(adventure\.dialogueState\)/, "NPC interactions must use the reusable engine");
 assert.match(engineSource, /adventureComplete\(mapped,choiceIndex\)/, "mission-ending dialogue must reach the existing reward/mission handler");
@@ -245,6 +251,10 @@ assert.match(engineSourceForMissions, /collectPrototypeObjective\(objective,choi
 assert.match(engineSourceForMissions, /recordPrototypeObjectiveChoice\(adventure,objective\.missionId,objective\.id,choice\.id\)/, "the live game uses the tested objective progress function");
 assert.match(engineSourceForMissions, /recordPrototypeObjectiveChoice/, "live field activity delegates persistence to the tested mission helper");
 for (const mission of prototypePack) {
+  const notStartedState = { dialogueState: engine.createDialogueState() };
+  assert.equal(prototypeMissions.recordPrototypeObjectiveChoice(notStartedState,mission.id,mission.objectives[0].id,mission.objectives[0].choices[0].id).error,"mission-not-started",mission.id+" cannot progress an activity before accepting it");
+  assert.ok(mission.objectives.every(objective=>Math.abs(objective.position.x)<=205&&Math.abs(objective.position.z)<=205),mission.id+" activity markers remain within the bounded playable city");
+
   const state = engine.createDialogueState();
   const session = new engine.ConversationEngine({content:mission.dialogue,state});
   let step = session.start();
@@ -280,6 +290,11 @@ for (const mission of prototypePack) {
   assert.equal(revisit.start().node.id,"afterComplete",mission.id+" has contextual returning dialogue without repeating the reward path");
 }
 assert.ok(prototypePack.some(mission=>mission.objectives.length===3), "several missions require multi-check practical activities");
+for (const mission of prototypePack) {
+  const completedState = {dialogueState:engine.createDialogueState({flags:{[mission.startedFlag]:true,[mission.completedFlag]:true}})};
+  assert.equal(prototypeMissions.recordPrototypeObjectiveChoice(completedState,mission.id,mission.objectives[0].id,mission.objectives[0].choices[0].id).error,"mission-complete",mission.id+" rejects objective progress after completion");
+}
+
 assert.ok(prototypePack.some(mission=>mission.branches.some(branch=>/database|blockchain|code|law|privacy/i.test(branch.text))), "the pack includes skeptical and limitation-aware dialogue");
 console.log("PASS: Nigerian world registry (36 states + separate FCT), registry-only settlements, real asset gating, 21+ sectors, NPC/location schema, 15 concepts, 16 legacy educational mission trees plus 8 interactive prototype missions, contextual deepening, prerequisites, repetition avoidance and dialogue progression validate.");
 await cleanup();
