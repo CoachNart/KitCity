@@ -3,137 +3,299 @@ export const REQUIRED_CAST = [
   {
     "name": "Softstorm",
     "role": "patient systems architect",
-    "style": "explains trade-offs with sketches"
+    "style": "explains trade-offs with sketches",
+    "motivation": "Make tools understandable before people risk money.",
+    "voice": "Draw the steps first; nobody should have to guess with their money.",
+    "connections": [
+      "Toza",
+      "Cclya"
+    ]
   },
   {
     "name": "IamAbdul",
     "role": "street-smart wallet coach",
-    "style": "uses short Pidgin jokes"
+    "style": "uses short Pidgin jokes",
+    "motivation": "Keep beginners safe without making them feel foolish.",
+    "voice": "No let urgency carry you where your sense never reach.",
+    "connections": [
+      "Joseph Nnadi",
+      "Joseph"
+    ]
   },
   {
     "name": "Joseph",
     "role": "market courier",
-    "style": "asks practical questions"
+    "style": "asks practical questions",
+    "motivation": "Finish deliveries with proof both sides can trust.",
+    "voice": "I need proof I can show the next person, not story.",
+    "connections": [
+      "The don",
+      "IamAbdul"
+    ]
   },
   {
     "name": "Larai",
     "role": "cooperative organiser",
-    "style": "protects members' interests"
+    "style": "protects members' interests",
+    "motivation": "Protect cooperative members and make decisions fair.",
+    "voice": "Our members deserve a fair say before any money moves.",
+    "connections": [
+      "BigSam",
+      "Kenny"
+    ]
   },
   {
     "name": "Unique",
     "role": "curious student researcher",
-    "style": "tests every claim"
+    "style": "tests every claim",
+    "motivation": "Test claims and find the source behind them.",
+    "voice": "Show me where that claim came from.",
+    "connections": [
+      "Kodavic",
+      "IamAbdul"
+    ]
   },
   {
     "name": "Smrt huntr",
     "role": "security investigator",
-    "style": "spots suspicious details"
+    "style": "spots suspicious details",
+    "motivation": "Stop scams before someone loses access.",
+    "voice": "Pressure is a clue. Slow down and inspect the sender.",
+    "connections": [
+      "The cryptonian",
+      "Joseph Nnadi"
+    ]
   },
   {
     "name": "Goodness",
     "role": "community medic",
-    "style": "puts people first"
+    "style": "puts people first",
+    "motivation": "Protect dignity while making services easier to use.",
+    "voice": "People come first; collect only what the task truly needs.",
+    "connections": [
+      "Cybersage",
+      "Larai"
+    ]
   },
   {
     "name": "Semi",
     "role": "independent game developer",
-    "style": "thinks in mechanics"
+    "style": "thinks in mechanics",
+    "motivation": "Ship a game that stays fun when players make mistakes.",
+    "voice": "If a player gets stuck, that's a design bug.",
+    "connections": [
+      "Reina",
+      "Toza"
+    ]
   },
   {
     "name": "Blockqueen",
     "role": "governance facilitator",
-    "style": "asks who is accountable"
+    "style": "asks who is accountable",
+    "motivation": "Make community decisions accountable after the vote.",
+    "voice": "Who can change this, and who answers when it goes wrong?",
+    "connections": [
+      "BigSam",
+      "Larai"
+    ]
   },
   {
     "name": "Christol",
     "role": "artist and rights advocate",
-    "style": "separates ownership from copyright"
+    "style": "separates ownership from copyright",
+    "motivation": "Protect creators' rights and fair attribution.",
+    "voice": "A token is not a copyright contract.",
+    "connections": [
+      "Praise",
+      "Reina"
+    ]
   },
   {
     "name": "Laloba",
     "role": "market negotiator",
-    "style": "compares the real costs"
+    "style": "compares the real costs",
+    "motivation": "Get traders a fair net price after every fee.",
+    "voice": "Tell me the final amount after fees, not the sweet headline.",
+    "connections": [
+      "OxNight",
+      "Kenny"
+    ]
   },
   {
     "name": "BigSam",
     "role": "Port Harcourt community chair",
-    "style": "keeps decisions accountable"
+    "style": "keeps decisions accountable",
+    "motivation": "Make community spending transparent and useful.",
+    "voice": "If the community pays, the community sees the receipts.",
+    "connections": [
+      "Blockqueen",
+      "Larai"
+    ]
   },
   {
     "name": "LunaX",
     "role": "cash-out and settlement specialist",
-    "style": "checks receipts before release"
+    "style": "checks receipts before release",
+    "motivation": "Prevent fake-payment disputes and unsafe releases.",
+    "voice": "Screenshot no be settlement. Check the receipt.",
+    "connections": [
+      "The don",
+      "Joseph"
+    ]
   },
   {
     "name": "OxNight",
     "role": "exchange desk operator",
-    "style": "never trusts a headline quote"
+    "style": "never trusts a headline quote",
+    "motivation": "Make exchange quotes honest about the final outcome.",
+    "voice": "The headline rate is not the rate you walk away with.",
+    "connections": [
+      "Laloba",
+      "Moon"
+    ]
   },
   {
     "name": "Moon",
     "role": "liquidity-pool tinkerer",
-    "style": "demonstrates price impact"
+    "style": "demonstrates price impact",
+    "motivation": "Help users understand liquidity and price impact.",
+    "voice": "A pool can pay fees and still lose value.",
+    "connections": [
+      "Kodavic",
+      "OxNight"
+    ]
   },
   {
     "name": "The cryptonian",
     "role": "scam investigator",
-    "style": "questions urgency and impersonation"
+    "style": "questions urgency and impersonation",
+    "motivation": "Catch impersonation networks before they spread.",
+    "voice": "A copied badge and urgent DM? That is the scammer's uniform.",
+    "connections": [
+      "Smrt huntr",
+      "Joseph Nnadi"
+    ]
   },
   {
     "name": "Joseph Nnadi",
     "role": "wallet recovery specialist",
-    "style": "treats secrets carefully"
+    "style": "treats secrets carefully",
+    "motivation": "Help people recover access without exposing secrets.",
+    "voice": "Your recovery words are the master key. I never need to see them.",
+    "connections": [
+      "IamAbdul",
+      "Smrt huntr"
+    ]
   },
   {
     "name": "The don",
     "role": "dispatch boss",
-    "style": "cares about safe handoffs"
+    "style": "cares about safe handoffs",
+    "motivation": "Make every delivery handoff clear and verifiable.",
+    "voice": "Parcel and payment need the same clear handoff.",
+    "connections": [
+      "Joseph",
+      "LunaX"
+    ]
   },
   {
     "name": "Praise",
     "role": "community artist",
-    "style": "makes ideas memorable"
+    "style": "makes ideas memorable",
+    "motivation": "Make difficult ideas memorable without distorting them.",
+    "voice": "Make the truth simple, not smaller.",
+    "connections": [
+      "Christol",
+      "Semi"
+    ]
   },
   {
     "name": "Toza",
     "role": "junior frontend builder",
-    "style": "prototypes fast and tests often"
+    "style": "prototypes fast and tests often",
+    "motivation": "Build small interfaces that work on real phones.",
+    "voice": "Small prototype first; test it on a cheap phone.",
+    "connections": [
+      "Softstorm",
+      "Semi"
+    ]
   },
   {
     "name": "Craftore",
     "role": "smart-contract engineer",
-    "style": "thinks about failure states"
+    "style": "thinks about failure states",
+    "motivation": "Write contracts with explicit failure paths.",
+    "voice": "Every success path needs a failure path.",
+    "connections": [
+      "Cybersage",
+      "Softstorm"
+    ]
   },
   {
     "name": "Kodavic",
     "role": "data analyst",
-    "style": "asks what evidence supports a claim"
+    "style": "asks what evidence supports a claim",
+    "motivation": "Turn public data into honest evidence, not hype.",
+    "voice": "One chart is a clue, not proof.",
+    "connections": [
+      "Unique",
+      "Moon"
+    ]
   },
   {
     "name": "Cybersage",
     "role": "privacy researcher",
-    "style": "minimises exposed information"
+    "style": "minimises exposed information",
+    "motivation": "Minimise sensitive data exposure and access.",
+    "voice": "Collect less data; expose less risk.",
+    "connections": [
+      "Goodness",
+      "Craftore"
+    ]
   },
   {
     "name": "Reina",
     "role": "product designer",
-    "style": "watches real users struggle"
+    "style": "watches real users struggle",
+    "motivation": "Make useful products understandable to first-time users.",
+    "voice": "Watch the user, not just the mockup.",
+    "connections": [
+      "Semi",
+      "Leemah"
+    ]
   },
   {
     "name": "Cclya",
     "role": "protocol researcher",
-    "style": "reads primary sources"
+    "style": "reads primary sources",
+    "motivation": "Separate protocol facts from marketing claims.",
+    "voice": "Read the source, not only the headline.",
+    "connections": [
+      "Softstorm",
+      "Kodavic"
+    ]
   },
   {
     "name": "Leemah",
     "role": "career mentor",
-    "style": "matches evidence to opportunity"
+    "style": "matches evidence to opportunity",
+    "motivation": "Help people find realistic career paths with evidence.",
+    "voice": "Show your work; no one can promise a job.",
+    "connections": [
+      "Toza",
+      "Kenny"
+    ]
   },
   {
     "name": "Kenny",
     "role": "local entrepreneur",
-    "style": "checks whether the business can last"
+    "style": "checks whether the business can last",
+    "motivation": "Build local services that can sustain themselves after launch.",
+    "voice": "If it cannot keep helping people after launch, rethink the plan.",
+    "connections": [
+      "Larai",
+      "BigSam"
+    ]
   }
 ];
 export const CAMPAIGN_STAGES = [
@@ -2444,29 +2606,6 @@ export const CAMPAIGN_BLUEPRINTS = [
 ];
 export function getMissionById(id){return CAMPAIGN_BLUEPRINTS.find(m=>m.id===id)||null;}
 export function canStartMission(mission,completedIds){if(!mission)return false;return mission.number===9||completedIds.includes(CAMPAIGN_BLUEPRINTS[CAMPAIGN_BLUEPRINTS.indexOf(mission)-1]?.id);}
-export function validateCampaign(){const ids=new Set();const errors=[];for(const m of CAMPAIGN_BLUEPRINTS){if(ids.has(m.id))errors.push('duplicate id: '+m.id);ids.add(m.id);if(m.choices.length<2||m.correct<0||m.correct>=m.choices.length)errors.push('invalid choices: '+m.id);if(!m.title||!m.story||!m.teach||!m.challenge||!m.city||!m.site)errors.push('missing content: '+m.id);}for(const c of REQUIRED_CAST)if(!CAMPAIGN_BLUEPRINTS.some(m=>m.character===c.name))errors.push('unused character: '+c.name);for(const c of STREET_CITIES)if(CAMPAIGN_BLUEPRINTS.filter(m=>m.city===c.id).length!==2)errors.push('expected two missions for city: '+c.id);return errors;}
-
-export function isJourneyUnlocked(cityId,completedIds,starterComplete){
-  const index=STREET_CITIES.findIndex(city=>city.id===cityId);
-  if(index<0)return false;
-  if(index===0)return Boolean(starterComplete);
-  return completedIds.includes('ak_'+STREET_CITIES[index-1].id);
-}
-export function awardCampaignJourney(player,journey,bonus=0){
-  if(!journey||!journey.id)return {player,first:false,xpGain:0,coinGain:0};
-  const current=player||{},done={...(current.done||{})};
-  if(done[journey.id])return {player:current,first:false,xpGain:0,coinGain:0};
-  const next={...current,done,skills:{...(current.skills||{})},relationships:{...(current.relationships||{})}};
-  const safeBonus=Math.max(0,Number(bonus)||0);
-  const xpGain=(Number(journey.xp)||0)+safeBonus;
-  const coinGain=20+Math.floor(safeBonus/5);
-  next.xp=(Number(current.xp)||0)+xpGain;
-  next.coins=(Number(current.coins)||0)+coinGain;
-  next.reputation=(Number(current.reputation)||0)+2;
-  for(const mission of journey.blueprints||[]){
-    if(mission.skill)next.skills[mission.skill]=(next.skills[mission.skill]||0)+1;
-    if(mission.character)next.relationships[mission.character]=(next.relationships[mission.character]||0)+1;
-  }
-  next.done[journey.id]=true;
-  return {player:next,first:true,xpGain,coinGain};
-}
+export function validateCampaign(){const ids=new Set();const errors=[];for(const m of CAMPAIGN_BLUEPRINTS){if(ids.has(m.id))errors.push('duplicate id: '+m.id);ids.add(m.id);if(m.choices.length<2||m.correct<0||m.correct>=m.choices.length)errors.push('invalid choices: '+m.id);if(!m.title||!m.story||!m.teach||!m.challenge||!m.city||!m.site)errors.push('missing content: '+m.id);}for(const c of REQUIRED_CAST)if(!c.role||!c.style||!c.motivation||!c.voice||!Array.isArray(c.connections)||!c.connections.length)errors.push('incomplete character: '+c.name);for(const c of REQUIRED_CAST)if(!CAMPAIGN_BLUEPRINTS.some(m=>m.character===c.name))errors.push('unused character: '+c.name);for(const c of STREET_CITIES)if(CAMPAIGN_BLUEPRINTS.filter(m=>m.city===c.id).length!==2)errors.push('expected two missions for city: '+c.id);return errors;}
+export function isJourneyUnlocked(cityId,completedIds,starterComplete){const index=STREET_CITIES.findIndex(city=>city.id===cityId);if(index<0)return false;if(index===0)return Boolean(starterComplete);return completedIds.includes('ak_'+STREET_CITIES[index-1].id);}
+export function awardCampaignJourney(player,journey,bonus=0){if(!journey||!journey.id)return {player,first:false,xpGain:0,coinGain:0};const current=player||{},done={...(current.done||{})};if(done[journey.id])return {player:current,first:false,xpGain:0,coinGain:0};const next={...current,done,skills:{...(current.skills||{})},relationships:{...(current.relationships||{})}};const safeBonus=Math.max(0,Number(bonus)||0);const xpGain=(Number(journey.xp)||0)+safeBonus;const coinGain=20+Math.floor(safeBonus/5);next.xp=(Number(current.xp)||0)+xpGain;next.coins=(Number(current.coins)||0)+coinGain;next.reputation=(Number(current.reputation)||0)+2;for(const mission of journey.blueprints||[]){if(mission.skill)next.skills[mission.skill]=(next.skills[mission.skill]||0)+1;if(mission.character)next.relationships[mission.character]=(next.relationships[mission.character]||0)+1;}next.done[journey.id]=true;return {player:next,first:true,xpGain,coinGain};}
