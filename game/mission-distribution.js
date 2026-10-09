@@ -168,7 +168,11 @@ export function selectEducationalMissions({
     const alreadyCompleted = Boolean(completed[mission.missionId]);
     const repeatsKnown = usedConcepts.has(mission.conceptId);
     if (alreadyCompleted) continue;
-    if (repeatsKnown && !allowDeepening) continue;
+    if (repeatsKnown) {
+      if (!allowDeepening) continue;
+      const priorContexts = conceptHistory[mission.conceptId] || [];
+      if (priorContexts.some(entry => entry.locationId === locationId)) continue;
+    }
     selected.push(mission);
     if (selected.length >= limit) break;
   }
