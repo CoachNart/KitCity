@@ -85,6 +85,9 @@ try {
   await moveUntil(page, ["Shift", "S"], "z", -65, "gte");
   await moveUntil(page, ["Shift", "A"], "x", 31, "lte");
   await page.waitForFunction(() => !document.querySelector("#talkBtn").classList.contains("hidden"), undefined, { timeout: 10000 });
+  const objectiveApproach = await page.evaluate(() => ({ position: window.__KITCITY_E2E__?.position(), nearby: window.__KITCITY_E2E__?.nearby(), button: document.querySelector("#talkBtn")?.innerText }));
+  console.log("Objective approach diagnostic:", JSON.stringify(objectiveApproach));
+  assert.equal(objectiveApproach.nearby, "Supplier delivery receipt", "the player reaches the actual marked practical objective");
   await page.locator("#talkBtn").click();
   await page.waitForFunction(() => /Supplier delivery receipt/.test(document.querySelector("#sheet")?.innerText || ""), undefined, { timeout: 10000 });
   await clickChoice(page, /Match the order number/i);
