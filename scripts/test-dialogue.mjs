@@ -18,7 +18,7 @@ const farmer = content.getDialogue("coop-record");
 const session = new engine.ConversationEngine({ content: farmer, state: engine.createDialogueState(), context: { exploreScore: 200, travelMeters: 400 } });
 const opening = session.start();
 assert.match(opening.node.text, /produce to buyers/i);
-assert.equal(opening.node.choices.length, 3);
+assert.equal(opening.node.choices.length, 4, "dialogue always offers a natural exit alongside authored responses");
 assert.equal(session.choose("ask-process").node.id, "current-process");
 assert.equal(session.choose("combine-evidence").node.id, "reaction");
 assert.equal(session.choose("who-sees").node.id, "access");
@@ -49,4 +49,14 @@ assert.equal(returning.returning, true);
 assert.match(returning.node.text, /you’re back/i);
 assert.equal(returning.state.relationships["musa-farmer"].meetings, 2);
 
-console.log("PASS: 7 dialogue trees validate; branching, multi-turn follow-ups, mission completion, knowledge/trust state, and returning-NPC dialogue all work.");
+const gatedContent = { ...farmer, id: "gated-test", requires: { completedMission: "starter" } };
+const gated = new engine.ConversationEngine({ content: gatedContent, state: engine.createDialogueState() });
+assert.equal(gated.start().unavailable, true, "mission prerequisites gate conversations");
+
+const leaveSession = new engine.ConversationEngine({ content: farmer, state: engine.createDialogueState() });
+assert.equal(leaveSession.start().node.choices.at(-1).id, "__leave_conversation");
+const left = leaveSession.choose("__leave_conversation");
+assert.equal(left.ended, true);
+assert.equal(left.missionCompleted, false, "leaving early must not complete the mission");
+
+console.log("PASS: 7 dialogue trees validate; branching, multi-turn follow-ups, mission gates, early exit, mission completion, knowledge/trust state, and returning-NPC dialogue all work.");
