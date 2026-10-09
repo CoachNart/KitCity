@@ -2445,3 +2445,28 @@ export const CAMPAIGN_BLUEPRINTS = [
 export function getMissionById(id){return CAMPAIGN_BLUEPRINTS.find(m=>m.id===id)||null;}
 export function canStartMission(mission,completedIds){if(!mission)return false;return mission.number===9||completedIds.includes(CAMPAIGN_BLUEPRINTS[CAMPAIGN_BLUEPRINTS.indexOf(mission)-1]?.id);}
 export function validateCampaign(){const ids=new Set();const errors=[];for(const m of CAMPAIGN_BLUEPRINTS){if(ids.has(m.id))errors.push('duplicate id: '+m.id);ids.add(m.id);if(m.choices.length<2||m.correct<0||m.correct>=m.choices.length)errors.push('invalid choices: '+m.id);if(!m.title||!m.story||!m.teach||!m.challenge||!m.city||!m.site)errors.push('missing content: '+m.id);}for(const c of REQUIRED_CAST)if(!CAMPAIGN_BLUEPRINTS.some(m=>m.character===c.name))errors.push('unused character: '+c.name);for(const c of STREET_CITIES)if(CAMPAIGN_BLUEPRINTS.filter(m=>m.city===c.id).length!==2)errors.push('expected two missions for city: '+c.id);return errors;}
+
+export function isJourneyUnlocked(cityId,completedIds,starterComplete){
+  const index=STREET_CITIES.findIndex(city=>city.id===cityId);
+  if(index<0)return false;
+  if(index===0)return Boolean(starterComplete);
+  return completedIds.includes('ak_'+STREET_CITIES[index-1].id);
+}
+export function awardCampaignJourney(player,journey,bonus=0){
+  if(!journey||!journey.id)return {player,first:false,xpGain:0,coinGain:0};
+  const current=player||{},done={...(current.done||{})};
+  if(done[journey.id])return {player:current,first:false,xpGain:0,coinGain:0};
+  const next={...current,done,skills:{...(current.skills||{})},relationships:{...(current.relationships||{})}};
+  const safeBonus=Math.max(0,Number(bonus)||0);
+  const xpGain=(Number(journey.xp)||0)+safeBonus;
+  const coinGain=20+Math.floor(safeBonus/5);
+  next.xp=(Number(current.xp)||0)+xpGain;
+  next.coins=(Number(current.coins)||0)+coinGain;
+  next.reputation=(Number(current.reputation)||0)+2;
+  for(const mission of journey.blueprints||[]){
+    if(mission.skill)next.skills[mission.skill]=(next.skills[mission.skill]||0)+1;
+    if(mission.character)next.relationships[mission.character]=(next.relationships[mission.character]||0)+1;
+  }
+  next.done[journey.id]=true;
+  return {player:next,first:true,xpGain,coinGain};
+}
