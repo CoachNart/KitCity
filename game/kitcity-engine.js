@@ -2520,17 +2520,16 @@ function objectiveGeometry(shape){
  if(shape==='board')return new THREE.BoxGeometry(.9,.68,.13);
  return new THREE.BoxGeometry(.82,.52,.24);
 }
-function collectPrototypeObjective(objective,choice){
- const result=recordPrototypeObjectiveChoice(adventure,objective.missionId,objective.id,choice.id);
+function collectPrototypeObjective(mission,objective,choice){
+ const result=recordPrototypeObjectiveChoice(adventure,mission.id,objective.id,choice.id);
  if(result.error){closeSheet();toast(result.error==='already-recorded'?'You have already checked this item.':'This activity is not available yet.');return;}
  const mission=result.mission,completed=result.completed,allDone=result.allDone;
  adventureSave();closeSheet();clearPrototypeObjectiveVisuals();refreshPrototypeObjectives();adventureAfterActivity();
  if(allDone)toast(result.choice.feedback+' Objective complete. Return to '+mission.npcName+' to discuss what you found.');
  else toast(result.choice.feedback+' · '+completed+'/'+result.total+' checks complete. Keep exploring.');
 }
-function inspectPrototypeObjective(objective){
- const mission=PROTOTYPE_MISSIONS.find(item=>item.id===objective.missionId);if(!mission)return;
- const choices=objective.choices.map(choice=>({t:choice.label,f:()=>collectPrototypeObjective(objective,choice)}));
+function inspectPrototypeObjective(mission,objective){
+ const choices=objective.choices.map(choice=>({t:choice.label,f:()=>collectPrototypeObjective(mission,objective,choice)}));
  choices.push({t:'Not yet',f:()=>{closeSheet();adventureAfterActivity();}});
  openSheet('<div class="who"><div><b>'+dialogueEscape(objective.label)+'</b><small>'+dialogueEscape(mission.title)+' · practical task</small></div></div><p>'+dialogueEscape(objective.instruction)+'</p><p class="note">Choose how to handle this evidence. Your choice is saved with this mission.</p>',choices);
 }
@@ -2546,7 +2545,7 @@ function refreshPrototypeObjectives(){
    const mesh=new THREE.Mesh(objectiveGeometry(objective.shape),lam(objective.color,{emissive:objective.color,emissiveIntensity:.18}));mesh.position.y=objective.shape==='board'||objective.shape==='design'?1.0:.72;root.add(mesh);
    if(objective.shape==='checkpoint'){const cap=new THREE.Mesh(new THREE.SphereGeometry(.18,10,8),lam('#FFFFFF',{emissive:'#FFFFFF',emissiveIntensity:.4}));cap.position.y=1.42;root.add(cap);}
    const tag=label(objective.label,objective.color,'#fff');tag.position.set(objective.position.x,3.15,objective.position.z);missionGroup.add(tag);missionGroup.add(root);prototypeObjectiveVisuals.push(root,tag);
-   ents.push({x:objective.position.x,z:objective.position.z,r:5.1,prototypeObjective:true,objective,active:()=>true,talk:()=>inspectPrototypeObjective(objective)});
+   ents.push({x:objective.position.x,z:objective.position.z,r:5.1,prototypeObjective:true,objective,active:()=>true,talk:()=>inspectPrototypeObjective(mission,objective)});
   }
  }
 }
