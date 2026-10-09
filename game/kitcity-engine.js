@@ -2001,7 +2001,7 @@ streetProfiles.forEach((p,i)=>{
     id:'street_'+p.city,n:'★',mod:i+1,city:p.city,title:p.title,
     goal:'Meet '+p.name+' at '+p.site+' and help resolve a real-world problem.',xp:65,explore:true,
     steps:[{label:'Meet '+p.name+' · '+p.site,spot,npc:mentor,run(){
-      const opening='<p>'+p.scene+'</p><p><b>'+p.name+':</b> '+p.ask+'</p>';
+      const opening='<p>'+p.scene+'</p><p><b>'+p.name+':</b> Let me show you how I handle this at work. Choose the next move and I will explain why.</p><p><b>What would you do?</b></p>';
       const ask=()=>{
         talk(mentor,opening,p.choices.map((choice,j)=>({t:choice,f:()=>{
           if(j===p.answer){
