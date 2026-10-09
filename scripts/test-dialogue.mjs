@@ -10,6 +10,13 @@ async function importSource(relativePath) {
 }
 const engine = await importSource("game/conversation-engine.js");
 const content = await importSource("game/dialogue-content.js");
+const engineSource = await readFile(path.join(root, "game/kitcity-engine.js"), "utf8");
+assert.match(engineSource, /new ConversationEngine\(\{content,state:createDialogueState\(adventure\.dialogueState\)/, "NPC interactions must use the reusable engine");
+assert.match(engineSource, /adventureComplete\(mapped,choiceIndex\)/, "mission-ending dialogue must reach the existing reward/mission handler");
+assert.match(engineSource, /adventureSave\(\);adventureAfterActivity\(\);/, "a non-mission exit must return to free roam");
+assert.match(engineSource, /function adventureAfterActivity\(\)[\s\S]*?freeRoam:true/, "return-to-gameplay restores the free-roam state");
+assert.doesNotMatch(engineSource, /function adventureConversation\(/, "the old hardcoded linear dialogue handler must stay removed");
+
 const errors = engine.validateDialogueContent(content.KITCITY_DIALOGUES);
 assert.deepEqual(errors, [], "all authored dialogue trees should validate");
 assert.equal(content.KITCITY_DIALOGUES.length, 7, "all seven open-world NPC conversations are registered");
