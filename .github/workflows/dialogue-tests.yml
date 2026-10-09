@@ -1,0 +1,16 @@
+name: KitCity dialogue tests
+on:
+  push:
+    branches: [main, "rebuild/open-world-adventure"]
+  pull_request:
+    branches: [main]
+jobs:
+  dialogue-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Validate branching conversations
+        run: npm run test:dialogue
