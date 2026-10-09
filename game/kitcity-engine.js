@@ -2542,6 +2542,7 @@ function adventureTalk(def){
  activeDialogueSession=new ConversationEngine({content,state:createDialogueState(adventure.dialogueState),context:{exploreScore:adventure.exploreScore,travelMeters:adventure.travel}});
  const started=activeDialogueSession.start();
  adventure.dialogueState=started.state;adventureSave();
+ if(started.unavailable){activeDialogueSession=null;activeDialogueDef=null;toast(started.reason||'Come back after exploring the earlier idea.');return;}
  activeDialogueLog=[{speaker:started.node.speaker||def.name,text:started.node.text,kind:'npc'}];
  renderDialogueNode(started.node);
 }
