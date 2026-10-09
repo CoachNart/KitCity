@@ -2256,8 +2256,8 @@ function completeExplore(){
 }
 function moduleCard(m){
   const sc=P.scores[m.id],dn=!!P.done[m.id];
-  const foot=sc?'Best: '+sc.grade+' ('+sc.ft+'/6)':(dn?'Retake to earn a grade':'Up to 110 XP');
-  return '<div class="card"><div class="ch">'+badgeSVG(m.n,dn,46)+'<div><b>Module '+m.mod+': '+m.title+'</b><small>'+m.goal+'</small></div></div><div class="cf"><span>'+foot+'</span><button class="btn brand" data-a="play" data-v="'+m.id+'" type="button">'+(dn?'Replay':'Play')+'</button></div></div>';
+  const foot=sc?'Best: '+sc.grade+' ('+sc.ft+'/6)':(dn?'Revisit to improve your grade':'Up to 130 XP');
+  return '<div class="card"><div class="ch">'+badgeSVG(m.n,dn,46)+'<div><b>City journey '+m.mod+': '+m.title+'</b><small>'+m.goal+'</small></div></div><div class="cf"><span>'+foot+'</span><button class="btn brand" data-a="play" data-v="'+m.id+'" type="button">'+(dn?'Replay journey':'Begin journey')+'</button></div></div>';
 }
 function startExam(){
   const qs=[]; AK_TRACKS.forEach(t=>shuffle(Q3(t.qs)).slice(0,2).forEach(q=>qs.push(q)));
@@ -2324,7 +2324,7 @@ function startMission(id){
 function briefing(){
   const m=G.m,C=CITIES[m.city];
   openSheet('<div class="who"><span class="av" style="background:'+INK+'">'+m.n+'</span><div><b>'+(m.explore?'City journey '+m.mod+': ':'Mission '+m.n+': ')+m.title+'</b><small>'+C.name+', '+C.tag+'</small></div></div><p>'+m.goal+'</p><ul class="pts">'+m.steps.map(s=>'<li>'+s.label+'</li>').join('')+'</ul>'+(m.n===1?'<p class="note">Move with the left stick or WASD. Hold Run or Shift to run. Tap Talk or press E to speak. Follow the arrow.</p>':'<p class="note">Follow the arrow to the next person. Watch for traffic.</p>'),
-    [{t:'Start mission',f:closeSheet},{t:'Back to hub',g:1,f:exitToHub}]);
+    [{t:'Start conversations',f:closeSheet},{t:'Back to city selection',g:1,f:exitToHub}]);
 }
 function finishStep(){
   closeSheet(); if(!G) return;
