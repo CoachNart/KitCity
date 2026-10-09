@@ -50,7 +50,7 @@ export const NIGERIAN_JURISDICTIONS = [...NIGERIAN_STATES, ...NIGERIAN_TERRITORI
  * The label is deliberately broad: this registry does not claim that every
  * Lagos district or any other state's capital has a separate finished map.
  */
-export const WORLD_LOCATIONS = [{
+const PLAYABLE_WORLD_LOCATIONS = [{
   id: "lagos-free-roam",
   jurisdictionId: "lagos",
   settlementName: "Lagos",
@@ -71,6 +71,45 @@ export const WORLD_LOCATIONS = [{
   unlockRequirement: null,
   contentStatus: "starter-environment"
 }];
+
+
+/**
+ * Administrative-capital records make every jurisdiction addressable before its
+ * scene is built. These records are metadata only: no engine city, asset,
+ * encounter, mission or environment is implied by their existence.
+ */
+export const PLANNED_SETTLEMENT_LOCATIONS = NIGERIAN_JURISDICTIONS.map(jurisdiction => ({
+  id: "settlement-" + jurisdiction.id,
+  jurisdictionId: jurisdiction.id,
+  settlementName: jurisdiction.administrativeCapital,
+  locationType: "administrative-capital-settlement",
+  status: "planned",
+  environmentAssetId: null,
+  engineCityId: null,
+  environmentProfileIds: [],
+  sectorIds: [],
+  npcProfileIds: [],
+  occupationTags: [],
+  communityTags: [],
+  mainMissionIds: [],
+  sideMissionIds: [],
+  environmentalEncounterIds: [],
+  educationalConceptIds: [],
+  storyArcId: null,
+  unlockRequirement: null,
+  contentStatus: "registry-only",
+  regionalContext: {
+    geopoliticalZone: jurisdiction.region,
+    researchStatus: "not-yet-researched",
+    evidenceRefs: [],
+    contextNotes: []
+  }
+}));
+
+export const WORLD_LOCATIONS = [
+  ...PLAYABLE_WORLD_LOCATIONS,
+  ...PLANNED_SETTLEMENT_LOCATIONS
+];
 
 export const ENVIRONMENT_PROFILES = [
   {id:"urban-streets",label:"Urban streets",settingTags:["transport","residential","public-space"]},
