@@ -46,6 +46,7 @@ try {
   const context = await browser.newContext({ viewport: { width: 1280, height: 800 } });
   const page = await context.newPage();
   attachErrors(page);
+  await page.addInitScript(() => { if (!sessionStorage.getItem("__kitcityE2ESeeded")) { localStorage.setItem("kitnaija_v1", JSON.stringify({ low: true })); sessionStorage.setItem("__kitcityE2ESeeded", "1"); } });
   await waitForGame(page);
   assert.ok(await page.locator("#gl").evaluate(canvas => canvas.width > 0 && canvas.height > 0), "3D canvas is initialized");
   assert.ok(await page.locator("#gl").evaluate(canvas => Boolean(canvas.getContext("webgl2") || canvas.getContext("webgl"))), "browser provides a WebGL context");
