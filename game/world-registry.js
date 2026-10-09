@@ -25,21 +25,22 @@ const STATE_ROWS = [
 ];
 
 const emptyContentSlots = () => ({
-  locationIds: [], environmentProfiles: [], npcProfileIds: [], occupationTags: [],
-  communityTags: [], mainMissionIds: [], sideMissionIds: [], environmentalEncounterIds: [],
+  locationIds: [], environmentProfileIds: [], environmentSettings: {}, sectorIds: [],
+  npcProfileIds: [], npcSpawnPoints: [], occupationTags: [], communityTags: [],
+  mainMissionIds: [], sideMissionIds: [], environmentalEncounterIds: [],
   educationalConceptIds: [], storyArcId: null, unlockRequirement: null
 });
 
 export const NIGERIAN_STATES = STATE_ROWS.map(([id,name,administrativeCapital,region]) => ({
   id, name, kind: "state", administrativeCapital, region, status: "registered",
-  regionalContext: { geopoliticalZone: region, researchStatus: "not-yet-researched", evidenceRefs: [] },
+  regionalContext: { geopoliticalZone: region, researchStatus: "not-yet-researched", evidenceRefs: [], contextNotes: [] },
   content: emptyContentSlots()
 }));
 
 export const NIGERIAN_TERRITORIES = [{
   id: "fct", name: "Federal Capital Territory", shortName: "FCT", kind: "territory",
   administrativeCapital: "Abuja", region: "North Central", status: "registered",
-  regionalContext: { geopoliticalZone: "North Central", researchStatus: "not-yet-researched", evidenceRefs: [] },
+  regionalContext: { geopoliticalZone: "North Central", researchStatus: "not-yet-researched", evidenceRefs: [], contextNotes: [] },
   content: emptyContentSlots()
 }];
 
@@ -71,7 +72,13 @@ const PLAYABLE_WORLD_LOCATIONS = [{
   environmentSettings: {},
   storyArcId: "kitcity-open-world-introduction",
   unlockRequirement: null,
-  contentStatus: "starter-environment"
+  contentStatus: "starter-environment",
+  regionalContext: {
+    geopoliticalZone: "South West",
+    researchStatus: "not-yet-researched",
+    evidenceRefs: [],
+    contextNotes: []
+  }
 }];
 
 
