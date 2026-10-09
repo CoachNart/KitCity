@@ -3831,6 +3831,97 @@ export const EDUCATIONAL_MISSIONS = [
     },
     "domain": "Open internet and digital infrastructure"
   }
+
+  ,
+  {
+    "id": "learn-agriculture-cooperative-audit",
+    "conceptId": "agriculture-traceability",
+    "title": "Deepening the lesson: Auditing a cooperative's produce record",
+    "npcId": "farm-coop",
+    "npcName": "Musa",
+    "role": "Smallholder farmer and cooperative member",
+    "personality": "Patient, experienced, firm about costs",
+    "personalConcern": "A repeat buyer disputes a delivery record after the cooperative has already learned the basics of traceability.",
+    "existingKnowledge": "Understands shared records, but wants a fair way to correct mistakes and resolve disagreements.",
+    "communicationStyle": "Uses a concrete shipment dispute and asks who can verify each claim.",
+    "participationReason": "Work through a difficult record dispute without exposing farmers or pretending a ledger proves the physical facts.",
+    "sectors": ["agriculture", "commerce", "transport-logistics"],
+    "scenario": "After a first traceability pilot, a cooperative and a buyer disagree about a delayed produce batch. The task is to check independent evidence, record a correction transparently, and decide whether the system is worth its cost.",
+    "complexity": "intermediate",
+    "prerequisites": ["agriculture-traceability"],
+    "conceptTags": ["agriculture-traceability", "cooperative-governance", "evidence-quality", "privacy-by-design"],
+    "explanation": "A shared trail can help parties compare submissions and corrections, but the group still needs trustworthy inspections, a dispute process, and an accountable person to resolve claims.",
+    "application": "Compare harvest notes, transporter receipts and an independent inspection; record what changed, why it changed and who approved the correction.",
+    "limitations": "A tamper-evident history cannot prove the shipment's physical condition, guarantee honest witnesses, or make a costly process worthwhile.",
+    "takeaway": "Use independent evidence, visible corrections, clear accountability and a cost comparison against simpler records.",
+    "optionalFollowUps": [
+      { "id": "cooperative-audit-deeper", "title": "Explore a more difficult dispute", "optional": true }
+    ],
+    "nodes": {
+      "opening": {
+        "text": "Musa says the cooperative already tested a shared produce record. Now a buyer disputes a delayed batch, and both sides insist their paperwork is right.",
+        "choices": [
+          { "id": "ask-practical", "label": "Start with the evidence both sides can check", "next": "application", "effects": { "knowledge": ["agriculture-traceability-deepening"] } },
+          { "id": "challenge-hype", "label": "Ask whether a ledger can prove the shipment was handled well", "next": "limitation" },
+          { "id": "hear-concern", "label": "Ask what the dispute is costing the cooperative", "next": "compare" }
+        ]
+      },
+      "application": {
+        "text": "The harvest note, transport receipt and inspection record disagree about the delivery time. No single entry should automatically settle the argument.",
+        "choices": [
+          { "id": "who-benefits", "label": "Who should be able to challenge or correct a record?", "next": "limitation" },
+          { "id": "how-work", "label": "Compare the harvest and transport evidence first", "next": "evidence" },
+          { "id": "finish-idea", "label": "Keep the trial small until the process is fair", "next": "takeaway" }
+        ]
+      },
+      "evidence": {
+        "text": "The cooperative can compare its harvest note with the transporter receipt and an independent inspection. A shared record makes the history easier to review; it does not decide which physical-world claim is true.",
+        "choices": [
+          { "id": "who-records", "label": "Who is responsible for checking the first entry?", "next": "accountability" },
+          { "id": "check-first-entry", "label": "What if the original entry was wrong?", "next": "limitation" }
+        ]
+      },
+      "accountability": {
+        "text": "The group needs named roles for submitting evidence, approving corrections and resolving disputes. No one should be able to silently rewrite the trail or expose farmers' private details.",
+        "choices": [
+          { "id": "how-work-accountability", "label": "Design a correction and review process", "next": "trial" },
+          { "id": "protect-details", "label": "Limit who can see personal and commercial details", "next": "trial" }
+        ]
+      },
+      "compare": {
+        "text": "The pilot also costs time and money. If a shared spreadsheet with signed receipts solves the problem for less, the cooperative should be willing to use that instead.",
+        "choices": [
+          { "id": "compare-cost", "label": "Compare cost, control and dispute handling", "next": "trial" },
+          { "id": "use-paper", "label": "Keep a paper fallback while testing", "next": "evidence" }
+        ]
+      },
+      "limitation": {
+        "text": "A ledger can preserve who submitted which claim and when, but it cannot make a false harvest note true or determine the condition of a physical shipment by itself.",
+        "choices": [
+          { "id": "design-around", "label": "Add independent checks and a correction path", "next": "trial" },
+          { "id": "who-corrects", "label": "Give someone accountable authority to resolve disputes", "next": "accountability" }
+        ]
+      },
+      "trial": {
+        "text": "A useful pilot would define the evidence required, who can submit and approve corrections, what remains private, a paper/offline fallback and the cost of each shipment.",
+        "choices": [
+          { "id": "takeaway", "label": "That gives the cooperative a fair test", "next": "takeaway" },
+          { "id": "test-cost", "label": "Measure whether the process saves more than it costs", "next": "takeaway" }
+        ]
+      },
+      "takeaway": {
+        "text": "The deeper lesson: a shared record is only one part of a trustworthy supply chain. Evidence quality, correction rules, accountability, privacy and real operating costs matter just as much.",
+        "choices": [
+          { "id": "finish", "label": "Use evidence and cost—not hype—to judge the pilot", "end": true, "completeConversation": true, "completeMission": "agriculture-cooperative-audit", "effects": { "knowledge": ["agriculture-traceability"], "trust": 1, "flags": { "agriculture-cooperative-audit-complete": true } } }
+        ]
+      }
+    },
+    "start": "opening",
+    "missionId": "agriculture-cooperative-audit",
+    "reward": { "xp": 22, "ngn": 30 },
+    "position": { "x": 65, "z": -245, "f": -1 },
+    "domain": "Agriculture · advanced cooperative case"
+  }
 ];
 
 export const EDUCATIONAL_NPCS = EDUCATIONAL_MISSIONS.map((mission,index)=>({
