@@ -216,7 +216,9 @@ function graphReachable(content) {
     const id = pending.pop();
     if (seen.has(id) || !content.nodes?.[id]) continue;
     seen.add(id);
-    pending.push(...allEdges(content, content.nodes[id]));
+    const node = content.nodes[id];
+    if (node.fallback) pending.push(node.fallback);
+    pending.push(...allEdges(content, node));
   }
   return seen;
 }
