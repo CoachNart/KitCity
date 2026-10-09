@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { STREET_CITIES, CAMPAIGN_BLUEPRINTS, CAMPAIGN_STAGES, REQUIRED_CAST } from './web3-campaign.js';
+import { STREET_CITIES, CAMPAIGN_BLUEPRINTS, CAMPAIGN_STAGES, REQUIRED_CAST, isJourneyUnlocked, awardCampaignJourney } from './web3-campaign.js';
 import { STREET_CITIES, CAMPAIGN_BLUEPRINTS, CAMPAIGN_STAGES, REQUIRED_CAST } from './web3-campaign.js';
 import { ConversationEngine, createDialogueState } from './conversation-engine.js';
 import { getDialogue } from './dialogue-content.js';
@@ -2061,8 +2061,7 @@ STREET_CITIES.forEach((city,i)=>{
  EXPLORE.push(m);MBY[m.id]=m;
 });
 function completeExplore(){
- const m=G.m,first=!P.done[m.id],before=levelInfo(P.xp).n;let gain=0,coinGain=0;
- if(first){gain=m.xp+G.bonus;P.xp+=gain;for(const bp of m.blueprints){P.skills[bp.skill]=(P.skills[bp.skill]||0)+1;P.relationships[bp.character]=(P.relationships[bp.character]||0)+1;}P.reputation+=2;coinGain=20+Math.floor(G.bonus/5);P.coins+=coinGain;}P.done[m.id]=true;save();updateHUD();Snd.sfx('done');
+ const m=G.m,before=levelInfo(P.xp).n,reward=awardCampaignJourney(P,m,G.bonus);let gain=reward.xpGain,coinGain=reward.coinGain;Object.assign(P,reward.player);if(!P.done[m.id])P.done[m.id]=true;save();updateHUD();Snd.sfx('done');
  const after=levelInfo(P.xp);clearGroup(missionGroup);colliders.length=cityCols;smoke=[];ents=[];goal=null;beacon.visible=false;hubCity=m.city;
  const btns=[{t:'Enter KitCity Hub',f:()=>{hubCity=m.city;hubTab='cityhub';exitToHub();}},{t:'Back to missions',g:1,f:()=>{hubTab='missions';exitToHub();}}];
  openSheet('<div class="badge">'+badgeSVG('★',true,96)+'<div><h3 style="margin-top:0">Arrived at KitCity Hub</h3><small>'+CITIES[m.city].name+' · Agent Kit brought the community together</small></div></div>'+
@@ -2086,10 +2085,7 @@ const STARTER_CITY_ORDER=['lagos','abuja','kano','ph'];
 const isCityUnlocked=city=>{
  const starterIndex=STARTER_CITY_ORDER.indexOf(city);
  if(starterIndex>=0){if(starterIndex===0)return true;const previous=MISSIONS.filter(m=>m.city===STARTER_CITY_ORDER[starterIndex-1]);return previous.length>0&&previous.every(m=>!!P.done[m.id]);}
- const index=EXPLORE.findIndex(m=>m.city===city);
- if(index<0)return false;
- if(index===0)return MISSIONS.every(m=>!!P.done[m.id]);
- return !!P.done[EXPLORE[index-1].id];
+ return isJourneyUnlocked(city,Object.keys(P.done).filter(id=>P.done[id]),MISSIONS.every(m=>!!P.done[m.id]));
 };
 const isUnlocked=m=>{if(m.explore)return isCityUnlocked(m.city);const k=MISSIONS.indexOf(m);return k===0||!!P.done[MISSIONS[k-1].id];};
 
@@ -2157,7 +2153,7 @@ function startMission(id){
 }
 function briefing(){
   const m=G.m,C=CITIES[m.city];
-  openSheet('<div class="who"><span class="av" style="background:'+INK+'">'+m.n+'</span><div><b>'+(m.explore?'':'Mission '+m.n+': ')+m.title+'</b><small>'+C.name+', '+C.tag+'</small></div></div><p>'+m.goal+'</p><ul class="pts">'+m.steps.map(s=>'<li>'+s.label+'</li>').join('')+'</ul>'+(m.explore?'<p class="note">Move with the left stick or WASD. Hold Run or Shift to run. Tap Talk or press E near a person. Follow the arrow to your next conversation.</p>':'<p class="note">Follow the arrow to the next person. Watch for traffic.</p>'),
+  openSheet('<div class="who"><span class="av" style="background:'+INK+'">'+m.n+'</span><div><b>'+(m.explore?'':'Mission '+m.n+': ')+m.title+'</b><small>'+C.name+', '+C.tag+'</small></div></div>'+(m.explore?'<p class="note">Stage '+m.stage+' · '+campaignText(CAMPAIGN_STAGES[m.stage-1]?.title||'Street campaign')+'</p>':'')+'<p>'+m.goal+'</p><ul class="pts">'+m.steps.map(s=>'<li>'+s.label+'</li>').join('')+'</ul>'+(m.explore?'<p class="note">Move with the left stick or WASD. Hold Run or Shift to run. Tap Talk or press E near a person. Follow the arrow to your next conversation.</p>':'<p class="note">Follow the arrow to the next person. Watch for traffic.</p>'),
     [{t:'Start conversations',f:closeSheet},{t:'Back to city selection',g:1,f:exitToHub}]);
 }
 function finishStep(){
