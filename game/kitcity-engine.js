@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { STREET_CITIES, CAMPAIGN_BLUEPRINTS, CAMPAIGN_STAGES, REQUIRED_CAST } from './web3-campaign.js';
+import { STREET_CITIES, CAMPAIGN_BLUEPRINTS, CAMPAIGN_STAGES, REQUIRED_CAST } from './web3-campaign.js';
 import { ConversationEngine, createDialogueState } from './conversation-engine.js';
 import { getDialogue } from './dialogue-content.js';
 import { PROTOTYPE_MISSIONS, PROTOTYPE_MISSION_NPCS, recordPrototypeObjectiveChoice } from './prototype-missions.js';
@@ -2070,9 +2071,9 @@ function completeExplore(){
  (gain&&after.n>before?'<p><b>Level up! You are now '+after.title+'.</b></p>':''),btns);
 }
 function moduleCard(m){
-  const dn=!!P.done[m.id];
-  const foot=dn?'Journey complete':'Street conversations · Community Hub destination';
-  return '<div class="card"><div class="ch">'+badgeSVG(m.n,dn,46)+'<div><b>'+m.title+'</b><small>'+m.goal+'</small></div></div><div class="cf"><span>'+foot+'</span><button class="btn brand" data-a="play" data-v="'+m.id+'" type="button">'+(dn?'Replay journey':'Begin journey')+'</button></div></div>';
+  const dn=!!P.done[m.id],un=isUnlocked(m);
+  const foot=dn?'Journey complete':(un?'Two practical street challenges · KitCity Hub destination':'Complete the previous journey first');
+  return '<div class="card'+(un?'':' lock')+'"><div class="ch">'+badgeSVG(m.n,dn,46)+'<div><b>'+m.title+'</b><small>'+m.goal+'</small></div></div><div class="cf"><span>'+foot+'</span>'+(un?'<button class="btn brand" data-a="play" data-v="'+m.id+'" type="button">'+(dn?'Replay journey':'Begin journey')+'</button>':'<button class="btn line" type="button" disabled>Locked</button>')+'</div></div>';
 }
 const BADGES=['Wallet Starter','Swap Smart','Scam Spotter','Key Keeper','Safe Sender','Passport Holder','Community Voice','Cash-out Pro'];
 const LEVELS=[0,150,400,700,1000,1400],LTITLES=['Newcomer','Hustler','Street smart','Wallet pro','Onchain Oga','Naija legend'];
@@ -2081,7 +2082,16 @@ function levelInfo(xp){
   const lo=LEVELS[n],hi=LEVELS[n+1];
   return {n:n+1,title:LTITLES[n],pct:hi?Math.min(100,Math.round((xp-lo)/(hi-lo)*100)):100};
 }
-const isUnlocked=m=>{ if(m.explore) return true; const k=MISSIONS.indexOf(m); return k===0||!!P.done[MISSIONS[k-1].id]; };
+const STARTER_CITY_ORDER=['lagos','abuja','kano','ph'];
+const isCityUnlocked=city=>{
+ const starterIndex=STARTER_CITY_ORDER.indexOf(city);
+ if(starterIndex>=0){if(starterIndex===0)return true;const previous=MISSIONS.filter(m=>m.city===STARTER_CITY_ORDER[starterIndex-1]);return previous.length>0&&previous.every(m=>!!P.done[m.id]);}
+ const index=EXPLORE.findIndex(m=>m.city===city);
+ if(index<0)return false;
+ if(index===0)return MISSIONS.every(m=>!!P.done[m.id]);
+ return !!P.done[EXPLORE[index-1].id];
+};
+const isUnlocked=m=>{if(m.explore)return isCityUnlocked(m.city);const k=MISSIONS.indexOf(m);return k===0||!!P.done[MISSIONS[k-1].id];};
 
 /* =====================  mission flow  ===================== */
 function hideEnt(e){ e.hidden=true; loadStep(); }
@@ -2124,16 +2134,17 @@ function loadStep(){
   clearGroup(missionGroup); colliders.length=cityCols; smoke=[]; ents=[]; goal=null;
   const m=G.m,st=m.steps[G.i];
   const e=placeNPC(st.npc,SPOTS[st.spot]); e.talk=()=>st.run(); e.active=()=>true; ents.push(e); goal=e;
-  if(G.m.explore && G.i<G.m.steps.length-1) missionCentre(SPOTS[st.spot],CITIES[G.m.city].name,G.m.title.replace('Agent Kit in ','').toUpperCase());
-  if(G.m.explore && G.i<G.m.steps.length-1) missionCentre(SPOTS[st.spot],CITIES[G.m.city].name,G.m.title.replace('Agent Kit in ','').toUpperCase());
+  if(G.m.explore&&G.i===0)missionCentre(SPOTS[st.spot],CITIES[G.m.city].name,G.m.title.toUpperCase());
+  if(G.m.explore&&G.i===G.m.steps.length-1)missionCentre(SPOTS[st.spot],CITIES[G.m.city].name,'KITCITY HUB');
   for(const ex of (m.extras||[])){
-    if(G.used[ex.id]) continue;
-    const e2=placeNPC(ex.npc,ex.spot); e2.ex=ex; e2.talk=()=>ex.run(e2); e2.active=()=>!G.used[ex.id]; ents.push(e2);
+    if(G.used[ex.id]||(ex.once&&P.sideDone[ex.id])) continue;
+    const e2=placeNPC(ex.npc,ex.spot); e2.ex=ex; e2.talk=()=>ex.run(e2); e2.active=()=>!G.used[ex.id]&&!(ex.once&&P.sideDone[ex.id]); ents.push(e2);
   }
   updateHUD();
 }
 function startMission(id){
   const m=MBY[id];
+  if(!m||!isUnlocked(m)){toast('Finish the previous mission first');renderHub();return;}
   $('#loadTxt').textContent=L('Loading '+CITIES[m.city].name+'\u2026','We dey load '+CITIES[m.city].name+'\u2026'); $('#loading').classList.remove('hidden');
   setTimeout(()=>{
     if(curCity!==m.city) buildCity(m.city); else setupBarks(CITIES[curCity]);
@@ -2209,14 +2220,14 @@ function missionCard(m){
 }
 function renderHub(){
   const L=levelInfo(P.xp);
-  $('#hubTop').innerHTML=tx('<span class="wm"><img class="header-logo" src="https://i.postimg.cc/6pLt0sn3/file-000000006e348210b7a8c70bc4ed899d.png" alt="KitCity" /></span><div class="lvl"><b>Level '+L.n+': '+L.title+'</b><div class="bar"><i style="width:'+L.pct+'%"></i></div>'+P.xp+' XP</div>');
+  $('#hubTop').innerHTML=tx('<span class="wm"><img class="header-logo" src="https://i.postimg.cc/6pLt0sn3/file-000000006e348210b7a8c70bc4ed899d.png" alt="KitCity" /></span><div class="lvl"><b>Level '+L.n+': '+L.title+'</b><div class="bar"><i style="width:'+L.pct+'%"></i></div>'+P.xp+' XP · '+P.coins+' KitCoins</div>');
   document.querySelectorAll('#nav [data-v="kitlab"]').forEach(b=>b.remove());
   if(hubTab==='kitlab') hubTab='cityhub';
   document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===hubTab));
   let h='';
   if(hubTab==='missions'){
     const C=CITIES[hubCity];
-    h+=mapSVG()+'<div class="chips">'+Object.keys(CITIES).map(k=>'<button class="chip'+(k===hubCity?' on':'')+'" data-a="city" data-v="'+k+'" type="button">'+CITIES[k].name+'</button>').join('')+'</div>';
+    h+=mapSVG()+'<div class="chips">'+Object.keys(CITIES).map(k=>'<button class="chip'+(k===hubCity?' on':'')+'" data-a="city" data-v="'+k+'" type="button" '+(isCityUnlocked(k)?'':'disabled')+'>'+CITIES[k].name+(isCityUnlocked(k)?'':' · Locked')+'</button>').join('')+'</div>';
     h+='<p class="soft"><b>'+C.name+'</b>, '+C.tag+'</p>'+EXPLORE.filter(m=>m.city===hubCity).map(moduleCard).join('');
     const journey=P.done['ak_'+hubCity];
     h+='<div class="card"><div class="ch"><div><b>KitCity Hub · '+C.name+'</b><small>'+(journey?'Agent Kit has completed the local onboarding journey. Enter the Hub to keep learning and meet the wider Web3 ecosystem.':'Your city journey ends at this Hub. Meet local people with Agent Kit to unlock the community learning space.')+'</small></div></div><div class="cf"><span>'+(journey?'Hub unlocked':'Complete the city journey first')+'</span>'+(journey?'<button class="btn brand" data-a="cityhub" type="button">Enter Hub</button>':'<span>Locked</span>')+'</div></div>';
@@ -2229,7 +2240,7 @@ function renderHub(){
   } else if(hubTab==='passport'){
     const done=EXPLORE.filter(m=>P.done[m.id]).length,all=done===EXPLORE.length;
     h+='<div class="h2">City journeys</div><div class="grid2">'+EXPLORE.map((m,i)=>'<div class="bd'+(P.done[m.id]?'':' off')+'">'+badgeSVG(m.mod,!!P.done[m.id],56)+'<b>'+m.title.replace('Agent Kit in ','')+'</b></div>').join('')+'</div>';
-    h+='<div class="h2">Journey progress</div><div class="stat"><span>City journeys complete</span><b>'+done+' of '+EXPLORE.length+'</b></div>';
+    h+='<div class="h2">Journey progress</div><div class="stat"><span>City journeys complete</span><b>'+done+' of '+EXPLORE.length+'</b></div><div class="stat"><span>KitCoins</span><b>'+P.coins+'</b></div><div class="stat"><span>Neighbourhood reputation</span><b>'+P.reputation+'</b></div><div class="h2">Practical skills</div>'+(Object.keys(P.skills).length?Object.entries(P.skills).map(([skill,count])=>'<div class="stat"><span>'+campaignText(skill)+'</span><b>Level '+count+'</b></div>').join(''):'<p class="soft">Complete street challenges to build practical skills.</p>')+'<div class="h2">Character relationships</div>'+(Object.keys(P.relationships).length?Object.entries(P.relationships).map(([name,count])=>'<div class="stat"><span>'+campaignText(name)+'</span><b>Trust '+count+'</b></div>').join(''):'<p class="soft">Your choices build trust with local characters.</p>')+'<div class="h2">Career pathways</div>'+(EXPLORE.filter(m=>m.stage===7&&P.done[m.id]).length===4?'<p class="soft">Unlocked: development, security, research, design, analytics, content, education, marketing, community operations, business development, product management, trading analysis, game development and AI infrastructure. Career success is never guaranteed.</p>':'<p class="soft">Complete the Stage 7 street journeys to explore role-fit, portfolios and practical career paths.</p>');
     h+='<div class="h2">Wallet</div>'+(P.wallet?'<div class="stat"><span>Address</span><b style="font-family:ui-monospace,Menlo,monospace;font-size:13px">'+short(P.wallet)+'</b></div><div class="stat"><span>USDC</span><b>'+P.usdc.toFixed(2)+'</b></div><div class="stat"><span>Naira token</span><b>'+fmtN(P.ngn)+'</b></div>':'<p class="soft">No wallet yet. Finish mission 1 to open one.</p>');
     if(all) h+='<div class="row"><button class="btn brand" data-a="cert" type="button">View certificate</button></div>';
   } else {
@@ -2248,7 +2259,7 @@ $('#hub').addEventListener('click',e=>{
   const b=e.target.closest('[data-a]'); if(!b) return;
   const a=b.dataset.a,v=b.dataset.v;
   if(a==='tab'){ hubTab=v; resetArm=false; renderHub(); $('#hubBody').scrollTop=0; }
-  else if(a==='city'){ hubCity=v; hubTab='missions'; renderHub(); }
+  else if(a==='city'){ if(!isCityUnlocked(v)){toast('Finish the previous journey first');return;}hubCity=v;hubTab='missions';renderHub(); }
   else if(a==='cityhub'){ hubTab='cityhub'; renderHub(); $('#hubBody').scrollTop=0; }
   else if(a==='play'){ startMission(v); }
   else if(a==='quality'){ P.low=!P.low; save(); setPR(); setShadows(); resize(); renderHub(); }
@@ -2260,7 +2271,7 @@ $('#hub').addEventListener('click',e=>{
   else if(a==='snd'){ P[v]=!P[v]; save(); Snd.set(v,P[v]); Snd.sfx('click'); renderHub(); }
   else if(a==='reset'){
     if(!resetArm){ resetArm=true; renderHub(); return; }
-    Store.del(KEY); Object.assign(P,{wallet:null,usdc:0,ngn:0,xp:0,done:{},dodged:0,fell:0,scores:{},web3:null}); save(); resetArm=false; hubCity='lagos'; hubTab='missions'; renderHub(); toast('Progress erased');
+    Store.del(KEY); Object.assign(P,{wallet:null,usdc:0,ngn:0,xp:0,done:{},dodged:0,fell:0,scores:{},web3:null,skills:{},relationships:{},reputation:0,coins:0,sideDone:{},jobCounts:{}}); save(); resetArm=false; hubCity='lagos'; hubTab='missions'; renderHub(); toast('Progress erased');
   }
 });
 $('#startBtn').addEventListener('click',()=>{
@@ -2346,9 +2357,9 @@ function objectiveGeometry(shape){
 function collectPrototypeObjective(mission,objective,choice){
  const result=recordPrototypeObjectiveChoice(adventure,mission.id,objective.id,choice.id);
  if(result.error){closeSheet();toast(result.error==='already-recorded'?'You have already checked this item.':'This activity is not available yet.');return;}
- const mission=result.mission,completed=result.completed,allDone=result.allDone;
+ const updatedMission=result.mission,completed=result.completed,allDone=result.allDone;
  adventureSave();closeSheet();clearPrototypeObjectiveVisuals();refreshPrototypeObjectives();adventureAfterActivity();
- if(allDone)toast(result.choice.feedback+' Objective complete. Return to '+mission.npcName+' to discuss what you found.');
+ if(allDone)toast(result.choice.feedback+' Objective complete. Return to '+updatedMission.npcName+' to discuss what you found.');
  else toast(result.choice.feedback+' · '+completed+'/'+result.total+' checks complete. Keep exploring.');
 }
 function inspectPrototypeObjective(mission,objective){
