@@ -108,6 +108,15 @@ export const MISSION_REWARD_REGISTRY = EDUCATIONAL_MISSIONS.map(mission => ({
   delivery: "in-game-simulation"
 }));
 
+export const REWARD_REGISTRY = [
+  ...MISSION_REWARD_REGISTRY,
+  ...SOCIAL_ADVENTURE_NPCS.map(encounter => ({
+    id: "reward:" + encounter.id, encounterId: encounter.id,
+    xp: encounter.reward?.xp || 0, simulatedNgn: encounter.reward?.ngn || 0,
+    item: encounter.reward?.item || null, delivery: "in-game-simulation"
+  }))
+];
+
 export const LOCATION_EVENT_REGISTRY = [{
   id: "pothole-awareness",
   type: "environmental-hazard",
@@ -220,7 +229,7 @@ export function validateWorldSystem() {
   const sectorIds = unique(SECTOR_REGISTRY, "sector");
   const eventIds = unique(LOCATION_EVENT_REGISTRY, "location event");
   const storyArcIds = unique(STORY_ARCS, "story arc");
-  const rewardIds = unique(MISSION_REWARD_REGISTRY, "mission reward");
+  const rewardIds = unique(REWARD_REGISTRY, "reward");
   unique(ENVIRONMENT_PROFILES, "environment profile");
   const conceptIds = unique(EDUCATIONAL_CONCEPTS, "concept");
   const missionIds = unique(EDUCATIONAL_MISSIONS, "mission");
@@ -289,10 +298,12 @@ export function getDevelopmentReport() {
     playableLocations: WORLD_LOCATIONS.filter(item => item.status === "playable").length,
     sectors: SECTOR_REGISTRY.length,
     npcProfiles: NPC_REGISTRY.length,
+    rewards: REWARD_REGISTRY.length,
     educationalConcepts: EDUCATIONAL_CONCEPTS.length,
     educationalMissions: EDUCATIONAL_MISSIONS.length,
     dialogueTrees: DIALOGUE_REGISTRY.length,
     locationEvents: LOCATION_EVENT_REGISTRY.length,
-    missionsWithPlayableLocation: MISSION_DISTRIBUTION.filter(item => item.locationIds.some(id => WORLD_LOCATIONS.some(location => location.id === id && location.status === "playable"))).length
+    missionsWithPlayableLocation: MISSION_DISTRIBUTION.filter(item => item.locationIds.some(id => WORLD_LOCATIONS.some(location => location.id === id && location.status === "playable"))).length,
+    missionsAwaitingEnvironment: MISSION_DISTRIBUTION.filter(item => item.status === "authored-awaiting-environment").length
   };
 }
