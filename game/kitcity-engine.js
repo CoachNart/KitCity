@@ -503,7 +503,7 @@ function label(text,bg,fg,H0){
 /* =====================  world  ===================== */
 const R=70;
 const colliders=[],buildings=[];
-const SPAWN={x:9.5,z:-9.5};
+const SPAWN={x:0,z:0};
 const SPOTS={
   a:{x:10,z:-30,f:-1}, b:{x:-10,z:-105,f:1}, c:{x:80,z:-35,f:-1}, d:{x:60,z:-105,f:1},
   e:{x:-80,z:-35,f:1}, f:{x:-60,z:-105,f:-1}, g:{x:10,z:-175,f:-1}, h:{x:-10,z:-175,f:1},
