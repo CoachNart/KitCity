@@ -1603,7 +1603,7 @@ function badgeSVG(n,on,size){
 /* =====================  HUD  ===================== */
 function updateHUD(){
   if(G){
-    $('#mTitle').textContent=tr((G.m.explore?'City journey '+G.m.mod:'Mission '+G.m.n)+': '+G.m.title);
+    $('#mTitle').textContent=tr(G.m.explore?G.m.title:'Mission '+G.m.n+': '+G.m.title);
     $('#steps').innerHTML=G.m.steps.map((s,i)=>'<li class="'+(G.i>i?'done':(G.i===i?'now':''))+'">'+tr(s.label)+'</li>').join('');
   }
   $('#wallet').innerHTML=P.wallet?('<b>'+P.usdc.toFixed(2)+' USDC</b>'+(P.ngn>0?fmtN(P.ngn)+' token':short(P.wallet))):tr('No wallet yet');
@@ -2258,7 +2258,7 @@ function completeExplore(){
 function moduleCard(m){
   const sc=P.scores[m.id],dn=!!P.done[m.id];
   const foot=sc?'Best: '+sc.grade+' ('+sc.ft+'/6)':(dn?'Revisit to improve your grade':'Up to 130 XP');
-  return '<div class="card"><div class="ch">'+badgeSVG(m.n,dn,46)+'<div><b>City journey '+m.mod+': '+m.title+'</b><small>'+m.goal+'</small></div></div><div class="cf"><span>'+foot+'</span><button class="btn brand" data-a="play" data-v="'+m.id+'" type="button">'+(dn?'Replay journey':'Begin journey')+'</button></div></div>';
+  return '<div class="card"><div class="ch">'+badgeSVG(m.n,dn,46)+'<div><b>'+m.title+'</b><small>'+m.goal+'</small></div></div><div class="cf"><span>'+foot+'</span><button class="btn brand" data-a="play" data-v="'+m.id+'" type="button">'+(dn?'Replay journey':'Begin journey')+'</button></div></div>';
 }
 function startExam(){
   const qs=[]; AK_TRACKS.forEach(t=>shuffle(Q3(t.qs)).slice(0,2).forEach(q=>qs.push(q)));
@@ -2324,7 +2324,7 @@ function startMission(id){
 }
 function briefing(){
   const m=G.m,C=CITIES[m.city];
-  openSheet('<div class="who"><span class="av" style="background:'+INK+'">'+m.n+'</span><div><b>'+(m.explore?'City journey '+m.mod+': ':'Mission '+m.n+': ')+m.title+'</b><small>'+C.name+', '+C.tag+'</small></div></div><p>'+m.goal+'</p><ul class="pts">'+m.steps.map(s=>'<li>'+s.label+'</li>').join('')+'</ul>'+(m.n===1?'<p class="note">Move with the left stick or WASD. Hold Run or Shift to run. Tap Talk or press E to speak. Follow the arrow.</p>':'<p class="note">Follow the arrow to the next person. Watch for traffic.</p>'),
+  openSheet('<div class="who"><span class="av" style="background:'+INK+'">'+m.n+'</span><div><b>'+(m.explore?'':'Mission '+m.n+': ')+m.title+'</b><small>'+C.name+', '+C.tag+'</small></div></div><p>'+m.goal+'</p><ul class="pts">'+m.steps.map(s=>'<li>'+s.label+'</li>').join('')+'</ul>'+(m.explore?'<p class="note">Move with the left stick or WASD. Hold Run or Shift to run. Tap Talk or press E near a person. Follow the arrow to your next conversation.</p>':'<p class="note">Follow the arrow to the next person. Watch for traffic.</p>'),
     [{t:'Start conversations',f:closeSheet},{t:'Back to city selection',g:1,f:exitToHub}]);
 }
 function finishStep(){
@@ -2466,7 +2466,7 @@ $('#hub').addEventListener('click',e=>{
 $('#startBtn').addEventListener('click',()=>{
   Snd.unlock(); Snd.setMode('hub'); Snd.sfx('click');
   S.phase='hub'; $('#title').classList.add('hidden'); $('#hub').classList.remove('hidden');
-  const next=EXPLORE.find(m=>!P.done[m.id]); if(next) hubCity=next.city;
+  const next=EXPLORE.find(m=>m.city==='lagos'&&!P.done[m.id])||EXPLORE.find(m=>!P.done[m.id]); if(next) hubCity=next.city;
   renderHub();
 });
 function applyLang(){
