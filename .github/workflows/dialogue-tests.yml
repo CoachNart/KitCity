@@ -12,8 +12,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Validate branching conversations
-        run: npm run test:dialogue
+      - name: Validate world registry and branching conversations
+        run: npm run test
   production-build:
     runs-on: ubuntu-latest
     steps:
