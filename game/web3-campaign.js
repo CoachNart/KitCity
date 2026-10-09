@@ -195,7 +195,7 @@ export const CAMPAIGN_STAGES = [
     "id": 10,
     "title": "Explore the future",
     "first": 62,
-    "last": 76
+    "last": 84
   }
 ];
 export const STREET_CITIES = [
@@ -2083,6 +2083,98 @@ export const CAMPAIGN_BLUEPRINTS = [
     "character": "Cclya",
     "success": "Good call. A good solution starts with a real user problem and uses Web3 only where it adds meaningful value.",
     "consequence": "That choice creates an avoidable risk. A good solution starts with a real user problem and uses Web3 only where it adds meaningful value. Try again; the simulation resets safely.",
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+  },
+  {
+    "title": "The grant with strings attached",
+    "concept": "Funding due diligence",
+    "story": "A sponsor offers a large grant but demands control of the community treasury.",
+    "teach": "Funding terms, reporting duties and control rights matter as much as the amount offered.",
+    "challenge": "Compare two simulated grant offers and choose the sustainable one.",
+    "choices": [
+      "Compare milestones, reporting, ownership and exit terms",
+      "Accept the largest number immediately",
+      "Hide the sponsor's control clause from the community"
+    ],
+    "correct": 0,
+    "skill": "Funding discipline",
+    "character": "Kenny",
+    "id": "campaign_081",
+    "number": 81,
+    "stage": 10,
+    "xp": 100,
+    "difficulty": "Advanced",
+    "success": "Good call. Funding terms, reporting duties and control rights matter as much as the amount offered.",
+    "consequence": "That choice creates an avoidable risk. Funding terms, reporting duties and control rights matter as much as the amount offered. Try again; the simulation resets safely.",
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+  },
+  {
+    "title": "The outage drill",
+    "concept": "Resilient product operations",
+    "story": "The network is down on market day and customers still need to see their order status.",
+    "teach": "A real product needs graceful failure, clear status and a safe fallback; blockchain availability is not guaranteed.",
+    "challenge": "Plan what the app should do while the network is unavailable.",
+    "choices": [
+      "Show a clear pending state, queue safe actions and reconcile later",
+      "Pretend the transaction succeeded",
+      "Ask users to submit the same payment repeatedly"
+    ],
+    "correct": 0,
+    "skill": "Incident response",
+    "character": "Softstorm",
+    "id": "campaign_082",
+    "number": 82,
+    "stage": 10,
+    "xp": 100,
+    "difficulty": "Advanced",
+    "success": "Good call. A real product needs graceful failure, clear status and a safe fallback; blockchain availability is not guaranteed.",
+    "consequence": "That choice creates an avoidable risk. A real product needs graceful failure, clear status and a safe fallback; blockchain availability is not guaranteed. Try again; the simulation resets safely.",
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+  },
+  {
+    "title": "The privacy-preserving membership",
+    "concept": "Zero-knowledge proof trade-offs",
+    "story": "A cooperative wants to prove members qualify without publishing their identity.",
+    "teach": "Zero-knowledge systems can prove defined statements with less disclosure, but setup, implementation and trust assumptions still matter.",
+    "challenge": "Choose the right proof and fallback for the membership check.",
+    "choices": [
+      "Prove only eligibility and explain the system's assumptions",
+      "Publish every member's identity onchain",
+      "Claim the proof makes all data and software risk-free"
+    ],
+    "correct": 0,
+    "skill": "Privacy technology",
+    "character": "Cybersage",
+    "id": "campaign_083",
+    "number": 83,
+    "stage": 10,
+    "xp": 100,
+    "difficulty": "Advanced",
+    "success": "Good call. Zero-knowledge systems can prove defined statements with less disclosure, but setup, implementation and trust assumptions still matter.",
+    "consequence": "That choice creates an avoidable risk. Zero-knowledge systems can prove defined statements with less disclosure, but setup, implementation and trust assumptions still matter. Try again; the simulation resets safely.",
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+  },
+  {
+    "title": "The launch review",
+    "concept": "Responsible Web3 launch",
+    "story": "KitCity's pilot has users, bugs and a small treasury; the team must decide whether to expand.",
+    "teach": "A launch is successful when users get durable value, risks are managed and the team can support what it ships.",
+    "challenge": "Choose the release gate for the final pilot.",
+    "choices": [
+      "Review user evidence, security, support, costs and rollback readiness",
+      "Expand immediately because the demo looked good",
+      "Promise guaranteed returns to attract users"
+    ],
+    "correct": 0,
+    "skill": "Systems thinking",
+    "character": "Leemah",
+    "id": "campaign_084",
+    "number": 84,
+    "stage": 10,
+    "xp": 100,
+    "difficulty": "Advanced",
+    "success": "Good call. A launch is successful when users get durable value, risks are managed and the team can support what it ships.",
+    "consequence": "That choice creates an avoidable risk. A launch is successful when users get durable value, risks are managed and the team can support what it ships. Try again; the simulation resets safely.",
     "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
   }
 ];
