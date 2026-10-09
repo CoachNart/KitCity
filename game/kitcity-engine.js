@@ -1581,13 +1581,15 @@ const who=(i,n,r,bg)=>'<div class="who"><span class="av" style="background:'+bg+
 const whoOf=d=>who(d.name.charAt(0),d.name,d.role,d.color);
 const plain=h=>h.replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim();
 function talk(def,html,btns){
-  html=tx(html);
+  html=tx(personalize(html));
   if(!S.modal||chat.npc!==def.name) chat={npc:def.name,log:[]};
-  const prev=chat.log.slice(-3).map(m=>'<div class="b '+(m.me?'me':'npc old')+'"><small class="speaker-tag">'+(m.me?'AGENT KIT':def.name.toUpperCase())+'</small>'+m.html+'</div>').join('');
+  const npcName=personalize(def.name||'Local resident');
+  const playerLabel=playerName().toUpperCase();
+  const prev=chat.log.slice(-3).map(m=>'<div class="b '+(m.me?'me':'npc old')+'"><small class="speaker-tag">'+(m.me?playerLabel:npcName.toUpperCase())+'</small>'+m.html+'</div>').join('');
   const pl=plain(html);
   chat.log.push({html:pl.slice(0,80)+(pl.length>80?'\u2026':'')});
   const wrapped=(btns||[]).map(b=>({t:tr(b.t),g:b.g,m:b.m,f:()=>{ chat.log.push({me:1,html:tr(b.t)}); b.f(); }}));
-  openSheet(whoOf(def)+'<div class="chat">'+prev+'<div class="b npc dots"><i></i><i></i><i></i></div><div class="b npc new"><small class="speaker-tag">'+def.name.toUpperCase()+'</small>'+html+'</div></div>',wrapped,Math.min(1100,320+pl.length*4));
+  openSheet(personalize(whoOf(def))+'<div class="chat">'+prev+'<div class="b npc dots"><i></i><i></i><i></i></div><div class="b npc new"><small class="speaker-tag">'+npcName.toUpperCase()+'</small>'+html+'</div></div>',wrapped,Math.min(1100,320+pl.length*4));
 }
 function busy(def,txt,ms,next){ openSheet(whoOf(def)+'<div class="busy"><span class="spin"></span><p>'+txt+'</p></div>',[]); setTimeout(next,ms); }
 const TX=()=>'0x'+hex(32);
@@ -2305,18 +2307,6 @@ function bannerSprite(text,sub){
  g.fillStyle='#ffffff';g.font='900 43px Arial';g.textAlign='center';g.textBaseline='middle';g.fillText(text.toUpperCase(),c.width/2,72,700);
  g.fillStyle='#9deef5';g.font='700 24px Arial';g.fillText(sub.toUpperCase(),c.width/2,132,700);
  const t=new THREE.CanvasTexture(c);t.needsUpdate=true;const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:t,transparent:true,depthTest:true}));sp.scale.set(12,3,1);return sp;
-}
-function missionCentre(spot,cityName,title){
- const f=spot.f>0?1:-1,cx=spot.x-f*13,cz=spot.z;
- const add=(geo,mat,x,y,z)=>{const o=new THREE.Mesh(geo,mat);o.position.set(x,y,z);o.userData.nomerge=true;missionGroup.add(o);return o;};
- const wall=new THREE.MeshStandardMaterial({color:'#d8d4c8',roughness:.9}),trim=new THREE.MeshStandardMaterial({color:'#24303b',roughness:.75}),cyan=new THREE.MeshStandardMaterial({color:'#10C8DC',roughness:.6}),glass=new THREE.MeshStandardMaterial({color:'#8ddbe5',roughness:.25,metalness:.12});
- add(new THREE.BoxGeometry(19,9,12),wall,cx,4.5,cz);add(new THREE.BoxGeometry(20,1,13),trim,cx,9.1,cz);add(new THREE.BoxGeometry(19.5,.5,12.5),cyan,cx,9.8,cz);
- for(let i=-1;i<=1;i++){add(new THREE.BoxGeometry(3.5,3.2,.22),glass,cx+i*5,4.7,cz+f*6.12);add(new THREE.BoxGeometry(3.8,.25,.28),trim,cx+i*5,6.4,cz+f*6.16);}
- add(new THREE.BoxGeometry(7,2.1,.35),trim,cx,7.6,cz+f*6.22);
- const sign=bannerSprite(title,cityName+' · Community Mission Centre');sign.position.set(cx,7.6,cz+f*6.55);sign.scale.set(10.5,2.65,1);missionGroup.add(sign);
- const bx=spot.x+f*1.5,bz=spot.z+f*2.6;add(new THREE.BoxGeometry(5.8,2.2,.28),trim,bx,4,bz);
- const banner=bannerSprite(title,cityName+' · Meet Agent Kit');banner.position.set(bx,4,bz+f*.22);banner.scale.set(5.4,1.8,1);missionGroup.add(banner);
- colliders.push({x0:cx-9.5,x1:cx+9.5,z0:cz-6,z1:cz+6});
 }
 function loadStep(){
   clearGroup(missionGroup); colliders.length=cityCols; smoke=[]; ents=[]; goal=null;
