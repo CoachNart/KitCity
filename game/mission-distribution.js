@@ -137,7 +137,8 @@ function sectorToId(sector) {
     "small business":"small-business", healthcare:"healthcare", finance:"finance",
     education:"education", agriculture:"agriculture", law:"law", governance:"government-public-administration"
   };
-  return aliases[sector] || (SECTOR_REGISTRY.some(item => item.id === sector) ? sector : null);
+  const key = String(sector).toLowerCase();
+  return aliases[key] || (SECTOR_REGISTRY.some(item => item.id === key) ? key : null);
 }
 
 export function selectEducationalMissions({
