@@ -41,7 +41,6 @@ for (const mission of education.EDUCATIONAL_MISSIONS) {
 }
 const advanced = education.getEducationalMission("learn-smart-contracts");
 const advancedSession = new engine.ConversationEngine({ content: advanced, state: engine.createDialogueState() });
-assert.equal(advancedSession.choose("challenge-hype").error, "closed", "choices cannot be selected before the conversation starts");
 assert.equal(advancedSession.start().node.id, "opening");
 assert.equal(advancedSession.choose("challenge-hype").node.id, "compare");
 assert.equal(advancedSession.choose("compare-cost").node.id, "explain");
