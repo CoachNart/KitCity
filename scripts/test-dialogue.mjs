@@ -252,7 +252,8 @@ const engineSourceForMissions = await readFile(path.join(root, "game/kitcity-eng
 assert.match(engineSourceForMissions, /PROTOTYPE_MISSION_NPCS/, "prototype NPCs are wired into the actual free-roam encounter spawn");
 assert.match(engineSourceForMissions, /refreshPrototypeObjectives\(\)/, "accepted missions spawn and refresh in-world activity objects");
 assert.match(engineSourceForMissions, /collectPrototypeObjective\(objective,choice\)/, "activity choices record progress in the live game");
-assert.match(engineSourceForMissions, /recordPrototypeObjectiveChoice\(adventure,objective\.missionId,objective\.id,choice\.id\)/, "the live game uses the tested objective progress function");
+assert.match(engineSourceForMissions, /recordPrototypeObjectiveChoice\(adventure,mission\.id,objective\.id,choice\.id\)/, "the live game uses the parent mission ID for objective progression and persistence");
+assert.match(engineSourceForMissions, /talk:\(\)=>inspectPrototypeObjective\(mission,objective\)/, "in-world objective markers retain their owning mission");
 assert.match(engineSourceForMissions, /recordPrototypeObjectiveChoice/, "live field activity delegates persistence to the tested mission helper");
 for (const mission of prototypePack) {
   const notStartedState = { dialogueState: engine.createDialogueState() };
