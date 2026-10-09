@@ -11,9 +11,27 @@ async function importSource(relativePath) {
     const educationalModule = "data:text/javascript;base64," + Buffer.from(educationalSource).toString("base64");
     source = source.replace('"./educational-content.js"', JSON.stringify(educationalModule));
   }
+  if (relativePath === "game/mission-distribution.js") {
+    const educationalSource = await readFile(path.join(root, "game/educational-content.js"), "utf8");
+    const worldSource = await readFile(path.join(root, "game/world-registry.js"), "utf8");
+    const dialogueSource = await readFile(path.join(root, "game/dialogue-content.js"), "utf8");
+    const toDataUrl = value => "data:text/javascript;base64," + Buffer.from(value).toString("base64");
+    const educationalModule = toDataUrl(educationalSource);
+    const worldModule = toDataUrl(worldSource);
+    const dialogueModule = toDataUrl(dialogueSource.replace('"./educational-content.js"', JSON.stringify(educationalModule)));
+    const adventureSource = await readFile(path.join(root, "game/adventure-data.js"), "utf8");
+    const adventureModule = toDataUrl(adventureSource.replace('"./world-registry.js"', JSON.stringify(worldModule)));
+    source = source
+      .replace('"./world-registry.js"', JSON.stringify(worldModule))
+      .replace('"./educational-content.js"', JSON.stringify(educationalModule))
+      .replace('"./dialogue-content.js"', JSON.stringify(dialogueModule))
+      .replace('"./adventure-data.js"', JSON.stringify(adventureModule));
+  }
   return import("data:text/javascript;base64," + Buffer.from(source).toString("base64"));
 }
 const engine = await importSource("game/conversation-engine.js");
+const world = await importSource("game/world-registry.js");
+const distribution = await importSource("game/mission-distribution.js");
 const content = await importSource("game/dialogue-content.js");
 const education = await importSource("game/educational-content.js");
 const engineSource = await readFile(path.join(root, "game/kitcity-engine.js"), "utf8");
@@ -23,6 +41,36 @@ assert.match(engineSource, /adventureSave\(\);adventureAfterActivity\(\);/, "a n
 assert.match(engineSource, /function adventureAfterActivity\(\)[\s\S]*?freeRoam:true/, "return-to-gameplay restores the free-roam state");
 assert.doesNotMatch(engineSource, /function adventureConversation\(/, "the old hardcoded linear dialogue handler must stay removed");
 
+
+const worldErrors = distribution.validateWorldSystem();
+assert.deepEqual(worldErrors, [], "the Nigerian world, NPC, dialogue, mission, sector, reward and event registries validate");
+assert.equal(world.NIGERIAN_STATES.length, 36, "all 36 states are registered individually");
+assert.equal(world.NIGERIAN_STATES.some(item => item.id === "fct"), false, "FCT is not incorrectly counted as a state");
+assert.equal(world.NIGERIAN_TERRITORIES.length, 1);
+assert.equal(world.NIGERIAN_TERRITORIES[0].id, "fct");
+assert.equal(world.NIGERIAN_TERRITORIES[0].administrativeCapital, "Abuja");
+assert.equal(world.NIGERIAN_JURISDICTIONS.length, 37);
+assert.equal(world.WORLD_LOCATIONS.filter(item => item.status === "playable").length, 1, "only the existing free-roam environment is marked playable");
+assert.ok(world.NIGERIAN_STATES.filter(item => item.id !== "lagos").every(item => item.content.locationIds.length === 0), "states without map assets remain registered, not fabricated as playable");
+assert.ok(world.SECTOR_REGISTRY.length >= 21, "the sector registry covers all requested sectors");
+assert.ok(distribution.NPC_REGISTRY.length >= 22, "social and educational NPCs share a structured registry");
+assert.equal(distribution.MISSION_REWARD_REGISTRY.length, 15);
+assert.equal(distribution.LOCATION_EVENT_REGISTRY.some(item => item.id === "pothole-awareness"), true);
+const developmentReport = distribution.getDevelopmentReport();
+assert.equal(developmentReport.states, 36);
+assert.equal(developmentReport.territories, 1);
+assert.equal(developmentReport.jurisdictions, 37);
+assert.equal(developmentReport.playableLocations, 1);
+assert.equal(developmentReport.educationalMissions, 15);
+assert.ok(developmentReport.missionsWithPlayableLocation > 0 && developmentReport.missionsWithPlayableLocation < developmentReport.educationalMissions, "the report distinguishes assigned content from content awaiting suitable environments");
+const distributed = distribution.selectEducationalMissions({locationId:"lagos-free-roam",dialogueState:{},limit:6,allowDeepening:true});
+assert.ok(distributed.length > 0 && distributed.length <= 6);
+assert.equal(new Set(distributed.map(item => item.conceptId)).size, distributed.length, "initial mission distribution avoids repeated concepts");
+assert.ok(distributed.every(item => distribution.MISSION_DISTRIBUTION.some(entry => entry.missionId === item.id && entry.locationIds.includes("lagos-free-roam"))), "only missions matched to the current playable environment are selected");
+const doneState = {completedMissions:Object.fromEntries(distributed.map(item => [item.missionId,true])),knowledge:Object.fromEntries(distributed.map(item => [item.conceptId,true]))};
+const nextBatch = distribution.selectEducationalMissions({locationId:"lagos-free-roam",dialogueState:doneState,limit:6,allowDeepening:true});
+assert.ok(nextBatch.every(item => !doneState.completedMissions[item.missionId]), "completed missions do not repeat unnecessarily");
+assert.deepEqual(distribution.selectEducationalMissions({locationId:"unbuilt-city",dialogueState:{},limit:6}), [], "unbuilt environments do not receive fabricated missions");
 
 const educationErrors = education.validateEducationalLibrary();
 assert.deepEqual(educationErrors, [], "all educational concepts and mission trees must validate");
@@ -114,4 +162,4 @@ const left = leaveSession.choose("__leave_conversation");
 assert.equal(left.ended, true);
 assert.equal(left.missionCompleted, false, "leaving early must not complete the mission");
 
-console.log("PASS: 7 social dialogue trees and 15 educational missions validate; story-led branches, experienced-user challenges, prerequisite gating, mission completion, persistent knowledge, and return visits work.");
+console.log("PASS: Nigerian world registry (36 states + separate FCT), playable-location gating, sector/NPC/mission/reward/event registries, 7 social dialogues, 15 educational missions, prerequisite gating, repeat avoidance and dialogue progression validate.");
