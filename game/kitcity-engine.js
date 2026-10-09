@@ -2930,7 +2930,7 @@ function update(dt,time){
 }
 function tick(){
   requestAnimationFrame(tick);
-  const dt=Math.min(clock.getDelta(),.05);
+  const dt=Math.min(clock.getDelta(),.2);
   update(dt,clock.elapsedTime);
   if(GR) GR.render(); else renderer.render(scene,camera);
 }
