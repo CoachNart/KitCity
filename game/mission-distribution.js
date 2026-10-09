@@ -216,7 +216,8 @@ function canReachMissionCompletion(content, nodeId, seen = new Set()) {
   return false;
 }
 
-export function validateWorldSystem() {
+export function validateWorldSystem({ additionalLocations = [] } = {}) {
+  const locations = [...WORLD_LOCATIONS, ...additionalLocations];
   const errors = [];
   const unique = (items, label) => {
     const seen = new Set();
@@ -229,7 +230,7 @@ export function validateWorldSystem() {
   };
   const stateIds = unique(NIGERIAN_STATES, "state");
   const territoryIds = unique(NIGERIAN_TERRITORIES, "territory");
-  const locationIds = unique(WORLD_LOCATIONS, "location");
+  const locationIds = unique(locations, "location");
   const sectorIds = unique(SECTOR_REGISTRY, "sector");
   const eventIds = unique(LOCATION_EVENT_REGISTRY, "location event");
   const storyArcIds = unique(STORY_ARCS, "story arc");
@@ -248,7 +249,7 @@ export function validateWorldSystem() {
     ...KITCITY_DIALOGUES.flatMap(dialogue => [dialogue.id, dialogue.missionId].filter(Boolean)),
     ...SOCIAL_ADVENTURE_NPCS.map(encounter => encounter.id)
   ]);
-  for (const location of WORLD_LOCATIONS) {
+  for (const location of locations) {
     if (!stateIds.has(location.jurisdictionId) && !territoryIds.has(location.jurisdictionId)) errors.push(location.id + ": references missing jurisdiction " + location.jurisdictionId);
     if (!validLocationStatuses.has(location.status)) errors.push(location.id + ": invalid location status " + location.status);
     if (!location.settlementName || !location.locationType) errors.push(location.id + ": missing location identity fields");
@@ -268,13 +269,13 @@ export function validateWorldSystem() {
   }
   if (PLANNED_SETTLEMENT_LOCATIONS.length !== NIGERIAN_JURISDICTIONS.length) errors.push("every jurisdiction must have a registry-only settlement record");
   for (const jurisdiction of NIGERIAN_JURISDICTIONS) {
-    const records = WORLD_LOCATIONS.filter(location => location.jurisdictionId === jurisdiction.id);
+    const records = locations.filter(location => location.jurisdictionId === jurisdiction.id);
     if (!records.length) errors.push(jurisdiction.id + ": has no location registry record");
     const settlement = PLANNED_SETTLEMENT_LOCATIONS.find(location => location.id === "settlement-" + jurisdiction.id);
     if (!settlement || settlement.settlementName !== jurisdiction.administrativeCapital || settlement.status !== "planned") errors.push(jurisdiction.id + ": missing or mismatched administrative-capital registry record");
     if (!Array.isArray(jurisdiction.content.locationIds)) errors.push(jurisdiction.id + ": location index must be an array");
     for (const locationId of jurisdiction.content.locationIds || []) {
-      const location = WORLD_LOCATIONS.find(item => item.id === locationId);
+      const location = locations.find(item => item.id === locationId);
       if (!location || location.jurisdictionId !== jurisdiction.id) errors.push(jurisdiction.id + ": invalid indexed location " + locationId);
     }
     for (const npcId of jurisdiction.content.npcProfileIds || []) if (!npcIds.has(npcId)) errors.push(jurisdiction.id + ": unknown indexed NPC " + npcId);
@@ -335,6 +336,7 @@ export function getDevelopmentReport() {
     territories: NIGERIAN_TERRITORIES.length,
     jurisdictions: NIGERIAN_JURISDICTIONS.length,
     configuredLocations: WORLD_LOCATIONS.length,
+    plannedLocations: WORLD_LOCATIONS.filter(item => item.status === "planned").length,
     settlementRecords: PLANNED_SETTLEMENT_LOCATIONS.length,
     registryOnlyLocations: WORLD_LOCATIONS.filter(item => item.status === "planned").length,
     playableLocations: WORLD_LOCATIONS.filter(item => item.status === "playable").length,
