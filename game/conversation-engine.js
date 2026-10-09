@@ -84,9 +84,12 @@ export class ConversationEngine {
     const node = this.content.nodes[this.nodeId];
     if (!node) throw new Error("Unknown dialogue node: " + this.nodeId);
     if (node.requires && !matchesCondition(node.requires, this.state, { ...this.context, npcId: this.npcId })) {
-      const fallback = node.fallback || this.content.start;
-      if (fallback !== this.nodeId && this.content.nodes[fallback]) this.nodeId = fallback;
-      return this.currentNode();
+      const fallback = node.fallback || this.content.fallback;
+      if (fallback && fallback !== this.nodeId && this.content.nodes[fallback]) {
+        this.nodeId = fallback;
+        return this.currentNode();
+      }
+      return { id: node.id || this.nodeId, speaker: node.speaker || this.content.npcName || "Resident", role: node.role || this.content.role || "", text: node.lockedText || this.content.unavailableText || "Let’s come back to this another time.", portrait: node.portrait || this.content.portrait || null, conceptTags: node.conceptTags || this.content.conceptTags || [], choices: [{ id: "__leave_conversation", label: this.content.exitLabel || "I’ll let you get back to it", style: "quiet" }] };
     }
     const text = this._openingOverride || node.text;
     this._openingOverride = null;
