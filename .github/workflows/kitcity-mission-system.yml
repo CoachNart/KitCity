@@ -1,0 +1,23 @@
+name: KitCity mission system checks
+
+on:
+  push:
+    branches:
+      - rebuild/complete-web3-mission-system
+  pull_request:
+    branches:
+      - main
+      - rebuild/complete-web3-mission-system
+
+jobs:
+  mission-tests-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm install
+      - run: npm test
+      - run: npm run build
