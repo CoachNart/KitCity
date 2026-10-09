@@ -67,6 +67,9 @@ export class ConversationEngine {
   }
 
   start() {
+    if (this.content.requires && !matchesCondition(this.content.requires, this.state, { ...this.context, npcId: this.npcId })) {
+      return { unavailable: true, reason: this.content.unavailableText || "You have not met the requirements for this conversation yet.", state: this.state };
+    }
     const rel = this.state.relationships[this.npcId] ||= { trust: 0, meetings: 0 };
     const returning = Boolean(this.state.metNpcs[this.npcId]);
     this.state.metNpcs[this.npcId] = true;
@@ -91,11 +94,18 @@ export class ConversationEngine {
       matchesCondition(choice.requires, this.state, { ...this.context, npcId: this.npcId }) &&
       (!choice.optional || this.state.unlockedFollowUps[choice.id] || choice.alwaysAvailable)
     ).slice(0, 4).map(({ id, label, style }) => ({ id, label, style: style || "normal" }));
+    if (node.allowExit !== false && choices.length < 4) choices.push({ id: "__leave_conversation", label: this.content.exitLabel || "I’ll let you get back to it", style: "quiet" });
     return { id: node.id || this.nodeId, speaker: node.speaker || this.content.npcName || "Resident", role: node.role || this.content.role || "", text: text || "", portrait: node.portrait || this.content.portrait || null, conceptTags: node.conceptTags || this.content.conceptTags || [], choices };
   }
 
   choose(choiceId) {
     if (this.closed) return { error: "closed" };
+    if (choiceId === "__leave_conversation") {
+      this.state.choices[this.npcId] ||= [];
+      this.state.choices[this.npcId].push({ nodeId: this.nodeId, choiceId, at: Date.now() });
+      this.closed = true;
+      return { ended: true, completed: false, missionCompleted: false, missionId: null, choiceIndex: -1, state: this.state, ending: "" };
+    }
     const node = this.content.nodes[this.nodeId];
     const available = (node.choices || []).filter(choice => matchesCondition(choice.requires, this.state, { ...this.context, npcId: this.npcId }));
     const index = available.findIndex(choice => choice.id === choiceId);
