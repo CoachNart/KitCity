@@ -5,7 +5,7 @@ import { PROTOTYPE_MISSIONS, PROTOTYPE_MISSION_NPCS, recordPrototypeObjectiveCho
 import './mission-distribution.js';
 import { getWorldLocation } from './world-registry.js';
 import { SOCIAL_ADVENTURE_NPCS } from './adventure-data.js';
-import { EXPLORATION_DISCOVERIES } from './exploration-life.js';
+import { EXPLORATION_DISCOVERIES, recordExplorationDiscovery } from './exploration-life.js';
 
 export default function initKitCity(){
 'use strict';
@@ -2560,10 +2560,11 @@ function inspectExplorationDiscovery(discovery){
  const memory=alreadySeen?'<p class="msg"><small>YOU REMEMBER</small>'+dialogueEscape(discovery.memory||'A familiar face remembers you.')+'</p>':'';
  openSheet('<div class="who"><div class="av" style="background:'+discovery.color+'">'+dialogueEscape(discovery.icon.slice(0,1))+'</div><div><b>'+dialogueEscape(discovery.name)+'</b><small>Optional street discovery</small></div></div><p>'+dialogueEscape(discovery.description)+'</p>'+memory+(alreadySeen?'<p class="note">You have already collected this discovery’s reward. Keep wandering; there is no mission to start here.</p>':'<p><b>'+dialogueEscape(discovery.activity)+'</b></p><p class="note">A small local discovery—no lesson required.</p>'),alreadySeen?[{t:'Back to the streets',f:closeSheet}]:[{t:'Explore this spot',f:()=>{
   if(adventure.discoveries[discovery.id]){closeSheet();return;}
-  adventure.discoveries[discovery.id]=true;adventure.discoveryHints[discovery.id]=true;
-  adventure.activityCount++;adventure.exploreScore+=14;P.xp+=reward.xp||0;P.ngn+=reward.ngn||0;
+  const recorded=recordExplorationDiscovery(adventure,discovery.id);
+  if(recorded.error){closeSheet();toast('You have already explored this spot.');return;}
+  adventure.discoveryHints[discovery.id]=true;P.xp+=recorded.reward.xp||0;P.ngn+=recorded.reward.ngn||0;
   P.done['discovery_'+discovery.id]=true;adventureSave();save();closeSheet();refreshExplorationDiscoveries();updateHUD();Snd.sfx('chime');
-  toast('Discovered '+discovery.name+' · +'+(reward.xp||0)+' XP'+(reward.ngn?' · '+fmtN(reward.ngn):''));
+  toast('Discovered '+discovery.name+' · +'+(recorded.reward.xp||0)+' XP'+(recorded.reward.ngn?' · '+fmtN(recorded.reward.ngn):''));
  }},{t:'Maybe later',g:1,f:closeSheet}]);
 }
 function refreshExplorationDiscoveries(){
@@ -2574,7 +2575,7 @@ function refreshExplorationDiscoveries(){
   const base=new THREE.Mesh(new THREE.CylinderGeometry(.8,.95,.08,14),lam('#18222b'));base.position.y=.06;root.add(base);
   const color=visited?'#9AA4AE':discovery.color;
   const post=new THREE.Mesh(new THREE.BoxGeometry(.18,1.5,.18),lam(color));post.position.y=.78;root.add(post);
-  const marker=new THREE.Mesh(discovery.kind==='street-art'?new THREE.BoxGeometry(1.15,.85,.12):new THREE.OctahedronGeometry(.58,0),lam(color,{emissive:color,emissiveIntensity:visited?.04:.16}));
+  const marker=new THREE.Mesh(discovery.kind==='street-art'?new THREE.BoxGeometry(1.15,.85,.12):new THREE.OctahedronGeometry(.58,0),lam(color,{emissive:color,emissiveIntensity:visited ? 0.04 : 0.16}));
   marker.position.y=1.75;root.add(marker);missionGroup.add(root);
   const tag=label(visited?discovery.name+' · remembered':discovery.name,color,'#fff');tag.position.set(discovery.position.x,3.25,discovery.position.z);missionGroup.add(tag);
   explorationDiscoveryVisuals.push(root,tag);
