@@ -53,8 +53,16 @@ assert.equal(advancedSession.choose("real-world").node.id, "trial");
 assert.equal(advancedSession.choose("ask-limits").node.id, "limitation");
 assert.equal(advancedSession.choose("accept-tradeoff").node.id, "takeaway");
 assert.equal(advancedSession.choose("finish").missionCompleted, true);
+const lockedCredentials = education.getEducationalMission("learn-professional-credentials");
+const lockedSession = new engine.ConversationEngine({ content: lockedCredentials, state: engine.createDialogueState() });
+assert.equal(lockedSession.start().unavailable, true, "advanced professional credentials require portable-credential knowledge");
+const unlockedState = engine.createDialogueState({ knowledge: { "portable-credentials": true } });
+const unlockedSession = new engine.ConversationEngine({ content: lockedCredentials, state: unlockedState });
+assert.equal(unlockedSession.start().unavailable, undefined, "learning a prerequisite unlocks the advanced mission");
+const eligibleWithoutPrerequisite = education.getAvailableEducationalMissions({});
+assert.ok(!eligibleWithoutPrerequisite.some(item => item.conceptId === "professional-credentials"), "locked missions are excluded from available content");
 const eligible = education.getAvailableEducationalMissions({ knowledge: { "portable-credentials": true } });
-assert.ok(!eligible.some(item => item.conceptId === "professional-credentials"), "prerequisite concepts gate advanced missions");
+assert.ok(eligible.some(item => item.conceptId === "professional-credentials"), "prerequisite concepts unlock advanced missions");
 assert.ok(eligible.some(item => item.conceptId === "digital-ownership"), "missions without prerequisites remain available");
 
 const errors = engine.validateDialogueContent(content.KITCITY_DIALOGUES);
