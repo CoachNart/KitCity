@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { ConversationEngine, createDialogueState } from './conversation-engine.js';
 import { getDialogue } from './dialogue-content.js';
 import { PROTOTYPE_MISSIONS, PROTOTYPE_MISSION_NPCS } from './prototype-missions.js';
+import './mission-distribution.js';
 import { getWorldLocation } from './world-registry.js';
 import { SOCIAL_ADVENTURE_NPCS } from './adventure-data.js';
 
