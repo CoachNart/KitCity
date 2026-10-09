@@ -32,12 +32,14 @@ const emptyContentSlots = () => ({
 
 export const NIGERIAN_STATES = STATE_ROWS.map(([id,name,administrativeCapital,region]) => ({
   id, name, kind: "state", administrativeCapital, region, status: "registered",
+  regionalContext: { geopoliticalZone: region, researchStatus: "not-yet-researched", evidenceRefs: [] },
   content: emptyContentSlots()
 }));
 
 export const NIGERIAN_TERRITORIES = [{
   id: "fct", name: "Federal Capital Territory", shortName: "FCT", kind: "territory",
   administrativeCapital: "Abuja", region: "North Central", status: "registered",
+  regionalContext: { geopoliticalZone: "North Central", researchStatus: "not-yet-researched", evidenceRefs: [] },
   content: emptyContentSlots()
 }];
 
@@ -59,6 +61,8 @@ export const WORLD_LOCATIONS = [{
   environmentProfileIds: ["urban-streets", "market-edge", "transport-corridor", "residential-neighborhood", "public-space"],
   sectorIds: ["commerce-retail", "transport-logistics", "small-business", "community-civil-society"],
   npcProfileIds: [],
+  occupationTags: [],
+  communityTags: [],
   mainMissionIds: [],
   sideMissionIds: [],
   environmentalEncounterIds: ["pothole-awareness"],
