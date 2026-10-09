@@ -2029,15 +2029,15 @@ function campaignChoiceStep(bp,npc,spot,label){
     ]);
    }
   }}));
-  talk(npc,'<h3>'+campaignText(bp.title)+'</h3><p>'+campaignText(bp.story)+'</p><p>'+campaignText(bp.teach)+'</p><p><b>'+(CAMPAIGN_MECHANICS[bp.stage]||'STREET CHALLENGE')+'</b></p><p>'+campaignText(bp.challenge)+'</p>',choices);
+  talk(npc,'<h3>'+campaignText(bp.title)+'</h3><p><i>“'+campaignText(npc.voice||'')+'”</i></p><p>'+campaignText(bp.story)+'</p><p>'+campaignText(bp.teach)+'</p><p><small>'+campaignText(npc.motivation||'')+' · Works with '+campaignText((npc.connections||[]).join(' and '))+'.</small></p><p><b>'+(CAMPAIGN_MECHANICS[bp.stage]||'STREET CHALLENGE')+'</b></p><p>'+campaignText(bp.challenge)+'</p>',choices);
  }};
  return step;
 }
 STREET_CITIES.forEach((city,i)=>{
  const first=CAMPAIGN_BLUEPRINTS[i*2],second=CAMPAIGN_BLUEPRINTS[i*2+1];
  const cast1=CAST_BY_NAME[first.character],cast2=CAST_BY_NAME[second.character];
- const mentor1=loc(first.character,cast1.role,'#268A9B',LK.trader,city.site);
- const mentor2=loc(second.character,cast2.role,'#6A65B8',LK.man,city.site);
+ const mentor1=Object.assign(loc(first.character,cast1.role,'#268A9B',LK.trader,city.site),{voice:cast1.voice,motivation:cast1.motivation,connections:cast1.connections,style:cast1.style});
+ const mentor2=Object.assign(loc(second.character,cast2.role,'#6A65B8',LK.man,city.site),{voice:cast2.voice,motivation:cast2.motivation,connections:cast2.connections,style:cast2.style});
  const local=loc(city.name,city.role,'#C16C32',LK.mama,city.site);
  const hubStep={label:'Bring the neighbourhood to KitCity Hub',spot:'d',npc:AGENT_KIT_GUIDE,run(){
   talk(AGENT_KIT_GUIDE,'<p>'+campaignText(city.name)+' has two useful wins to take into the neighbourhood: <b>'+campaignText(first.skill)+'</b> and <b>'+campaignText(second.skill)+'</b>.</p><p>KitCity Hub is where residents can find collaborators, compare ideas and keep building. No one needs to trade or become a developer to belong here.</p>',[
@@ -2052,10 +2052,10 @@ STREET_CITIES.forEach((city,i)=>{
    hubStep
   ]};
  if((i+1)%5===0){
-  const hidden=REQUIRED_CAST[(i+13)%REQUIRED_CAST.length],npc=loc(hidden.name,hidden.role,'#C7457E',LK.guy,city.site),id='hidden_'+m.id;
+  const hidden=REQUIRED_CAST[(i+13)%REQUIRED_CAST.length],npc=Object.assign(loc(hidden.name,hidden.role,'#C7457E',LK.guy,city.site),{voice:hidden.voice,motivation:hidden.motivation,connections:hidden.connections,style:hidden.style}),id='hidden_'+m.id;
   m.extras=[{id,once:true,npc,spot:SPOTS.c,run(){const options=first.choices.map((choice,index)=>({t:choice,f:()=>{if(index===first.correct){P.sideDone[id]=true;P.coins+=12;P.reputation+=1;P.relationships[hidden.name]=(P.relationships[hidden.name]||0)+1;P.xp+=8;G.bonus+=5;G.used[id]=true;save();updateHUD();Snd.sfx('coin');talk(npc,'<h3>Hidden street discovery</h3><p>You helped with a problem most visitors walk past. +12 KitCoins, +8 XP and +1 neighbourhood reputation.</p>',[{t:'Back to the street',f:closeSheet}]);}else{talk(npc,'<p>That creates an avoidable risk. '+campaignText(first.teach)+'</p>',[{t:'Try again',f:()=>m.extras[0].run()},{t:'Leave it for now',g:1,f:closeSheet}]);}}}));talk(npc,'<h3>Hidden street discovery</h3><p>'+campaignText(hidden.style)+'. A resident has a small problem linked to '+campaignText(first.concept.toLowerCase())+'.</p><p>'+campaignText(first.challenge)+'</p>',options);}}];
  }else if((i+1)%7===0){
-  const worker=REQUIRED_CAST[(i+19)%REQUIRED_CAST.length],npc=loc(worker.name,worker.role,'#D08A25',LK.trader,city.site),id='job_'+m.id;
+  const worker=REQUIRED_CAST[(i+19)%REQUIRED_CAST.length],npc=Object.assign(loc(worker.name,worker.role,'#D08A25',LK.trader,city.site),{voice:worker.voice,motivation:worker.motivation,connections:worker.connections,style:worker.style}),id='job_'+m.id;
   m.extras=[{id,repeatable:true,npc,spot:SPOTS.c,run(){const count=P.jobCounts[id]||0;if(count>=3){talk(npc,'<p>You have completed this local job three times. The job board will refresh in a later update.</p>',[{t:'Got it',g:1,f:closeSheet}]);return;}const options=second.choices.map((choice,index)=>({t:choice,f:()=>{if(index===second.correct){P.jobCounts[id]=count+1;P.coins+=8;P.reputation+=1;P.relationships[worker.name]=(P.relationships[worker.name]||0)+1;if(count===0)P.xp+=5;G.used[id]=true;save();updateHUD();Snd.sfx('coin');talk(npc,'<p>Job delivered. +8 KitCoins and +1 reputation'+(count===0?', plus +5 XP':'')+'. This job can be repeated up to three times.</p>',[{t:'Done',f:closeSheet}]);}else{talk(npc,'<p>'+campaignText(second.teach)+'</p>',[{t:'Try again',f:()=>m.extras[0].run()},{t:'Leave job',g:1,f:closeSheet}]);}}}));talk(npc,'<h3>Repeatable street job · '+(count+1)+'/3</h3><p>'+campaignText(worker.role)+' needs one practical check about '+campaignText(second.concept.toLowerCase())+'.</p><p>'+campaignText(second.challenge)+'</p>',options);}}];
  }
  EXPLORE.push(m);MBY[m.id]=m;
