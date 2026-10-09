@@ -2202,43 +2202,6 @@ const AK_SECTORS=[
 ['diaspora & remittances','Remittance agent and diaspora community organiser','Remittance desk','families need predictable transfer costs, trusted payout partners and understandable dispute support','compare regulated remittance rails with blockchain settlement where lawful, affordable and genuinely better','payments operations, customer support, compliance, treasury and cross-border product work']
 ].map(x=>({name:x[0],role:x[1],sign:x[2],problem:x[3],idea:x[4],career:x[5],stall:!!x[6]}));
 
-function runAgentConversation(def,Lz){
- const options=Lz.options.map((t,i)=>({t,f:()=>talk(def,'<p>'+Lz.responses[i]+'</p><p>'+Lz.teach+'</p>',[
-  {t:'Tell me more',f:()=>talk(def,'<p>'+Lz.follow+'</p><p>'+Lz.alternate+'</p>',[{t:'Let’s keep going',f:finishStep},{t:'Explain it another way',g:1,f:()=>talk(def,'<p>'+Lz.teach+'</p>',[{t:'Let’s keep going',f:finishStep}])}])},
-  {t:'How could this help people here?',g:1,f:()=>talk(def,'<p>'+Lz.alternate+'</p><p>'+Lz.check+'</p>',[{t:'Let’s keep going',f:finishStep},{t:'Give me a practical example',g:1,f:()=>talk(def,'<p>'+Lz.follow+'</p><p>'+Lz.teach+'</p>',[{t:'Let’s keep going',f:finishStep}])}])}
- ])}));
- talk(def,'<p>'+Lz.opening+'</p><p>'+Lz.question+'</p>',options);
-}
-function akLesson(cityName,sector,npc,part){
- const intro=part===0?'Agent Kit meets '+npc.name+' in '+cityName+'. '+sector.problem+'. Before suggesting a tool, Agent Kit listens: Web3 grew from open-internet ideas and questions about who controls digital identity, assets and coordination.':'Agent Kit returns to '+npc.name+' to connect the big idea to everyday work. '+sector.idea+'. No technology fixes everything; the right design starts with people.';
- const questions=part===0?[
-  ['What is Web3 exploring?',['Guaranteed money for everyone','More open networks, digital ownership and coordination','Removing every institution'],1,'Web3 explores ownership and openness, not guaranteed wealth.'],
-  ['Why did Web3 ideas emerge after Web1 and Web2?',['People explored alternatives to concentrated platform control','The internet stopped using computers','Every site became a blockchain'],0,'The history includes open publishing, social platforms and debates about control.'],
-  ['What should Agent Kit do first?',['Listen to local needs and compare solutions','Tell everyone to buy a token','Assume blockchain is always best'],0,'Responsible onboarding starts with people and evidence.']
- ]:[
-  ['Which is a realistic opportunity in '+sector.name+'?',['Guaranteed token profit','A useful service or career solving a real problem','Replacing everyone immediately'],1,'Useful products solve real problems, not promise profit.'],
-  ['What makes a sector project trustworthy?',['Clear costs, consent, accessibility and accountability','Hiding limitations','Requiring speculation'],0,'Trust depends on design, support and outcomes.'],
-  ['What is a sensible first step?',['Start with a small pilot and listen to users','Launch a token before talking to anyone','Put private records on a public ledger'],0,'Small pilots reveal what helps before scaling.']
- ];
- return {agentKit:true,t:part===0?'Why Web3 began — and what it is for':'Web3 in '+sector.name,intro,
- opening:part===0?'“People keep saying Web3 is just crypto. What is the story behind it, and why did it begin?”':'“I see how this affects our work. Could Web3 help here, and what opportunities might it create?”',
- question:part===0?'Which starting point sounds most useful to you?':'What should guide a solution for this community?',
- options:part===0?['More choice over digital identity and work','We just need a new coin','Technology matters more than people']:['Start with local needs and compare tools','Put every record on-chain','Promise quick profits'],
- responses:part===0?[
-  'That is a strong starting point. Web1 made publishing more open; Web2 made participation social but concentrated power in platforms; Web3 explores open protocols, portable assets and community coordination.',
-  'A coin is one component of some networks. Web3 also includes apps, identity, communities, governance, public goods and tools to build.',
-  'People shape outcomes. Technology should serve a real need, with understandable choices and accountability.'
- ]:[
-  'Exactly. Interview people, map the workflow, understand costs and connectivity, compare tools and test a small prototype.',
-  'Not every record belongs on a public ledger. Health, student and private information needs privacy and consent.',
-  'Quick-profit promises are a warning sign. Explain purpose, risks, costs and evidence instead of selling hype.'
- ],
- teach:part===0?'The Web3 vision is not “crypto only”. It is an attempt to make digital ownership, coordination and participation more open. Governance, usability, law and inclusion still matter.':'For '+sector.name+', opportunities include '+sector.career+'. The community should decide what is useful; Agent Kit connects people to knowledge, tools and one another.',
- follow:part===0?'Web3 is an umbrella term. Blockchains are one tool within a wider ecosystem of protocols, applications, contributors and communities.':'A responsible pilot has a clear problem, measurable outcomes, consent, accessible support and a plan for failures or disputes.',
- check:part===0?'What matters more than hype when judging a project?':'What should a team measure before expanding a project?',
- alternate:part===0?'Web3 includes open protocols, cryptographic verification, digital ownership and community coordination. Different projects make different trade-offs.':'A good solution may combine on-chain proofs with normal databases, phone-friendly interfaces, local-language training and human support.',
- q:Q3(questions)};
-}
 function streetMissionRun(def,Lz,stage,missionTitle,taskLabel){
   return function(){
     const qs=(Lz&&Array.isArray(Lz.q))?Lz.q:[];
