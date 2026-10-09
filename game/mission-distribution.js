@@ -67,6 +67,24 @@ export const MISSION_DISTRIBUTION = EDUCATIONAL_MISSIONS.map(mission => ({
 }));
 
 
+// Derive jurisdiction-level indexes from authored content; empty registries remain valid for unbuilt states.
+for (const location of WORLD_LOCATIONS) {
+  const assigned = MISSION_DISTRIBUTION.filter(item => item.locationIds.includes(location.id));
+  location.npcProfileIds = [...new Set(assigned.map(item => item.npcProfileId))];
+  location.sideMissionIds = [...new Set(assigned.map(item => item.missionId))];
+  location.educationalConceptIds = [...new Set(assigned.map(item => item.conceptId))];
+  const jurisdiction = NIGERIAN_JURISDICTIONS.find(item => item.id === location.jurisdictionId);
+  if (jurisdiction) {
+    const content = jurisdiction.content;
+    content.locationIds = [...new Set([...content.locationIds, location.id])];
+    content.environmentProfiles = [...new Set([...content.environmentProfiles, ...(location.environmentProfileIds || [])])];
+    content.npcProfileIds = [...new Set([...content.npcProfileIds, ...location.npcProfileIds])];
+    content.sideMissionIds = [...new Set([...content.sideMissionIds, ...location.sideMissionIds])];
+    content.educationalConceptIds = [...new Set([...content.educationalConceptIds, ...location.educationalConceptIds])];
+    content.storyArcId = location.storyArcId || content.storyArcId;
+  }
+}
+
 export const NPC_REGISTRY = [
   ...EDUCATIONAL_PROFILES.map(profile => ({
     ...profile, category:"educational", diversity:NPC_PERSPECTIVES[profile.id] || null,
@@ -114,6 +132,7 @@ function sectorToId(sector) {
     "public administration":"government-public-administration", community:"civil-society-community",
     employment:"professional-services", "open source":"technology", privacy:"professional-services",
     identity:"professional-services", infrastructure:"energy", connectivity:"telecommunications",
+    property:"construction-real-estate", research:"professional-services", security:"technology", "supply chain":"transport-logistics", ai:"technology",
     computing:"technology", internet:"technology", software:"technology", "social networks":"media-entertainment",
     "small business":"small-business", healthcare:"healthcare", finance:"finance",
     education:"education", agriculture:"agriculture", law:"law", governance:"government-public-administration"
@@ -229,7 +248,10 @@ export function validateWorldSystem() {
     for (const prerequisite of mission.prerequisites || []) if (!conceptIds.has(prerequisite)) errors.push(mission.id + ": invalid concept prerequisite " + prerequisite);
     const distribution = MISSION_DISTRIBUTION.find(item => item.missionId === mission.id);
     if (!distribution) errors.push(mission.id + ": missing distribution record");
-    else for (const locationId of distribution.locationIds) if (!locationIds.has(locationId)) errors.push(mission.id + ": references missing location " + locationId);
+    else {
+      for (const locationId of distribution.locationIds) if (!locationIds.has(locationId)) errors.push(mission.id + ": references missing location " + locationId);
+      for (const sectorId of distribution.sectorIds) if (sectorId && !sectorIds.has(sectorId)) errors.push(mission.id + ": references missing sector " + sectorId);
+    }
     if (!canReachMissionCompletion(mission, mission.start)) errors.push(mission.id + ": no reachable mission-completion path");
   }
   for (const profile of EDUCATIONAL_PROFILES) {
