@@ -45,7 +45,7 @@ test("every mandated character has a distinct role and is used in the campaign",
   const expected=["Softstorm","IamAbdul","Joseph","Larai","Unique","Smrt huntr","Goodness","Semi","Blockqueen","Christol","Laloba","BigSam","LunaX","OxNight","Moon","The cryptonian","Joseph Nnadi","The don","Praise","Toza","Craftore","Kodavic","Cybersage","Reina","Cclya","Leemah","Kenny"];
   assert.deepEqual(REQUIRED_CAST.map(c=>c.name), expected);
   for (const character of REQUIRED_CAST) {
-    assert.ok(character.role && character.style, character.name);
+    assert.ok(character.role && character.style && character.motivation && character.voice && character.connections.length, character.name);
     assert.ok(CAMPAIGN_BLUEPRINTS.some(m=>m.character===character.name), character.name);
   }
 });
@@ -107,6 +107,7 @@ test("the live engine wires tested progression, persistence, recovery, side jobs
   assert.match(source,/if\(!m\|\|!isUnlocked\(m\)\)/);
   assert.match(source,/skills:P\.skills,relationships:P\.relationships,reputation:P\.reputation,coins:P\.coins,sideDone:P\.sideDone,jobCounts:P\.jobCounts,projects:P\.projects/);
   assert.match(source,/Hidden street discovery/);
+  assert.match(source,/npc\.voice\|\|/,"authored character voices are used in live dialogue");
   assert.match(source,/Repeatable street job/);
   assert.match(source,/data-a="fund"/);
   assert.match(source,/MISSIONS\.filter\(m=>m\.city===hubCity\)\.map\(missionCard\)/,"the eight starter missions remain reachable from the hub");
