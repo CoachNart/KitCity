@@ -67,10 +67,27 @@ const PLAYABLE_WORLD_LOCATIONS = [{
   sideMissionIds: [],
   environmentalEncounterIds: ["pothole-awareness"],
   educationalConceptIds: [],
+  npcSpawnPoints: [],
+  environmentSettings: {},
   storyArcId: "kitcity-open-world-introduction",
   unlockRequirement: null,
   contentStatus: "starter-environment"
 }];
+
+
+/**
+ * Only assets explicitly registered as available may back a playable location.
+ * Add a record here only when the scene/environment is actually implemented.
+ */
+export const ENVIRONMENT_ASSET_REGISTRY = [
+  {
+    id: "kitcity-current-free-roam",
+    engineCityId: "lagos",
+    status: "available",
+    source: "existing-game-scene",
+    notes: "Current KitCity free-roam scene; not a claim that other Lagos districts are separate maps."
+  }
+];
 
 
 /**
@@ -95,6 +112,8 @@ export const PLANNED_SETTLEMENT_LOCATIONS = NIGERIAN_JURISDICTIONS.map(jurisdict
   sideMissionIds: [],
   environmentalEncounterIds: [],
   educationalConceptIds: [],
+  npcSpawnPoints: [],
+  environmentSettings: {},
   storyArcId: null,
   unlockRequirement: null,
   contentStatus: "registry-only",
@@ -149,9 +168,9 @@ export const SECTOR_REGISTRY = [
 
 /** Suggested content directions, not claims that a mission or asset is already present. */
 export const LOCATION_CONTENT_TEMPLATE = Object.freeze({
-  environmentProfileIds: [], npcProfileIds: [], occupationTags: [], communityTags: [],
-  mainMissionIds: [], sideMissionIds: [], environmentalEncounterIds: [],
-  educationalConceptIds: [], storyArcId: null, unlockRequirement: null
+  environmentProfileIds: [], npcProfileIds: [], npcSpawnPoints: [], environmentSettings: {},
+  occupationTags: [], communityTags: [], mainMissionIds: [], sideMissionIds: [],
+  environmentalEncounterIds: [], educationalConceptIds: [], storyArcId: null, unlockRequirement: null
 });
 
 export function getJurisdiction(id) {
