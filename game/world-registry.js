@@ -59,7 +59,7 @@ export const WORLD_LOCATIONS = [{
   environmentAssetId: "kitcity-current-free-roam",
   engineCityId: "lagos",
   environmentProfileIds: ["urban-streets", "market-edge", "transport-corridor", "residential-neighborhood", "public-space"],
-  sectorIds: ["commerce-retail", "transport-logistics", "small-business", "community-civil-society"],
+  sectorIds: ["commerce-retail", "transport-logistics", "small-business", "civil-society-community"],
   npcProfileIds: [],
   occupationTags: [],
   communityTags: [],
