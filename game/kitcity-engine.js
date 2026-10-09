@@ -2081,7 +2081,7 @@ function startMission(id){
   setTimeout(()=>{
     if(curCity!==m.city) buildCity(m.city); else setupBarks(CITIES[curCity]);
     G={m,i:0,bonus:0,correct:0,used:{},words:null,addr:null,slip:null,routeSpots:shuffle(routeSpots)};
-    $('#hub').classList.add('hidden'); $('#title').classList.add('hidden'); $('#hud').classList.remove('hidden');
+    $('#hub').classList.add('hidden'); $('#hub').setAttribute('aria-hidden','true'); $('#title').classList.add('hidden'); $('#hud').classList.remove('hidden');
     S.phase='play'; closeSheet(); Snd.setMode('play'); lastLoc=''; resetPlayer(); loadStep();
     $('#loading').classList.add('hidden');
     briefing();
@@ -2090,7 +2090,7 @@ function startMission(id){
 function briefing(){
   const m=G.m,C=CITIES[m.city];
   openSheet('<div class="who"><span class="av" style="background:'+INK+'">'+m.n+'</span><div><b>'+(m.explore?'':'Mission '+m.n+': ')+m.title+'</b><small>'+C.name+', '+C.tag+'</small></div></div><p>'+m.goal+'</p><ul class="pts">'+m.steps.map(s=>'<li>'+s.label+'</li>').join('')+'</ul>'+(m.explore?'<p class="note">Move with the left stick or WASD. Hold Run or Shift to run. Tap Talk or press E near a person. Follow the arrow to your next conversation.</p>':'<p class="note">Follow the arrow to the next person. Watch for traffic.</p>'),
-    [{t:'Start conversations',f:closeSheet},{t:'Back to title',g:1,f:exitToHub}]);
+    [{t:'Start conversations',f:closeSheet},{t:'Back to hub',g:1,f:exitToHub}]);
 }
 function finishStep(){
   closeSheet(); if(!G) return;
@@ -2122,16 +2122,18 @@ function certificate(){
   sheetEl.insertAdjacentHTML('beforeend',tx('<div class="row"><a class="btn" href="https://wa.me/?text='+msg+'" target="_blank" rel="noopener">Share on WhatsApp</a></div>'));
 }
 function exitToHub(){
-  closeSheet(); S.phase='title'; Snd.setMode('hub'); G=null;
+  closeSheet(); S.phase='hub'; Snd.setMode('hub'); G=null;
   clearGroup(missionGroup); colliders.length=cityCols; smoke=[]; ents=[]; goal=null; beacon.visible=false;
-  $('#hud').classList.add('hidden'); $('#hub').classList.add('hidden'); $('#title').classList.remove('hidden');
+  $('#hud').classList.add('hidden'); $('#title').classList.add('hidden');
+  $('#hub').classList.remove('hidden'); $('#hub').setAttribute('aria-hidden','false');
+  renderHub();
 }
 $('#pauseBtn').addEventListener('click',()=>{
   if(S.phase!=='play'||S.modal) return;
   openSheet('<h3>Paused</h3><p class="note">'+(G.m.explore?'Module '+G.m.mod:'Mission '+G.m.n)+': '+G.m.title+'</p>',[
     {t:'Resume',f:closeSheet},
     {t:'Restart mission',g:1,f:()=>startMission(G.m.id)},
-    {t:'Back to title',g:1,f:exitToHub}
+    {t:'Back to hub',g:1,f:exitToHub}
   ]);
 });
 
