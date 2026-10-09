@@ -2240,19 +2240,19 @@ MODS.forEach((e,i)=>{
 function gradeOf(ft){ return ft>=6?['A','Distinction']:ft===5?['B','Merit']:ft===4?['C','Pass']:['D','Pass with review']; }
 function completeExplore(){
   const m=G.m,ft=Math.min(6,G.ft||0),g=gradeOf(ft),prev=P.scores[m.id],before=levelInfo(P.xp).n;
-  let gain=0; if(!prev){ gain=m.xp+10*ft; P.xp+=gain; }
-  if(!prev||ft>prev.ft) P.scores[m.id]={ft:ft,grade:g[0]};
-  P.done[m.id]=true; save(); updateHUD(); Snd.sfx('done');
-  const after=levelInfo(P.xp),next=EXPLORE[EXPLORE.indexOf(m)+1],allGraded=EXPLORE.every(x=>P.scores[x.id]);
-  clearGroup(missionGroup); colliders.length=cityCols; smoke=[]; ents=[]; goal=null; beacon.visible=false; hubCity=next?next.city:m.city;
-  const btns=[];
-  if(next) btns.push({t:'Next: Module '+next.mod+', '+next.title,f:()=>startMission(next.id)});
-  else if(allGraded) btns.push({t:'Take the final exam',f:()=>{ exitToHub(); startExam(); }});
-  btns.push({t:'Back to hub',g:1,f:exitToHub});
-  openSheet('<div class="badge">'+badgeSVG('\u2605',true,96)+'<div><h3 style="margin-top:0">Module '+m.mod+' complete</h3><small>'+m.title+'</small></div></div>'+
-    '<div class="kv"><span>Grade</span><b>'+g[0]+', '+g[1]+'</b></div><div class="kv"><span>Correct first time</span><b>'+ft+' of 6</b></div>'+
-    (gain?'<div class="kv"><span>XP earned</span><b>+'+gain+'</b></div>':'<p class="note">'+(ft>prev.ft?'New best score saved.':'Your best score stays on record. XP is only awarded the first time.')+'</p>')+
-    (ft<6?'<p class="note">Replay this module any time to beat your score. Only your first try in each replay counts.</p>':'<p><b>Perfect score. Well done!</b></p>')+
+  let gain=0;if(!prev){gain=m.xp+10*ft;P.xp+=gain;}
+  if(!prev||ft>prev.ft)P.scores[m.id]={ft:ft,grade:g[0]};
+  P.done[m.id]=true;save();updateHUD();Snd.sfx('done');
+  const after=levelInfo(P.xp),allGraded=EXPLORE.every(x=>P.scores[x.id]);
+  clearGroup(missionGroup);colliders.length=cityCols;smoke=[];ents=[];goal=null;beacon.visible=false;hubCity=m.city;
+  const btns=[{t:'Enter KitCity Hub',f:()=>{hubCity=m.city;hubTab='cityhub';exitToHub();}}];
+  if(allGraded)btns.push({t:'Take the final exam',g:1,f:()=>{exitToHub();startExam();}});
+  btns.push({t:'Back to missions',g:1,f:()=>{hubTab='missions';exitToHub();}});
+  openSheet('<div class="badge">'+badgeSVG('★',true,96)+'<div><h3 style="margin-top:0">Arrived at KitCity Hub</h3><small>'+CITIES[m.city].name+' · Agent Kit city journey complete</small></div></div>'+
+    '<p>Agent Kit has met local people, explored how Web3 may serve real needs and brought the conversation to the city Hub. Continue growing in KitLab, meet other learners and explore a career or project path.</p>'+
+    '<div class="kv"><span>Journey grade</span><b>'+g[0]+', '+g[1]+'</b></div><div class="kv"><span>First-try answers</span><b>'+ft+' of 6</b></div>'+
+    (gain?'<div class="kv"><span>XP earned</span><b>+'+gain+'</b></div>':'<p class="note">Your best score remains saved. XP is awarded only on first completion.</p>')+
+    (ft<6?'<p class="note">Revisit conversations to improve your understanding any time.</p>':'<p><b>Excellent conversation and learning!</b></p>')+
     (gain&&after.n>before?'<p><b>Level up! You are now '+after.title+'.</b></p>':''),btns);
 }
 function moduleCard(m){
@@ -2386,6 +2386,21 @@ function missionCard(m){
   const un=isUnlocked(m),dn=!!P.done[m.id];
   return '<div class="card'+(un?'':' lock')+'"><div class="ch">'+badgeSVG(m.n,dn,46)+'<div><b>'+(m.explore?'Module '+m.mod+': ':'Mission '+m.n+': ')+m.title+'</b><small>'+m.goal+'</small></div></div><div class="cf"><span>'+m.xp+' XP'+(dn?', done':'')+'</span>'+(un?'<button class="btn brand" data-a="play" data-v="'+m.id+'" type="button">'+(dn?'Replay':'Play')+'</button>':'<span>Finish mission '+(m.n-1)+' first</span>')+'</div></div>';
 }
+function startKitLabTrack(id){
+ const t=AK_TRACKS.find(x=>x.id===id);if(!t)return;P.labDone=P.labDone||{};
+ const opts=[
+  {t:'Show me the big picture',f:()=>talk(AGENT_KIT_GUIDE,'<p>'+t.teach+'</p><p>Which part feels most useful to your own work or community?</p>',[{t:'Try a knowledge check',f:()=>quizKitLab(t)},{t:'Give me a practical next step',g:1,f:()=>talk(AGENT_KIT_GUIDE,'<p>Start small: speak to people affected, write down the problem, find a community or open project, and make one useful contribution you can show others.</p>',[{t:'Try a knowledge check',f:()=>quizKitLab(t)}])}])},
+  {t:'Give me a real-world example',f:()=>talk(AGENT_KIT_GUIDE,'<p>'+t.desc+'</p><p>Imagine applying this in your school, market, farm, clinic, creative community or local organisation. Start with the people and constraints, then test whether an open network adds real value.</p>',[{t:'Try a knowledge check',f:()=>quizKitLab(t)}])},
+  {t:'What should I be careful about?',f:()=>talk(AGENT_KIT_GUIDE,'<p>'+t.teach+'</p><p>Be honest about costs and limitations. Protect private information, check applicable law, avoid guaranteed-return claims and do not assume blockchain is the best tool for every job.</p>',[{t:'Try a knowledge check',f:()=>quizKitLab(t)}])}
+ ];
+ talk(AGENT_KIT_GUIDE,'<p>'+t.ask+'</p><p><b>'+t.title+'</b> — let us explore it together. What would you like to hear first?</p>',opts);
+ function quizKitLab(track){
+  runQuiz({head:whoOf(AGENT_KIT_GUIDE),qs:Q3(track.qs),pass:2,review:'<p>'+track.teach+'</p>',onExit:closeSheet,onPass:result=>{
+   const first=!P.labDone[track.id];P.labDone[track.id]=true;if(first)P.xp+=15;save();updateHUD();Snd.sfx('done');
+   openSheet(whoOf(AGENT_KIT_GUIDE)+'<h3>KitLab track completed</h3><p><b>'+track.title+'</b></p><p>You got '+result.ok+' of '+result.n+' right. Next, share what you learned or contribute to a real project.</p>'+(first?'<div class="kv"><span>Learning XP</span><b>+15</b></div>':'<p class="note">Track revisited. First-completion XP remains saved.</p>'),[{t:'Back to KitLab',f:()=>{closeSheet();hubTab='kitlab';renderHub();}},{t:'Back to City Hub',g:1,f:()=>{closeSheet();hubTab='cityhub';renderHub();}}]);
+  }});
+ }
+}
 function renderHub(){
   const L=levelInfo(P.xp);
   $('#hubTop').innerHTML=tx('<span class="wm"><img class="header-logo" src="https://i.postimg.cc/6pLt0sn3/file-000000006e348210b7a8c70bc4ed899d.png" alt="KitCity" /></span><div class="lvl"><b>Level '+L.n+': '+L.title+'</b><div class="bar"><i style="width:'+L.pct+'%"></i></div>'+P.xp+' XP</div>');
@@ -2395,6 +2410,19 @@ function renderHub(){
     const C=CITIES[hubCity];
     h+=mapSVG()+'<div class="chips">'+Object.keys(CITIES).map(k=>'<button class="chip'+(k===hubCity?' on':'')+'" data-a="city" data-v="'+k+'" type="button">'+CITIES[k].name+'</button>').join('')+'</div>';
     h+='<p class="soft"><b>'+C.name+'</b>, '+C.tag+'</p>'+MISSIONS.concat(EXPLORE).filter(m=>m.city===hubCity).map(m=>m.explore?moduleCard(m):missionCard(m)).join('');
+    const journey=P.done['x_'+hubCity];
+    h+='<div class="card"><div class="ch"><div><b>KitCity Hub · '+C.name+'</b><small>'+(journey?'Agent Kit has completed the local onboarding journey. Enter the Hub to keep learning and meet the wider Web3 ecosystem.':'Your city journey ends at this Hub. Meet local people with Agent Kit to unlock the community learning space.')+'</small></div></div><div class="cf"><span>'+(journey?'Hub unlocked':'Complete the city journey first')+'</span>'+(journey?'<button class="btn brand" data-a="cityhub" type="button">Enter Hub</button>':'<span>Locked</span>')+'</div></div>';
+  } else if(hubTab==='cityhub'){
+    const C=CITIES[hubCity],journey=P.done['x_'+hubCity];P.labDone=P.labDone||{};
+    h+='<div class="card"><div class="ch"><div><b>KitCity Hub · '+C.name+'</b><small>Agent Kit’s local destination for people who want to understand, build and grow with Web3. A community space—not a trading terminal.</small></div></div><div class="cf"><span>'+(journey?'City journey completed':'City journey in progress')+'</span><button class="btn line" data-a="tab" data-v="missions" type="button">View missions</button></div></div>';
+    h+='<div class="h2">Welcome to the Hub</div><p class="soft">Bring your questions, profession and ideas. Market people, farmers, students, writers, health workers, teachers, civic leaders, creators and builders all have a place here.</p>';
+    h+='<div class="grid2"><div class="bd"><b>Community</b><p class="soft">Meet people, compare local problems and learn from each other.</p></div><div class="bd"><b>KitLab</b><p class="soft">Learn the history, ecosystem, careers, product building and real-world impact.</p><button class="btn brand" data-a="tab" data-v="kitlab" type="button">Enter KitLab</button></div></div>';
+    h+='<div class="h2">Your next step</div><div class="card"><div class="ch"><div><b>From learner to contributor</b><small>Choose a track, finish the conversation and knowledge check, then use what you learned in a small project or community contribution.</small></div></div><div class="cf"><span>'+AK_TRACKS.filter(t=>P.labDone[t.id]).length+' of '+AK_TRACKS.length+' KitLab tracks explored</span><button class="btn brand" data-a="tab" data-v="kitlab" type="button">Explore learning paths</button></div></div>';
+  } else if(hubTab==='kitlab'){
+    P.labDone=P.labDone||{};
+    h+='<div class="card"><div class="ch"><div><b>KitLab · Learn, build, contribute</b><small>Agent Kit’s Web3 learning and career-development space. Every track begins with a conversation, not a lecture card.</small></div></div><div class="cf"><span>'+AK_TRACKS.filter(t=>P.labDone[t.id]).length+' / '+AK_TRACKS.length+' tracks complete</span><button class="btn line" data-a="cityhub" type="button">Back to City Hub</button></div></div>';
+    h+='<div class="h2">Choose your path</div>'+AK_TRACKS.map(t=>'<div class="card"><div class="ch"><div><b>'+t.title+'</b><small>'+t.tag+' · '+t.desc+'</small></div></div><div class="cf"><span>'+(P.labDone[t.id]?'Completed · +15 XP':'Conversation + knowledge check')+'</span><button class="btn brand" data-a="lab" data-v="'+t.id+'" type="button">'+(P.labDone[t.id]?'Revisit':'Start track')+'</button></div></div>').join('');
+    h+='<p class="soft">KitLab teaches opportunities and trade-offs—not investment promises. Choose a path based on your interests and the problems you want to solve.</p>';
   } else if(hubTab==='passport'){
     const done=MISSIONS.filter(m=>P.done[m.id]).length,all=done===MISSIONS.length;
     h+='<div class="h2">Badges</div><div class="grid2">'+MISSIONS.map((m,i)=>'<div class="bd'+(P.done[m.id]?'':' off')+'">'+badgeSVG(m.n,!!P.done[m.id],56)+'<b>'+BADGES[i]+'</b></div>').join('')+'</div>';
@@ -2418,6 +2446,8 @@ $('#hub').addEventListener('click',e=>{
   const a=b.dataset.a,v=b.dataset.v;
   if(a==='tab'){ hubTab=v; resetArm=false; renderHub(); $('#hubBody').scrollTop=0; }
   else if(a==='city'){ hubCity=v; hubTab='missions'; renderHub(); }
+  else if(a==='cityhub'){ hubTab='cityhub'; renderHub(); $('#hubBody').scrollTop=0; }
+  else if(a==='lab'){ startKitLabTrack(v); }
   else if(a==='play'){ startMission(v); }
   else if(a==='quality'){ P.low=!P.low; save(); setPR(); setShadows(); resize(); renderHub(); }
   else if(a==='cert'){ certificate(); }
@@ -2430,7 +2460,7 @@ $('#hub').addEventListener('click',e=>{
   else if(a==='snd'){ P[v]=!P[v]; save(); Snd.set(v,P[v]); Snd.sfx('click'); renderHub(); }
   else if(a==='reset'){
     if(!resetArm){ resetArm=true; renderHub(); return; }
-    Store.del(KEY); Object.assign(P,{wallet:null,usdc:0,ngn:0,xp:0,done:{},dodged:0,fell:0,scores:{},web3:null}); save(); resetArm=false; hubCity='lagos'; hubTab='missions'; renderHub(); toast('Progress erased');
+    Store.del(KEY); Object.assign(P,{wallet:null,usdc:0,ngn:0,xp:0,done:{},dodged:0,fell:0,scores:{},web3:null,labDone:{}}); save(); resetArm=false; hubCity='lagos'; hubTab='missions'; renderHub(); toast('Progress erased');
   }
 });
 $('#startBtn').addEventListener('click',()=>{
