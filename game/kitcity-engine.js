@@ -52,11 +52,73 @@ const MUSIC_QUEUES={
   enugu:{label:'Enugu · Igbo',videos:['Uyr1c0pkpas','W41TT8g3MnQ']},
   kano:{label:'Kano · Hausa',videos:['qseIbxXwlmg','UuumEqJKQ9I']},
   kaduna:{label:'Kaduna · Hausa',videos:['i1uEVNMSalo','ULjXLxJa74w']},
-  maiduguri:{label:'Maiduguri · Hausa',videos:['ddXZE34DFbQ','UuumEqJKQ9I']}
+  maiduguri:{label:'Maiduguri · Hausa',videos:['ddXZE34DFbQ','UuumEqJKQ9I']},
+  'owerri':{label:'Owerri · igbo regional rhythms',videos:["Uyr1c0pkpas","W41TT8g3MnQ"]},
+  'aba':{label:'Aba · igbo regional rhythms',videos:["Uyr1c0pkpas","W41TT8g3MnQ"]},
+  'umuahia':{label:'Umuahia · igbo regional rhythms',videos:["Uyr1c0pkpas","W41TT8g3MnQ"]},
+  'awka':{label:'Awka · igbo regional rhythms',videos:["Uyr1c0pkpas","W41TT8g3MnQ"]},
+  'onitsha':{label:'Onitsha · igbo regional rhythms',videos:["Uyr1c0pkpas","W41TT8g3MnQ"]},
+  'asaba':{label:'Asaba · igbo regional rhythms',videos:["Uyr1c0pkpas","W41TT8g3MnQ"]},
+  'uyo':{label:'Uyo · ibibio regional rhythms',videos:["Uyr1c0pkpas","W41TT8g3MnQ"]},
+  'ikot-ekpene':{label:'Ikot Ekpene · ibibio regional rhythms',videos:["Uyr1c0pkpas","W41TT8g3MnQ"]},
+  'yenagoa':{label:'Yenagoa · ijaw regional rhythms',videos:["l-_FcHIS4Yo","k6eE3c70hgg"]},
+  'warri':{label:'Warri · ijaw regional rhythms',videos:["l-_FcHIS4Yo","k6eE3c70hgg"]},
+  'makurdi':{label:'Makurdi · tiv regional rhythms',videos:["DqUd72pK15Y","l-_FcHIS4Yo"]},
+  'ilorin':{label:'Ilorin · yoruba regional rhythms',videos:["bcs_jFdPQn4","zzhKmRovdMY"]},
+  'akure':{label:'Akure · yoruba regional rhythms',videos:["bcs_jFdPQn4","zzhKmRovdMY"]},
+  'ado-ekiti':{label:'Ado-Ekiti · yoruba regional rhythms',videos:["bcs_jFdPQn4","zzhKmRovdMY"]},
+  'osogbo':{label:'Osogbo · yoruba regional rhythms',videos:["bcs_jFdPQn4","zzhKmRovdMY"]},
+  'abeokuta':{label:'Abeokuta · yoruba regional rhythms',videos:["bcs_jFdPQn4","zzhKmRovdMY"]},
+  'lokoja':{label:'Lokoja · igala regional rhythms',videos:["DqUd72pK15Y","l-_FcHIS4Yo"]},
+  'lafia':{label:'Lafia · hausa regional rhythms',videos:["qseIbxXwlmg","UuumEqJKQ9I"]},
+  'bauchi':{label:'Bauchi · hausa regional rhythms',videos:["qseIbxXwlmg","UuumEqJKQ9I"]},
+  'gombe':{label:'Gombe · hausa regional rhythms',videos:["qseIbxXwlmg","UuumEqJKQ9I"]},
+  'damaturu':{label:'Damaturu · kanuri regional rhythms',videos:["qseIbxXwlmg","UuumEqJKQ9I"]},
+  'jalingo':{label:'Jalingo · fulfulde regional rhythms',videos:["ddXZE34DFbQ","UuumEqJKQ9I"]},
+  'yola':{label:'Yola · fulfulde regional rhythms',videos:["ddXZE34DFbQ","UuumEqJKQ9I"]},
+  'sokoto':{label:'Sokoto · hausa regional rhythms',videos:["qseIbxXwlmg","UuumEqJKQ9I"]},
+  'katsina':{label:'Katsina · hausa regional rhythms',videos:["qseIbxXwlmg","UuumEqJKQ9I"]},
+  'birnin-kebbi':{label:'Birnin Kebbi · hausa regional rhythms',videos:["qseIbxXwlmg","UuumEqJKQ9I"]},
+  'minna':{label:'Minna · nupe regional rhythms',videos:["qseIbxXwlmg","UuumEqJKQ9I"]},
+  'dutse':{label:'Dutse · hausa regional rhythms',videos:["qseIbxXwlmg","UuumEqJKQ9I"]},
+  'gusau':{label:'Gusau · hausa regional rhythms',videos:["qseIbxXwlmg","UuumEqJKQ9I"]},
+  'kafanchan':{label:'Kafanchan · hausa regional rhythms',videos:["qseIbxXwlmg","UuumEqJKQ9I"]},
+  'damboa':{label:'Damboa · kanuri regional rhythms',videos:["qseIbxXwlmg","UuumEqJKQ9I"]}
 };
 const CITY_MUSIC={
   lagos:'lagos', abuja:'abuja', ph:'ph', benin:'benin', calabar:'calabar',
-  jos:'jos', ibadan:'ibadan', enugu:'enugu', kano:'kano', kaduna:'kaduna', maiduguri:'maiduguri'
+  jos:'jos', ibadan:'ibadan', enugu:'enugu', kano:'kano', kaduna:'kaduna', maiduguri:'maiduguri',
+  'owerri':'owerri',
+  'aba':'aba',
+  'umuahia':'umuahia',
+  'awka':'awka',
+  'onitsha':'onitsha',
+  'asaba':'asaba',
+  'uyo':'uyo',
+  'ikot-ekpene':'ikot-ekpene',
+  'yenagoa':'yenagoa',
+  'warri':'warri',
+  'makurdi':'makurdi',
+  'ilorin':'ilorin',
+  'akure':'akure',
+  'ado-ekiti':'ado-ekiti',
+  'osogbo':'osogbo',
+  'abeokuta':'abeokuta',
+  'lokoja':'lokoja',
+  'lafia':'lafia',
+  'bauchi':'bauchi',
+  'gombe':'gombe',
+  'damaturu':'damaturu',
+  'jalingo':'jalingo',
+  'yola':'yola',
+  'sokoto':'sokoto',
+  'katsina':'katsina',
+  'birnin-kebbi':'birnin-kebbi',
+  'minna':'minna',
+  'dutse':'dutse',
+  'gusau':'gusau',
+  'kafanchan':'kafanchan',
+  'damboa':'damboa'
 };
 const DEFAULT_PLAYLIST='PLtZ6yiYzu2i3UoRZM3wmw2xpBRM9zYrwP';
 const YT=(function(){
@@ -454,6 +516,14 @@ const CITIES={
   ph:{name:'Port Harcourt',tag:'The garden city',lon:7.0,lat:4.8,seed:51,sky:0x9FB3B8,fog:[70,200],ground:'#26292D',slab:'#9EA39F',
     paint:['#A9B8A8','#8FA79A','#B7B7A8','#9AA7B5','#C4B79F','#7E9C8E'],h:[10,30],market:4,palm:.75,fleet:[['police',.5],['danfo',3],['keke',3],['okada',2],['sedan',3],['truck',2],['suv',1]],pal:{danfo:['#F6B21A','#1B1C20'],keke:['#F6B21A','#2D6FB3'],sedan:['#E9E4DA','#2b2b30','#C8402A','#8a8d93'],stripe:null}}
 };
+// Expanded Nigerian city worlds: distinct coordinates, seed, climate palette and regional traffic/language.
+const EXTRA_CITIES=[["owerri","Owerri",5.48,7.03,63,12047041,"#2E3B32","igbo"],["aba","Aba",5.12,7.37,67,15254682,"#3A3029","igbo"],["umuahia","Umuahia",5.53,7.49,71,13030857,"#343934","igbo"],["awka","Awka",6.21,7.07,73,12571865,"#34393B","igbo"],["onitsha","Onitsha",6.15,6.78,79,14992540,"#39332D","igbo"],["asaba","Asaba",6.2,6.2,83,13097429,"#343B3B","igbo"],["uyo","Uyo",7.91,5.05,89,11060920,"#29352F","ibibio"],["ikot-ekpene","Ikot Ekpene",7.71,5.18,97,11848630,"#2C342E","ibibio"],["yenagoa","Yenagoa",6.26,4.92,101,9549758,"#293638","ijaw"],["warri","Warri",5.75,5.52,103,10926516,"#2C3333","ijaw"],["makurdi","Makurdi",8.53,7.73,107,14010017,"#38352D","tiv"],["ilorin","Ilorin",4.54,8.5,109,14206112,"#39342D","yoruba"],["akure","Akure",5.2,7.25,113,12177591,"#2F3730","yoruba"],["ado-ekiti","Ado-Ekiti",5.23,7.62,127,11848632,"#303831","yoruba"],["osogbo","Osogbo",4.56,7.77,131,12898999,"#33372E","yoruba"],["abeokuta","Abeokuta",3.35,7.15,137,14140320,"#3A342C","yoruba"],["lokoja","Lokoja",6.74,7.8,139,13095349,"#35372F","igala"],["lafia","Lafia",8.49,8.49,149,14075301,"#39352F","hausa"],["bauchi","Bauchi",9.84,10.31,151,14861467,"#3A342D","hausa"],["gombe","Gombe",11.17,10.29,157,14927516,"#39342D","hausa"],["damaturu","Damaturu",11.96,11.75,163,15255450,"#3B352D","kanuri"],["jalingo","Jalingo",11.37,8.89,167,12899256,"#32372F","fulfulde"],["yola","Yola",12.46,9.2,173,14272420,"#39352E","fulfulde"],["sokoto","Sokoto",5.24,13.06,179,15255964,"#3A332B","hausa"],["katsina","Katsina",7.62,12.99,181,15058845,"#3A342C","hausa"],["birnin-kebbi","Birnin Kebbi",4.2,12.45,191,14993822,"#3A352D","hausa"],["minna","Minna",6.56,9.61,193,13944228,"#36342F","nupe"],["dutse","Dutse",9.35,11.76,197,14927774,"#3A342C","hausa"],["gusau","Gusau",6.66,12.17,211,14993308,"#3A342D","hausa"],["kafanchan","Kafanchan",8.3,9.58,223,13748652,"#38352F","hausa"],["damboa","Damboa",12.75,11.15,227,15124635,"#3A342D","kanuri"]];
+EXTRA_CITIES.forEach(([key,name,lon,lat,seed,sky,ground,language])=>{
+ const northern=['hausa','kanuri','fulfulde','nupe'].includes(language);
+ const base=northern?CITIES.kano:(['igbo','ibibio','ijaw'].includes(language)?CITIES.ph:CITIES.lagos);
+ const paints=northern?['#D8C39C','#CFBA9B','#B8C6D2','#C88F74']:language==='yoruba'?['#C9D5BB','#D5C3A2','#B9C9D6','#C98F77']:['#C6D8D1','#D5C6AE','#B7C7D6','#C48E7A'];
+ CITIES[key]={...base,name,tag:name+' · '+language+' region',lon,lat,seed,sky,ground,slab:northern?'#C8B89B':'#B8B9AA',paint:paints,h:northern?[5,22]:[7,28],market:northern?2:3,palm:northern?.12:(language==='ijaw'||language==='ibibio'?.72:.35),fog:northern?[85,220]:[95,250],localLanguage:language,fleet:northern?[['police',.3],['keke',5],['okada',3],['sedan',2],['truck',2]]:base.fleet};
+});
 const CITY_X={
   lagos:{styles:[['zinc',.3],['flat',.5],['glass',.1],['admin',.1]],bridges:[[0,-52],[70,-60]],lm:[['theatre',-35,35],['church',35,105]],
     signs:[['PURE WATER','#0B7A43','#ffffff'],['POS & RECHARGE','#E4572E','#ffffff'],['PROVISIONS','#2D6FB3','#ffffff'],['PHARMACY','#0B7A43','#ffffff'],['BARBING SALON','#1B1C20','#F6B21A'],['FRESH BREAD','#F6B21A','#1B1C20'],['TAILOR','#C7457E','#ffffff'],['PHONE REPAIR','#10C8DC','#1B1C20'],['BUKA','#E4572E','#ffffff']],
@@ -1549,7 +1619,7 @@ const TOLA=NPC('Craftore','Bank agent','#0B7A43',LK.clerk,{body:'#0B7A43',a:'#ff
 /* ---- extra mission characters ---- */
 const mkSign=(name,role,color,look,sign)=>{ const n=NPC(name,role,color,look,null,sign); n.signBg=color; n.signFg='#ffffff'; return n; };
 const OXNIGHT=mkSign('OxNight','Knows the street rules','#1f4f82',LK.man,'Share or keep?');
-const MOON=mkSign('John Jonathan','Rate watcher','#6a3fb5',LK.woman,'Check the quote');
+const MOON=mkSign('Moyo Akin','Rate watcher','#6a3fb5',LK.woman,'Check the quote');
 const CRYPT=mkSign('The Cryptonian','Scam veteran','#0B7A43',LK.guy,'Spot the red flag');
 const NNADI=mkSign('Joseph Nnadi','Backup advisor','#2D6FB3',LK.clerk,'Where to keep it');
 const DON=mkSign('The Don','Careful sender','#5a3a22',LK.elder,'Test first');
