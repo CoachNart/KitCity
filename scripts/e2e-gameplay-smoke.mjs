@@ -54,6 +54,13 @@ try {
   await hold(page, ["Shift", "W"], 5000);
   await hold(page, ["Shift", "D"], 3900);
   await hold(page, ["Shift", "W"], 2300);
+  const arrival = await page.evaluate(() => ({
+    position: window.__KITCITY_E2E__?.position(),
+    nearby: window.__KITCITY_E2E__?.nearby(),
+    phase: window.__KITCITY_E2E__?.phase()
+  }));
+  console.log("NPC approach diagnostic:", JSON.stringify(arrival));
+  assert.ok(arrival.position && Math.hypot(arrival.position.x - 60, arrival.position.z + 105) < 12, "keyboard movement reaches the market NPC area");
   await page.waitForFunction(() => !document.querySelector("#talkBtn").classList.contains("hidden"), undefined, { timeout: 12000 });
   assert.equal(await page.locator("#talkBtn").innerText(), "Talk", "nearby NPC interaction appears after walking through the world");
   await page.locator("#talkBtn").click();
