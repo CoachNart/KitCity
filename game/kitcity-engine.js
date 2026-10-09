@@ -34,9 +34,11 @@ const Store=(function(){
   };
 })();
 const KEY='kitnaija_v1';
-const P=Object.assign({wallet:null,usdc:0,ngn:0,xp:0,done:{},dodged:0,fell:0,low:false,music:true,sfx:true,lang:'en',pl:'',scores:{},web3:null},Store.get(KEY,{}));
+const P=Object.assign({wallet:null,usdc:0,ngn:0,xp:0,done:{},dodged:0,fell:0,low:false,music:true,sfx:true,lang:'en',pl:'',name:'',scores:{},web3:null},Store.get(KEY,{}));
 if(!P.done||typeof P.done!=='object') P.done={};
 function save(){ Store.set(KEY,{wallet:P.wallet,usdc:P.usdc,ngn:P.ngn,xp:P.xp,done:P.done,dodged:P.dodged,fell:P.fell,low:P.low,music:P.music,sfx:P.sfx,lang:P.lang,pl:P.pl,scores:P.scores,web3:P.web3}); }
+function playerName(){ return (P.name||'Player').trim(); }
+function personalize(html){ return String(html==null?'':html).replace(/Agent Kit/g,playerName()).replace(/agent kit/g,playerName()); }
 
 /* =====================  sound (synthesised, no files)  ===================== */
 
@@ -1559,7 +1561,7 @@ const modalEl=$('#modal'),sheetEl=$('#sheet'),talkBtn=$('#talkBtn');
 let cbs=[],toastT=0,chat={npc:null,log:[]},sheetTok=0,pendingReveal=null;
 function toast(msg){ const t=$('#toast'); t.textContent=tr(msg); t.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),2400); }
 function openSheet(html,btns,typingMs){
-  html=tx(html); S.modal=true; joy.reset(); btns=btns||[]; cbs=btns.map(b=>b.f);
+  html=tx(personalize(html)); S.modal=true; joy.reset(); btns=btns||[]; cbs=btns.map(b=>b.f);
   const row=btns.length?'<div class="row">'+btns.map((b,i)=>'<button class="btn'+(b.g?' ghost':'')+(b.m?' mono':'')+'" data-i="'+i+'" type="button">'+tr(b.t)+'</button>').join('')+'</div>':'';
   const tok=++sheetTok;
   sheetEl.innerHTML=html+row; sheetEl.scrollTop=0;
@@ -2429,14 +2431,33 @@ $('#hub').addEventListener('click',e=>{
     Store.del(KEY); Object.assign(P,{wallet:null,usdc:0,ngn:0,xp:0,done:{},dodged:0,fell:0,scores:{},web3:null}); save(); resetArm=false; hubCity='lagos'; hubTab='missions'; renderHub(); toast('Progress erased');
   }
 });
-$('#startBtn').addEventListener('click',()=>{
+const playerNameInput=$('#playerName');
+const playerNameError=$('#playerNameError');
+if(playerNameInput){ playerNameInput.value=P.name||''; }
+function submitPlayerName(){
+  const candidate=(playerNameInput&&playerNameInput.value||'').trim();
+  if(!/^[A-Za-z0-9_]{3,20}$/.test(candidate)){
+    if(playerNameError) playerNameError.textContent='Use 3–20 letters, numbers, or underscores.';
+    if(playerNameInput) playerNameInput.focus();
+    return;
+  }
+  P.name=candidate; save();
+  if(playerNameError) playerNameError.textContent='';
+  beginGame();
+}
+function beginGame(){
   Snd.unlock(); Snd.setMode('hub'); Snd.sfx('click');
   const nextCity=cityOrder.find(city=>!isCityComplete(city));
   const nextJourney=nextCity?cityMissions(nextCity)[0]:null;
   if(!nextJourney){ openSheet('<h3>All cities completed!</h3><p>You have completed every city journey across Nigeria.</p>',[{t:'Back to title',f:exitToHub}]); return; }
   $('#title').classList.add('hidden'); $('#hub').classList.add('hidden');
   startMission(nextJourney.id);
-});
+}
+$('#startBtn').addEventListener('click',submitPlayerName);
+if(playerNameInput){
+  playerNameInput.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); submitPlayerName(); } });
+  playerNameInput.addEventListener('input',()=>{ if(playerNameError) playerNameError.textContent=''; });
+}
 function applyLang(){
   document.documentElement.lang=P.lang==='pcm'?'pcm':'en';
   document.querySelectorAll('[data-t]').forEach(el=>{ if(!el.dataset.en) el.dataset.en=el.textContent; el.textContent=(P.lang==='pcm'&&el.dataset.pcm)?el.dataset.pcm:tr(el.dataset.en); });
