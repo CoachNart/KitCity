@@ -2495,6 +2495,7 @@ if(!adventure.dialogueState||typeof adventure.dialogueState!=='object') adventur
 if(!adventure.discoveries||typeof adventure.discoveries!=='object') adventure.discoveries={};
 if(!adventure.discoveryHints||typeof adventure.discoveryHints!=='object') adventure.discoveryHints={};
 const adventureSave=()=>Store.set(ADVENTURE_KEY,adventure);
+const saveAdventureCheckpoint=()=>{if(S.phase==='play'&&G?.freeRoam){adventure.playerPosition={x:Number(player.position.x.toFixed(2)),z:Number(player.position.z.toFixed(2))};adventureSave();}};
 let adventureLastX=SPAWN.x,adventureLastZ=SPAWN.z,adventureMeters=0,adventureHazards=[],adventureEncounterIds=new Set(),adventureToastCd=0;
 const ADVENTURE_NPCS=[...SOCIAL_ADVENTURE_NPCS,...PROTOTYPE_MISSION_NPCS].map(def=>({...def,look:LK[def.look]||LK.guy}));
 let prototypeObjectiveVisuals=[];
@@ -2633,7 +2634,10 @@ function adventureBegin(){
  spawnAdventureHazards();
  S.phase='play';S.modal=false;$('#hub').classList.add('hidden');$('#title').classList.add('hidden');$('#hud').classList.remove('hidden');
  $('#mTitle').textContent='Explore KitCity';$('#steps').innerHTML='<li class="now">Explore freely</li><li>Find people and activities</li><li>Earn rewards and keep going</li>';
- Snd.setMode('play');resetPlayer();adventureLastX=player.position.x;adventureLastZ=player.position.z;
+ Snd.setMode('play');resetPlayer();
+ const checkpoint=adventure.playerPosition;
+ if(checkpoint&&Number.isFinite(checkpoint.x)&&Number.isFinite(checkpoint.z)&&Math.abs(checkpoint.x)<=205&&Math.abs(checkpoint.z)<=205){player.position.set(checkpoint.x,.05,checkpoint.z);resolve(player.position,1);resolve(player.position,1);camera.position.set(player.position.x,35,player.position.z+20);}
+ adventureLastX=player.position.x;adventureLastZ=player.position.z;
  $('#loading').classList.add('hidden');updateHUD();toast('Explore freely · left stick to move · Run to sprint · tap Talk or Look nearby.');
 }
 function dialogueEscape(value){
@@ -2729,7 +2733,7 @@ function adventureTick(dt){
  adventureToastCd=Math.max(0,adventureToastCd-dt);
  // Encourage careful navigation without damage or forced movement.
  for(const h of adventureHazards){if(Math.hypot(p.x-h.x,p.z-h.z)<h.r&&adventureToastCd<=0){toast('Watch the pothole — steer around it.');adventureToastCd=4;}}
- if(adventureMeters>45){adventureMeters=0;adventure.activityCount++;adventureSave();}
+ if(adventureMeters>45){adventureMeters=0;adventure.activityCount++;saveAdventureCheckpoint();}
 }
 
 function interact(){ if(S.phase!=='play'||S.modal||!nearEnt) return; if(nearEnt.def) { nearEnt.talk(); return; } nearEnt.talk(); }
@@ -2781,6 +2785,7 @@ function fadeBuildings(dt,active){
 }
 
 /* =====================  loop  ===================== */
+window.addEventListener('pagehide',()=>{saveAdventureCheckpoint();save();});
 const clock=new THREE.Clock();
 const camTarget=new THREE.Vector3(),camDesired=new THREE.Vector3();
 let lastDist=-1;
@@ -2789,7 +2794,7 @@ function inputVec(){
   if(keys.KeyA||keys.ArrowLeft) x-=1; if(keys.KeyD||keys.ArrowRight) x+=1;
   if(keys.KeyW||keys.ArrowUp) z-=1; if(keys.KeyS||keys.ArrowDown) z+=1;
   const l=Math.hypot(x,z); if(l>0){ x/=l; z/=l; }
-  if(joy.active){ x=joy.x; z=joy.y; }
+  if(joy.active){ x=joy.x; z=-joy.y; }
   return {x,z};
 }
 /* ---- pedestrians: walking, pairs, crossers, chats, greetings, buying from hawkers ---- */
