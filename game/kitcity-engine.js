@@ -36,7 +36,7 @@ const Store=(function(){
 const KEY='kitnaija_v1';
 const P=Object.assign({wallet:null,usdc:0,ngn:0,xp:0,done:{},dodged:0,fell:0,low:false,music:true,sfx:true,lang:'en',pl:'',scores:{},web3:null,labDone:{},kitLabExam:null},Store.get(KEY,{}));
 if(!P.done||typeof P.done!=='object') P.done={};
-function save(){ Store.set(KEY,{wallet:P.wallet,usdc:P.usdc,ngn:P.ngn,xp:P.xp,done:P.done,dodged:P.dodged,fell:P.fell,low:P.low,music:P.music,sfx:P.sfx,lang:P.lang,pl:P.pl,scores:P.scores,web3:P.web3,kitLabExam:P.kitLabExam,labDone:P.labDone,kitLabExam:P.kitLabExam}); }
+function save(){ Store.set(KEY,{wallet:P.wallet,usdc:P.usdc,ngn:P.ngn,xp:P.xp,done:P.done,dodged:P.dodged,fell:P.fell,low:P.low,music:P.music,sfx:P.sfx,lang:P.lang,pl:P.pl,scores:P.scores,web3:P.web3,labDone:P.labDone,kitLabExam:P.kitLabExam}); }
 
 /* =====================  sound (synthesised, no files)  ===================== */
 
@@ -2265,15 +2265,15 @@ function startExam(){
   const head=who('\u2605','Final exam','KitLab final review, 18 questions','#1B1C20');
   const review=ms=>ms.length?'<p class="note">Review these:</p><ul class="pts">'+ms.map(i=>'<li><b>'+qs[i].q+'</b> '+qs[i].o[qs[i].a]+'. '+qs[i].w+'</li>').join('')+'</ul>':'';
   openSheet(head+'<p>This is the final check. It has 18 questions drawn from the KitLab learning paths. There is no feedback until the end. You need <b>14 of 18</b> to pass.</p>',[{t:'Start exam',f:()=>runQuiz({head:head,qs:qs,pass:14,exam:true,onExit:closeSheet,
-    onPass:r=>{ const first=!P.web3; P.web3={score:Math.max(r.ok,(P.web3&&P.web3.score)||0),n:r.n}; let gain=0; if(first){ gain=150; P.xp+=gain; } save(); updateHUD(); Snd.sfx('done');
+    onPass:r=>{ const first=!P.kitLabExam; P.kitLabExam={score:Math.max(r.ok,(P.kitLabExam&&P.kitLabExam.score)||0),n:r.n}; let gain=0; if(first){ gain=150; P.xp+=gain; } save(); updateHUD(); Snd.sfx('done');
       openSheet(head+'<h3>Passed: '+r.ok+' of '+r.n+'</h3>'+(gain?'<div class="kv"><span>Exam XP</span><b>+'+gain+'</b></div>':'')+'<p>You are now Web3 learning-path certified in KitCity.</p>'+review(r.miss),[{t:'View certificate',f:webCert},{t:'Back to hub',g:1,f:()=>{ closeSheet(); renderHub(); }}]); },
     onFail:r=>{ openSheet(head+'<h3>'+r.ok+' of '+r.n+'. Not yet.</h3><p>You need 14 to pass. Here is what to review, then try again with a fresh set of questions.</p>'+review(r.miss),[{t:'Try again',f:startExam},{t:'Back to hub',g:1,f:()=>{ closeSheet(); renderHub(); }}]); }})},
    {t:'Not now',g:1,f:closeSheet}]);
 }
 function webCert(){
   const tot=EXPLORE.reduce((a,x)=>a+(P.scores[x.id]?P.scores[x.id].ft:0),0),pct=Math.round(tot/(EXPLORE.length*6)*100);
-  const msg=encodeURIComponent(L('I passed the KitCity Web3 learning review ('+(P.web3?P.web3.score:'')+' of '+(P.web3?P.web3.n:'')+'). I explored Web3 history, careers, building, local industries and community impact. What will you contribute?','I don explore Web3 history, careers, building, local industries and community impact. Wetin you go contribute?'));
-  openSheet('<div class="badge">'+badgeSVG('\u2605',true,96)+'<div><h3 style="margin-top:0">KitCity Web3 Learning Certified</h3><small>Final exam '+(P.web3?P.web3.score+'/'+P.web3.n:'')+', city-journey first-try accuracy '+pct+'%</small></div></div><p>You explored the history and vision of Web3, its ecosystem, careers, product building, local industries, creators, public good, governance and responsible impact.</p>',[{t:'Back to hub',f:()=>{ closeSheet(); renderHub(); }}]);
+  const msg=encodeURIComponent(L('I passed the KitCity Web3 learning review ('+(P.kitLabExam?P.kitLabExam.score:'')+' of '+(P.kitLabExam?P.kitLabExam.n:'')+'). I explored Web3 history, careers, building, local industries and community impact. What will you contribute?','I don explore Web3 history, careers, building, local industries and community impact. Wetin you go contribute?'));
+  openSheet('<div class="badge">'+badgeSVG('\u2605',true,96)+'<div><h3 style="margin-top:0">KitCity Web3 Learning Certified</h3><small>Final exam '+(P.kitLabExam?P.kitLabExam.score+'/'+P.kitLabExam.n:'')+', city-journey first-try accuracy '+pct+'%</small></div></div><p>You explored the history and vision of Web3, its ecosystem, careers, product building, local industries, creators, public good, governance and responsible impact.</p>',[{t:'Back to hub',f:()=>{ closeSheet(); renderHub(); }}]);
   sheetEl.insertAdjacentHTML('beforeend',tx('<div class="row"><a class="btn" href="https://wa.me/?text='+msg+'" target="_blank" rel="noopener">Share on WhatsApp</a></div>'));
 }
 function web3Section(){
@@ -2281,7 +2281,7 @@ function web3Section(){
   let h='<div class="h2">KitLab learning</div><div class="stat"><span>Learning paths completed</span><b>'+done+' of '+AK_TRACKS.length+'</b></div>';
   
   h+=AK_TRACKS.map(t=>'<div class="stat"><span>'+t.title+'</span><b>'+(P.labDone[t.id]?'Complete':'Not yet')+'</b></div>').join('');
-  if(done===AK_TRACKS.length) h+=P.web3?'<div class="stat"><span>Final exam</span><b>'+P.web3.score+'/'+P.web3.n+'</b></div><div class="row"><button class="btn brand" data-a="webcert" type="button">View certificate</button><button class="btn line" data-a="exam" type="button">Retake exam</button></div>':'<div class="row"><button class="btn brand" data-a="exam" type="button">Take the final exam</button></div>';
+  if(done===AK_TRACKS.length) h+=P.kitLabExam?'<div class="stat"><span>Final exam</span><b>'+P.kitLabExam.score+'/'+P.kitLabExam.n+'</b></div><div class="row"><button class="btn brand" data-a="webcert" type="button">View certificate</button><button class="btn line" data-a="exam" type="button">Retake exam</button></div>':'<div class="row"><button class="btn brand" data-a="exam" type="button">Take the final exam</button></div>';
   else h+='<p class="soft">Complete all KitLab learning paths to unlock the final review.</p>';
   return h;
 }
