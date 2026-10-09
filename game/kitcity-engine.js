@@ -1993,6 +1993,22 @@ function levelInfo(xp){
 const cityOrder=['lagos','abuja','kano','ph',...streetCityProfiles.map(c=>c[0])];
 EXPLORE.sort((a,b)=>cityOrder.indexOf(a.city)-cityOrder.indexOf(b.city));
 EXPLORE.forEach((m,i)=>{ m.mod=i+1; });
+/* Guard the intended two-mission-per-city route and globally unique titles. */
+const ALL_MISSIONS=[...MISSIONS,...EXPLORE];
+const missionTitles=new Set();
+for(const mission of ALL_MISSIONS){
+  if(missionTitles.has(mission.title)) throw new Error('Duplicate mission title: '+mission.title);
+  missionTitles.add(mission.title);
+}
+for(let ci=0;ci<cityOrder.length;ci++){
+  const pack=cityMissions(cityOrder[ci]);
+  if(pack.length!==2) throw new Error('Each city must have exactly two missions: '+cityOrder[ci]);
+  for(let mi=0;mi<pack.length;mi++){
+    const expected=ci<4?ci*2+mi+1:9+2*(ci-4)+mi;
+    if(pack[mi].n!==expected) throw new Error('Mission numbering gap at '+cityOrder[ci]+': expected '+expected+', got '+pack[mi].n);
+  }
+}
+
 const cityMissions=city=>{ const explore=EXPLORE.filter(m=>m.city===city); return explore.length?explore:MISSIONS.filter(m=>m.city===city); };
 const isCityComplete=city=>{ const missions=cityMissions(city); return missions.length>0&&missions.every(m=>!!P.done[m.id]); };
 const isCityUnlocked=city=>{ const i=cityOrder.indexOf(city); return i>=0&&(i===0||isCityComplete(cityOrder[i-1])); };
@@ -2057,10 +2073,13 @@ function completeMission(){
  const m=G.m,first=!P.done[m.id],before=levelInfo(P.xp).n;let gain=0;if(first){gain=m.xp+G.bonus;P.xp+=gain;}
  P.done[m.id]=true;save();updateHUD();Snd.sfx('done');
  const after=levelInfo(P.xp),idx=MISSIONS.indexOf(m),next=MISSIONS[idx+1],cityComplete=isCityComplete(m.city);
- hubCity=next?next.city:m.city;clearGroup(missionGroup);colliders.length=cityCols;smoke=[];ents=[];goal=null;beacon.visible=false;
- const nextInCity=cityMissions(m.city).find(x=>!P.done[x.id]),nextJourney=nextInCity||(next||null),btns=[];
+ clearGroup(missionGroup);colliders.length=cityCols;smoke=[];ents=[];goal=null;beacon.visible=false;
+ const nextInCity=cityMissions(m.city).find(x=>!P.done[x.id]);
+ const nextCityKey=cityOrder[cityOrder.indexOf(m.city)+1];
+ const nextJourney=nextInCity||(next||(nextCityKey?cityMissions(nextCityKey)[0]:null)),btns=[];
+ hubCity=nextJourney?nextJourney.city:m.city;
  if(cityComplete)btns.push({t:'Collect city badge',f:()=>showCityBadge(m.city,()=>nextJourney?startMission(nextJourney.id):exitToHub())});
- if(nextJourney)btns.push({t:nextJourney.city!==m.city?'Next city: '+CITIES[nextJourney.city].name:'Next: '+nextJourney.title,f:()=>startMission(nextJourney.id)});
+ if(nextJourney)btns.push({t:nextJourney.city!==m.city?'Continue to '+CITIES[nextJourney.city].name:'Next: '+nextJourney.title,f:()=>startMission(nextJourney.id)});
  btns.push({t:'Back to hub',g:1,f:exitToHub});
  openSheet('<div class="who"><span class="av" style="background:'+INK+'">'+m.n+'</span><div><h3 style="margin:0">'+(cityComplete?CITIES[m.city].name+' journey complete':'Mission '+m.n+' complete')+'</h3><small>'+CITIES[m.city].name+' · '+m.title+'</small></div></div>'+(first?'<div class="kv"><span>Mission XP</span><b>+'+m.xp+'</b></div>'+(G.bonus?'<div class="kv"><span>Bonus XP</span><b>+'+G.bonus+'</b></div>':'')+'<div class="kv"><span>Total XP</span><b>'+P.xp+'</b></div>':'<p class="note">Replay complete. XP is only awarded the first time.</p>')+(cityComplete?'<p><b>Both missions in '+CITIES[m.city].name+' are complete. Your city badge is available.</b></p>':'<p class="note">Finish the other mission in this city to earn its badge.</p>')+(first&&after.n>before?'<p><b>Level up! You are now '+after.title+'.</b></p>':''),btns);
 }
@@ -2069,8 +2088,9 @@ function showCityBadge(city,after){
  openSheet('<div class="badge">'+badgeSVG('★',true,96)+'<div><h3 style="margin-top:0">'+name+' Pathfinder</h3><small>City journey completed</small></div></div><p>You completed both missions and earned the '+name+' city badge.</p>',[{t:'Continue journey',f:()=>{closeSheet();if(after)after();}}]);
 }
 function certificate(){
-  const msg=encodeURIComponent(L('I finished all 8 KitCity missions and learned how to use a crypto wallet safely. Can you survive Naija with your wallet?','I don finish all 8 KitCity missions and I don learn how to use crypto wallet safely. You fit survive Naija with your wallet?'));
-  openSheet('<div class="badge">'+badgeSVG('\u2605',true,96)+'<div><h3 style="margin-top:0">KitCity Graduate</h3><small>All 8 missions complete</small></div></div><p>You can create a wallet, swap, spot scams, back up your keys, send safely, sign messages, vote and cash out without getting caught out. Total XP: <b>'+P.xp+'</b>.</p>',
+  const totalMissions=MISSIONS.length+EXPLORE.length;
+  const msg=encodeURIComponent(L('I finished all '+totalMissions+' KitCity missions and learned how to use a crypto wallet safely. Can you survive Naija with your wallet?','I don finish all '+totalMissions+' KitCity missions and I don learn how to use crypto wallet safely. You fit survive Naija with your wallet?'));
+  openSheet('<div class="badge">'+badgeSVG('\u2605',true,96)+'<div><h3 style="margin-top:0">KitCity Graduate</h3><small>All '+totalMissions+' missions complete</small></div></div><p>You completed the full KitCity mission journey across all cities. Total XP: <b>'+P.xp+'</b>.</p>',
     [{t:'Back to hub',f:exitToHub}]);
   sheetEl.insertAdjacentHTML('beforeend',tx('<div class="row"><a class="btn" href="https://wa.me/?text='+msg+'" target="_blank" rel="noopener">Share on WhatsApp</a></div>'));
 }
@@ -2122,9 +2142,11 @@ function renderHub(){
     const C=CITIES[hubCity];
     h+=mapSVG()+'<p class="soft"><b>'+C.name+'</b>, '+C.tag+'</p>'+cityMissions(hubCity).map(m=>m.explore?moduleCard(m):missionCard(m)).join('');
   } else if(hubTab==='passport'){
-    const done=EXPLORE.filter(m=>P.done[m.id]).length,all=done===EXPLORE.length;
-    h+='<div class="h2">City journeys</div><div class="grid2">'+EXPLORE.map((m,i)=>'<div class="bd'+(P.done[m.id]?'':' off')+'">'+badgeSVG(m.mod,!!P.done[m.id],56)+'<b>'+m.title.replace('Agent Kit in ','')+'</b></div>').join('')+'</div>';
-    h+='<div class="h2">Journey progress</div><div class="stat"><span>City journeys complete</span><b>'+done+' of '+EXPLORE.length+'</b></div>';
+    const allMissions=[...MISSIONS,...EXPLORE];
+    const done=allMissions.filter(m=>P.done[m.id]).length,all=done===allMissions.length;
+    const completedCities=cityOrder.filter(city=>isCityComplete(city)).length;
+    h+='<div class="h2">Mission badges</div><div class="grid2">'+allMissions.map((m,i)=>'<div class="bd'+(P.done[m.id]?'':' off')+'">'+badgeSVG(m.n,!!P.done[m.id],56)+'<b>Mission '+m.n+': '+m.title+'</b></div>').join('')+'</div>';
+    h+='<div class="h2">Journey progress</div><div class="stat"><span>Missions complete</span><b>'+done+' of '+allMissions.length+'</b></div><div class="stat"><span>City journeys complete</span><b>'+completedCities+' of '+cityOrder.length+'</b></div>';
     h+='<div class="h2">Wallet</div>'+(P.wallet?'<div class="stat"><span>Address</span><b style="font-family:ui-monospace,Menlo,monospace;font-size:13px">'+short(P.wallet)+'</b></div><div class="stat"><span>USDC</span><b>'+P.usdc.toFixed(2)+'</b></div><div class="stat"><span>Naira token</span><b>'+fmtN(P.ngn)+'</b></div>':'<p class="soft">No wallet yet. Finish mission 1 to open one.</p>');
     if(all) h+='<div class="row"><button class="btn brand" data-a="cert" type="button">View certificate</button></div>';
   } else {
