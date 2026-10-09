@@ -539,14 +539,14 @@ export const EDUCATIONAL_MISSIONS = [
     "id": "learn-digital-ownership",
     "conceptId": "digital-ownership",
     "title": "A problem before a protocol: Digital ownership",
-    "npcId": "credential-verifier",
-    "npcName": "Nneka",
-    "role": "School records officer",
-    "personality": "Careful, patient, practical",
-    "personalConcern": "Her office spends days confirming paper certificates.",
-    "existingKnowledge": "Trusts official seals but worries about forged documents.",
-    "communicationStyle": "Explains process step by step; asks who issued the claim.",
-    "participationReason": "Help a graduate prove a qualification to an overseas employer.",
+    "npcId": "creator-rights",
+    "npcName": "Tomi",
+    "role": "Student illustrator and designer",
+    "personality": "Thoughtful, ambitious",
+    "personalConcern": "Her artwork is copied and she is unsure what a token would protect.",
+    "existingKnowledge": "Values attribution but knows legal rights can be complicated.",
+    "communicationStyle": "Asks what was sold and what permission was granted.",
+    "participationReason": "Distinguish a collectible record from copyright and license rights.",
     "sectors": [
       "creative-industries",
       "commerce"
@@ -745,20 +745,20 @@ export const EDUCATIONAL_MISSIONS = [
       "z": -50,
       "f": -1
     },
-    "domain": "Education"
+    "domain": "Digital ownership"
   },
   {
     "id": "learn-portable-credentials",
     "conceptId": "portable-credentials",
     "title": "A problem before a protocol: Portable credentials",
-    "npcId": "farm-coop",
-    "npcName": "Musa",
-    "role": "Smallholder farmer",
-    "personality": "Observant, patient, skeptical",
-    "personalConcern": "Buyers dispute where produce came from and when it was harvested.",
-    "existingKnowledge": "Believes a notebook and cooperative witness are still essential.",
-    "communicationStyle": "Concrete examples; no jargon; challenges unrealistic claims.",
-    "participationReason": "Resolve a produce-origin dispute without exposing farmers' personal details.",
+    "npcId": "credential-verifier",
+    "npcName": "Nneka",
+    "role": "School records officer",
+    "personality": "Careful, patient, practical",
+    "personalConcern": "Her office spends days confirming paper certificates.",
+    "existingKnowledge": "Trusts official seals but worries about forged documents.",
+    "communicationStyle": "Explains process step by step; asks who issued the claim.",
+    "participationReason": "Help a graduate prove a qualification to an overseas employer.",
     "sectors": [
       "education",
       "employment"
@@ -957,20 +957,20 @@ export const EDUCATIONAL_MISSIONS = [
       "z": -50,
       "f": 1
     },
-    "domain": "Agriculture"
+    "domain": "Education"
   },
   {
     "id": "learn-agriculture-traceability",
     "conceptId": "agriculture-traceability",
     "title": "A problem before a protocol: Agriculture traceability",
-    "npcId": "market-ledger",
-    "npcName": "Amaka",
-    "role": "Market trader",
-    "personality": "Witty, practical, sharp",
-    "personalConcern": "She loses time reconciling cash, transfers and orders.",
-    "existingKnowledge": "Believes technology often ignores weak networks and busy stalls.",
-    "communicationStyle": "Short direct questions and lively market phrasing.",
-    "participationReason": "Reconcile an order and payment while comparing simple tools.",
+    "npcId": "farm-coop",
+    "npcName": "Musa",
+    "role": "Smallholder farmer",
+    "personality": "Observant, patient, skeptical",
+    "personalConcern": "Buyers dispute where produce came from and when it was harvested.",
+    "existingKnowledge": "Believes a notebook and cooperative witness are still essential.",
+    "communicationStyle": "Concrete examples; no jargon; challenges unrealistic claims.",
+    "participationReason": "Resolve a produce-origin dispute without exposing farmers' personal details.",
     "sectors": [
       "agriculture",
       "commerce"
@@ -1169,20 +1169,20 @@ export const EDUCATIONAL_MISSIONS = [
       "z": -215,
       "f": -1
     },
-    "domain": "Commerce"
+    "domain": "Agriculture"
   },
   {
     "id": "learn-commerce-payments",
     "conceptId": "commerce-payments",
     "title": "A problem before a protocol: Commerce and payments",
-    "npcId": "clinic-privacy",
-    "npcName": "Halima",
-    "role": "Community health worker",
-    "personality": "Empathetic, cautious, firm",
-    "personalConcern": "A patient needs records at a new clinic but fears gossip.",
-    "existingKnowledge": "Knows confidentiality matters; unsure how digital sharing can be limited.",
-    "communicationStyle": "Gentle, careful, asks about consent and access.",
-    "participationReason": "Share the minimum necessary record through controlled access.",
+    "npcId": "market-ledger",
+    "npcName": "Amaka",
+    "role": "Market trader",
+    "personality": "Witty, practical, sharp",
+    "personalConcern": "She loses time reconciling cash, transfers and orders.",
+    "existingKnowledge": "Believes technology often ignores weak networks and busy stalls.",
+    "communicationStyle": "Short direct questions and lively market phrasing.",
+    "participationReason": "Reconcile an order and payment while comparing simple tools.",
     "sectors": [
       "commerce",
       "finance"
@@ -1381,20 +1381,20 @@ export const EDUCATIONAL_MISSIONS = [
       "z": -215,
       "f": 1
     },
-    "domain": "Healthcare"
+    "domain": "Commerce"
   },
   {
     "id": "learn-health-data-rights",
     "conceptId": "health-data-rights",
     "title": "A problem before a protocol: Health data rights",
-    "npcId": "legal-clerk",
-    "npcName": "Barrister Eze",
-    "role": "Small-business lawyer",
-    "personality": "Analytical, skeptical, precise",
-    "personalConcern": "A client assumes automated code settles a contract dispute.",
-    "existingKnowledge": "Knows that law, evidence and jurisdiction still matter.",
-    "communicationStyle": "Asks who is liable and what happens when inputs are wrong.",
-    "participationReason": "Review a smart payment clause against real-world obligations.",
+    "npcId": "clinic-privacy",
+    "npcName": "Halima",
+    "role": "Community health worker",
+    "personality": "Empathetic, cautious, firm",
+    "personalConcern": "A patient needs records at a new clinic but fears gossip.",
+    "existingKnowledge": "Knows confidentiality matters; unsure how digital sharing can be limited.",
+    "communicationStyle": "Gentle, careful, asks about consent and access.",
+    "participationReason": "Share the minimum necessary record through controlled access.",
     "sectors": [
       "healthcare",
       "privacy"
@@ -1593,20 +1593,20 @@ export const EDUCATIONAL_MISSIONS = [
       "z": -145,
       "f": -1
     },
-    "domain": "Law and public records"
+    "domain": "Healthcare"
   },
   {
     "id": "learn-smart-contracts",
     "conceptId": "smart-contracts",
     "title": "A problem before a protocol: Smart contracts",
-    "npcId": "skills-mentor",
-    "npcName": "Chidi",
-    "role": "Motor-park mechanic and mentor",
-    "personality": "Funny, resourceful, distrusts hype",
-    "personalConcern": "He needs evidence of skill to win remote repair work.",
-    "existingKnowledge": "Trusts demonstrated ability more than badges.",
-    "communicationStyle": "Uses workshop comparisons and asks to see proof.",
-    "participationReason": "Build a portable work record without exposing customer details.",
+    "npcId": "legal-clerk",
+    "npcName": "Barrister Eze",
+    "role": "Small-business lawyer",
+    "personality": "Analytical, skeptical, precise",
+    "personalConcern": "A client assumes automated code settles a contract dispute.",
+    "existingKnowledge": "Knows that law, evidence and jurisdiction still matter.",
+    "communicationStyle": "Asks who is liable and what happens when inputs are wrong.",
+    "participationReason": "Review a smart payment clause against real-world obligations.",
     "sectors": [
       "law",
       "commerce",
@@ -1807,20 +1807,20 @@ export const EDUCATIONAL_MISSIONS = [
       "z": -145,
       "f": 1
     },
-    "domain": "Employment"
+    "domain": "Law and public records"
   },
   {
     "id": "learn-professional-credentials",
     "conceptId": "professional-credentials",
     "title": "A problem before a protocol: Proof of skills",
-    "npcId": "music-producer",
-    "npcName": "Tayo",
-    "role": "Independent musician",
-    "personality": "Expressive, proud, skeptical",
-    "personalConcern": "His beat was used in an advert without clear credit or payment.",
-    "existingKnowledge": "Believes exposure is often used as an excuse not to pay creators.",
-    "communicationStyle": "Vivid examples; pushes back on vague promises.",
-    "participationReason": "Clarify rights and revenue split before releasing a track.",
+    "npcId": "skills-mentor",
+    "npcName": "Chidi",
+    "role": "Motor-park mechanic and mentor",
+    "personality": "Funny, resourceful, distrusts hype",
+    "personalConcern": "He needs evidence of skill to win remote repair work.",
+    "existingKnowledge": "Trusts demonstrated ability more than badges.",
+    "communicationStyle": "Uses workshop comparisons and asks to see proof.",
+    "participationReason": "Build a portable work record without exposing customer details.",
     "sectors": [
       "employment",
       "education",
@@ -2023,7 +2023,7 @@ export const EDUCATIONAL_MISSIONS = [
       "z": 215,
       "f": -1
     },
-    "domain": "Creative industries",
+    "domain": "Employment and professional development",
     "requires": {
       "any": [
         {
@@ -2044,14 +2044,14 @@ export const EDUCATIONAL_MISSIONS = [
     "id": "learn-creative-rights",
     "conceptId": "creative-rights",
     "title": "A problem before a protocol: Creative rights",
-    "npcId": "community-steward",
-    "npcName": "Aisha",
-    "role": "Cooperative organizer",
-    "personality": "Fair-minded, persistent",
-    "personalConcern": "Members disagree over spending and few attend meetings.",
-    "existingKnowledge": "Wants transparency but fears wealthy members will dominate votes.",
-    "communicationStyle": "Invites disagreement and asks whose voice is missing.",
-    "participationReason": "Design a decision process with quorum and appeal rules.",
+    "npcId": "music-producer",
+    "npcName": "Tayo",
+    "role": "Independent musician",
+    "personality": "Expressive, proud, skeptical",
+    "personalConcern": "His beat was used in an advert without clear credit or payment.",
+    "existingKnowledge": "Believes exposure is often used as an excuse not to pay creators.",
+    "communicationStyle": "Vivid examples; pushes back on vague promises.",
+    "participationReason": "Clarify rights and revenue split before releasing a track.",
     "sectors": [
       "music",
       "art",
@@ -2255,7 +2255,7 @@ export const EDUCATIONAL_MISSIONS = [
       "z": 215,
       "f": 1
     },
-    "domain": "Governance",
+    "domain": "Creative industries",
     "requires": {
       "any": [
         {
@@ -2286,14 +2286,14 @@ export const EDUCATIONAL_MISSIONS = [
     "id": "learn-community-governance",
     "conceptId": "community-governance",
     "title": "A problem before a protocol: Community governance",
-    "npcId": "privacy-guide",
-    "npcName": "Zainab",
-    "role": "Student designer and privacy advocate",
-    "personality": "Curious, direct, ambitious",
-    "personalConcern": "She must prove a qualification without sharing all her personal data.",
-    "existingKnowledge": "Believes verification should not require a public life history.",
-    "communicationStyle": "Clear questions; calls out unnecessary data collection.",
-    "participationReason": "Share one credential claim while minimizing disclosure.",
+    "npcId": "community-steward",
+    "npcName": "Aisha",
+    "role": "Cooperative organizer",
+    "personality": "Fair-minded, persistent",
+    "personalConcern": "Members disagree over spending and few attend meetings.",
+    "existingKnowledge": "Wants transparency but fears wealthy members will dominate votes.",
+    "communicationStyle": "Invites disagreement and asks whose voice is missing.",
+    "participationReason": "Design a decision process with quorum and appeal rules.",
     "sectors": [
       "community",
       "public administration",
@@ -2494,20 +2494,20 @@ export const EDUCATIONAL_MISSIONS = [
       "z": 40,
       "f": -1
     },
-    "domain": "Identity and privacy"
+    "domain": "Governance and communities"
   },
   {
     "id": "learn-decentralized-identity",
     "conceptId": "decentralized-identity",
     "title": "A problem before a protocol: Digital identity and selective disclosure",
-    "npcId": "network-builder",
-    "npcName": "Emeka",
-    "role": "Community network technician",
-    "personality": "Inventive, grounded",
-    "personalConcern": "A neighborhood's connection fails when one provider is down.",
-    "existingKnowledge": "Likes shared infrastructure but worries about maintenance and accountability.",
-    "communicationStyle": "Practical engineering language, explains trade-offs.",
-    "participationReason": "Compare a community network with a single-provider plan.",
+    "npcId": "privacy-guide",
+    "npcName": "Zainab",
+    "role": "Student designer and privacy advocate",
+    "personality": "Curious, direct, ambitious",
+    "personalConcern": "She must prove a qualification without sharing all her personal data.",
+    "existingKnowledge": "Believes verification should not require a public life history.",
+    "communicationStyle": "Clear questions; calls out unnecessary data collection.",
+    "participationReason": "Share one credential claim while minimizing disclosure.",
     "sectors": [
       "identity",
       "privacy",
@@ -2710,7 +2710,7 @@ export const EDUCATIONAL_MISSIONS = [
       "z": 40,
       "f": 1
     },
-    "domain": "Infrastructure",
+    "domain": "Digital identity and privacy",
     "requires": {
       "any": [
         {
@@ -2731,14 +2731,14 @@ export const EDUCATIONAL_MISSIONS = [
     "id": "learn-decentralized-infrastructure",
     "conceptId": "decentralized-infrastructure",
     "title": "A problem before a protocol: Decentralized infrastructure",
-    "npcId": "property-clerk",
-    "npcName": "Mrs Danjuma",
-    "role": "Property documentation clerk",
-    "personality": "Methodical, cautious",
-    "personalConcern": "A family is offered fractional tokens in a building with unclear title.",
-    "existingKnowledge": "Insists paper title, custody and legal rights still matter.",
-    "communicationStyle": "Careful and asks to see documents before believing claims.",
-    "participationReason": "Identify what legal rights a property token actually represents.",
+    "npcId": "network-builder",
+    "npcName": "Emeka",
+    "role": "Community network technician",
+    "personality": "Inventive, grounded",
+    "personalConcern": "A neighborhood's connection fails when one provider is down.",
+    "existingKnowledge": "Likes shared infrastructure but worries about maintenance and accountability.",
+    "communicationStyle": "Practical engineering language, explains trade-offs.",
+    "participationReason": "Compare a community network with a single-provider plan.",
     "sectors": [
       "infrastructure",
       "connectivity",
@@ -2939,20 +2939,20 @@ export const EDUCATIONAL_MISSIONS = [
       "z": 115,
       "f": -1
     },
-    "domain": "Tokenization"
+    "domain": "Infrastructure and decentralized networks"
   },
   {
     "id": "learn-tokenization",
     "conceptId": "tokenization",
     "title": "A problem before a protocol: Tokenization and real-world assets",
-    "npcId": "news-researcher",
-    "npcName": "Fola",
-    "role": "Local journalist",
-    "personality": "Curious, evidence-first",
-    "personalConcern": "A viral AI-generated clip is being shared as proof of an event.",
-    "existingKnowledge": "Knows metadata can help but is not proof of truth.",
-    "communicationStyle": "Asks who filmed it and what independent evidence exists.",
-    "participationReason": "Check provenance without confusing authenticity with truth.",
+    "npcId": "property-clerk",
+    "npcName": "Mrs Danjuma",
+    "role": "Property documentation clerk",
+    "personality": "Methodical, cautious",
+    "personalConcern": "A family is offered fractional tokens in a building with unclear title.",
+    "existingKnowledge": "Insists paper title, custody and legal rights still matter.",
+    "communicationStyle": "Careful and asks to see documents before believing claims.",
+    "participationReason": "Identify what legal rights a property token actually represents.",
     "sectors": [
       "property",
       "finance",
@@ -3155,7 +3155,7 @@ export const EDUCATIONAL_MISSIONS = [
       "z": 115,
       "f": 1
     },
-    "domain": "AI and Web3",
+    "domain": "Tokenization and real-world assets",
     "requires": {
       "any": [
         {
@@ -3176,14 +3176,14 @@ export const EDUCATIONAL_MISSIONS = [
     "id": "learn-verifiable-ai",
     "conceptId": "verifiable-ai",
     "title": "A problem before a protocol: AI provenance and Web3",
-    "npcId": "security-coach",
-    "npcName": "Ifeanyi",
-    "role": "Phone repair technician",
-    "personality": "Blunt, protective, street-smart",
-    "personalConcern": "A customer nearly gives a stranger their recovery phrase.",
-    "existingKnowledge": "Knows mistakes happen under pressure and avoids shaming victims.",
-    "communicationStyle": "Plain warnings and practical next steps.",
-    "participationReason": "Spot a phishing attempt and choose a safer recovery plan.",
+    "npcId": "news-researcher",
+    "npcName": "Fola",
+    "role": "Local journalist",
+    "personality": "Curious, evidence-first",
+    "personalConcern": "A viral AI-generated clip is being shared as proof of an event.",
+    "existingKnowledge": "Knows metadata can help but is not proof of truth.",
+    "communicationStyle": "Asks who filmed it and what independent evidence exists.",
+    "participationReason": "Check provenance without confusing authenticity with truth.",
     "sectors": [
       "AI",
       "media",
@@ -3386,7 +3386,7 @@ export const EDUCATIONAL_MISSIONS = [
       "z": -255,
       "f": 1
     },
-    "domain": "Security",
+    "domain": "AI and Web3",
     "requires": {
       "any": [
         {
@@ -3407,14 +3407,14 @@ export const EDUCATIONAL_MISSIONS = [
     "id": "learn-security-and-limits",
     "conceptId": "security-and-limits",
     "title": "A problem before a protocol: Security and personal responsibility",
-    "npcId": "open-source-builder",
-    "npcName": "Dayo",
-    "role": "Software developer",
-    "personality": "Collaborative, independent",
-    "personalConcern": "A creator cannot move followers and content when a platform blocks them.",
-    "existingKnowledge": "Likes open standards but knows network effects are hard to beat.",
-    "communicationStyle": "Uses relatable app examples; challenges 'decentralized' branding.",
-    "participationReason": "Compare export, interoperability and actual control.",
+    "npcId": "security-coach",
+    "npcName": "Ifeanyi",
+    "role": "Phone repair technician",
+    "personality": "Blunt, protective, street-smart",
+    "personalConcern": "A customer nearly gives a stranger their recovery phrase.",
+    "existingKnowledge": "Knows mistakes happen under pressure and avoids shaming victims.",
+    "communicationStyle": "Plain warnings and practical next steps.",
+    "participationReason": "Spot a phishing attempt and choose a safer recovery plan.",
     "sectors": [
       "security",
       "finance",
@@ -3615,20 +3615,20 @@ export const EDUCATIONAL_MISSIONS = [
       "z": 255,
       "f": -1
     },
-    "domain": "Open internet"
+    "domain": "Security and responsibility"
   },
   {
     "id": "learn-open-internet",
     "conceptId": "open-internet",
     "title": "A problem before a protocol: Open protocols and the internet",
-    "npcId": "creator-rights",
-    "npcName": "Tomi",
-    "role": "Student illustrator and designer",
-    "personality": "Thoughtful, ambitious",
-    "personalConcern": "Her artwork is copied and she is unsure what a token would protect.",
-    "existingKnowledge": "Values attribution but knows legal rights can be complicated.",
-    "communicationStyle": "Asks what was sold and what permission was granted.",
-    "participationReason": "Distinguish a collectible record from copyright and license rights.",
+    "npcId": "open-source-builder",
+    "npcName": "Dayo",
+    "role": "Software developer",
+    "personality": "Collaborative, independent",
+    "personalConcern": "A creator cannot move followers and content when a platform blocks them.",
+    "existingKnowledge": "Likes open standards but knows network effects are hard to beat.",
+    "communicationStyle": "Uses relatable app examples; challenges 'decentralized' branding.",
+    "participationReason": "Compare export, interoperability and actual control.",
     "sectors": [
       "internet",
       "software",
@@ -3829,7 +3829,7 @@ export const EDUCATIONAL_MISSIONS = [
       "z": 255,
       "f": 1
     },
-    "domain": "Digital ownership"
+    "domain": "Open internet and digital infrastructure"
   }
 ];
 
