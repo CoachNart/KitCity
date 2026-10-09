@@ -2213,7 +2213,7 @@ function akLesson(cityName,sector,npc,part){
 function streetMissionRun(def,Lz,stage,missionTitle,taskLabel){
   return function(){
     const qs=(Lz&&Array.isArray(Lz.q))?Lz.q:[];
-    const q=qs[Math.min(stage,Math.max(0,qs.length-1))];
+    const q=qs[0];
     const opening=(Lz&&Lz.intro)||('A local problem needs solving in '+missionTitle+'.');
     const topic=(Lz&&Lz.t)||missionTitle;
     const setup='<p>'+opening+'</p><h3>'+topic+'</h3><p>'+whoOf(def)+' needs your help: '+taskLabel+'. Listen, make the call, and see what happens.</p>';
@@ -2221,7 +2221,11 @@ function streetMissionRun(def,Lz,stage,missionTitle,taskLabel){
       talk(def,setup,[{t:'Help '+whoOf(def),f:()=>finishStep}]);
       return;
     }
-    const ask=()=>talk(def,'<p>'+q.q+'</p><p class="note">Choose the move you would make out on the street.</p>',
+    const rawPrompt=String(q.q||'What is the safest move?');
+    const prompt=/^(Which action is the safest first step\\?|Which habit best protects a wallet\\?|A stranger pressures you to act immediately\\. What should you do\\?)$/i.test(rawPrompt)
+      ? 'For '+topic.toLowerCase()+', what is the best move in this situation?'
+      : rawPrompt;
+    const ask=()=>talk(def,'<p>'+prompt+'</p><p class="note">Choose the move you would make out on the street.</p>',
       q.o.map((choice,j)=>({t:choice,f:()=>{
         if(j===q.a){
           talk(def,'<h3>Good move</h3><p>'+(q.w||'That choice gets the job moving safely.')+'</p>',[{t:'Carry on',f:finishStep}]);
