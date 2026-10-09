@@ -1962,7 +1962,7 @@ const routeSpots=Object.keys(SPOTS).filter(k=>k!=='x1');
 const CAST_BY_NAME=Object.fromEntries(REQUIRED_CAST.map(c=>[c.name,c]));
 const streetCityProfiles=STREET_CITIES.map((c,i)=>[c.id,c.name,c.role,c.site,CAMPAIGN_BLUEPRINTS.slice(i*2,i*2+2)]);
 const streetProfiles=STREET_CITIES.flatMap((c,i)=>CAMPAIGN_BLUEPRINTS.slice(i*2,i*2+2).map((m,slot)=>({...m,city:c.id,localName:c.name,localRole:c.role,site:c.site,slot:slot+1})));
-const EXPLORE=[];
+
 const esc=s=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 streetProfiles.forEach((p,i)=>{
  const cast=CAST_BY_NAME[p.character]||{role:'Web3 community member',style:'learns by doing'};
