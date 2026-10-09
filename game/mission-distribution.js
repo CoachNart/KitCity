@@ -78,9 +78,18 @@ for (const location of WORLD_LOCATIONS) {
   if (jurisdiction) {
     const content = jurisdiction.content;
     content.locationIds = [...new Set([...content.locationIds, location.id])];
-    content.environmentProfiles = [...new Set([...content.environmentProfiles, ...(location.environmentProfileIds || [])])];
+    content.environmentProfileIds = [...new Set([...content.environmentProfileIds, ...(location.environmentProfileIds || [])])];
+    content.sectorIds = [...new Set([...content.sectorIds, ...(location.sectorIds || [])])];
     content.npcProfileIds = [...new Set([...content.npcProfileIds, ...location.npcProfileIds])];
+    content.npcSpawnPoints = [
+      ...content.npcSpawnPoints.filter(point => point.locationId !== location.id),
+      ...(location.npcSpawnPoints || []).map(point => ({...point, locationId: location.id}))
+    ];
+    content.occupationTags = [...new Set([...content.occupationTags, ...(location.occupationTags || [])])];
+    content.communityTags = [...new Set([...content.communityTags, ...(location.communityTags || [])])];
+    content.mainMissionIds = [...new Set([...content.mainMissionIds, ...(location.mainMissionIds || [])])];
     content.sideMissionIds = [...new Set([...content.sideMissionIds, ...location.sideMissionIds])];
+    content.environmentalEncounterIds = [...new Set([...content.environmentalEncounterIds, ...(location.environmentalEncounterIds || [])])];
     content.educationalConceptIds = [...new Set([...content.educationalConceptIds, ...location.educationalConceptIds])];
     content.storyArcId = location.storyArcId || content.storyArcId;
   }
@@ -289,7 +298,12 @@ export function validateWorldSystem({ additionalLocations = [] } = {}) {
     if (!records.length) errors.push(jurisdiction.id + ": has no location registry record");
     const settlement = PLANNED_SETTLEMENT_LOCATIONS.find(location => location.id === "settlement-" + jurisdiction.id);
     if (!settlement || settlement.settlementName !== jurisdiction.administrativeCapital || settlement.status !== "planned") errors.push(jurisdiction.id + ": missing or mismatched administrative-capital registry record");
-    if (!Array.isArray(jurisdiction.content.locationIds)) errors.push(jurisdiction.id + ": location index must be an array");
+    for (const slot of ["locationIds","environmentProfileIds","sectorIds","npcProfileIds","npcSpawnPoints","occupationTags","communityTags","mainMissionIds","sideMissionIds","environmentalEncounterIds","educationalConceptIds"]) {
+      if (!Array.isArray(jurisdiction.content[slot])) errors.push(jurisdiction.id + ": content." + slot + " must be an array");
+    }
+    if (!jurisdiction.content.environmentSettings || typeof jurisdiction.content.environmentSettings !== "object" || Array.isArray(jurisdiction.content.environmentSettings)) errors.push(jurisdiction.id + ": content.environmentSettings must be an object");
+    for (const profileId of jurisdiction.content.environmentProfileIds || []) if (!ENVIRONMENT_PROFILES.some(profile => profile.id === profileId)) errors.push(jurisdiction.id + ": unknown indexed environment profile " + profileId);
+    for (const sectorId of jurisdiction.content.sectorIds || []) if (!sectorIds.has(sectorId)) errors.push(jurisdiction.id + ": unknown indexed sector " + sectorId);
     for (const locationId of jurisdiction.content.locationIds || []) {
       const location = locations.find(item => item.id === locationId);
       if (!location || location.jurisdictionId !== jurisdiction.id) errors.push(jurisdiction.id + ": invalid indexed location " + locationId);
@@ -368,6 +382,7 @@ export function getDevelopmentReport() {
     availableEnvironmentAssets: ENVIRONMENT_ASSET_REGISTRY.filter(asset => asset.status === "available").length,
     npcProfiles: NPC_REGISTRY.length,
     npcSpawnPoints: WORLD_LOCATIONS.reduce((count, location) => count + (location.npcSpawnPoints || []).length, 0),
+    jurisdictionsWithRegionalResearchNotes: NIGERIAN_JURISDICTIONS.filter(item => item.regionalContext?.evidenceRefs?.length || item.regionalContext?.contextNotes?.length).length,
     rewards: REWARD_REGISTRY.length,
     educationalConcepts: EDUCATIONAL_CONCEPTS.length,
     educationalMissions: EDUCATIONAL_MISSIONS.length,
