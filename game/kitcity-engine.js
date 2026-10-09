@@ -2498,7 +2498,12 @@ function adventureBegin(){
  closeSheet(); G={m:{id:'free-roam',title:'Explore KitCity',n:'',explore:true,steps:[]},i:0,bonus:0,used:{},freeRoam:true};
  clearGroup(missionGroup); colliders.length=cityCols; smoke=[]; ents=[]; goal=null; beacon.visible=false;
  adventureEncounterIds.clear(); adventureHazards=[];
- const activeLocation=getWorldLocation(adventure.locationId||'lagos-free-roam');
+ let activeLocation=getWorldLocation(adventure.locationId||'lagos-free-roam');
+ if(!activeLocation||activeLocation.status!=='playable'){
+   activeLocation=getWorldLocation('lagos-free-roam');
+   adventure.locationId=activeLocation?.id||'lagos-free-roam';
+   adventureSave();
+ }
  const selectedEducationalIds=new Set(selectEducationalMissions({locationId:adventure.locationId,dialogueState:adventure.dialogueState,limit:6,allowDeepening:true}).map(mission=>mission.id));
  const locationEducationalNpcs=EDUCATIONAL_NPCS.filter(def=>selectedEducationalIds.has(def.id));
  for(const def of [...ADVENTURE_NPCS,...locationEducationalNpcs]){
