@@ -3925,7 +3925,7 @@ export const EDUCATIONAL_MISSIONS = [
 ];
 
 export const EDUCATIONAL_NPCS = EDUCATIONAL_MISSIONS.map((mission,index)=>({
- id:mission.id,dialogueId:mission.id,name:mission.npcName,role:mission.role,
+ id:mission.id,dialogueId:mission.id,npcProfileId:mission.npcId,name:mission.npcName,role:mission.role,
  color:["#3A8DAD","#0B7A43","#D28A20","#8C6AC8","#2D6FB3"][index%5],
  look:["woman","guy","man","elder"][index%4],
  spot:null,position:mission.position,sign:"Learn: "+mission.domain,
