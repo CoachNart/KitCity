@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { ConversationEngine, createDialogueState } from './conversation-engine.js';
 import { getDialogue } from './dialogue-content.js';
-import { PROTOTYPE_MISSIONS, PROTOTYPE_MISSION_NPCS } from './prototype-missions.js';
+import { PROTOTYPE_MISSIONS, PROTOTYPE_MISSION_NPCS, recordPrototypeObjectiveChoice } from './prototype-missions.js';
 import './mission-distribution.js';
 import { getWorldLocation } from './world-registry.js';
 import { SOCIAL_ADVENTURE_NPCS } from './adventure-data.js';
@@ -2513,19 +2513,12 @@ function objectiveGeometry(shape){
  return new THREE.BoxGeometry(.82,.52,.24);
 }
 function collectPrototypeObjective(objective,choice){
- const mission=PROTOTYPE_MISSIONS.find(item=>item.id===objective.missionId);if(!mission)return;
- const state=adventure.dialogueState||(adventure.dialogueState=createDialogueState());state.flags||={};
- const stepFlag=prototypeFlag('objective',mission.id+':'+objective.id);
- if(state.flags[stepFlag]){closeSheet();toast('You have already checked this item.');return;}
- state.flags[stepFlag]=true;
- adventure.prototypeDecisions||={};adventure.prototypeDecisions[mission.id]||={};
- adventure.prototypeDecisions[mission.id][objective.id]={choiceId:choice.id,feedback:choice.feedback};
- const completed=mission.objectives.filter(item=>state.flags[prototypeFlag('objective',mission.id+':'+item.id)]).length;
- const allDone=completed===mission.objectives.length;
- if(allDone)state.flags[mission.objectiveCompleteFlag]=true;
+ const result=recordPrototypeObjectiveChoice(adventure,objective.missionId,objective.id,choice.id);
+ if(result.error){closeSheet();toast(result.error==='already-recorded'?'You have already checked this item.':'This activity is not available yet.');return;}
+ const mission=result.mission,completed=result.completed,allDone=result.allDone;
  adventureSave();closeSheet();clearPrototypeObjectiveVisuals();refreshPrototypeObjectives();adventureAfterActivity();
  if(allDone)toast('Objective complete. Return to '+mission.npcName+' to discuss what you found.');
- else toast('Evidence recorded · '+completed+'/'+mission.objectives.length+' checks complete. Keep exploring.');
+ else toast('Evidence recorded · '+completed+'/'+result.total+' checks complete. Keep exploring.');
 }
 function inspectPrototypeObjective(objective){
  const mission=PROTOTYPE_MISSIONS.find(item=>item.id===objective.missionId);if(!mission)return;
