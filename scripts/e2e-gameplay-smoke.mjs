@@ -84,7 +84,7 @@ try {
   // Reach the real marked receipt, make a choice, then return to the same NPC for debrief.
   await moveUntil(page, ["Shift", "S"], "z", -65, "gte");
   await moveUntil(page, ["Shift", "A"], "x", 31, "lte");
-  await page.waitForFunction(() => !document.querySelector("#talkBtn").classList.contains("hidden"), undefined, { timeout: 10000 });
+  await page.waitForFunction(() => window.__KITCITY_E2E__?.nearby() === "Supplier delivery receipt", undefined, { timeout: 20000, polling: 100 });
   const objectiveApproach = await page.evaluate(() => ({ position: window.__KITCITY_E2E__?.position(), nearby: window.__KITCITY_E2E__?.nearby(), button: document.querySelector("#talkBtn")?.innerText }));
   console.log("Objective approach diagnostic:", JSON.stringify(objectiveApproach));
   assert.equal(objectiveApproach.nearby, "Supplier delivery receipt", "the player reaches the actual marked practical objective");
@@ -97,7 +97,7 @@ try {
 
   await moveUntil(page, ["Shift", "D"], "x", 58, "gte");
   await moveUntil(page, ["Shift", "W"], "z", -100, "lte");
-  await page.waitForFunction(() => !document.querySelector("#talkBtn").classList.contains("hidden"), undefined, { timeout: 10000 });
+  await page.waitForFunction(() => window.__KITCITY_E2E__?.nearby() === "Amaka", undefined, { timeout: 15000, polling: 100 });
   await page.locator("#talkBtn").click();
   await clickChoice(page, /Share what I found/i);
   await clickChoice(page, /Complete the task/i);
@@ -121,7 +121,7 @@ try {
   await page.waitForFunction(() => !document.querySelector("#bootLoading") || document.querySelector("#bootLoading").classList.contains("done"), undefined, { timeout: 60000 });
   await page.locator("#startBtn").click();
   await page.waitForFunction(() => !document.querySelector("#hud").classList.contains("hidden"), undefined, { timeout: 15000 });
-  await page.waitForFunction(() => !document.querySelector("#talkBtn").classList.contains("hidden"), undefined, { timeout: 10000 });
+  await page.waitForFunction(() => window.__KITCITY_E2E__?.nearby() === "Amaka", undefined, { timeout: 15000, polling: 100 });
   await page.locator("#talkBtn").click();
   await page.waitForFunction(() => /Good to see you again/.test(document.querySelector("#sheet")?.innerText || ""), undefined, { timeout: 10000 });
   const xpBeforeReturn = await page.evaluate(() => JSON.parse(localStorage.getItem("kitnaija_v1") || "{}").xp);
