@@ -34,9 +34,9 @@ const Store=(function(){
   };
 })();
 const KEY='kitnaija_v1';
-const P=Object.assign({wallet:null,usdc:0,ngn:0,xp:0,done:{},dodged:0,fell:0,low:false,music:true,sfx:true,lang:'en',pl:'',scores:{},web3:null,labDone:{},kitLabExam:null},Store.get(KEY,{}));
+const P=Object.assign({wallet:null,usdc:0,ngn:0,xp:0,done:{},dodged:0,fell:0,low:false,music:true,sfx:true,lang:'en',pl:'',scores:{},web3:null},Store.get(KEY,{}));
 if(!P.done||typeof P.done!=='object') P.done={};
-function save(){ Store.set(KEY,{wallet:P.wallet,usdc:P.usdc,ngn:P.ngn,xp:P.xp,done:P.done,dodged:P.dodged,fell:P.fell,low:P.low,music:P.music,sfx:P.sfx,lang:P.lang,pl:P.pl,scores:P.scores,web3:P.web3,labDone:P.labDone,kitLabExam:P.kitLabExam}); }
+function save(){ Store.set(KEY,{wallet:P.wallet,usdc:P.usdc,ngn:P.ngn,xp:P.xp,done:P.done,dodged:P.dodged,fell:P.fell,low:P.low,music:P.music,sfx:P.sfx,lang:P.lang,pl:P.pl,scores:P.scores,web3:P.web3}); }
 
 /* =====================  sound (synthesised, no files)  ===================== */
 
@@ -2158,7 +2158,7 @@ const MODS=[
   {label:"Learn with Amina",spot:'j',npc:loc("Amina Modu","grain seller",'#10C8DC',LK.trader,"damboa community"),L:{t:"Understand lending collateral",intro:"In damboa, understand lending collateral matters because a small mistake can cost real money. Learn the checks first, then practise them before using real assets.",pts:["Understand the protocol's rules, collateral requirements, liquidation conditions, and fees before supplying assets or borrowing.","Review the official documentation and contract address, and remember that audits reduce some risks but do not guarantee safety.","Track changing rates and collateral values; smart-contract failures, oracle errors, and volatile markets can cause losses even without a scam."],q:Q3([["Which action is the safest first step?",["Trust a screenshot instead of checking the actual record","Understand the protocol's rules, collateral requirements, liquidation conditions, and fees before supplying assets or borrowing.","Ignore fees and network details if the amount looks right"],1,"Remember: Understand the protocol's rules, collateral requirements, liquidation conditions, and fees before supplying assets or borrowing."],["What should you check before proceeding?",["Approve every request because it appears familiar","Let a stranger handle the wallet to save time","Review the official documentation and contract address, and remember that audits reduce some risks but do not guarantee safety."],2,"Remember: Review the official documentation and contract address, and remember that audits reduce some risks but do not guarantee safety."],["Which warning sign means you should stop?",["Track changing rates and collateral values; smart-contract failures, oracle errors, and volatile markets can cause losses even without a scam.","Assume a popular service cannot make mistakes","Treat a promise of guaranteed returns as proof"],0,"Remember: Track changing rates and collateral values; smart-contract failures, oracle errors, and volatile markets can cause losses even without a scam."]])}}
  ]}
 ];
-const AGENT_KIT_GUIDE=NPC('Aunty Nneka','KitLab mentor & community guide',BRAND,LK.clerk,null,'KitLab guide');
+const AGENT_KIT_GUIDE=NPC('Aunty Nneka','KitCity Hub community guide',BRAND,LK.clerk,null,'Hub guide');
 const AK_SECTORS=[
 ['market traders & small businesses','Market trader and small-business owner','Market association','small businesses face opaque fees, paper records and limited customer reach','transparent trade records, digital marketplaces and cooperative tools','commerce operations, payments design and customer support',1],
 ['farmers & food systems','Farmer and cooperative organiser','Farmers cooperative','farmers struggle to prove produce origin and coordinate buyers','traceability, cooperative records and supply-chain milestones','AgriTech, supply-chain data and cooperative coordination',1],
@@ -2273,6 +2273,7 @@ function missionCentre(spot,cityName,title){
  const sign=bannerSprite(title,cityName+' · Community Mission Centre');sign.position.set(cx,7.6,cz+f*6.55);sign.scale.set(10.5,2.65,1);missionGroup.add(sign);
  const bx=spot.x+f*1.5,bz=spot.z+f*2.6;add(new THREE.BoxGeometry(5.8,2.2,.28),trim,bx,4,bz);
  const banner=bannerSprite(title,cityName+' · Meet Agent Kit');banner.position.set(bx,4,bz+f*.22);banner.scale.set(5.4,1.8,1);missionGroup.add(banner);
+ colliders.push({x0:cx-9.5,x1:cx+9.5,z0:cz-6,z1:cz+6});
 }
 function addKitCityHubBuilding(cityName){
  const cx=60,cz=-130,group=cityGroup;
@@ -2284,6 +2285,7 @@ function addKitCityHubBuilding(cityName){
  const sign=bannerSprite('KITCITY HUB',cityName+' · Community · Learning · Building');sign.position.set(cx,11.1,cz+10);sign.scale.set(18,4.5,1);group.add(sign);
  add(new THREE.BoxGeometry(4,5,.6),dark,cx,2.6,cz+9.5);add(new THREE.BoxGeometry(19,.35,7),dark,cx,.2,cz+14);
  const fore=bannerSprite('WELCOME TO '+cityName,'Agent Kit brings the city together');fore.position.set(cx,4.6,cz+15);fore.scale.set(13,3.25,1);group.add(fore);
+ colliders.push({x0:cx-13.5,x1:cx+13.5,z0:cz-9,z1:cz+9});
 }
 function loadStep(){
   clearGroup(missionGroup); colliders.length=cityCols; smoke=[]; ents=[]; goal=null;
@@ -2378,8 +2380,6 @@ function renderHub(){
   $('#hubTop').innerHTML=tx('<span class="wm"><img class="header-logo" src="https://i.postimg.cc/6pLt0sn3/file-000000006e348210b7a8c70bc4ed899d.png" alt="KitCity" /></span><div class="lvl"><b>Level '+L.n+': '+L.title+'</b><div class="bar"><i style="width:'+L.pct+'%"></i></div>'+P.xp+' XP</div>');
   document.querySelectorAll('#nav [data-v="kitlab"]').forEach(b=>b.remove());
   if(hubTab==='kitlab') hubTab='cityhub';
-  document.querySelectorAll('#nav [data-v="kitlab"]').forEach(b=>b.remove());
-  if(hubTab==='kitlab') hubTab='cityhub';
   document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===hubTab));
   let h='';
   if(hubTab==='missions'){
@@ -2428,7 +2428,7 @@ $('#hub').addEventListener('click',e=>{
   else if(a==='snd'){ P[v]=!P[v]; save(); Snd.set(v,P[v]); Snd.sfx('click'); renderHub(); }
   else if(a==='reset'){
     if(!resetArm){ resetArm=true; renderHub(); return; }
-    Store.del(KEY); Object.assign(P,{wallet:null,usdc:0,ngn:0,xp:0,done:{},dodged:0,fell:0,scores:{},web3:null,labDone:{},kitLabExam:null}); save(); resetArm=false; hubCity='lagos'; hubTab='missions'; renderHub(); toast('Progress erased');
+    Store.del(KEY); Object.assign(P,{wallet:null,usdc:0,ngn:0,xp:0,done:{},dodged:0,fell:0,scores:{},web3:null}); save(); resetArm=false; hubCity='lagos'; hubTab='missions'; renderHub(); toast('Progress erased');
   }
 });
 $('#startBtn').addEventListener('click',()=>{
