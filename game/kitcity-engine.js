@@ -36,7 +36,7 @@ const Store=(function(){
 const KEY='kitnaija_v1';
 const P=Object.assign({wallet:null,usdc:0,ngn:0,xp:0,done:{},dodged:0,fell:0,low:false,music:true,sfx:true,lang:'en',pl:'',name:'',scores:{},web3:null},Store.get(KEY,{}));
 if(!P.done||typeof P.done!=='object') P.done={};
-function save(){ Store.set(KEY,{wallet:P.wallet,usdc:P.usdc,ngn:P.ngn,xp:P.xp,done:P.done,dodged:P.dodged,fell:P.fell,low:P.low,music:P.music,sfx:P.sfx,lang:P.lang,pl:P.pl,scores:P.scores,web3:P.web3}); }
+function save(){ Store.set(KEY,{wallet:P.wallet,usdc:P.usdc,ngn:P.ngn,xp:P.xp,done:P.done,dodged:P.dodged,fell:P.fell,low:P.low,music:P.music,sfx:P.sfx,lang:P.lang,pl:P.pl,name:P.name,scores:P.scores,web3:P.web3}); }
 function playerName(){ return (P.name||'Player').trim(); }
 function personalize(html){ return String(html==null?'':html).replace(/Agent Kit/g,playerName()).replace(/agent kit/g,playerName()); }
 
@@ -2462,7 +2462,7 @@ function applyLang(){
   document.documentElement.lang=P.lang==='pcm'?'pcm':'en';
   document.querySelectorAll('[data-t]').forEach(el=>{ if(!el.dataset.en) el.dataset.en=el.textContent; el.textContent=(P.lang==='pcm'&&el.dataset.pcm)?el.dataset.pcm:tr(el.dataset.en); });
   document.querySelectorAll('[data-lang]').forEach(b=>b.classList.toggle('on',b.dataset.lang===P.lang));
-  $('#startBtn').textContent=(P.xp>0||Object.keys(P.done).length)?L('Continue','Continue'):L('Play','Play');
+  $('#startBtn').textContent=(P.xp>0||Object.keys(P.done).length)?L('Continue','Continue'):L('Enter KitCity','Enter KitCity');
   if(G) updateHUD();
   renderHub();
 }
