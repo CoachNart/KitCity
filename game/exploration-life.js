@@ -64,3 +64,16 @@ export function validateExplorationDiscoveries() {
   }
   return errors;
 }
+
+/** Record a first-time discovery against the persisted adventure snapshot. */
+export function recordExplorationDiscovery(state, id) {
+  const discovery = EXPLORATION_DISCOVERIES.find(item => item.id === id);
+  if (!discovery) return { error: "unknown-discovery" };
+  if (!state || typeof state !== "object") return { error: "invalid-state" };
+  state.discoveries ||= {};
+  if (state.discoveries[id]) return { error: "already-discovered", discovery };
+  state.discoveries[id] = true;
+  state.activityCount = (Number(state.activityCount) || 0) + 1;
+  state.exploreScore = (Number(state.exploreScore) || 0) + 14;
+  return { discovery, reward: { ...discovery.reward } };
+}
