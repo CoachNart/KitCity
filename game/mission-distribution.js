@@ -11,6 +11,7 @@ import {
   getAvailableEducationalMissions
 } from "./educational-content.js";
 import { KITCITY_DIALOGUES, getDialogue } from "./dialogue-content.js";
+import { SOCIAL_ADVENTURE_NPCS } from "./adventure-data.js";
 
 export const NPC_PERSPECTIVES = {
   "credential-verifier": {ageRange:"40s-50s",economicContext:"public-facing school administration",technicalFluency:"practical digital user",stance:"careful and process-oriented"},
@@ -66,11 +67,17 @@ export const MISSION_DISTRIBUTION = EDUCATIONAL_MISSIONS.map(mission => ({
 }));
 
 
-export const NPC_REGISTRY = EDUCATIONAL_PROFILES.map(profile => ({
-  ...profile,
-  diversity: NPC_PERSPECTIVES[profile.id] || null,
-  dialogueIds: EDUCATIONAL_MISSIONS.filter(mission => mission.npcId === profile.id).map(mission => mission.id)
-}));
+export const NPC_REGISTRY = [
+  ...EDUCATIONAL_PROFILES.map(profile => ({
+    ...profile, category:"educational", diversity:NPC_PERSPECTIVES[profile.id] || null,
+    dialogueIds:EDUCATIONAL_MISSIONS.filter(mission => mission.npcId === profile.id).map(mission => mission.id)
+  })),
+  ...SOCIAL_ADVENTURE_NPCS.map(profile => ({
+    id:profile.npcProfileId, encounterId:profile.id, name:profile.name, role:profile.role,
+    category:"social", diversity:{ageRange:profile.ageRange,economicContext:profile.economicContext,technicalFluency:profile.technicalFluency,stance:profile.stance},
+    dialogueIds:[profile.dialogueId]
+  }))
+];
 
 export const DIALOGUE_REGISTRY = [
   ...KITCITY_DIALOGUES.map(dialogue => ({id:dialogue.id, kind:"social", npcId:dialogue.npcId, missionId:dialogue.missionId || null})),
@@ -103,7 +110,7 @@ export const STORY_ARCS = [{
 function sectorToId(sector) {
   const aliases = {
     commerce:"commerce-retail", "creative-industries":"music-creative-industries",
-    music:"music-creative-industries", art:"music-creative-industries", media:"media-entertainment",
+    music:"music-creative-industries", art:"music-creative-industries", media:"media-entertainment", "real estate":"construction-real-estate", construction:"construction-real-estate",
     "public administration":"government-public-administration", community:"civil-society-community",
     employment:"professional-services", "open source":"technology", privacy:"professional-services",
     identity:"professional-services", infrastructure:"energy", connectivity:"telecommunications",
@@ -197,7 +204,7 @@ export function validateWorldSystem() {
   unique(ENVIRONMENT_PROFILES, "environment profile");
   const conceptIds = unique(EDUCATIONAL_CONCEPTS, "concept");
   const missionIds = unique(EDUCATIONAL_MISSIONS, "mission");
-  const npcIds = unique(EDUCATIONAL_PROFILES, "NPC profile");
+  const npcIds = unique(NPC_REGISTRY, "NPC profile");
   const dialogueIds = unique([...KITCITY_DIALOGUES, ...EDUCATIONAL_MISSIONS], "dialogue");
   if (NIGERIAN_STATES.length !== 36) errors.push("expected 36 states; found " + NIGERIAN_STATES.length);
   if (NIGERIAN_TERRITORIES.length !== 1 || NIGERIAN_TERRITORIES[0]?.id !== "fct") errors.push("FCT must be represented separately from the 36 states");
@@ -234,6 +241,9 @@ export function validateWorldSystem() {
     for (const sector of concept.sectors || []) if (!sectorToId(sector)) errors.push(concept.id + ": sector has no registry mapping: " + sector);
     for (const prerequisite of concept.prerequisites || []) if (!conceptIds.has(prerequisite)) errors.push(concept.id + ": invalid prerequisite concept " + prerequisite);
   }
+  for (const dialogue of KITCITY_DIALOGUES) {
+    if (!NPC_REGISTRY.some(npc => npc.id === dialogue.npcId && npc.dialogueIds.includes(dialogue.id))) errors.push(dialogue.id + ": NPC references missing dialogue association for " + dialogue.npcId);
+  }
   for (const content of [...KITCITY_DIALOGUES, ...EDUCATIONAL_MISSIONS]) {
     if (!content.start || !content.nodes?.[content.start]) errors.push(content.id + ": missing valid start node");
     const reachable = graphReachable(content);
@@ -255,9 +265,11 @@ export function getDevelopmentReport() {
     configuredLocations: WORLD_LOCATIONS.length,
     playableLocations: WORLD_LOCATIONS.filter(item => item.status === "playable").length,
     sectors: SECTOR_REGISTRY.length,
-    npcProfiles: EDUCATIONAL_PROFILES.length,
+    npcProfiles: NPC_REGISTRY.length,
     educationalConcepts: EDUCATIONAL_CONCEPTS.length,
     educationalMissions: EDUCATIONAL_MISSIONS.length,
+    dialogueTrees: DIALOGUE_REGISTRY.length,
+    locationEvents: LOCATION_EVENT_REGISTRY.length,
     missionsWithPlayableLocation: MISSION_DISTRIBUTION.filter(item => item.locationIds.some(id => WORLD_LOCATIONS.some(location => location.id === id && location.status === "playable"))).length
   };
 }
