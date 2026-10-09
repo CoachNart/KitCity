@@ -2225,7 +2225,7 @@ function renderHub(){
   if(hubTab==='missions'){
     const C=CITIES[hubCity];
     h+=mapSVG()+'<div class="chips">'+Object.keys(CITIES).map(k=>'<button class="chip'+(k===hubCity?' on':'')+'" data-a="city" data-v="'+k+'" type="button" '+(isCityUnlocked(k)?'':'disabled')+'>'+CITIES[k].name+(isCityUnlocked(k)?'':' · Locked')+'</button>').join('')+'</div>';
-    h+='<p class="soft"><b>'+C.name+'</b>, '+C.tag+'</p>'+EXPLORE.filter(m=>m.city===hubCity).map(moduleCard).join('');
+    h+='<p class="soft"><b>'+C.name+'</b>, '+C.tag+'</p>'+MISSIONS.filter(m=>m.city===hubCity).map(missionCard).join('')+EXPLORE.filter(m=>m.city===hubCity).map(moduleCard).join('');
     const journey=P.done['ak_'+hubCity];
     h+='<div class="card"><div class="ch"><div><b>KitCity Hub · '+C.name+'</b><small>'+(journey?'Agent Kit has completed the local onboarding journey. Enter the Hub to keep learning and meet the wider Web3 ecosystem.':'Your city journey ends at this Hub. Meet local people with Agent Kit to unlock the community learning space.')+'</small></div></div><div class="cf"><span>'+(journey?'Hub unlocked':'Complete the city journey first')+'</span>'+(journey?'<button class="btn brand" data-a="cityhub" type="button">Enter Hub</button>':'<span>Locked</span>')+'</div></div>';
   } else if(hubTab==='cityhub'){
