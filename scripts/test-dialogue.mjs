@@ -22,6 +22,24 @@ assert.equal(world.NIGERIAN_TERRITORIES.length, 1);
 assert.equal(world.NIGERIAN_TERRITORIES[0].id, "fct");
 assert.equal(world.NIGERIAN_TERRITORIES[0].administrativeCapital, "Abuja");
 assert.equal(world.NIGERIAN_JURISDICTIONS.length, 37);
+assert.ok(world.NIGERIAN_JURISDICTIONS.every(jurisdiction =>
+  Array.isArray(jurisdiction.content.locationIds) &&
+  Array.isArray(jurisdiction.content.environmentProfileIds) &&
+  jurisdiction.content.environmentSettings && typeof jurisdiction.content.environmentSettings === "object" &&
+  Array.isArray(jurisdiction.content.sectorIds) &&
+  Array.isArray(jurisdiction.content.npcProfileIds) &&
+  Array.isArray(jurisdiction.content.npcSpawnPoints) &&
+  Array.isArray(jurisdiction.content.occupationTags) &&
+  Array.isArray(jurisdiction.content.communityTags) &&
+  Array.isArray(jurisdiction.content.mainMissionIds) &&
+  Array.isArray(jurisdiction.content.sideMissionIds) &&
+  Array.isArray(jurisdiction.content.environmentalEncounterIds) &&
+  Array.isArray(jurisdiction.content.educationalConceptIds) &&
+  jurisdiction.regionalContext?.researchStatus
+), "every state and FCT supports the complete location/content schema");
+assert.ok(world.WORLD_LOCATIONS.every(location => location.regionalContext?.researchStatus && Array.isArray(location.npcSpawnPoints) && location.environmentSettings && typeof location.environmentSettings === "object"), "each location has regional research metadata, environment settings and NPC spawn slots");
+assert.equal(world.ENVIRONMENT_ASSET_REGISTRY.length, 1, "only the existing environment asset is registered");
+assert.equal(world.ENVIRONMENT_ASSET_REGISTRY[0].id, "kitcity-current-free-roam");
 assert.equal(world.PLANNED_SETTLEMENT_LOCATIONS.length, 37, "each state and FCT has an administrative-capital settlement record");
 assert.equal(world.WORLD_LOCATIONS.length, 38, "the one existing scene plus 37 registry-only settlements are represented");
 assert.equal(world.WORLD_LOCATIONS.filter(item => item.status === "playable").length, 1, "only the existing free-roam environment is marked playable");
@@ -176,5 +194,5 @@ const left = leaveSession.choose("__leave_conversation");
 assert.equal(left.ended, true);
 assert.equal(left.missionCompleted, false, "leaving early must not complete the mission");
 
-console.log("PASS: Nigerian world registry (36 states + separate FCT), playable-location gating, sector/NPC/mission/reward/event registries, 7 social dialogues, 15 educational missions, prerequisite gating, repeat avoidance and dialogue progression validate.");
+console.log("PASS: Nigerian world registry (36 states + separate FCT), registry-only settlements, real asset gating, 21+ sectors, NPC/location schema, 15 concepts, 16 authored mission trees, contextual deepening, prerequisites, repetition avoidance and dialogue progression validate.");
 await cleanup();
