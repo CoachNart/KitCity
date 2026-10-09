@@ -2293,7 +2293,7 @@ function resetPlayer(){
   camera.position.set(SPAWN.x,35,SPAWN.z+20);
 }
 function bannerSprite(text,sub){
- const c=document.createElement('canvas');c.width=768;c.height=192;const g=c.getContext('2d);
+ const c=document.createElement('canvas');c.width=768;c.height=192;const g=c.getContext('2d');
  g.fillStyle='#111820';g.fillRect(0,0,c.width,c.height);g.fillStyle='#10C8DC';g.fillRect(0,0,14,c.height);g.fillRect(c.width-14,0,14,c.height);
  g.fillStyle='#ffffff';g.font='900 43px Arial';g.textAlign='center';g.textBaseline='middle';g.fillText(text.toUpperCase(),c.width/2,72,700);
  g.fillStyle='#9deef5';g.font='700 24px Arial';g.fillText(sub.toUpperCase(),c.width/2,132,700);
