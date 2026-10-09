@@ -2210,20 +2210,46 @@ function akLesson(cityName,sector,npc,part){
  alternate:part===0?'Web3 includes open protocols, cryptographic verification, digital ownership and community coordination. Different projects make different trade-offs.':'A good solution may combine on-chain proofs with normal databases, phone-friendly interfaces, local-language training and human support.',
  q:Q3(questions)};
 }
+function streetMissionRun(def,Lz,stage,missionTitle,taskLabel){
+  return function(){
+    const qs=(Lz&&Array.isArray(Lz.q))?Lz.q:[];
+    const q=qs[Math.min(stage,Math.max(0,qs.length-1))];
+    const opening=(Lz&&Lz.intro)||('A local problem needs solving in '+missionTitle+'.');
+    const topic=(Lz&&Lz.t)||missionTitle;
+    const setup='<p>'+opening+'</p><h3>'+topic+'</h3><p>'+whoOf(def)+' needs your help: '+taskLabel+'. Listen, make the call, and see what happens.</p>';
+    if(!q||!Array.isArray(q.o)||!q.o.length){
+      talk(def,setup,[{t:'Help '+whoOf(def),f:()=>finishStep}]);
+      return;
+    }
+    const ask=()=>talk(def,'<p>'+q.q+'</p><p class="note">Choose the move you would make out on the street.</p>',
+      q.o.map((choice,j)=>({t:choice,f:()=>{
+        if(j===q.a){
+          talk(def,'<h3>Good move</h3><p>'+(q.w||'That choice gets the job moving safely.')+'</p>',[{t:'Carry on',f:finishStep}]);
+        }else{
+          talk(def,'<p>That move could put the job at risk. '+(q.w||'Check the details before you act.')+'</p>',[{t:'Try a different move',f:ask}]);
+        }
+      }})));
+    talk(def,setup,[{t:'Let’s handle it',f:ask},{t:'I need a moment',g:1,f:closeSheet}]);
+  };
+}
 const EXPLORE=[];
+const routeSpots=Object.keys(SPOTS).filter(k=>k!=='x1');
 MODS.forEach((e,i)=>{
-  // Keep each city's authored mission, NPCs, lesson and dialogue intact.
-  // The former generator replaced all of these with the same generic Web3 conversation.
-  const steps=e.steps.map(step=>({
-    label:step.label,
-    spot:step.spot,
-    npc:step.npc,
-    run:lessonRun(step.npc,step.L)
-  }));
+  const steps=e.steps.map((step,stepIndex)=>{
+    const taskLabel=stepIndex===0
+      ? 'start '+e.title.toLowerCase()+' with '+step.npc.name
+      : 'finish the local job with '+step.npc.name;
+    return {
+      label:stepIndex===0?'Find '+step.npc.name+' · '+e.title:'Help '+step.npc.name+' finish the job',
+      spot:routeSpots[(i*3+stepIndex*7+1)%routeSpots.length],
+      npc:step.npc,
+      run:streetMissionRun(step.npc,step.L,stepIndex,e.title,taskLabel)
+    };
+  });
   const m={
     id:'ak_'+e.city,n:'★',mod:i+1,city:e.city,
-    title:e.title,goal:e.goal,xp:70,explore:true,
-    steps,lessons:e.steps.map(step=>step.L)
+    title:e.title,goal:e.goal,xp:70,explore:true,steps,
+    lessons:e.steps.map(step=>step.L)
   };
   EXPLORE.push(m);MBY[m.id]=m;
 });
