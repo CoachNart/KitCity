@@ -432,192 +432,8 @@ export const CAMPAIGN_BLUEPRINTS = [
   {
     "id": "campaign_009",
     "number": 9,
-    "title": "The money that crosses town",
-    "stage": 2,
-    "concept": "Digital money",
-    "story": "A tailor must pay a supplier who has left the market.",
-    "teach": "Show how a digital balance can move without handing over cash.",
-    "challenge": "Choose what a wallet actually stores.",
-    "choices": [
-      "Open the wallet app",
-      "Look for a banknote inside the phone",
-      "Share the secret recovery words"
-    ],
-    "correct": 0,
-    "skill": "Wallet basics",
-    "xp": 85,
-    "difficulty": "Easy",
-    "character": "Semi",
-    "success": "Good call. Show how a digital balance can move without handing over cash.",
-    "consequence": "That choice creates an avoidable risk. Show how a digital balance can move without handing over cash. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
-  },
-  {
-    "id": "campaign_010",
-    "number": 10,
-    "title": "One address, one destination",
-    "stage": 2,
-    "concept": "Public addresses",
-    "story": "A dispatch rider has three lookalike delivery labels.",
-    "teach": "A public address is a destination, not a password.",
-    "challenge": "Match the complete destination before sending.",
-    "choices": [
-      "Compare the full address",
-      "Check only the first four letters",
-      "Ask a stranger to confirm"
-    ],
-    "correct": 0,
-    "skill": "Address checking",
-    "xp": 92,
-    "difficulty": "Easy",
-    "character": "Blockqueen",
-    "success": "Good call. A public address is a destination, not a password.",
-    "consequence": "That choice creates an avoidable risk. A public address is a destination, not a password. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
-  },
-  {
-    "id": "campaign_011",
-    "number": 11,
-    "title": "The stable-price stall",
-    "stage": 2,
-    "concept": "Stablecoins",
-    "story": "A trader needs a digital unit designed to track a currency.",
-    "teach": "A stablecoin aims to track a reference asset but still has issuer and depeg risks.",
-    "challenge": "Pick the safest explanation for a US-dollar stablecoin.",
-    "choices": [
-      "It is designed to track USD, not guaranteed by magic",
-      "It can never lose its peg",
-      "It is the same thing as a bank deposit everywhere"
-    ],
-    "correct": 0,
-    "skill": "Asset literacy",
-    "xp": 99,
-    "difficulty": "Easy",
-    "character": "Christol",
-    "success": "Good call. A stablecoin aims to track a reference asset but still has issuer and depeg risks.",
-    "consequence": "That choice creates an avoidable risk. A stablecoin aims to track a reference asset but still has issuer and depeg risks. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
-  },
-  {
-    "id": "campaign_012",
-    "number": 12,
-    "title": "Fee before fare",
-    "stage": 2,
-    "concept": "Transaction fees",
-    "story": "A bus payment is delayed because the network is busy.",
-    "teach": "Network fees pay for processing; they vary by chain and demand.",
-    "challenge": "Compare two simulated routes with different fees and speed.",
-    "choices": [
-      "Show fee and estimated wait before confirming",
-      "Assume every chain is free",
-      "Pay the biggest fee without checking"
-    ],
-    "correct": 0,
-    "skill": "Fee awareness",
-    "xp": 106,
-    "difficulty": "Easy",
-    "character": "Laloba",
-    "success": "Good call. Network fees pay for processing; they vary by chain and demand.",
-    "consequence": "That choice creates an avoidable risk. Network fees pay for processing; they vary by chain and demand. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
-  },
-  {
-    "id": "campaign_013",
-    "number": 13,
-    "title": "Rate at the counter",
-    "stage": 2,
-    "concept": "Exchange rates",
-    "story": "A buyer sees two swap quotes that look almost identical.",
-    "teach": "A quote can change; compare rate, fee, slippage and minimum received.",
-    "challenge": "Choose the quote with the better net outcome.",
-    "choices": [
-      "Compare amount received after all costs",
-      "Choose the largest headline rate",
-      "Ignore minimum received"
-    ],
-    "correct": 0,
-    "skill": "Swap comparison",
-    "xp": 113,
-    "difficulty": "Easy",
-    "character": "BigSam",
-    "success": "Good call. A quote can change; compare rate, fee, slippage and minimum received.",
-    "consequence": "That choice creates an avoidable risk. A quote can change; compare rate, fee, slippage and minimum received. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
-  },
-  {
-    "id": "campaign_014",
-    "number": 14,
-    "title": "The swap that moved",
-    "stage": 2,
-    "concept": "Swaps and slippage",
-    "story": "A thin market shifts while a trader confirms a swap.",
-    "teach": "Slippage is the difference between expected and actual execution price.",
-    "challenge": "Set a sensible tolerance in a simulated swap.",
-    "choices": [
-      "Use a realistic tolerance and inspect the minimum",
-      "Set unlimited slippage for speed",
-      "Retry blindly until it works"
-    ],
-    "correct": 0,
-    "skill": "Swap safety",
-    "xp": 120,
-    "difficulty": "Easy",
-    "character": "LunaX",
-    "success": "Good call. Slippage is the difference between expected and actual execution price.",
-    "consequence": "That choice creates an avoidable risk. Slippage is the difference between expected and actual execution price. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
-  },
-  {
-    "id": "campaign_015",
-    "number": 15,
-    "title": "The missing transfer",
-    "stage": 3,
-    "concept": "Transaction status",
-    "story": "A customer thinks a pending transfer has vanished.",
-    "teach": "Submitted, pending, confirmed and failed are different states.",
-    "challenge": "Inspect a simulated transaction receipt.",
-    "choices": [
-      "Check status and transaction ID",
-      "Send again immediately",
-      "Trust a screenshot from the sender"
-    ],
-    "correct": 0,
-    "skill": "Transaction verification",
-    "xp": 91,
-    "difficulty": "Easy",
-    "character": "OxNight",
-    "success": "Good call. Submitted, pending, confirmed and failed are different states.",
-    "consequence": "That choice creates an avoidable risk. Submitted, pending, confirmed and failed are different states. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
-  },
-  {
-    "id": "campaign_016",
-    "number": 16,
-    "title": "Who holds the keys?",
-    "stage": 3,
-    "concept": "Custody",
-    "story": "A family business debates a hosted wallet versus self-custody.",
-    "teach": "Custody determines who controls keys and who can help recover access.",
-    "challenge": "Choose a setup based on control and recovery needs.",
-    "choices": [
-      "Compare control, recovery and provider risk",
-      "Assume a provider can never freeze access",
-      "Give every worker the same secret key"
-    ],
-    "correct": 0,
-    "skill": "Custody choices",
-    "xp": 98,
-    "difficulty": "Easy",
-    "character": "Moon",
-    "success": "Good call. Custody determines who controls keys and who can help recover access.",
-    "consequence": "That choice creates an avoidable risk. Custody determines who controls keys and who can help recover access. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
-  },
-  {
-    "id": "campaign_017",
-    "number": 17,
     "title": "The fake support agent",
-    "stage": 3,
+    "stage": 2,
     "concept": "Phishing",
     "story": "Someone claiming to be support asks for recovery words.",
     "teach": "Legitimate support should never need your recovery phrase.",
@@ -637,10 +453,10 @@ export const CAMPAIGN_BLUEPRINTS = [
     "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
   },
   {
-    "id": "campaign_018",
-    "number": 18,
+    "id": "campaign_010",
+    "number": 10,
     "title": "Airdrop at midnight",
-    "stage": 4,
+    "stage": 2,
     "concept": "Fake airdrops",
     "story": "A suspicious token appears with a link promising instant rewards.",
     "teach": "Unknown tokens and urgency links can be traps.",
@@ -660,10 +476,10 @@ export const CAMPAIGN_BLUEPRINTS = [
     "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
   },
   {
-    "id": "campaign_019",
-    "number": 19,
+    "id": "campaign_011",
+    "number": 11,
     "title": "The lookalike account",
-    "stage": 4,
+    "stage": 2,
     "concept": "Impersonation",
     "story": "A popular builder's name is copied with one extra character.",
     "teach": "Handles, domains and announcements need independent verification.",
@@ -683,10 +499,10 @@ export const CAMPAIGN_BLUEPRINTS = [
     "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
   },
   {
-    "id": "campaign_020",
-    "number": 20,
+    "id": "campaign_012",
+    "number": 12,
     "title": "The unlimited approval",
-    "stage": 4,
+    "stage": 2,
     "concept": "Malicious approvals",
     "story": "A game asks for unlimited permission to spend a token.",
     "teach": "An approval can let a contract move assets within the granted allowance.",
@@ -706,10 +522,10 @@ export const CAMPAIGN_BLUEPRINTS = [
     "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
   },
   {
-    "id": "campaign_021",
-    "number": 21,
+    "id": "campaign_013",
+    "number": 13,
     "title": "Back up before the rain",
-    "stage": 4,
+    "stage": 2,
     "concept": "Recovery phrases",
     "story": "A phone repair leaves a player locked out of a demo wallet.",
     "teach": "A recovery phrase can restore control; anyone who gets it may take the wallet.",
@@ -729,10 +545,10 @@ export const CAMPAIGN_BLUEPRINTS = [
     "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
   },
   {
-    "id": "campaign_022",
-    "number": 22,
+    "id": "campaign_014",
+    "number": 14,
     "title": "Receipt or rumour?",
-    "stage": 4,
+    "stage": 2,
     "concept": "Explorer verification",
     "story": "A seller sends a screenshot as proof of payment.",
     "teach": "A block explorer can show transaction status, but the right network and address matter.",
@@ -752,10 +568,10 @@ export const CAMPAIGN_BLUEPRINTS = [
     "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
   },
   {
-    "id": "campaign_023",
-    "number": 23,
+    "id": "campaign_015",
+    "number": 15,
     "title": "Bitcoin's missing page",
-    "stage": 4,
+    "stage": 3,
     "concept": "Bitcoin origins",
     "story": "An archivist asks why Bitcoin appeared after a financial crisis.",
     "teach": "Bitcoin's 2008 white paper proposed peer-to-peer electronic cash; the network launched in 2009.",
@@ -775,10 +591,10 @@ export const CAMPAIGN_BLUEPRINTS = [
     "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
   },
   {
-    "id": "campaign_024",
-    "number": 24,
+    "id": "campaign_016",
+    "number": 16,
     "title": "The double-spend puzzle",
-    "stage": 4,
+    "stage": 3,
     "concept": "Bitcoin and consensus",
     "story": "Two market stalls both claim the same digital coin.",
     "teach": "A shared ledger and consensus help participants agree which spend counts.",
@@ -798,10 +614,10 @@ export const CAMPAIGN_BLUEPRINTS = [
     "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
   },
   {
-    "id": "campaign_025",
-    "number": 25,
+    "id": "campaign_017",
+    "number": 17,
     "title": "Ethereum's new trick",
-    "stage": 5,
+    "stage": 3,
     "concept": "Smart contracts",
     "story": "A cooperative wants rules to run the same way for everyone.",
     "teach": "Ethereum popularised a general-purpose blockchain for programmable smart contracts.",
@@ -821,10 +637,10 @@ export const CAMPAIGN_BLUEPRINTS = [
     "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
   },
   {
-    "id": "campaign_026",
-    "number": 26,
+    "id": "campaign_018",
+    "number": 18,
     "title": "The ledger everybody checks",
-    "stage": 5,
+    "stage": 4,
     "concept": "Distributed ledgers",
     "story": "A warehouse has three copies of a delivery book that disagree.",
     "teach": "A distributed ledger shares updates across participants using agreed rules.",
@@ -844,10 +660,10 @@ export const CAMPAIGN_BLUEPRINTS = [
     "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
   },
   {
-    "id": "campaign_027",
-    "number": 27,
+    "id": "campaign_019",
+    "number": 19,
     "title": "Node on the corner",
-    "stage": 5,
+    "stage": 4,
     "concept": "Nodes",
     "story": "A student asks why one server does not run the whole network.",
     "teach": "Nodes run software to verify, store or relay network data; roles vary by chain.",
@@ -867,10 +683,10 @@ export const CAMPAIGN_BLUEPRINTS = [
     "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
   },
   {
-    "id": "campaign_028",
-    "number": 28,
+    "id": "campaign_020",
+    "number": 20,
     "title": "Block builder",
-    "stage": 5,
+    "stage": 4,
     "concept": "Blocks and hashes",
     "story": "A record keeper must group transactions into tamper-evident batches.",
     "teach": "Blocks link to prior history; changing old data affects the chain of hashes and consensus.",
@@ -890,10 +706,10 @@ export const CAMPAIGN_BLUEPRINTS = [
     "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
   },
   {
-    "id": "campaign_029",
-    "number": 29,
+    "id": "campaign_021",
+    "number": 21,
     "title": "Who gets to validate?",
-    "stage": 5,
+    "stage": 4,
     "concept": "Validators",
     "story": "A network needs participants to help order and verify transactions.",
     "teach": "Proof-of-stake validators commit stake and face protocol incentives and penalties.",
@@ -913,10 +729,10 @@ export const CAMPAIGN_BLUEPRINTS = [
     "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
   },
   {
-    "id": "campaign_030",
-    "number": 30,
+    "id": "campaign_022",
+    "number": 22,
     "title": "Gas is not petrol",
-    "stage": 5,
+    "stage": 4,
     "concept": "Gas fees",
     "story": "A demo contract call fails because the player set too little gas.",
     "teach": "Gas measures computational work; fees depend on network rules and conditions.",
@@ -936,10 +752,10 @@ export const CAMPAIGN_BLUEPRINTS = [
     "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
   },
   {
-    "id": "campaign_031",
-    "number": 31,
+    "id": "campaign_023",
+    "number": 23,
     "title": "Wait for finality",
-    "stage": 6,
+    "stage": 4,
     "concept": "Finality",
     "story": "A merchant wants to release a parcel the instant a transfer appears.",
     "teach": "Confirmation and finality depend on the network; shallow confirmation may be reversible in some contexts.",
@@ -959,10 +775,10 @@ export const CAMPAIGN_BLUEPRINTS = [
     "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
   },
   {
-    "id": "campaign_032",
-    "number": 32,
+    "id": "campaign_024",
+    "number": 24,
     "title": "Layer one, layer two",
-    "stage": 6,
+    "stage": 4,
     "concept": "Scaling",
     "story": "A crowded network has slow, expensive transactions.",
     "teach": "Layer 1 is a base network; Layer 2 systems aim to scale by processing more activity with different security trade-offs.",
@@ -982,10 +798,10 @@ export const CAMPAIGN_BLUEPRINTS = [
     "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
   },
   {
-    "id": "campaign_033",
-    "number": 33,
+    "id": "campaign_025",
+    "number": 25,
     "title": "The bridge with a warning",
-    "stage": 6,
+    "stage": 5,
     "concept": "Cross-chain infrastructure",
     "story": "A shop needs to move a simulated asset between networks.",
     "teach": "Cross-chain bridges add contracts, relayers or trust assumptions and can be attacked.",
@@ -1005,10 +821,10 @@ export const CAMPAIGN_BLUEPRINTS = [
     "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
   },
   {
-    "id": "campaign_034",
-    "number": 34,
+    "id": "campaign_026",
+    "number": 26,
     "title": "Exchange with a gatekeeper",
-    "stage": 6,
+    "stage": 5,
     "concept": "Centralised exchanges",
     "story": "A customer compares a hosted exchange with a direct onchain swap.",
     "teach": "Centralised exchanges manage custody and accounts; they can offer support but introduce counterparty risk.",
@@ -1028,10 +844,10 @@ export const CAMPAIGN_BLUEPRINTS = [
     "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
   },
   {
-    "id": "campaign_035",
-    "number": 35,
+    "id": "campaign_027",
+    "number": 27,
     "title": "Pool party, no lifeguard",
-    "stage": 6,
+    "stage": 5,
     "concept": "Liquidity",
     "story": "A local trader wants a market for two tokens.",
     "teach": "Liquidity pools let users trade against pooled assets; pricing and loss risks remain.",
@@ -1051,10 +867,10 @@ export const CAMPAIGN_BLUEPRINTS = [
     "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
   },
   {
-    "id": "campaign_036",
-    "number": 36,
+    "id": "campaign_028",
+    "number": 28,
     "title": "Borrowed, not free",
-    "stage": 6,
+    "stage": 5,
     "concept": "DeFi lending",
     "story": "A cooperative considers a crypto-backed loan in a simulation.",
     "teach": "DeFi lending uses collateral and rules; prices can fall and trigger liquidation.",
@@ -1074,10 +890,10 @@ export const CAMPAIGN_BLUEPRINTS = [
     "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
   },
   {
-    "id": "campaign_037",
-    "number": 37,
+    "id": "campaign_029",
+    "number": 29,
     "title": "The NFT receipt",
-    "stage": 7,
+    "stage": 5,
     "concept": "NFTs and ownership",
     "story": "An artist wants a verifiable record for a digital collectible.",
     "teach": "An NFT is a token record; it does not automatically grant copyright or guarantee value.",
@@ -1097,10 +913,10 @@ export const CAMPAIGN_BLUEPRINTS = [
     "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
   },
   {
-    "id": "campaign_038",
-    "number": 38,
+    "id": "campaign_030",
+    "number": 30,
     "title": "The DAO budget vote",
-    "stage": 7,
+    "stage": 5,
     "concept": "DAOs and governance",
     "story": "A community must choose between three uses for a shared budget.",
     "teach": "A DAO coordinates decisions through rules and tools; voting power and participation can be unequal.",
@@ -1120,10 +936,10 @@ export const CAMPAIGN_BLUEPRINTS = [
     "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
   },
   {
-    "id": "campaign_039",
-    "number": 39,
+    "id": "campaign_031",
+    "number": 31,
     "title": "Tokenomics on the table",
-    "stage": 7,
+    "stage": 6,
     "concept": "Token supply and utility",
     "story": "A project promises a token but cannot explain why it is needed.",
     "teach": "Tokenomics includes supply, distribution, incentives, utility and unlocks; a token is not proof of product value.",
@@ -1143,10 +959,10 @@ export const CAMPAIGN_BLUEPRINTS = [
     "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
   },
   {
-    "id": "campaign_040",
-    "number": 40,
+    "id": "campaign_032",
+    "number": 32,
     "title": "The product people need",
-    "stage": 7,
+    "stage": 6,
     "concept": "User research",
     "story": "Farmers miss market-price updates and a team wants to build an app.",
     "teach": "Start from users' real pain; compare a simple database or messaging service before choosing a chain.",
@@ -1166,10 +982,10 @@ export const CAMPAIGN_BLUEPRINTS = [
     "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
   },
   {
-    "id": "campaign_041",
-    "number": 41,
+    "id": "campaign_033",
+    "number": 33,
     "title": "Sketch the flow",
-    "stage": 7,
+    "stage": 6,
     "concept": "Product design",
     "story": "A market seller struggles with a six-screen payment prototype.",
     "teach": "Good product design reduces confusion, friction and mistakes.",
@@ -1189,10 +1005,10 @@ export const CAMPAIGN_BLUEPRINTS = [
     "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
   },
   {
-    "id": "campaign_042",
-    "number": 42,
+    "id": "campaign_034",
+    "number": 34,
     "title": "A dApp without the drama",
-    "stage": 7,
+    "stage": 6,
     "concept": "dApps",
     "story": "A cooperative wants a web app to read a shared onchain record.",
     "teach": "A dApp combines a user interface with smart-contract or blockchain interactions; not every feature belongs onchain.",
@@ -1212,10 +1028,10 @@ export const CAMPAIGN_BLUEPRINTS = [
     "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
   },
   {
-    "id": "campaign_043",
-    "number": 43,
+    "id": "campaign_035",
+    "number": 35,
     "title": "Contract with conditions",
-    "stage": 7,
+    "stage": 6,
     "concept": "Smart contracts",
     "story": "A market escrow should release funds only after delivery is confirmed.",
     "teach": "Contracts execute code and need explicit conditions, error handling and security review.",
@@ -1235,10 +1051,10 @@ export const CAMPAIGN_BLUEPRINTS = [
     "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
   },
   {
-    "id": "campaign_044",
-    "number": 44,
+    "id": "campaign_036",
+    "number": 36,
     "title": "Test before the launch",
-    "stage": 7,
+    "stage": 6,
     "concept": "Testing and debugging",
     "story": "A demo payment works once but fails on a boundary amount.",
     "teach": "Tests cover normal cases, edge cases and failures; reproducible bugs are easier to fix.",
@@ -1258,10 +1074,10 @@ export const CAMPAIGN_BLUEPRINTS = [
     "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
   },
   {
-    "id": "campaign_045",
-    "number": 45,
+    "id": "campaign_037",
+    "number": 37,
     "title": "Open-source handshake",
-    "stage": 8,
+    "stage": 7,
     "concept": "Open source",
     "story": "A project asks for its first community contribution.",
     "teach": "Open source makes code reviewable under a license; contributions need clear scope and tests.",
@@ -1281,10 +1097,10 @@ export const CAMPAIGN_BLUEPRINTS = [
     "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
   },
   {
-    "id": "campaign_046",
-    "number": 46,
+    "id": "campaign_038",
+    "number": 38,
     "title": "Launch without breaking things",
-    "stage": 8,
+    "stage": 7,
     "concept": "Prototype release",
     "story": "A dApp is ready for a small pilot.",
     "teach": "A responsible launch includes testnet rehearsal, monitoring, rollback and user support.",
@@ -1304,10 +1120,10 @@ export const CAMPAIGN_BLUEPRINTS = [
     "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
   },
   {
-    "id": "campaign_047",
-    "number": 47,
+    "id": "campaign_039",
+    "number": 39,
     "title": "Find the right first role",
-    "stage": 8,
+    "stage": 7,
     "concept": "Career paths",
     "story": "A junior asks which Web3 job fits their strengths.",
     "teach": "Roles differ: building, research, design, security, writing, data, operations and partnerships.",
@@ -1327,10 +1143,10 @@ export const CAMPAIGN_BLUEPRINTS = [
     "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
   },
   {
-    "id": "campaign_048",
-    "number": 48,
+    "id": "campaign_040",
+    "number": 40,
     "title": "Security investigator",
-    "stage": 8,
+    "stage": 7,
     "concept": "Security careers",
     "story": "A protocol team suspects a bug in its permissions flow.",
     "teach": "Security work uses threat models, tests, review and responsible disclosure.",
@@ -1350,10 +1166,10 @@ export const CAMPAIGN_BLUEPRINTS = [
     "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
   },
   {
-    "id": "campaign_049",
-    "number": 49,
+    "id": "campaign_041",
+    "number": 41,
     "title": "Read the chain's footprints",
-    "stage": 8,
+    "stage": 7,
     "concept": "Analytics and research",
     "story": "A cooperative asks whether a protocol is actually being used.",
     "teach": "Onchain data shows public activity but can be incomplete, sybil-driven or hard to interpret.",
@@ -1373,10 +1189,10 @@ export const CAMPAIGN_BLUEPRINTS = [
     "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
   },
   {
-    "id": "campaign_050",
-    "number": 50,
+    "id": "campaign_042",
+    "number": 42,
     "title": "Explain it at the bus stop",
-    "stage": 8,
+    "stage": 7,
     "concept": "Content and education",
     "story": "A trader asks for a simple explanation without technical jargon.",
     "teach": "Good Web3 communication is accurate, sourced, audience-aware and honest about risk.",
@@ -1396,10 +1212,10 @@ export const CAMPAIGN_BLUEPRINTS = [
     "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
   },
   {
-    "id": "campaign_051",
-    "number": 51,
+    "id": "campaign_043",
+    "number": 43,
     "title": "Community under pressure",
-    "stage": 8,
+    "stage": 7,
     "concept": "Community operations",
     "story": "A fake support account appears in a project's chat.",
     "teach": "Moderation means clear rules, escalation, privacy and calm incident response.",
@@ -1419,10 +1235,10 @@ export const CAMPAIGN_BLUEPRINTS = [
     "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
   },
   {
-    "id": "campaign_052",
-    "number": 52,
+    "id": "campaign_044",
+    "number": 44,
     "title": "Pitch the partnership",
-    "stage": 8,
+    "stage": 7,
     "concept": "Business development",
     "story": "A farmer cooperative and a software team discuss a pilot.",
     "teach": "Partnerships need shared goals, responsibilities, costs, data handling and exit terms.",
@@ -1442,8 +1258,8 @@ export const CAMPAIGN_BLUEPRINTS = [
     "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
   },
   {
-    "id": "campaign_053",
-    "number": 53,
+    "id": "campaign_045",
+    "number": 45,
     "title": "Who owns the roadmap?",
     "stage": 8,
     "concept": "Product management",
@@ -1465,8 +1281,8 @@ export const CAMPAIGN_BLUEPRINTS = [
     "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
   },
   {
-    "id": "campaign_054",
-    "number": 54,
+    "id": "campaign_046",
+    "number": 46,
     "title": "Trading desk, not casino",
     "stage": 8,
     "concept": "Trading analysis",
@@ -1488,10 +1304,10 @@ export const CAMPAIGN_BLUEPRINTS = [
     "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
   },
   {
-    "id": "campaign_055",
-    "number": 55,
+    "id": "campaign_047",
+    "number": 47,
     "title": "Build the street game",
-    "stage": 9,
+    "stage": 8,
     "concept": "Game development",
     "story": "A game designer wants verifiable collectibles but smooth gameplay.",
     "teach": "Game systems should use chain only where ownership or shared state benefits; latency and fees matter.",
@@ -1511,10 +1327,10 @@ export const CAMPAIGN_BLUEPRINTS = [
     "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
   },
   {
-    "id": "campaign_056",
-    "number": 56,
+    "id": "campaign_048",
+    "number": 48,
     "title": "AI agent with a wallet",
-    "stage": 9,
+    "stage": 8,
     "concept": "AI and infrastructure",
     "story": "An AI helper can prepare a transaction but should not act unchecked.",
     "teach": "AI agents can call tools; blockchain actions need scoped permissions, simulation, limits and human approval.",
@@ -1534,10 +1350,10 @@ export const CAMPAIGN_BLUEPRINTS = [
     "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
   },
   {
-    "id": "campaign_057",
-    "number": 57,
+    "id": "campaign_049",
+    "number": 49,
     "title": "Farmers need a fair price",
-    "stage": 9,
+    "stage": 8,
     "concept": "Agriculture",
     "story": "Produce prices arrive late and middlemen dispute delivery records.",
     "teach": "Shared records may help audit handoffs, but connectivity, data quality and incentives still matter.",
@@ -1557,10 +1373,10 @@ export const CAMPAIGN_BLUEPRINTS = [
     "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
   },
   {
-    "id": "campaign_058",
-    "number": 58,
+    "id": "campaign_050",
+    "number": 50,
     "title": "Clinic records under lock",
-    "stage": 9,
+    "stage": 8,
     "concept": "Healthcare and privacy",
     "story": "A clinic wants portable records without exposing patients.",
     "teach": "Sensitive health data should not be written to a public chain; access control and privacy come first.",
@@ -1580,10 +1396,10 @@ export const CAMPAIGN_BLUEPRINTS = [
     "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
   },
   {
-    "id": "campaign_059",
-    "number": 59,
+    "id": "campaign_051",
+    "number": 51,
     "title": "School certificate check",
-    "stage": 9,
+    "stage": 8,
     "concept": "Education and credentials",
     "story": "A graduate needs a credential verified by an employer.",
     "teach": "Verifiable credentials can help prove claims, but issuer trust and revocation still matter.",
@@ -1603,10 +1419,10 @@ export const CAMPAIGN_BLUEPRINTS = [
     "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
   },
   {
-    "id": "campaign_060",
-    "number": 60,
+    "id": "campaign_052",
+    "number": 52,
     "title": "Dispatch proof, not surveillance",
-    "stage": 9,
+    "stage": 8,
     "concept": "Logistics",
     "story": "A delivery dispute involves a seller, rider and buyer.",
     "teach": "Timestamped proofs can help reconcile handoffs; tracking every person publicly creates privacy risks.",
@@ -1626,10 +1442,10 @@ export const CAMPAIGN_BLUEPRINTS = [
     "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
   },
   {
-    "id": "campaign_061",
-    "number": 61,
+    "id": "campaign_053",
+    "number": 53,
     "title": "Power sharing cooperative",
-    "stage": 9,
+    "stage": 8,
     "concept": "Energy",
     "story": "Neighbours want transparent shared-solar billing.",
     "teach": "Shared ledgers can reconcile contributions, but meters and governance remain critical.",
@@ -1649,10 +1465,10 @@ export const CAMPAIGN_BLUEPRINTS = [
     "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
   },
   {
-    "id": "campaign_062",
-    "number": 62,
+    "id": "campaign_054",
+    "number": 54,
     "title": "Identity without oversharing",
-    "stage": 10,
+    "stage": 8,
     "concept": "Digital identity",
     "story": "A service needs proof that someone qualifies without collecting everything.",
     "teach": "Privacy-preserving credentials can minimise disclosure; identity and recovery remain hard problems.",
@@ -1672,10 +1488,10 @@ export const CAMPAIGN_BLUEPRINTS = [
     "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
   },
   {
-    "id": "campaign_063",
-    "number": 63,
+    "id": "campaign_055",
+    "number": 55,
     "title": "Ticket resale without chaos",
-    "stage": 10,
+    "stage": 9,
     "concept": "Commerce and entertainment",
     "story": "An event has counterfeit tickets and expensive verification.",
     "teach": "Tokenised tickets can help track issuance and transfer, but do not stop every scam by themselves.",
@@ -1695,10 +1511,10 @@ export const CAMPAIGN_BLUEPRINTS = [
     "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
   },
   {
-    "id": "campaign_064",
-    "number": 64,
+    "id": "campaign_056",
+    "number": 56,
     "title": "Supply-chain trail",
-    "stage": 10,
+    "stage": 9,
     "concept": "Supply chains",
     "story": "A rice buyer needs to know where a batch came from.",
     "teach": "A shared trail helps only if real-world inputs are truthful and verified.",
@@ -1718,10 +1534,10 @@ export const CAMPAIGN_BLUEPRINTS = [
     "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
   },
   {
-    "id": "campaign_065",
-    "number": 65,
+    "id": "campaign_057",
+    "number": 57,
     "title": "Public service receipt",
-    "stage": 10,
+    "stage": 9,
     "concept": "Public services",
     "story": "Residents want to track a permit application fairly.",
     "teach": "Audit logs may improve traceability, but public blockchains can expose sensitive metadata and do not replace accountable institutions.",
@@ -1741,10 +1557,10 @@ export const CAMPAIGN_BLUEPRINTS = [
     "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
   },
   {
-    "id": "campaign_066",
-    "number": 66,
+    "id": "campaign_058",
+    "number": 58,
     "title": "Does this need a chain?",
-    "stage": 10,
+    "stage": 9,
     "concept": "Web2 vs Web3",
     "story": "A small shop wants to track its own stock.",
     "teach": "A conventional database is often better when one trusted operator controls the data and fast edits matter.",
@@ -1764,10 +1580,10 @@ export const CAMPAIGN_BLUEPRINTS = [
     "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
   },
   {
-    "id": "campaign_067",
-    "number": 67,
+    "id": "campaign_059",
+    "number": 59,
     "title": "Find product-market fit",
-    "stage": 10,
+    "stage": 9,
     "concept": "Startup validation",
     "story": "A team has a clever idea but no repeat users.",
     "teach": "Product-market fit starts with a painful problem and repeated user value, not token hype.",
@@ -1787,10 +1603,10 @@ export const CAMPAIGN_BLUEPRINTS = [
     "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
   },
   {
-    "id": "campaign_068",
-    "number": 68,
+    "id": "campaign_060",
+    "number": 60,
     "title": "Grant money, clear milestones",
-    "stage": 10,
+    "stage": 9,
     "concept": "Funding and grants",
     "story": "A community project needs support for a pilot.",
     "teach": "Grants and funding require clear scope, milestones, budget and honest reporting.",
@@ -1810,10 +1626,10 @@ export const CAMPAIGN_BLUEPRINTS = [
     "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
   },
   {
-    "id": "campaign_069",
-    "number": 69,
+    "id": "campaign_061",
+    "number": 61,
     "title": "Treasury in the open",
-    "stage": 10,
+    "stage": 9,
     "concept": "Treasury management",
     "story": "A DAO has a shared budget and a surprise expense.",
     "teach": "Treasury policy needs approvals, reporting, reserves and conflict management.",
@@ -1833,8 +1649,8 @@ export const CAMPAIGN_BLUEPRINTS = [
     "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
   },
   {
-    "id": "campaign_070",
-    "number": 70,
+    "id": "campaign_062",
+    "number": 62,
     "title": "Token utility or decoration?",
     "stage": 10,
     "concept": "Token utility",
@@ -1856,8 +1672,8 @@ export const CAMPAIGN_BLUEPRINTS = [
     "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
   },
   {
-    "id": "campaign_071",
-    "number": 71,
+    "id": "campaign_063",
+    "number": 63,
     "title": "Grow without buying fake users",
     "stage": 10,
     "concept": "User acquisition",
@@ -1879,8 +1695,8 @@ export const CAMPAIGN_BLUEPRINTS = [
     "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
   },
   {
-    "id": "campaign_072",
-    "number": 72,
+    "id": "campaign_064",
+    "number": 64,
     "title": "Governance after the vote",
     "stage": 10,
     "concept": "Project governance",
@@ -1902,8 +1718,8 @@ export const CAMPAIGN_BLUEPRINTS = [
     "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
   },
   {
-    "id": "campaign_073",
-    "number": 73,
+    "id": "campaign_065",
+    "number": 65,
     "title": "The privacy puzzle",
     "stage": 10,
     "concept": "Zero-knowledge proofs",
@@ -1925,8 +1741,8 @@ export const CAMPAIGN_BLUEPRINTS = [
     "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
   },
   {
-    "id": "campaign_074",
-    "number": 74,
+    "id": "campaign_066",
+    "number": 66,
     "title": "One wallet, many apps",
     "stage": 10,
     "concept": "Account abstraction",
@@ -1948,8 +1764,8 @@ export const CAMPAIGN_BLUEPRINTS = [
     "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
   },
   {
-    "id": "campaign_075",
-    "number": 75,
+    "id": "campaign_067",
+    "number": 67,
     "title": "Build with Lego chains",
     "stage": 10,
     "concept": "Modular blockchains",
@@ -1971,8 +1787,8 @@ export const CAMPAIGN_BLUEPRINTS = [
     "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
   },
   {
-    "id": "campaign_076",
-    "number": 76,
+    "id": "campaign_068",
+    "number": 68,
     "title": "Who stores the files?",
     "stage": 10,
     "concept": "Decentralised infrastructure",
@@ -1994,10 +1810,10 @@ export const CAMPAIGN_BLUEPRINTS = [
     "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
   },
   {
-    "id": "campaign_077",
-    "number": 77,
+    "id": "campaign_069",
+    "number": 69,
     "title": "Real-world assets, real-world rules",
-    "stage": 0,
+    "stage": 10,
     "concept": "Asset tokenisation",
     "story": "A cooperative considers representing warehouse receipts digitally.",
     "teach": "Tokenisation can represent claims, but legal ownership, custody, audits and redemption must work offchain too.",
@@ -2017,10 +1833,10 @@ export const CAMPAIGN_BLUEPRINTS = [
     "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
   },
   {
-    "id": "campaign_078",
-    "number": 78,
+    "id": "campaign_070",
+    "number": 70,
     "title": "Connect chains carefully",
-    "stage": 0,
+    "stage": 10,
     "concept": "Interoperability",
     "story": "A service needs to read events from two networks.",
     "teach": "Interoperability depends on bridges, messaging, verification and trust assumptions.",
@@ -2040,10 +1856,10 @@ export const CAMPAIGN_BLUEPRINTS = [
     "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
   },
   {
-    "id": "campaign_079",
-    "number": 79,
+    "id": "campaign_071",
+    "number": 71,
     "title": "AI agent, limited mandate",
-    "stage": 0,
+    "stage": 10,
     "concept": "Autonomous onchain agents",
     "story": "A cooperative wants an agent to pay routine invoices.",
     "teach": "Autonomous agents are emerging; safe design uses limited funds, policies, monitoring, and human override.",
@@ -2063,29 +1879,6 @@ export const CAMPAIGN_BLUEPRINTS = [
     "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
   },
   {
-    "id": "campaign_080",
-    "number": 80,
-    "title": "Build the KitCity solution",
-    "stage": 0,
-    "concept": "Capstone",
-    "story": "A local cooperative needs a useful service and has limited connectivity.",
-    "teach": "A good solution starts with a real user problem and uses Web3 only where it adds meaningful value.",
-    "challenge": "Pitch and prototype a solution with risks, fallback and success measures.",
-    "choices": [
-      "Show user evidence, simplest architecture, privacy, budget and failure recovery",
-      "Add a token to every feature",
-      "Promise guaranteed impact and profit"
-    ],
-    "correct": 0,
-    "skill": "Systems thinking",
-    "xp": 114,
-    "difficulty": "Advanced",
-    "character": "Cclya",
-    "success": "Good call. A good solution starts with a real user problem and uses Web3 only where it adds meaningful value.",
-    "consequence": "That choice creates an avoidable risk. A good solution starts with a real user problem and uses Web3 only where it adds meaningful value. Try again; the simulation resets safely.",
-    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
-  },
-  {
     "title": "The grant with strings attached",
     "concept": "Funding due diligence",
     "story": "A sponsor offers a large grant but demands control of the community treasury.",
@@ -2099,8 +1892,8 @@ export const CAMPAIGN_BLUEPRINTS = [
     "correct": 0,
     "skill": "Funding discipline",
     "character": "Kenny",
-    "id": "campaign_081",
-    "number": 81,
+    "id": "campaign_072",
+    "number": 72,
     "stage": 10,
     "xp": 100,
     "difficulty": "Advanced",
@@ -2122,8 +1915,8 @@ export const CAMPAIGN_BLUEPRINTS = [
     "correct": 0,
     "skill": "Incident response",
     "character": "Softstorm",
-    "id": "campaign_082",
-    "number": 82,
+    "id": "campaign_073",
+    "number": 73,
     "stage": 10,
     "xp": 100,
     "difficulty": "Advanced",
@@ -2145,8 +1938,8 @@ export const CAMPAIGN_BLUEPRINTS = [
     "correct": 0,
     "skill": "Privacy technology",
     "character": "Cybersage",
-    "id": "campaign_083",
-    "number": 83,
+    "id": "campaign_074",
+    "number": 74,
     "stage": 10,
     "xp": 100,
     "difficulty": "Advanced",
@@ -2168,13 +1961,180 @@ export const CAMPAIGN_BLUEPRINTS = [
     "correct": 0,
     "skill": "Systems thinking",
     "character": "Leemah",
-    "id": "campaign_084",
-    "number": 84,
+    "id": "campaign_075",
+    "number": 75,
     "stage": 10,
     "xp": 100,
     "difficulty": "Advanced",
     "success": "Good call. A launch is successful when users get durable value, risks are managed and the team can support what it ships.",
     "consequence": "That choice creates an avoidable risk. A launch is successful when users get durable value, risks are managed and the team can support what it ships. Try again; the simulation resets safely.",
+    "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
+  },
+  {
+    "title": "The data-availability dilemma",
+    "concept": "Data availability",
+    "story": "A rollup team can execute transactions cheaply, but users need a way to verify the data behind its state.",
+    "teach": "Data availability concerns whether transaction data can be accessed and checked; different designs make different security and cost trade-offs.",
+    "challenge": "Compare two simulated scaling designs before the pilot.",
+    "choices": [
+      "Check who publishes data, how it is recovered and what users must trust",
+      "Choose the design with the lowest headline fee only",
+      "Assume a valid-looking block proves the data is available"
+    ],
+    "correct": 0,
+    "skill": "Scaling architecture",
+    "character": "Softstorm",
+    "number": 76,
+    "id": "campaign_076",
+    "stage": 10
+  },
+  {
+    "title": "Who jumped the queue?",
+    "concept": "MEV and transaction ordering",
+    "story": "A trader's simulated swap gets a worse result after another transaction is ordered first.",
+    "teach": "Transaction ordering can create MEV opportunities; protection depends on the chain, wallet, routing and transaction design.",
+    "challenge": "Choose how the trader should reduce avoidable ordering risk.",
+    "choices": [
+      "Compare protected routing options and understand their trade-offs",
+      "Assume every public transaction is ordered fairly",
+      "Raise slippage to unlimited and retry"
+    ],
+    "correct": 0,
+    "skill": "Transaction risk",
+    "character": "OxNight",
+    "number": 77,
+    "id": "campaign_077",
+    "stage": 10
+  },
+  {
+    "title": "Tell the network what you want",
+    "concept": "Intents and solvers",
+    "story": "A user wants to receive a set amount without manually choosing every route.",
+    "teach": "Intent-based systems let a user specify an outcome while solvers find routes; the solver, execution and failure assumptions still matter.",
+    "challenge": "Select a safe simulated intent configuration.",
+    "choices": [
+      "Set the desired result, maximum spend, expiry and route constraints",
+      "Give the solver unlimited spend and no expiry",
+      "Assume the quoted route cannot change"
+    ],
+    "correct": 0,
+    "skill": "Transaction design",
+    "character": "Toza",
+    "number": 78,
+    "id": "campaign_078",
+    "stage": 10
+  },
+  {
+    "title": "The bridge exit queue",
+    "concept": "Rollup withdrawal and bridge risk",
+    "story": "A business needs to move funds back from a scaling network before payroll.",
+    "teach": "Some rollups have withdrawal delays or different exit mechanisms; timing, bridge trust and liquidity should be understood before using them.",
+    "challenge": "Plan the simulated withdrawal around its actual exit path.",
+    "choices": [
+      "Check withdrawal method, expected delay, bridge assumptions and fallback liquidity",
+      "Promise funds will arrive instantly on every network",
+      "Use a random bridge to bypass the wait"
+    ],
+    "correct": 0,
+    "skill": "Cross-chain planning",
+    "character": "Cybersage",
+    "number": 79,
+    "id": "campaign_079",
+    "stage": 10
+  },
+  {
+    "title": "The hotspot incentive",
+    "concept": "Decentralised physical infrastructure",
+    "story": "A community wants to fund local connectivity hotspots with token incentives.",
+    "teach": "DePIN projects coordinate physical infrastructure with software and incentives; real service quality, costs, location and token dependence must be measured.",
+    "challenge": "Choose what to measure before expanding the pilot.",
+    "choices": [
+      "Verify uptime, coverage, real demand, operating costs and incentive dependence",
+      "Count token price as proof of network quality",
+      "Reward devices even when they provide no service"
+    ],
+    "correct": 0,
+    "skill": "Infrastructure economics",
+    "character": "Kenny",
+    "number": 80,
+    "id": "campaign_080",
+    "stage": 10
+  },
+  {
+    "title": "The oracle lied",
+    "concept": "Oracle and external-data risk",
+    "story": "A lending simulation liquidates users after a stale price feed reports a false market move.",
+    "teach": "Smart contracts cannot independently know every real-world fact; oracles introduce data-source, update, manipulation and outage risks.",
+    "challenge": "Choose the safest response to a stale price feed.",
+    "choices": [
+      "Pause risky actions under defined safeguards and verify independent sources",
+      "Accept the stale value because it is onchain",
+      "Let one unverified API set all collateral prices"
+    ],
+    "correct": 0,
+    "skill": "Oracle risk",
+    "character": "Kodavic",
+    "number": 81,
+    "id": "campaign_081",
+    "stage": 10
+  },
+  {
+    "title": "A vote bought in bulk",
+    "concept": "Governance capture",
+    "story": "A proposal suddenly wins after one account acquires a large share of voting power.",
+    "teach": "Token-weighted voting can be captured or concentrated; quorum, delegation, timelocks and participation design have trade-offs.",
+    "challenge": "Choose a governance safeguard for the simulated treasury.",
+    "choices": [
+      "Review concentration, quorum, timelock and accountable execution controls",
+      "Assume a majority token vote always represents every user",
+      "Hide the vote and let one founder decide privately"
+    ],
+    "correct": 0,
+    "skill": "Governance safety",
+    "character": "Blockqueen",
+    "number": 82,
+    "id": "campaign_082",
+    "stage": 10
+  },
+  {
+    "title": "The agent's poisoned instruction",
+    "concept": "AI agent threat modelling",
+    "story": "An AI agent reads a malicious message that tells it to ignore its payment policy.",
+    "teach": "AI agents can misread untrusted inputs; enforce permissions outside the model, isolate secrets, validate tool calls and require approval for high-impact actions.",
+    "challenge": "Choose the safe agent execution policy.",
+    "choices": [
+      "Treat messages as untrusted, enforce external limits and require approval for risky actions",
+      "Let the model rewrite its own spending policy",
+      "Put the treasury recovery phrase in its prompt"
+    ],
+    "correct": 0,
+    "skill": "AI security",
+    "character": "Smrt huntr",
+    "number": 83,
+    "id": "campaign_083",
+    "stage": 10
+  },
+  {
+    "id": "campaign_084",
+    "number": 84,
+    "title": "Build the KitCity solution",
+    "stage": 10,
+    "concept": "Capstone",
+    "story": "A local cooperative needs a useful service and has limited connectivity.",
+    "teach": "A good solution starts with a real user problem and uses Web3 only where it adds meaningful value.",
+    "challenge": "Pitch and prototype a solution with risks, fallback and success measures.",
+    "choices": [
+      "Show user evidence, simplest architecture, privacy, budget and failure recovery",
+      "Add a token to every feature",
+      "Promise guaranteed impact and profit"
+    ],
+    "correct": 0,
+    "skill": "Systems thinking",
+    "xp": 114,
+    "difficulty": "Advanced",
+    "character": "Cclya",
+    "success": "Good call. A good solution starts with a real user problem and uses Web3 only where it adds meaningful value.",
+    "consequence": "That choice creates an avoidable risk. A good solution starts with a real user problem and uses Web3 only where it adds meaningful value. Try again; the simulation resets safely.",
     "recovery": "Retry the decision or return to the briefing; this mission never permanently locks."
   }
 ];
