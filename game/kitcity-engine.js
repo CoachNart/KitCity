@@ -2387,7 +2387,7 @@ function renderHub(){
   if(hubTab==='missions'){
     const C=CITIES[hubCity];
     h+=mapSVG()+'<div class="chips">'+Object.keys(CITIES).map(k=>'<button class="chip'+(k===hubCity?' on':'')+'" data-a="city" data-v="'+k+'" type="button" '+(isCityUnlocked(k)?'':'disabled')+'>'+CITIES[k].name+(isCityUnlocked(k)?'':' · Locked')+'</button>').join('')+'</div>';
-    h+='<p class="soft"><b>'+C.name+'</b>, '+C.tag+'</p>'+EXPLORE.filter(m=>m.city===hubCity).map(moduleCard).join('');
+    h+='<p class="soft"><b>'+C.name+'</b>, '+C.tag+'</p>'+cityMissions(hubCity).map(m=>m.explore?moduleCard(m):missionCard(m)).join('');
   } else if(hubTab==='cityhub'){
     hubTab='missions';
     const C=CITIES[hubCity];
