@@ -51,9 +51,9 @@ try {
   await page.waitForTimeout(400);
 
   // Travel through the existing Lagos street grid to Amaka's actual in-world encounter.
-  await hold(page, ["Shift", "W"], 6300);
+  await hold(page, ["Shift", "W"], 5000);
   await hold(page, ["Shift", "D"], 3900);
-  await hold(page, ["Shift", "W"], 900);
+  await hold(page, ["Shift", "W"], 2300);
   await page.waitForFunction(() => !document.querySelector("#talkBtn").classList.contains("hidden"), undefined, { timeout: 12000 });
   assert.equal(await page.locator("#talkBtn").innerText(), "Talk", "nearby NPC interaction appears after walking through the world");
   await page.locator("#talkBtn").click();
