@@ -35,6 +35,7 @@ const MISSION_CONTEXT = {
   "learn-digital-ownership": ["technology-creative-hub","market-edge"],
   "learn-portable-credentials": ["school-campus","market-edge"],
   "learn-agriculture-traceability": ["farm-cooperative","market-edge"],
+  "learn-agriculture-cooperative-audit": ["farm-cooperative"],
   "learn-commerce-payments": ["market-edge"],
   "learn-health-data-rights": ["health-facility"],
   "learn-smart-contracts": ["legal-professional-office","market-edge"],
