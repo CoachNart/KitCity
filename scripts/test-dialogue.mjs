@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 import { loadKitCityModules } from "./registry-loader.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const { engine, world, distribution, content, education, cleanup } = await loadKitCityModules();
+const { engine, world, distribution, content, education, prototypeMissions, cleanup } = await loadKitCityModules();
 const engineSource = await readFile(path.join(root, "game/kitcity-engine.js"), "utf8");
 assert.match(engineSource, /new ConversationEngine\(\{content,state:createDialogueState\(adventure\.dialogueState\)/, "NPC interactions must use the reusable engine");
 assert.match(engineSource, /adventureComplete\(mapped,choiceIndex\)/, "mission-ending dialogue must reach the existing reward/mission handler");
@@ -205,5 +205,51 @@ const left = leaveSession.choose("__leave_conversation");
 assert.equal(left.ended, true);
 assert.equal(left.missionCompleted, false, "leaving early must not complete the mission");
 
-console.log("PASS: Nigerian world registry (36 states + separate FCT), registry-only settlements, real asset gating, 21+ sectors, NPC/location schema, 15 concepts, 16 authored mission trees, contextual deepening, prerequisites, repetition avoidance and dialogue progression validate.");
+const prototypePack = prototypeMissions.PROTOTYPE_MISSIONS;
+assert.equal(prototypePack.length, 8, "the prototype pack contains exactly eight missions");
+assert.deepEqual(prototypeMissions.validatePrototypeMissionPack(), [], "prototype missions have valid branching paths, activity objectives and rewards");
+assert.equal(distribution.MISSION_DISTRIBUTION.filter(item=>item.status==="prototype-playable-overlay").length, 8, "all eight prototype missions are in the location distribution registry");
+assert.equal(new Set(prototypeMissions.PROTOTYPE_MISSION_NPCS.map(npc=>npc.spot)).size, 8, "the eight mission NPCs use distinct encounter spots");
+assert.ok(prototypeMissions.PROTOTYPE_MISSION_NPCS.every(npc=>content.getDialogue(npc.dialogueId)?.id===npc.id), "each prototype NPC resolves through the existing dialogue API");
+assert.ok(prototypePack.every(mission=>mission.locationIds.length===1&&mission.locationIds[0]==="lagos-free-roam"), "the prototype uses only the currently playable environment and does not invent other maps");
+assert.ok(prototypePack.every(mission=>mission.objectives.every(objective=>objective.choices.length>=2)), "every practical activity contains meaningful player choices");
+const engineSourceForMissions = await readFile(path.join(root, "game/kitcity-engine.js"), "utf8");
+assert.match(engineSourceForMissions, /PROTOTYPE_MISSION_NPCS/, "prototype NPCs are wired into the actual free-roam encounter spawn");
+assert.match(engineSourceForMissions, /refreshPrototypeObjectives\(\)/, "accepted missions spawn and refresh in-world activity objects");
+assert.match(engineSourceForMissions, /collectPrototypeObjective\(objective,choice\)/, "activity choices record progress in the live game");
+assert.match(engineSourceForMissions, /prototypeDecisions/, "objective decisions are persisted with adventure progress");
+for (const mission of prototypePack) {
+  const state = engine.createDialogueState();
+  const session = new engine.ConversationEngine({content:mission.dialogue,state});
+  let step = session.start();
+  assert.equal(step.node.id,"opening",mission.id+" opens with NPC dialogue");
+  const branchChoice = step.node.choices[0];
+  step = session.choose(branchChoice.id);
+  assert.equal(step.node.id,"branch0",mission.id+" offers a meaningful opening branch");
+  step = session.choose(step.node.choices[0].id);
+  assert.equal(step.node.id,"taskBrief",mission.id+" transitions from conversation into a practical task");
+  const started = session.choose("begin-activity");
+  assert.equal(started.ended,true,mission.id+" returns control to exploration when task begins");
+  assert.equal(started.missionCompleted,false,mission.id+" cannot be completed by dialogue alone");
+  assert.equal(started.state.flags[mission.startedFlag],true,mission.id+" persists its started state");
+  for (const objective of mission.objectives) {
+    const objectiveFlag = "prototype:objective:"+mission.id+":"+objective.id;
+    started.state.flags[objectiveFlag] = true;
+  }
+  started.state.flags[mission.objectiveCompleteFlag] = true;
+  const returnSession = new engine.ConversationEngine({content:mission.dialogue,state:started.state});
+  step = returnSession.start();
+  assert.equal(step.node.id,"return",mission.id+" requires the player to finish its practical task before debrief");
+  step = returnSession.choose("share-findings");
+  assert.equal(step.node.id,"debrief",mission.id+" supports a post-activity debrief");
+  const completed = returnSession.choose("complete-mission");
+  assert.equal(completed.missionCompleted,true,mission.id+" completes through the real conversation engine");
+  assert.equal(completed.state.completedMissions[mission.id],true,mission.id+" records mission completion");
+  assert.equal(completed.state.knowledge[mission.conceptId],true,mission.id+" records concept knowledge");
+  const revisit = new engine.ConversationEngine({content:mission.dialogue,state:completed.state});
+  assert.equal(revisit.start().node.id,"afterComplete",mission.id+" has contextual returning dialogue without repeating the reward path");
+}
+assert.ok(prototypePack.some(mission=>mission.objectives.length===3), "several missions require multi-check practical activities");
+assert.ok(prototypePack.some(mission=>mission.branches.some(branch=>/database|blockchain|code|law|privacy/i.test(branch.text))), "the pack includes skeptical and limitation-aware dialogue");
+console.log("PASS: Nigerian world registry (36 states + separate FCT), registry-only settlements, real asset gating, 21+ sectors, NPC/location schema, 15 concepts, 16 legacy educational mission trees plus 8 interactive prototype missions, contextual deepening, prerequisites, repetition avoidance and dialogue progression validate.");
 await cleanup();
