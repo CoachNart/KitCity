@@ -2158,7 +2158,6 @@ const MODS=[
   {label:"Learn with Amina",spot:'j',npc:loc("Amina Modu","grain seller",'#10C8DC',LK.trader,"damboa community"),L:{t:"Understand lending collateral",intro:"In damboa, understand lending collateral matters because a small mistake can cost real money. Learn the checks first, then practise them before using real assets.",pts:["Understand the protocol's rules, collateral requirements, liquidation conditions, and fees before supplying assets or borrowing.","Review the official documentation and contract address, and remember that audits reduce some risks but do not guarantee safety.","Track changing rates and collateral values; smart-contract failures, oracle errors, and volatile markets can cause losses even without a scam."],q:Q3([["Which action is the safest first step?",["Trust a screenshot instead of checking the actual record","Understand the protocol's rules, collateral requirements, liquidation conditions, and fees before supplying assets or borrowing.","Ignore fees and network details if the amount looks right"],1,"Remember: Understand the protocol's rules, collateral requirements, liquidation conditions, and fees before supplying assets or borrowing."],["What should you check before proceeding?",["Approve every request because it appears familiar","Let a stranger handle the wallet to save time","Review the official documentation and contract address, and remember that audits reduce some risks but do not guarantee safety."],2,"Remember: Review the official documentation and contract address, and remember that audits reduce some risks but do not guarantee safety."],["Which warning sign means you should stop?",["Track changing rates and collateral values; smart-contract failures, oracle errors, and volatile markets can cause losses even without a scam.","Assume a popular service cannot make mistakes","Treat a promise of guaranteed returns as proof"],0,"Remember: Track changing rates and collateral values; smart-contract failures, oracle errors, and volatile markets can cause losses even without a scam."]])}}
  ]}
 ];
-const AGENT_KIT_GUIDE=NPC('Aunty Nneka','KitCity Hub community guide',BRAND,LK.clerk,null,'Hub guide');
 const AK_SECTORS=[
 ['market traders & small businesses','Market trader and small-business owner','Market association','small businesses face opaque fees, paper records and limited customer reach','transparent trade records, digital marketplaces and cooperative tools','commerce operations, payments design and customer support',1],
 ['farmers & food systems','Farmer and cooperative organiser','Farmers cooperative','farmers struggle to prove produce origin and coordinate buyers','traceability, cooperative records and supply-chain milestones','AgriTech, supply-chain data and cooperative coordination',1],
@@ -2215,14 +2214,8 @@ MODS.forEach((e,i)=>{
  const sector=AK_SECTORS[i%AK_SECTORS.length],cityName=(CITIES[e.city]&&CITIES[e.city].name)||e.city,a=e.steps[0],b=e.steps[1];
  a.npc.role='Local resident and community member';a.npc.sign='Community conversation';a.npc.signBg=a.npc.color||BRAND;a.npc.signFg='#fff';a.npc.stall=null;b.npc.role=sector.role;b.npc.sign=sector.sign;b.npc.signBg=b.npc.color||BRAND;b.npc.signFg='#fff';if(!sector.stall)b.npc.stall=null;
  const l1=akLesson(cityName,sector,a.npc,0),l2=akLesson(cityName,sector,b.npc,1);
- const hubStep={label:'Follow Agent Kit to KitCity Hub',spot:'d',npc:AGENT_KIT_GUIDE,run(){
-  talk(AGENT_KIT_GUIDE,'<p>We have listened to people across '+cityName+' and talked through Web3 history, its purpose, the wider ecosystem and opportunities in everyday work.</p><p>Welcome to <b>KitCity Hub — '+cityName+'</b>, the local destination where everyone Agent Kit met can keep learning together, find collaborators and turn ideas into useful projects. You do not need to be a trader or developer to belong here.</p>',[
-   {t:'Enter KitCity Hub',f:()=>{hubCity=e.city;hubTab='cityhub';finishStep();}},
-   {t:'How do we keep growing?',g:1,f:()=>talk(AGENT_KIT_GUIDE,'<p>Keep asking questions, share what you learned with neighbours, meet people working on real problems and start with a small useful contribution. Web3 includes builders, writers, educators, artists, health workers, organisers and many more.</p>',[{t:'Enter KitCity Hub',f:()=>{hubCity=e.city;hubTab='cityhub';finishStep();}}])}
-  ]);
- }};
  const m={id:'ak_'+e.city,n:'★',mod:i+1,city:e.city,title:'Agent Kit in '+cityName,goal:'Meet people across '+sector.name+', talk through Web3 in everyday life, then bring the community to KitCity Hub.',xp:70,explore:true,sector,
- steps:[{label:'Hear the Web3 story with '+a.npc.name,spot:a.spot,npc:a.npc,run:lessonRun(a.npc,l1)},{label:'Explore '+sector.name+' opportunities',spot:b.spot,npc:b.npc,run:lessonRun(b.npc,l2)},hubStep],lessons:[l1,l2]};
+ steps:[{label:'Hear the Web3 story with '+a.npc.name,spot:a.spot,npc:a.npc,run:lessonRun(a.npc,l1)},{label:'Explore '+sector.name+' opportunities',spot:b.spot,npc:b.npc,run:lessonRun(b.npc,l2)}],lessons:[l1,l2]};
  EXPLORE.push(m);MBY[m.id]=m;
 });
 function gradeOf(ft){ return ft>=6?['A','Distinction']:ft===5?['B','Merit']:ft===4?['C','Pass']:['D','Pass with review']; }
@@ -2230,9 +2223,11 @@ function completeExplore(){
  const m=G.m,first=!P.done[m.id],before=levelInfo(P.xp).n;let gain=0;
  if(first){gain=m.xp;P.xp+=gain;}P.done[m.id]=true;save();updateHUD();Snd.sfx('done');
  const after=levelInfo(P.xp);clearGroup(missionGroup);colliders.length=cityCols;smoke=[];ents=[];goal=null;beacon.visible=false;hubCity=m.city;
- const btns=[{t:'Enter KitCity Hub',f:()=>{hubCity=m.city;hubTab='cityhub';exitToHub();}},{t:'Back to missions',g:1,f:()=>{hubTab='missions';exitToHub();}}];
- openSheet('<div class="badge">'+badgeSVG('★',true,96)+'<div><h3 style="margin-top:0">Arrived at KitCity Hub</h3><small>'+CITIES[m.city].name+' · Agent Kit brought the community together</small></div></div>'+
- '<p>Agent Kit has listened to people across the city, shared the story and possibilities of Web3, and invited them to keep growing together at KitCity Hub.</p>'+
+ const idx=cityOrder.indexOf(m.city),nextCity=cityOrder[idx+1];
+ const btns=nextCity?[{t:'Next city: '+CITIES[nextCity].name,f:()=>{hubCity=nextCity;hubTab='missions';exitToHub();}}]:[];
+ btns.push({t:'Back to cities',g:1,f:()=>{hubTab='missions';exitToHub();}});
+ openSheet('<div class="badge">'+badgeSVG('★',true,96)+'<div><h3 style="margin-top:0">City journey complete</h3><small>'+CITIES[m.city].name+' · Journey passed</small></div></div>'+
+ '<p>You completed this city journey. The next city is now unlocked.</p>'+
  (gain?'<div class="kv"><span>Journey XP</span><b>+'+gain+'</b></div>':'<p class="note">Your city journey is already saved.</p>')+
  (gain&&after.n>before?'<p><b>Level up! You are now '+after.title+'.</b></p>':''),btns);
 }
@@ -2248,7 +2243,11 @@ function levelInfo(xp){
   const lo=LEVELS[n],hi=LEVELS[n+1];
   return {n:n+1,title:LTITLES[n],pct:hi?Math.min(100,Math.round((xp-lo)/(hi-lo)*100)):100};
 }
-const isUnlocked=m=>{ if(m.explore) return true; const k=MISSIONS.indexOf(m); return k===0||!!P.done[MISSIONS[k-1].id]; };
+const cityOrder=Object.keys(CITIES).filter(city=>EXPLORE.some(m=>m.city===city));
+EXPLORE.sort((a,b)=>cityOrder.indexOf(a.city)-cityOrder.indexOf(b.city));
+EXPLORE.forEach((m,i)=>{ m.mod=i+1; });
+const isCityUnlocked=city=>{ const i=cityOrder.indexOf(city); return i>=0&&(i===0||!!P.done[EXPLORE.find(m=>m.city===cityOrder[i-1])?.id]); };
+const isUnlocked=m=>{ if(m.explore) return isCityUnlocked(m.city); const k=MISSIONS.indexOf(m); return k===0||!!P.done[MISSIONS[k-1].id]; };
 
 /* =====================  mission flow  ===================== */
 function hideEnt(e){ e.hidden=true; loadStep(); }
@@ -2301,6 +2300,7 @@ function loadStep(){
 }
 function startMission(id){
   const m=MBY[id];
+  if(!m||!isUnlocked(m)){ toast('Finish the previous city journey first'); renderHub(); return; }
   $('#loadTxt').textContent=L('Loading '+CITIES[m.city].name+'\u2026','We dey load '+CITIES[m.city].name+'\u2026'); $('#loading').classList.remove('hidden');
   setTimeout(()=>{
     if(curCity!==m.city) buildCity(m.city); else setupBarks(CITIES[curCity]);
@@ -2366,8 +2366,8 @@ function mapSVG(){
   const pts=NG.map(p=>mx(p[0]).toFixed(1)+','+my(p[1]).toFixed(1)).join(' ');
   let pins='';
   for(const k in CITIES){
-    const c=CITIES[k],x=mx(c.lon),y=my(c.lat),ms=EXPLORE.filter(m=>m.city===k),d=ms.filter(m=>P.done[m.id]).length,open=ms.some(isUnlocked),sel=k===hubCity;
-    pins+='<g data-a="city" data-v="'+k+'" style="cursor:pointer"><circle cx="'+x+'" cy="'+y+'" r="'+(sel?12:9)+'" fill="'+(open?BRAND:'#6b6f78')+'" stroke="#fff" stroke-width="'+(sel?3:2)+'"/><text x="'+x+'" y="'+(y+3.5)+'" text-anchor="middle" font-size="10" font-weight="800" fill="'+INK+'">'+d+'/'+ms.length+'</text><text x="'+x+'" y="'+(y+25)+'" text-anchor="middle" font-size="11" font-weight="800" fill="#fff">'+c.name+'</text></g>';
+    const c=CITIES[k],x=mx(c.lon),y=my(c.lat),ms=EXPLORE.filter(m=>m.city===k),d=ms.filter(m=>P.done[m.id]).length,open=isCityUnlocked(k),sel=k===hubCity;
+    pins+='<g data-a="city" data-v="'+k+'" style="cursor:'+(open?'pointer':'not-allowed')+'"><circle cx="'+x+'" cy="'+y+'" r="'+(sel?12:9)+'" fill="'+(open?BRAND:'#6b6f78')+'" stroke="#fff" stroke-width="'+(sel?3:2)+'"/><text x="'+x+'" y="'+(y+3.5)+'" text-anchor="middle" font-size="10" font-weight="800" fill="'+INK+'">'+d+'/'+ms.length+'</text><text x="'+x+'" y="'+(y+25)+'" text-anchor="middle" font-size="11" font-weight="800" fill="#fff">'+c.name+(open?'':' · LOCKED')+'</text></g>';
   }
   return '<svg viewBox="0 0 270 220" class="map" role="img" aria-label="Map of Nigeria with mission cities"><polygon points="'+pts+'" fill="rgba(16,200,220,.18)" stroke="'+BRAND+'" stroke-width="2.5" stroke-linejoin="round"/>'+pins+'</svg>';
 }
@@ -2384,16 +2384,12 @@ function renderHub(){
   let h='';
   if(hubTab==='missions'){
     const C=CITIES[hubCity];
-    h+=mapSVG()+'<div class="chips">'+Object.keys(CITIES).map(k=>'<button class="chip'+(k===hubCity?' on':'')+'" data-a="city" data-v="'+k+'" type="button">'+CITIES[k].name+'</button>').join('')+'</div>';
+    h+=mapSVG()+'<div class="chips">'+Object.keys(CITIES).map(k=>'<button class="chip'+(k===hubCity?' on':'')+'" data-a="city" data-v="'+k+'" type="button" '+(isCityUnlocked(k)?'':'disabled')+'>'+CITIES[k].name+(isCityUnlocked(k)?'':' · Locked')+'</button>').join('')+'</div>';
     h+='<p class="soft"><b>'+C.name+'</b>, '+C.tag+'</p>'+EXPLORE.filter(m=>m.city===hubCity).map(moduleCard).join('');
-    const journey=P.done['ak_'+hubCity];
-    h+='<div class="card"><div class="ch"><div><b>KitCity Hub · '+C.name+'</b><small>'+(journey?'Agent Kit has completed the local onboarding journey. Enter the Hub to keep learning and meet the wider Web3 ecosystem.':'Your city journey ends at this Hub. Meet local people with Agent Kit to unlock the community learning space.')+'</small></div></div><div class="cf"><span>'+(journey?'Hub unlocked':'Complete the city journey first')+'</span>'+(journey?'<button class="btn brand" data-a="cityhub" type="button">Enter Hub</button>':'<span>Locked</span>')+'</div></div>';
   } else if(hubTab==='cityhub'){
-    const C=CITIES[hubCity],journey=P.done['ak_'+hubCity];
-    h+='<div class="card"><div class="ch"><div><b>KitCity Hub · '+C.name+'</b><small>Agent Kit’s local destination for people who want to understand, build and grow with Web3. A community space—not a trading terminal.</small></div></div><div class="cf"><span>'+(journey?'City journey completed':'City journey in progress')+'</span><button class="btn line" data-a="tab" data-v="missions" type="button">View missions</button></div></div>';
-    h+='<div class="h2">Welcome to the Hub</div><p class="soft">Bring your questions, profession and ideas. Market people, farmers, students, writers, health workers, teachers, civic leaders, politicians, creators and builders all have a place here.</p>';
-    h+='<div class="h2">The community destination</div><div class="grid2"><div class="bd"><b>Meet & share</b><p class="soft">Bring questions from the street, compare experiences and learn from neighbours across professions.</p></div><div class="bd"><b>Build & contribute</b><p class="soft">Find collaborators, explore career paths and turn local problems into small, testable projects.</p></div></div>';
-    h+='<div class="h2">What Agent Kit brings together</div><p class="soft">A growing community of market traders, farmers, students, writers, creators, health workers, teachers, civic leaders, politicians and builders. Learning continues through real conversations—not exams.</p>';
+    hubTab='missions';
+    const C=CITIES[hubCity];
+    h+=mapSVG()+'<p class="soft"><b>'+C.name+'</b>, '+C.tag+'</p>'+EXPLORE.filter(m=>m.city===hubCity).map(moduleCard).join('');
   } else if(hubTab==='passport'){
     const done=EXPLORE.filter(m=>P.done[m.id]).length,all=done===EXPLORE.length;
     h+='<div class="h2">City journeys</div><div class="grid2">'+EXPLORE.map((m,i)=>'<div class="bd'+(P.done[m.id]?'':' off')+'">'+badgeSVG(m.mod,!!P.done[m.id],56)+'<b>'+m.title.replace('Agent Kit in ','')+'</b></div>').join('')+'</div>';
@@ -2416,8 +2412,8 @@ $('#hub').addEventListener('click',e=>{
   const b=e.target.closest('[data-a]'); if(!b) return;
   const a=b.dataset.a,v=b.dataset.v;
   if(a==='tab'){ hubTab=v; resetArm=false; renderHub(); $('#hubBody').scrollTop=0; }
-  else if(a==='city'){ hubCity=v; hubTab='missions'; renderHub(); }
-  else if(a==='cityhub'){ hubTab='cityhub'; renderHub(); $('#hubBody').scrollTop=0; }
+  else if(a==='city'){ if(!isCityUnlocked(v)){ toast('Finish the previous city journey first'); return; } hubCity=v; hubTab='missions'; renderHub(); }
+  else if(a==='cityhub'){ hubTab='missions'; renderHub(); $('#hubBody').scrollTop=0; }
   else if(a==='play'){ startMission(v); }
   else if(a==='quality'){ P.low=!P.low; save(); setPR(); setShadows(); resize(); renderHub(); }
   else if(a==='cert'){ certificate(); }
