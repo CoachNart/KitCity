@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { ConversationEngine, createDialogueState } from './conversation-engine.js';
 import { getDialogue } from './dialogue-content.js';
+import { EDUCATIONAL_NPCS } from './educational-content.js';
 
 export default function initKitCity(){
 'use strict';
@@ -2499,9 +2500,10 @@ function adventureBegin(){
  closeSheet(); G={m:{id:'free-roam',title:'Explore KitCity',n:'',explore:true,steps:[]},i:0,bonus:0,used:{},freeRoam:true};
  clearGroup(missionGroup); colliders.length=cityCols; smoke=[]; ents=[]; goal=null; beacon.visible=false;
  adventureEncounterIds.clear(); adventureHazards=[];
- for(const def of ADVENTURE_NPCS){
-   const spot=SPOTS[def.spot]; if(!spot) continue;
-   const npc=NPC(def.name,def.role,def.color,def.look,null,def.sign); npc.signBg=def.color;npc.signFg='#fff';
+ for(const def of [...ADVENTURE_NPCS,...EDUCATIONAL_NPCS]){
+   const spot=SPOTS[def.spot]||def.position; if(!spot) continue;
+   const look=typeof def.look==='string'?(LK[def.look]||LK.guy):def.look;
+   const npc=NPC(def.name,def.role,def.color,look,null,def.sign); npc.signBg=def.color;npc.signFg='#fff';
    const p=buildPerson({top:def.color,bottom:'#343746',shoe:'#eee',skin:'#7a4a2e',detail:true});
    p.position.set(spot.x,.05,spot.z);p.rotation.y=spot.f>0?Math.PI/2:-Math.PI/2;missionGroup.add(p);
    const sign=label(def.sign,def.color,'#fff');sign.position.set(spot.x,5.8,spot.z);missionGroup.add(sign);
