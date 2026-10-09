@@ -162,6 +162,7 @@ export function selectEducationalMissions({
   });
   const known = dialogueState.knowledge || {};
   const completed = dialogueState.completedMissions || {};
+  const conceptHistory = dialogueState.conceptHistory || {};
   const usedConcepts = new Set(Object.keys(known).filter(id => known[id]));
   const selected = [];
   for (const mission of eligible) {
