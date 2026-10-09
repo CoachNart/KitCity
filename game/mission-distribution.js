@@ -4,7 +4,7 @@
  */
 import {
   NIGERIAN_STATES, NIGERIAN_TERRITORIES, NIGERIAN_JURISDICTIONS,
-  WORLD_LOCATIONS, ENVIRONMENT_PROFILES, SECTOR_REGISTRY
+  WORLD_LOCATIONS, PLANNED_SETTLEMENT_LOCATIONS, ENVIRONMENT_PROFILES, SECTOR_REGISTRY
 } from "./world-registry.js";
 import {
   EDUCATIONAL_CONCEPTS, EDUCATIONAL_MISSIONS, EDUCATIONAL_PROFILES,
@@ -238,15 +238,45 @@ export function validateWorldSystem() {
   if (NIGERIAN_STATES.length !== 36) errors.push("expected 36 states; found " + NIGERIAN_STATES.length);
   if (NIGERIAN_TERRITORIES.length !== 1 || NIGERIAN_TERRITORIES[0]?.id !== "fct") errors.push("FCT must be represented separately from the 36 states");
   if (NIGERIAN_JURISDICTIONS.length !== 37) errors.push("expected 37 Nigerian jurisdictions");
+  const validLocationStatuses = new Set(["playable", "planned", "in-development", "retired"]);
+  const knownMissionRefs = new Set([
+    ...EDUCATIONAL_MISSIONS.flatMap(mission => [mission.id, mission.missionId]),
+    ...KITCITY_DIALOGUES.flatMap(dialogue => [dialogue.id, dialogue.missionId].filter(Boolean)),
+    ...SOCIAL_ADVENTURE_NPCS.map(encounter => encounter.id)
+  ]);
   for (const location of WORLD_LOCATIONS) {
     if (!stateIds.has(location.jurisdictionId) && !territoryIds.has(location.jurisdictionId)) errors.push(location.id + ": references missing jurisdiction " + location.jurisdictionId);
+    if (!validLocationStatuses.has(location.status)) errors.push(location.id + ": invalid location status " + location.status);
+    if (!location.settlementName || !location.locationType) errors.push(location.id + ": missing location identity fields");
+    for (const slot of ["environmentProfileIds","sectorIds","npcProfileIds","occupationTags","communityTags","mainMissionIds","sideMissionIds","environmentalEncounterIds","educationalConceptIds"]) {
+      if (!Array.isArray(location[slot])) errors.push(location.id + ": " + slot + " must be an array");
+    }
     for (const profileId of location.environmentProfileIds || []) if (!ENVIRONMENT_PROFILES.some(profile => profile.id === profileId)) errors.push(location.id + ": unknown environment profile " + profileId);
     for (const sectorId of location.sectorIds || []) if (!sectorIds.has(sectorId)) errors.push(location.id + ": unknown sector " + sectorId);
-    if (location.status === "playable" && !location.environmentAssetId) errors.push(location.id + ": playable location has no environment asset");
+    for (const npcId of location.npcProfileIds || []) if (!npcIds.has(npcId)) errors.push(location.id + ": unknown NPC profile " + npcId);
+    for (const missionRef of [...(location.mainMissionIds || []), ...(location.sideMissionIds || [])]) if (!knownMissionRefs.has(missionRef)) errors.push(location.id + ": unknown mission " + missionRef);
+    for (const conceptId of location.educationalConceptIds || []) if (!conceptIds.has(conceptId)) errors.push(location.id + ": unknown educational concept " + conceptId);
+    if (location.status === "playable" && (!location.environmentAssetId || !location.engineCityId)) errors.push(location.id + ": playable location must reference an existing environment asset and engine city");
+    if (location.status === "planned" && (location.environmentAssetId || location.engineCityId)) errors.push(location.id + ": planned location must not claim a wired environment asset");
     if (location.storyArcId && !storyArcIds.has(location.storyArcId)) errors.push(location.id + ": references missing story arc " + location.storyArcId);
     for (const eventId of location.environmentalEncounterIds || []) if (!eventIds.has(eventId)) errors.push(location.id + ": references missing location event " + eventId);
+    if (location.unlockRequirement?.completedMission && !knownMissionRefs.has(location.unlockRequirement.completedMission)) errors.push(location.id + ": unlock requirement references missing mission " + location.unlockRequirement.completedMission);
+  }
+  if (PLANNED_SETTLEMENT_LOCATIONS.length !== NIGERIAN_JURISDICTIONS.length) errors.push("every jurisdiction must have a registry-only settlement record");
+  for (const jurisdiction of NIGERIAN_JURISDICTIONS) {
+    const records = WORLD_LOCATIONS.filter(location => location.jurisdictionId === jurisdiction.id);
+    if (!records.length) errors.push(jurisdiction.id + ": has no location registry record");
+    if (!Array.isArray(jurisdiction.content.locationIds)) errors.push(jurisdiction.id + ": location index must be an array");
+    for (const locationId of jurisdiction.content.locationIds || []) {
+      const location = WORLD_LOCATIONS.find(item => item.id === locationId);
+      if (!location || location.jurisdictionId !== jurisdiction.id) errors.push(jurisdiction.id + ": invalid indexed location " + locationId);
+    }
+    for (const npcId of jurisdiction.content.npcProfileIds || []) if (!npcIds.has(npcId)) errors.push(jurisdiction.id + ": unknown indexed NPC " + npcId);
+    for (const missionId of [...(jurisdiction.content.mainMissionIds || []), ...(jurisdiction.content.sideMissionIds || [])]) if (!knownMissionRefs.has(missionId)) errors.push(jurisdiction.id + ": unknown indexed mission " + missionId);
+    for (const conceptId of jurisdiction.content.educationalConceptIds || []) if (!conceptIds.has(conceptId)) errors.push(jurisdiction.id + ": unknown indexed concept " + conceptId);
   }
   for (const event of LOCATION_EVENT_REGISTRY) for (const locationId of event.locationIds || []) if (!locationIds.has(locationId)) errors.push(event.id + ": references missing location " + locationId);
+  for (const event of LOCATION_EVENT_REGISTRY) if (event.rewardId && !rewardIds.has(event.rewardId)) errors.push(event.id + ": references missing reward " + event.rewardId);
   for (const arc of STORY_ARCS) for (const locationId of arc.locationIds || []) if (!locationIds.has(locationId)) errors.push(arc.id + ": references missing location " + locationId);
   for (const reward of MISSION_REWARD_REGISTRY) if (!EDUCATIONAL_MISSIONS.some(mission => mission.missionId === reward.missionId)) errors.push(reward.id + ": references missing mission " + reward.missionId);
   for (const mission of EDUCATIONAL_MISSIONS) {
@@ -290,12 +320,23 @@ export function validateWorldSystem() {
 }
 
 export function getDevelopmentReport() {
+  const jurisdictionIdsWithLocations = new Set(WORLD_LOCATIONS.map(location => location.jurisdictionId));
+  const jurisdictionIdsWithPlayableLocations = new Set(WORLD_LOCATIONS.filter(location => location.status === "playable").map(location => location.jurisdictionId));
   return {
     states: NIGERIAN_STATES.length,
     territories: NIGERIAN_TERRITORIES.length,
     jurisdictions: NIGERIAN_JURISDICTIONS.length,
     configuredLocations: WORLD_LOCATIONS.length,
+    settlementRecords: PLANNED_SETTLEMENT_LOCATIONS.length,
+    registryOnlyLocations: WORLD_LOCATIONS.filter(item => item.status === "planned").length,
     playableLocations: WORLD_LOCATIONS.filter(item => item.status === "playable").length,
+    jurisdictionsWithLocationRecords: jurisdictionIdsWithLocations.size,
+    jurisdictionsWithPlayableLocations: jurisdictionIdsWithPlayableLocations.size,
+    jurisdictionsAwaitingPlayableEnvironment: NIGERIAN_JURISDICTIONS.length - jurisdictionIdsWithPlayableLocations.size,
+    locationsByStatus: WORLD_LOCATIONS.reduce((counts, location) => {
+      counts[location.status] = (counts[location.status] || 0) + 1;
+      return counts;
+    }, {}),
     sectors: SECTOR_REGISTRY.length,
     npcProfiles: NPC_REGISTRY.length,
     rewards: REWARD_REGISTRY.length,
