@@ -2294,10 +2294,37 @@ MODS.forEach((e,i)=>{
         w:'Start with the real workflow. In '+careerSector.name+', relevant paths include '+careerSector.career+'. Web3 work can include engineering, product, operations, design, research, security, compliance, community support and training; most useful teams still connect to Web2 systems and keep sensitive data private.'
       });
     }
-    const tailoredLesson=Object.assign({},lesson,{q:questions});
-    const taskLabel=step.label||('Work with '+step.npc.name+' on '+e.title);
+    const cityName=CITIES[e.city]?.name||e.city;
+    const topic=lesson.t||e.title;
+    const uniqueQuestions=questions.map((q,qi)=>{
+      const raw=String(q.q||'');
+      const point=(Array.isArray(lesson.pts)&&lesson.pts.length)?lesson.pts[qi%lesson.pts.length]:('the key checks for '+topic);
+      let options=null,answer=1,prompt='';
+      if(raw==='Which action is the safest first step?'){
+        prompt='Before you act on '+topic.toLowerCase()+' in '+cityName+', what should you do first?';
+        options=['Skip verification because the service looks familiar','Apply this specific check: '+point,'Let someone else decide without showing you the evidence'];
+      }else if(raw==='Which habit best protects a wallet?'){
+        prompt='While handling '+topic.toLowerCase()+' with '+step.npc.name+', which habit protects both the person and the work?';
+        options=['Share private credentials to save time','Keep secrets private and verify the details: '+point,'Trust a familiar logo without checking the source'];
+      }else if(raw==='A stranger pressures you to act immediately. What should you do?'){
+        prompt='A stranger is rushing you during '+topic.toLowerCase()+' in '+cityName+'. What is the responsible response?';
+        options=['Pause, verify independently and apply this check: '+point,'Send a small amount to prove you are serious','Approve first and ask questions later'];
+        answer=0;
+      }else if(raw==='What should you check before proceeding?'){
+        prompt='Before continuing with '+topic.toLowerCase()+', what evidence should you verify in '+cityName+'?';
+        options=['Rely on a screenshot and skip the original record','Verify the actual record and check: '+point,'Share private information to unlock access'];
+      }else if(raw==='Which warning sign means you should stop?'){
+        prompt='Which warning sign could put '+topic.toLowerCase()+' at risk for '+step.npc.name+'?';
+        options=['Someone asks you to skip checks or ignore: '+point,'Someone asks to compare evidence before acting','A service clearly explains its costs and limits'];
+        answer=0;
+      }
+      if(!options) return q;
+      return Object.assign({},q,{q:prompt,o:options,a:answer,w:(q.w||'Check the evidence before acting.')+' Apply it here: '+point});
+    });
+    const tailoredLesson=Object.assign({},lesson,{q:uniqueQuestions});
+    const taskLabel='Help '+step.npc.name+' with '+topic+' in '+cityName;
     return {
-      label:taskLabel,
+      label:'Talk to '+step.npc.name+' · '+topic,
       spot:step.spot||routeSpots[(i*3+stepIndex*7+1)%routeSpots.length],
       npc:step.npc,
       run:streetMissionRun(step.npc,tailoredLesson,stepIndex,e.title,taskLabel)
