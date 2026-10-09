@@ -1602,7 +1602,7 @@ function badgeSVG(n,on,size){
 /* =====================  HUD  ===================== */
 function updateHUD(){
   if(G){
-    $('#mTitle').textContent=tr((G.m.explore?'Module '+G.m.mod:'Mission '+G.m.n)+': '+G.m.title);
+    $('#mTitle').textContent=tr((G.m.explore?'City journey '+G.m.mod:'Mission '+G.m.n)+': '+G.m.title);
     $('#steps').innerHTML=G.m.steps.map((s,i)=>'<li class="'+(G.i>i?'done':(G.i===i?'now':''))+'">'+tr(s.label)+'</li>').join('');
   }
   $('#wallet').innerHTML=P.wallet?('<b>'+P.usdc.toFixed(2)+' USDC</b>'+(P.ngn>0?fmtN(P.ngn)+' token':short(P.wallet))):tr('No wallet yet');
@@ -2271,8 +2271,8 @@ function startExam(){
 }
 function webCert(){
   const tot=EXPLORE.reduce((a,x)=>a+(P.scores[x.id]?P.scores[x.id].ft:0),0),pct=Math.round(tot/(EXPLORE.length*6)*100);
-  const msg=encodeURIComponent(L('I passed the KitCity Web3 learning review ('+(P.web3?P.web3.score:'')+' of '+(P.web3?P.web3.n:'')+'). I can now use a wallet, spot scams and cash out safely. Can you?','I don pass KitCity Web3 onboarding exam. I sabi use wallet, spot scam and cash out well. You fit?'));
-  openSheet('<div class="badge">'+badgeSVG('\u2605',true,96)+'<div><h3 style="margin-top:0">KitCity Web3 Learning Certified</h3><small>Final exam '+(P.web3?P.web3.score+'/'+P.web3.n:'')+', first-try accuracy '+pct+'%</small></div></div><p>You covered wallets and keys, networks and gas, stablecoins, safe sending, approvals, scams, swaps and risk, backups and cashing out.</p>',[{t:'Back to hub',f:()=>{ closeSheet(); renderHub(); }}]);
+  const msg=encodeURIComponent(L('I passed the KitCity Web3 learning review ('+(P.web3?P.web3.score:'')+' of '+(P.web3?P.web3.n:'')+'). I explored Web3 history, careers, building, local industries and community impact. What will you contribute?','I don explore Web3 history, careers, building, local industries and community impact. Wetin you go contribute?'));
+  openSheet('<div class="badge">'+badgeSVG('\u2605',true,96)+'<div><h3 style="margin-top:0">KitCity Web3 Learning Certified</h3><small>Final exam '+(P.web3?P.web3.score+'/'+P.web3.n:'')+', city-journey first-try accuracy '+pct+'%</small></div></div><p>You explored the history and vision of Web3, its ecosystem, careers, product building, local industries, creators, public good, governance and responsible impact.</p>',[{t:'Back to hub',f:()=>{ closeSheet(); renderHub(); }}]);
   sheetEl.insertAdjacentHTML('beforeend',tx('<div class="row"><a class="btn" href="https://wa.me/?text='+msg+'" target="_blank" rel="noopener">Share on WhatsApp</a></div>'));
 }
 function web3Section(){
@@ -2323,7 +2323,7 @@ function startMission(id){
 }
 function briefing(){
   const m=G.m,C=CITIES[m.city];
-  openSheet('<div class="who"><span class="av" style="background:'+INK+'">'+m.n+'</span><div><b>'+(m.explore?'Module '+m.mod+': ':'Mission '+m.n+': ')+m.title+'</b><small>'+C.name+', '+C.tag+'</small></div></div><p>'+m.goal+'</p><ul class="pts">'+m.steps.map(s=>'<li>'+s.label+'</li>').join('')+'</ul>'+(m.n===1?'<p class="note">Move with the left stick or WASD. Hold Run or Shift to run. Tap Talk or press E to speak. Follow the arrow.</p>':'<p class="note">Follow the arrow to the next person. Watch for traffic.</p>'),
+  openSheet('<div class="who"><span class="av" style="background:'+INK+'">'+m.n+'</span><div><b>'+(m.explore?'City journey '+m.mod+': ':'Mission '+m.n+': ')+m.title+'</b><small>'+C.name+', '+C.tag+'</small></div></div><p>'+m.goal+'</p><ul class="pts">'+m.steps.map(s=>'<li>'+s.label+'</li>').join('')+'</ul>'+(m.n===1?'<p class="note">Move with the left stick or WASD. Hold Run or Shift to run. Tap Talk or press E to speak. Follow the arrow.</p>':'<p class="note">Follow the arrow to the next person. Watch for traffic.</p>'),
     [{t:'Start mission',f:closeSheet},{t:'Back to hub',g:1,f:exitToHub}]);
 }
 function finishStep(){
@@ -2424,7 +2424,7 @@ function renderHub(){
     h+='<p class="soft">KitLab teaches opportunities and trade-offs—not investment promises. Choose a path based on your interests and the problems you want to solve.</p>';
   } else if(hubTab==='passport'){
     const done=EXPLORE.filter(m=>P.done[m.id]).length,all=done===EXPLORE.length;
-    h+='<div class="h2">Badges</div><div class="grid2">'+EXPLORE.map((m,i)=>'<div class="bd'+(P.done[m.id]?'':' off')+'">'+badgeSVG(m.n,!!P.done[m.id],56)+'<b>'+m.title.replace('Agent Kit in ','')+'</b></div>').join('')+'</div>';
+    h+='<div class="h2">City journeys</div><div class="grid2">'+EXPLORE.map((m,i)=>'<div class="bd'+(P.done[m.id]?'':' off')+'">'+badgeSVG(m.mod,!!P.done[m.id],56)+'<b>'+m.title.replace('Agent Kit in ','')+'</b></div>').join('')+'</div>';
     h+='<div class="h2">Journey progress</div><div class="stat"><span>City journeys complete</span><b>'+done+' of '+EXPLORE.length+'</b></div><div class="stat"><span>KitLab paths complete</span><b>'+(P.labDone?AK_TRACKS.filter(t=>P.labDone[t.id]).length:0)+' of '+AK_TRACKS.length+'</b></div>';
     h+=web3Section(); h+='<div class="h2">Wallet</div>'+(P.wallet?'<div class="stat"><span>Address</span><b style="font-family:ui-monospace,Menlo,monospace;font-size:13px">'+short(P.wallet)+'</b></div><div class="stat"><span>USDC</span><b>'+P.usdc.toFixed(2)+'</b></div><div class="stat"><span>Naira token</span><b>'+fmtN(P.ngn)+'</b></div>':'<p class="soft">No wallet yet. Finish mission 1 to open one.</p>');
     if(all) h+='<div class="row"><button class="btn brand" data-a="cert" type="button">View certificate</button></div>';
