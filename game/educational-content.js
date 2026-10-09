@@ -2023,7 +2023,22 @@ export const EDUCATIONAL_MISSIONS = [
       "z": 215,
       "f": -1
     },
-    "domain": "Creative industries"
+    "domain": "Creative industries",
+    "requires": {
+      "any": [
+        {
+          "any": [
+            {
+              "knowledge": "portable-credentials"
+            },
+            {
+              "completedMission": "learn-portable-credentials"
+            }
+          ]
+        }
+      ]
+    },
+    "unavailableText": "We should build on one idea first. Learn the basics of portable credentials and then come back."
   },
   {
     "id": "learn-creative-rights",
@@ -2240,7 +2255,32 @@ export const EDUCATIONAL_MISSIONS = [
       "z": 215,
       "f": 1
     },
-    "domain": "Governance"
+    "domain": "Governance",
+    "requires": {
+      "any": [
+        {
+          "any": [
+            {
+              "knowledge": "digital-ownership"
+            },
+            {
+              "completedMission": "learn-digital-ownership"
+            }
+          ]
+        },
+        {
+          "any": [
+            {
+              "knowledge": "smart-contracts"
+            },
+            {
+              "completedMission": "learn-smart-contracts"
+            }
+          ]
+        }
+      ]
+    },
+    "unavailableText": "We should build on one idea first. Learn the basics of digital ownership, smart contracts and then come back."
   },
   {
     "id": "learn-community-governance",
@@ -2670,7 +2710,22 @@ export const EDUCATIONAL_MISSIONS = [
       "z": 40,
       "f": 1
     },
-    "domain": "Infrastructure"
+    "domain": "Infrastructure",
+    "requires": {
+      "any": [
+        {
+          "any": [
+            {
+              "knowledge": "portable-credentials"
+            },
+            {
+              "completedMission": "learn-portable-credentials"
+            }
+          ]
+        }
+      ]
+    },
+    "unavailableText": "We should build on one idea first. Learn the basics of portable credentials and then come back."
   },
   {
     "id": "learn-decentralized-infrastructure",
@@ -3100,7 +3155,22 @@ export const EDUCATIONAL_MISSIONS = [
       "z": 115,
       "f": 1
     },
-    "domain": "AI and Web3"
+    "domain": "AI and Web3",
+    "requires": {
+      "any": [
+        {
+          "any": [
+            {
+              "knowledge": "smart-contracts"
+            },
+            {
+              "completedMission": "learn-smart-contracts"
+            }
+          ]
+        }
+      ]
+    },
+    "unavailableText": "We should build on one idea first. Learn the basics of smart contracts and then come back."
   },
   {
     "id": "learn-verifiable-ai",
@@ -3316,7 +3386,22 @@ export const EDUCATIONAL_MISSIONS = [
       "z": -255,
       "f": 1
     },
-    "domain": "Security"
+    "domain": "Security",
+    "requires": {
+      "any": [
+        {
+          "any": [
+            {
+              "knowledge": "digital-ownership"
+            },
+            {
+              "completedMission": "learn-digital-ownership"
+            }
+          ]
+        }
+      ]
+    },
+    "unavailableText": "We should build on one idea first. Learn the basics of digital ownership and then come back."
   },
   {
     "id": "learn-security-and-limits",
