@@ -1532,7 +1532,7 @@ function placeNPC(def,spot){
 /* ---- player + beacon ---- */
 const player=buildPerson({top:BRAND,bottom:'#2b3350',shoe:'#ffffff',hair:'short',skin:'#7a4a2e',detail:true,backpack:true,logo:true});
 player.position.set(SPAWN.x,.05,SPAWN.z); scene.add(player);
-// Agent Kit is the player character; no floating name tag above the avatar.
+// The selected username is the player character; no floating name tag above the avatar.
 {
   const blob=new THREE.Mesh(new THREE.CircleGeometry(.95,14),new THREE.MeshBasicMaterial({color:0,transparent:true,opacity:.3,depthWrite:false}));
   blob.rotation.x=-Math.PI/2; blob.position.y=.02; player.add(blob);
