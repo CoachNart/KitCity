@@ -118,6 +118,7 @@ html,body{height:100%;overflow:hidden;background:var(--ink);color:var(--ink);fon
 /* chat */
 .chat{display:flex;flex-direction:column;gap:8px;margin:10px 0 2px}
 .b{max-width:94%;padding:10px 12px;border-radius:14px;font-size:15px;line-height:1.4}
+.speaker-tag{display:block;font-size:10px;line-height:1.2;font-weight:900;letter-spacing:.08em;text-transform:uppercase;opacity:.68;margin:0 0 5px}.b.me .speaker-tag{color:var(--brand);opacity:1}
 .b.npc{background:#fff;border:2px solid var(--ink);border-bottom-left-radius:4px;align-self:flex-start}
 .b.me{background:var(--ink);color:var(--brand);border-bottom-right-radius:4px;align-self:flex-end;font-weight:700}
 .b.old{opacity:.65;font-size:13px;padding:7px 10px}
