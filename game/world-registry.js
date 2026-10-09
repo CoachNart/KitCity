@@ -73,6 +73,7 @@ export const WORLD_LOCATIONS = [{
 }];
 
 export const ENVIRONMENT_PROFILES = [
+  {id:"urban-streets",label:"Urban streets",settingTags:["transport","residential","public-space"]},
   {id:"market-edge",label:"Market and commercial edge", settingTags:["market","commerce","small-business"]},
   {id:"school-campus",label:"School or campus", settingTags:["education","students","professional-development"]},
   {id:"farm-cooperative",label:"Farm or cooperative", settingTags:["agriculture","cooperative","supply-chain"]},
