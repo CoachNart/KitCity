@@ -2214,7 +2214,9 @@ function streetMissionRun(def,Lz,stage,missionTitle,taskLabel){
   return function(){
     const qs=(Lz&&Array.isArray(Lz.q))?Lz.q:[];
     const q=qs[0];
-    const opening=(Lz&&Lz.intro)||('A local problem needs solving in '+missionTitle+'.');
+    const rawOpening=(Lz&&Lz.intro)||'';
+    const repeatedOpening=rawOpening.includes('matters because a small mistake can cost real money')&&rawOpening.includes('Learn the checks first');
+    const opening=repeatedOpening&&Lz.pts&&Lz.pts[0]?Lz.pts[0]:(rawOpening||('A local problem needs solving in '+missionTitle+'.'));
     const topic=(Lz&&Lz.t)||missionTitle;
     const setup='<p>'+opening+'</p><h3>'+topic+'</h3><p>'+whoOf(def)+' needs your help: '+taskLabel+'. Listen, make the call, and see what happens.</p>';
     if(!q||!Array.isArray(q.o)||!q.o.length){
