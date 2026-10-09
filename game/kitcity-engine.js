@@ -2517,8 +2517,8 @@ function collectPrototypeObjective(objective,choice){
  if(result.error){closeSheet();toast(result.error==='already-recorded'?'You have already checked this item.':'This activity is not available yet.');return;}
  const mission=result.mission,completed=result.completed,allDone=result.allDone;
  adventureSave();closeSheet();clearPrototypeObjectiveVisuals();refreshPrototypeObjectives();adventureAfterActivity();
- if(allDone)toast('Objective complete. Return to '+mission.npcName+' to discuss what you found.');
- else toast('Evidence recorded · '+completed+'/'+result.total+' checks complete. Keep exploring.');
+ if(allDone)toast(result.choice.feedback+' Objective complete. Return to '+mission.npcName+' to discuss what you found.');
+ else toast(result.choice.feedback+' · '+completed+'/'+result.total+' checks complete. Keep exploring.');
 }
 function inspectPrototypeObjective(objective){
  const mission=PROTOTYPE_MISSIONS.find(item=>item.id===objective.missionId);if(!mission)return;
