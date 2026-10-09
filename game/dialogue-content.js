@@ -1,3 +1,4 @@
+import { PROTOTYPE_MISSIONS } from "./prototype-missions.js";
 import { EDUCATIONAL_MISSIONS } from "./educational-content.js";
 
 /**
