@@ -3752,7 +3752,7 @@ export const EDUCATIONAL_NPCS = EDUCATIONAL_MISSIONS.map((mission,index)=>({
  id:mission.id,dialogueId:mission.id,name:mission.npcName,role:mission.role,
  color:["#3A8DAD","#0B7A43","#D28A20","#8C6AC8","#2D6FB3"][index%5],
  look:["woman","guy","man","elder"][index%4],
- spot:null,position:mission.position,sign:mission.domain+" · "+mission.title,
+ spot:null,position:mission.position,sign:"Learn: "+mission.domain,
  kind:"education",major:true,reward:mission.reward,missionId:mission.missionId,conceptId:mission.conceptId
 }));
 
