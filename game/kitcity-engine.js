@@ -2243,7 +2243,7 @@ function levelInfo(xp){
   const lo=LEVELS[n],hi=LEVELS[n+1];
   return {n:n+1,title:LTITLES[n],pct:hi?Math.min(100,Math.round((xp-lo)/(hi-lo)*100)):100};
 }
-const cityOrder=Object.keys(CITIES).filter(city=>EXPLORE.some(m=>m.city===city)||MISSIONS.some(m=>m.city===city));
+const cityOrder=['lagos',...Object.keys(CITIES).filter(city=>city!=='lagos'&&(EXPLORE.some(m=>m.city===city)||MISSIONS.some(m=>m.city===city)))];
 EXPLORE.sort((a,b)=>cityOrder.indexOf(a.city)-cityOrder.indexOf(b.city));
 EXPLORE.forEach((m,i)=>{ m.mod=i+1; });
 const cityMissions=city=>{ const explore=EXPLORE.filter(m=>m.city===city); return explore.length?explore:MISSIONS.filter(m=>m.city===city); };
@@ -2316,7 +2316,7 @@ function startMission(id){
 function briefing(){
   const m=G.m,C=CITIES[m.city];
   openSheet('<div class="who"><span class="av" style="background:'+INK+'">'+m.n+'</span><div><b>'+(m.explore?'':'Mission '+m.n+': ')+m.title+'</b><small>'+C.name+', '+C.tag+'</small></div></div><p>'+m.goal+'</p><ul class="pts">'+m.steps.map(s=>'<li>'+s.label+'</li>').join('')+'</ul>'+(m.explore?'<p class="note">Move with the left stick or WASD. Hold Run or Shift to run. Tap Talk or press E near a person. Follow the arrow to your next conversation.</p>':'<p class="note">Follow the arrow to the next person. Watch for traffic.</p>'),
-    [{t:'Start conversations',f:closeSheet},{t:'Back to city selection',g:1,f:exitToHub}]);
+    [{t:'Start conversations',f:closeSheet},{t:'Back to title',g:1,f:exitToHub}]);
 }
 function finishStep(){
   closeSheet(); if(!G) return;
@@ -2348,16 +2348,16 @@ function certificate(){
   sheetEl.insertAdjacentHTML('beforeend',tx('<div class="row"><a class="btn" href="https://wa.me/?text='+msg+'" target="_blank" rel="noopener">Share on WhatsApp</a></div>'));
 }
 function exitToHub(){
-  closeSheet(); S.phase='hub'; Snd.setMode('hub'); G=null;
+  closeSheet(); S.phase='title'; Snd.setMode('hub'); G=null;
   clearGroup(missionGroup); colliders.length=cityCols; smoke=[]; ents=[]; goal=null; beacon.visible=false;
-  $('#hud').classList.add('hidden'); $('#hub').classList.remove('hidden'); renderHub();
+  $('#hud').classList.add('hidden'); $('#hub').classList.add('hidden'); $('#title').classList.remove('hidden');
 }
 $('#pauseBtn').addEventListener('click',()=>{
   if(S.phase!=='play'||S.modal) return;
   openSheet('<h3>Paused</h3><p class="note">'+(G.m.explore?'Module '+G.m.mod:'Mission '+G.m.n)+': '+G.m.title+'</p>',[
     {t:'Resume',f:closeSheet},
     {t:'Restart mission',g:1,f:()=>startMission(G.m.id)},
-    {t:'Back to hub',g:1,f:exitToHub}
+    {t:'Back to title',g:1,f:exitToHub}
   ]);
 });
 
@@ -2431,9 +2431,11 @@ $('#hub').addEventListener('click',e=>{
 });
 $('#startBtn').addEventListener('click',()=>{
   Snd.unlock(); Snd.setMode('hub'); Snd.sfx('click');
-  S.phase='hub'; $('#title').classList.add('hidden'); $('#hub').classList.remove('hidden');
-  const nextCity=cityOrder.find(city=>!isCityComplete(city)); if(nextCity) hubCity=nextCity;
-  renderHub();
+  const nextCity=cityOrder.find(city=>!isCityComplete(city));
+  const nextJourney=nextCity?cityMissions(nextCity)[0]:null;
+  if(!nextJourney){ openSheet('<h3>All cities completed!</h3><p>You have completed every city journey across Nigeria.</p>',[{t:'Back to title',f:exitToHub}]); return; }
+  $('#title').classList.add('hidden'); $('#hub').classList.add('hidden');
+  startMission(nextJourney.id);
 });
 function applyLang(){
   document.documentElement.lang=P.lang==='pcm'?'pcm':'en';
