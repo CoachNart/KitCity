@@ -1,0 +1,22 @@
+name: KitCity campaign validation
+
+on:
+  push:
+    branches:
+      - rebuild/open-world-adventure
+  pull_request:
+    branches:
+      - main
+      - rebuild/open-world-adventure
+
+jobs:
+  validate-campaign:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install
+      - run: npm test
+      - run: npm run build
