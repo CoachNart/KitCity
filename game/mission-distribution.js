@@ -12,6 +12,7 @@ import {
 } from "./educational-content.js";
 import { KITCITY_DIALOGUES, getDialogue } from "./dialogue-content.js";
 import { SOCIAL_ADVENTURE_NPCS } from "./adventure-data.js";
+import { PROTOTYPE_MISSIONS, PROTOTYPE_MISSION_NPCS, validatePrototypeMissionPack } from "./prototype-missions.js";
 
 export const NPC_PERSPECTIVES = {
   "credential-verifier": {ageRange:"40s-50s",economicContext:"public-facing school administration",technicalFluency:"practical digital user",stance:"careful and process-oriented"},
@@ -50,7 +51,7 @@ const MISSION_CONTEXT = {
   "learn-open-internet": ["technology-creative-hub","residential-neighborhood","public-space"]
 };
 
-export const MISSION_DISTRIBUTION = EDUCATIONAL_MISSIONS.map(mission => ({
+export const MISSION_DISTRIBUTION = [...EDUCATIONAL_MISSIONS.map(mission => ({
   missionId: mission.id,
   conceptId: mission.conceptId,
   npcProfileId: mission.npcId,
@@ -65,7 +66,15 @@ export const MISSION_DISTRIBUTION = EDUCATIONAL_MISSIONS.map(mission => ({
   status: WORLD_LOCATIONS.some(location => location.status === "playable" &&
     (MISSION_CONTEXT[mission.id] || []).some(profileId => location.environmentProfileIds.includes(profileId)))
     ? "available-in-playable-environment" : "authored-awaiting-environment"
-}));
+})),
+...PROTOTYPE_MISSIONS.map(mission=>({
+  missionId:mission.id,conceptId:mission.conceptId,npcProfileId:mission.npcId,dialogueId:mission.id,
+  sectorIds:mission.sectors.map(sector=>sectorToId(sector)).filter(Boolean),
+  preferredEnvironmentProfileIds:["urban-streets","public-space"],
+  locationIds:mission.locationIds.filter(id=>WORLD_LOCATIONS.some(location=>location.id===id&&location.status==="playable")),
+  repeatPolicy:"complete-once-with-returning-dialogue",status:"prototype-playable-overlay"
+}))
+];
 
 
 // Derive jurisdiction-level indexes from authored content; empty registries remain valid for unbuilt states.
@@ -96,6 +105,7 @@ for (const location of WORLD_LOCATIONS) {
 }
 
 export const NPC_REGISTRY = [
+  ...PROTOTYPE_MISSION_NPCS.map(profile => ({id:profile.npcProfileId, name:profile.name, role:profile.role, category:"prototype-mission", diversity:{ageRange:profile.ageRange,economicContext:profile.economicContext,technicalFluency:profile.technicalFluency,stance:profile.stance}, dialogueIds:[profile.dialogueId]})),
   ...EDUCATIONAL_PROFILES.map(profile => ({
     ...profile, category:"educational", diversity:NPC_PERSPECTIVES[profile.id] || null,
     dialogueIds:EDUCATIONAL_MISSIONS.filter(mission => mission.npcId === profile.id).map(mission => mission.id)
@@ -109,14 +119,14 @@ export const NPC_REGISTRY = [
 
 export const DIALOGUE_REGISTRY = [
   ...KITCITY_DIALOGUES.map(dialogue => ({id:dialogue.id, kind:"social", npcId:dialogue.npcId, missionId:dialogue.missionId || null})),
-  ...EDUCATIONAL_MISSIONS.map(mission => ({id:mission.id, kind:"educational-mission", npcId:mission.npcId, missionId:mission.missionId}))
+  ...EDUCATIONAL_MISSIONS.map(mission => ({id:mission.id, kind:"educational-mission", npcId:mission.npcId, missionId:mission.missionId})),
+  ...PROTOTYPE_MISSIONS.map(mission => ({id:mission.id, kind:"prototype-playable", npcId:mission.npcId, missionId:mission.id}))
 ];
 
-export const MISSION_REWARD_REGISTRY = EDUCATIONAL_MISSIONS.map(mission => ({
-  id: "reward:" + mission.id, missionId: mission.missionId,
-  xp: mission.reward?.xp || 0, simulatedNgn: mission.reward?.ngn || 0,
-  delivery: "in-game-simulation"
-}));
+export const MISSION_REWARD_REGISTRY = [
+  ...EDUCATIONAL_MISSIONS.map(mission => ({id:"reward:"+mission.id, missionId:mission.missionId, xp:mission.reward?.xp||0, simulatedNgn:mission.reward?.ngn||0, item:mission.reward?.item||null, delivery:"in-game-simulation"})),
+  ...PROTOTYPE_MISSIONS.map(mission => ({id:"reward:"+mission.id, missionId:mission.id, xp:mission.reward?.xp||0, simulatedNgn:mission.reward?.ngn||0, item:mission.reward?.item||null, delivery:"in-game-simulation"}))
+];
 
 export const REWARD_REGISTRY = [
   ...MISSION_REWARD_REGISTRY,
@@ -249,9 +259,9 @@ export function validateWorldSystem({ additionalLocations = [] } = {}) {
   const rewardIds = unique(REWARD_REGISTRY, "reward");
   unique(ENVIRONMENT_PROFILES, "environment profile");
   const conceptIds = unique(EDUCATIONAL_CONCEPTS, "concept");
-  const missionIds = unique(EDUCATIONAL_MISSIONS, "mission");
+  const missionIds = unique([...EDUCATIONAL_MISSIONS,...PROTOTYPE_MISSIONS], "mission");
   const npcIds = unique(NPC_REGISTRY, "NPC profile");
-  const dialogueIds = unique([...KITCITY_DIALOGUES, ...EDUCATIONAL_MISSIONS], "dialogue");
+  const dialogueIds = unique([...KITCITY_DIALOGUES, ...EDUCATIONAL_MISSIONS, ...PROTOTYPE_MISSIONS.map(mission=>mission.dialogue)], "dialogue");
   if (NIGERIAN_STATES.length !== 36) errors.push("expected 36 states; found " + NIGERIAN_STATES.length);
   if (NIGERIAN_TERRITORIES.length !== 1 || NIGERIAN_TERRITORIES[0]?.id !== "fct") errors.push("FCT must be represented separately from the 36 states");
   if (NIGERIAN_JURISDICTIONS.length !== 37) errors.push("expected 37 Nigerian jurisdictions");
@@ -259,6 +269,7 @@ export function validateWorldSystem({ additionalLocations = [] } = {}) {
   const knownMissionRefs = new Set([
     ...EDUCATIONAL_MISSIONS.flatMap(mission => [mission.id, mission.missionId]),
     ...KITCITY_DIALOGUES.flatMap(dialogue => [dialogue.id, dialogue.missionId].filter(Boolean)),
+    ...PROTOTYPE_MISSIONS.flatMap(mission=>[mission.id,mission.dialogue.id]),
     ...SOCIAL_ADVENTURE_NPCS.map(encounter => encounter.id)
   ]);
   for (const location of locations) {
@@ -317,7 +328,7 @@ export function validateWorldSystem({ additionalLocations = [] } = {}) {
   for (const event of LOCATION_EVENT_REGISTRY) for (const locationId of event.locationIds || []) if (!locationIds.has(locationId)) errors.push(event.id + ": references missing location " + locationId);
   for (const event of LOCATION_EVENT_REGISTRY) if (event.rewardId && !rewardIds.has(event.rewardId)) errors.push(event.id + ": references missing reward " + event.rewardId);
   for (const arc of STORY_ARCS) for (const locationId of arc.locationIds || []) if (!locationIds.has(locationId)) errors.push(arc.id + ": references missing location " + locationId);
-  for (const reward of MISSION_REWARD_REGISTRY) if (!EDUCATIONAL_MISSIONS.some(mission => mission.missionId === reward.missionId)) errors.push(reward.id + ": references missing mission " + reward.missionId);
+  for (const reward of MISSION_REWARD_REGISTRY) if (![...EDUCATIONAL_MISSIONS.map(mission=>mission.missionId),...PROTOTYPE_MISSIONS.map(mission=>mission.id)].includes(reward.missionId)) errors.push(reward.id + ": references missing mission " + reward.missionId);
   for (const mission of EDUCATIONAL_MISSIONS) {
     if (!conceptIds.has(mission.conceptId)) errors.push(mission.id + ": references missing concept " + mission.conceptId);
     if (!npcIds.has(mission.npcId)) errors.push(mission.id + ": references missing NPC profile " + mission.npcId);
@@ -345,7 +356,21 @@ export function validateWorldSystem({ additionalLocations = [] } = {}) {
   for (const dialogue of KITCITY_DIALOGUES) {
     if (!NPC_REGISTRY.some(npc => npc.id === dialogue.npcId && npc.dialogueIds.includes(dialogue.id))) errors.push(dialogue.id + ": NPC references missing dialogue association for " + dialogue.npcId);
   }
-  for (const content of [...KITCITY_DIALOGUES, ...EDUCATIONAL_MISSIONS]) {
+  errors.push(...validatePrototypeMissionPack());
+  for (const mission of PROTOTYPE_MISSIONS) {
+    if (!conceptIds.has(mission.conceptId)) errors.push(mission.id + ": references missing concept " + mission.conceptId);
+    if (!npcIds.has(mission.npcId)) errors.push(mission.id + ": references missing NPC profile " + mission.npcId);
+    if (!NPC_REGISTRY.some(npc=>npc.id===mission.npcId&&npc.dialogueIds.includes(mission.id))) errors.push(mission.id + ": NPC registry is missing its dialogue association");
+    if (!MISSION_REWARD_REGISTRY.some(reward=>reward.missionId===mission.id)) errors.push(mission.id + ": missing reward registry record");
+    if (!getDialogue(mission.id)) errors.push(mission.id + ": NPC mission references missing dialogue");
+    const distribution=MISSION_DISTRIBUTION.find(item=>item.missionId===mission.id);
+    if (!distribution) errors.push(mission.id + ": missing distribution record");
+    else {
+      for(const locationId of distribution.locationIds)if(!locationIds.has(locationId))errors.push(mission.id+": references missing location "+locationId);
+      for(const sectorId of distribution.sectorIds)if(!sectorIds.has(sectorId))errors.push(mission.id+": references missing sector "+sectorId);
+    }
+  }
+  for (const content of [...KITCITY_DIALOGUES, ...EDUCATIONAL_MISSIONS, ...PROTOTYPE_MISSIONS.map(mission=>mission.dialogue)]) {
     if (content.requires?.completedMission && !knownMissionRefs.has(content.requires.completedMission)) errors.push(content.id + ": invalid required mission " + content.requires.completedMission);
     for (const requiredMission of content.requires?.completedMissions || []) if (!knownMissionRefs.has(requiredMission)) errors.push(content.id + ": invalid required mission " + requiredMission);
     if (!content.start || !content.nodes?.[content.start]) errors.push(content.id + ": missing valid start node");
@@ -388,6 +413,8 @@ export function getDevelopmentReport() {
     rewards: REWARD_REGISTRY.length,
     educationalConcepts: EDUCATIONAL_CONCEPTS.length,
     educationalMissions: EDUCATIONAL_MISSIONS.length,
+    prototypeMissions: PROTOTYPE_MISSIONS.length,
+    prototypeObjectives: PROTOTYPE_MISSIONS.reduce((count,mission)=>count+mission.objectives.length,0),
     dialogueTrees: DIALOGUE_REGISTRY.length,
     locationEvents: LOCATION_EVENT_REGISTRY.length,
     missionsWithPlayableLocation: MISSION_DISTRIBUTION.filter(item => item.locationIds.some(id => WORLD_LOCATIONS.some(location => location.id === id && location.status === "playable"))).length,
