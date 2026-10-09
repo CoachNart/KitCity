@@ -8,7 +8,7 @@
     "start": "next start",
     "test:dialogue": "node scripts/test-dialogue.mjs",
     "test:world": "node scripts/world-report.mjs",
-    "report:world": "node scripts/report-world.mjs",
+    "report:world": "node scripts/world-report.mjs",
     "test": "npm run test:dialogue && npm run test:world"
   },
   "dependencies": {
