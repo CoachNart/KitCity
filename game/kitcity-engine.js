@@ -2011,7 +2011,7 @@ CITY_JOURNEYS.forEach((cityData,ci)=>{
     const evidenceHtml=()=>{
       const evidence=[
         '<div class="kv"><span>Request</span><b>Amount, recipient and total debit</b></div><div class="kv"><span>Evidence</span><b>Original agreement and transaction preview</b></div>',
-        '<div class="kv"><span>Trusted record</span><b class="mono">0x8a71…c920</b></div><div class="kv"><span>New request</span><b class="mono">0x8a71…c902</b></div><p class="note">Compare the full destination with the supplier's previously verified details.</p>',
+        '<div class="kv"><span>Trusted record</span><b class="mono">0x8a71…c920</b></div><div class="kv"><span>New request</span><b class="mono">0x8a71…c902</b></div><p class="note">Compare the full destination with the supplier&#39;s previously verified details.</p>',
         '<div class="kv"><span>Requested access</span><b>Wallet permission</b></div><div class="kv"><span>Check</span><b>Scope, recipient and duration</b></div>',
         '<div class="kv"><span>Transaction record</span><b>Network, recipient and status</b></div><div class="kv"><span>Submitted proof</span><b>Image or forwarded message</b></div>',
         '<div class="kv"><span>Proposal</span><b>Terms and intended outcome</b></div><div class="kv"><span>Decision record</span><b>Agreed voting process</b></div>',
