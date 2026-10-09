@@ -9,7 +9,8 @@
     "test:dialogue": "node scripts/test-dialogue.mjs",
     "test:world": "node scripts/world-report.mjs",
     "report:world": "node scripts/world-report.mjs",
-    "test": "npm run test:dialogue && npm run test:world"
+    "test": "npm run test:dialogue && npm run test:world && npm run test:campaign",
+    "test:campaign": "node --experimental-default-type=module --test game/web3-campaign.test.js"
   },
   "dependencies": {
     "next": "16.3.8",
