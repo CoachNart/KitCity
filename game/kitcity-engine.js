@@ -2465,7 +2465,7 @@ $('#hub').addEventListener('click',e=>{
 $('#startBtn').addEventListener('click',()=>{
   Snd.unlock(); Snd.setMode('hub'); Snd.sfx('click');
   S.phase='hub'; $('#title').classList.add('hidden'); $('#hub').classList.remove('hidden');
-  const next=MISSIONS.find(m=>!P.done[m.id]); if(next) hubCity=next.city;
+  const next=EXPLORE.find(m=>!P.done[m.id]); if(next) hubCity=next.city;
   renderHub();
 });
 function applyLang(){
