@@ -33,7 +33,7 @@ assert.ok(world.PLANNED_SETTLEMENT_LOCATIONS.every(location => !location.environ
 assert.ok(world.NIGERIAN_STATES.filter(item => item.id !== "lagos").every(item => !world.WORLD_LOCATIONS.some(location => location.jurisdictionId === item.id && location.status === "playable")), "states without map assets are registered without fabricated playable worlds");
 assert.ok(world.SECTOR_REGISTRY.length >= 21, "the sector registry covers all requested sectors");
 assert.ok(distribution.NPC_REGISTRY.length >= 22, "social and educational NPCs share a structured registry");
-assert.equal(distribution.MISSION_REWARD_REGISTRY.length, 15);
+assert.equal(distribution.MISSION_REWARD_REGISTRY.length, 16);
 assert.equal(distribution.LOCATION_EVENT_REGISTRY.some(item => item.id === "pothole-awareness"), true);
 const developmentReport = distribution.getDevelopmentReport();
 assert.equal(developmentReport.states, 36);
@@ -48,15 +48,18 @@ assert.equal(developmentReport.plannedLocations, 37);
 assert.equal(developmentReport.jurisdictionsWithLocationRecords, 37);
 assert.equal(developmentReport.jurisdictionsWithPlayableLocations, 1);
 assert.equal(developmentReport.jurisdictionsAwaitingPlayableEnvironment, 36);
-assert.equal(developmentReport.educationalMissions, 15);
+assert.equal(developmentReport.educationalMissions, 16);
+assert.equal(developmentReport.environmentAssets, 1);
+assert.equal(developmentReport.availableEnvironmentAssets, 1);
+assert.equal(developmentReport.npcSpawnPoints, 0);
 assert.ok(developmentReport.missionsWithPlayableLocation > 0 && developmentReport.missionsWithPlayableLocation < developmentReport.educationalMissions, "the report distinguishes assigned content from content awaiting suitable environments");
 const distributed = distribution.selectEducationalMissions({locationId:"lagos-free-roam",dialogueState:{},limit:6,allowDeepening:true});
 assert.ok(distributed.length > 0 && distributed.length <= 6);
 const invalidLocation = {
   id:"__invalid-test-location", jurisdictionId:"missing-jurisdiction", settlementName:"Test",
   locationType:"test", status:"planned", environmentAssetId:null, engineCityId:null,
-  environmentProfileIds:["missing-environment"], sectorIds:["missing-sector"], npcProfileIds:["missing-npc"],
-  occupationTags:[], communityTags:[], mainMissionIds:["missing-mission"], sideMissionIds:[],
+  environmentProfileIds:["missing-environment"], sectorIds:["missing-sector"], npcProfileIds:["missing-npc"], npcSpawnPoints:[],
+  environmentSettings:{}, occupationTags:[], communityTags:[], mainMissionIds:["missing-mission"], sideMissionIds:[],
   environmentalEncounterIds:[], educationalConceptIds:["missing-concept"], storyArcId:"missing-arc",
   unlockRequirement:null, contentStatus:"registry-only"
 };
@@ -72,14 +75,21 @@ assert.ok(nextBatch.every(item => !doneState.completedMissions[item.missionId]),
 const sameContextKnowledge = {knowledge:{"digital-ownership":true},conceptHistory:{"digital-ownership":[{missionId:"learn-digital-ownership",locationId:"lagos-free-roam"}]}};
 assert.ok(!distribution.selectEducationalMissions({locationId:"lagos-free-roam",dialogueState:sameContextKnowledge,limit:15,allowDeepening:true}).some(item=>item.conceptId==="digital-ownership"), "a known concept is not repeated in the same context");
 const newContextKnowledge = {knowledge:{"digital-ownership":true},conceptHistory:{"digital-ownership":[{missionId:"learn-digital-ownership",locationId:"another-playable-location"}]}};
-assert.ok(distribution.selectEducationalMissions({locationId:"lagos-free-roam",dialogueState:newContextKnowledge,limit:15,allowDeepening:true}).some(item=>item.conceptId==="digital-ownership"), "a known concept may return when the context changes");
+assert.ok(!distribution.selectEducationalMissions({locationId:"lagos-free-roam",dialogueState:newContextKnowledge,limit:15,allowDeepening:true}).some(item=>item.id==="learn-digital-ownership"), "a location change alone must not repeat the same lesson");
 
 assert.deepEqual(distribution.selectEducationalMissions({locationId:"unbuilt-city",dialogueState:{},limit:6}), [], "unbuilt environments do not receive fabricated missions");
 
 const educationErrors = education.validateEducationalLibrary();
 assert.deepEqual(educationErrors, [], "all educational concepts and mission trees must validate");
 assert.equal(education.EDUCATIONAL_CONCEPTS.length, 15, "the education library covers all 15 required domains");
-assert.equal(education.EDUCATIONAL_MISSIONS.length, 15, "each educational domain has a playable story mission");
+assert.equal(education.EDUCATIONAL_MISSIONS.length, 16, "the library includes 15 concept introductions and a separate contextual deepening mission");
+const agricultureDeepening = education.getEducationalMission("learn-agriculture-cooperative-audit");
+assert.ok(agricultureDeepening && agricultureDeepening.conceptId === "agriculture-traceability", "a separate mission can deepen an already introduced concept");
+assert.ok(!education.getAvailableEducationalMissions({}).some(item => item.id === agricultureDeepening.id), "contextual deepening is gated until its base concept is known");
+assert.ok(education.getAvailableEducationalMissions({knowledge:{"agriculture-traceability":true}}).some(item => item.id === agricultureDeepening.id), "learning the base concept unlocks the deeper mission");
+const agricultureDeepeningDistribution = distribution.MISSION_DISTRIBUTION.find(item => item.missionId === agricultureDeepening.id);
+assert.equal(agricultureDeepeningDistribution.status, "authored-awaiting-environment", "the cooperative deepening mission waits for a real farm/cooperative environment");
+assert.deepEqual(agricultureDeepeningDistribution.locationIds, [], "no unbuilt location is treated as playable for the contextual mission");
 for (const mission of education.EDUCATIONAL_MISSIONS) {
   assert.equal(content.getDialogue(mission.id).id, mission.id, mission.id + " is registered in the game dialogue resolver");
   assert.ok(mission.scenario && mission.explanation && mission.application && mission.limitations && mission.takeaway, mission.id + " has a story, plain-language explanation, application, limitation and takeaway");
