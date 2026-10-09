@@ -7,6 +7,16 @@ import { NIGERIAN_STATES, NIGERIAN_TERRITORIES, getState, getTerritory } from ".
 export { NIGERIAN_STATES, NIGERIAN_TERRITORIES, getState, getTerritory };
 
 
+export const SOCIAL_ADVENTURE_NPCS = [
+ {id:"trader-spill",npcProfileId:"mama-kemi",dialogueId:"trader-spill",name:"Mama Kemi",role:"Market trader",color:"#C7457E",look:"woman",spot:"a",sign:"Help pick up the oranges",kind:"activity",major:false,reward:{xp:8,ngn:35,item:"market-kindness"},ageRange:"40s-60s",economicContext:"independent market trader; daily sales and stock at risk",technicalFluency:"mobile user, time-constrained",stance:"practical and skeptical"},
+ {id:"driver-directions",npcProfileId:"bode-driver",dialogueId:"driver-directions",name:"Bode",role:"Commercial driver",color:"#2D6FB3",look:"guy",spot:"c",sign:"Driver needs directions",kind:"activity",major:false,reward:{xp:10,ngn:25,item:"helpful-neighbour"},ageRange:"30s-50s",economicContext:"commercial transport and daily route income",technicalFluency:"practical phone user",stance:"direct and community-minded"},
+ {id:"student-directions",npcProfileId:"tomi-student",dialogueId:"student-directions",name:"Tomi",role:"Student and aspiring designer",color:"#0B7A43",look:"woman",spot:"e",sign:"Student looking for campus",kind:"activity",major:false,reward:{xp:8,ngn:20,item:"campus-helper"},ageRange:"late teens-20s",economicContext:"student with early-career ambitions",technicalFluency:"digitally curious",stance:"curious and ambitious"},
+ {id:"wrong-delivery",npcProfileId:"sani-rider",dialogueId:"wrong-delivery",name:"Sani",role:"Delivery rider",color:"#E4572E",look:"man",spot:"g",sign:"Delivery at the wrong address",kind:"activity",major:false,reward:{xp:12,ngn:30,item:"trusted-runner"},ageRange:"20s-40s",economicContext:"delivery work with time and fuel pressure",technicalFluency:"mobile-first",stance:"resourceful and alert"},
+ {id:"lost-keys",npcProfileId:"aunty-bose",dialogueId:"lost-keys",name:"Aunty Bose",role:"Retired seamstress and resident",color:"#8C6AC8",look:"elder",spot:"i",sign:"Lost keys nearby",kind:"activity",major:false,reward:{xp:10,ngn:20,item:"found-keys"},ageRange:"60s-70s",economicContext:"retired craft worker and neighborhood resident",technicalFluency:"varies; prefers clear practical help",stance:"warm but independent"},
+ {id:"street-challenge",npcProfileId:"kunle-fan",dialogueId:"street-challenge",name:"Kunle",role:"Local football fan",color:"#D28A20",look:"guy",spot:"j",sign:"Quick street challenge",kind:"challenge",major:false,reward:{xp:6,ngn:15,item:"street-challenge"},ageRange:"20s-30s",economicContext:"local resident and sports enthusiast",technicalFluency:"not assumed",stance:"playful and competitive"},
+ {id:"coop-record",npcProfileId:"musa-farmer",dialogueId:"coop-record",name:"Musa",role:"Smallholder farmer",color:"#0B7A43",look:"man",spot:"b",sign:"Farmer has a question",kind:"education",major:true,reward:{xp:15,ngn:30,item:"supply-chain-note"},ageRange:"30s-50s",economicContext:"smallholder livelihood and cooperative trade",technicalFluency:"practical; values local evidence",stance:"skeptical of costly promises"}
+];
+
 export const WEB3_CONCEPTS = [
   "digital-ownership","verifiable-records","decentralized-identity","portable-credentials",
   "agriculture-traceability","commerce-payments","health-data-rights","smart-contracts",
