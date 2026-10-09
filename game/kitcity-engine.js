@@ -2263,12 +2263,12 @@ function moduleCard(m){
 }
 function startExam(){
   const qs=[]; AK_TRACKS.forEach(t=>shuffle(Q3(t.qs)).slice(0,2).forEach(q=>qs.push(q)));
-  const head=who('\u2605','Final exam','KitLab final review, 18 questions','#1B1C20');
+  const head=who('\u2605','Final exam','KitLab final review, 20 questions','#1B1C20');
   const review=ms=>ms.length?'<p class="note">Review these:</p><ul class="pts">'+ms.map(i=>'<li><b>'+qs[i].q+'</b> '+qs[i].o[qs[i].a]+'. '+qs[i].w+'</li>').join('')+'</ul>':'';
-  openSheet(head+'<p>This is the final check. It has 18 questions drawn from the KitLab learning paths. There is no feedback until the end. You need <b>14 of 18</b> to pass.</p>',[{t:'Start exam',f:()=>runQuiz({head:head,qs:qs,pass:14,exam:true,onExit:closeSheet,
+  openSheet(head+'<p>This is the final check. It has 20 questions drawn from the KitLab learning paths. There is no feedback until the end. You need <b>15 of 20</b> to pass.</p>',[{t:'Start exam',f:()=>runQuiz({head:head,qs:qs,pass:15,exam:true,onExit:closeSheet,
     onPass:r=>{ const first=!P.kitLabExam; P.kitLabExam={score:Math.max(r.ok,(P.kitLabExam&&P.kitLabExam.score)||0),n:r.n}; let gain=0; if(first){ gain=150; P.xp+=gain; } save(); updateHUD(); Snd.sfx('done');
       openSheet(head+'<h3>Passed: '+r.ok+' of '+r.n+'</h3>'+(gain?'<div class="kv"><span>Exam XP</span><b>+'+gain+'</b></div>':'')+'<p>You are now Web3 learning-path certified in KitCity.</p>'+review(r.miss),[{t:'View certificate',f:webCert},{t:'Back to hub',g:1,f:()=>{ closeSheet(); renderHub(); }}]); },
-    onFail:r=>{ openSheet(head+'<h3>'+r.ok+' of '+r.n+'. Not yet.</h3><p>You need 14 to pass. Here is what to review, then try again with a fresh set of questions.</p>'+review(r.miss),[{t:'Try again',f:startExam},{t:'Back to hub',g:1,f:()=>{ closeSheet(); renderHub(); }}]); }})},
+    onFail:r=>{ openSheet(head+'<h3>'+r.ok+' of '+r.n+'. Not yet.</h3><p>You need 15 to pass. Here is what to review, then try again with a fresh set of questions.</p>'+review(r.miss),[{t:'Try again',f:startExam},{t:'Back to hub',g:1,f:()=>{ closeSheet(); renderHub(); }}]); }})},
    {t:'Not now',g:1,f:closeSheet}]);
 }
 function webCert(){
