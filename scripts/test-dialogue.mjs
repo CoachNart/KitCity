@@ -2,38 +2,10 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { loadKitCityModules } from "./registry-loader.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-async function importSource(relativePath) {
-  let source = await readFile(path.join(root, relativePath), "utf8");
-  if (relativePath === "game/dialogue-content.js") {
-    const educationalSource = await readFile(path.join(root, "game/educational-content.js"), "utf8");
-    const educationalModule = "data:text/javascript;base64," + Buffer.from(educationalSource).toString("base64");
-    source = source.replace('"./educational-content.js"', JSON.stringify(educationalModule));
-  }
-  if (relativePath === "game/mission-distribution.js") {
-    const educationalSource = await readFile(path.join(root, "game/educational-content.js"), "utf8");
-    const worldSource = await readFile(path.join(root, "game/world-registry.js"), "utf8");
-    const dialogueSource = await readFile(path.join(root, "game/dialogue-content.js"), "utf8");
-    const toDataUrl = value => "data:text/javascript;base64," + Buffer.from(value).toString("base64");
-    const educationalModule = toDataUrl(educationalSource);
-    const worldModule = toDataUrl(worldSource);
-    const dialogueModule = toDataUrl(dialogueSource.replace('"./educational-content.js"', JSON.stringify(educationalModule)));
-    const adventureSource = await readFile(path.join(root, "game/adventure-data.js"), "utf8");
-    const adventureModule = toDataUrl(adventureSource.replace('"./world-registry.js"', JSON.stringify(worldModule)));
-    source = source
-      .replace('"./world-registry.js"', JSON.stringify(worldModule))
-      .replace('"./educational-content.js"', JSON.stringify(educationalModule))
-      .replace('"./dialogue-content.js"', JSON.stringify(dialogueModule))
-      .replace('"./adventure-data.js"', JSON.stringify(adventureModule));
-  }
-  return import("data:text/javascript;base64," + Buffer.from(source).toString("base64"));
-}
-const engine = await importSource("game/conversation-engine.js");
-const world = await importSource("game/world-registry.js");
-const distribution = await importSource("game/mission-distribution.js");
-const content = await importSource("game/dialogue-content.js");
-const education = await importSource("game/educational-content.js");
+const { engine, world, distribution, content, education, cleanup } = await loadKitCityModules();
 const engineSource = await readFile(path.join(root, "game/kitcity-engine.js"), "utf8");
 assert.match(engineSource, /new ConversationEngine\(\{content,state:createDialogueState\(adventure\.dialogueState\)/, "NPC interactions must use the reusable engine");
 assert.match(engineSource, /adventureComplete\(mapped,choiceIndex\)/, "mission-ending dialogue must reach the existing reward/mission handler");
@@ -195,3 +167,4 @@ assert.equal(left.ended, true);
 assert.equal(left.missionCompleted, false, "leaving early must not complete the mission");
 
 console.log("PASS: Nigerian world registry (36 states + separate FCT), playable-location gating, sector/NPC/mission/reward/event registries, 7 social dialogues, 15 educational missions, prerequisite gating, repeat avoidance and dialogue progression validate.");
+await cleanup();
