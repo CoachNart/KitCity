@@ -270,6 +270,8 @@ export function validateWorldSystem() {
   for (const jurisdiction of NIGERIAN_JURISDICTIONS) {
     const records = WORLD_LOCATIONS.filter(location => location.jurisdictionId === jurisdiction.id);
     if (!records.length) errors.push(jurisdiction.id + ": has no location registry record");
+    const settlement = PLANNED_SETTLEMENT_LOCATIONS.find(location => location.id === "settlement-" + jurisdiction.id);
+    if (!settlement || settlement.settlementName !== jurisdiction.administrativeCapital || settlement.status !== "planned") errors.push(jurisdiction.id + ": missing or mismatched administrative-capital registry record");
     if (!Array.isArray(jurisdiction.content.locationIds)) errors.push(jurisdiction.id + ": location index must be an array");
     for (const locationId of jurisdiction.content.locationIds || []) {
       const location = WORLD_LOCATIONS.find(item => item.id === locationId);
@@ -311,6 +313,8 @@ export function validateWorldSystem() {
     if (!NPC_REGISTRY.some(npc => npc.id === dialogue.npcId && npc.dialogueIds.includes(dialogue.id))) errors.push(dialogue.id + ": NPC references missing dialogue association for " + dialogue.npcId);
   }
   for (const content of [...KITCITY_DIALOGUES, ...EDUCATIONAL_MISSIONS]) {
+    if (content.requires?.completedMission && !knownMissionRefs.has(content.requires.completedMission)) errors.push(content.id + ": invalid required mission " + content.requires.completedMission);
+    for (const requiredMission of content.requires?.completedMissions || []) if (!knownMissionRefs.has(requiredMission)) errors.push(content.id + ": invalid required mission " + requiredMission);
     if (!content.start || !content.nodes?.[content.start]) errors.push(content.id + ": missing valid start node");
     const reachable = graphReachable(content);
     for (const nodeId of Object.keys(content.nodes || {})) if (!reachable.has(nodeId)) errors.push(content.id + ": unreachable dialogue node " + nodeId);
