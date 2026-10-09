@@ -173,7 +173,7 @@ export function selectEducationalMissions({
     if (repeatsKnown) {
       if (!allowDeepening) continue;
       const priorContexts = conceptHistory[mission.conceptId] || [];
-      if (priorContexts.some(entry => entry.locationId === locationId)) continue;
+      if (priorContexts.some(entry => entry.locationId === locationId || entry.missionId === mission.id)) continue;
     }
     selected.push(mission);
     if (selected.length >= limit) break;
