@@ -8,13 +8,13 @@ The active game entry point is free roam. Encounters are optional and contextual
 
 ### Conversation engine
 
-- `game/conversation-engine.js`: reusable, data-only conversation state machine. Supports branching nodes, conditional choices, node/conversation mission requirements, optional follow-ups, state changes, trust and knowledge flags, mission completion, natural exit, and persistence snapshots.
-- `game/dialogue-content.js`: authored conversation pack. Each NPC has a distinct profession, concern, knowledge level, communication style and response branches. Add another profession, community, location or educational mission by registering a content tree; no rendering or engine changes are needed.
-- `game/kitcity-engine.js`: adapts engine state to compact dialogue bubbles, mobile choice buttons, game rewards and existing mission progress. It persists dialogue state through the game's existing storage wrapper.
+- `game/conversation-engine.js`: reusable, data-only conversation state machine. Supports branching nodes, conditional choices, mission requirements, optional follow-ups, state changes, trust and knowledge flags, mission completion, natural exit, and persistent state snapshots.
+- `game/dialogue-content.js`: authored conversation pack. NPCs have distinct professions, concerns, knowledge levels, communication styles and response branches. Add another profession, community, location or educational mission by registering a content tree; no rendering or engine changes are needed.
+- `game/kitcity-engine.js`: adapts engine state to compact dialogue bubbles, mobile choice buttons, game rewards and mission progress. Dialogue state is persisted through the game's existing storage wrapper.
 - `game/adventure-data.js`: registry for Nigeria's 36 states and FCT, NPC profiles, concepts and free-roam activities.
 - `game/adventure-director.js`: exploration-first encounter pacing and eligibility rules.
 
-Dialogue is authored locally. No external AI API or paid runtime service is needed. Choice effects, knowledge flags, relationship trust, completed missions and unlocked follow-ups are stored in the dialogue state. NPCs can recognize returning players. Every node offers a safe way to leave without falsely completing a mission.
+Dialogue is authored locally. No external AI API or paid runtime service is needed. Choice effects, knowledge flags, relationship trust, completed missions and unlocked follow-ups are stored in dialogue state. NPCs can recognize returning players. Every node offers a safe way to leave without falsely completing a mission.
 
 ## Verification
 
