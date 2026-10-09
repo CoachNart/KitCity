@@ -394,6 +394,30 @@ export const PROTOTYPE_OBJECTIVES = PROTOTYPE_MISSIONS.flatMap(mission=>mission.
 export function getPrototypeMission(id){return PROTOTYPE_MISSIONS.find(mission=>mission.id===id)||null;}
 export function getPrototypeDialogue(id){return getPrototypeMission(id)?.dialogue||null;}
 
+/** Record one selected field-activity decision and gate the debrief until every step is inspected. */
+export function recordPrototypeObjectiveChoice(adventureState,missionId,objectiveId,choiceId){
+  const mission=getPrototypeMission(missionId);
+  if(!mission)return {error:"unknown-mission"};
+  const objective=mission.objectives.find(item=>item.id===objectiveId);
+  if(!objective)return {error:"unknown-objective"};
+  const choice=objective.choices.find(item=>item.id===choiceId);
+  if(!choice)return {error:"unknown-choice"};
+  const dialogueState=adventureState.dialogueState||(adventureState.dialogueState={});
+  dialogueState.flags||={};
+  if(!dialogueState.flags[mission.startedFlag])return {error:"mission-not-started"};
+  if(dialogueState.flags[mission.completedFlag])return {error:"mission-complete"};
+  const stepFlag=flag("objective",mission.id+":"+objective.id);
+  if(dialogueState.flags[stepFlag])return {error:"already-recorded"};
+  dialogueState.flags[stepFlag]=true;
+  adventureState.prototypeDecisions||={};
+  adventureState.prototypeDecisions[mission.id]||={};
+  adventureState.prototypeDecisions[mission.id][objective.id]={choiceId:choice.id,feedback:choice.feedback};
+  const completed=mission.objectives.filter(item=>dialogueState.flags[flag("objective",mission.id+":"+item.id)]).length;
+  const allDone=completed===mission.objectives.length;
+  if(allDone)dialogueState.flags[mission.objectiveCompleteFlag]=true;
+  return {mission,objective,choice,completed,total:mission.objectives.length,allDone};
+}
+
 export function validatePrototypeMissionPack(){
   const errors=[];
   const ids=new Set(),npcIds=new Set(),dialogueIds=new Set(),objectiveIds=new Set();
