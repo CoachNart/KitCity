@@ -2222,7 +2222,8 @@ function streetMissionRun(def,Lz,stage,missionTitle,taskLabel){
       return;
     }
     const rawPrompt=String(q.q||'What is the safest move?');
-    const prompt=/^(Which action is the safest first step\\?|Which habit best protects a wallet\\?|A stranger pressures you to act immediately\\. What should you do\\?)$/i.test(rawPrompt)
+    const genericPrompt=rawPrompt==="Which action is the safest first step?"||rawPrompt==="Which habit best protects a wallet?"||rawPrompt==="A stranger pressures you to act immediately. What should you do?";
+    const prompt=genericPrompt
       ? 'For '+topic.toLowerCase()+', what is the best move in this situation?'
       : rawPrompt;
     const ask=()=>talk(def,'<p>'+prompt+'</p><p class="note">Choose the move you would make out on the street.</p>',
