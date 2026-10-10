@@ -1041,7 +1041,7 @@ const CITY_ARCH={
   sokoto:'northern-compound',katsina:'northern-compound','birnin-kebbi':'northern-compound',
   minna:'middle-belt',dutse:'northern-compound',gusau:'northern-compound',kafanchan:'middle-belt',
   damboa:'northern-compound',kaduna:'north-central',enugu:'southeast-urban',benin:'southwest-urban',
-  calabar:'coastal-tropical',jos:'north-central',uyo:'coastal-tropical',port-harcourt:'river-port'
+  calabar:'coastal-tropical',jos:'north-central',uyo:'coastal-tropical'
 };
 const ARCH_STYLES={
   'dense-coastal':[['zinc',.28],['flat',.43],['glass',.16],['admin',.13]],
