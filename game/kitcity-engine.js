@@ -4191,6 +4191,34 @@ async function submitPlayerName(){
     updateAuthButton();
   }
 }
+async function resumeAuthenticatedUser(user){
+  if(!user||authBusy) return;
+  authBusy=true;
+  const button=$('#startBtn');
+  if(button){ button.disabled=true; button.textContent='Restoring your KitCity session…'; }
+  try{
+    let savedName='';
+    try{ savedName=window.localStorage.getItem('kitcity_player_name')||''; }catch(e){}
+    const validName=value=>/^[A-Za-z0-9_]{3,20}$/.test(String(value||''));
+    const candidate=validName(savedName)?savedName:(validName(P.name)?P.name:'Player_'+String(user.uid).slice(0,8));
+    const profile=await getOrCreateUserProfile(user,candidate,deviceInstallId(),null);
+    activateUserProgress(user.uid);
+    const remote=await loadCloudProgress(user.uid);
+    if(remote) mergeCloudProgress(remote);
+    P.name=(profile&&typeof profile.username==='string'&&profile.username)||candidate;
+    try{ window.localStorage.setItem('kitcity_player_name',P.name); }catch(e){}
+    cloudSyncReady=true;
+    save();
+    if(playerNameError) playerNameError.textContent='';
+    beginGame();
+  }catch(error){
+    if(playerNameError) playerNameError.textContent='Could not restore your saved session. '+authErrorMessage(error);
+  }finally{
+    authBusy=false;
+    if(button) button.disabled=false;
+    updateAuthButton();
+  }
+}
 function beginGame(){
   Snd.unlock(); Snd.setMode('hub'); Snd.sfx('click');
   $('#title').classList.add('hidden');
@@ -4215,11 +4243,7 @@ if(firebaseConfigured){
   waitForAuthState().then(user=>{
     if(user&&playerEmailInput) playerEmailInput.value=user.email||'';
     updateAuthButton();
-    if(user&&new URLSearchParams(window.location.search).get('enter')==='1'){
-      let savedName='';
-      try{ savedName=window.localStorage.getItem('kitcity_player_name')||''; }catch(e){}
-      if(playerNameInput&&savedName){ playerNameInput.value=savedName; submitPlayerName(); }
-    }
+    if(user) void resumeAuthenticatedUser(user);
   }).catch(()=>updateAuthButton());
 }else updateAuthButton();
 function applyLang(){
