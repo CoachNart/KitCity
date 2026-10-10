@@ -264,7 +264,7 @@ const Snd=(function(){
     click(t){ tone(560,t,.06,'triangle',.12,gSfx,{to:420}); },
     /* footstep: heel thud + shoe scuff + crisp tap. side alternates left/right, run is heavier and snappier */
     foot(t,a){
-      const run=!!(a&&a.run),side=(a&&a.side)?1:-1,v=((a&&a.vol)||1)*(run?.42:.32);
+      const run=!!(a&&a.run),side=(a&&a.side)?1:-1,v=Math.min(1.15,((a&&a.vol)||1)*(run?.48:.38));
       const p=.9+Math.random()*.2+side*.03;
       tone(150*p,t,.1,'sine',.55*v,gSfx,{to:55*p});
       burst(t,run?.09:.12,'bandpass',(run?1700:1250)*p,.12*v,gSfx,.8);
@@ -283,7 +283,7 @@ const Snd=(function(){
     setCity:city=>YT.setCity(city),
     setMode:noop,
     duck(b){ YT.setDuck(b); },
-    sfx(n,a){ if(!ctx||!on.sfx) return; const f=SFX[n]; if(f) f(ctx.currentTime,a); },
+    sfx(n,a){ if(!on.sfx||!ensure()) return; const f=SFX[n]; if(f) f(ctx.currentTime,a); },
     set(k,v){ on[k]=v; if(k==='music') YT.setOn(v); applyVol(); },
     blip(name,n){
       if(!ctx||!on.sfx) return; let h=0; const str=String(name||''); for(let i=0;i<str.length;i++) h=(h*31+str.charCodeAt(i))|0;
@@ -1526,7 +1526,7 @@ function streetDetails0(C,blocks){
   let tries=0,made=0;
   while(made<4&&tries++<120){ const b=pk(blocks),side=Math.floor(RN()*4),pt=ringPoint(b,side,rr(-8,8)); if(!ringFree(pt.x,pt.z,7)) continue; ringTaken.push({x:pt.x,z:pt.z,r:5}); addBusStop(pt,side); made++; }
   tries=0; made=0;
-  while(made<8&&tries++<200){ const b=pk(blocks),side=Math.floor(RN()*4),pt=ringPoint(b,side,rr(-12,12)); if(!ringFree(pt.x,pt.z,4)) continue; ringTaken.push({x:pt.x,z:pt.z,r:2}); addHawker(pt,side); made++; }
+  while(made<14&&tries++<320){ const b=pk(blocks),side=Math.floor(RN()*4),pt=ringPoint(b,side,rr(-12,12)); if(!ringFree(pt.x,pt.z,4)) continue; ringTaken.push({x:pt.x,z:pt.z,r:2}); addHawker(pt,side); made++; }
 }
 function streetDetails(C,blocks){
   streetDetails0(C,blocks);
@@ -1663,7 +1663,7 @@ function buildCity(key){
   dxFlush(C);
   cityCols=colliders.length;
   for(let k=-3;k<=3;k++)for(const axis of ['x','z'])for(const dir of [1,-1]){
-    const n=(k===0||k===-1)?2:(RN()<.5?1:0);
+    const n=(k===0||k===-1)?3:(RN()<.72?1:2);
     for(let q=0;q<n;q++) addCar(axis,k,dir,C);
   }
   const spotWalk=()=>{
@@ -1681,14 +1681,14 @@ function buildCity(key){
     const g=buildPerson(Object.assign({},pk(LOOKSC),{skin:pk(SKINS)})); g.position.set(x,.05,z); trafficGroup.add(g);
     const w=Object.assign({g:g,dir:new THREE.Vector3(dx,0,dz),sp:sp,rem:rr(10,30),ph:rr(0,6),state:'walk',timer:0,cd:rr(0,6),type:'walk',near:true},extra||{}); walkers.push(w); return w;
   };
-  for(let q=0;q<20;q++){ const sp=spotWalk(); if(!sp) continue; const sg=RN()<.5?1:-1; mkW(sp.x,sp.z,sp.dx*sg,sp.dz*sg,rr(2,3.2)); }
-  for(let q=0;q<6;q++){
+  for(let q=0;q<30;q++){ const sp=spotWalk(); if(!sp) continue; const sg=RN()<.5?1:-1; mkW(sp.x,sp.z,sp.dx*sg,sp.dz*sg,rr(2,3.2)); }
+  for(let q=0;q<9;q++){
     const sp=spotWalk(); if(!sp) continue; const sg=RN()<.5?1:-1,spd=rr(2,2.7),rem=rr(10,30);
     const a=mkW(sp.x,sp.z,sp.dx*sg,sp.dz*sg,spd,{type:'pair',rem:rem}),b=mkW(sp.x+sp.dz*1.1,sp.z+sp.dx*1.1,sp.dx*sg,sp.dz*sg,spd,{type:'pair',rem:rem,ph:a.ph+.6});
     a.partner=b; b.partner=a;
   }
   let made=0,tr=0;
-  while(made<10&&tr++<120){
+  while(made<14&&tr++<160){
     const i=Math.floor(rr(-3,4)),j=Math.floor(rr(-3,4)),o=RN()<.5?10.5:-10.5; let A,B,axis,coord,cc;
     if(RN()<.5){ const x0=i*R+o,z0=j*R; A={x:x0,z:z0-8.2}; B={x:x0,z:z0+8.2}; axis='x'; coord=z0; cc=x0; }
     else { const z0=j*R+o,x0=i*R; A={x:x0-8.2,z:z0}; B={x:x0+8.2,z:z0}; axis='z'; coord=x0; cc=z0; }
