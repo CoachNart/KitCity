@@ -84,7 +84,7 @@ const MUSIC_QUEUES={
   'birnin-kebbi':{label:"Birnin Kebbi · Hausa / Arewa",videos:["UuumEqJKQ9I"]},
   'minna':{label:"Minna · Nupe / Arewa",videos:["WQFDWM-6ytA"]},
   'dutse':{label:"Dutse · Hausa / Arewa",videos:["ULjXLxJa74w"]},
-  'gusau':{label:"Gusau · Hausa / Arewa",videos:["jwxbXMCHj5c"]},
+  'gusau':{label:"Gusau · Hausa / Arewa",videos:["hCR54DuQoBM"]},
   'kafanchan':{label:"Kafanchan · Southern Kaduna",videos:["dkPClcO4Whw"]},
   'damboa':{label:"Damboa · Kanuri / Hausa",videos:["hLJcQH_2Onk"]}
 };
