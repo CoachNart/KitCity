@@ -45,7 +45,7 @@ function personalize(html){ return String(html==null?'':html).replace(/Agent Kit
 /* =====================  YouTube soundtrack  ===================== */
 const MUSIC_QUEUES={
   afrobeat:{label:'Naija Afrobeats',videos:['kc4PfiRWpog','ulmVmlNoSL8','LZ6B1xACdxM']},
-  'lagos':{label:"Lagos · Naija Afrobeats",videos:["kc4PfiRWpog","ulmVmlNoSL8","LZ6B1xACdxM"]},
+  'lagos':{label:"Lagos · Soulful Jazz & Lo-fi",videos:["xi_lHo9KCo0","vlZkQGiXeA8"]},
   'abuja':{label:"Abuja · Naija Afrobeats",videos:["kc4PfiRWpog","ulmVmlNoSL8","qbefFtgUVTY"]},
   'ph':{label:"Port Harcourt · Niger Delta / Ijaw",videos:["l-_FcHIS4Yo","k6eE3c70hgg","kc4PfiRWpog"]},
   'benin':{label:"Benin City · Edo / Delta grooves",videos:["l-_FcHIS4Yo","k6eE3c70hgg","ulmVmlNoSL8"]},
