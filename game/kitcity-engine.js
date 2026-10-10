@@ -2040,8 +2040,8 @@ const SUYA_ADDR='0x'+hex(20);
 const modalEl=$('#modal'),sheetEl=$('#sheet'),talkBtn=$('#talkBtn');
 let cbs=[],toastT=0,chat={npc:null,log:[]},sheetTok=0,pendingReveal=null,hazardSpeechActive=false,pendingFeetLine=false;
 function toast(msg,opts){ const t=$('#toast'); clearTimeout(toastT); t.classList.remove('hazard-bubble'); hazardSpeechActive=false; t.textContent=tr(msg); if(opts&&opts.bubble){t.classList.add('hazard-bubble');hazardSpeechActive=true;} t.classList.add('show'); const duration=opts&&opts.duration?opts.duration:2400; toastT=setTimeout(()=>{t.classList.remove('show','hazard-bubble');hazardSpeechActive=false;if(pendingFeetLine){pendingFeetLine=false;toast('Back on your feet. Watch the traffic.');}},duration); }
-function openSheet(html,btns,typingMs){
-  html=tx(personalize(html)); S.modal=true; joy.reset(); btns=btns||[]; cbs=btns.map(b=>b.f);
+function openSheet(html,btns,typingMs,preserveIdentity){
+  html=tx(preserveIdentity?html:personalize(html)); S.modal=true; joy.reset(); btns=btns||[]; cbs=btns.map(b=>b.f);
   const row=btns.length?'<div class="row">'+btns.map((b,i)=>'<button class="btn'+(b.g?' ghost':'')+(b.m?' mono':'')+'" data-i="'+i+'" type="button">'+tr(b.t)+'</button>').join('')+'</div>':'';
   const tok=++sheetTok;
   sheetEl.innerHTML=html+row; sheetEl.scrollTop=0;
@@ -2070,7 +2070,7 @@ function talk(def,html,btns){
   const pl=plain(html);
   chat.log.push({html:pl.slice(0,80)+(pl.length>80?'\u2026':'')});
   const wrapped=(btns||[]).map(b=>({t:personalize(tr(b.t)),g:b.g,m:b.m,f:()=>{ chat.log.push({me:1,html:personalize(tr(b.t))}); b.f(); }}));
-  openSheet(whoOf(def)+'<div class="chat">'+prev+'<div class="b npc dots"><i></i><i></i><i></i></div><div class="b npc new"><small class="speaker-tag">'+npcName.toUpperCase()+'</small>'+html+'</div></div>',wrapped,Math.min(1100,320+pl.length*4));
+  openSheet(whoOf(def)+'<div class="chat">'+prev+'<div class="b npc dots"><i></i><i></i><i></i></div><div class="b npc new"><small class="speaker-tag">'+npcName.toUpperCase()+'</small>'+html+'</div></div>',wrapped,Math.min(1100,320+pl.length*4),true);
 }
 function busy(def,txt,ms,next){ openSheet(whoOf(def)+'<div class="busy"><span class="spin"></span><p>'+txt+'</p></div>',[]); setTimeout(next,ms); }
 const TX=()=>'0x'+hex(32);
