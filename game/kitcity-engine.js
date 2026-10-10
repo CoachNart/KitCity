@@ -864,6 +864,22 @@ const LOOK={
  jos:{paint:['#D3CCBC','#B3BFB0','#BCA98C','#9FAFBA','#D6BF9A','#8FA38F'],h:'#D5E3EC',z:'#4A82BA',sun:'#FFF3DE',con:1.14,sat:1.04,cl:.8,gain:[1,1,1.02],lift:[0,.01,.04],dust:.05,veil:['#D5E3EC',.07],fog:[75,260],leaf:'#3f7a45'},
  maiduguri:{paint:['#D7BE92','#C7A171','#E2CFA6','#B88F5E','#D0B084','#A98254'],dust:.5,fx:'dust',h:'#EBD3A6',z:'#C4B08E',sI:1.0,exp:1.12,sat:.85,con:1.0,fade:.08,gain:[1.08,1.02,.86],vig:.4,veil:['#EBD3A6',.34],fog:[38,165],cl:.1,dirt:'#C9A06E',slab:'#C3AC82',leaf:'#6f8f3e'}
 };
+/* KitCity is a fictional Web3 destination, not another regional street-grid city. */
+CITIES.kitcity={
+ name:'KitCity',tag:'The Web3 World · Built by T3kit',lon:14.15,lat:13.05,seed:811,
+ sky:0x07182D,fog:[180,520],ground:'#07121F',slab:'#172B3D',dirt:'#07121F',
+ leaf:'#10C8DC',paint:['#10263A','#17384B','#203D54','#0D2A3B'],h:[24,88],market:1,palm:0,tree:0,
+ fleet:[],pal:{},localLanguage:'web3',
+ barks:['Welcome to KitCity.','Build something that lasts.','Your next chapter starts here.'],
+ barksEn:['Welcome to KitCity.','Build something that lasts.','Your next chapter starts here.'],
+ hawk:['Learn it. Verify it. Build it.'],conductor:['T3Kit Hub ahead.'],
+ nsRoads:['Genesis Boulevard','Validator Avenue','Builder Parkway','Open Protocol Road','T3Kit Way','Creator Avenue','Consensus Drive'],
+ ewRoads:['Wallet Way','Onchain Boulevard','DAO Crescent','Smart Contract Street','Learning Loop','Public Goods Road','Mainnet Avenue'],
+ districts:['Genesis Quarter','Builder District','Protocol Row','Creator Campus','DAO Commons','Learning Quarter','Validator Park','Open Finance District','T3Kit Hub']
+};
+Object.assign(LOOK,{
+ kitcity:{h:'#07182D',z:'#123B63',sun:'#7CEBFF',sI:1.35,hS:'#C5E8F8',hG:'#07121F',hI:.9,off:[-42,74,36],exp:1.12,sat:1.16,con:1.12,fade:0,lift:[0,.01,.025],gain:[.94,1.04,1.12],vig:.16,grain:.012,bloom:.72,veil:['#0A2340',.025],cl:.22,cc:'#8CEBFF',fog:[150,500],dust:0,mil:0,rust:0,lat:0,dash:'#36E5F5',roof:'#17384B',ground:'#07121F',slab:'#172B3D',dirt:'#07121F',leaf:'#10C8DC',paint:['#10263A','#17384B','#203D54','#0D2A3B'],zinc:['#123047','#17384B','#0C2337']}
+});
 const lkc=h=>new THREE.Color(h);
 function lkWeather(c,L){
   const g=c.getContext('2d'),S=c.width,R=mulberry(S*7+Math.floor(L.dust*100)+Math.floor(L.mil*100)+Math.floor(L.lat*100)),r=(a,b)=>a+R()*(b-a);
@@ -1650,12 +1666,130 @@ function locName(x,z){
   const di=Math.max(0,Math.min(2,Math.floor((x+210)/140))),dj=Math.max(0,Math.min(2,Math.floor((z+210)/140)));
   return (road?road+', ':'')+C.districts[dj*3+di];
 }
+function buildKitCity(C){
+  const add=(geo,color,x,y,z,opts={})=>{
+    const mat=new THREE.MeshStandardMaterial({
+      color,metalness:opts.metalness===undefined?.45:opts.metalness,
+      roughness:opts.roughness===undefined?.38:opts.roughness,
+      emissive:opts.emissive||'#000000',emissiveIntensity:opts.emissiveIntensity||0
+    });
+    const mesh=new THREE.Mesh(geo,mat); mesh.position.set(x,y,z);
+    mesh.castShadow=true; mesh.receiveShadow=true; mesh.userData.nomerge=true;
+    cityGroup.add(mesh); return mesh;
+  };
+  const box=(w,h,d,color,x,y,z,opts)=>add(new THREE.BoxGeometry(w,h,d),color,x,y,z,opts);
+  const cyl=(rt,rb,h,color,x,y,z,opts)=>add(new THREE.CylinderGeometry(rt,rb,h,12),color,x,y,z,opts);
+  const glow='#20E5F5',gold='#F4C76B',glass='#12334C',white='#E6F5FF';
+  // A dark, polished campus platform with luminous roads instead of the familiar Nigerian grid.
+  box(520,.35,520,'#081725',0,-.28,0,{roughness:.8});
+  for(let k=-2;k<=2;k++){
+    box(9,.08,470,'#10283B',k*82,.015,0,{roughness:.65});
+    box(470,.08,9,'#10283B',0,.018,k*82,{roughness:.65});
+    box(.24,.035,470,glow,k*82,.08,0,{emissive:glow,emissiveIntensity:.8});
+    box(470,.035,.24,glow,0,.08,k*82,{emissive:glow,emissiveIntensity:.8});
+  }
+  // Circular consensus plazas and connected on-chain nodes.
+  for(const [x,z,r] of [[0,-140,40],[-105,-25,24],[110,-30,26],[-110,100,23],[110,95,25],[0,65,28]]){
+    const pad=add(new THREE.CylinderGeometry(r,r,1.1,48),'#122A3E',x,.25,z,{metalness:.7,roughness:.28});
+    pad.rotation.y=.12;
+    add(new THREE.TorusGeometry(r*.83,.18,8,64),glow,x,.9,z,{emissive:glow,emissiveIntensity:1.1,metalness:.55});
+    add(new THREE.TorusGeometry(r*.64,.08,6,64),gold,x,1.02,z,{emissive:gold,emissiveIntensity:.65});
+    for(let i=0;i<8;i++){
+      const a=i*Math.PI/4, nx=x+Math.cos(a)*r*.74,nz=z+Math.sin(a)*r*.74;
+      cyl(.55,.75,2.2,white,nx,1.7,nz,{emissive:glow,emissiveIntensity:.3});
+    }
+  }
+  // T3Kit Hub: a monumental, multi-tier glass-and-metal headquarters.
+  const hx=0,hz=-140;
+  box(78,2,68,'#0D2438',hx,1.25,hz,{metalness:.8,roughness:.25});
+  box(68,1,58,'#1A3D55',hx,2.8,hz,{metalness:.65,roughness:.2});
+  box(54,24,44,glass,hx,15,hz,{metalness:.7,roughness:.18,emissive:'#0A4565',emissiveIntensity:.35});
+  box(58,2,48,'#1B4A63',hx,27,hz,{metalness:.75,roughness:.2});
+  box(44,20,36,'#102C42',hx,38,hz,{metalness:.75,roughness:.16,emissive:'#07364D',emissiveIntensity:.5});
+  box(48,1.2,40,gold,hx,48,hz,{metalness:.8,roughness:.18,emissive:gold,emissiveIntensity:.5});
+  // Layered crown and a signature cyan beacon, visible across the whole destination.
+  for(let i=0;i<4;i++){
+    const r=26-i*5;
+    const ring=add(new THREE.TorusGeometry(r,.42,10,72),i%2?gold:glow,hx,50+i*4,hz,{emissive:i%2?gold:glow,emissiveIntensity:1.2});
+    ring.rotation.x=Math.PI/2;
+  }
+  cyl(1.7,2.4,30,white,hx,68,hz,{emissive:glow,emissiveIntensity:1.2,metalness:.3});
+  add(new THREE.OctahedronGeometry(4,1),glow,hx,85,hz,{emissive:glow,emissiveIntensity:2,metalness:.7});
+  // Four monumental entrance pylons frame the T3Kit Hub gate.
+  for(const x of [-30,30]){
+    for(const z of [-176,-169]){
+      box(2.2,18,2.2,white,x,9,z,{emissive:glow,emissiveIntensity:1.3,metalness:.7});
+      box(3.4,.65,3.4,gold,x,18.4,z,{emissive:gold,emissiveIntensity:1});
+    }
+  }
+  box(66,.7,2,glow,0,18,-173,{emissive:glow,emissiveIntensity:1.2});
+  // Distinct Web3 districts: learning, builders, creators, DAO governance, and open finance.
+  const campus=[
+    {x:-105,z:-25,w:34,d:28,h:26,c:'#153E59',name:'LEARN / VERIFY',kind:'learn'},
+    {x:110,z:-30,w:38,d:30,h:36,c:'#16415A',name:'BUILDER CAMPUS',kind:'build'},
+    {x:-110,z:100,w:32,d:28,h:24,c:'#15354C',name:'CREATOR STUDIOS',kind:'create'},
+    {x:110,z:95,w:38,d:30,h:30,c:'#163B50',name:'DAO COMMONS',kind:'dao'},
+    {x:0,z:65,w:42,d:30,h:27,c:'#17364D',name:'OPEN FINANCE',kind:'finance'},
+    {x:-180,z:-140,w:24,d:26,h:38,c:'#13344B',name:'VALIDATOR NODE',kind:'node'},
+    {x:180,z:-140,w:24,d:26,h:42,c:'#13344B',name:'PROTOCOL LAB',kind:'node'},
+    {x:-180,z:155,w:28,d:26,h:22,c:'#15384D',name:'PUBLIC GOODS',kind:'dao'},
+    {x:180,z:155,w:30,d:26,h:25,c:'#15384D',name:'IDENTITY & SAFETY',kind:'learn'}
+  ];
+  for(const b of campus){
+    box(b.w,b.h,b.d,b.c,b.x,b.h/2,b.z,{metalness:.65,roughness:.2,emissive:'#082D43',emissiveIntensity:.3});
+    box(b.w+2,1,b.d+2,glow,b.x,b.h+0.6,b.z,{emissive:glow,emissiveIntensity:.55,metalness:.7});
+    for(let y=5;y<b.h-2;y+=5){
+      box(b.w+.12,.22,.3,glow,b.x,y,b.z+b.d/2+.18,{emissive:glow,emissiveIntensity:.8});
+      box(.3,.22,b.d+.12,glow,b.x-b.w/2-.18,y,b.z,{emissive:glow,emissiveIntensity:.55});
+    }
+    for(let xx=-1;xx<=1;xx++){
+      box(2.8,Math.max(3,b.h-5),.5,white,b.x+xx*b.w*.23,b.h/2,b.z+b.d/2+.42,{emissive:glow,emissiveIntensity:.3,metalness:.25});
+    }
+    const tag=label(b.name,white,'#0A1B2C',1.2); tag.position.set(b.x,b.h+5,b.z); cityGroup.add(tag);
+    colliders.push({x0:b.x-b.w/2,x1:b.x+b.w/2,z0:b.z-b.d/2,z1:b.z+b.d/2});
+    // Validator antennae make the skyline feel active and infrastructural.
+    if(b.kind==='node'){
+      cyl(1.1,1.5,22,gold,b.x,b.h+11,b.z,{emissive:gold,emissiveIntensity:.7});
+      for(let y=b.h+7;y<b.h+24;y+=5){
+        const rr=add(new THREE.TorusGeometry(3,.16,6,24),glow,b.x,y,b.z,{emissive:glow,emissiveIntensity:1});
+        rr.rotation.x=Math.PI/2;
+      }
+    }
+  }
+  // A suspended data bridge, linking the campus districts to the Hub.
+  box(12,1.2,240,'#1A4058',0,5,-12,{metalness:.8,roughness:.2});
+  for(const x of [-6,6]) box(.25,3,240,glow,x,6.5,-12,{emissive:glow,emissiveIntensity:.7});
+  for(let z=-120;z<=100;z+=20){
+    for(const x of [-5.2,5.2]) box(.22,4,.22,gold,x,6,z,{emissive:gold,emissiveIntensity:.55});
+  }
+  // Large holographic-looking rings above the DAO Commons and open-finance campus.
+  for(const [x,z,r] of [[110,95,18],[0,65,20],[-105,-25,15]]){
+    const tor=add(new THREE.TorusGeometry(r,.5,10,48),glow,x,42,z,{emissive:glow,emissiveIntensity:1.25});
+    tor.rotation.x=Math.PI/2;
+    tor.rotation.y=.18;
+  }
+  // A small, deliberately restrained set of static citizens around the plazas.
+  const people=[[-45,-105],[-56,-80],[42,-94],[52,-65],[-82,-8],[-76,-42],[82,-4],[84,-54],[-92,82],[-75,118],[88,76],[91,119],[-30,48],[32,84],[145,50],[-145,35]];
+  people.forEach(([x,z],i)=>{
+    const p=buildPerson(Object.assign({},pk(LOOKSC),{skin:pk(SKINS)}));
+    p.position.set(x,.05,z); p.rotation.y=(i%2?Math.PI:0); trafficGroup.add(p);
+  });
+  // Landmark labels and a clear route into the Hub.
+  const hubTitle=label('T3KIT HUB',white,'#071827',2.1); hubTitle.position.set(0,58,-140); cityGroup.add(hubTitle);
+  const hubSub=label('THE WEB3 WORLD',gold,'#071827',1.25); hubSub.position.set(0,53,-140); cityGroup.add(hubSub);
+  const gate=label('WELCOME TO KITCITY',white,'#062638',1.4); gate.position.set(0,23,-176); cityGroup.add(gate);
+  const access=label('LEARN  •  BUILD  •  CONTRIBUTE',glow,'#071827',1.05); access.position.set(0,20,-180); cityGroup.add(access);
+  cityCols=colliders.length;
+  mergeStatic(cityGroup); flagShadows(cityGroup); flagShadows(trafficGroup); freeze(cityGroup);
+  setupBarks(C); Snd.setCity('abuja');
+}
 function buildCity(key){
   const C=CITIES[key]; curCity=key;
   clearGroup(cityGroup); clearGroup(trafficGroup); texs.forEach(t=>t.dispose()); texs=[];
   colliders.length=0; buildings.length=0; cars=[]; walkers=[];
   RN=mulberry(C.seed); dxReset(); LOOKSC=CITY_LOOKS[key]||LOOKS;
   applyLook(key,C);
+  if(key==='kitcity'){ buildKitCity(C); return; }
   const outer=new THREE.Mesh(uvScale(new THREE.PlaneGeometry(1400,1400),100,100),lam(C.dirt,{map:LKT.dirt})); outer.rotation.x=-Math.PI/2; outer.position.y=-.04; cityGroup.add(outer);
   const ground=new THREE.Mesh(uvScale(new THREE.PlaneGeometry(520,520),20,20),lam(C.ground,{map:LKT.asph})); ground.rotation.x=-Math.PI/2; cityGroup.add(ground);
   const dirtMat=lam(C.dirt,{map:LKT.dirt}),paveMat=lam(C.slab,{map:LKT.pave}),slabGeo=uvScale(new THREE.BoxGeometry(56,0.1,56),14,14),vergeGeo=uvScale(new THREE.PlaneGeometry(59,59),10,10);
@@ -3563,10 +3697,39 @@ const MISSIONS=[
     wrong:'Accepting a short payout in silence lets gaps repeat. Raise it on the record first.',
     say:'The co-op reviews the three mornings and corrects the payout.'})
  ]},
+{id:'m81',n:81,city:'kitcity',title:'The Final Gate: Enter the T3Kit Hub',goal:'Prove you can protect your wallet, verify on-chain activity, question unsafe permissions, and choose how you will contribute to Web3 before entering KitCity.',steps:[
+ taskStep({label:'Protect your keys',spot:'a',npc:mkSign('Amina Okoro','T3Kit security guide','#1A7897',LK.clerk,'Wallet safety'),
+  intro:'The city gates only open for people who understand the first rule of self-custody. A visitor asks you to send your recovery phrase so they can “activate” your wallet.',
+  q:'What is the safe response?',
+  opts:[['Never share the recovery phrase; use only the official wallet flow',1],['Send it to the visitor because they sound helpful',0]],
+  wrong:'A recovery phrase can give someone control of the wallet. Legitimate support should never ask you to reveal it.',
+  say:'Your keys remain yours. You know the difference between a public address and a secret.'}),
+ taskStep({label:'Verify the transaction trail',spot:'c',npc:mkSign('Tobi Adeyemi','On-chain analyst','#2266A3',LK.guy,'Transaction explorer'),
+  intro:'A contributor claims that a payment is complete and sends you a screenshot. The destination wallet and network are not shown.',
+  q:'What should you verify before accepting the claim?',
+  opts:[['Check the transaction hash, network, recipient and confirmed status in a trusted explorer',1],['Trust the screenshot and move on',0]],
+  wrong:'A screenshot is not proof of an on-chain result. Verify the transaction details on the correct network.',
+  say:'You can distinguish a claim from verifiable on-chain evidence.'}),
+ taskStep({label:'Review the contract permissions',spot:'d',npc:mkSign('Nneka James','Protocol reviewer','#6A4FC8',LK.trader,'Smart contract review'),
+  intro:'A new dApp asks for broad token approval and promises a guaranteed reward if you sign immediately.',
+  q:'What is the responsible next step?',
+  opts:[['Pause, inspect the app and approval scope, and reject anything you cannot verify',1],['Approve immediately because the reward expires soon',0]],
+  wrong:'Urgency and guaranteed rewards are not proof of safety. Understand the permission and verify the application first.',
+  say:'You have learned to question signatures instead of treating every prompt as harmless.'}),
+ taskStep({label:'Choose how you will contribute',spot:'g',npc:mkSign('David Eze','T3Kit community steward','#0B7A70',LK.man,'Builder pathways'),
+  intro:'KitCity is not an endpoint for speculation. It is a starting point for people who learn, build, explain, review and contribute.',
+  q:'What is a useful first step into the ecosystem?',
+  opts:[['Choose a learning path, practise the skills, and contribute work people can verify',1],['Chase rewards without understanding the tools or helping anyone',0]],
+  wrong:'The Hub is designed to turn curiosity into competence and meaningful contribution.',
+  say:'Your path is yours to choose: builder, analyst, creator, researcher or community contributor.'}),
+ {label:'Cross the T3Kit threshold',spot:'h',npc:mkSign('T3Kit Hub Concierge','Final access steward','#D3A84C',LK.elder,'The Web3 World'),run(){
+  talk(this.npc,'<div class="who"><span class="av" style="background:#D3A84C">81</span><div><b>The final gate is open.</b><small>KitCity · T3Kit Hub</small></div></div><p>You have travelled through the cities, learned the street-level rules, and reached the place they were preparing you for.</p><p><b>Welcome to the T3Kit Hub.</b> This is the Web3 World: learn with direction, build with care, verify what you use, and contribute to an open ecosystem.</p><p class="note">Your next chapter begins here. The game’s wallet and rewards remain simulated practice features.</p>',[{t:'Enter the Web3 World',f:finishStep}]);
+ }}
+]},
 ];
 const MBY={}; MISSIONS.forEach(m=>{ MBY[m.id]=m; });
 const loc=(name,role,color,look,sub)=>NPC(name,role,color,look,{body:color,a:'#ffffff',b:YELLOW,sub:sub});
-const BADGES=['Wallet Starter','Swap Smart','Scam Spotter','Key Keeper','Safe Sender','Passport Holder','Community Voice','Cash-out Pro','Fare Payer','Club Skeptic','Gas Watcher','Escrow Trader','Off-ramp Pro','Depeg Calm','Mint Checker','Pump Spotter','Buffer Keeper','Pool Wise','Hardware Holder','Multisig Team','Wallet Splitter','Record Keeper','Phone Buyer','Phish Doubter','School Donor','Review Reader','Remit Careful','Lost Phone Calm','Invoice Checker','Crowdfund Skeptic','Gate Watcher','Ledger Clear','Oil Money Smart','Creek Careful','Tailor Shield','Bank Alert Calm','Loan Sense','Herd Wise','Flyer Doubter','Relief Guard','Gift Pool Wise','Clearance Check','Lucky Draw Skeptic','Cocoa Careful','Gold Audit','Tour Verifier','Lease Check','Supply Watch','Scholar Shield','Fee Guard','Rent Shield','Franchise Check','Loan Sense','Course Skeptic','Input Verified','Bureau Wise','PIN Guard','Bulk Buyer Check','Partner Guard','Recharge Safe','Abia Shoe Check','Land Title Check','Net Co-op','Produce Guard','Pump Verifier','Travel Licence','Seed Scheme Sense','Pond Skeptic','Job Fee Guard','Bond Checker','Permit Honest','Feed Invoice','Ticket Honest','Grove Trust','Cocoa Terms','Park Permit','Solar Limit','Export Office','Gold Licence','Cattle Terms'];
+const BADGES=['Wallet Starter','Swap Smart','Scam Spotter','Key Keeper','Safe Sender','Passport Holder','Community Voice','Cash-out Pro','Fare Payer','Club Skeptic','Gas Watcher','Escrow Trader','Off-ramp Pro','Depeg Calm','Mint Checker','Pump Spotter','Buffer Keeper','Pool Wise','Hardware Holder','Multisig Team','Wallet Splitter','Record Keeper','Phone Buyer','Phish Doubter','School Donor','Review Reader','Remit Careful','Lost Phone Calm','Invoice Checker','Crowdfund Skeptic','Gate Watcher','Ledger Clear','Oil Money Smart','Creek Careful','Tailor Shield','Bank Alert Calm','Loan Sense','Herd Wise','Flyer Doubter','Relief Guard','Gift Pool Wise','Clearance Check','Lucky Draw Skeptic','Cocoa Careful','Gold Audit','Tour Verifier','Lease Check','Supply Watch','Scholar Shield','Fee Guard','Rent Shield','Franchise Check','Loan Sense','Course Skeptic','Input Verified','Bureau Wise','PIN Guard','Bulk Buyer Check','Partner Guard','Recharge Safe','Abia Shoe Check','Land Title Check','Net Co-op','Produce Guard','Pump Verifier','Travel Licence','Seed Scheme Sense','Pond Skeptic','Job Fee Guard','Bond Checker','Permit Honest','Feed Invoice','Ticket Honest','Grove Trust','Cocoa Terms','Park Permit','Solar Limit','Export Office','Gold Licence','Cattle Terms','Genesis Access'];
 /* Progress is tracked by completed missions and practice USDC. */
 const isUnlocked=m=>{ const k=MISSIONS.indexOf(m); return k===0||!!P.done[MISSIONS[k-1].id]; };
 
@@ -3624,7 +3787,7 @@ function finishStep(){
 }
 function completeMission(){
   const m=G.m,first=!P.done[m.id],wrong=G.wrong||0;
-  const missionReward=first?(wrong===0?MISSION_CLEAR_REWARD:MISSION_RETRY_REWARD):0;
+  const missionReward=first?(m.city==='kitcity'?2.5:(wrong===0?MISSION_CLEAR_REWARD:MISSION_RETRY_REWARD)):0;
   if(missionReward) P.usdc=Math.round((P.usdc+missionReward)*100)/100;
   P.done[m.id]=true;save();updateHUD();Snd.sfx('done');
   const idx=MISSIONS.indexOf(m),next=MISSIONS[idx+1],cityComplete=isCityComplete(m.city);
@@ -3636,6 +3799,7 @@ function completeMission(){
   btns.push({t:'Back to hub',g:1,f:exitToHub});
   openSheet('<div class="who"><span class="av" style="background:'+INK+'">'+m.n+'</span><div><h3 style="margin:0">Mission '+m.n+' complete</h3><small>'+CITIES[m.city].name+' · '+m.title+'</small></div></div>'+
     (first?'<div class="kv"><span>Mission reward</span><b>+'+missionReward.toFixed(2)+' USDC</b></div><p class="note">'+(wrong===0?'Clean run reward collected.':'Completed with '+wrong+' wrong answer'+(wrong===1?'':'s')+'. Correct answers and mistakes have already adjusted your USDC balance.')+'</p>':'<p class="note">Replay complete. The first-clear reward has already been collected.</p>')+
+    (m.city==='kitcity'?'<p><b>Welcome to the T3Kit Hub. The journey through Nigeria was your preparation; KitCity is the destination.</b></p>':'')+
     (cityComplete?'<p><b>All missions in '+CITIES[m.city].name+' are complete. Your city badge is available.</b></p>':'')+
     '<div class="kv"><span>Practice balance</span><b>'+P.usdc.toFixed(2)+' USDC</b></div>',btns);
 }
@@ -3672,12 +3836,12 @@ const mx=lon=>(lon-2.2)*20,my=lat=>(14.2-lat)*20;
 function mapSVG(){
   const pts=NG.map(p=>mx(p[0]).toFixed(1)+','+my(p[1]).toFixed(1)).join(' '); let pins='';
   for(const k of cityOrder){ const c=CITIES[k],x=mx(c.lon),y=my(c.lat),open=isCityUnlocked(k),sel=k===hubCity,done=cityMissions(k).filter(m=>P.done[m.id]).length,total=cityMissions(k).length;
-    pins+='<g data-a="city" data-v="'+k+'" role="button" aria-label="'+c.name+(open?'':' locked')+'" tabindex="0" style="cursor:'+(open?'pointer':'not-allowed')+'">'+(sel?'<circle cx="'+x+'" cy="'+y+'" r="8.5" fill="none" stroke="#e8f7ff" stroke-width="1.4"/>':'')+'<circle cx="'+x+'" cy="'+y+'" r="'+(sel?4.6:3.1)+'" fill="'+(done===total?'#72E0B0':open?'#53DDF0':'#536273')+'" stroke="'+(sel?'#fff':'#142333')+'" stroke-width="'+(sel?1.7:1.1)+'"/><title>'+c.name+' · '+done+'/'+total+' missions</title></g>'; }
+    pins+='<g data-a="city" data-v="'+k+'" role="button" aria-label="'+c.name+(open?'':' locked')+'" tabindex="0" style="cursor:'+(open?'pointer':'not-allowed')+'">'+(sel?'<circle cx="'+x+'" cy="'+y+'" r="8.5" fill="none" stroke="'+(k==='kitcity'?'#F4C76B':'#e8f7ff')+'" stroke-width="'+(k==='kitcity'?2.2:1.4)+'"/>':'')+'<circle cx="'+x+'" cy="'+y+'" r="'+(sel?4.6:(k==='kitcity'?4:3.1))+'" fill="'+(k==='kitcity'?'#F4C76B':done===total?'#72E0B0':open?'#53DDF0':'#536273')+'" stroke="'+(sel||k==='kitcity'?'#fff':'#142333')+'" stroke-width="'+(sel||k==='kitcity'?1.7:1.1)+'"/><title>'+(k==='kitcity'?'FINAL DESTINATION · T3Kit Hub':c.name)+' · '+done+'/'+total+' missions</title></g>'; }
   return '<section class="map-card"><div class="map-card-head"><div><span>EXPLORE NIGERIA</span><h2>City Map</h2></div><b>'+cityOrder.length+' cities</b></div><svg viewBox="0 0 270 220" class="map" role="img" aria-label="Interactive map of Nigeria. Tap a city marker to view its missions"><defs><linearGradient id="landFill" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#153747"/><stop offset="100%" stop-color="#172432"/></linearGradient></defs><rect width="270" height="220" rx="14" fill="#0b131d"/><g stroke="#fff" stroke-opacity=".035" stroke-width=".7">'+Array.from({length:10},(_,i)=>'<path d="M'+(i*30)+' 0V220"/>').join('')+Array.from({length:8},(_,i)=>'<path d="M0 '+(i*30)+'H270"/>').join('')+'</g><polygon points="'+pts+'" fill="url(#landFill)" stroke="#2c6578" stroke-width="1.6" stroke-linejoin="round"/>'+pins+'</svg><div class="map-legend"><span><i class="map-dot unlocked"></i>Unlocked</span><span><i class="map-dot completed"></i>Completed</span><span><i class="map-dot locked"></i>Locked</span></div></section>';
 }
 function missionCard(m){
   const un=isUnlocked(m),dn=!!P.done[m.id];
-  return '<div class="card'+(un?'':' lock')+'"><div class="ch">'+badgeSVG(m.n,false,46)+'<div><b>'+'Mission '+m.n+': '+m.title+'</b><small>'+m.goal+'</small></div></div><div class="cf"><span>'+(dn?'Completed':'Up to +0.50 USDC')+'</span>'+(un?'<button class="btn brand" data-a="play" data-v="'+m.id+'" type="button">'+(dn?'Replay':'Play')+'</button>':'<span>Finish mission '+(m.n-1)+' first</span>')+'</div></div>';
+  return '<div class="card'+(un?'':' lock')+(m.city==='kitcity'?' final-destination':'')+'"><div class="ch">'+badgeSVG(m.n,false,46)+'<div><b>'+'Mission '+m.n+': '+m.title+'</b><small>'+m.goal+'</small></div></div><div class="cf"><span>'+(dn?'Completed':'Up to +0.50 USDC')+'</span>'+(un?'<button class="btn brand" data-a="play" data-v="'+m.id+'" type="button">'+(dn?'Replay':'Play')+'</button>':'<span>Finish mission '+(m.n-1)+' first</span>')+'</div></div>';
 }
 function renderHub(){
   $('#hubTop').innerHTML=tx('<span class="wm"><img class="header-logo" src="https://i.postimg.cc/6pLt0sn3/file-000000006e348210b7a8c70bc4ed899d.png" alt="KitCity" /></span><div class="lvl"><b>Practice wallet</b><div class="balance-line"><strong>'+P.usdc.toFixed(2)+' USDC</strong><small>'+Object.keys(P.done).filter(k=>P.done[k]).length+' missions completed</small></div></div>');
@@ -3688,6 +3852,7 @@ function renderHub(){
   if(hubTab==='missions'){
     const C=CITIES[hubCity];
     h+=mapSVG()+'<div class="map-selected"><div><span>SELECTED CITY</span><b>'+C.name+'</b><small>'+C.tag+'</small></div><strong>'+cityMissions(hubCity).filter(m=>P.done[m.id]).length+' / '+cityMissions(hubCity).length+' missions</strong></div>';
+    if(hubCity==='kitcity') h+='<section class="destination-card"><span class="destination-kicker">THE FINAL DESTINATION</span><h2>T3Kit Hub</h2><p>Every city prepared you for this. KitCity is the Web3 World: a premium campus for learning, building, verification, creators, open finance and community contribution.</p><div class="destination-pillars"><span>LEARN</span><span>BUILD</span><span>VERIFY</span><span>CONTRIBUTE</span></div></section>';
     h+='<div class="chips">'+cityOrder.map(k=>'<button class="chip'+(k===hubCity?' on':'')+'" data-a="city" data-v="'+k+'" type="button" '+(isCityUnlocked(k)?'':'disabled')+'>'+CITIES[k].name+(isCityUnlocked(k)?'':' · Locked')+'</button>').join('')+'</div>';
     h+=cityMissions(hubCity).map(m=>missionCard(m)).join('');
   } else if(hubTab==='cityhub'){
