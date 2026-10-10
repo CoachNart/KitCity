@@ -4013,7 +4013,7 @@ async function approximateLocation(){
 function authErrorMessage(error){
   const code=error&&error.code||'';
   if(code==='auth/email-already-in-use') return 'An account already uses this email. Sign in instead.';
-  if(code==='auth/configuration-not-found') return 'Firebase Authentication is not configured for this project yet. Enable Email/Password in Firebase Console → Authentication → Sign-in method, then try again.';
+  if(code==='auth/configuration-not-found') return 'Firebase Authentication is not initialized for this project, or the web config points to a different project. In Firebase Console, open kitcity-efd96, set up Authentication, and enable Email/Password.';
   if(code==='auth/invalid-credential'||code==='auth/wrong-password'||code==='auth/user-not-found') return 'Email or password is incorrect.';
   if(code==='auth/weak-password') return 'Choose a stronger password with at least 8 characters.';
   if(code==='auth/invalid-email') return 'Enter a valid email address.';
