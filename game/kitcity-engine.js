@@ -3846,11 +3846,16 @@ for(const npc of orderedNPCObjects){
 }
 
 function buildMissionNameAliases(mission){
-  const candidates=Object.create(null),ambiguous=new Set();
-  for(const npc of missionNPCObjects(mission)){
+  const candidates=Object.create(null),ambiguous=new Set(),currentNames=new Set();
+  const npcs=missionNPCObjects(mission);
+  for(const npc of npcs){ const current=String(npc.name||'').trim(); if(current) currentNames.add(current.toLowerCase()); }
+  for(const npc of npcs){
     const original=String(npc.originalName||'').trim();
     const current=String(npc.name||'').trim();
     if(!original||!current||original===current) continue;
+    /* Never rewrite a name that is already the canonical name of another NPC in this mission.
+       Otherwise a card for Praise or The don can be renamed by an unrelated dialogue alias. */
+    if(currentNames.has(original.toLowerCase())) continue;
     if(Object.prototype.hasOwnProperty.call(candidates,original)&&candidates[original]!==current) ambiguous.add(original);
     else candidates[original]=current;
   }
@@ -4339,6 +4344,32 @@ function resolve(p,r){
   }
 }
 let hitCd=0,shake=0,fallTimer=0,fallLean=1;
+const HAZARD_LINES={
+  en:[
+    'Yeeh! I don die! Oga driver, who give you licence?',
+    'Ah-ah! You dey drive or you dey play FIFA with my body?',
+    'Driver! Na road you dey use or you dey settle family beef?',
+    'Jesus take the wheel! This driver don turn me to speed bump!',
+    'Omo! My ancestors just saw the car and logged out.',
+    'Oga, you see human being and press accelerator? Outstanding madness.',
+    'I just came to learn crypto, not to become road crypto dust!',
+    'Abeg! Who dash this driver steering wheel? Collect am back!',
+    'This one no be driving, na live-action demolition!',
+    'I don see my village people. Dem dey inside this motor!'
+  ],
+  pcm:[
+    'Yeeh! I don die! Oga driver, who give you licence?',
+    'Ah-ah! You dey drive or you dey play FIFA with my body?',
+    'Driver! Na road you dey use settle family beef?',
+    'Jesus take wheel! This driver don turn me to speed bump!',
+    'Omo! My ancestors don log out since dem see this motor.',
+    'Oga, you see human being come press accelerator? Madness!',
+    'I come learn crypto, no be to become road dust!',
+    'Abeg, who dash this driver steering? Collect am back!',
+    'This one no be driving, na live-action demolition!',
+    'My village people dey inside this motor, I don confirm am!'
+  ]
+};
 function carHit(dt){ if(hitCd>0)hitCd=Math.max(0,hitCd-dt);
   if(fallTimer>0){fallTimer=Math.max(0,fallTimer-dt);player.rotation.z=fallLean*1.25*Math.min(1,(1.5-fallTimer)*8);if(fallTimer===0){player.rotation.z=0;toast('Back on your feet. Watch the traffic.');}return;}
   player.rotation.z=0;if(hitCd>0)return;const p=player.position;
@@ -4350,11 +4381,13 @@ function carHit(dt){ if(hitCd>0)hitCd=Math.max(0,hitCd-dt);
       const penalty=Math.min(.50,P.usdc);
       P.usdc=Math.round((P.usdc-penalty)*100)/100;save();updateHUD();Snd.sfx('bump');
       resolve(p,1);resolve(p,1);
+      const shout=pick(HAZARD_LINES[P.lang==='pcm'?'pcm':'en']);
+      const hitMessage=shout+' '+(penalty>0?'(−'+penalty.toFixed(2)+' USDC)':'(no USDC left to deduct)');
       if(P.usdc<=1e-9&&missionToRestart){
-        toast('No USDC left. Mission failed — restarting from the beginning.');
+        toast(hitMessage+' No USDC left — mission restarting!');
         startMission(missionToRestart);
       } else {
-        toast(penalty>0?'Traffic collision · −'+penalty.toFixed(2)+' USDC':'Traffic collision · no USDC left to deduct');
+        toast(hitMessage);
       }
       break;
     }
