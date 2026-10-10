@@ -1,6 +1,6 @@
 'use client';
 
-import { FormEvent, useState } from 'react';
+import { useState, type FormEvent } from 'react';
 import { authenticateEmailPassword, firebaseConfigured } from '../../lib/firebase';
 
 const logo = 'https://i.postimg.cc/6pLt0sn3/file-000000006e348210b7a8c70bc4ed899d.png';
