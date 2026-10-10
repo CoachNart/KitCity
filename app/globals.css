@@ -117,6 +117,8 @@ html,body{height:100%;overflow:hidden;background:var(--ink);color:var(--ink);fon
 #err{position:fixed;inset:0;display:grid;place-items:center;padding:30px;text-align:center;background:var(--brand);z-index:130;font-weight:800}
 /* chat */
 .chat{display:flex;flex-direction:column;gap:8px;margin:10px 0 2px}
+/* Keep every mission conversation on the same readable typeface. */
+#sheet .chat .b,#sheet .chat .b p,#sheet .chat .b li,#sheet .chat .b h3,#sheet .chat .b b,#sheet .chat .b strong{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
 .b{max-width:94%;padding:10px 12px;border-radius:14px;font-size:15px;line-height:1.4}
 .speaker-tag{display:block;font-size:10px;line-height:1.2;font-weight:900;letter-spacing:.08em;text-transform:uppercase;opacity:.68;margin:0 0 5px}.b.me .speaker-tag{color:var(--brand);opacity:1}
 .b.npc{background:#fff;border:2px solid var(--ink);border-bottom-left-radius:4px;align-self:flex-start}
@@ -207,6 +209,8 @@ html,body{height:100%;overflow:hidden;background:var(--ink);color:var(--ink);fon
 .btn.brand{background:linear-gradient(135deg,#00E5FF,#00BDD8);color:#04161C;border-color:rgba(0,229,255,.72);box-shadow:0 6px 18px rgba(0,229,255,.13)}
 .btn.line{background:rgba(255,255,255,.035);color:#D7E3EB;border-color:rgba(210,231,241,.17);box-shadow:none}
 .btn.ghost{color:#D7E3EB;border-color:rgba(210,231,241,.17)}
+/* Mission conversation actions are consistently black, including secondary choices. */
+#sheet .row .btn{background:#000!important;color:#fff!important;border:1px solid #000!important;box-shadow:none!important}
 .grid2{gap:10px}
 .bd{background:linear-gradient(145deg,rgba(25,36,47,.9),rgba(17,26,36,.94));border:1px solid rgba(180,210,228,.12);border-radius:15px;padding:14px 8px;color:#EAF5FA;box-shadow:0 8px 20px rgba(0,0,0,.1)}
 .bd.off{opacity:.48}
