@@ -110,7 +110,7 @@ function personalize(html){
 /* =====================  YouTube soundtrack  ===================== */
 const MUSIC_QUEUES={
   afrobeat:{label:'Naija Afrobeats Mix 2026',videos:['bGgjIvWj2I0']},
-  'lagos':{label:"Lagos · Soulful Jazz & Lo-fi",videos:["Ik-9-VulHv8","XhMgKHZr1f8"]},
+  'lagos':{label:"Lagos · Soundtrack",videos:["rhrCG0Vtx3g"]},
   'abuja':{label:"Abuja · Contemporary Afrobeats",videos:["XCjU9qbfv1U"]},
   'ph':{label:"Port Harcourt · Niger Delta / Ijaw",videos:["xodanM9AfrI"]},
   'benin':{label:"Benin City · Edo / Delta grooves",videos:["qcBFntpoW4M"]},
@@ -203,6 +203,17 @@ const YT=(function(){
     return MUSIC_QUEUES[currentKey]||MUSIC_QUEUES.lagos;
   }
   function vol(){ if(ready) try{ player.setVolume(duck?22:55); }catch(e){} }
+  function suppressSystemMediaControls(){
+    try{
+      const session=navigator.mediaSession;
+      if(!session) return;
+      session.metadata=null;
+      session.playbackState='none';
+      ['play','pause','stop','seekbackward','seekforward','seekto','previoustrack','nexttrack'].forEach(action=>{
+        try{ session.setActionHandler(action,null); }catch(e){}
+      });
+    }catch(e){}
+  }
   function mount(){
     let d=document.getElementById('ytHost');
     if(!d){
@@ -233,7 +244,7 @@ const YT=(function(){
           if(wantOn && started) play();
         },
         onStateChange:ev=>{
-          if(ev.data===1) errCount=0;
+          suppressSystemMediaControls();\n          if(ev.data===1) errCount=0;
           if(ev.data===0&&wantOn){ try{ player.nextVideo(); }catch(e){} }
         },
         onError:()=>{
@@ -261,7 +272,7 @@ const YT=(function(){
       try{ if(player.getPlayerState&&player.getPlayerState()===-1) loadQueue(); player.playVideo(); }catch(e){}
     }
   }
-  function pause(){ if(ready){ try{ player.pauseVideo(); }catch(e){} } }
+  function pause(){ suppressSystemMediaControls(); if(ready){ try{ player.pauseVideo(); }catch(e){} } }
   return {
     parseId,
     start(){
@@ -424,7 +435,7 @@ const ball=(r,c,sx,sy,sz)=>{ const m=new THREE.Mesh(new THREE.SphereGeometry(r,1
 const tube=(rt,rb,h,c)=>{ const g=new THREE.CylinderGeometry(rt,rb,h,10); g.translate(0,-h/2,0); return new THREE.Mesh(g,M(c)); };
 const boxm=(w,h,d,c)=>new THREE.Mesh(new THREE.BoxGeometry(w,h,d),M(c));
 let logoMat=null;
-const KITCITY_LOGO_URL='https://i.postimg.cc/6pLt0sn3/file-000000006e348210b7a8c70bc4ed899d.png';
+const KITCITY_LOGO_URL='https://i.postimg.cc/qqbdTXky/file-00000000958881f4a776df689a235dec.png';
 function getLogoMat(){if(logoMat)return logoMat;const loader=new THREE.TextureLoader();loader.setCrossOrigin('anonymous');const texture=loader.load(KITCITY_LOGO_URL);texture.colorSpace=THREE.SRGBColorSpace;logoMat=new THREE.MeshBasicMaterial({map:texture,transparent:true,side:THREE.DoubleSide});return logoMat;}
 const ANK=[];
 function ankaraMat(i){
@@ -4002,7 +4013,7 @@ function missionCard(m){
   return '<div class="card'+(un?'':' lock')+(m.city==='kitcity'?' final-destination':'')+'"><div class="ch">'+badgeSVG(m.n,false,46)+'<div><b>'+'Mission '+m.n+': '+m.title+'</b><small>'+m.goal+'</small></div></div><div class="cf"><span>'+(dn?'Completed':'Up to +0.50 USDC')+'</span>'+(un?'<button class="btn brand" data-a="play" data-v="'+m.id+'" type="button">'+(dn?'Replay':'Play')+'</button>':'<span>Finish mission '+(m.n-1)+' first</span>')+'</div></div>';
 }
 function renderHub(){
-  $('#hubTop').innerHTML=tx('<span class="wm"><img class="header-logo" src="https://i.postimg.cc/6pLt0sn3/file-000000006e348210b7a8c70bc4ed899d.png" alt="KitCity" /></span><div class="lvl"><b>Practice wallet</b><div class="balance-line"><strong>'+P.usdc.toFixed(2)+' USDC</strong><small>'+Object.keys(P.done).filter(k=>P.done[k]).length+' missions completed</small></div></div>');
+  $('#hubTop').innerHTML=tx('<span class="wm"><img class="header-logo" src="https://i.postimg.cc/qqbdTXky/file-00000000958881f4a776df689a235dec.png" alt="KitCity" /></span><div class="lvl"><b>Practice wallet</b><div class="balance-line"><strong>'+P.usdc.toFixed(2)+' USDC</strong><small>'+Object.keys(P.done).filter(k=>P.done[k]).length+' missions completed</small></div></div>');
   document.querySelectorAll('#nav [data-v="kitlab"]').forEach(b=>b.remove());
   if(hubTab==='kitlab') hubTab='cityhub';
   document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===hubTab));
