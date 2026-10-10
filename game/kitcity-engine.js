@@ -1028,40 +1028,7 @@ const dashMat=new THREE.MeshBasicMaterial({map:dashTex,transparent:true,depthWri
 const dashGeo=new THREE.PlaneGeometry(56,0.5);
 
 const ZINC=['#8a4b2a','#7a5a45','#6f7f8a','#3c6e8f','#8c3b2e','#a2552e'];
-// City-specific architecture keeps every destination visually distinct while
-// retaining the shared, lightweight procedural 3D city builder.
-const CITY_ARCH={
-  lagos:'dense-coastal',abuja:'planned-capital',kano:'northern-compound',ph:'river-port',
-  ibadan:'southwest-urban',owerri:'southeast-urban',aba:'southeast-urban',umuahia:'southeast-urban',
-  awka:'southeast-urban',onitsha:'river-port',asaba:'planned-regional',uyo:'coastal-tropical',
-  'ikot-ekpene':'coastal-tropical',yenagoa:'river-port',warri:'river-port',makurdi:'middle-belt',
-  ilorin:'north-central',akure:'southwest-urban','ado-ekiti':'southwest-urban',osogbo:'southwest-urban',
-  abeokuta:'southwest-urban',lokoja:'middle-belt',lafia:'northern-compound',bauchi:'northern-compound',
-  gombe:'northern-compound',damaturu:'northern-compound',jalingo:'middle-belt',yola:'middle-belt',
-  sokoto:'northern-compound',katsina:'northern-compound','birnin-kebbi':'northern-compound',
-  minna:'middle-belt',dutse:'northern-compound',gusau:'northern-compound',kafanchan:'middle-belt',
-  damboa:'northern-compound',kaduna:'north-central',enugu:'southeast-urban',benin:'southwest-urban',
-  calabar:'coastal-tropical',jos:'north-central',uyo:'coastal-tropical'
-};
-const ARCH_STYLES={
-  'dense-coastal':[['zinc',.28],['flat',.43],['glass',.16],['admin',.13]],
-  'planned-capital':[['glass',.34],['flat',.25],['admin',.31],['zinc',.1]],
-  'northern-compound':[['banco',.56],['flat',.25],['admin',.1],['zinc',.09]],
-  'river-port':[['zinc',.3],['flat',.4],['admin',.17],['glass',.13]],
-  'coastal-tropical':[['zinc',.25],['flat',.36],['admin',.2],['glass',.09],['banco',.1]],
-  'southwest-urban':[['zinc',.38],['flat',.35],['admin',.17],['glass',.1]],
-  'southeast-urban':[['zinc',.34],['flat',.39],['admin',.16],['glass',.11]],
-  'asaba-regional':[['flat',.38],['admin',.25],['glass',.2],['zinc',.17]],
-  'middle-belt':[['zinc',.25],['flat',.32],['banco',.25],['admin',.12],['glass',.06]],
-  'north-central':[['flat',.32],['banco',.28],['admin',.22],['zinc',.12],['glass',.06]]
-};
-function archType(C){ return CITY_ARCH[curCity]||'southwest-urban'; }
-function pickStyle(C){
-  const styles=ARCH_STYLES[archType(C)]||C.styles;
-  let t=0; styles.forEach(x=>{t+=x[1];}); let r=RN()*t;
-  for(const x of styles){r-=x[1];if(r<=0)return x[0];}
-  return styles[0][0];
-}
+function pickStyle(C){ let t=0; C.styles.forEach(x=>{ t+=x[1]; }); let r=RN()*t; for(const x of C.styles){ r-=x[1]; if(r<=0) return x[0]; } return C.styles[0][0]; }
 const signTexCache={};
 function signMat(sg){
   const key=sg.join('|'); let tex=signTexCache[key];
@@ -1216,42 +1183,7 @@ function addBuilding(x,z,w,d,style,color,cx,cz,ox,oz){
     for(let t=-w/2+2.8;t<w/2-2;t+=2.4) for(const sz of [-1,1]) DX.merlon.push({x:x+t,y:h+.5,z:z+sz*(d/2-.4),sx:1,sy:1,sz:.8});
     for(let t=-d/2+2.8;t<d/2-2;t+=2.4) for(const sx of [-1,1]) DX.merlon.push({x:x+sx*(w/2-.4),y:h+.5,z:z+t,sx:.8,sy:1,sz:1});
   }
-  else if(style==='admin'){
-    xb(w+2,.6,d+2,'#e9e6df',x,h+.3,z);
-    const fx=x+w/2-1,fz=z+d/2-1;
-    DX.pole.push({x:fx,y:h+5.6,z:fz,sx:.2,sy:10,sz:.2});
-    DX.flag.push({x:fx+.1,y:h+9.6,z:fz,ry:rr(0,6)});
-    // Civic/commercial buildings get a visible entrance canopy and columns.
-    xb(Math.min(w*.62,10),.55,2.2,'#b7b5ad',x,h*.22,z+d/2+1.2);
-    for(const px of [-1,1]) xb(.42,h*.22,.42,'#e4e1d8',x+px*Math.min(w*.26,4),h*.11,z+d/2+1.2);
-  }
-  // Keep architectural accents lightweight for mobile GPUs. The previous
-  // version added dozens of separate meshes to every tall building, which
-  // overwhelmed draw calls and could make the game appear frozen on phones.
-  const facadeSide=oz<0?-1:1;
-  if((style==='flat'||style==='admin')&&h>13&&w>9&&d>9&&RN()<.3){
-    const yy=Math.min(h-2,rr(4,Math.min(8,h-2))),bw=Math.min(w*.58,9);
-    const zz=z+facadeSide*(d/2+.42);
-    xb(bw,.2,.72,'#8d969b',x,yy,zz);
-    xb(bw,.14,.1,'#d2d2cb',x,yy+.58,zz+facadeSide*.28);
-    for(let q=-1;q<=1;q++) xb(.08,.48,.08,'#626b70',x+q*bw/3,yy+.3,zz+facadeSide*.28);
-  }
-  if((style==='flat'||style==='admin')&&RN()<.2){
-    // One compact AC unit on a small share of buildings; existing instanced
-    // rooftop tanks remain in place.
-    const ax=x+rr(-w*.25,w*.25),az=z+facadeSide*(d/2+.24),ay=rr(5,Math.max(6,h-3));
-    xb(.9,.62,.42,'#d4d4cc',ax,ay,az);
-  }
-  if(style==='glass'){
-    // A single roof cap keeps tower silhouettes distinct without many draw calls.
-    xb(w*.34,1.4,d*.34,'#4c5962',x,h+.7,z);
-  }
-  if(style==='zinc'&&['dense-coastal','southwest-urban','southeast-urban','river-port','coastal-tropical'].includes(archType(C))&&RN()<.1){
-    // A sparse porch canopy adds local character without creating a duplicate
-    // roof mesh for every zinc-roof house on mobile devices.
-    const porchZ=z+facadeSide*(d/2+1.05);
-    xb(Math.min(w*.45,6),.16,1.35,'#777b78',x,h*.42,porchZ);
-  }
+  else if(style==='admin'){ xb(w+2,.6,d+2,'#e9e6df',x,h+.3,z); const fx=x+w/2-1,fz=z+d/2-1; DX.pole.push({x:fx,y:h+5.6,z:fz,sx:.2,sy:10,sz:.2}); DX.flag.push({x:fx+.1,y:h+9.6,z:fz,ry:rr(0,6)}); }
   const box={x0:x-w/2,x1:x+w/2,z0:z-d/2,z1:z+d/2,y1:h+4};
   colliders.push({x0:box.x0,x1:box.x1,z0:box.z0,z1:box.z1});
   if(style!=='glass'&&RN()<.8){
