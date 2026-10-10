@@ -18,6 +18,11 @@ export default function AuthPage() {
     switch (value?.code) {
       case 'auth/configuration-not-found':
         return 'Firebase Authentication is not initialized for this project, or the web config points to a different project. In Firebase Console, open kitcity-efd96, set up Authentication, and enable Email/Password.';
+      case 'unavailable':
+      case 'firestore/unavailable':
+        return mode === 'signup'
+          ? 'Your sign-in account may have been created, but KitCity could not reach its cloud database to save your profile. Check your connection and try Sign in again. If this keeps happening, the Firestore database or network connection needs to be checked.'
+          : 'KitCity could not reach its cloud database. Check your connection and try again. If this persists, the Firestore database or network connection needs to be checked.';
       case 'auth/email-already-in-use':
         return 'An account already uses this email. Choose Sign in instead.';
       case 'auth/invalid-credential':
