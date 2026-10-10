@@ -1910,8 +1910,8 @@ const STEP_BIGSAM=askStep({label:'Talk to BigSam before you vote',spot:'e',npc:B
   bad:'Following the crowd or rushing is how bad proposals pass. Take your time and read it properly.'});
 const STEP_LUNAX=askStep({label:'Check the buyer with LunaX',spot:'h',npc:LUNAX,
   intro:'In a peer trade, the buyer should pay from an account in their own name. That is how you know the money is really theirs.',
-  q:'Your buyer says he will pay from his cousin\u2019s account, and the name does not match. What do you do?',
-  opts:[['Keep the USDC in escrow and ask for payment from his own account, or cancel',1],['Release as soon as the money shows',0],['Accept a screenshot of the transfer',0]],
+  q:'Your buyer says they will pay from their cousin\u2019s account, and the name does not match. What do you do?',
+  opts:[['Keep the USDC in escrow and ask for payment from their own account, or cancel',1],['Release as soon as the money shows',0],['Accept a screenshot of the transfer',0]],
   good:'Right. Third-party payments are a common cover for stolen money and chargebacks. Stay in escrow until it is clean.',
   bad:'That puts you at risk. Payments from other people can be reversed or flagged later. Keep the USDC in escrow.'});
 
@@ -2288,10 +2288,10 @@ const MISSIONS=[
         rows:x=>[['Item','Sample pack access pass'],['Price','1.00 USDC'],['Network',x],['Network fee','Paid to the network']]},
     say:'Your pass is minted. Anyone holding it can check their access on the public record.'}),
   taskStep({label:'Check a fan’s pass',spot:'k',npc:mkSign('Fan Tayo','Fan','#6a3fb5',LK.man,'Fan'),
-    intro:'A fan shows a screenshot that says he owns the pass.',q:'How do you check?',
-    opts:[['Look up his address on the block explorer for the pass’s contract',1],['Trust the screenshot',0]],
-    wrong:'Screenshots can be edited. The pass is only real if the public record shows it in his wallet.',
-    say:'The record shows the pass in his wallet. He gets his sample pack.'})
+    intro:'A fan shows a screenshot that says they own the pass.',q:'How do you check?',
+    opts:[['Look up their address on the block explorer for the pass’s contract',1],['Trust the screenshot',0]],
+    wrong:'Screenshots can be edited. The pass is only real if the public record shows it in their wallet.',
+    say:'The record shows the pass in their wallet. They get their sample pack.'})
  ]},
 {id:'m15',n:15,city:'benin',title:'Mint a provenance certificate',goal:'Check the issuer, mint the certificate, and show the buyer the contract.',xp:200,
  steps:[
@@ -2336,8 +2336,8 @@ const MISSIONS=[
 {id:'m17',n:17,city:'calabar',title:'Confirm before you serve',goal:'Serve only after the payment shows in your wallet, and help a customer on the wrong network.',xp:210,
  steps:[
   taskStep({label:'Take a payment with Mama Efik',spot:'a',npc:mkSign('Mama Efik','Carnival food seller','#0B7A43',LK.mama,'Stall'),
-    intro:'A customer says he has paid in USDC. He shows you a screen.',q:'When do you hand over the food?',
-    opts:[['When it shows in my own wallet',1],['As soon as he shows the screen',0]],
+    intro:'A customer says they have paid in USDC. They show you a screen.',q:'When do you hand over the food?',
+    opts:[['When it shows in my own wallet',1],['As soon as they show the screen',0]],
     wrong:'A screen is not a payment. Only your wallet, or the public record, shows what you received.',
     say:'The payment is in your wallet. Food goes over.'}),
   taskStep({label:'Buy stock with 1 USDC',spot:'c',npc:mkSign('Wholesale Ekpo','Wholesaler','#2D6FB3',LK.man,'Wholesale'),
@@ -2368,8 +2368,8 @@ const MISSIONS=[
         rows:x=>[['Item','QR setup'],['Amount','1.00 USDC'],['Network',x]]},
     say:'The QR is ready. Print it on the menu card.'}),
   taskStep({label:'A customer shows a payment screen',spot:'k',npc:mkSign('Customer Tayo','Restaurant customer','#6a3fb5',LK.man,'Customer'),
-    intro:'He shows a screen that says he paid. Your wallet shows nothing yet.',q:'What do you do?',
-    opts:[['Wait for it in my wallet, and check the transaction ID',1],['Serve him now, he showed a screen',0]],
+    intro:'They show a screen that says they paid. Your wallet shows nothing yet.',q:'What do you do?',
+    opts:[['Wait for it in my wallet, and check the transaction ID',1],['Serve them now, they showed a screen',0]],
     wrong:'Wait. A payment is real when it lands in your wallet.',
     say:'The payment lands in your wallet. You serve the food.'})
  ]},
@@ -2650,12 +2650,12 @@ const MISSIONS=[
  steps:[
   taskStep({label:'Agree the payment with Engr. Ekpo',spot:'a',npc:mkSign('Engr. Ekpo Client','Contractor client','#1f4f82',LK.man,'Contract'),
     intro:'Your client pays on each milestone. Bank delays have cost you cash before.',q:'How does the payment work?',
-    opts:[['USDC on Base, sent on each milestone date',1],['Whenever it is convenient for him',0]],
+    opts:[['USDC on Base, sent on each milestone date',1],['Whenever it is convenient for them',0]],
     wrong:'Undated payments cause the late payments you already know. Fix the date and the network.',
     say:'The payment schedule is set.'}),
   taskStep({label:'Confirm milestone one',spot:'c',npc:mkSign('Engr. Ekpo Client','Contractor client','#1f4f82',LK.man,'Contract'),
     intro:'Five USDC should have arrived for milestone one.',q:'How do you confirm it?',
-    opts:[['Paste the transaction ID into the explorer and check 5 USDC arrived',1],['Trust his message that it is sent',0]],
+    opts:[['Paste the transaction ID into the explorer and check 5 USDC arrived',1],['Trust their message that it is sent',0]],
     wrong:'A message is not proof. The explorer shows the payment on the public record.',
     say:'The explorer confirms 5 USDC. Milestone one is paid.'}),
   taskStep({label:'Log the payment with Chidi',spot:'e',npc:mkSign('Accountant Chidi','Bookkeeper','#0B7A43',LK.man,'Records'),
