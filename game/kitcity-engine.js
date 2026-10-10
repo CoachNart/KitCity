@@ -1028,7 +1028,40 @@ const dashMat=new THREE.MeshBasicMaterial({map:dashTex,transparent:true,depthWri
 const dashGeo=new THREE.PlaneGeometry(56,0.5);
 
 const ZINC=['#8a4b2a','#7a5a45','#6f7f8a','#3c6e8f','#8c3b2e','#a2552e'];
-function pickStyle(C){ let t=0; C.styles.forEach(x=>{ t+=x[1]; }); let r=RN()*t; for(const x of C.styles){ r-=x[1]; if(r<=0) return x[0]; } return C.styles[0][0]; }
+// City-specific architecture keeps every destination visually distinct while
+// retaining the shared, lightweight procedural 3D city builder.
+const CITY_ARCH={
+  lagos:'dense-coastal',abuja:'planned-capital',kano:'northern-compound',ph:'river-port',
+  ibadan:'southwest-urban',owerri:'southeast-urban',aba:'southeast-urban',umuahia:'southeast-urban',
+  awka:'southeast-urban',onitsha:'river-port',asaba:'planned-regional',uyo:'coastal-tropical',
+  'ikot-ekpene':'coastal-tropical',yenagoa:'river-port',warri:'river-port',makurdi:'middle-belt',
+  ilorin:'north-central',akure:'southwest-urban','ado-ekiti':'southwest-urban',osogbo:'southwest-urban',
+  abeokuta:'southwest-urban',lokoja:'middle-belt',lafia:'northern-compound',bauchi:'northern-compound',
+  gombe:'northern-compound',damaturu:'northern-compound',jalingo:'middle-belt',yola:'middle-belt',
+  sokoto:'northern-compound',katsina:'northern-compound','birnin-kebbi':'northern-compound',
+  minna:'middle-belt',dutse:'northern-compound',gusau:'northern-compound',kafanchan:'middle-belt',
+  damboa:'northern-compound',kaduna:'north-central',enugu:'southeast-urban',benin:'southwest-urban',
+  calabar:'coastal-tropical',jos:'north-central',uyo:'coastal-tropical',port-harcourt:'river-port'
+};
+const ARCH_STYLES={
+  'dense-coastal':[['zinc',.28],['flat',.43],['glass',.16],['admin',.13]],
+  'planned-capital':[['glass',.34],['flat',.25],['admin',.31],['zinc',.1]],
+  'northern-compound':[['banco',.56],['flat',.25],['admin',.1],['zinc',.09]],
+  'river-port':[['zinc',.3],['flat',.4],['admin',.17],['glass',.13]],
+  'coastal-tropical':[['zinc',.25],['flat',.36],['admin',.2],['glass',.09],['banco',.1]],
+  'southwest-urban':[['zinc',.38],['flat',.35],['admin',.17],['glass',.1]],
+  'southeast-urban':[['zinc',.34],['flat',.39],['admin',.16],['glass',.11]],
+  'asaba-regional':[['flat',.38],['admin',.25],['glass',.2],['zinc',.17]],
+  'middle-belt':[['zinc',.25],['flat',.32],['banco',.25],['admin',.12],['glass',.06]],
+  'north-central':[['flat',.32],['banco',.28],['admin',.22],['zinc',.12],['glass',.06]]
+};
+function archType(C){ return CITY_ARCH[curCity]||'southwest-urban'; }
+function pickStyle(C){
+  const styles=ARCH_STYLES[archType(C)]||C.styles;
+  let t=0; styles.forEach(x=>{t+=x[1];}); let r=RN()*t;
+  for(const x of styles){r-=x[1];if(r<=0)return x[0];}
+  return styles[0][0];
+}
 const signTexCache={};
 function signMat(sg){
   const key=sg.join('|'); let tex=signTexCache[key];
@@ -1183,7 +1216,60 @@ function addBuilding(x,z,w,d,style,color,cx,cz,ox,oz){
     for(let t=-w/2+2.8;t<w/2-2;t+=2.4) for(const sz of [-1,1]) DX.merlon.push({x:x+t,y:h+.5,z:z+sz*(d/2-.4),sx:1,sy:1,sz:.8});
     for(let t=-d/2+2.8;t<d/2-2;t+=2.4) for(const sx of [-1,1]) DX.merlon.push({x:x+sx*(w/2-.4),y:h+.5,z:z+t,sx:.8,sy:1,sz:1});
   }
-  else if(style==='admin'){ xb(w+2,.6,d+2,'#e9e6df',x,h+.3,z); const fx=x+w/2-1,fz=z+d/2-1; DX.pole.push({x:fx,y:h+5.6,z:fz,sx:.2,sy:10,sz:.2}); DX.flag.push({x:fx+.1,y:h+9.6,z:fz,ry:rr(0,6)}); }
+  else if(style==='admin'){
+    xb(w+2,.6,d+2,'#e9e6df',x,h+.3,z);
+    const fx=x+w/2-1,fz=z+d/2-1;
+    DX.pole.push({x:fx,y:h+5.6,z:fz,sx:.2,sy:10,sz:.2});
+    DX.flag.push({x:fx+.1,y:h+9.6,z:fz,ry:rr(0,6)});
+    // Civic/commercial buildings get a visible entrance canopy and columns.
+    xb(Math.min(w*.62,10),.55,2.2,'#b7b5ad',x,h*.22,z+d/2+1.2);
+    for(const px of [-1,1]) xb(.42,h*.22,.42,'#e4e1d8',x+px*Math.min(w*.26,4),h*.11,z+d/2+1.2);
+  }
+  // Add real-world street architecture: projecting balconies, railings, shop
+  // awnings, rooftop services and window AC units, with restrained geometry.
+  const facadeSide=oz<0?-1:1;
+  if((style==='flat'||style==='admin')&&h>13&&w>9&&d>9){
+    const floors=Math.max(1,Math.min(4,Math.floor(h/5.2)));
+    for(let fl=1;fl<=floors;fl++){
+      const yy=Math.min(h-2,fl*4.4),bw=Math.min(w*.72,12);
+      for(const side of [-1,1]){
+        const zz=z+side*(d/2+.48);
+        xb(bw,.22,.95,'#8d969b',x,yy,zz);
+        xb(bw,.18,.12,'#d2d2cb',x,yy+1.05,zz+side*.36);
+        for(let q=-2;q<=2;q++) xb(.09,.92,.1,'#626b70',x+q*bw/5,yy+.55,zz+side*.36);
+      }
+    }
+  }
+  if(style==='flat'||style==='admin'){
+    // Roof tanks and service rooms are common on Nigerian concrete buildings.
+    if(RN()<.62){
+      const tx=x+rr(-w*.22,w*.22),tz=z+rr(-d*.22,d*.22);
+      xb(2.8,3.4,2.8,'#777f82',tx,h+1.7,tz);
+      const tank=new THREE.Mesh(new THREE.CylinderGeometry(1.1,1.1,2.4,12),lam('#20272b'));
+      tank.position.set(tx,h+4.5,tz); tank.userData.nomerge=true; cityGroup.add(tank); mats.push(tank.material);
+    }
+    if(RN()<.48){
+      const side=facadeSide,ax=x+rr(-w*.28,w*.28),az=z+side*(d/2+.25),ay=rr(4,Math.max(5,h-3));
+      xb(1.2,1,.5,'#d4d4cc',ax,ay,az);
+      xb(.85,.35,.56,'#606d75',ax,ay,az+side*.12);
+    }
+  }
+  if(style==='glass'){
+    // Curtain-wall tower caps, service cores and floor-edge bands.
+    for(let fl=1;fl<Math.min(7,Math.floor(h/6));fl++) xb(w+.12,.16,d+.12,'#6b7d88',x,fl*6,z);
+    xb(w*.34,2.1,d*.34,'#4c5962',x,h+1,z);
+  }
+  if(style==='zinc'&&['dense-coastal','southwest-urban','southeast-urban','river-port','coastal-tropical'].includes(archType(C))){
+    // Corrugated roof eaves and a shaded veranda give low-rise homes a lived-in silhouette.
+    const eave=lam('#6f7778',{map:LKT.zroof,transparent:true}); mats.push(eave);
+    const roofSlab=new THREE.Mesh(new THREE.BoxGeometry(w+1.8,.22,d+1.8),eave);
+    roofSlab.position.set(x,h+.12,z); roofSlab.userData.nomerge=true; cityGroup.add(roofSlab);
+    if(RN()<.58){
+      const porchZ=z+facadeSide*(d/2+1.15);
+      xb(Math.min(w*.68,10),.22,2.2,'#777b78',x,h*.45,porchZ);
+      for(const px of [-1,1]) xb(.18,h*.45,.18,'#777b78',x+px*Math.min(w*.3,4),h*.225,porchZ);
+    }
+  }
   const box={x0:x-w/2,x1:x+w/2,z0:z-d/2,z1:z+d/2,y1:h+4};
   colliders.push({x0:box.x0,x1:box.x1,z0:box.z0,z1:box.z1});
   if(style!=='glass'&&RN()<.8){
