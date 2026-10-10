@@ -3941,7 +3941,10 @@ $('#hub').addEventListener('click',async e=>{
   else if(a==='signout'){
     try{
       const user=getCurrentAuthUser();
-      if(user&&activeUid===user.uid) await flushCloudProgress(user.uid,progressSnapshot());
+      if(user&&activeUid===user.uid){
+        try{ await flushCloudProgress(user.uid,progressSnapshot()); }
+        catch(syncError){ console.warn('KitCity sign-out continuing; local progress is saved.',syncError); }
+      }
       await signOutCurrentUser();
       cloudSyncReady=false;
       $('#hub').classList.add('hidden');
