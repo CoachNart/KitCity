@@ -3731,13 +3731,14 @@ const MBY={}; MISSIONS.forEach(m=>{ MBY[m.id]=m; });
 const loc=(name,role,color,look,sub)=>NPC(name,role,color,look,{body:color,a:'#ffffff',b:YELLOW,sub:sub});
 const BADGES=['Wallet Starter','Swap Smart','Scam Spotter','Key Keeper','Safe Sender','Passport Holder','Community Voice','Cash-out Pro','Fare Payer','Club Skeptic','Gas Watcher','Escrow Trader','Off-ramp Pro','Depeg Calm','Mint Checker','Pump Spotter','Buffer Keeper','Pool Wise','Hardware Holder','Multisig Team','Wallet Splitter','Record Keeper','Phone Buyer','Phish Doubter','School Donor','Review Reader','Remit Careful','Lost Phone Calm','Invoice Checker','Crowdfund Skeptic','Gate Watcher','Ledger Clear','Oil Money Smart','Creek Careful','Tailor Shield','Bank Alert Calm','Loan Sense','Herd Wise','Flyer Doubter','Relief Guard','Gift Pool Wise','Clearance Check','Lucky Draw Skeptic','Cocoa Careful','Gold Audit','Tour Verifier','Lease Check','Supply Watch','Scholar Shield','Fee Guard','Rent Shield','Franchise Check','Loan Sense','Course Skeptic','Input Verified','Bureau Wise','PIN Guard','Bulk Buyer Check','Partner Guard','Recharge Safe','Abia Shoe Check','Land Title Check','Net Co-op','Produce Guard','Pump Verifier','Travel Licence','Seed Scheme Sense','Pond Skeptic','Job Fee Guard','Bond Checker','Permit Honest','Feed Invoice','Ticket Honest','Grove Trust','Cocoa Terms','Park Permit','Solar Limit','Export Office','Gold Licence','Cattle Terms','Genesis Access'];
 /* Progress is tracked by completed missions and practice USDC. */
-const isUnlocked=m=>{ const k=MISSIONS.indexOf(m); return k===0||!!P.done[MISSIONS[k-1].id]; };
+/* TEMP PREVIEW ACCESS: remove after the user finishes reviewing KitCity. */
+const isUnlocked=m=>{ const k=MISSIONS.indexOf(m); return m.city==='kitcity'||k===0||!!P.done[MISSIONS[k-1].id]; };
 
 
 const cityOrder=[...new Set(MISSIONS.map(m=>m.city))];
 const cityMissions=city=>MISSIONS.filter(m=>m.city===city);
 const isCityComplete=city=>{const ms=cityMissions(city);return ms.length>0&&ms.every(m=>!!P.done[m.id]);};
-const isCityUnlocked=city=>{const ms=cityMissions(city);return ms.length>0&&isUnlocked(ms[0]);};
+const isCityUnlocked=city=>{const ms=cityMissions(city);return city==='kitcity'||(ms.length>0&&isUnlocked(ms[0]));};
 /* =====================  mission flow  ===================== */
 function hideEnt(e){ e.hidden=true; loadStep(); }
 function resetPlayer(){
@@ -3922,6 +3923,7 @@ function beginGame(){
   S.phase='hub'; G=null;
   const nextCity=cityOrder.find(city=>!isCityComplete(city));
   if(nextCity) hubCity=nextCity;
+  hubCity='kitcity'; // TEMP PREVIEW: open directly on the final destination.
   hubTab='missions';
   renderHub();
 }
