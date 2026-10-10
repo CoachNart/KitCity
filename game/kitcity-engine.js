@@ -1801,8 +1801,29 @@ function confirmTx(def,o){
 }
 const FEE0='\u20A60, covered for you';
 function badgeSVG(n,on,size){
-  const f=on?BRAND:'#555960',st=on?INK:'#2a2c31';
-  return '<svg width="'+size+'" height="'+size+'" viewBox="0 0 120 120" aria-hidden="true"><polygon points="60,6 108,33 108,87 60,114 12,87 12,33" fill="'+f+'" stroke="'+st+'" stroke-width="6" stroke-linejoin="round"/><text x="60" y="76" text-anchor="middle" font-family="Arial Black,Impact,sans-serif" font-weight="900" font-size="52" fill="'+(on?INK:'#2a2c31')+'">'+n+'</text></svg>';
+  const num=Number(n),idx=Number.isFinite(num)&&num>0?Math.floor(num)-1:Math.abs(String(n).split('').reduce((a,c)=>a+c.charCodeAt(0),0))%12;
+  const colors=['#F4B942','#28C7A5','#5CA8FF','#C084FC','#FF8066','#F472B6','#A3D95B','#4DD0E1','#FFA64D','#818CF8','#E879F9','#7DD3A7'];
+  const hue=(idx*137.508+38)%360;
+  const accent=on?'hsl('+hue+' 78% 62%)':'#59636D';
+  const dark=on?'hsl('+hue+' 52% 20%)':'#252D35';
+  const icons=[
+    '<path d="M60 29 81 37V53C81 68 71 79 60 85 49 79 39 68 39 53V37Z"/><path d="m49 55 8 8 15-17"/>',
+    '<circle cx="60" cy="49" r="17"/><path d="M51 49h18M60 40v18M49 68l-4 16 15-7 15 7-4-16"/>',
+    '<path d="M35 51Q60 25 85 51Q60 77 35 51Z"/><circle cx="60" cy="51" r="7"/>',
+    '<rect x="41" y="47" width="38" height="30" rx="6"/><path d="M49 47v-8a11 11 0 0 1 22 0v8M60 58v8"/>',
+    '<path d="M34 54 60 33l26 21-26 21Z"/><path d="M46 54h28M60 42v24"/>',
+    '<path d="M60 29 78 48 60 67 42 48Z"/><path d="M60 67v16M49 83h22"/>',
+    '<path d="M35 39h50v34H57L44 83V73h-9Z"/><path d="M46 50h28M46 61h19"/>',
+    '<circle cx="60" cy="48" r="18"/><path d="M69 39c-3-5-17-4-17 3 0 8 17 3 17 11 0 7-14 9-19 2M60 26v5M60 65v5"/>',
+    '<rect x="36" y="38" width="48" height="36" rx="7"/><path d="M43 38v36M77 38v36M36 61h48M48 81h6M66 81h6"/><circle cx="47" cy="69" r="3"/><circle cx="73" cy="69" r="3"/>',
+    '<circle cx="51" cy="43" r="9"/><circle cx="70" cy="47" r="7"/><path d="M33 76c1-13 8-20 18-20s17 7 18 20M66 61c11-2 19 4 21 15"/>',
+    '<path d="M63 29c4 14-10 17-5 27 3-4 9-5 11-12 12 17 7 34-9 38-15-1-23-15-15-29 3 7 7 8 9 10-2-13 4-21 9-34Z"/>',
+    '<path d="M39 49 51 37l10 8 8-6 12 12-22 27Z"/><path d="m48 58 8 8 17-18"/>'
+  ];
+  const shape=icons[idx%icons.length];
+  const lock=on?'':'<g transform="translate(78 73)"><circle r="15" fill="#151D25" stroke="#8996A2" stroke-width="2"/><rect x="-6" y="-1" width="12" height="9" rx="2" fill="#AAB4BE"/><path d="M-4-1v-4a4 4 0 0 1 8 0v4" fill="none" stroke="#AAB4BE" stroke-width="2"/></g>';
+  const earned=on?'<g transform="translate(82 27)"><circle r="13" fill="#F7FFF9" stroke="'+accent+'" stroke-width="3"/><path d="m-6 0 4 4 8-9" fill="none" stroke="#137B56" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></g>':'';
+  return '<svg class="mission-medal '+(on?'earned':'unearned')+'" width="'+size+'" height="'+size+'" viewBox="0 0 120 120" aria-hidden="true"><path d="M35 76 31 108 51 98 60 113 69 98 89 108 85 76" fill="'+(on?dark:'#303943')+'" stroke="'+accent+'" stroke-width="3" stroke-linejoin="round"/><path d="M60 7 94 21 108 51 94 81 60 95 26 81 12 51 26 21Z" fill="'+dark+'" stroke="'+accent+'" stroke-width="5" stroke-linejoin="round"/><path d="M60 17 86 28 97 51 86 74 60 85 34 74 23 51 34 28Z" fill="'+(on?'#17232D':'#202830')+'" stroke="'+accent+'" stroke-opacity=".65" stroke-width="2"/><g fill="none" stroke="'+accent+'" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" transform="translate(0 0)">'+shape+'</g>'+earned+lock+'</svg>';
 }
 
 /* =====================  HUD  ===================== */
