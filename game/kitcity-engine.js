@@ -1657,7 +1657,7 @@ function buildCity(key){
     if(lmk) landmark(lmk[0],cx,cz);
     else if((((i+j)%C.market)+C.market)%C.market===0) addMarket(cx,cz);
     else for(const ox of [-11,11])for(const oz of [-11,11]) addBuilding(cx+ox+rr(-1,1),cz+oz+rr(-1,1),rr(14,20),rr(14,20),pickStyle(C),pk(C.paint),cx,cz,ox,oz);
-    for(const sx of [-25,25])for(const sz of [-25,25]) if(RN()<C.palm&&!nearSpecial(cx+sx,cz+sz,8)) addTree(cx+sx,cz+sz,C);
+    // Roadside/block-edge tree placement removed: keep streets and road verges clear.
   }
   streetDetails(C,blocks); roadDecals(C,blocks);
   dxFlush(C);
