@@ -1,4 +1,15 @@
 import * as THREE from 'three';
+import {
+  authenticateEmailPassword,
+  firebaseConfigured,
+  flushCloudProgress,
+  getCurrentAuthUser,
+  getOrCreateUserProfile,
+  loadCloudProgress,
+  queueCloudProgressSave,
+  signOutCurrentUser,
+  waitForAuthState,
+} from '../lib/firebase';
 
 export default function initKitCity(){
 'use strict';
@@ -34,9 +45,50 @@ const Store=(function(){
   };
 })();
 const KEY='kitnaija_v1';
-const P=Object.assign({wallet:null,usdc:0,ngn:0,done:{},dodged:0,fell:0,low:false,music:true,sfx:true,lang:'en',pl:'',name:'',scores:{},web3:null},Store.get(KEY,{}));
+const DEFAULT_PLAYER={wallet:null,usdc:0,ngn:0,done:{},dodged:0,fell:0,low:false,music:true,sfx:true,lang:'en',pl:'',name:'',scores:{},web3:null};
+let activeUid=Store.get('kitcity_active_uid',null);
+let storageKey=activeUid?KEY+'_user_'+activeUid:KEY;
+const P=Object.assign({},DEFAULT_PLAYER,Store.get(storageKey,{}));
 if(!P.done||typeof P.done!=='object') P.done={};
-function save(){ Store.set(KEY,{wallet:P.wallet,usdc:P.usdc,ngn:P.ngn,done:P.done,dodged:P.dodged,fell:P.fell,low:P.low,music:P.music,sfx:P.sfx,lang:P.lang,pl:P.pl,name:P.name,scores:P.scores,web3:P.web3}); }
+let cloudSyncReady=false;
+function progressSnapshot(){ return {wallet:P.wallet,usdc:P.usdc,ngn:P.ngn,done:P.done,dodged:P.dodged,fell:P.fell,low:P.low,music:P.music,sfx:P.sfx,lang:P.lang,pl:P.pl,name:P.name,scores:P.scores,web3:P.web3}; }
+function save(){
+  const snapshot=progressSnapshot();
+  Store.set(storageKey,snapshot);
+  const user=getCurrentAuthUser();
+  if(cloudSyncReady&&user&&activeUid===user.uid) queueCloudProgressSave(user.uid,snapshot);
+}
+function replacePlayerState(data){
+  Object.keys(P).forEach(k=>delete P[k]);
+  Object.assign(P,DEFAULT_PLAYER,data||{});
+  if(!P.done||typeof P.done!=='object') P.done={};
+}
+function activateUserProgress(uid){
+  const nextKey=KEY+'_user_'+uid;
+  if(activeUid!==uid){
+    const stored=Store.get(nextKey,null);
+    if(activeUid||stored) replacePlayerState(stored||DEFAULT_PLAYER);
+    storageKey=nextKey;
+    activeUid=uid;
+    Store.set('kitcity_active_uid',uid);
+  }else{
+    storageKey=nextKey;
+  }
+}
+function mergeCloudProgress(remote){
+  if(!remote||typeof remote!=='object') return;
+  const local=progressSnapshot();
+  const merged=Object.assign({},remote,local);
+  merged.done=Object.assign({},remote.done&&typeof remote.done==='object'?remote.done:{},local.done||{});
+  merged.scores=Object.assign({},remote.scores&&typeof remote.scores==='object'?remote.scores:{},local.scores||{});
+  merged.wallet=local.wallet||remote.wallet||null;
+  merged.usdc=Math.max(Number(remote.usdc)||0,Number(local.usdc)||0);
+  merged.ngn=Math.max(Number(remote.ngn)||0,Number(local.ngn)||0);
+  merged.dodged=Math.max(Number(remote.dodged)||0,Number(local.dodged)||0);
+  merged.fell=Math.max(Number(remote.fell)||0,Number(local.fell)||0);
+  merged.web3=local.web3||remote.web3||null;
+  replacePlayerState(merged);
+}
 delete P.xp;
 save();
 const QUESTION_REWARD=.10,QUESTION_PENALTY=.10,MISSION_CLEAR_REWARD=.50,MISSION_RETRY_REWARD=.10;
@@ -3731,14 +3783,13 @@ const MBY={}; MISSIONS.forEach(m=>{ MBY[m.id]=m; });
 const loc=(name,role,color,look,sub)=>NPC(name,role,color,look,{body:color,a:'#ffffff',b:YELLOW,sub:sub});
 const BADGES=['Wallet Starter','Swap Smart','Scam Spotter','Key Keeper','Safe Sender','Passport Holder','Community Voice','Cash-out Pro','Fare Payer','Club Skeptic','Gas Watcher','Escrow Trader','Off-ramp Pro','Depeg Calm','Mint Checker','Pump Spotter','Buffer Keeper','Pool Wise','Hardware Holder','Multisig Team','Wallet Splitter','Record Keeper','Phone Buyer','Phish Doubter','School Donor','Review Reader','Remit Careful','Lost Phone Calm','Invoice Checker','Crowdfund Skeptic','Gate Watcher','Ledger Clear','Oil Money Smart','Creek Careful','Tailor Shield','Bank Alert Calm','Loan Sense','Herd Wise','Flyer Doubter','Relief Guard','Gift Pool Wise','Clearance Check','Lucky Draw Skeptic','Cocoa Careful','Gold Audit','Tour Verifier','Lease Check','Supply Watch','Scholar Shield','Fee Guard','Rent Shield','Franchise Check','Loan Sense','Course Skeptic','Input Verified','Bureau Wise','PIN Guard','Bulk Buyer Check','Partner Guard','Recharge Safe','Abia Shoe Check','Land Title Check','Net Co-op','Produce Guard','Pump Verifier','Travel Licence','Seed Scheme Sense','Pond Skeptic','Job Fee Guard','Bond Checker','Permit Honest','Feed Invoice','Ticket Honest','Grove Trust','Cocoa Terms','Park Permit','Solar Limit','Export Office','Gold Licence','Cattle Terms','Genesis Access'];
 /* Progress is tracked by completed missions and practice USDC. */
-/* TEMP PREVIEW ACCESS: remove after the user finishes reviewing KitCity. */
-const isUnlocked=m=>{ const k=MISSIONS.indexOf(m); return m.city==='kitcity'||k===0||!!P.done[MISSIONS[k-1].id]; };
+const isUnlocked=m=>{ const k=MISSIONS.indexOf(m); return k===0||!!P.done[MISSIONS[k-1].id]; };
 
 
 const cityOrder=[...new Set(MISSIONS.map(m=>m.city))];
 const cityMissions=city=>MISSIONS.filter(m=>m.city===city);
 const isCityComplete=city=>{const ms=cityMissions(city);return ms.length>0&&ms.every(m=>!!P.done[m.id]);};
-const isCityUnlocked=city=>{const ms=cityMissions(city);return city==='kitcity'||(ms.length>0&&isUnlocked(ms[0]));};
+const isCityUnlocked=city=>{const ms=cityMissions(city);return ms.length>0&&isUnlocked(ms[0]);};
 /* =====================  mission flow  ===================== */
 function hideEnt(e){ e.hidden=true; loadStep(); }
 function resetPlayer(){
@@ -3881,12 +3932,27 @@ function renderHub(){
   $('#hubBody').innerHTML=tx(h);
 }
 $('#hub').addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.closest('.map g[data-a="city"]')){e.preventDefault();e.target.dispatchEvent(new MouseEvent('click',{bubbles:true}));}});
-$('#hub').addEventListener('click',e=>{
+$('#hub').addEventListener('click',async e=>{
   const b=e.target.closest('[data-a]'); if(!b) return;
   const a=b.dataset.a,v=b.dataset.v;
   if(a==='tab'){ hubTab=v; resetArm=false; renderHub(); $('#hubBody').scrollTop=0; }
   else if(a==='city'){ if(!isCityUnlocked(v)){ toast('Finish the previous city journey first'); return; } hubCity=v; hubTab='missions'; renderHub(); }
   else if(a==='cityhub'){ hubTab='missions'; renderHub(); $('#hubBody').scrollTop=0; }
+  else if(a==='signout'){
+    try{
+      const user=getCurrentAuthUser();
+      if(user&&activeUid===user.uid) await flushCloudProgress(user.uid,progressSnapshot());
+      await signOutCurrentUser();
+      cloudSyncReady=false;
+      $('#hub').classList.add('hidden');
+      $('#hub').setAttribute('aria-hidden','true');
+      $('#title').classList.remove('hidden');
+      $('#hud').classList.add('hidden');
+      S.phase='title'; G=null;
+      if(playerPasswordInput) playerPasswordInput.value='';
+      updateAuthButton();
+    }catch(error){ toast('Could not sign out. Please try again.'); }
+  }
   else if(a==='play'){ startMission(v); }
   else if(a==='quality'){ P.low=!P.low; save(); setPR(); setShadows(); resize(); renderHub(); }
   else if(a==='cert'){ certificate(); }
@@ -3902,17 +3968,106 @@ $('#hub').addEventListener('click',e=>{
 });
 const playerNameInput=$('#playerName');
 const playerNameError=$('#playerNameError');
+const playerEmailInput=$('#playerEmail');
+const playerPasswordInput=$('#playerPassword');
+const shareLocationInput=$('#shareLocation');
+let authMode='signin';
+let authBusy=false;
 if(playerNameInput){ playerNameInput.value=P.name||''; }
-function submitPlayerName(){
+function updateAuthButton(){
+  const signedIn=!!getCurrentAuthUser();
+  $('#startBtn').textContent=signedIn?'Continue to KitCity':(authMode==='signup'?'Create account & enter KitCity':'Sign in & enter KitCity');
+  const passwordLabel=document.querySelector('label[for="playerPassword"]');
+  if(playerPasswordInput) playerPasswordInput.required=!signedIn;
+  if(passwordLabel) passwordLabel.textContent=signedIn?'PASSWORD (NOT NEEDED FOR THIS SESSION)':'PASSWORD';
+}
+function setAuthMode(mode){
+  authMode=mode==='signup'?'signup':'signin';
+  document.querySelectorAll('[data-auth-mode]').forEach(b=>b.classList.toggle('on',b.dataset.authMode===authMode));
+  if(playerPasswordInput) playerPasswordInput.autocomplete=authMode==='signup'?'new-password':'current-password';
+  updateAuthButton();
+}
+document.querySelectorAll('[data-auth-mode]').forEach(b=>b.addEventListener('click',()=>setAuthMode(b.dataset.authMode)));
+function deviceInstallId(){
+  const key='kitcity_install_id';
+  try{
+    let id=window.localStorage.getItem(key);
+    if(!id){ id=(window.crypto&&crypto.randomUUID)?crypto.randomUUID():'kc-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2); window.localStorage.setItem(key,id); }
+    return id;
+  }catch(e){ return 'kc-session-'+Math.random().toString(36).slice(2); }
+}
+async function approximateLocation(){
+  if(!shareLocationInput||!shareLocationInput.checked||!navigator.geolocation) return null;
+  try{
+    const position=await new Promise((resolve,reject)=>navigator.geolocation.getCurrentPosition(resolve,reject,{enableHighAccuracy:false,timeout:7000,maximumAge:600000}));
+    return {
+      latitude:Math.round(position.coords.latitude*100)/100,
+      longitude:Math.round(position.coords.longitude*100)/100,
+      accuracy:Math.max(1000,Math.round(position.coords.accuracy||1000))
+    };
+  }catch(e){ return null; }
+}
+function authErrorMessage(error){
+  const code=error&&error.code||'';
+  if(code==='auth/email-already-in-use') return 'An account already uses this email. Sign in instead.';
+  if(code==='auth/invalid-credential'||code==='auth/wrong-password'||code==='auth/user-not-found') return 'Email or password is incorrect.';
+  if(code==='auth/weak-password') return 'Choose a stronger password with at least 8 characters.';
+  if(code==='auth/invalid-email') return 'Enter a valid email address.';
+  if(code==='auth/too-many-requests') return 'Too many attempts. Wait a little and try again.';
+  return error&&error.message?error.message:'Could not sign in right now. Check your connection and try again.';
+}
+async function submitPlayerName(){
+  if(authBusy) return;
+  if(!firebaseConfigured){
+    if(playerNameError) playerNameError.textContent='Firebase is not configured yet. Add the NEXT_PUBLIC_FIREBASE_* settings in Vercel and deploy the Firestore rules before signing in.';
+    return;
+  }
   const candidate=(playerNameInput&&playerNameInput.value||'').trim();
   if(!/^[A-Za-z0-9_]{3,20}$/.test(candidate)){
-    if(playerNameError) playerNameError.textContent='Use 3–20 letters, numbers, or underscores.';
+    if(playerNameError) playerNameError.textContent='Use 3–20 letters, numbers, or underscores for your gamer ID.';
     if(playerNameInput) playerNameInput.focus();
     return;
   }
-  P.name=candidate; save();
-  if(playerNameError) playerNameError.textContent='';
-  beginGame();
+  const email=(playerEmailInput&&playerEmailInput.value||'').trim();
+  const password=(playerPasswordInput&&playerPasswordInput.value||'');
+  const existing=await waitForAuthState();
+  if(!existing&&(!email||!password)){
+    if(playerNameError) playerNameError.textContent='Enter your email and password to continue.';
+    return;
+  }
+  if(!existing&&password.length<8){
+    if(playerNameError) playerNameError.textContent='Your password must contain at least 8 characters.';
+    return;
+  }
+  authBusy=true;
+  const button=$('#startBtn');
+  button.disabled=true;
+  button.textContent='Securing your account…';
+  try{
+    const location=await approximateLocation();
+    const deviceId=deviceInstallId();
+    let user=existing,profile;
+    if(user){
+      profile=await getOrCreateUserProfile(user,candidate,deviceId,location);
+    }else{
+      const result=await authenticateEmailPassword({mode:authMode,email,password,username:candidate,deviceId,location});
+      user=result.user; profile=result.profile;
+    }
+    activateUserProgress(user.uid);
+    const remote=await loadCloudProgress(user.uid);
+    if(remote) mergeCloudProgress(remote);
+    P.name=(profile&&typeof profile.username==='string'&&profile.username)||candidate;
+    cloudSyncReady=true;
+    save();
+    if(playerNameError) playerNameError.textContent='';
+    beginGame();
+  }catch(error){
+    if(playerNameError) playerNameError.textContent=authErrorMessage(error);
+  }finally{
+    authBusy=false;
+    button.disabled=false;
+    updateAuthButton();
+  }
 }
 function beginGame(){
   Snd.unlock(); Snd.setMode('hub'); Snd.sfx('click');
@@ -3923,7 +4078,6 @@ function beginGame(){
   S.phase='hub'; G=null;
   const nextCity=cityOrder.find(city=>!isCityComplete(city));
   if(nextCity) hubCity=nextCity;
-  hubCity='kitcity'; // TEMP PREVIEW: open directly on the final destination.
   hubTab='missions';
   renderHub();
 }
@@ -3932,11 +4086,19 @@ if(playerNameInput){
   playerNameInput.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); submitPlayerName(); } });
   playerNameInput.addEventListener('input',()=>{ if(playerNameError) playerNameError.textContent=''; });
 }
+if(playerEmailInput) playerEmailInput.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); submitPlayerName(); } });
+if(playerPasswordInput) playerPasswordInput.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); submitPlayerName(); } });
+if(firebaseConfigured){
+  waitForAuthState().then(user=>{
+    if(user&&playerEmailInput) playerEmailInput.value=user.email||'';
+    updateAuthButton();
+  }).catch(()=>updateAuthButton());
+}else updateAuthButton();
 function applyLang(){
   document.documentElement.lang=P.lang==='pcm'?'pcm':'en';
   document.querySelectorAll('[data-t]').forEach(el=>{ if(!el.dataset.en) el.dataset.en=el.textContent; el.textContent=(P.lang==='pcm'&&el.dataset.pcm)?el.dataset.pcm:tr(el.dataset.en); });
   document.querySelectorAll('[data-lang]').forEach(b=>b.classList.toggle('on',b.dataset.lang===P.lang));
-  $('#startBtn').textContent=(P.usdc>0||Object.keys(P.done).length)?L('Continue','Continue'):L('Enter KitCity','Enter KitCity');
+  updateAuthButton();
   if(G) updateHUD();
   renderHub();
 }
