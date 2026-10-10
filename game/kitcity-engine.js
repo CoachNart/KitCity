@@ -555,7 +555,7 @@ const LK={
 
 /* =====================  labels  ===================== */
 function label(text,bg,fg,H0){
-  const size=44,font='900 '+size+'px "Arial Black",Impact,sans-serif';
+  const size=44,font='900 '+size+'px "BadaBoom BB","Badaboom BB",Impact,sans-serif';
   const m=document.createElement('canvas').getContext('2d'); m.font=font;
   const w=Math.ceil(m.measureText(text).width)+44,h=size+28;
   const c=document.createElement('canvas'); c.width=w; c.height=h; const g=c.getContext('2d');
