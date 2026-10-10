@@ -27,6 +27,9 @@ html,body{height:100%;overflow:hidden;background:var(--ink);color:var(--ink);fon
 #dist{position:absolute;bottom:-12px;left:50%;transform:translateX(-50%);background:var(--brand);border:2px solid var(--ink);border-radius:4px;font:800 11px/1 system-ui;padding:3px 5px;white-space:nowrap}
 #toast{top:calc(170px + env(safe-area-inset-top));left:50%;transform:translateX(-50%) translateY(-8px);background:var(--ink);color:var(--brand);border-radius:6px;padding:8px 14px;font-weight:800;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;max-width:86vw;text-align:center;z-index:45}
 #toast.show{opacity:1;transform:translateX(-50%)}
+#toast.hazard-bubble{top:calc(148px + env(safe-area-inset-top));max-width:min(88vw,440px);width:max-content;white-space:normal;padding:14px 18px;background:#fff;color:#17191c;border:3px solid #17191c;border-radius:22px 22px 22px 6px;box-shadow:4px 5px 0 rgba(0,0,0,.28);font:800 17px/1.45 system-ui,-apple-system,'Segoe UI',sans-serif;overflow-wrap:anywhere}
+#toast.hazard-bubble:after{content:'';position:absolute;left:24px;bottom:-13px;width:0;height:0;border-top:13px solid #17191c;border-right:13px solid transparent}
+#toast.hazard-bubble:before{content:'';position:absolute;left:27px;bottom:-8px;width:0;height:0;border-top:9px solid #fff;border-right:9px solid transparent;z-index:1}
 #joy{left:calc(18px + env(safe-area-inset-left));bottom:calc(26px + env(safe-area-inset-bottom));width:124px;height:124px;border-radius:50%;background:rgba(27,28,32,.35);border:3px solid rgba(27,28,32,.75);touch-action:none;z-index:5}
 #knob{position:absolute;left:50%;top:50%;width:52px;height:52px;margin:-26px 0 0 -26px;border-radius:50%;background:var(--brand);border:3px solid var(--ink);pointer-events:none}
 .round{border:3px solid var(--ink);background:var(--brand);color:var(--ink);font:900 15px var(--display);border-radius:50%;box-shadow:3px 3px 0 var(--ink);touch-action:none;cursor:pointer;z-index:5}
