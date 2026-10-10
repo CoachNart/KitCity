@@ -3991,6 +3991,17 @@ function setAuthMode(mode){
   updateAuthButton();
 }
 document.querySelectorAll('[data-auth-mode]').forEach(b=>b.addEventListener('click',()=>setAuthMode(b.dataset.authMode)));
+const authOpenButton=$('#authOpenBtn');
+const authBackButton=$('#authBackBtn');
+if(authOpenButton) authOpenButton.addEventListener('click',()=>{
+  $('#title').classList.add('auth-open');
+  setAuthMode('signin');
+  if(playerEmailInput) playerEmailInput.focus({preventScroll:true});
+});
+if(authBackButton) authBackButton.addEventListener('click',()=>{
+  $('#title').classList.remove('auth-open');
+  if(playerNameError) playerNameError.textContent='';
+});
 function deviceInstallId(){
   const key='kitcity_install_id';
   try{
