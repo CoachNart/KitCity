@@ -286,3 +286,75 @@ html,body{height:100%;overflow:hidden;background:var(--ink);color:var(--ink);fon
 .chip{min-height:34px}
 .chip:disabled{opacity:.4;cursor:not-allowed}
 @media(min-width:760px){.map-card{padding:18px;border-radius:22px}.map-card .map{max-height:330px}.map-selected{padding:15px 17px}}
+
+
+/* Mission achievements: unmistakable medal silhouettes and earned-state contrast. */
+#hubBody .grid2 .bd{
+  display:flex;
+  min-width:0;
+  min-height:158px;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-start;
+  gap:7px;
+  padding:13px 9px 12px;
+  overflow:hidden;
+  text-align:center;
+  border:1px solid rgba(183,211,228,.13);
+  border-radius:17px;
+  background:linear-gradient(155deg,rgba(29,43,56,.96),rgba(14,23,33,.98));
+  box-shadow:inset 0 1px rgba(255,255,255,.035),0 9px 22px rgba(0,0,0,.16);
+}
+#hubBody .grid2 .bd.earned{
+  border-color:rgba(121,221,190,.27);
+  background:linear-gradient(155deg,rgba(31,52,59,.98),rgba(15,26,36,.98));
+  box-shadow:inset 0 1px rgba(255,255,255,.07),0 8px 24px rgba(0,0,0,.18);
+}
+#hubBody .grid2 .bd.off{opacity:.66;filter:saturate(.55)}
+#hubBody .mission-medal{
+  display:block;
+  flex:none;
+  width:64px;
+  height:64px;
+  overflow:visible;
+  filter:drop-shadow(0 5px 7px rgba(0,0,0,.28));
+}
+#hubBody .bd.earned .mission-medal{filter:drop-shadow(0 4px 10px rgba(0,0,0,.25))}
+#hubBody .bd b{
+  width:100%;
+  margin-top:0;
+  color:#E8F3F8;
+  font-size:12px;
+  line-height:1.35;
+  font-weight:750;
+  overflow-wrap:anywhere;
+}
+#hubBody .bd.earned b{color:#F4FCFF}
+#hubBody .badge-status{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  margin-top:auto;
+  padding:4px 7px;
+  border:1px solid rgba(183,202,217,.16);
+  border-radius:999px;
+  background:rgba(255,255,255,.035);
+  color:#91A4B3;
+  font-size:8px;
+  font-weight:900;
+  letter-spacing:.09em;
+  line-height:1.2;
+  text-align:center;
+}
+#hubBody .bd.earned .badge-status{
+  border-color:rgba(112,231,183,.28);
+  background:rgba(62,203,145,.11);
+  color:#86F0BD;
+}
+@media(min-width:760px){
+  #hubBody .grid2 .bd{min-height:174px;padding:16px 12px}
+  #hubBody .mission-medal{width:72px;height:72px}
+}
+@media(prefers-reduced-motion:reduce){
+  #hubBody .mission-medal{filter:none}
+}
