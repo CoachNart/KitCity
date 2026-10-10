@@ -47,6 +47,10 @@ export default function AuthPage() {
       setMessage('Username must be 3–20 letters, numbers, or underscores.');
       return;
     }
+    const emailName = email.trim().split('@')[0].replace(/[^A-Za-z0-9_]/g, '').slice(0, 13);
+    const accountUsername = /^[A-Za-z0-9_]{3,20}$/.test(cleanUsername)
+      ? cleanUsername
+      : ('Player_' + emailName).slice(0, 20);
     if (password.length < 8) {
       setMessage('Password must contain at least 8 characters.');
       return;
@@ -67,7 +71,7 @@ export default function AuthPage() {
         mode,
         email: email.trim().toLowerCase(),
         password,
-        username: cleanUsername,
+        username: accountUsername,
         deviceId,
         location: null,
       });
