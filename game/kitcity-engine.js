@@ -3046,37 +3046,7 @@ const MISSIONS=[
         rows:x=>[['To','Grain store group',1],['Amount','2.00 USDC'],['Network',x]]},
     say:'Your grain has a place in the store for the season.'})
  ]},
-{id:'m41',n:41,city:'ibadan',title:'Verify a translation credential',goal:'Check who issued a translator credential, confirm its current status, and share only the proof a client needs.',
- steps:[
-  taskStep({label:'Check the credential issuer',spot:'d',npc:mkSign('Bamidele','Professional registry','#2D6FB3',LK.clerk,'Credentials'),
-    intro:'A client asks whether your translation credential is genuine.',q:'Where do you verify it?',
-    opts:[['Search the issuing registry’s official record',1],['Trust a picture of the certificate',0]],
-    wrong:'A picture can be copied or changed. Use the official issuing registry.',say:'You located the credential in the source registry.'}),
-  taskStep({label:'Confirm the credential is current',spot:'e',npc:mkSign('Bamidele','Professional registry','#2D6FB3',LK.clerk,'Credentials'),
-    intro:'The registry shows the credential, but it may have expired or been suspended.',q:'What do you check next?',
-    opts:[['Its current status, issue date and expiry details',1],['Only the name printed on it',0]],
-    wrong:'A matching name does not tell you whether a credential is still valid.',say:'You confirmed the credential’s current status.'}),
-  taskStep({label:'Share only the required proof',spot:'h',npc:mkSign('Isaac','Translation client','#C7457E',LK.woman,'Client'),
-    intro:'The client only needs proof that your credential is valid.',q:'What should you send?',
-    opts:[['The public verification link or required credential reference',1],['Your private account password',0]],
-    wrong:'A client never needs your account password to verify a credential.',say:'You shared enough proof for verification without exposing private access.'})
- ]},
-{id:'m42',n:42,city:'ibadan',title:'Check school bursary eligibility',goal:'Verify a bursary’s published criteria, match an application to the required evidence, and protect a student’s private details.',
- steps:[
-  taskStep({label:'Read the published criteria',spot:'d',npc:mkSign('Toheeb','Bursary office','#2D6FB3',LK.clerk,'Bursary'),
-    intro:'The school has published criteria for a limited bursary.',q:'What do you check first?',
-    opts:[['The official eligibility rules and application deadline',1],['A forwarded list with no source',0]],
-    wrong:'Use the school’s official notice so applicants are judged by the same rules.',say:'You found the official eligibility criteria.'}),
-  taskStep({label:'Match evidence to the application',spot:'e',npc:mkSign('Toheeb','Bursary office','#2D6FB3',LK.clerk,'Bursary'),
-    intro:'An application must prove enrollment and meet the income requirement.',q:'What is the right review?',
-    opts:[['Check only the required evidence against the published rules',1],['Ask the applicant to send every personal document they own',0]],
-    wrong:'Collect only the evidence needed for the decision; extra personal data creates risk.',say:'You matched the required evidence without over-collecting data.'}),
-  taskStep({label:'Protect the applicant’s details',spot:'h',npc:mkSign('Toheeb','Bursary office','#2D6FB3',LK.clerk,'Bursary'),
-    intro:'The committee needs a record of its decision without exposing private student data.',q:'What belongs in a public update?',
-    opts:[['The decision reference and outcome, with sensitive details withheld',1],['The student’s full private documents',0]],
-    wrong:'Public accountability does not require publishing sensitive documents.',say:'The result can be checked while the student’s private information stays protected.'})
- ]},
-{id:'m43',n:43,city:'asaba',title:'Document a supplier dispute',goal:'Build a clear evidence trail for a disputed delivery and record both sides’ response before the issue is closed.',
+{id:'m43',n:41,city:'asaba',title:'Document a supplier dispute',goal:'Build a clear evidence trail for a disputed delivery and record both sides’ response before the issue is closed.',
  steps:[
   taskStep({label:'Record what was agreed',spot:'d',npc:mkSign('Joe','Trade desk','#6a3fb5',LK.clerk,'Dispute desk'),
     intro:'A supplier says the delivery matched the order, but the buyer disagrees.',q:'What should the record start with?',
@@ -3091,7 +3061,7 @@ const MISSIONS=[
     opts:[['Record the remedy, both parties’ acknowledgement and completion status',1],['Delete the disagreement without noting the remedy',0]],
     wrong:'A clear close-out shows what was agreed and whether it was completed.',say:'The final record captures the remedy and both sides’ acknowledgement.'})
  ]},
-{id:'m44',n:44,city:'asaba',title:'Invoice an overseas client',goal:'Prepare an invoice with clear scope, currency, due date and payment instructions, then reconcile the payment record.',
+{id:'m44',n:42,city:'asaba',title:'Invoice an overseas client',goal:'Prepare an invoice with clear scope, currency, due date and payment instructions, then reconcile the payment record.',
  steps:[
   taskStep({label:'Write a complete invoice',spot:'d',npc:mkSign('Mike','Overseas client','#C7457E',LK.woman,'Client desk'),
     intro:'You completed a design job for an overseas client.',q:'What should the invoice include?',
@@ -3106,7 +3076,7 @@ const MISSIONS=[
     opts:[['The amount and reference match the payment record',1],['A message that says “sent” with no record',0]],
     wrong:'A payment message alone does not reconcile an invoice.',say:'The payment record matches the amount due.'})
  ]},
-{id:'m45',n:45,city:'akure',title:'Give to the church fund, verified',goal:'Check the church fund address on the published notice, sign a pledge, and give on Base.',
+{id:'m45',n:43,city:'akure',title:'Give to the church fund, verified',goal:'Check the church fund address on the published notice, sign a pledge, and give on Base.',
  steps:[
   taskStep({label:'Check the building fund with Bamidele',spot:'m',npc:mkSign('Bamidele','Church treasurer','#7a4a2e',LK.elder,'Church'),
     intro:'The church is raising funds for a new roof. The address is on the notice board.',q:'Which address do you give to?',
@@ -3126,7 +3096,7 @@ const MISSIONS=[
         rows:x=>[['To','Church roof fund',1],['Amount','1.00 USDC'],['Network',x]]},
     say:'Your gift is on the public record, and the fund will publish its receipts.'})
  ]},
-{id:'m46',n:46,city:'akure',title:'A concert ticket you own',goal:'Buy the official ticket, check it is minted from the official contract, and show proof at the gate.',
+{id:'m46',n:44,city:'akure',title:'A concert ticket you own',goal:'Buy the official ticket, check it is minted from the official contract, and show proof at the gate.',
  steps:[
   taskStep({label:'Choose the ticket with the promoter',spot:'a',npc:mkSign('Promoter Dayo','Concert promoter','#E4572E',LK.man,'Tickets'),
     intro:'Tickets for the concert are sold as tokens, so the seat is yours on the record.',q:'Where do you buy?',
@@ -3146,7 +3116,7 @@ const MISSIONS=[
     wrong:'Screenshots can be copied. Show the ticket from your wallet.',
     say:'You are through the gate.'})
  ]},
-{id:'m47',n:47,city:'bauchi',title:'Inspect a roof-material delivery',goal:'Check a contractor’s material list, record quantities received, and flag a short delivery before approving the invoice.',
+{id:'m47',n:45,city:'bauchi',title:'Inspect a roof-material delivery',goal:'Check a contractor’s material list, record quantities received, and flag a short delivery before approving the invoice.',
  steps:[
   taskStep({label:'Compare the delivery with the order',spot:'d',npc:mkSign('Isaac','Mosque building committee','#0B7A43',LK.elder,'Roof project'),
     intro:'Roof sheets and timber arrive for a community building project.',q:'What do you compare first?',
@@ -3161,7 +3131,7 @@ const MISSIONS=[
     opts:[['Hold approval until the invoice reflects the verified delivery',1],['Approve the full invoice despite the shortage',0]],
     wrong:'Approval should match the agreed terms and the quantity actually received.',say:'The committee has a clear record before approving payment.'})
  ]},
-{id:'m48',n:48,city:'bauchi',title:'Pay stall rent by approval',goal:'Approve the exact monthly rent, check the landlord’s address on the published lease, and pay on Base.',
+{id:'m48',n:46,city:'bauchi',title:'Pay stall rent by approval',goal:'Approve the exact monthly rent, check the landlord’s address on the published lease, and pay on Base.',
  steps:[
   taskStep({label:'Check the lease with Hajiya Zainab',spot:'g',npc:mkSign('Hajiya Zainab','Market landlord','#C7457E',LK.trader,'Stall lease'),
     intro:'Your stall lease is signed. The landlord’s payment address is written in it.',q:'Which address do you pay to?',
@@ -3181,75 +3151,7 @@ const MISSIONS=[
         rows:x=>[['To','Hajiya Zainab (lease address)',1],['Amount','2.00 USDC'],['Network',x]]},
     say:'Rent is paid. The receipt goes with your lease.'})
  ]},
-{id:'m49',n:49,city:'minna',title:'Split a shared office utility bill',goal:'Allocate a shared utility bill using an agreed rule, check the meter period, and record each tenant’s contribution.',
- steps:[
-  taskStep({label:'Check the bill period and meter',spot:'d',npc:mkSign('Egbuna','Shared office','#2D6FB3',LK.clerk,'Utilities'),
-    intro:'Three small businesses share one office and receive a power bill.',q:'What do you verify first?',
-    opts:[['The billing period, meter reading and total charge',1],['Last month’s amount without checking this bill',0]],
-    wrong:'The amount must match the actual period and meter data.',say:'The shared bill is tied to the correct reading and period.'}),
-  taskStep({label:'Apply the agreed split',spot:'e',npc:mkSign('Egbuna','Shared office','#2D6FB3',LK.clerk,'Utilities'),
-    intro:'The tenants agreed to split the shared bill equally unless a separate meter shows otherwise.',q:'How do you calculate each share?',
-    opts:[['Use the documented split rule and any verified sub-meter readings',1],['Charge one tenant the full bill without agreement',0]],
-    wrong:'Use the rule everyone agreed to and account for reliable separate readings.',say:'Each share follows a transparent, agreed calculation.'}),
-  taskStep({label:'Publish the contribution record',spot:'h',npc:mkSign('Egbuna','Shared office','#2D6FB3',LK.clerk,'Utilities'),
-    intro:'The tenants need to see who has contributed without exposing unrelated personal details.',q:'What should the record show?',
-    opts:[['The bill reference, split calculation and contribution status',1],['Private account details unrelated to the bill',0]],
-    wrong:'Show enough to reconcile the bill without disclosing unnecessary private data.',say:'Everyone can reconcile the shared cost.'})
- ]},
-{id:'m50',n:50,city:'minna',title:'A health claim, approved on the record',goal:'Sign the health claim, approve only the approved amount, and confirm the payout on the explorer.',
- steps:[
-  taskStep({label:'File the claim with Sister Ruth',spot:'m',npc:mkSign('Sister Ruth','Clinic nurse','#0B7A43',LK.woman,'Clinic'),
-    intro:'You file a claim for a clinic visit. The pool’s rules are public.',q:'What do you attach?',
-    opts:[['The clinic receipt and the visit record',1],['A verbal explanation only',0]],
-    wrong:'A claim needs the receipt and the visit record. Attach both.',
-    say:'The claim is filed with its receipt.'}),
-  taskStep({label:'Sign the claim',spot:'n',npc:mkSign('Amaka','Health pool','#2D6FB3',LK.clerk,'Claims'),
-    intro:'Your claim is signed on the pool’s record. A signature moves no money.',q:'What do you sign?',
-    opts:[['The claim with its receipt',1],['A request to send the pool’s whole balance',0]],
-    wrong:'A claim is a signature on the record. A balance request is not a claim, so reject it.',
-    say:'The claim is on the record for review.'}),
-  taskStep({label:'Confirm the payout',spot:'o',npc:mkSign('Amaka','Health pool','#2D6FB3',LK.clerk,'Claims'),
-    intro:'The claim is approved. The payout is sent on Base.',q:'How do you check it arrived?',
-    opts:[['Look up the payout transaction on the explorer',1],['Wait for a message from the desk',0]],
-    wrong:'Messages can be late or wrong. The explorer shows the payout.',
-    say:'The payout is on the public record.'})
- ]},
-
-/* ---- Oyo ---- */
-{id:'m51',n:51,city:'ibadan',title:'List your recipe guide on the marketplace',goal:'List the guide with a clear licence, sign the licence, and receive the buyer’s payment on Base.',
- steps:[
-  taskStep({label:'List the guide on the marketplace',spot:'a',npc:mkSign('Mama Folake','Home cook','#E4572E',LK.mama,'Marketplace'),
-    intro:'The recipe guide goes on the online marketplace. Buyers choose a licence before they pay.',q:'Which licence do you list?',
-    opts:[['A personal-use licence, with the price and credit to you',1],['A full transfer of rights for one fee',0]],
-    wrong:'A full transfer gives away your recipes for good. List a personal-use licence.',
-    say:'The guide is listed with its licence.'}),
-  taskStep({label:'Sign the licence you offer',spot:'b',npc:mkSign('Mama Folake','Home cook','#E4572E',LK.mama,'Marketplace'),
-    intro:'Your listing asks you to sign the licence terms. A signature is a promise, not a payment.',q:'What do you sign?',
-    opts:[['The licence terms for the guide',1],['A request to send money from my wallet to the marketplace',0]],
-    wrong:'Signing a licence is not paying anyone. Reject the spending request.',
-    say:'Your licence is on the record for buyers.'}),
-  taskStep({label:'Receive the buyer’s payment',spot:'c',npc:mkSign('Mide','Buyer abroad','#6a3fb5',LK.woman,'Buyer'),
-    intro:'Tara buys the guide and pays on Base. Check it arrives.',q:'How do you confirm the sale?',
-    opts:[['Look up her transaction on the explorer for Base',1],['Trust the marketplace notification',0]],
-    wrong:'Notifications can be wrong. The explorer shows the payment on the public record.',
-    say:'The payment is in your wallet. The guide is hers.'})
- ]},
-{id:'m52',n:52,city:'ibadan',title:'Plan a school-fee budget',goal:'Build a school-fee plan with due dates, separate essentials from optional spending, and track each payment against the plan.',
- steps:[
-  taskStep({label:'List the upcoming school costs',spot:'d',npc:mkSign('Ayo Bello','School parent','#C7457E',LK.woman,'School fees'),
-    intro:'A parent needs to plan for tuition, books, transport and a uniform before term starts.',q:'What is the best first step?',
-    opts:[['List each expected cost and its due date',1],['Spend first and estimate what remains later',0]],
-    wrong:'A plan starts with the amounts and deadlines that are known.',say:'You have a dated list of expected school costs.'}),
-  taskStep({label:'Prioritise the required payments',spot:'e',npc:mkSign('Ayo Bello','School parent','#C7457E',LK.woman,'School fees'),
-    intro:'The available budget cannot cover every purchase at once.',q:'How do you decide what gets paid first?',
-    opts:[['Prioritise required fees and essentials due soon, then plan optional items',1],['Pay optional purchases before the school deadline',0]],
-    wrong:'Protect required deadlines before discretionary spending.',say:'The plan puts essential costs and deadlines first.'}),
-  taskStep({label:'Track the payment against the plan',spot:'h',npc:mkSign('Ayo Bello','School parent','#C7457E',LK.woman,'School fees'),
-    intro:'A tuition payment is made and a receipt is issued.',q:'What do you update?',
-    opts:[['Mark the fee paid with its receipt reference and remaining balance',1],['Delete the planned fee without recording the payment',0]],
-    wrong:'A receipt reference and updated balance keep the plan auditable.',say:'The budget reflects the actual payment and what remains due.'})
- ]},
-{id:'m53',n:53,city:'adoekiti',title:'Honey contract, signed at the cooperative',goal:'Sign the honey contract at the cooperative, check the lab certificate’s address, and release payment on delivery.',
+{id:'m53',n:47,city:'adoekiti',title:'Honey contract, signed at the cooperative',goal:'Sign the honey contract at the cooperative, check the lab certificate’s address, and release payment on delivery.',
  steps:[
   taskStep({label:'Sign the honey contract',spot:'g',npc:mkSign('Toheeb','Honey buyer','#F6B21A',LK.man,'Honey'),
     intro:'The cooperative office holds the signing. The contract covers grade, quantity and price.',q:'What do you check before signing?',
@@ -3269,7 +3171,7 @@ const MISSIONS=[
         rows:x=>[['Contract','Honey escrow',1],['Release','On delivery'],['Network',x]]},
     say:'The honey is paid for, and the record shows the grade.'})
  ]},
-{id:'m54',n:54,city:'adoekiti',title:'Guide certificate, checked on the registry',goal:'Check your guide certificate on the registry, sign the trail waiver, and pay the park entry on Base.',
+{id:'m54',n:48,city:'adoekiti',title:'Guide certificate, checked on the registry',goal:'Check your guide certificate on the registry, sign the trail waiver, and pay the park entry on Base.',
  steps:[
   taskStep({label:'Check your certificate on the registry',spot:'j',npc:mkSign('Ayo Ogunleye','Trail guide trainer','#0B7A43',LK.man,'Guides'),
     intro:'Hikers check that your guide certificate is real before they book.',q:'Where do you check it?',
@@ -3289,7 +3191,7 @@ const MISSIONS=[
         rows:x=>[['To','Park gate',1],['Amount','1.00 USDC'],['Network',x]]},
     say:'Your entry is on the record. The climb can start.'})
  ]},
-{id:'m55',n:55,city:'gombe',title:'Weekly order on the chef’s tab',goal:'Open the chef’s weekly order, approve only the delivery amount, and pay on delivery on Base.',
+{id:'m55',n:49,city:'gombe',title:'Weekly order on the chef’s tab',goal:'Open the chef’s weekly order, approve only the delivery amount, and pay on delivery on Base.',
  steps:[
   taskStep({label:'Open the weekly order with Mike',spot:'m',npc:mkSign('Mike','Restaurant chef','#6a3fb5',LK.man,'Chef'),
     intro:'The restaurant orders tomatoes every week. The order is on a shared list.',q:'What goes on the order?',
@@ -3309,7 +3211,7 @@ const MISSIONS=[
         rows:x=>[['To','Tomato farm',1],['Amount','2.00 USDC'],['Network',x]]},
     say:'The delivery is paid. The order is closed on the record.'})
  ]},
-{id:'m56',n:56,city:'gombe',title:'Share your farm record with the bank',goal:'Sign to share your farm record with the bank, and check the loan amount before you accept the disbursement.',
+{id:'m56',n:50,city:'gombe',title:'Share your farm record with the bank',goal:'Sign to share your farm record with the bank, and check the loan amount before you accept the disbursement.',
  steps:[
   taskStep({label:'Share your farm record at the bank',spot:'a',npc:mkSign('Lami Bako','Agricultural lender','#1f4f82',LK.woman,'Lender'),
     intro:'The bank wants to see your farm records. You decide what to share.',q:'What do you share?',
@@ -3329,7 +3231,7 @@ const MISSIONS=[
         rows:x=>[['From','Agricultural lender',1],['Amount','8.00 USDC'],['Network',x]]},
     say:'The loan is in your wallet. Repayments follow the agreed schedule.'})
  ]},
-{id:'m57',n:57,city:'yola',title:'Join the groundnut co-op at the market',goal:'Check the co-op register address, sign your membership, and pay the fee on Base.',
+{id:'m57',n:51,city:'yola',title:'Join the groundnut co-op at the market',goal:'Check the co-op register address, sign your membership, and pay the fee on Base.',
  steps:[
   taskStep({label:'Check the co-op register',spot:'d',npc:mkSign('Joshua','Co-op secretary','#0B7A43',LK.man,'Co-op'),
     intro:'The co-op keeps its member register public. Check the address on the register before paying.',q:'Which address do you check?',
@@ -3349,7 +3251,7 @@ const MISSIONS=[
         rows:x=>[['To','Co-op register address',1],['Amount','1.00 USDC'],['Network',x]]},
     say:'Your membership is active and on the public register.'})
  ]},
-{id:'m58',n:58,city:'yola',title:'Approve wedding-photo delivery',goal:'Agree the wedding photo selection, verify the delivered files, and record client approval before closing the job.',
+{id:'m58',n:52,city:'yola',title:'Approve wedding-photo delivery',goal:'Agree the wedding photo selection, verify the delivered files, and record client approval before closing the job.',
  steps:[
   taskStep({label:'Agree the photo selection',spot:'d',npc:mkSign('Hajiya Kande','Wedding client','#C7457E',LK.woman,'Photo delivery'),
     intro:'The photographer and couple need to agree on the final album.',q:'What should the delivery brief specify?',
@@ -3364,7 +3266,7 @@ const MISSIONS=[
     opts:[['Record the specific edits and confirm approval after they are completed',1],['Close the job without acknowledging the requested changes',0]],
     wrong:'Specific revisions create a clear path to acceptance.',say:'The approval record states what remains and when the job is complete.'})
  ]},
-{id:'m59',n:59,city:'abakaliki',title:'Group buy at the rice depot',goal:'Sign the group order, pay your share on Base, and check the depot’s delivery record.',
+{id:'m59',n:53,city:'abakaliki',title:'Group buy at the rice depot',goal:'Sign the group order, pay your share on Base, and check the depot’s delivery record.',
  steps:[
   taskStep({label:'Sign the group order at the depot',spot:'j',npc:mkSign('Egbuna','Rice depot','#1f4f82',LK.man,'Depot'),
     intro:'Five millers order rice together. The order lists each share.',q:'What do you sign?',
@@ -3384,7 +3286,7 @@ const MISSIONS=[
     wrong:'Check each share, not just the total. That is how the group stays fair.',
     say:'Every share matches the delivery record.'})
  ]},
-{id:'m60',n:60,city:'abakaliki',title:'Resolve a pending transfer safely',goal:'Investigate a pending transfer without exposing private keys or sending the payment a second time.',
+{id:'m60',n:54,city:'abakaliki',title:'Resolve a pending transfer safely',goal:'Investigate a pending transfer without exposing private keys or sending the payment a second time.',
  steps:[
   taskStep({label:'Find the transaction status',spot:'m',npc:mkSign('Mmesoma Okafor','Network support desk','#C7457E',LK.woman,'Help desk'),
     intro:'A customer says a transfer is still pending. The balance has not changed yet, and they are worried.',q:'What should you check first?',
@@ -3402,7 +3304,7 @@ const MISSIONS=[
     wrong:'An unsolicited unlock fee can be a scam. Follow the network status and official support guidance.',
     say:'You avoided a duplicate payment and an unofficial fee while the original transfer is pending.'})
  ]},
-{id:'m61',n:61,city:'abia',title:'Overseas repair order on the courier',goal:'Accept the repair order by signature, pay the courier on Base, and confirm the parcel was received.',
+{id:'m61',n:55,city:'abia',title:'Overseas repair order on the courier',goal:'Accept the repair order by signature, pay the courier on Base, and confirm the parcel was received.',
  steps:[
   taskStep({label:'Accept the repair order',spot:'a',npc:mkSign('Amaka','Overseas client','#6a3fb5',LK.man,'Client'),
     intro:'A client sends shoes for repair from overseas. Accepting the order is a signature.',q:'What do you sign?',
@@ -3422,7 +3324,7 @@ const MISSIONS=[
     wrong:'An open order keeps disputes alive. Mark it received once it arrives.',
     say:'The order is closed, and the record shows it.'})
  ]},
-{id:'m62',n:62,city:'abia',title:'Workshop rent, booked on a shared calendar',goal:'Sign the shared rent agreement, pay your share on Base, and swap a booking by signature.',
+{id:'m62',n:56,city:'abia',title:'Workshop rent, booked on a shared calendar',goal:'Sign the shared rent agreement, pay your share on Base, and swap a booking by signature.',
  steps:[
   taskStep({label:'Sign the shared rent agreement',spot:'d',npc:mkSign('Mama Uche','Workshop owner','#7a4a2e',LK.mama,'Workshop'),
     intro:'Three artisans share the workshop. The agreement sets each share of the rent.',q:'What do you sign?',
@@ -3442,7 +3344,7 @@ const MISSIONS=[
     wrong:'A swap is a signed change to the calendar, not a payment. Sign the swap only.',
     say:'The calendar is updated with both signatures.'})
  ]},
-{id:'m63',n:63,city:'bayelsa',title:'Trace a fish catch to its landing',goal:'Record the landing location, catch time and handling checks so a buyer can trace the fish batch to its source.',
+{id:'m63',n:57,city:'bayelsa',title:'Trace a fish catch to its landing',goal:'Record the landing location, catch time and handling checks so a buyer can trace the fish batch to its source.',
  steps:[
   taskStep({label:'Record the landing details',spot:'d',npc:mkSign('Aunty Kemi','Fish seller','#2D6FB3',LK.man,'Landing site'),
     intro:'A buyer asks where a batch of fish was caught and landed.',q:'What should the first record include?',
@@ -3457,7 +3359,7 @@ const MISSIONS=[
     opts:[['The batch reference and its relevant source and handling record',1],['Private records for every other customer',0]],
     wrong:'Share only the records relevant to this batch.',say:'The buyer can trace the fish to its source and handling checks.'})
  ]},
-{id:'m64',n:64,city:'bayelsa',title:'Manage the ferry boarding manifest',goal:'Match passenger bookings to the departure manifest, handle a changed booking, and reconcile the final passenger count.',
+{id:'m64',n:58,city:'bayelsa',title:'Manage the ferry boarding manifest',goal:'Match passenger bookings to the departure manifest, handle a changed booking, and reconcile the final passenger count.',
  steps:[
   taskStep({label:'Match bookings to the manifest',spot:'d',npc:mkSign('Timi Opu','Ferry operator','#2D6FB3',LK.clerk,'Boarding desk'),
     intro:'The ferry crew needs a reliable list of passengers for the crossing.',q:'What do you check?',
@@ -3472,7 +3374,7 @@ const MISSIONS=[
     opts:[['The boarded count matches the checked manifest and safety limit',1],['Depart with an unexplained mismatch',0]],
     wrong:'The crew needs a reconciled count within the safe passenger limit.',say:'The final manifest matches the boarding count.'})
  ]},
-{id:'m65',n:65,city:'jigawa',title:'Book the shared pump on the log',goal:'Book your turn on the shared pump, approve the group fund for your share, and pay your running cost on Base.',
+{id:'m65',n:59,city:'jigawa',title:'Book the shared pump on the log',goal:'Book your turn on the shared pump, approve the group fund for your share, and pay your running cost on Base.',
  steps:[
   taskStep({label:'Book your turn at the pump',spot:'a',npc:mkSign('Sadiq Bello','Farm group leader','#0B7A43',LK.man,'Pump log'),
     intro:'The pump runs on a shared booking log. Each farm books its hours before it runs.',q:'What do you book?',
@@ -3492,7 +3394,7 @@ const MISSIONS=[
         rows:x=>[['To','Pump fund',1],['Amount','1.00 USDC'],['Network',x]]},
     say:'Your hours and cost are both on the shared record.'})
  ]},
-{id:'m66',n:66,city:'jigawa',title:'List your grain at the market board',goal:'Check the market price feed, list your grain with a signed listing, and confirm the buyer’s payment on the explorer.',
+{id:'m66',n:60,city:'jigawa',title:'List your grain at the market board',goal:'Check the market price feed, list your grain with a signed listing, and confirm the buyer’s payment on the explorer.',
  steps:[
   taskStep({label:'Check the market price feed',spot:'d',npc:mkSign('Malam Musa','Market information','#2D6FB3',LK.man,'Prices'),
     intro:'The market publishes prices at its board and online. Check the feed before you list.',q:'Which feed do you use?',
@@ -3510,7 +3412,7 @@ const MISSIONS=[
     wrong:'Messages do not move the truck. The explorer shows the payment.',
     say:'The payment is in your wallet. The truck can leave.'})
  ]},
-{id:'m67',n:67,city:'kebbi',title:'Consent before the field survey',goal:'Sign the consent form, submit the survey on the research registry, and check the survey fee arrives.',
+{id:'m67',n:61,city:'kebbi',title:'Consent before the field survey',goal:'Sign the consent form, submit the survey on the research registry, and check the survey fee arrives.',
  steps:[
   taskStep({label:'Sign the consent form with Nneka Okafor',spot:'g',npc:mkSign('Nneka Okafor','Agricultural research','#0B7A43',LK.woman,'Research'),
     intro:'The survey asks about your farm. Before the first question, you choose what you agree to share.',q:'What do you sign?',
@@ -3528,7 +3430,7 @@ const MISSIONS=[
     wrong:'The explorer shows the fee. A message only says it was sent.',
     say:'The fee is in your wallet.'})
  ]},
-{id:'m68',n:68,city:'kebbi',title:'Sign off the pond harvest',goal:'Vote on the harvest sign-off, pay the feed on Base, and check the harvest record for your share.',
+{id:'m68',n:62,city:'kebbi',title:'Sign off the pond harvest',goal:'Vote on the harvest sign-off, pay the feed on Base, and check the harvest record for your share.',
  steps:[
   taskStep({label:'Vote on the harvest sign-off',spot:'j',npc:mkSign('Mallam Sadiq','Pond manager','#2D6FB3',LK.man,'Pond'),
     intro:'The harvest is weighed. Members vote to sign off the record.',q:'What do you vote?',
@@ -3548,7 +3450,7 @@ const MISSIONS=[
     wrong:'Check your own share. A large total can hide a short share.',
     say:'Your share matches the record.'})
  ]},
-{id:'m69',n:69,city:'kogi',title:'Sign the apprenticeship offer',goal:'Check the plant’s published address, sign your apprenticeship offer, and pay your safety course on Base.',
+{id:'m69',n:63,city:'kogi',title:'Sign the apprenticeship offer',goal:'Check the plant’s published address, sign your apprenticeship offer, and pay your safety course on Base.',
  steps:[
   taskStep({label:'Check the plant’s address',spot:'m',npc:mkSign('Femi Alade','Training officer','#1f4f82',LK.man,'Training'),
     intro:'The apprenticeship is posted on the plant’s site. Check the plant’s address before you sign.',q:'Which address do you check?',
@@ -3568,7 +3470,7 @@ const MISSIONS=[
         rows:x=>[['Item','Plant safety course'],['Amount','1.00 USDC'],['Network',x]]},
     say:'You are enrolled. Keep the receipt.'})
  ]},
-{id:'m70',n:70,city:'kogi',title:'Loan repayment, approved in advance',goal:'Sign the loan terms, approve only the next instalment, and repay on time on Base.',
+{id:'m70',n:64,city:'kogi',title:'Loan repayment, approved in advance',goal:'Sign the loan terms, approve only the next instalment, and repay on time on Base.',
  steps:[
   taskStep({label:'Sign the loan terms with Mrs Ojo',spot:'a',npc:mkSign('Mrs Ojo','Community lender','#0B7A43',LK.woman,'Lender'),
     intro:'The loan is 8 USDC over four months. The terms are written on a signed record.',q:'What do you check before signing?',
@@ -3588,7 +3490,7 @@ const MISSIONS=[
         rows:x=>[['To','Loan desk',1],['Amount','2.00 USDC'],['Network',x]]},
     say:'Your repayment is on the record. The schedule is on track.'})
  ]},
-{id:'m71',n:71,city:'nasarawa',title:'Weekly egg round, approved for the week',goal:'Sign this week’s delivery list, approve only the weekly total, and pay for the crates on Base.',
+{id:'m71',n:65,city:'nasarawa',title:'Weekly egg round, approved for the week',goal:'Sign this week’s delivery list, approve only the weekly total, and pay for the crates on Base.',
  steps:[
   taskStep({label:'Sign the weekly delivery list',spot:'d',npc:mkSign('Aisha Danladi','Poultry seller','#C7457E',LK.mama,'Eggs'),
     intro:'Your round has regular customers. The weekly list is signed so customers can check it.',q:'What do you sign?',
@@ -3608,7 +3510,7 @@ const MISSIONS=[
         rows:x=>[['To','Crate seller',1],['Amount','1.00 USDC'],['Network',x]]},
     say:'The crates are paid for. The round can start.'})
  ]},
-{id:'m72',n:72,city:'nasarawa',title:'Post the water tariff and test',goal:'Sign the posted tariff on the kiosk record, pay for the water test on Base, and check the test certificate.',
+{id:'m72',n:66,city:'nasarawa',title:'Post the water tariff and test',goal:'Sign the posted tariff on the kiosk record, pay for the water test on Base, and check the test certificate.',
  steps:[
   taskStep({label:'Sign the posted tariff',spot:'g',npc:mkSign('Engr. Dauda','Water kiosk operator','#2D6FB3',LK.man,'Water kiosk'),
     intro:'The kiosk tariff is posted on the community record. Sign it to make it official.',q:'What do you sign?',
@@ -3628,7 +3530,7 @@ const MISSIONS=[
     wrong:'A stamp can be copied. Check the lab’s address and the date against its record.',
     say:'The certificate is genuine. It goes up at the kiosk.'})
  ]},
-{id:'m73',n:73,city:'osun',title:'Check a festival vendor’s food-safety record',goal:'Verify a vendor’s food-handling checklist, record a temperature check, and flag an issue before the stall opens.',
+{id:'m73',n:67,city:'osun',title:'Check a festival vendor’s food-safety record',goal:'Verify a vendor’s food-handling checklist, record a temperature check, and flag an issue before the stall opens.',
  steps:[
   taskStep({label:'Review the vendor checklist',spot:'d',npc:mkSign('Sani Musa','Event safety team','#2D6FB3',LK.clerk,'Food safety'),
     intro:'A food stall is preparing to open at a busy festival.',q:'What do you review first?',
@@ -3643,7 +3545,7 @@ const MISSIONS=[
     opts:[['Record the issue, prevent unsafe food from being served and recheck after correction',1],['Ignore it so the stall can open on time',0]],
     wrong:'Protect customers first, then document the correction and recheck.',say:'The issue has a documented corrective action before service.'})
  ]},
-{id:'m74',n:74,city:'osun',title:'Publish a craft with the maker’s consent',goal:'Get the maker’s consent, publish the craft entry on Base, and remove a piece when a maker asks.',
+{id:'m74',n:68,city:'osun',title:'Publish a craft with the maker’s consent',goal:'Get the maker’s consent, publish the craft entry on Base, and remove a piece when a maker asks.',
  steps:[
   taskStep({label:'Get the maker’s consent',spot:'m',npc:mkSign('Maker Funmi','Weaver','#C7457E',LK.woman,'Maker'),
     intro:'Before a craft goes in the archive, the maker signs her consent.',q:'What does the consent say?',
@@ -3663,7 +3565,7 @@ const MISSIONS=[
     wrong:'The maker decides what is shared. Sign the removal.',
     say:'The pattern is removed. The record shows the request.'})
  ]},
-{id:'m75',n:75,city:'taraba',title:'Sell cocoa on a graded board',goal:'Check the published grade, sign the sale at that grade, and confirm payment on the explorer.',
+{id:'m75',n:69,city:'taraba',title:'Sell cocoa on a graded board',goal:'Check the published grade, sign the sale at that grade, and confirm payment on the explorer.',
  steps:[
   taskStep({label:'Check the published grade',spot:'a',npc:mkSign('Nura Abubakar','Cocoa cooperative','#7a4a2e',LK.man,'Cocoa'),
     intro:'Your batch is graded by the cooperative. The grade is on its published board.',q:'What do you check?',
@@ -3681,7 +3583,7 @@ const MISSIONS=[
     wrong:'Messages are not escrow. The explorer shows the amount held.',
     say:'The amount is held in escrow for weighing.'})
  ]},
-{id:'m76',n:76,city:'taraba',title:'Log a sighting on the park record',goal:'Sign the park data policy, log your sighting with time and place, and pay the research permit on Base.',
+{id:'m76',n:70,city:'taraba',title:'Log a sighting on the park record',goal:'Sign the park data policy, log your sighting with time and place, and pay the research permit on Base.',
  steps:[
   taskStep({label:'Sign the park data policy',spot:'d',npc:mkSign('Dr Iliya','Park researcher','#0B7A43',LK.man,'Park research'),
     intro:'Field data is shared under a policy. You sign before your first survey.',q:'What do you sign?',
@@ -3701,7 +3603,7 @@ const MISSIONS=[
         rows:x=>[['To','Park permit office',1],['Amount','1.00 USDC'],['Network',x]]},
     say:'The permit is paid and recorded.'})
  ]},
-{id:'m77',n:77,city:'yobe',title:'Sell a seedling with a lot certificate',goal:'Mint a lot certificate for the seedling batch on Base, and check a buyer’s lot record before you guarantee it.',
+{id:'m77',n:71,city:'yobe',title:'Sell a seedling with a lot certificate',goal:'Mint a lot certificate for the seedling batch on Base, and check a buyer’s lot record before you guarantee it.',
  steps:[
   taskStep({label:'Name the variety with Zainab Lawal',spot:'g',npc:mkSign('Zainab Lawal','Date grower','#7a4a2e',LK.elder,'Nursery'),
     intro:'Each seedling batch has a variety and a lot number. Buyers want both.',q:'What goes on the lot label?',
@@ -3721,7 +3623,7 @@ const MISSIONS=[
     wrong:'His word is not a record. The lot certificate shows what was sold and when.',
     say:'His earlier lot is on record. You can guarantee the new batch with confidence.'})
  ]},
-{id:'m78',n:78,city:'yobe',title:'Document a cold-chain power outage',goal:'Record a cold-store outage, track the affected batch and temperature history, and document the corrective action before release.',
+{id:'m78',n:72,city:'yobe',title:'Document a cold-chain power outage',goal:'Record a cold-store outage, track the affected batch and temperature history, and document the corrective action before release.',
  steps:[
   taskStep({label:'Log the outage window',spot:'d',npc:mkSign('Zainab Gambo','Produce storage','#2D6FB3',LK.clerk,'Cold chain'),
     intro:'Power fails overnight at a cold store holding produce for several farms.',q:'What do you record first?',
@@ -3736,7 +3638,7 @@ const MISSIONS=[
     opts:[['Record the inspection result and release or hold decision for each batch',1],['Delete the outage note after power returns',0]],
     wrong:'The record should show how each batch was assessed and what happened next.',say:'The incident trail records the checks and final disposition.'})
  ]},
-{id:'m79',n:79,city:'zamfara',title:'Prepare a livestock movement record',goal:'Document the origin, animal count, destination and required health documents before livestock are moved between markets.',
+{id:'m79',n:73,city:'zamfara',title:'Prepare a livestock movement record',goal:'Document the origin, animal count, destination and required health documents before livestock are moved between markets.',
  steps:[
   taskStep({label:'Record the origin and destination',spot:'d',npc:mkSign('Chisom Okeke','Movement desk','#2D6FB3',LK.clerk,'Animal movement'),
     intro:'A livestock owner is preparing to move a group of animals to another market.',q:'What belongs in the movement record?',
@@ -3751,7 +3653,7 @@ const MISSIONS=[
     opts:[['Confirm the arrival count and record any discrepancy',1],['Reuse the departure count without checking',0]],
     wrong:'A final count helps identify losses or mistakes during transit.',say:'The movement record reflects the actual arrival count.'})
  ]},
-{id:'m80',n:80,city:'zamfara',title:'Weigh-in, sign, and a fair payout',goal:'Sign the weigh-in for your milk deliveries, check the weekly payout against the record, and raise a gap before you accept.',
+{id:'m80',n:74,city:'zamfara',title:'Weigh-in, sign, and a fair payout',goal:'Sign the weigh-in for your milk deliveries, check the weekly payout against the record, and raise a gap before you accept.',
  steps:[
   taskStep({label:'Sign your weigh-in',spot:'a',npc:mkSign('Hajiya Rakiya','Milk cooperative chair','#C7457E',LK.woman,'Milk co-op'),
     intro:'Each morning’s milk is weighed and recorded. You sign the weigh-in for your deliveries.',q:'What do you sign?',
@@ -3769,7 +3671,7 @@ const MISSIONS=[
     wrong:'Accepting a short payout in silence lets gaps repeat. Raise it on the record first.',
     say:'The co-op reviews the three mornings and corrects the payout.'})
  ]},
-{id:'m81',n:81,city:'kitcity',title:'The Final Gate: Enter the T3Kit Hub',goal:'Prove you can protect your wallet, verify on-chain activity, question unsafe permissions, and choose how you will contribute to Web3 before entering KitCity.',steps:[
+{id:'m81',n:75,city:'kitcity',title:'The Final Gate: Enter the T3Kit Hub',goal:'Prove you can protect your wallet, verify on-chain activity, question unsafe permissions, and choose how you will contribute to Web3 before entering KitCity.',steps:[
  taskStep({label:'Protect your keys',spot:'a',npc:mkSign('Amina Okoro','T3Kit security guide','#1A7897',LK.clerk,'Wallet safety'),
   intro:'The city gates only open for people who understand the first rule of self-custody. A visitor asks you to send your recovery phrase so they can “activate” your wallet.',
   q:'What is the safe response?',
@@ -3905,7 +3807,7 @@ function buildMissionNameAliases(mission){
   ambiguous.forEach(name=>delete candidates[name]);
   return candidates;
 }
-const cityMissions=city=>MISSIONS.filter(m=>m.city===city);
+const cityMissions=city=>{const seen=new Set();return MISSIONS.filter(m=>{if(m.city!==city)return false;const key=String(m.title||'').trim().toLowerCase();if(seen.has(key))return false;seen.add(key);return true;});};
 const isCityComplete=city=>{const ms=cityMissions(city);return ms.length>0&&ms.every(m=>!!P.done[m.id]);};
 const isCityUnlocked=city=>{const ms=cityMissions(city);return ms.length>0&&isUnlocked(ms[0]);};
 /* =====================  mission flow  ===================== */
@@ -4001,14 +3903,86 @@ $('#pauseBtn').addEventListener('click',()=>{
 });
 
 /* =====================  hub  ===================== */
-const NG=[[2.7,6.4],[4.0,6.4],[5.0,5.4],[5.6,4.4],[6.8,4.3],[7.6,4.5],[8.3,4.6],[8.5,4.9],[9.0,5.8],[9.9,6.7],[10.6,7.0],[11.2,6.6],[11.8,7.2],[12.8,7.8],[13.2,9.0],[12.2,10.0],[11.7,10.9],[12.5,11.5],[13.7,11.9],[14.6,12.2],[14.2,13.0],[13.6,13.6],[12.0,13.5],[10.0,13.3],[8.5,13.0],[7.0,13.0],[5.5,13.6],[4.2,13.4],[3.6,11.9],[3.8,11.0],[3.7,10.0],[3.1,9.0],[2.8,7.9]];
-const mx=lon=>(lon-2.2)*20,my=lat=>(14.2-lat)*20;
+const mapXY=(lon,lat)=>({x:(lon-2.2)*27+9,y:(14.2-lat)*27+7});
+const mapPoints=coords=>coords.map(p=>{const q=mapXY(p[0],p[1]);return q.x.toFixed(1)+','+q.y.toFixed(1);}).join(' ');
+const mapPath=coords=>coords.map((p,i)=>{const q=mapXY(p[0],p[1]);return (i?'L':'M')+q.x.toFixed(1)+' '+q.y.toFixed(1);}).join(' ');
+const escMapText=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+/* Nigeria outline follows the country's broad real geographic shape; interior strokes
+   are quiet state-region guides, while the Niger and Benue are shown as waterways. */
+const NG=[
+ [2.72,6.45],[2.77,7.15],[2.78,8.15],[2.83,9.15],[2.92,10.15],[2.98,11.1],
+ [3.12,12.05],[3.62,12.72],[4.05,13.38],[5.12,13.68],[6.18,13.57],[7.24,13.55],
+ [8.25,13.45],[9.25,13.28],[10.12,13.34],[11.18,13.44],[12.2,13.43],[13.22,13.49],
+ [14.08,13.12],[14.42,12.35],[14.35,11.45],[13.92,10.55],[13.48,9.68],[13.16,8.82],
+ [12.82,7.98],[12.54,7.13],[12.23,6.42],[11.9,5.65],[11.47,4.68],[10.92,4.31],
+ [10.12,4.25],[9.25,4.29],[8.4,4.44],[7.62,4.49],[6.82,4.41],[6.02,4.35],
+ [5.22,4.39],[4.4,4.41],[3.76,4.62],[3.22,5.15],[2.9,5.82]
+];
+const MAP_LABELS=new Set(['lagos','abuja','kano','ibadan','minna','ph','kaduna','enugu','benin','calabar','jos','maiduguri','ilorin','sokoto','kitcity']);
+const MAP_OFFSETS={
+ lagos:[8,13],ibadan:[10,-8],abeokuta:[-8,-10],ilorin:[-12,-8],akure:[12,11],
+ 'ado-ekiti':[12,12],osogbo:[10,-8],abuja:[10,-8],minna:[-10,13],kano:[9,-8],
+ kaduna:[-10,12],jos:[10,-8],enugu:[10,12],benin:[10,-8],ph:[10,8],
+ calabar:[10,11],maiduguri:[-12,-8],sokoto:[-8,-8],kitcity:[-10,12]
+};
 function mapSVG(){
-  const pts=NG.map(p=>mx(p[0]).toFixed(1)+','+my(p[1]).toFixed(1)).join(' '); let pins='';
-  for(const k of cityOrder){ const c=CITIES[k],x=mx(c.lon),y=my(c.lat),open=isCityUnlocked(k),sel=k===hubCity,done=cityMissions(k).filter(m=>P.done[m.id]).length,total=cityMissions(k).length;
-    pins+='<g data-a="city" data-v="'+k+'" role="button" aria-label="'+c.name+(open?'':' locked')+'" tabindex="0" style="cursor:'+(open?'pointer':'not-allowed')+'">'+(sel?'<circle cx="'+x+'" cy="'+y+'" r="8.5" fill="none" stroke="'+(k==='kitcity'?'#F4C76B':'#e8f7ff')+'" stroke-width="'+(k==='kitcity'?2.2:1.4)+'"/>':'')+'<circle cx="'+x+'" cy="'+y+'" r="'+(sel?4.6:(k==='kitcity'?4:3.1))+'" fill="'+(k==='kitcity'?'#F4C76B':done===total?'#72E0B0':open?'#53DDF0':'#536273')+'" stroke="'+(sel||k==='kitcity'?'#fff':'#142333')+'" stroke-width="'+(sel||k==='kitcity'?1.7:1.1)+'"/><title>'+(k==='kitcity'?'FINAL DESTINATION · T3Kit Hub':c.name)+' · '+done+'/'+total+' missions</title></g>'; }
-  return '<section class="map-card"><div class="map-card-head"><div><span>EXPLORE NIGERIA</span><h2>City Map</h2></div><b>'+cityOrder.length+' cities</b></div><svg viewBox="0 0 270 220" class="map" role="img" aria-label="Interactive map of Nigeria. Tap a city marker to view its missions"><defs><linearGradient id="landFill" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#153747"/><stop offset="100%" stop-color="#172432"/></linearGradient></defs><rect width="270" height="220" rx="14" fill="#0b131d"/><g stroke="#fff" stroke-opacity=".035" stroke-width=".7">'+Array.from({length:10},(_,i)=>'<path d="M'+(i*30)+' 0V220"/>').join('')+Array.from({length:8},(_,i)=>'<path d="M0 '+(i*30)+'H270"/>').join('')+'</g><polygon points="'+pts+'" fill="url(#landFill)" stroke="#2c6578" stroke-width="1.6" stroke-linejoin="round"/>'+pins+'</svg><div class="map-legend"><span><i class="map-dot unlocked"></i>Unlocked</span><span><i class="map-dot completed"></i>Completed</span><span><i class="map-dot locked"></i>Locked</span></div></section>';
+  const outline=mapPoints(NG);
+  const stateGuides=[
+    [[4.15,12.95],[5.15,12.2],[5.75,11.25],[6.9,11.15]],
+    [[6.9,13.52],[7.0,12.25],[7.35,11.15],[7.4,10.5]],
+    [[8.35,13.44],[8.55,12.3],[8.5,11.2],[8.55,10.2],[8.53,9.0],[8.53,7.73]],
+    [[10.1,13.34],[10.0,12.2],[10.4,11.1],[10.7,10.1],[10.8,8.9]],
+    [[12.2,13.43],[12.05,12.2],[12.45,11.1],[12.8,10.1],[13.2,9.1]],
+    [[3.0,10.15],[4.25,10.05],[5.3,9.6],[6.56,9.61],[7.5,9.1]],
+    [[3.0,8.2],[4.3,8.35],[5.25,7.62],[6.2,7.07],[6.74,7.8]],
+    [[3.2,5.15],[4.35,5.9],[5.2,6.5],[6.2,6.2],[7.0,6.0]],
+    [[7.0,6.0],[7.9,6.3],[8.8,6.1],[9.6,5.8],[10.7,5.1]],
+    [[8.53,7.73],[9.8,7.2],[10.9,7.4],[12.0,7.2]],
+    [[9.25,13.28],[9.4,12.0],[9.84,10.31],[9.7,9.0],[9.8,7.2]],
+    [[5.75,11.25],[6.56,9.61],[6.74,7.8],[5.75,6.1]]
+  ];
+  const roads=[
+    [[3.4,6.5],[3.9,7.4],[4.54,8.5],[6.74,7.8],[7.5,9.1],[8.5,12.0]],
+    [[7.5,9.1],[7.4,10.5],[8.5,12.0],[9.84,10.31],[11.17,10.29],[12.46,9.2]],
+    [[7.5,9.1],[6.56,9.61],[6.21,7.07],[6.15,6.78],[5.48,7.03]],
+    [[7.5,9.1],[8.53,7.73],[11.37,8.89]],
+    [[5.2,7.25],[3.9,7.4],[3.35,7.15]],
+    [[6.74,7.8],[8.53,7.73],[9.0,9.9],[9.84,10.31]]
+  ];
+  const rivers=[
+    [[4.25,13.0],[4.7,12.0],[5.15,11.1],[5.65,10.3],[6.15,9.45],[6.58,8.65],[6.74,7.8],[6.45,7.05],[6.15,6.35],[5.85,5.7],[5.55,5.05],[5.35,4.45]],
+    [[11.55,7.45],[10.7,7.12],[9.85,7.2],[9.0,7.35],[8.15,7.55],[7.4,7.68],[6.74,7.8]]
+  ];
+  const guides=stateGuides.map(p=>'<path d="'+mapPath(p)+'" class="map-state-line"/>').join('');
+  const roadLines=roads.map(p=>'<path d="'+mapPath(p)+'" class="map-road-line"/>').join('');
+  const riverLines=rivers.map(p=>'<path d="'+mapPath(p)+'" class="map-river-line"/>').join('');
+  let pins='';
+  for(const k of cityOrder){
+    const c=CITIES[k],p=mapXY(c.lon,c.lat),open=isCityUnlocked(k),sel=k===hubCity;
+    const done=cityMissions(k).filter(m=>P.done[m.id]).length,total=cityMissions(k).length;
+    const color=k==='kitcity'?'#F4C76B':done===total?'#72E0B0':open?'#53DDF0':'#718093';
+    const off=MAP_OFFSETS[k]||(p.x>280?[-8,-8]:[8,-7]);
+    const showLabel=sel||MAP_LABELS.has(k);
+    const lx=p.x+off[0],ly=p.y+off[1],anchor=off[0]<0?'end':'start';
+    const label=showLabel?'<path d="M'+p.x.toFixed(1)+' '+p.y.toFixed(1)+' L'+(p.x+off[0]*.62).toFixed(1)+' '+(p.y+off[1]*.62).toFixed(1)+'" class="map-label-leader"/><text x="'+lx.toFixed(1)+'" y="'+ly.toFixed(1)+'" text-anchor="'+anchor+'" class="map-city-label'+(sel?' selected':'')+'">'+escMapText(c.name)+'</text>':'';
+    pins+='<g data-a="city" data-v="'+k+'" role="button" aria-label="'+escMapText(c.name)+(open?'':' locked')+'" tabindex="0" class="map-city'+(sel?' selected':'')+'" style="cursor:'+(open?'pointer':'not-allowed')+'">'+
+      (sel?'<circle cx="'+p.x.toFixed(1)+'" cy="'+p.y.toFixed(1)+'" r="8.2" class="map-selected-ring"/>':'')+
+      '<circle cx="'+p.x.toFixed(1)+'" cy="'+p.y.toFixed(1)+'" r="'+(sel?4.5:(k==='kitcity'?4:2.8))+'" fill="'+color+'" class="map-city-dot"/>'+
+      '<title>'+escMapText(k==='kitcity'?'FINAL DESTINATION · T3Kit Hub':c.name)+' · '+done+'/'+total+' missions</title>'+label+'</g>';
+  }
+  return '<section class="map-card"><div class="map-card-head"><div><span>EXPLORE NIGERIA</span><h2>City Map</h2></div><b>'+cityOrder.length+' cities</b></div>'+
+    '<svg viewBox="0 0 360 300" class="map" role="img" aria-label="Interactive geographic overview of Nigeria. Select a labelled city marker or use the city list below to view missions">'+
+    '<defs><linearGradient id="landFill" x1="0" y1="0" x2="0.9" y2="1"><stop offset="0%" stop-color="#263A42"/><stop offset="100%" stop-color="#202D35"/></linearGradient><linearGradient id="seaFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#132C3A"/><stop offset="100%" stop-color="#0D202C"/></linearGradient></defs>'+
+    '<rect width="360" height="300" rx="14" fill="url(#seaFill)"/>'+
+    '<path d="M0 256 Q60 247 110 262 T220 258 T360 263 V300 H0Z" fill="#153A47" opacity=".58"/>'+
+    '<polygon points="'+outline+'" fill="url(#landFill)" stroke="#82949A" stroke-width="1.5" stroke-linejoin="round"/>'+
+    guides+riverLines+roadLines+
+    '<text x="26" y="22" class="map-map-title">NIGERIA</text><text x="26" y="34" class="map-map-subtitle">CITY NETWORK</text>'+
+    '<g transform="translate(330 24)" class="map-north"><path d="M0 13 L6 0 L12 13 L6 10Z" fill="#D8E6E9"/><text x="6" y="24" text-anchor="middle">N</text></g>'+
+    pins+'</svg>'+
+    '<div class="map-legend"><span><i class="map-dot unlocked"></i>Unlocked</span><span><i class="map-dot completed"></i>Completed</span><span><i class="map-dot locked"></i>Locked</span><span class="map-legend-note">Tap a labelled city to explore</span></div></section>';
 }
+
 function missionCard(m){
   const un=isUnlocked(m),dn=!!P.done[m.id];
   return '<div class="card'+(un?'':' lock')+(m.city==='kitcity'?' final-destination':'')+'"><div class="ch">'+badgeSVG(m.n,false,46)+'<div><b>'+'Mission '+m.n+': '+m.title+'</b><small>'+m.goal+'</small></div></div><div class="cf"><span>'+(dn?'Completed':'Up to +0.50 USDC')+'</span>'+(un?'<button class="btn brand" data-a="play" data-v="'+m.id+'" type="button">'+(dn?'Replay':'Play')+'</button>':'<span>Finish mission '+(m.n-1)+' first</span>')+'</div></div>';
