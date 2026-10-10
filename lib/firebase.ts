@@ -2,11 +2,13 @@
 
 import { getApp, getApps, initializeApp } from 'firebase/app';
 import {
+  browserLocalPersistence,
   createUserWithEmailAndPassword,
   getAuth,
   onAuthStateChanged,
   signInWithEmailAndPassword,
   signOut,
+  setPersistence,
   type User,
 } from 'firebase/auth';
 import {
@@ -139,6 +141,9 @@ export async function authenticateEmailPassword(input: {
   if (!auth || !db) {
     throw new Error('Firebase is not configured yet. Add the NEXT_PUBLIC_FIREBASE_* settings in Vercel, then redeploy.');
   }
+
+  // Keep the Firebase session across refreshes and future visits on this device.
+  await setPersistence(auth, browserLocalPersistence);
 
   const email = input.email.trim().toLowerCase();
   let user: User;
