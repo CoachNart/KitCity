@@ -95,7 +95,15 @@ const QUESTION_REWARD=.10,QUESTION_PENALTY=.10,MISSION_CLEAR_REWARD=.50,MISSION_
 function awardUSDC(amount,message){ P.usdc=Math.max(0,Math.round((P.usdc+amount)*100)/100); save(); updateHUD(); if(message) toast(message); }
 function settleAnswer(good){ if(!G) return; if(good){ G.correct=(G.correct||0)+1; awardUSDC(QUESTION_REWARD,'Correct answer · +0.10 USDC'); } else { G.wrong=(G.wrong||0)+1; awardUSDC(-QUESTION_PENALTY,'Wrong answer · −0.10 USDC'); } }
 function playerName(){ return (P.name||'Player').trim(); }
-function personalize(html){ return String(html==null?'':html).replace(/Agent Kit/g,playerName()).replace(/agent kit/g,playerName()); }
+function personalize(html){
+  let out=String(html==null?'':html).replace(/Agent Kit/g,playerName()).replace(/agent kit/g,playerName());
+  const aliases=G&&G.nameAliases||{};
+  Object.keys(aliases).sort((a,b)=>b.length-a.length).forEach(original=>{
+    const escaped=original.replace(/[.*+?^${}()|[\]\\]/g,'\\function personalize(html){ return String(html==null?'':html).replace(/Agent Kit/g,playerName()).replace(/agent kit/g,playerName()); }');
+    out=out.replace(new RegExp('\\b'+escaped+'\\b','g'),aliases[original]);
+  });
+  return out;
+}
 
 /* =====================  sound (synthesised, no files)  ===================== */
 
@@ -2040,7 +2048,7 @@ function badgeSVG(n,on,size){
 function updateHUD(){
   if(G){
     $('#mTitle').textContent=tr('Mission '+G.m.n+': '+G.m.title);
-    $('#steps').innerHTML=G.m.steps.map((s,i)=>'<li class="'+(G.i>i?'done':(G.i===i?'now':''))+'">'+tr(s.label)+'</li>').join('');
+    $('#steps').innerHTML=G.m.steps.map((s,i)=>'<li class="'+(G.i>i?'done':(G.i===i?'now':''))+'">'+personalize(tr(s.label))+'</li>').join('');
   }
   $('#wallet').innerHTML=P.wallet?('<b>'+P.usdc.toFixed(2)+' USDC</b>'+(P.ngn>0?fmtN(P.ngn)+' token':short(P.wallet))):tr('No wallet yet');
 }
@@ -3862,6 +3870,7 @@ const priorityAssignedNPCs=new Set();
 for(const npc of orderedNPCObjects){
   if(priorityNameIndex<PRIORITY_COMMUNITY_NAMES.length){
     const nextName=PRIORITY_COMMUNITY_NAMES[priorityNameIndex++];
+    if(!npc.originalName) npc.originalName=npc.name;
     npc.name=nextName;
     priorityAssignedNPCs.add(npc);
     usedNPCNameKeys.add(nextName.toLowerCase());
@@ -3884,10 +3893,23 @@ for(const npc of orderedNPCObjects){
     let suffix=1;
     do{ replacement=base+' '+(CITIES[city]?.name||city)+' '+suffix++; }while(usedNPCNameKeys.has(replacement.toLowerCase()));
   }
+  if(!npc.originalName) npc.originalName=npc.name;
   npc.name=replacement;
   usedNPCNameKeys.add(replacement.toLowerCase());
 }
 
+function buildMissionNameAliases(mission){
+  const candidates=Object.create(null),ambiguous=new Set();
+  for(const npc of missionNPCObjects(mission)){
+    const original=String(npc.originalName||'').trim();
+    const current=String(npc.name||'').trim();
+    if(!original||!current||original===current) continue;
+    if(Object.prototype.hasOwnProperty.call(candidates,original)&&candidates[original]!==current) ambiguous.add(original);
+    else candidates[original]=current;
+  }
+  ambiguous.forEach(name=>delete candidates[name]);
+  return candidates;
+}
 const cityMissions=city=>MISSIONS.filter(m=>m.city===city);
 const isCityComplete=city=>{const ms=cityMissions(city);return ms.length>0&&ms.every(m=>!!P.done[m.id]);};
 const isCityUnlocked=city=>{const ms=cityMissions(city);return ms.length>0&&isUnlocked(ms[0]);};
@@ -3920,7 +3942,7 @@ function startMission(id){
   $('#loadTxt').textContent=L('Loading '+CITIES[m.city].name+'\u2026','We dey load '+CITIES[m.city].name+'\u2026'); $('#loading').classList.remove('hidden');
   setTimeout(()=>{
     if(curCity!==m.city) buildCity(m.city); else setupBarks(CITIES[curCity]);
-    G={m,i:0,correct:0,wrong:0,used:{},words:null,addr:null,slip:null};
+    G={m,i:0,correct:0,wrong:0,used:{},words:null,addr:null,slip:null,nameAliases:buildMissionNameAliases(m)};
     $('#hub').classList.add('hidden'); $('#hub').setAttribute('aria-hidden','true'); $('#title').classList.add('hidden'); $('#hud').classList.remove('hidden');
     S.phase='play'; closeSheet(); Snd.setMode('play'); lastLoc=''; resetPlayer(); loadStep();
     $('#loading').classList.add('hidden');
