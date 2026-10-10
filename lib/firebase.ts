@@ -3,7 +3,6 @@
 import { getApp, getApps, initializeApp } from 'firebase/app';
 import {
   createUserWithEmailAndPassword,
-  deleteUser,
   getAuth,
   onAuthStateChanged,
   signInWithEmailAndPassword,
@@ -13,7 +12,7 @@ import {
 import {
   doc,
   getDoc,
-  getFirestore,
+  initializeFirestore,
   runTransaction,
   serverTimestamp,
   setDoc,
@@ -37,7 +36,7 @@ const app = firebaseConfigured
   ? (getApps().length ? getApp() : initializeApp(config))
   : null;
 const auth = app ? getAuth(app) : null;
-const db = app ? getFirestore(app) : null;
+const db = app ? initializeFirestore(app, { experimentalAutoDetectLongPolling: true }) : null;
 
 export function getCurrentAuthUser(): User | null {
   return auth?.currentUser ?? null;
@@ -157,8 +156,8 @@ export async function authenticateEmailPassword(input: {
       const profile = await createOrUpdateProfile(user, input.username, input.deviceId, input.location);
       return { user, profile };
     } catch (error) {
-      // Avoid leaving an authenticated but unprofiled account when username reservation fails.
-      try { await deleteUser(user); } catch {}
+      // Keep the Auth account if Firestore is temporarily unreachable. The player can
+      // sign in again later to finish profile creation once the connection recovers.
       throw error;
     }
   }
