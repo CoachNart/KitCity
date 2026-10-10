@@ -99,11 +99,13 @@ async function createOrUpdateProfile(
     if (reserved.exists() && reserved.data().uid !== user.uid) {
       throw new Error('That username is already taken. Choose another one.');
     }
-    transaction.set(usernameRef, {
-      uid: user.uid,
-      username: cleanUsername,
-      createdAt: serverTimestamp(),
-    });
+    if (!reserved.exists()) {
+      transaction.set(usernameRef, {
+        uid: user.uid,
+        username: cleanUsername,
+        createdAt: serverTimestamp(),
+      });
+    }
     transaction.set(profileRef, {
       uid: user.uid,
       email: user.email ?? '',
