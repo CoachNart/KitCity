@@ -3976,7 +3976,7 @@ const playerPasswordInput=$('#playerPassword');
 const shareLocationInput=$('#shareLocation');
 let authMode='signin';
 let authBusy=false;
-if(playerNameInput){ playerNameInput.value=P.name||''; }
+if(playerNameInput){ playerNameInput.value=P.name||localStorage.getItem('kitcity_player_name')||''; }
 function updateAuthButton(){
   const signedIn=!!getCurrentAuthUser();
   $('#startBtn').textContent=signedIn?'Continue to KitCity':(authMode==='signup'?'Create account & enter KitCity':'Sign in & enter KitCity');
@@ -4013,6 +4013,7 @@ async function approximateLocation(){
 function authErrorMessage(error){
   const code=error&&error.code||'';
   if(code==='auth/email-already-in-use') return 'An account already uses this email. Sign in instead.';
+  if(code==='auth/configuration-not-found') return 'Firebase Authentication is not initialized for this project, or the web config points to a different project. In Firebase Console, open kitcity-efd96, set up Authentication, and enable Email/Password.';
   if(code==='auth/invalid-credential'||code==='auth/wrong-password'||code==='auth/user-not-found') return 'Email or password is incorrect.';
   if(code==='auth/weak-password') return 'Choose a stronger password with at least 8 characters.';
   if(code==='auth/invalid-email') return 'Enter a valid email address.';
@@ -4085,6 +4086,8 @@ function beginGame(){
   renderHub();
 }
 $('#startBtn').addEventListener('click',submitPlayerName);
+const signInPageButton=$('#signInPageBtn');
+if(signInPageButton) signInPageButton.addEventListener('click',()=>{ window.location.href='/auth'; });
 if(playerNameInput){
   playerNameInput.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); submitPlayerName(); } });
   playerNameInput.addEventListener('input',()=>{ if(playerNameError) playerNameError.textContent=''; });
@@ -4095,6 +4098,10 @@ if(firebaseConfigured){
   waitForAuthState().then(user=>{
     if(user&&playerEmailInput) playerEmailInput.value=user.email||'';
     updateAuthButton();
+    if(user&&new URLSearchParams(window.location.search).get('enter')==='1'){
+      window.history.replaceState({},'',window.location.pathname);
+      void submitPlayerName();
+    }
   }).catch(()=>updateAuthButton());
 }else updateAuthButton();
 function applyLang(){
