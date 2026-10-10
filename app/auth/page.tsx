@@ -43,7 +43,7 @@ export default function AuthPage() {
       return;
     }
     const cleanUsername = username.trim();
-    if (!/^[A-Za-z0-9_]{3,20}$/.test(cleanUsername)) {
+    if (mode === 'signup' && !/^[A-Za-z0-9_]{3,20}$/.test(cleanUsername)) {
       setMessage('Username must be 3–20 letters, numbers, or underscores.');
       return;
     }
