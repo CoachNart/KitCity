@@ -1835,7 +1835,7 @@ const HASSAN=NPC('Goodness','Messaged you online','#C7457E',LK.man,null,'New DM'
 const CHIOMA=NPC('Semi','Shows you a post','#E4572E',LK.woman,null,'Airdrop alert'); CHIOMA.signBg='#E4572E'; CHIOMA.signFg='#ffffff';
 const KEEPER=NPC('Blockqueen','Guardian of secrets','#5a3a22',LK.elder,{body:'#5a3a22',a:'#ffffff',b:GREEN,sub:'Recovery vault'});
 const NOTARY=NPC('Christol','Checks your memory','#2D6FB3',LK.clerk,{body:'#2D6FB3',a:'#ffffff',b:YELLOW,sub:'Notary'});
-const MUSA=NPC('Laloba','Market trader','#C7457E',LK.man,{body:'#C7457E',a:'#ffffff',b:'#E7D27A',sub:'Fresh yam'});
+const MUSA=NPC('Laloba','Market trader','#C7457E',LK.woman,{body:'#C7457E',a:'#ffffff',b:'#E7D27A',sub:'Fresh yam'});
 const REG=NPC('Kenny','Passport registry','#0B7A43',LK.woman,{body:'#0B7A43',a:'#ffffff',b:BRAND,sub:'KitCity Passport'});
 const MINT=NPC('Leemah','Passport mint','#0897A8',LK.clerk,{body:'#0897A8',a:'#ffffff',b:BRAND,sub:'Free mint'});
 const CHAIR=NPC('Cybersage','Community leader','#6a3fb5',LK.trader,{body:'#6a3fb5',a:'#ffffff',b:BRAND,sub:'Community'});
@@ -2080,15 +2080,15 @@ const MISSIONS=[
  steps:[
   {label:'Get Laloba\u2019s address at the motor park',spot:'i',npc:MUSA,run(){
     if(!G.addr) G.addr='0x'+hex(20);
-    talk(MUSA,'<p>Boss, I am rushing to my stall in the market across town. Take my address, then bring my 1 USDC for the yam there:</p><span class="addr">'+G.addr+'</span><p class="note">Address mistakes cannot be undone. Funds sent to the wrong address are lost.</p>',[{t:'Copy his address',f:()=>{ toast('Address copied'); finishStep(); }}]);
+    talk(MUSA,'<p>Boss, I am rushing to my stall in the market across town. Take my address, then bring my 1 USDC for the yam there:</p><span class="addr">'+G.addr+'</span><p class="note">Address mistakes cannot be undone. Funds sent to the wrong address are lost.</p>',[{t:'Copy her address',f:()=>{ toast('Address copied'); finishStep(); }}]);
   }},
   STEP_DON,
-  {label:'Pay Laloba at his market stall',spot:'o',npc:MUSA,run(){
+  {label:'Pay Laloba at her market stall',spot:'o',npc:MUSA,run(){
     if(!G.addr) G.addr='0x'+hex(20);
     needFunds(1);
     const fakeA=addrMutate(G.addr,12,16),fakeB=addrMutate(G.addr,36,40);
     const opts=shuffle([[G.addr,1],[fakeA,0],[fakeB,0]]);
-    talk(MUSA,'<p>You find Laloba at his stall. His phone shows:</p><span class="addr">'+G.addr+'</span><p>Your clipboard has an address. <b>Which one matches his, character for character?</b></p>',
+    talk(MUSA,'<p>You find Laloba at her stall. Her phone shows:</p><span class="addr">'+G.addr+'</span><p>Your clipboard has an address. <b>Which one matches hers, character for character?</b></p>',
       opts.map(o=>({t:o[0],m:1,f:()=>{
         if(o[1]!==1){ talk(MUSA,'<h3>Close, but wrong</h3><p>That address looks similar but is not the same. Scammers make lookalike addresses that match the start and end. Compare the whole address, not just the edges.</p>',[{t:'Try again',f:()=>MISSIONS[4].steps[2].run()}]); return; }
         talk(MUSA,'<h3>Right address</h3><p>Now decide how to send. A small test payment proves the address works before you risk the full amount.</p>',[
@@ -2102,7 +2102,7 @@ const MISSIONS=[
           P.usdc=Math.max(0,P.usdc-amt); save(); updateHUD();
           if(test){
             G.bonus+=10;
-            talk(MUSA,'<h3>Laloba got it</h3><p>He confirms the test arrived. Now send the rest.</p>',[{t:'Send remaining 0.90 USDC',f:()=>sendRest()}]);
+            talk(MUSA,'<h3>Laloba got it</h3><p>She confirms the test arrived. Now send the rest.</p>',[{t:'Send remaining 0.90 USDC',f:()=>sendRest()}]);
           } else {
             talk(MUSA,'<h3>Sent</h3><p>It worked this time. For larger amounts, always send a small test first.</p>',[{t:'Continue',f:finishStep}]);
           }
@@ -2238,25 +2238,23 @@ const MISSIONS=[
         rows:x=>[['To','My savings address',0],['Amount','1.00 USDC'],['Network','Base']]},
     say:'Your savings are kept in USDC, in a wallet only you hold.'})
  ]},
-{id:'m12',n:12,city:'kaduna',title:'Your own keys',goal:'Create a self-custody wallet, store the recovery phrase on paper, and send a first transfer.',xp:180,
+{id:'m12',n:12,city:'kaduna',title:'Check a token before buying',goal:'Verify a token’s official contract, network and market details before deciding whether to buy.',xp:180,
  steps:[
-  taskStep({label:'Create your wallet with Aunty Salamatu',spot:'d',npc:mkSign('Aunty Salamatu','Market trader, new to apps','#C7457E',LK.woman,'Onboarding'),
-    intro:'The app can keep your keys for you, or give you the keys yourself. You want control of your money.',q:'Which wallet do you create?',
-    opts:[['Self-custody wallet, I hold the keys',1],['An app account that holds the keys for me',0]],
-    wrong:'If the app holds the keys, the app controls your money. Pick the wallet where you hold the keys.',
-    say:'Your wallet is created on your phone. Only you can move the funds.'}),
-  taskStep({label:'Back up your recovery phrase',spot:'e',npc:mkSign('Aunty Salamatu','Market trader, new to apps','#C7457E',LK.woman,'Onboarding'),
-    intro:'The app shows 12 words. These restore your wallet on any new device.',q:'Where do you keep them?',
-    opts:[['Written on paper, in order, somewhere safe',1],['A screenshot in my gallery',0]],
-    wrong:'A screenshot sits in your photos, and anyone with access to your phone can see it. Use paper.',
-    say:'The 12 words are on paper. Nobody can restore your wallet without them, and nobody can take it with them.'}),
-  taskStep({label:'Send your first USDC',spot:'h',npc:mkSign('Aunty Salamatu','Market trader, new to apps','#C7457E',LK.woman,'Onboarding'),
-    intro:'Your first transfer can be gas-free, because the wallet covers the network fee for new users.',q:'Which network do you send on?',
-    opts:[['Base',1],['Ethereum',0]],
-    wrong:'Your wallet is on Base. Sending on Ethereum would not reach the wallet.',
-    tx:{title:'First transfer',amt:1,btn:'Send 1 USDC',done:'First transfer done',note:'The network fee for this first transfer is covered for you.',
-        rows:x=>[['To','Aunty Salamatu',0],['Amount','1.00 USDC'],['Network',x],['Network fee','Covered for you']]},
-    say:'Your USDC is on the public network. You can look it up any time.'})
+  taskStep({label:'Find the official token contract',spot:'d',npc:mkSign('Sadiq','Market analyst','#C7457E',LK.man,'Token desk'),
+    intro:'A new token is trending in the group chat. Before buying, compare the contract address with the project’s official website.',q:'Which source should you trust first?',
+    opts:[['The contract linked from the project’s verified official site',1],['A contract address sent by an unknown account',0]],
+    wrong:'A copied name or logo proves nothing. Start from the project’s official channel and verify the contract address.',
+    say:'You found the contract from the project’s own source, not a stranger’s message.'}),
+  taskStep({label:'Match the network and token address',spot:'e',npc:mkSign('Sadiq','Market analyst','#C7457E',LK.man,'Token desk'),
+    intro:'Two tokens can share a name while living at different contract addresses or networks.',q:'What must match before you trade?',
+    opts:[['The full contract address and the intended network',1],['Only the token name and logo',0]],
+    wrong:'Names and logos are easy to copy. Check the complete address and the network.',
+    say:'The token identity and network match the details published by the project.'}),
+  taskStep({label:'Check liquidity before deciding',spot:'h',npc:mkSign('Sadiq','Market analyst','#C7457E',LK.man,'Token desk'),
+    intro:'A token can show a price but have too little liquidity for you to sell later.',q:'What is the safest next step?',
+    opts:[['Check liquidity, trading activity and sell conditions before buying',1],['Buy immediately because the price is rising',0]],
+    wrong:'A displayed price does not guarantee you can sell. Review liquidity and the trading conditions first.',
+    say:'You checked whether the market can support an exit before risking funds.'})
  ]},
 {id:'m13',n:13,city:'enugu',title:'Pay the supplier on-chain',goal:'Pay a supplier on the right network, then prove the payment with its transaction ID.',xp:190,
  steps:[
@@ -2598,25 +2596,23 @@ const MISSIONS=[
     wrong:'A one-off fee ends your income at the first sale. Choose the royalty.',
     say:'Your pattern earns on every sale. The report shows it.'})
  ]},
-{id:'m30',n:30,city:'sokoto',title:'First wallet for the elders',goal:'Help the elders create their own wallet, send a test payment, and store the phrase safely.',xp:300,
+{id:'m30',n:30,city:'sokoto',title:'Verify a digital land record',goal:'Check the issuer, parcel reference and change history before relying on a digital land record.',xp:300,
  steps:[
-  taskStep({label:'Set up with Malam Idris',spot:'g',npc:mkSign('Malam Idris','Community leader','#0B7A43',LK.elder,'Community'),
-    intro:'Each elder creates a wallet on their own phone.',q:'How do you set it up?',
-    opts:[['Each person holds their own recovery phrase, on paper',1],['One phrase is shared for the whole group',0]],
-    wrong:'One shared phrase gives everyone the same access. Each elder keeps their own.',
-    say:'Each elder has a wallet, and only they hold its keys.'}),
-  taskStep({label:'Send a test payment',spot:'h',npc:mkSign('Elder Hajiya','Elder','#7a4a2e',LK.elder,'Elders'),
-    intro:'Elder Hajiya sends a small test before anyone pays big sums.',q:'Which network?',
-    opts:[['Base',1],['Ethereum',0]],
-    wrong:'The elders’ wallets are on Base.',
-    tx:{title:'Test payment',amt:1,btn:'Send 1 USDC',done:'Test sent',note:'A test first, then the real amount.',
-        rows:x=>[['To','Malam Idris',1],['Amount','1.00 USDC'],['Network',x]]},
-    say:'The test arrives. The elders now know the steps.'}),
-  taskStep({label:'Store the paper copy',spot:'i',npc:mkSign('Elder Hajiya','Elder','#7a4a2e',LK.elder,'Elders'),
-    intro:'The paper with the 12 words needs a home.',q:'Where does it go?',
-    opts:[['A family safe, and one trusted person knows where it is',1],['The phone notes app',0]],
-    wrong:'A phone notes app can be opened by anyone with the phone. Use paper in a safe place.',
-    say:'The paper is safe. The family knows where to find it.'})
+  taskStep({label:'Check who issued the record',spot:'g',npc:mkSign('Aunty Ronke','Community records officer','#0B7A43',LK.woman,'Land registry'),
+    intro:'A buyer brings a digital record for a plot of land. A file or token alone does not prove the claim is genuine.',q:'What do you verify first?',
+    opts:[['The issuing registry and its official record',1],['The seller’s forwarded screenshot',0]],
+    wrong:'Screenshots can be edited. Verify the issuer and locate the record through its official registry.',
+    say:'You have confirmed the record comes from the registry that is meant to issue it.'}),
+  taskStep({label:'Match the parcel reference',spot:'h',npc:mkSign('Aunty Ronke','Community records officer','#0B7A43',LK.woman,'Land registry'),
+    intro:'The registry entry has a parcel reference, location and named holder. The seller’s document must match the public entry.',q:'What should you compare?',
+    opts:[['The parcel reference and holder details against the registry entry',1],['Only the seller’s name on the printed page',0]],
+    wrong:'A printed page can be altered. Compare the parcel reference and holder details against the registry source.',
+    say:'The parcel details match the source record, so you can continue your checks.'}),
+  taskStep({label:'Review the record history',spot:'i',npc:mkSign('Aunty Ronke','Community records officer','#0B7A43',LK.woman,'Land registry'),
+    intro:'A record can be updated or disputed after it was first issued.',q:'Before relying on it, what else do you inspect?',
+    opts:[['The latest status, recorded changes and any dispute notice',1],['The date on the oldest copy only',0]],
+    wrong:'An old copy can miss later changes. Check the current status and the full available history.',
+    say:'You checked the latest entry and its history instead of relying on a single document.'})
  ]},
 {id:'m31',n:31,city:'abeokuta',title:'Book tours in USDC',goal:'Set up a booking link that shows both prices and the network, and confirm a deposit in your wallet.',xp:310,
  steps:[
@@ -3190,25 +3186,23 @@ const MISSIONS=[
     wrong:'Check each share, not just the total. That is how the group stays fair.',
     say:'Every share matches the delivery record.'})
  ]},
-{id:'m60',n:60,city:'abakaliki',title:'Set up a phone wallet for a new customer',goal:'Create a self-custody wallet for a customer at the phone shop, back up the phrase on paper, and send a test transfer.',xp:460,
+{id:'m60',n:60,city:'abakaliki',title:'Resolve a pending transfer safely',goal:'Investigate a pending transfer without exposing private keys or sending the payment a second time.',xp:460,
  steps:[
-  taskStep({label:'Create the wallet with Mama Ada',spot:'m',npc:mkSign('Mama Ada','First-time customer','#C7457E',LK.mama,'Customer'),
-    intro:'Mama Ada wants a wallet on her own phone. You set it up with her.',q:'Who holds the keys?',
-    opts:[['Mama Ada, on a self-custody wallet',1],['The phone shop, so they can help her later',0]],
-    wrong:'If the shop holds the keys, the shop holds her money. The wallet must be hers.',
-    say:'The wallet is on her phone, and she holds the keys.'}),
-  taskStep({label:'Back up the phrase on paper',spot:'n',npc:mkSign('Mama Ada','First-time customer','#C7457E',LK.mama,'Customer'),
-    intro:'The 12 words are shown once. Write them down before you go on.',q:'Where do the words go?',
-    opts:[['Written on paper, with Mama Ada keeping the paper',1],['Saved in a photo on the phone',0]],
-    wrong:'A photo on the phone is one screen-share away from being seen. Use paper.',
-    say:'The paper is with Mama Ada. The wallet is safe.'}),
-  taskStep({label:'Send the test transfer',spot:'o',npc:mkSign('Mama Ada','First-time customer','#C7457E',LK.mama,'Customer'),
-    intro:'Send a small test before any big payment. Choose the network.',q:'Which network?',
-    opts:[['Base',1],['Ethereum',0]],
-    wrong:'Her wallet is on Base.',
-    tx:{title:'Test transfer',amt:1,btn:'Send 1 USDC',done:'Test sent',note:'Test first, then the real amount.',
-        rows:x=>[['To','Mama Ada’s test address',1],['Amount','1.00 USDC'],['Network',x]]},
-    say:'The test arrives. Mama Ada is ready to receive money.'})
+  taskStep({label:'Find the transaction status',spot:'m',npc:mkSign('Support Agent Ada','Network support desk','#C7457E',LK.woman,'Help desk'),
+    intro:'A customer says a transfer is still pending. The balance has not changed yet, and they are worried.',q:'What should you check first?',
+    opts:[['Search the transaction ID on the correct network explorer',1],['Send the same amount again immediately',0]],
+    wrong:'The first transfer may still confirm. Check its transaction ID and status before attempting anything else.',
+    say:'You found the original transaction and checked its status before taking another action.'}),
+  taskStep({label:'Share only safe troubleshooting details',spot:'n',npc:mkSign('Support Agent Ada','Network support desk','#C7457E',LK.woman,'Help desk'),
+    intro:'The support agent asks for information to investigate the delay.',q:'What can you safely share?',
+    opts:[['The public transaction ID and wallet address',1],['The recovery phrase or wallet password',0]],
+    wrong:'Support never needs your recovery phrase or password. Share only public troubleshooting details.',
+    say:'You shared the public transaction reference without exposing account secrets.'}),
+  taskStep({label:'Choose the next step from the status',spot:'o',npc:mkSign('Support Agent Ada','Network support desk','#C7457E',LK.woman,'Help desk'),
+    intro:'The explorer says the transaction is still pending, not failed.',q:'What do you do now?',
+    opts:[['Wait for the status to resolve and follow the network guidance',1],['Pay a stranger an extra fee to unlock it',0]],
+    wrong:'An unsolicited unlock fee can be a scam. Follow the network status and official support guidance.',
+    say:'You avoided a duplicate payment and an unofficial fee while the original transfer is pending.'})
  ]},
 {id:'m61',n:61,city:'abia',title:'Overseas repair order on the courier',goal:'Accept the repair order by signature, pay the courier on Base, and confirm the parcel was received.',xp:470,
  steps:[
