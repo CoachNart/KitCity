@@ -3807,7 +3807,7 @@ function buildMissionNameAliases(mission){
   ambiguous.forEach(name=>delete candidates[name]);
   return candidates;
 }
-const cityMissions=city=>{const seen=new Set();return MISSIONS.filter(m=>{if(m.city!==city)return false;const key=String(m.title||'').trim().toLowerCase();if(seen.has(key))return false;seen.add(key);return true;});};
+const cityMissions=city=>MISSIONS.filter(m=>m.city===city);
 const isCityComplete=city=>{const ms=cityMissions(city);return ms.length>0&&ms.every(m=>!!P.done[m.id]);};
 const isCityUnlocked=city=>{const ms=cityMissions(city);return ms.length>0&&isUnlocked(ms[0]);};
 /* =====================  mission flow  ===================== */
