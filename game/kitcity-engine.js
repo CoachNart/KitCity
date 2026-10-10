@@ -1246,15 +1246,11 @@ function addBuilding(x,z,w,d,style,color,cx,cz,ox,oz){
     // A single roof cap keeps tower silhouettes distinct without many draw calls.
     xb(w*.34,1.4,d*.34,'#4c5962',x,h+.7,z);
   }
-  if(style==='zinc'&&['dense-coastal','southwest-urban','southeast-urban','river-port','coastal-tropical'].includes(archType(C))){
-    // Corrugated eaves and a modest veranda canopy for selected low-rise homes.
-    const eave=lam('#6f7778',{map:LKT.zroof,transparent:true}); mats.push(eave);
-    const roofSlab=new THREE.Mesh(new THREE.BoxGeometry(w+1.8,.22,d+1.8),eave);
-    roofSlab.position.set(x,h+.12,z); roofSlab.userData.nomerge=true; cityGroup.add(roofSlab);
-    if(RN()<.3){
-      const porchZ=z+facadeSide*(d/2+1.15);
-      xb(Math.min(w*.55,8),.18,1.8,'#777b78',x,h*.45,porchZ);
-    }
+  if(style==='zinc'&&['dense-coastal','southwest-urban','southeast-urban','river-port','coastal-tropical'].includes(archType(C))&&RN()<.1){
+    // A sparse porch canopy adds local character without creating a duplicate
+    // roof mesh for every zinc-roof house on mobile devices.
+    const porchZ=z+facadeSide*(d/2+1.05);
+    xb(Math.min(w*.45,6),.16,1.35,'#777b78',x,h*.42,porchZ);
   }
   const box={x0:x-w/2,x1:x+w/2,z0:z-d/2,z1:z+d/2,y1:h+4};
   colliders.push({x0:box.x0,x1:box.x1,z0:box.z0,z1:box.z1});
