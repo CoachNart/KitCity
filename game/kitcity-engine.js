@@ -2038,8 +2038,8 @@ const SUYA_ADDR='0x'+hex(20);
 
 /* =====================  sheet UI  ===================== */
 const modalEl=$('#modal'),sheetEl=$('#sheet'),talkBtn=$('#talkBtn');
-let cbs=[],toastT=0,chat={npc:null,log:[]},sheetTok=0,pendingReveal=null;
-function toast(msg){ const t=$('#toast'); t.textContent=tr(msg); t.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),2400); }
+let cbs=[],toastT=0,chat={npc:null,log:[]},sheetTok=0,pendingReveal=null,hazardSpeechActive=false,pendingFeetLine=false;
+function toast(msg,opts){ const t=$('#toast'); clearTimeout(toastT); t.classList.remove('hazard-bubble'); hazardSpeechActive=false; t.textContent=tr(msg); if(opts&&opts.bubble){t.classList.add('hazard-bubble');hazardSpeechActive=true;} t.classList.add('show'); const duration=opts&&opts.duration?opts.duration:2400; toastT=setTimeout(()=>{t.classList.remove('show','hazard-bubble');hazardSpeechActive=false;if(pendingFeetLine){pendingFeetLine=false;toast('Back on your feet. Watch the traffic.');}},duration); }
 function openSheet(html,btns,typingMs){
   html=tx(personalize(html)); S.modal=true; joy.reset(); btns=btns||[]; cbs=btns.map(b=>b.f);
   const row=btns.length?'<div class="row">'+btns.map((b,i)=>'<button class="btn'+(b.g?' ghost':'')+(b.m?' mono':'')+'" data-i="'+i+'" type="button">'+tr(b.t)+'</button>').join('')+'</div>':'';
@@ -2064,13 +2064,13 @@ const plain=h=>h.replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim();
 function talk(def,html,btns){
   html=tx(personalize(html));
   if(!S.modal||chat.npc!==def.name) chat={npc:def.name,log:[]};
-  const npcName=personalize(def.name||'Local resident');
+  const npcName=String(def.name||'Local resident');
   const playerLabel=playerName().toUpperCase();
   const prev=chat.log.slice(-3).map(m=>'<div class="b '+(m.me?'me':'npc old')+'"><small class="speaker-tag">'+(m.me?playerLabel:npcName.toUpperCase())+'</small>'+m.html+'</div>').join('');
   const pl=plain(html);
   chat.log.push({html:pl.slice(0,80)+(pl.length>80?'\u2026':'')});
   const wrapped=(btns||[]).map(b=>({t:personalize(tr(b.t)),g:b.g,m:b.m,f:()=>{ chat.log.push({me:1,html:personalize(tr(b.t))}); b.f(); }}));
-  openSheet(personalize(whoOf(def))+'<div class="chat">'+prev+'<div class="b npc dots"><i></i><i></i><i></i></div><div class="b npc new"><small class="speaker-tag">'+npcName.toUpperCase()+'</small>'+html+'</div></div>',wrapped,Math.min(1100,320+pl.length*4));
+  openSheet(whoOf(def)+'<div class="chat">'+prev+'<div class="b npc dots"><i></i><i></i><i></i></div><div class="b npc new"><small class="speaker-tag">'+npcName.toUpperCase()+'</small>'+html+'</div></div>',wrapped,Math.min(1100,320+pl.length*4));
 }
 function busy(def,txt,ms,next){ openSheet(whoOf(def)+'<div class="busy"><span class="spin"></span><p>'+txt+'</p></div>',[]); setTimeout(next,ms); }
 const TX=()=>'0x'+hex(32);
@@ -4355,7 +4355,17 @@ const HAZARD_LINES={
     'I just came to learn crypto, not to become road crypto dust!',
     'Abeg! Who dash this driver steering wheel? Collect am back!',
     'This one no be driving, na live-action demolition!',
-    'I don see my village people. Dem dey inside this motor!'
+    'I don see my village people. Dem dey inside this motor!',
+    'Yeeh! My insurance company just block my number!',
+    'Oga driver, you dey dodge pothole or you dey dodge sense?',
+    'My body get 206 bones, but your driving wan reduce the number!',
+    'Who give you licence, your mechanic or your prayer warrior?',
+    'I never even cash out my USDC, you wan cash out my soul!',
+    'Driver, calm down! Na me be passenger, no be your debt!',
+    'If na audition for Fast and Furious, you don fail medicals!',
+    'Ah! My spirit don press emergency exit!',
+    'You see road user, you think say na bonus level?',
+    'Abeg park! Even Google Maps don abandon us!'
   ],
   pcm:[
     'Yeeh! I don die! Oga driver, who give you licence?',
@@ -4367,11 +4377,21 @@ const HAZARD_LINES={
     'I come learn crypto, no be to become road dust!',
     'Abeg, who dash this driver steering? Collect am back!',
     'This one no be driving, na live-action demolition!',
-    'My village people dey inside this motor, I don confirm am!'
+    'My village people dey inside this motor, I don confirm am!',
+    'Yeeh! My insurance people don block my number!',
+    'Oga rider, you dey avoid pothole or you dey avoid sense?',
+    'My bones no be suya stick, abeg drive with sense!',
+    'I never cash out my USDC, you wan cash out my soul!',
+    'Na me be passenger, no be your enemy for road!',
+    'If na Fast and Furious audition, you don fail medical!',
+    'Even Google Maps don abandon us, driver!',
+    'Ah! My spirit don press emergency exit!',
+    'You see human being, you think say na bonus level?',
+    'Abeg park! Your steering dey write obituary!'
   ]
 };
 function carHit(dt){ if(hitCd>0)hitCd=Math.max(0,hitCd-dt);
-  if(fallTimer>0){fallTimer=Math.max(0,fallTimer-dt);player.rotation.z=fallLean*1.25*Math.min(1,(1.5-fallTimer)*8);if(fallTimer===0){player.rotation.z=0;toast('Back on your feet. Watch the traffic.');}return;}
+  if(fallTimer>0){fallTimer=Math.max(0,fallTimer-dt);player.rotation.z=fallLean*1.25*Math.min(1,(1.5-fallTimer)*8);if(fallTimer===0){player.rotation.z=0;if(hazardSpeechActive)pendingFeetLine=true;else toast('Back on your feet. Watch the traffic.');}return;}
   player.rotation.z=0;if(hitCd>0)return;const p=player.position;
   for(const c of cars){const hx=c.axis==='x'?c.hl:c.hw,hz=c.axis==='x'?c.hw:c.hl,cx=c.m.position.x,cz=c.m.position.z;
     if(Math.abs(p.x-cx)<hx+.9&&Math.abs(p.z-cz)<hz+.9){
@@ -4384,10 +4404,10 @@ function carHit(dt){ if(hitCd>0)hitCd=Math.max(0,hitCd-dt);
       const shout=pick(HAZARD_LINES[P.lang==='pcm'?'pcm':'en']);
       const hitMessage=shout+' '+(penalty>0?'(−'+penalty.toFixed(2)+' USDC)':'(no USDC left to deduct)');
       if(P.usdc<=1e-9&&missionToRestart){
-        toast(hitMessage+' No USDC left — mission restarting!');
+        toast(hitMessage+' No USDC left — mission restarting!',{bubble:true,duration:5600});
         startMission(missionToRestart);
       } else {
-        toast(hitMessage);
+        toast(hitMessage,{bubble:true,duration:5600});
       }
       break;
     }
