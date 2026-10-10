@@ -99,8 +99,8 @@ function personalize(html){
   let out=String(html==null?'':html).replace(/Agent Kit/g,playerName()).replace(/agent kit/g,playerName());
   const aliases=G&&G.nameAliases||{};
   Object.keys(aliases).sort((a,b)=>b.length-a.length).forEach(original=>{
-    const escaped=original.replace(/[.*+?^${}()|[\]\\]/g,'\\function personalize(html){ return String(html==null?'':html).replace(/Agent Kit/g,playerName()).replace(/agent kit/g,playerName()); }');
-    out=out.replace(new RegExp('\\b'+escaped+'\\b','g'),aliases[original]);
+    const pattern=original.replace(/ /g,'\\s+');
+    out=out.replace(new RegExp('\\b'+pattern+'\\b','g'),aliases[original]);
   });
   return out;
 }
