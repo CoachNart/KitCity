@@ -17,7 +17,7 @@ export default function AuthPage() {
     const value = error as { code?: string; message?: string };
     switch (value?.code) {
       case 'auth/configuration-not-found':
-        return 'Firebase Authentication is not configured for this project yet. Enable Email/Password in Firebase Console → Authentication → Sign-in method.';
+        return 'Firebase Authentication is not initialized for this project, or the web config points to a different project. In Firebase Console, open kitcity-efd96, set up Authentication, and enable Email/Password.';
       case 'auth/email-already-in-use':
         return 'An account already uses this email. Choose Sign in instead.';
       case 'auth/invalid-credential':
