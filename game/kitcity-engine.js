@@ -100,7 +100,7 @@ function personalize(html){
   const aliases=G&&G.nameAliases||{};
   Object.keys(aliases).sort((a,b)=>b.length-a.length).forEach(original=>{
     const pattern=original.replace(/ /g,'\\s+');
-    out=out.replace(new RegExp('\\b'+pattern+'\\b','g'),aliases[original]);
+    out=out.replace(new RegExp('\\b'+pattern+'\\b','gi'),aliases[original]);
   });
   return out;
 }
