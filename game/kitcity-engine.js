@@ -1878,7 +1878,7 @@ const STEP_MOON=askStep({label:'Check the quote with Moon',spot:'g',npc:MOON,
   opts:[['Cancel and check the quote and fee',1],['Confirm anyway, it is probably fine',0],['Raise slippage so it goes through',0]],
   good:'Right. A big gap can mean a high fee or a bad price. Raising slippage only makes a bad price easier to accept.',
   bad:'That is how people lose money. When the quote looks wrong, stop and check it before you confirm.'});
-const STEP_CRYPT=askStep({label:'Test your instincts with The Cryptonian',spot:'a',npc:CRYPT,
+const STEP_CRYPT=askStep({label:'Test your instincts with The cryptonian',spot:'a',npc:CRYPT,
   intro:'I have watched scammers for years. They change the story, but the trick is nearly always the same.',
   q:'Which of these is a real red flag?',
   opts:[['Anyone asking you to send first so you can receive more',1],['An app that shows your balance',0],['A block explorer link to check a payment',0]],
@@ -1890,7 +1890,7 @@ const STEP_NNADI=askStep({label:'Ask Joe_Sef where to keep your phrase',spot:'e'
   opts:[['On paper, somewhere private and safe',1],['A screenshot in my gallery',0],['In my notes app or a chat with myself',0]],
   good:'Right. Paper cannot be hacked from far away. Keep it private, and consider a second copy in another safe place.',
   bad:'Phones sync to the cloud and get hacked or lost. Anything digital can leak. Paper in a safe place is best.'});
-const STEP_DON=askStep({label:'Hear The Don on test payments',spot:'b',npc:DON,
+const STEP_DON=askStep({label:'Hear The don on test payments',spot:'b',npc:DON,
   intro:'Money sent on a blockchain cannot be pulled back. That is why careful people never send blind.',
   q:'You are about to send money to an address you have not used before. What do you do first?',
   opts:[['Send a small test and check it arrives',1],['Send everything, blockchains are fast',0],['Trust the address because it came in a message',0]],
