@@ -3846,54 +3846,37 @@ for(const mission of MISSIONS){
     if(!allNPCSeen.has(npc)){ allNPCSeen.add(npc); allNPCObjects.push(npc); }
   }
 }
-const firstMissionGroups=cityOrder.map(city=>({city,mission:MISSIONS.find(m=>m.city===city)})).filter(x=>x.mission);
-const firstMissionOrder=[];
-const firstMissionSeen=new Set();
-const addFirstMissionGroup=group=>{
-  for(const npc of missionNPCObjects(group.mission)){
-    if(!firstMissionSeen.has(npc)){ firstMissionSeen.add(npc); firstMissionOrder.push(npc); }
-  }
-};
-const lagosFirst=firstMissionGroups.find(g=>g.city==='lagos');
-const kanoFirst=firstMissionGroups.find(g=>g.city==='kano');
-if(lagosFirst) addFirstMissionGroup(lagosFirst);
-if(kanoFirst) addFirstMissionGroup(kanoFirst);
-for(const group of firstMissionGroups){
-  if(group.city==='lagos'||group.city==='kano') continue;
-  addFirstMissionGroup(group);
-}
-const orderedNPCObjects=firstMissionOrder.slice();
-for(const npc of allNPCObjects) if(!firstMissionSeen.has(npc)){ firstMissionSeen.add(npc); orderedNPCObjects.push(npc); }
+/* Assign the supplied community names across mission NPCs in city progression order.
+   Keep Laloba in Kano; use regional names for every NPC after the supplied list. */
+const orderedNPCObjects=allNPCObjects.slice();
+for(const npc of orderedNPCObjects) if(!npc.originalName) npc.originalName=npc.name;
 let priorityNameIndex=0;
 const usedNPCNameKeys=new Set();
 const priorityAssignedNPCs=new Set();
 for(const npc of orderedNPCObjects){
-  if(priorityNameIndex<PRIORITY_COMMUNITY_NAMES.length){
-    const nextName=PRIORITY_COMMUNITY_NAMES[priorityNameIndex++];
-    if(!npc.originalName) npc.originalName=npc.name;
-    npc.name=nextName;
-    priorityAssignedNPCs.add(npc);
-    usedNPCNameKeys.add(nextName.toLowerCase());
-  }
+  if(priorityNameIndex>=PRIORITY_COMMUNITY_NAMES.length) break;
+  const nextName=PRIORITY_COMMUNITY_NAMES[priorityNameIndex++];
+  npc.name=nextName;
+  priorityAssignedNPCs.add(npc);
+  usedNPCNameKeys.add(nextName.toLowerCase());
 }
-if(typeof MUSA!=='undefined') MUSA.name='Laloba';
+const lalobaNPC=orderedNPCObjects.find(npc=>npc.name==='Laloba');
+const kanoNPC=orderedNPCObjects.find(npc=>npcFirstCity.get(npc)==='kano');
+if(lalobaNPC&&kanoNPC&&lalobaNPC!==kanoNPC){
+  const swap=lalobaNPC.name;
+  lalobaNPC.name=kanoNPC.name;
+  kanoNPC.name=swap;
+}
 for(const npc of orderedNPCObjects){
   if(priorityAssignedNPCs.has(npc)) continue;
-  const current=(npc.name||'').trim();
-  const key=current.toLowerCase();
-  if(key&&!usedNPCNameKeys.has(key)&&!PRIORITY_NAME_KEYS.has(key)){
-    usedNPCNameKeys.add(key);
-    continue;
-  }
   const city=npcFirstCity.get(npc)||'kitcity';
   const pool=externalNamePools[npcRegion(city)]||externalNamePools.northeast;
   let replacement=pool.find(name=>!usedNPCNameKeys.has(name.toLowerCase())&&!PRIORITY_NAME_KEYS.has(name.toLowerCase()));
   if(!replacement){
     const base=pool[0]||'Community Guide';
     let suffix=1;
-    do{ replacement=base+' '+(CITIES[city]?.name||city)+' '+suffix++; }while(usedNPCNameKeys.has(replacement.toLowerCase()));
+    do{ replacement=base+' '+(CITIES[city]?.name||city)+' '+suffix++; }while(usedNPCNameKeys.has(replacement.toLowerCase())||PRIORITY_NAME_KEYS.has(replacement.toLowerCase()));
   }
-  if(!npc.originalName) npc.originalName=npc.name;
   npc.name=replacement;
   usedNPCNameKeys.add(replacement.toLowerCase());
 }
