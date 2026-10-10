@@ -952,6 +952,56 @@ CITIES.kitcity={
 Object.assign(LOOK,{
  kitcity:{h:'#07182D',z:'#123B63',sun:'#7CEBFF',sI:1.35,hS:'#C5E8F8',hG:'#07121F',hI:.9,off:[-42,74,36],exp:1.12,sat:1.16,con:1.12,fade:0,lift:[0,.01,.025],gain:[.94,1.04,1.12],vig:.16,grain:.012,bloom:.72,veil:['#0A2340',.025],cl:.22,cc:'#8CEBFF',fog:[150,500],dust:0,mil:0,rust:0,lat:0,dash:'#36E5F5',roof:'#17384B',ground:'#07121F',slab:'#172B3D',dirt:'#07121F',leaf:'#10C8DC',paint:['#10263A','#17384B','#203D54','#0D2A3B'],zinc:['#123047','#17384B','#0C2337']}
 });
+/* =====================  modern Nigerian city visual pass  ===================== */
+/* Keep each city's layout, landmarks, traffic and regional character, but remove
+   the heavy sepia/rust treatment and give buildings contemporary urban finishes. */
+(function modernizeCityVisuals(){
+  const coolPalettes={
+    coastal:['#E8EFF2','#C6D9DF','#B7CBC7','#D9E5DC','#A9C1D1','#F0F1EA','#91AAB9','#D2DCE4'],
+    southwest:['#E9ECEF','#CCD7DD','#B7C9C6','#DCE5D8','#A8BCCC','#F0EEE8','#8EA6B5','#D3DDE2'],
+    southeast:['#E7EEF0','#C7D7D8','#B6C9C2','#DCE6D9','#AABED0','#F1EFE8','#8FA6B2','#D2DCE3'],
+    north:['#E7EBED','#D0D9DF','#BBCBD4','#E3E8E2','#AFC2CD','#F0F0E9','#94A9B5','#D5DDE2'],
+    capital:['#F0F2F3','#D5E0E7','#C0D0D8','#E1E9E5','#A8BFCE','#F3F1EA','#91A8B7','#DCE4E8']
+  };
+  const northern=new Set(['kano','kaduna','maiduguri','sokoto','katsina','birnin-kebbi','minna','dutse','gusau','damaturu','bauchi','gombe','lafia','jalingo','yola','kafanchan','damboa']);
+  const coastal=new Set(['lagos','ph','calabar','uyo','ikot-ekpene','yenagoa','warri','asaba','port-harcourt']);
+  const southeast=new Set(['enugu','benin','owerri','aba','umuahia','awka','onitsha','abakaliki','anambra']);
+  const capital=new Set(['abuja','jos']);
+  const steel=['#6E7C86','#7F8D96','#596A75','#8C989F','#657681','#4D5C66'];
+  Object.keys(CITIES).forEach((key,index)=>{
+    if(key==='kitcity') return;
+    const C=CITIES[key];
+    const palette=capital.has(key)?coolPalettes.capital:northern.has(key)?coolPalettes.north:coastal.has(key)?coolPalettes.coastal:southeast.has(key)?coolPalettes.southeast:coolPalettes.southwest;
+    const shift=(index*3)%palette.length;
+    C.paint=Array.from({length:palette.length},(_,i)=>palette[(i+shift)%palette.length]);
+    C.ground='#30363C';
+    C.slab='#BFC8CE';
+    C.dirt='#78838A';
+    C.zinc=steel.slice();
+    if(key==='ibadan') C.tag='The city of firsts';
+    if(Array.isArray(C.styles)){
+      C.styles=C.styles.map(([style,weight])=>[style,weight*(style==='glass'?1.45:style==='admin'?1.25:style==='flat'?1.2:style==='zinc'?.55:style==='banco'?.12:1)]);
+      const present=new Set(C.styles.map(x=>x[0]));
+      [['flat',.3],['admin',.18],['glass',.16],['zinc',.1]].forEach(([style,weight])=>{if(!present.has(style)) C.styles.push([style,weight]);});
+    }else{
+      C.styles=[['flat',.48],['admin',.2],['glass',.18],['zinc',.12],['banco',northern.has(key)?.04:.01]];
+    }
+    const old=LOOK[key]||{};
+    const sky=capital.has(key)?{h:'#C9DFEE',z:'#5889B5',sun:'#FFF5E7',cc:'#E9F4FA',hS:'#EAF3F8',hG:'#414B51'}:
+      northern.has(key)?{h:'#C8DDF0',z:'#719AC2',sun:'#FFF4E4',cc:'#EDF4F8',hS:'#EAF2F8',hG:'#454B4F'}:
+      coastal.has(key)?{h:'#BBDCE4',z:'#5E91A8',sun:'#FFF4E8',cc:'#E5F1F4',hS:'#E7F2F4',hG:'#38494B'}:
+      southeast.has(key)?{h:'#C4E0E0',z:'#6595B0',sun:'#FFF4E8',cc:'#E8F4F2',hS:'#E8F3F1',hG:'#3B4A47'}:
+      {h:'#C6DCEB',z:'#658FB7',sun:'#FFF4E7',cc:'#EAF3F8',hS:'#EAF2F7',hG:'#424B50'};
+    LOOK[key]=Object.assign({},old,sky,{
+      paint:C.paint,ground:C.ground,slab:C.slab,dirt:C.dirt,zinc:steel,roof:'#858F97',
+      rust:.025,dust:.025,lat:0,mil:Math.min(Number(old.mil)||0,.22),
+      fx:old.fx==='rain'?'rain':null,fade:0,grain:.016,bloom:.22,
+      sat:1.06,con:1.08,exp:1.04,veil:[sky.h,.025],
+      lift:[0,.006,.012],gain:[1.01,1.015,1.02],vig:.2,
+      dash:'#E8C95B'
+    });
+  });
+})();
 const lkc=h=>new THREE.Color(h);
 function lkWeather(c,L){
   const g=c.getContext('2d'),S=c.width,R=mulberry(S*7+Math.floor(L.dust*100)+Math.floor(L.mil*100)+Math.floor(L.lat*100)),r=(a,b)=>a+R()*(b-a);
