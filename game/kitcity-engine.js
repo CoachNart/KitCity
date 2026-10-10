@@ -1925,7 +1925,7 @@ function giveawayGuy(e){
   if(!P.wallet||P.usdc<2){ talk(GUY,'<p>Hey boss! Got any money? Not yet? Come back when your wallet has funds. I have a big offer for you.</p>',[{t:'Okay',f:closeSheet}]); return; }
   talk(GUY,'<p>Congratulations, you are our lucky winner! Send 2 USDC to this address and we will send you 20 USDC back in five minutes. Today only!</p><div class="kv"><span>Send to</span><b class="mono">'+short('0x'+hex(20))+'</b></div>',[
     {t:'Send 2 USDC',f:()=>busy(GUY,'Sending 2 USDC\u2026',1200,()=>{
-      G.used[e.ex.id]=true; P.fell++; save(); hideEnt(e); Snd.sfx('error');
+      G.used[e.ex.id]=true; settleAnswer(false); P.fell++; save(); hideEnt(e); Snd.sfx('error');
       talk(NPC('Joseph Nnadi','The giveaway guy is gone','#B3261E',LK.guy),'<p>Nobody doubles your money, and crypto payments cannot be reversed. A real giveaway never asks you to send first.</p><p class="note">This is practice, so your balance is safe. In real life that money would be gone for good.</p>',[{t:'Keep going',f:closeSheet}]);
     })},
     {t:'Walk away',g:1,f:()=>{
@@ -2118,7 +2118,7 @@ const MISSIONS=[
   {label:'Mint your free Passport',spot:'j',npc:MINT,run(){
     confirmTx(MINT,{title:'Mint KitCity Passport',rows:[['Item','KitCity Passport'],['Price','Free'],['Network fee',FEE0]],btn:'Mint free Passport',
       after:()=>talk(MINT,'<h3>Permission request</h3><div class="msg"><small>BonusMint.xyz</small>Allow this site to spend an <b>unlimited</b> amount of your USDC to unlock extra rewards?</div><p>You already minted your Passport. Do you approve this extra request?</p>',[
-        {t:'Approve',f:()=>{ P.fell++; save(); talk(MINT,'<h3>Dangerous choice</h3><p>An unlimited approval lets that site take all your USDC at any time, even later. Only approve exact amounts, only for sites you trust, and revoke old permissions.</p>',[{t:'Continue',f:finishStep}]); }},
+        {t:'Approve',f:()=>{ settleAnswer(false); P.fell++; save(); talk(MINT,'<h3>Dangerous choice</h3><p>An unlimited approval lets that site take all your USDC at any time, even later. Only approve exact amounts, only for sites you trust, and revoke old permissions.</p>',[{t:'Continue',f:finishStep}]); }},
         {t:'Reject',g:1,f:()=>{ settleAnswer(true); P.dodged++; save(); talk(MINT,'<h3>Smart</h3><p>Minting was free and needed no spending permission. You earned 0.10 USDC for rejecting an unnecessary spending approval.</p>',[{t:'Continue',f:finishStep}]); }}
       ])});
   }}
