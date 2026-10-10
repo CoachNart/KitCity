@@ -177,7 +177,7 @@ html,body{height:100%;overflow:hidden;background:var(--ink);color:var(--ink);fon
 
 
 /* ===================== Premium KitCity HUD + hub refresh ===================== */
-:root{--brand:#00E5FF;--ink:#10151D;--green:#0B7A43;--ember:#E4572E;--display:system-ui,-apple-system,"Segoe UI",sans-serif}
+:root{--brand:#00E5FF;--ink:#10151D;--green:#0B7A43;--ember:#E4572E;--display:"Badaboom BB","BadaBoom BB",Impact,sans-serif}
 #hub{background:linear-gradient(160deg,rgba(8,15,23,.97),rgba(13,20,29,.96) 58%,rgba(9,16,24,.98));color:#F5FAFC}
 #hubTop{position:relative;min-height:76px;padding:calc(14px + env(safe-area-inset-top)) 18px 12px;gap:14px;border-bottom:1px solid rgba(255,255,255,.08);background:rgba(9,15,22,.78)}
 .header-logo{width:40px;height:40px;border-radius:12px;border:1px solid rgba(0,229,255,.24);box-shadow:0 0 22px rgba(0,229,255,.12)}
@@ -445,3 +445,87 @@ html,body{height:100%;overflow:hidden;background:var(--ink);color:var(--ink);fon
 
 /* KitCity brand display font */
 #title h1,#authPage .auth-heading h1,.brand-wordmark,.brand-lockup + .band h1{font-family:'BadaBoom BB','Badaboom BB',Impact,sans-serif;font-weight:400;letter-spacing:0}
+
+
+/* Map redraw: legible geographic cues instead of a blank polygon and a dot cloud. */
+.map-card .map{
+  aspect-ratio:6/5;
+  width:100%;
+  height:auto;
+  max-height:none;
+  background:#102633;
+  border:1px solid rgba(190,214,220,.14);
+  border-radius:14px;
+  overflow:hidden;
+}
+.map-state-line{
+  fill:none;
+  stroke:#C1CDD0;
+  stroke-width:.65;
+  stroke-opacity:.26;
+  stroke-dasharray:2.5 2.5;
+  pointer-events:none;
+}
+.map-road-line{
+  fill:none;
+  stroke:#D8C9A7;
+  stroke-width:1.05;
+  stroke-opacity:.38;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  pointer-events:none;
+}
+.map-river-line{
+  fill:none;
+  stroke:#6FB8D0;
+  stroke-width:2.15;
+  stroke-opacity:.82;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  pointer-events:none;
+}
+.map-city-dot{stroke:#13222B;stroke-width:1.15}
+.map-selected-ring{fill:none;stroke:#F4C76B;stroke-width:1.55;opacity:.95}
+.map-label-leader{fill:none;stroke:#B9CDD1;stroke-width:.65;stroke-opacity:.68;pointer-events:none}
+.map-city-label{
+  fill:#EDF5F5;
+  font-family:Arial,Helvetica,sans-serif;
+  font-size:8px;
+  font-weight:650;
+  paint-order:stroke;
+  stroke:#1A2A33;
+  stroke-width:2.6px;
+  stroke-linejoin:round;
+  pointer-events:none;
+}
+.map-city-label.selected{fill:#8FF3FF;font-size:9px;font-weight:800;stroke-width:3px}
+.map-map-title{fill:#F2F7F7;font:800 10px Arial,Helvetica,sans-serif;letter-spacing:2px}
+.map-map-subtitle{fill:#9CB4BE;font:600 6px Arial,Helvetica,sans-serif;letter-spacing:1.2px}
+.map-north text{fill:#D8E6E9;font:700 7px Arial,Helvetica,sans-serif}
+.map-legend-note{margin-left:auto;color:#8196A4;font-size:9px;font-weight:550}
+.map-card-head h2,
+.map-selected b,
+#hubBody .h2,
+#hubBody .ch b,
+#hubTop .lvl b,
+.destination-card h2,
+#title h1,
+#mTitle,
+#sheet h3,
+#authPage .auth-heading h1,
+#authPage .auth-brand b{
+  font-family:var(--display)!important;
+  font-weight:400!important;
+  letter-spacing:.015em;
+}
+.map-card-head h2{font-size:22px;letter-spacing:.025em}
+#hubBody .h2{font-size:20px}
+#hubBody .ch b{font-size:16px;line-height:1.25}
+#hubTop .lvl b{font-size:15px}
+#title h1,#authPage .auth-heading h1{letter-spacing:.025em}
+@media(max-width:420px){
+  .map-card .map{border-radius:12px}
+  .map-city-label{font-size:7.5px}
+  .map-city-label.selected{font-size:8.5px}
+  .map-legend-note{width:100%;margin-left:0}
+}
