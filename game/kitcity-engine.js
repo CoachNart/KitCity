@@ -1781,7 +1781,7 @@ function buildKitCity(C){
   const access=label('LEARN  •  BUILD  •  CONTRIBUTE',glow,'#071827',1.05); access.position.set(0,20,-180); cityGroup.add(access);
   cityCols=colliders.length;
   mergeStatic(cityGroup); flagShadows(cityGroup); flagShadows(trafficGroup); freeze(cityGroup);
-  setupBarks(C); Snd.setCity('abuja');
+  setupBarks(C); Snd.setCity('kitcity');
 }
 function buildCity(key){
   const C=CITIES[key]; curCity=key;
