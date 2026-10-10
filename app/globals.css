@@ -538,3 +538,29 @@ html,body{height:100%;overflow:hidden;background:var(--ink);color:var(--ink);fon
   .player-entry .privacy-note { font-size: 8px; }
   #title .line { font-size: 11px; }
 }
+
+
+/* Landing-first account flow: keep the game welcome screen uncluttered. */
+#title:not(.auth-open) .player-entry,
+#title:not(.auth-open) #startBtn { display: none !important; }
+#title.auth-open .player-entry { display: block; }
+#title.auth-open .cta { width: 100%; }
+#title.auth-open #authOpenBtn { display: none; }
+#authOpenBtn { min-width: min(100%, 280px); }
+.auth-back {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 38px; margin: 0 0 14px; padding: 7px 0;
+  border: 0; background: transparent; color: rgba(255,255,255,.78);
+  font: 700 13px system-ui,sans-serif; cursor: pointer;
+}
+.auth-back:focus-visible { outline: 2px solid var(--brand); outline-offset: 3px; }
+#title.auth-open .wrap { gap: 14px; }
+#title.auth-open .band { margin-bottom: 2px; }
+@media (max-width: 600px) {
+  #title.auth-open { justify-content: flex-start; }
+  #title.auth-open .wrap { margin: 0 auto; gap: 10px; }
+  #title.auth-open .brand-logo { width: 42px; max-height: 34px; }
+  #title.auth-open .player-entry { padding: 12px; margin-bottom: 2px; }
+  #title.auth-open .band { padding: 8px 10px; }
+  #title.auth-open h1 { font-size: clamp(30px, 9vw, 46px); }
+}
