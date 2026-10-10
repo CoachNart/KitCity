@@ -3262,9 +3262,9 @@ const MISSIONS=[
     opts:[['The listing: 40 bags, price per bag, pickup day',1],['A request to send my stock to the board',0]],
     wrong:'A listing is a message. Nobody needs your stock sent to them to list it.',
     say:'Your listing is on the board.'}),
-  taskStep({label:'Confirm the buyer’s payment',spot:'f',npc:mkSign('Buyer Hadiza','Grain buyer','#E4572E',LK.man,'Buyer'),
-    intro:'Garba pays for the 40 bags. Check the payment before the truck leaves.',q:'How do you confirm?',
-    opts:[['Look up the payment transaction on the explorer',1],['Trust his message that it is sent',0]],
+  taskStep({label:'Confirm the buyer’s payment',spot:'f',npc:mkSign('Buyer Hadiza','Grain buyer','#E4572E',LK.woman,'Buyer'),
+    intro:'Hadiza pays for the 40 bags. Check the payment before the truck leaves.',q:'How do you confirm?',
+    opts:[['Look up the payment transaction on the explorer',1],['Trust her message that it is sent',0]],
     wrong:'Messages do not move the truck. The explorer shows the payment.',
     say:'The payment is in your wallet. The truck can leave.'})
  ]},
