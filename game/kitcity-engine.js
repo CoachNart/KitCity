@@ -44,7 +44,7 @@ function personalize(html){ return String(html==null?'':html).replace(/Agent Kit
 
 /* =====================  YouTube soundtrack  ===================== */
 const MUSIC_QUEUES={
-  afrobeat:{label:'Naija Afrobeats',videos:['GHTXMiUJQrA']},
+  afrobeat:{label:'Naija Afrobeats Mix 2026',videos:['bGgjIvWj2I0']},
   'lagos':{label:"Lagos · Soulful Jazz & Lo-fi",videos:["xi_lHo9KCo0","vlZkQGiXeA8"]},
   'abuja':{label:"Abuja · Contemporary Afrobeats",videos:["XCjU9qbfv1U"]},
   'ph':{label:"Port Harcourt · Niger Delta / Ijaw",videos:["xodanM9AfrI"]},
@@ -84,7 +84,7 @@ const MUSIC_QUEUES={
   'birnin-kebbi':{label:"Birnin Kebbi · Hausa / Arewa",videos:["62Zazi9KEJc"]},
   'minna':{label:"Minna · Nupe / Arewa",videos:["WQFDWM-6ytA"]},
   'dutse':{label:"Dutse · Hausa / Arewa",videos:["dkPClcO4Whw"]},
-  'gusau':{label:"Gusau · Hausa / Arewa",videos:["zYq0ze2Iw6c"]},
+  'gusau':{label:"Gusau · Hausa / Arewa",videos:["GHTXMiUJQrA"]},
   'kafanchan':{label:"Kafanchan · Southern Kaduna",videos:["LZ6B1xACdxM"]},
   'damboa':{label:"Damboa · Kanuri / Hausa",videos:["hLJcQH_2Onk"]}
 };
