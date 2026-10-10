@@ -1872,7 +1872,7 @@ function buildCity(key){
   dxFlush(C);
   cityCols=colliders.length;
   for(let k=-3;k<=3;k++)for(const axis of ['x','z'])for(const dir of [1,-1]){
-    const n=(k===0||k===-1)?5:(RN()<.45?3:2);
+    const n=(k===0||k===-1)?8:(RN()<.45?5:4);
     for(let q=0;q<n;q++) addCar(axis,k,dir,C);
   }
   const spotWalk=()=>{
