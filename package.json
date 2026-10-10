@@ -12,7 +12,9 @@
     "react": "19.2.0",
     "react-dom": "19.2.0",
     "three": "0.128.0",
-    "firebase": "^12.4.0"
+    "firebase": "^12.4.0",
+    "firebase-admin": "^13.4.0",
+    "server-only": "^0.0.1"
   },
   "devDependencies": {
     "@types/node": "^22.15.0",
