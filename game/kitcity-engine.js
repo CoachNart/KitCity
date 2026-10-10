@@ -1847,9 +1847,9 @@ const TOLA=NPC('Craftore','Bank agent','#0B7A43',LK.clerk,{body:'#0B7A43',a:'#ff
 const mkSign=(name,role,color,look,sign)=>{ const n=NPC(name,role,color,look,null,sign); n.signBg=color; n.signFg='#ffffff'; return n; };
 const OXNIGHT=mkSign('OxNight','Knows the street rules','#1f4f82',LK.man,'Share or keep?');
 const MOON=mkSign('Moon','Rate watcher','#6a3fb5',LK.woman,'Check the quote');
-const CRYPT=mkSign('The Cryptonian','Scam veteran','#0B7A43',LK.guy,'Spot the red flag');
+const CRYPT=mkSign('The cryptonian','Scam veteran','#0B7A43',LK.guy,'Spot the red flag');
 const NNADI=mkSign('Joe_Sef','Backup advisor','#2D6FB3',LK.clerk,'Where to keep it');
-const DON=mkSign('The Don','Careful sender','#5a3a22',LK.elder,'Test first');
+const DON=mkSign('The don','Careful sender','#5a3a22',LK.elder,'Test first');
 const PRAISE=mkSign('Praise','Signature checker','#C7457E',LK.trader,'Read before signing');
 const BIGSAM=mkSign('BigSam','Community organiser','#E4572E',LK.man,'Read the proposal');
 const LUNAX=mkSign('LunaX','Trusted trader','#0897A8',LK.woman,'Name must match');
