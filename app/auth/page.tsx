@@ -97,7 +97,7 @@ export default function AuthPage() {
           </label>
           <label className="auth-field">
             <span>PLAYER USERNAME</span>
-            <input type="text" name="username" autoComplete="nickname" autoCapitalize="none" spellCheck={false} placeholder="e.g. KitExplorer" minLength={3} maxLength={20} required value={username} onChange={event => setUsername(event.target.value)} />
+            <input type="text" name="username" autoComplete="nickname" autoCapitalize="none" spellCheck={false} placeholder={mode === 'signup' ? 'e.g. KitExplorer' : 'Only needed when creating an account'} minLength={mode === 'signup' ? 3 : undefined} maxLength={20} required={mode === 'signup'} value={username} onChange={event => setUsername(event.target.value)} />
           </label>
           <label className="auth-field">
             <span>PASSWORD</span>
