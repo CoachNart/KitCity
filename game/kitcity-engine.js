@@ -3858,18 +3858,20 @@ const orderedNPCObjects=firstMissionOrder.slice();
 for(const npc of allNPCObjects) if(!firstMissionSeen.has(npc)){ firstMissionSeen.add(npc); orderedNPCObjects.push(npc); }
 let priorityNameIndex=0;
 const usedNPCNameKeys=new Set();
+const priorityAssignedNPCs=new Set();
 for(const npc of orderedNPCObjects){
   if(priorityNameIndex<PRIORITY_COMMUNITY_NAMES.length){
     const nextName=PRIORITY_COMMUNITY_NAMES[priorityNameIndex++];
     npc.name=nextName;
+    priorityAssignedNPCs.add(npc);
     usedNPCNameKeys.add(nextName.toLowerCase());
   }
 }
 if(typeof MUSA!=='undefined') MUSA.name='Laloba';
 for(const npc of orderedNPCObjects){
+  if(priorityAssignedNPCs.has(npc)) continue;
   const current=(npc.name||'').trim();
   const key=current.toLowerCase();
-  if(usedNPCNameKeys.has(key)&&PRIORITY_NAME_KEYS.has(key)) continue;
   if(key&&!usedNPCNameKeys.has(key)&&!PRIORITY_NAME_KEYS.has(key)){
     usedNPCNameKeys.add(key);
     continue;
@@ -4196,7 +4198,8 @@ function beginGame(){
   hubTab='missions';
   renderHub();
 }
-$('#startBtn').addEventListener('click',submitPlayerName);
+const startGameButton=$('#startBtn');
+if(startGameButton) startGameButton.addEventListener('click',submitPlayerName);
 if(playerNameInput){
   playerNameInput.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); submitPlayerName(); } });
   playerNameInput.addEventListener('input',()=>{ if(playerNameError) playerNameError.textContent=''; });
