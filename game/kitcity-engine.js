@@ -1225,49 +1225,35 @@ function addBuilding(x,z,w,d,style,color,cx,cz,ox,oz){
     xb(Math.min(w*.62,10),.55,2.2,'#b7b5ad',x,h*.22,z+d/2+1.2);
     for(const px of [-1,1]) xb(.42,h*.22,.42,'#e4e1d8',x+px*Math.min(w*.26,4),h*.11,z+d/2+1.2);
   }
-  // Add real-world street architecture: projecting balconies, railings, shop
-  // awnings, rooftop services and window AC units, with restrained geometry.
+  // Keep architectural accents lightweight for mobile GPUs. The previous
+  // version added dozens of separate meshes to every tall building, which
+  // overwhelmed draw calls and could make the game appear frozen on phones.
   const facadeSide=oz<0?-1:1;
-  if((style==='flat'||style==='admin')&&h>13&&w>9&&d>9){
-    const floors=Math.max(1,Math.min(4,Math.floor(h/5.2)));
-    for(let fl=1;fl<=floors;fl++){
-      const yy=Math.min(h-2,fl*4.4),bw=Math.min(w*.72,12);
-      for(const side of [-1,1]){
-        const zz=z+side*(d/2+.48);
-        xb(bw,.22,.95,'#8d969b',x,yy,zz);
-        xb(bw,.18,.12,'#d2d2cb',x,yy+1.05,zz+side*.36);
-        for(let q=-2;q<=2;q++) xb(.09,.92,.1,'#626b70',x+q*bw/5,yy+.55,zz+side*.36);
-      }
-    }
+  if((style==='flat'||style==='admin')&&h>13&&w>9&&d>9&&RN()<.3){
+    const yy=Math.min(h-2,rr(4,Math.min(8,h-2))),bw=Math.min(w*.58,9);
+    const zz=z+facadeSide*(d/2+.42);
+    xb(bw,.2,.72,'#8d969b',x,yy,zz);
+    xb(bw,.14,.1,'#d2d2cb',x,yy+.58,zz+facadeSide*.28);
+    for(let q=-1;q<=1;q++) xb(.08,.48,.08,'#626b70',x+q*bw/3,yy+.3,zz+facadeSide*.28);
   }
-  if(style==='flat'||style==='admin'){
-    // Roof tanks and service rooms are common on Nigerian concrete buildings.
-    if(RN()<.62){
-      const tx=x+rr(-w*.22,w*.22),tz=z+rr(-d*.22,d*.22);
-      xb(2.8,3.4,2.8,'#777f82',tx,h+1.7,tz);
-      const tank=new THREE.Mesh(new THREE.CylinderGeometry(1.1,1.1,2.4,12),lam('#20272b'));
-      tank.position.set(tx,h+4.5,tz); tank.userData.nomerge=true; cityGroup.add(tank); mats.push(tank.material);
-    }
-    if(RN()<.48){
-      const side=facadeSide,ax=x+rr(-w*.28,w*.28),az=z+side*(d/2+.25),ay=rr(4,Math.max(5,h-3));
-      xb(1.2,1,.5,'#d4d4cc',ax,ay,az);
-      xb(.85,.35,.56,'#606d75',ax,ay,az+side*.12);
-    }
+  if((style==='flat'||style==='admin')&&RN()<.2){
+    // One compact AC unit on a small share of buildings; existing instanced
+    // rooftop tanks remain in place.
+    const ax=x+rr(-w*.25,w*.25),az=z+facadeSide*(d/2+.24),ay=rr(5,Math.max(6,h-3));
+    xb(.9,.62,.42,'#d4d4cc',ax,ay,az);
   }
   if(style==='glass'){
-    // Curtain-wall tower caps, service cores and floor-edge bands.
-    for(let fl=1;fl<Math.min(7,Math.floor(h/6));fl++) xb(w+.12,.16,d+.12,'#6b7d88',x,fl*6,z);
-    xb(w*.34,2.1,d*.34,'#4c5962',x,h+1,z);
+    // A single roof cap keeps tower silhouettes distinct without many draw calls.
+    xb(w*.34,1.4,d*.34,'#4c5962',x,h+.7,z);
   }
   if(style==='zinc'&&['dense-coastal','southwest-urban','southeast-urban','river-port','coastal-tropical'].includes(archType(C))){
-    // Corrugated roof eaves and a shaded veranda give low-rise homes a lived-in silhouette.
+    // Corrugated eaves and a modest veranda canopy for selected low-rise homes.
     const eave=lam('#6f7778',{map:LKT.zroof,transparent:true}); mats.push(eave);
     const roofSlab=new THREE.Mesh(new THREE.BoxGeometry(w+1.8,.22,d+1.8),eave);
     roofSlab.position.set(x,h+.12,z); roofSlab.userData.nomerge=true; cityGroup.add(roofSlab);
-    if(RN()<.58){
+    if(RN()<.3){
       const porchZ=z+facadeSide*(d/2+1.15);
-      xb(Math.min(w*.68,10),.22,2.2,'#777b78',x,h*.45,porchZ);
-      for(const px of [-1,1]) xb(.18,h*.45,.18,'#777b78',x+px*Math.min(w*.3,4),h*.225,porchZ);
+      xb(Math.min(w*.55,8),.18,1.8,'#777b78',x,h*.45,porchZ);
     }
   }
   const box={x0:x-w/2,x1:x+w/2,z0:z-d/2,z1:z+d/2,y1:h+4};
