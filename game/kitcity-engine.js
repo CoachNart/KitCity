@@ -2861,7 +2861,7 @@ const MISSIONS=[
     wrong:'The invoice should follow the agreed scope and documented changes.',say:'The amount can be traced back to the agreement.'}),
   taskStep({label:'Reconcile the incoming payment',spot:'h',npc:mkSign('Client Amaka','Overseas client','#C7457E',LK.woman,'Client desk'),
     intro:'A payment arrives with a reference number.',q:'What confirms the invoice is settled?',
-    opts:[['The amount and reference match the payment record',1],['A message that says 'sent' with no record',0]],
+    opts:[['The amount and reference match the payment record',1],['A message that says “sent” with no record',0]],
     wrong:'A payment message alone does not reconcile an invoice.',say:'The payment record matches the amount due.'})
  ]},
 {id:'m45',n:45,city:'akure',title:'Give to the church fund, verified',goal:'Check the church fund address on the published notice, sign a pledge, and give on Base.',xp:390,
