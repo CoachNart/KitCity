@@ -687,7 +687,7 @@ const NEWC={
     barks:['Sannu!','Ina kwana?','Boss, come!','Customer!'],barksEn:['Hello!','How are you?','Boss, come!','Customer!'],hawk:['Ruwa! Ruwa sanyi!','Suya, suya!','Kunu! Cold kunu!'],conductor:['Monday Market! Hawa!','Baga Road! Hawa!'],
     nsRoads:['Baga Road','Bama Road','Kano Road','Gombole Road','Customs Road','Damboa Road','Jos Road'],ewRoads:['Sir Kashim Ibrahim Road','Shehu Laminu Way','Ngomari Road','Bulumkutu Road','Lagos Street','Mohammed Goni Road','Shehu Garbai Way'],
     districts:['Gwange','Bolori','Maiduguri Central','Shehuri','Pompomari','Bulumkutu','Ngomari','Hausari','Mairi']},
-  minna:{name:'Niger',tag:'The city of the Niger State',lon:6.55,lat:9.61,seed:271,sky:0xC9DBC6,ground:'#2F302B',slab:'#BFBDA8',
+  minna:{name:'Minna',tag:'Capital of Niger State',lon:6.55,lat:9.61,seed:271,sky:0xC9DBC6,ground:'#2F302B',slab:'#BFBDA8',
     paint:['#D6C7A4','#B9C6A4','#E2D1AC','#A9B9B0','#CDB58F','#C1CFA8'],market:4,palm:.4,tree:.7,leaf:'#4a7c3a',dirt:'#94643e',
     fleet:[['police',.4],['keke',4],['okada',3],['sedan',3],['danfo',2],['truck',2]],styles:[['flat',.4],['zinc',.3],['admin',.2],['banco',.1]],lm:[['church',-35,35],['mosque',35,105]],
     shopKinds:[['shop',3],['kiosk',3],['buka',2],['container',2],['vulc',1]],oka:4,pud:6,
@@ -3787,6 +3787,105 @@ const isUnlocked=m=>{ const k=MISSIONS.indexOf(m); return k===0||!!P.done[MISSIO
 
 
 const cityOrder=[...new Set(MISSIONS.map(m=>m.city))];
+
+/* Community-name priority: assign all 60 names before any external NPC names.
+   First-city missions are assigned first. Laloba is reserved for Kano. */
+const PRIORITY_COMMUNITY_NAMES=[
+  'Softstorm','IamAbdul','Christol','Laloba','Larai','Unique','Semi','Joe_Sef','Smrt huntr','Goodness',
+  'Blockqueen','BigSam','LunaX','OxNight','Moon','The cryptonian','Joseph Nnadi','The don','Praise','Kenny',
+  'Caleb','Craftore','Toza','Kodavic','Cybersage','Reina','Cclya','Duke David','Dark','Leemah',
+  'Web3_Esta','Love','Essa','John Jonathan','Kore','White Coach','Debs','K','Oromachi','David',
+  'Abdul','Mcbond','Akimitsu','Odion','Princess','Motunrayo','Seun','Blessing','Racheal','Bamidele',
+  'Isaac','Toheeb','Joe','Mike','Favour','Joshua','Okiks','Egbuna','Amaka','Mide'
+];
+const PRIORITY_NAME_KEYS=new Set(PRIORITY_COMMUNITY_NAMES.map(n=>n.toLowerCase()));
+const externalNamePools={
+  yoruba:['Akinwale Ogun','Sola Adebayo','Yetunde Balogun','Dayo Alade','Tunde Akinola','Bisola Ojo','Kehinde Fashola','Oluwatobi Lawal','Feyi Adekunle','Tola Ogunleye','Bukunmi Ajayi','Aderonke Bello','Olamide Akinyemi','Damilola Onasanya'],
+  hausa:['Aisha Lawal','Musa Bello','Hauwa Ibrahim','Sani Abubakar','Hadiza Garba','Bashir Abdullahi','Zainab Sani','Yakubu Danjuma','Safiya Umar','Malam Garba','Binta Adamu','Jatau Musa','Hajara Shehu','Kabiru Isah'],
+  igbo:['Chika Nwosu','Nneka Okafor','Chiamaka Eze','Obinna Umeh','Adaeze Okeke','Ifeanyi Nnamdi','Ngozi Onyekachi','Chukwuemeka Nwankwo','Ijeoma Nwachukwu','Ogechi Ude','Chisom Eze','Uche Nwankwo','Kenechukwu Obi','Ifeoma Nwosu'],
+  southsouth:['Efe Oghene','Tamuno Briggs','Boma George','Ivie Ediagbonya','Tariere Ebi','Onome Oghene','Ebiere Boma','Oghenekaro Igbinovia','Ekanem Essien','Etim Udo','Tari Opu','Ovie Akpofure','Iniobong Etuk','Imaobong Udo'],
+  middlebelt:['Tivter Iorfa','Aondohemba Tersoo','Lami Bako','Nura Ali','Amina Danladi','Jatau Musa','Ibrahim Dogo','Danjuma Saleh','Yakubu Jatau','Terna Mba','Mlumun Aondoakaa','Atsen Iorwuese','Oche Idoko','Audu Onah'],
+  northeast:['Aisha Danladi','Binta Adamu','Hauwa Ibrahim','Sani Abubakar','Bashir Abdullahi','Zainab Sani','Yakubu Danjuma','Safiya Umar','Kabiru Isah','Hadiza Garba','Nura Ali','Malam Garba']
+};
+function npcRegion(city){
+  if(['lagos','ibadan','ilorin','abeokuta','akure','adoekiti','osun'].includes(city)) return 'yoruba';
+  if(['kano','kaduna','maiduguri','sokoto','katsina','bauchi','gombe','yola','jigawa','kebbi','zamfara','minna'].includes(city)) return 'hausa';
+  if(['enugu','anambra','owerri','abia','abakaliki'].includes(city)) return 'igbo';
+  if(['ph','uyo','calabar','bayelsa','asaba','benin'].includes(city)) return 'southsouth';
+  if(['jos','makurdi','kogi','nasarawa','taraba'].includes(city)) return 'middlebelt';
+  return 'northeast';
+}
+function missionNPCObjects(mission){
+  const found=[],seen=new Set();
+  const add=npc=>{
+    if(!npc||typeof npc!=='object'||typeof npc.name!=='string'||seen.has(npc)) return;
+    seen.add(npc); found.push(npc);
+  };
+  const walk=step=>{
+    if(!step||typeof step!=='object') return;
+    add(step.npc);
+    if(Array.isArray(step.steps)) step.steps.forEach(walk);
+    if(Array.isArray(step.extras)) step.extras.forEach(walk);
+  };
+  (mission.steps||[]).forEach(walk);
+  (mission.extras||[]).forEach(ex=>{ add(ex.npc); walk(ex); });
+  return found;
+}
+const allNPCObjects=[],npcFirstCity=new Map(),allNPCSeen=new Set();
+for(const mission of MISSIONS){
+  for(const npc of missionNPCObjects(mission)){
+    if(!npcFirstCity.has(npc)) npcFirstCity.set(npc,mission.city);
+    if(!allNPCSeen.has(npc)){ allNPCSeen.add(npc); allNPCObjects.push(npc); }
+  }
+}
+const firstMissionGroups=cityOrder.map(city=>({city,mission:MISSIONS.find(m=>m.city===city)})).filter(x=>x.mission);
+const firstMissionOrder=[];
+const firstMissionSeen=new Set();
+const addFirstMissionGroup=group=>{
+  for(const npc of missionNPCObjects(group.mission)){
+    if(!firstMissionSeen.has(npc)){ firstMissionSeen.add(npc); firstMissionOrder.push(npc); }
+  }
+};
+const lagosFirst=firstMissionGroups.find(g=>g.city==='lagos');
+const kanoFirst=firstMissionGroups.find(g=>g.city==='kano');
+if(lagosFirst) addFirstMissionGroup(lagosFirst);
+if(kanoFirst) addFirstMissionGroup(kanoFirst);
+for(const group of firstMissionGroups){
+  if(group.city==='lagos'||group.city==='kano') continue;
+  addFirstMissionGroup(group);
+}
+const orderedNPCObjects=firstMissionOrder.slice();
+for(const npc of allNPCObjects) if(!firstMissionSeen.has(npc)){ firstMissionSeen.add(npc); orderedNPCObjects.push(npc); }
+let priorityNameIndex=0;
+const usedNPCNameKeys=new Set();
+for(const npc of orderedNPCObjects){
+  if(priorityNameIndex<PRIORITY_COMMUNITY_NAMES.length){
+    const nextName=PRIORITY_COMMUNITY_NAMES[priorityNameIndex++];
+    npc.name=nextName;
+    usedNPCNameKeys.add(nextName.toLowerCase());
+  }
+}
+if(typeof MUSA!=='undefined') MUSA.name='Laloba';
+for(const npc of orderedNPCObjects){
+  const current=(npc.name||'').trim();
+  const key=current.toLowerCase();
+  if(usedNPCNameKeys.has(key)&&PRIORITY_NAME_KEYS.has(key)) continue;
+  if(key&&!usedNPCNameKeys.has(key)&&!PRIORITY_NAME_KEYS.has(key)){
+    usedNPCNameKeys.add(key);
+    continue;
+  }
+  const city=npcFirstCity.get(npc)||'kitcity';
+  const pool=externalNamePools[npcRegion(city)]||externalNamePools.northeast;
+  let replacement=pool.find(name=>!usedNPCNameKeys.has(name.toLowerCase())&&!PRIORITY_NAME_KEYS.has(name.toLowerCase()));
+  if(!replacement){
+    const base=pool[0]||'Community Guide';
+    let suffix=1;
+    do{ replacement=base+' '+(CITIES[city]?.name||city)+' '+suffix++; }while(usedNPCNameKeys.has(replacement.toLowerCase()));
+  }
+  npc.name=replacement;
+  usedNPCNameKeys.add(replacement.toLowerCase());
+}
+
 const cityMissions=city=>MISSIONS.filter(m=>m.city===city);
 const isCityComplete=city=>{const ms=cityMissions(city);return ms.length>0&&ms.every(m=>!!P.done[m.id]);};
 const isCityUnlocked=city=>{const ms=cityMissions(city);return ms.length>0&&isUnlocked(ms[0]);};
@@ -3979,7 +4078,8 @@ let authBusy=false;
 if(playerNameInput){ playerNameInput.value=P.name||''; }
 function updateAuthButton(){
   const signedIn=!!getCurrentAuthUser();
-  $('#startBtn').textContent=signedIn?'Continue to KitCity':(authMode==='signup'?'Create account & enter KitCity':'Sign in & enter KitCity');
+  const startButton=$('#startBtn');
+  if(startButton) startButton.textContent=signedIn?'Continue to KitCity':(authMode==='signup'?'Create account & enter KitCity':'Sign in & enter KitCity');
   const passwordLabel=document.querySelector('label[for="playerPassword"]');
   if(playerPasswordInput) playerPasswordInput.required=!signedIn;
   if(passwordLabel) passwordLabel.textContent=signedIn?'PASSWORD (NOT NEEDED FOR THIS SESSION)':'PASSWORD';
@@ -3991,6 +4091,8 @@ function setAuthMode(mode){
   updateAuthButton();
 }
 document.querySelectorAll('[data-auth-mode]').forEach(b=>b.addEventListener('click',()=>setAuthMode(b.dataset.authMode)));
+const signInPageButton=$('#signInPageBtn');
+if(signInPageButton) signInPageButton.addEventListener('click',()=>{ window.location.href='/auth'; });
 const authOpenButton=$('#authOpenBtn');
 const authBackButton=$('#authBackBtn');
 if(authOpenButton) authOpenButton.addEventListener('click',()=>{
@@ -4055,8 +4157,7 @@ async function submitPlayerName(){
   }
   authBusy=true;
   const button=$('#startBtn');
-  button.disabled=true;
-  button.textContent='Securing your account…';
+  if(button){ button.disabled=true; button.textContent='Securing your account…'; }
   try{
     const location=await approximateLocation();
     const deviceId=deviceInstallId();
@@ -4079,7 +4180,7 @@ async function submitPlayerName(){
     if(playerNameError) playerNameError.textContent=authErrorMessage(error);
   }finally{
     authBusy=false;
-    button.disabled=false;
+    if(button) button.disabled=false;
     updateAuthButton();
   }
 }
@@ -4106,6 +4207,11 @@ if(firebaseConfigured){
   waitForAuthState().then(user=>{
     if(user&&playerEmailInput) playerEmailInput.value=user.email||'';
     updateAuthButton();
+    if(user&&new URLSearchParams(window.location.search).get('enter')==='1'){
+      let savedName='';
+      try{ savedName=window.localStorage.getItem('kitcity_player_name')||''; }catch(e){}
+      if(playerNameInput&&savedName){ playerNameInput.value=savedName; submitPlayerName(); }
+    }
   }).catch(()=>updateAuthButton());
 }else updateAuthButton();
 function applyLang(){
