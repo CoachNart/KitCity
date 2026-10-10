@@ -244,7 +244,8 @@ const YT=(function(){
           if(wantOn && started) play();
         },
         onStateChange:ev=>{
-          suppressSystemMediaControls();\n          if(ev.data===1) errCount=0;
+          suppressSystemMediaControls();
+          if(ev.data===1) errCount=0;
           if(ev.data===0&&wantOn){ try{ player.nextVideo(); }catch(e){} }
         },
         onError:()=>{
