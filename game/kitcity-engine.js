@@ -4014,6 +4014,7 @@ function authErrorMessage(error){
   const code=error&&error.code||'';
   if(code==='auth/email-already-in-use') return 'An account already uses this email. Sign in instead.';
   if(code==='auth/configuration-not-found') return 'Firebase Authentication is not initialized for this project, or the web config points to a different project. In Firebase Console, open kitcity-efd96, set up Authentication, and enable Email/Password.';
+  if(code==='unavailable'||code==='firestore/unavailable') return 'KitCity could not reach its cloud database. Check your connection and try again. If this keeps happening, the Firestore database or network connection needs to be checked.';
   if(code==='auth/invalid-credential'||code==='auth/wrong-password'||code==='auth/user-not-found') return 'Email or password is incorrect.';
   if(code==='auth/weak-password') return 'Choose a stronger password with at least 8 characters.';
   if(code==='auth/invalid-email') return 'Enter a valid email address.';
@@ -4058,10 +4059,12 @@ async function submitPlayerName(){
       user=result.user; profile=result.profile;
     }
     activateUserProgress(user.uid);
-    const remote=await loadCloudProgress(user.uid);
+    cloudSyncReady=true;
+    let remote=null;
+    try{ remote=await loadCloudProgress(user.uid); }
+    catch(syncError){ console.warn('KitCity cloud progress is temporarily unavailable; continuing with local progress.',syncError); }
     if(remote) mergeCloudProgress(remote);
     P.name=(profile&&typeof profile.username==='string'&&profile.username)||candidate;
-    cloudSyncReady=true;
     save();
     if(playerNameError) playerNameError.textContent='';
     beginGame();
