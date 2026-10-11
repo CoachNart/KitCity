@@ -466,7 +466,7 @@ const tube=(rt,rb,h,c)=>{ const g=new THREE.CylinderGeometry(rt,rb,h,10); g.tran
 const boxm=(w,h,d,c)=>new THREE.Mesh(new THREE.BoxGeometry(w,h,d),M(c));
 let logoMat=null;
 const KITCITY_LOGO_URL='https://i.postimg.cc/qqbdTXky/file-00000000958881f4a776df689a235dec.png';
-function getLogoMat(){if(logoMat)return logoMat;const loader=new THREE.TextureLoader();loader.setCrossOrigin('anonymous');const texture=loader.load(KITCITY_LOGO_URL);texture.colorSpace=THREE.SRGBColorSpace;logoMat=new THREE.MeshBasicMaterial({map:texture,transparent:true,side:THREE.DoubleSide});return logoMat;}
+function getLogoMat(){if(logoMat)return logoMat;const loader=new THREE.TextureLoader();loader.setCrossOrigin('anonymous');const texture=loader.load(KITCITY_LOGO_URL);texture.encoding=THREE.sRGBEncoding;logoMat=new THREE.MeshBasicMaterial({map:texture,transparent:true,side:THREE.DoubleSide});return logoMat;}
 const ANK=[];
 function ankaraMat(i){
   i=((i%4)+4)%4; if(ANK[i]) return ANK[i];
@@ -1755,7 +1755,7 @@ function streetDetails(C,blocks){
 }
 function buildBackdrop(key){
   clearGroup(backGroup);
-  const mk=(geo,c,x,y,z,sx,sy,sz,flat)=>{ const m=new THREE.Mesh(geo,new THREE.MeshLambertMaterial({color:c,flatShading:!!flat})); m.position.set(x,y,z); m.scale.set(sx,sy,sz); backGroup.add(m); return m; };
+  const mk=(geo,c,x,y,z,sx,sy,sz,flat)=>{ const material=new THREE.MeshLambertMaterial({color:c}); material.flatShading=!!flat; const m=new THREE.Mesh(geo,material); m.position.set(x,y,z); m.scale.set(sx,sy,sz); backGroup.add(m); return m; };
   const ico=new THREE.IcosahedronGeometry(1,1),box=new THREE.BoxGeometry(1,1,1);
   const water=(w,d,x,z,c)=>{ const m=new THREE.Mesh(new THREE.PlaneGeometry(w,d),new THREE.MeshLambertMaterial({color:c})); m.rotation.x=-Math.PI/2; m.position.set(x,.01,z); backGroup.add(m); };
   if(key==='lagos'){
@@ -4219,9 +4219,10 @@ $('#hub').addEventListener('click',async e=>{
   else if(a==='snd'){ P[v]=!P[v]; save(); Snd.set(v,P[v]); Snd.sfx('click'); renderHub(); }
   else if(a==='reset'){
     if(!resetArm){ resetArm=true; renderHub(); return; }
-    Store.del(KEY); Object.assign(P,{wallet:null,usdc:0,ngn:0,done:{},dodged:0,fell:0,scores:{},web3:null}); save(); resetArm=false; hubCity='lagos'; hubTab='missions'; renderHub(); toast('Progress erased');
+    Store.del(KEY); Object.assign(P,{wallet:null,usdc:0,ngn:0,done:{},dodged:0,fell:0,scores:{},web3:null,storyPrologueSeen:false}); save(); resetArm=false; hubCity='lagos'; hubTab='missions'; renderHub(); toast('Progress erased');
   }
 });
+const LOCAL_GUEST_TEST=process.env.NODE_ENV==='development'&&window.location.hostname==='localhost';
 const playerNameInput=$('#playerName');
 const playerNameError=$('#playerNameError');
 const playerEmailInput=$('#playerEmail');
@@ -4288,6 +4289,16 @@ function authErrorMessage(error){
 }
 async function submitPlayerName(){
   if(authBusy) return;
+  if(LOCAL_GUEST_TEST&&!firebaseConfigured){
+    const candidate=(playerNameInput&&playerNameInput.value||'KitTester01').trim();
+    if(!/^[A-Za-z0-9_]{3,20}$/.test(candidate)){
+      if(playerNameError) playerNameError.textContent='Use 3–20 letters, numbers, or underscores for your gamer ID.';
+      return;
+    }
+    P.name=candidate; cloudSyncReady=false; activeUid=null; storageKey=KEY;
+    Store.set('kitcity_player_name',candidate); Store.set('kitcity_local_guest_test',true);
+    save(); beginGame(); return;
+  }
   if(!firebaseConfigured){
     if(playerNameError) playerNameError.textContent='Firebase is not configured yet. Add the NEXT_PUBLIC_FIREBASE_* settings in Vercel and deploy the Firestore rules before signing in.';
     return;
@@ -4393,6 +4404,10 @@ if(firebaseConfigured){
     if(user) void resumeAuthenticatedUser(user);
   }).catch(()=>updateAuthButton());
 }else updateAuthButton();
+if(LOCAL_GUEST_TEST&&!firebaseConfigured){
+  if(playerNameInput) playerNameInput.value='KitTester01';
+  setTimeout(()=>{ void submitPlayerName(); },0);
+}
 function applyLang(){
   document.documentElement.lang=P.lang==='pcm'?'pcm':'en';
   document.querySelectorAll('[data-t]').forEach(el=>{ if(!el.dataset.en) el.dataset.en=el.textContent; el.textContent=(P.lang==='pcm'&&el.dataset.pcm)?el.dataset.pcm:tr(el.dataset.en); });
