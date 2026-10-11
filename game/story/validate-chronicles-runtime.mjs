@@ -108,8 +108,8 @@ for (const name of CHARACTER_ORDER) {
   if (!runtimeNames.has(name)) errors.push("Supplied NPC is missing from all mission casts: " + name);
 }
 // Keep one canonical source for the mission cards shown beneath each selected state.
-const missionCardRenderers = [...engine.matchAll(/function missionCard\\(m\\)\\{/g)].length;
-const missionCardMounts = [...engine.matchAll(/cityMissions\\(hubCity\\)\\.map\\(m=>missionCard\\(m\\)\\)\\.join\\(''\\)/g)].length;
+const missionCardRenderers = [...engine.matchAll(/function missionCard\(m\)\{/g)].length;
+const missionCardMounts = [...engine.matchAll(/cityMissions\(hubCity\)\.map\(m=>missionCard\(m\)\)\.join\(''\)/g)].length;
 const missionCardTemplates = [...engine.matchAll(/data-mission-id=/g)].length;
 if (missionCardRenderers !== 1) errors.push("Expected exactly one canonical mission-card renderer; found " + missionCardRenderers + ".");
 if (missionCardMounts !== 1) errors.push("Expected exactly one state mission-card mount point; found " + missionCardMounts + ".");
