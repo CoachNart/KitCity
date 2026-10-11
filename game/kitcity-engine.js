@@ -2019,7 +2019,12 @@ function buildStall(def,spot){
   colliders.push({x0:x-3.2,x1:x+3.2,z0:z-3.7,z1:z+3.7});
   const sp=label(tr(def.sign||def.name),def.signBg,def.signFg); sp.position.set(x,8.4,z); missionGroup.add(sp);
   if(o.sub){ const s2=label(tr(o.sub),'#ffffff',INK,1.25); s2.position.set(x,6.4,z); missionGroup.add(s2); }
-  const att=buildPerson(def.look); att.userData.storyCharacter=def.name; att.userData.storyRole=def.role; att.position.set(x+1.6*face,.05,z+4.9*face); att.rotation.y=face>0?Math.PI/2:-Math.PI/2; missionGroup.add(att);
+  const att=buildPerson(def.look); att.userData.storyCharacter=def.name; att.userData.storyRole=def.role;
+  if(G&&G.m&&G.m.id==='m0'&&(def.name==='Softstorm'||def.name==='IamAbdul')){
+    /* Stage the opening pair together in front of their separate stalls for the comic scene. */
+    const soft=def.name==='Softstorm'; att.position.set(soft?15:19,.05,-22.5); att.rotation.y=soft?Math.PI/2:-Math.PI/2;
+  }else{ att.position.set(x+1.6*face,.05,z+4.9*face); att.rotation.y=face>0?Math.PI/2:-Math.PI/2; }
+  missionGroup.add(att);
   if(o.grill){
     const gx=x+2.3*face;
     const grill=new THREE.Mesh(new THREE.BoxGeometry(1.6,.4,4),lam('#222')); grill.position.set(gx,1.75,z); missionGroup.add(grill);
