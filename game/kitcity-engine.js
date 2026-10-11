@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { createStorySceneDirector } from './story-scene-director';
+import { MISSION_BY_ID as CHRONICLE_MISSION_BY_ID } from './story/chronicles';
 import {
   authenticateEmailPassword,
   firebaseConfigured,
@@ -4019,6 +4020,9 @@ function startMission(id){
 }
 function briefing(){
   const m=G.m,C=CITIES[m.city],firstStep=m.steps[Math.min(G.i||0,m.steps.length-1)];
+  const chronicle=m.id==='m0'?CHRONICLE_MISSION_BY_ID.m01:null;
+  const displayTitle=chronicle?chronicle.title:m.title;
+  const displayGoal=chronicle?chronicle.narrativePurpose:m.goal;
   const checklist=m.steps.map((step,i)=>'<li class="'+(i<(G.i||0)?'done':(i===(G.i||0)?'current':''))+'"><span>'+(i<(G.i||0)?'✓':String(i+1).padStart(2,'0'))+'</span><b>'+personalize(tr(step.label),m,step.npc)+'</b></li>').join('');
   openSheet('<div class="chronicle-briefing-head"><span class="chronicle-eyebrow">KITCITY · THE T3KIT CHRONICLES</span><small>MISSION '+String(m.n).padStart(2,'0')+' · '+C.name.toUpperCase()+'</small><h3>'+personalize(m.title,null)+'</h3><p>'+personalize(m.goal,null)+'</p></div><div class="chronicle-first-objective"><small>START HERE</small><b>'+personalize(tr(firstStep.label),m,firstStep.npc)+'</b><span>One step at a time. Talk to people, inspect clues, and use what you discover.</span></div><div class="chronicle-checklist"><div class="chronicle-checklist-title"><b>YOUR MISSION</b><span>'+String(G.i||0)+' / '+m.steps.length+' complete</span></div><ul>'+checklist+'</ul></div>'+(m.n===1?'<p class="chronicle-controls">MOVE <b>left stick / WASD</b> · RUN <b>Shift</b> · TALK <b>E / Talk button</b></p>':'<p class="chronicle-controls">Follow the world marker to your next interaction. You can review the objectives any time.</p>'),
     [{t:'Continue journey',f:closeSheet},{t:'Back to hub',g:1,f:exitToHub}]);
