@@ -2393,6 +2393,9 @@ const CHRONICLE_ACTIVITY_RULES=[
 {r:/send a transaction/i,q:'You are about to send a transfer. What should you review?',o:['Recipient, network and amount','A stranger’s urgent message','Only the token logo'],a:0,w:'Check the recipient, network and amount before you confirm a transfer.',effect:'transaction'},
 {r:/reject a malicious request/i,q:'The request asks for an unlimited spending approval to unlock a bonus. What do you do?',o:['Reject it and inspect the request','Approve it because the bonus is free'],a:0,w:'Reject unnecessary permissions. Unlimited approval can expose assets in a real wallet.',effect:'safe-rejection'},
 {r:/recovery-phrase secrecy/i,q:'Where should a recovery phrase go?',o:['Keep it private and securely backed up offline','Send it to support','Paste it into a website'],a:0,w:'Anyone with the recovery phrase may control the wallet.'},
+{r:/transaction explorer record/i,q:'The buyer’s hash opens a confirmed 120 USDC transfer. Which details show whether the shop received it?',o:['Compare the exact recipient with the shop’s saved address','Treat Confirmed as proof the shop received it','Use the buyer’s display name instead of the address'],a:0,w:'The record is confirmed on Base for 120 USDC in block 1842031. The recipient is 0x2222222222222222222222222222222222222222, while the shop expects 0x1111111111111111111111111111111111111111. The transaction succeeded, but the funds went to a different address.',effect:'payment-dispute-trace'},
+{r:/trace a transaction and compare the recipient address/i,q:'You have the transaction record. What should you compare before reporting the result?',o:['The recipient address against the shop’s expected address','Only the confirmation status','The wallet display name against the buyer’s name'],a:0,w:'The recipient address does not match the shop address. Record the mismatch without guessing why it happened.',effect:'payment-dispute-trace'},
+{r:/record the address mismatch/i,q:'You have confirmed that the transaction went to a different address. What belongs in the incident note?',o:['The hash, network, amount, recipient and shop address for comparison','A guess about who intended to receive the money','A screenshot with no transaction reference'],a:0,w:'The report records a confirmed 120 USDC transfer on Base, block 1842031, to 0x2222222222222222222222222222222222222222 instead of the shop address 0x1111111111111111111111111111111111111111. The evidence establishes the mismatch, not the buyer’s intent.',effect:'payment-dispute-report'},
 {r:/transaction explorer/i,q:'Which details help verify a transaction?',o:['Transaction hash, network, status and block details','A screenshot alone','The sender’s promise'],a:0,w:'Use the transaction reference and network details; a screenshot alone is not proof.',effect:'explorer-record'},
 {r:/trace a transaction/i,q:'How do you trace the payment?',o:['Match the hash, recipient, amount and status','Guess from the wallet name','Trust a forwarded screenshot'],a:0,w:'Trace the transaction using the hash and verify the recipient, amount and status.'},
 {r:/record the address mismatch/i,q:'You have confirmed that the transaction went to a different address. What should go into the incident note?',o:['The hash, network, amount, recipient and the shop address for comparison','A guess about who intended to receive the money','A screenshot with no transaction reference'],a:0,w:'Record verifiable transaction details and the address comparison. Do not guess about intent.'},
@@ -2548,6 +2551,20 @@ function applyChronicleActivityEffect(effect,m,obj,choice,options){
     P.storyFlags.rejected_malicious_request=true;
   }else if(effect==='explorer-record'){
     P.storyFlags.practice_explorer_record={hash:'0x'+hex(32),block:1842031,status:'Confirmed',realTransaction:false};
+  }else if(effect==='payment-dispute-trace'){
+    P.storyFlags.payment_dispute_transaction={
+      hash:'0x'+'a'.repeat(64),network:'Base',amount:'120 USDC',status:'Confirmed',block:1842031,
+      recipient:'0x2222222222222222222222222222222222222222',
+      expectedRecipient:'0x1111111111111111111111111111111111111111'
+    };
+  }else if(effect==='payment-dispute-report'){
+    const trace=P.storyFlags.payment_dispute_transaction||{};
+    P.storyFlags.payment_dispute_report={
+      hash:trace.hash||'0x'+'a'.repeat(64),network:trace.network||'Base',amount:trace.amount||'120 USDC',
+      status:trace.status||'Confirmed',recipient:trace.recipient||'0x2222222222222222222222222222222222222222',
+      expectedRecipient:trace.expectedRecipient||'0x1111111111111111111111111111111111111111',
+      conclusion:'Confirmed transfer; recipient differs from the shop address'
+    };
   }else if(effect==='safe-vote'){
     P.storyFlags['test_vote_'+m.id]=options[choice];
   }else if(effect==='future-direction'){
