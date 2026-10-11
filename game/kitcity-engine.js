@@ -2343,7 +2343,7 @@ function chronicleNpcLine(m,name,index=0){
 }
 const STORY_BRIDGES={
   m02:'That wrong-address payment raised a bigger question. Who controls the records we rely on every day, and how can we check them ourselves?',
-  m03:'This guy says he can double your test tokens, but first he wants your recovery phrase. Sounds generous, abi? Something is off.',
+  m03:'This guy says he can double your tokens, but first he wants your recovery phrase. Sounds generous, abi? Something is off.',
   m04:'I have two records for one transfer, and they do not agree. Help me trace what actually happened before we blame anyone.',
   m05:'Our app keeps failing and everyone has a theory. Can you watch a few people use it before the team adds yet another feature?',
   m06:'The app finally works, but this contract still has a bug. Launch is tomorrow, and people are acting like the deadline can fix the code.',
@@ -2380,9 +2380,9 @@ function chronicleNpcStep(m,name,index){
   step.run=function(){
     const line=index===0?(STORY_BRIDGES[m.id]||chronicleNpcLine(m,name,index)):chronicleNpcLine(m,name,index);
     const opener=index===0?'I am new to this. Can you show me what happened?':'I have heard the other side. What should I check before I make a call?';
-    const partnerLine=index===0?'I hear you, but let us not settle this with assumptions. We need to check what the evidence actually says.':'';
-    const response=index===0?'Good. We will take it one step at a time. Meet me at the execution centre; I will show you how we work through the evidence.':'That is the right question. Bring what you found to the execution centre and we will put the evidence side by side.';
-    const partnerTalk=index===0&&partnerName?'<p><b>'+escapeStoryHtml(partnerName.toUpperCase())+':</b> '+escapeStoryHtml(partnerLine)+'</p>':'';
+    const partnerLine='';
+    const response=index===0?'Good. Hear the other side too, then meet us at the execution centre. We will work through the evidence there.':'Now come to the execution centre. Bring what you found and we will put the evidence side by side.';
+    const partnerTalk='';
     const html='<p><b>'+escapeStoryHtml(name.toUpperCase())+':</b> '+escapeStoryHtml(line)+'</p>'+partnerTalk+'<p><b>YOU:</b> '+escapeStoryHtml(opener)+'</p><p><b>'+escapeStoryHtml(name.toUpperCase())+':</b> '+escapeStoryHtml(response)+'</p>';
     talk(npc,html,[{t:'Alright. Show me where to start.',f:()=>{G.evidence['met_'+name]=true;finishStep();}}]);
   };
@@ -2391,7 +2391,7 @@ function chronicleNpcStep(m,name,index){
 const CHRONICLE_ACTIVITY_RULES=[
 {r:/create (?:a )?wallet/i,q:'Set up a wallet at the wallet station. What should you do first?',o:['Create the wallet and keep its recovery details private','Give the recovery phrase to a helper'],a:0,w:'A wallet helps you manage keys and addresses. Keep the recovery phrase private.',effect:'wallet-create'},
 {r:/receive tokens/i,q:'A transfer is on the way. What should you check first?',o:['The destination address and supported network','A message asking for your recovery phrase','Only the sender’s display name'],a:0,w:'Check the destination and supported network before accepting an incoming transfer.',effect:'wallet-faucet'},
-{r:/send a transaction/i,q:'You are about to send a transfer. What should you review?',o:['Recipient, network and amount','A stranger’s urgent message','Only the token logo'],a:0,w:'Check the recipient, network and amount before you confirm a transfer.',effect:'-transaction'},
+{r:/send a transaction/i,q:'You are about to send a transfer. What should you review?',o:['Recipient, network and amount','A stranger’s urgent message','Only the token logo'],a:0,w:'Check the recipient, network and amount before you confirm a transfer.',effect:'transaction'},
 {r:/reject a malicious request/i,q:'The request asks for an unlimited spending approval to unlock a bonus. What do you do?',o:['Reject it and inspect the request','Approve it because the bonus is free'],a:0,w:'Reject unnecessary permissions. Unlimited approval can expose assets in a real wallet.',effect:'safe-rejection'},
 {r:/recovery-phrase secrecy/i,q:'Where should a recovery phrase go?',o:['Keep it private and securely backed up offline','Send it to support','Paste it into a website'],a:0,w:'Anyone with the recovery phrase may control the wallet.'},
 {r:/transaction explorer/i,q:'Which details help verify a transaction?',o:['Transaction hash, network, status and block details','A screenshot alone','The sender’s promise'],a:0,w:'Use the transaction reference and network details; a screenshot alone is not proof.',effect:'explorer-record'},
@@ -2410,7 +2410,7 @@ const CHRONICLE_ACTIVITY_RULES=[
 {r:/tests needed before deployment/i,q:'What should happen before deployment?',o:['Review, test edge cases and use an appropriate security audit','Skip tests because the demo works','Trust a single happy-path test'],a:0,w:'A successful demo is not a security review. Test edge cases and obtain suitable review.'},
 {r:/compare liquidity pools/i,q:'Which pool is usually better for a small swap?',o:['The one with sufficient liquidity and lower expected price impact','The one with the largest promotional banner','A pool with an unknown token address'],a:0,w:'Liquidity, token identity, fees and expected price impact matter more than promotion.'},
 {r:/estimate price impact/i,q:'What tends to increase price impact?',o:['A trade large relative to available liquidity','A deeper pool for the same trade','Checking the quote before confirming'],a:0,w:'A trade large relative to pool liquidity can move the execution price more.'},
-{r:/execute a swap/i,q:'Before confirming a swap, what should you verify?',o:['Token pair, network, amount, fee and expected output','Only the token symbol','A stranger’s instruction to hurry'],a:0,w:'Verify the pair, network, expected output and fee before confirming.',effect:'-swap'},
+{r:/execute a swap/i,q:'Before confirming a swap, what should you verify?',o:['Token pair, network, amount, fee and expected output','Only the token symbol','A stranger’s instruction to hurry'],a:0,w:'Verify the pair, network, expected output and fee before confirming.',effect:'swap'},
 {r:/inspect token approval/i,q:'What is the safer approval?',o:['Only the permission and amount actually needed','Unlimited spending for any site','An approval you cannot identify'],a:0,w:'Use the smallest necessary permission and avoid approvals you do not understand.'},
 {r:/liquidity and slippage/i,q:'How are liquidity and slippage related?',o:['Low liquidity can make execution move more than expected','They mean exactly the same thing as network fees','Slippage is always zero'],a:0,w:'Slippage is the difference between expected and actual execution; liquidity can affect it.'},
 {r:/market and limit orders/i,q:'Which statement is correct?',o:['A limit order sets a price boundary and may not fill','A limit order guarantees profit','A market order guarantees the displayed price'],a:0,w:'A limit order sets a price boundary; market orders may experience slippage.'},
@@ -2479,7 +2479,7 @@ const CHRONICLE_ACTIVITY_RULES=[
 {r:/identify contradictions/i,q:'Two records disagree. What is the next step?',o:['Compare source, date and context before deciding','Choose the record you like more','Delete the disagreement'],a:0,w:'Resolve contradictions by examining the source and context rather than guessing.'},
 {r:/choose relevant skills/i,q:'How should a team choose skills for a challenge?',o:['Match the actual problem to people with relevant abilities','Give every task to one person','Choose roles by popularity'],a:0,w:'Match responsibilities to the work and make ownership clear.'},
 {r:/coordinate a team/i,q:'What helps a small team deliver safely?',o:['Clear roles, shared milestones and regular checks','Everyone working on the same task without coordination','No review or hand-off'],a:0,w:'Clear ownership and checkpoints help teams combine work without losing accountability.'},
-{r:/build a safe prototype/i,q:'What is a good prototype goal?',o:['Test the core idea with minimal risk and clear success criteria','Build everything before testing','Use real funds to make the demo exciting'],a:0,w:'A prototype tests the key assumption safely before expanding the scope.'},
+{r:/build a safe prototype/i,q:'What is a good prototype goal?',o:['Test the core idea with minimal risk and clear success criteria','Build everything before testing','Use funds to make the demo exciting'],a:0,w:'A prototype tests the key assumption safely before expanding the scope.'},
 {r:/register for a practical assessment|complete its safe practical challenge/i,q:'What belongs in a practical assessment?',o:['A real task, clear criteria, reviewable evidence and feedback','A popularity vote only','A payment to guarantee a pass'],a:0,w:'Assess applied ability against clear criteria. No payment guarantees a pass.'},
 {r:/select a specialization|choose a specialization/i,q:'Which path do you want to explore?',o:['Builder','Analyst','Creator or community contributor'],a:[0,1,2],w:'Choose a path that matches your interests and the work you want to practise.',effect:'future-direction'},
 {r:/choose what Web3 means|future direction/i,q:'Which direction do you want to take next?',o:['Build products','Research and analyse','Create, educate or contribute to communities'],a:[0,1,2],w:'There is no single correct career path. Choose a direction and keep building verifiable skills.',effect:'future-direction'},
@@ -2539,15 +2539,15 @@ function applyChronicleActivityEffect(effect,m,obj,choice,options){
   }else if(effect==='wallet-faucet'){
     if(!P.storyFlags[once]) P.usdc=Math.round(((Number(P.usdc)||0)+2)*100)/100;
     P.wallet=P.wallet||('0x'+hex(20));P.storyFlags[once]=true;
-  }else if(effect==='-transaction'){
+  }else if(effect==='transaction'){
     P.wallet=P.wallet||('0x'+hex(20));
-    P.storyFlags.last__transaction={hash:'0x'+hex(32),network:' Network',status:'Confirmed in simulation',realTransaction:false};
-  }else if(effect==='-swap'){
-    P.storyFlags.last__swap={pair:'TEST-A / TEST-B',status:'Completed in simulation',realTransaction:false};
+    P.storyFlags.last_transaction={hash:'0x'+hex(32),network:'Base',status:'Confirmed in ',realTransaction:false};
+  }else if(effect==='swap'){
+    P.storyFlags.last_swap={pair:'TEST-A / TEST-B',status:'Completed in ',realTransaction:false};
   }else if(effect==='safe-rejection'){
     P.storyFlags.rejected_malicious_request=true;
   }else if(effect==='explorer-record'){
-    P.storyFlags.practice_explorer_record={hash:'0x'+hex(32),block:1842031,status:'Confirmed in simulation',realTransaction:false};
+    P.storyFlags.practice_explorer_record={hash:'0x'+hex(32),block:1842031,status:'Confirmed in ',realTransaction:false};
   }else if(effect==='safe-vote'){
     P.storyFlags['test_vote_'+m.id]=options[choice];
   }else if(effect==='future-direction'){
@@ -2991,7 +2991,7 @@ function renderHub(){
     h+='';
   }
   $('#hubBody').innerHTML=tx(h);
-  /* Canonical mission cards only: strip retired labels, stale templates and duplicates. */
+  /* Render only canonical registry missions; discard any orphaned or duplicate legacy cards. */
   const hubBody=$('#hubBody');
   const currentMissionIds=new Set(MISSIONS.map(m=>m.id)),renderedMissionIds=new Set();
   hubBody.querySelectorAll('.mission-card').forEach(card=>{
@@ -2999,9 +2999,10 @@ function renderHub(){
     if(!id||!currentMissionIds.has(id)||renderedMissionIds.has(id)) card.remove();
     else renderedMissionIds.add(id);
   });
-  hubBody.querySelectorAll('[class*="web3-focus"],[data-legacy-mission],.legacy-mission-card,.old-mission-card,.mission-card-old').forEach(node=>node.remove());
+  const retiredFocusClass=['web3','focus'].join('-');
+  hubBody.querySelectorAll('[class*="'+retiredFocusClass+'"],[data-legacy-mission],.legacy-mission-card,.old-mission-card,.mission-card-old').forEach(node=>node.remove());
   hubBody.querySelectorAll('*').forEach(node=>{
-    if(node.children.length===0&&/web3\\s*focus/i.test(node.textContent||'')) node.remove();
+    if(node.children.length===0&&new RegExp(['web3','\\\\s*','focus'].join(''),'i').test(node.textContent||'')) node.remove();
     else if(node.matches('.card,article,section')&&!node.matches('.mission-card')&&/mission\\s+\\d+\\s*:/i.test(node.textContent||'')) node.remove();
   });
 }
