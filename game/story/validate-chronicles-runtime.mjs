@@ -2,7 +2,7 @@ import { readFile } from "node:fs/promises";
 import { CHARACTER_ORDER, MISSIONS, validateChronicles } from "./chronicles.js";
 
 const engine = await readFile(new URL("../kitcity-engine.js", import.meta.url), "utf8");
-const sceneDirector = await readFile(new URL("./story-scene-director.js", import.meta.url), "utf8");
+const sceneDirector = await readFile(new URL("../story-scene-director.js", import.meta.url), "utf8");
 const errors = [...validateChronicles().errors];
 const requireText = (text, label) => {
   if (!engine.includes(text)) errors.push("Runtime integration missing: " + label);
