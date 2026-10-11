@@ -66,6 +66,7 @@ assert.ok(source.includes("realBlockchainTransactionsRequired:false"), "The stor
 assert.ok(engine.includes("if(Array.isArray(o.sceneDialogue)&&o.sceneDialogue.length)"), "Story dialogue must be played line by line");
 assert.ok(engine.includes("const sceneCast=Array.isArray(o.sceneCast)?o.sceneCast:[]"), "Scene dialogue must resolve its speaker cast");
 assert.ok(engine.includes("if(Array.isArray(st.sceneCast))"), "Every listed scene character must be placed in the 3D world");
+assert.ok(engine.includes("sceneCast:o.sceneCast"), "The scene cast must survive task-step construction");
 assert.ok(engine.includes("SCRIPT · '+scriptLine+' / '+scriptTotal"), "Each bubble must show its script speaker and position");
 const opening = missions[0];
 assert.ok(opening.includes('characters:["Softstorm","IamAbdul"]'), "Opening scene must cast both Softstorm and IamAbdul");
