@@ -20,7 +20,10 @@ if (!sceneDirector.includes("const OPENING_LINES = [")) errors.push("Automatic L
 if (!sceneDirector.includes("kitcity-speech-bubble")) errors.push("World-anchored speech bubbles are missing");
 requireText("Your turn. Walk up to someone and press Talk when you are ready.", "player-led interaction after intro");
 requireText("const STORY_BRIDGES={", "connected story transitions");
-requireText("const line=index===0?(STORY_BRIDGES[m.id]||chronicleNpcLine(m,name,index)):(m.id==='m02'&&index===1?", "mission-specific spoken opening hooks and bespoke Lagos follow-up");
+requireText("function chronicleNpcStep(m,name,index)", "contextual character conversations");
+requireText("Confirm the hash and network first", "branching Lagos investigation dialogue");
+requireText("The successful screenshot should be enough", "Lagos dialogue responds to a mistaken assumption");
+requireText("Hear the other person’s side first", "player-led dialogue choices across missions");
 requireText("function chronicleClueStep(m,obj,index,spot)", "conversation-led mission clue interactions");
 requireText("Show me the evidence that matters.", "player engagement in contextual clue conversations");
 requireText("function chronicleChallengeStep(m,obj,index,spot)", "conversation-led mission decisions");
@@ -37,7 +40,10 @@ requireText("effect==='payment-dispute-report'", "saved recipient-mismatch incid
 requireText("Before investigating the payment, what information should you confirm with Joe_Sef?", "Lagos follow-up asks for transaction hash and network");
 requireText("The record is confirmed on Base for 120 USDC in block 1842031.", "Lagos transaction evidence has a concrete amount, network and block");
 requireText("function placeExecutionCenter", "physical execution centre and task workbench");
-requireText("const objectives=story.objectives||[],spots=['execution'];", "all remaining mission objectives target the execution centre");
+requireText("const objectiveSpots=['ledger','screenshot','shopdesk','buyer','b','c','d','e','f','g','h','i','j','k','l','m','n','o'];", "mission objectives use a route of distinct world locations");
+requireText("if(st.kind==='character'){", "NPC conversations are placed at their own world locations");
+requireText("else if(st.kind==='clue'||st.kind==='challenge'){", "investigation tasks are placed at their own world locations");
+requireText("if(m.id==='m01'&&st.kind==='character'&&G.i<m.characterStepCount)", "Lagos Mission 1's bespoke flow remains intact");
 requireText("const base=SPOTS.execution,station=storyExecutionStation(m,G.i)", "mission-specific execution station placement");
 requireText("document.createTreeWalker(hubBody,NodeFilter.SHOW_TEXT)", "retired Web3 focus text cleanup");
 requireText("if(hubTab==='missions') hubBody.querySelectorAll('.card:not(.mission-card),article:not(.mission-card)')", "state mission lists remove every non-canonical legacy card");
