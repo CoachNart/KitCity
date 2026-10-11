@@ -2339,7 +2339,9 @@ function runPracticeTask(o){
       const line=o.sceneDialogue[lineIndex];
       const speaker=String(line.speaker||'').trim();
       const actor=speaker.toUpperCase()==='PLAYER'?playerActor:(castByName.get(speaker.toLowerCase())||sceneCast.find(n=>String(n.name||'').toLowerCase()===speaker.toLowerCase())||o.npc);
-      const lineHtml='<div style="padding:12px 13px;background:#fff7d6;color:#20232a;border:3px solid #20232a;border-radius:14px;box-shadow:4px 4px 0 #20232a;font-size:16px;line-height:1.5;font-weight:750"><div style="font-size:10px;letter-spacing:1.5px;font-weight:950;color:#8b4b14;margin-bottom:5px">SCRIPT · '+(lineIndex+1)+' / '+o.sceneDialogue.length+'</div>'+esc(line.text||'')+'</div>';
+      const scriptLine=Number(o.scriptOffset||0)+lineIndex+1;
+      const scriptTotal=Number(o.sceneDialogueTotal)||o.sceneDialogue.length;
+      const lineHtml='<div style="padding:12px 13px;background:#fff7d6;color:#20232a;border:3px solid #20232a;border-radius:14px;box-shadow:4px 4px 0 #20232a;font-size:16px;line-height:1.5;font-weight:750"><div style="font-size:10px;letter-spacing:1.5px;font-weight:950;color:#8b4b14;margin-bottom:5px">SCRIPT · '+scriptLine+' / '+scriptTotal+'</div>'+esc(line.text||'')+'</div>';
       const last=lineIndex===o.sceneDialogue.length-1;
       const label=last?(Number(o.sceneIndex||0)<panels.length-1?'Next scene':'Continue'):'Next line';
       talk(actor,renderPanel(panels[Number(o.sceneIndex||0)])+lineHtml,[{t:label,f:()=>playLine(lineIndex+1)}]);
@@ -2566,10 +2568,13 @@ const list=specs.map((s,i)=>{
   const dialogue=Array.isArray(story.dialogue)?story.dialogue:[];
   const castNames=[...new Set([...(story.characters||[]),...dialogue.filter(d=>d.speaker&&d.speaker.toUpperCase()!=="PLAYER").map(d=>d.speaker)])];
   const sceneCast=castNames.map(npcFor);
-  const dialoguePerPanel=Math.max(1,Math.ceil(dialogue.length/Math.max(1,panels.length)));
+  const panelCount=Math.max(1,panels.length);
+  const baseLines=Math.floor(dialogue.length/panelCount);
+  const extraLines=dialogue.length%panelCount;
   steps=panels.map((p,pi)=>{
-   const start=pi*dialoguePerPanel;
-   const lines=dialogue.slice(start,start+dialoguePerPanel);
+   const start=pi*baseLines+Math.min(pi,extraLines);
+   const lineCount=baseLines+(pi<extraLines?1:0);
+   const lines=dialogue.slice(start,start+lineCount);
    return taskStep({
     label:story.title+" · Scene "+(pi+1),
     spot:pi===0?"a":pi===1?"c":pi===2?"d":"e",
@@ -2581,6 +2586,7 @@ const list=specs.map((s,i)=>{
     scenePanels:panels,
     sceneIndex:pi,
     sceneDialogue:lines,
+    sceneDialogueTotal:dialogue.length,
     sceneCast,
     scriptOffset:start
    });
