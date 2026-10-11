@@ -2088,7 +2088,29 @@ const S={phase:'title',modal:false};
 let G=null,ents=[],goal=null,nearEnt=null;
 let hubTab='missions',hubCity='lagos',resetArm=false;
 const SUYA_ADDR='0x'+hex(20);
-const storyDirector=createStorySceneDirector({camera,player,getCharacter(name){let found=null;missionGroup.traverse(o=>{if(!found&&o.userData&&o.userData.storyCharacter===name) found=o;});return found;},animateCharacter:animatePerson,setModal(value){S.modal=value;Snd.duck(value);}});
+// Dedicated cinematic actors: the regular Softstorm/IamAbdul NPC definitions are stalls,
+ // so searching missionGroup alone cannot ever produce two visible people in the opening scene.
+const storyCastGroup=new THREE.Group();
+storyCastGroup.name='KitCity opening story cast';
+scene.add(storyCastGroup);
+const storySoftstorm=buildPerson(LK.mama);
+storySoftstorm.userData.storyCharacter='Softstorm';
+storySoftstorm.userData.storyRole='The one with the card';
+storySoftstorm.position.set(8.2,.05,-30);
+storySoftstorm.rotation.y=Math.PI/2;
+storyCastGroup.add(storySoftstorm);
+const storyAbdul=buildPerson(LK.suya);
+storyAbdul.userData.storyCharacter='IamAbdul';
+storyAbdul.userData.storyRole='The one who heard it first';
+storyAbdul.position.set(13.2,.05,-30);
+storyAbdul.rotation.y=-Math.PI/2;
+storyCastGroup.add(storyAbdul);
+storyCastGroup.visible=false;
+const storyDirector=createStorySceneDirector({camera,player,getCharacter(name){
+  const staged=name==='Softstorm'?storySoftstorm:name==='IamAbdul'?storyAbdul:null;
+  if(storyCastGroup.visible&&staged) return staged;
+  let found=null;missionGroup.traverse(o=>{if(!found&&o.userData&&o.userData.storyCharacter===name) found=o;});return found;
+},animateCharacter:animatePerson,setModal(value){S.modal=value;Snd.duck(value);}});
 
 /* =====================  sheet UI  ===================== */
 const modalEl=$('#modal'),sheetEl=$('#sheet'),talkBtn=$('#talkBtn');
@@ -3991,7 +4013,7 @@ function startMission(id){
     S.phase='play'; closeSheet(); Snd.setMode('play'); lastLoc=''; resetPlayer(); loadStep();
     $('#loading').classList.add('hidden');
     if(m.id==='m0'){
-      storyDirector.playOpening(()=>{ P.storyPrologueSeen=true; if(G) G.used['iamabdul-story']=true; save(); briefing(); });
+      storyCastGroup.visible=true; storyDirector.playOpening(()=>{ storyCastGroup.visible=false; P.storyPrologueSeen=true; if(G) G.used['iamabdul-story']=true; save(); briefing(); });
     }else briefing();
   },60);
 }
