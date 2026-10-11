@@ -2309,7 +2309,9 @@ function runPracticeTask(o){
     talk(o.npc,'<h3>'+esc(o.workspace)+'</h3><div class="kv"><span>Task</span><b>'+esc(o.action)+'</b></div><p>'+esc(o.intro)+'</p><p>Review the details, then apply the action in this practice workspace.</p>',[
       {t:o.button||'Apply action',f:()=>{
         if(o.transaction){
-          confirmTx(o.npc,{title:o.action,rows:[["Workspace",o.workspace],["Action",o.action],["Network","Base · practice environment"],["Recipient","Verified mission address"],["Amount","2.00 USDC"]],note:"Review the transaction details before confirming.",btn:"Confirm and submit",after:h=>{P.usdc=Math.max(0,P.usdc-2);save();updateHUD();Snd.sfx('good');talk(o.npc,'<h3>Action complete</h3><div class="kv"><span>Receipt</span><b class="mono">'+short(h)+'</b></div><p>'+esc(o.result)+'</p>',[{t:'Continue',f:finishStep}]);}});
+          const amount=Number(o.amount||2);
+          needFunds(amount);
+          confirmTx(o.npc,{title:o.action,rows:[["Workspace",o.workspace],["Action",o.action],["Network","Base"],["Recipient",o.recipient||"Verified mission address"],["Amount",amount.toFixed(2)+" USDC"]],note:"Review the transaction details before confirming.",btn:"Confirm and submit",after:h=>{P.usdc=Math.max(0,P.usdc-amount);save();updateHUD();Snd.sfx('good');talk(o.npc,'<h3>Action complete</h3><div class="kv"><span>Receipt</span><b class="mono">'+short(h)+'</b></div><p>'+esc(o.result)+'</p>',[{t:'Continue',f:finishStep}]);}});
         } else {
           busy(o.npc,'Applying action…',650,()=>{Snd.sfx('good');talk(o.npc,'<h3>Saved</h3><div class="kv"><span>Status</span><b>Complete</b></div><p>'+esc(o.result)+'</p>',[{t:'Continue',f:finishStep}]);});
         }
@@ -2408,7 +2410,7 @@ const list=specs.map((s,i)=>{
  if(s.title==="Pay IamAbdul for Suya"){
   steps=[
    taskStep({label:"Open IamAbdul's stall",spot:"a",npc,intro:"IamAbdul has a fresh suya pack ready. Open the stall checkout and inspect the seller and price.",practice:true,workspace:"Suya checkout",action:"Select 1 suya pack · 1.00 USDC",button:"Open checkout",result:"Seller and price loaded.",transaction:false}),
-   taskStep({label:"Send USDC for suya",spot:"c",npc,intro:"The checkout is ready. Confirm the recipient, token, network and amount before sending.",practice:true,workspace:"USDC checkout",action:"Send 1.00 USDC to IamAbdul on Base",button:"Review payment",result:"The payment record is confirmed.",transaction:true}),
+   taskStep({label:"Send USDC for suya",spot:"c",npc,intro:"The checkout is ready. Confirm the recipient, token, network and amount before sending.",practice:true,workspace:"USDC checkout",action:"Send 1.00 USDC to IamAbdul on Base",button:"Review payment",result:"The payment record is confirmed.",transaction:true,amount:1,recipient:"IamAbdul"}),
    taskStep({label:"Collect the order receipt",spot:"d",npc,intro:"The checkout has returned a payment record. Open it and confirm the recipient and amount.",practice:true,workspace:"Payment receipt",action:"Verify IamAbdul · 1.00 USDC",button:"Verify receipt",result:"Receipt verified. Suya order complete.",transaction:false})
   ];
  } else {
@@ -2417,8 +2419,8 @@ const list=specs.map((s,i)=>{
  return {id:"web3-m"+(i+1),n:i+1,city:s.city,title:s.title,goal:s.goal,steps};
 });
 list.push({id:"web3-m90",n:90,city:"kitcity",title:"The T3Kit Hub: Build Your Path",goal:"Complete a final Web3 field check, then choose a meaningful path into the ecosystem.",steps:[
-taskStep({label:"Verify before you trust",spot:"a",npc:mkSign("T3Kit Hub Concierge","Ecosystem steward","#D3A84C",LK.elder,"Verification gate"),intro:"A contributor presents a screenshot as proof that a milestone shipped.",q:"What do you check before accepting it?",opts:[["Open the actual release, transaction or verifiable artifact",1],["Accept the screenshot because the branding looks official",0]],wrong:"A claim should be checked against a real artifact or trusted record.",say:"You verified the work instead of relying on appearances."}),
-taskStep({label:"Choose a contribution",spot:"c",npc:mkSign("Nneka James","Contributor guide","#6A4FC8",LK.woman,"Pathway desk"),intro:"You can help an ecosystem by building, testing, researching, creating or supporting its community.",q:"What is the strongest first contribution?",opts:[["Pick a real need and deliver a small, verifiable piece of work",1],["Claim expertise in every area before trying any of them",0]],wrong:"Small, verifiable contributions build real skill and trust.",say:"You chose a path grounded in useful work."}),
+taskStep({label:"Inspect a contribution",spot:"a",npc:mkSign("T3Kit Hub Concierge","Ecosystem steward","#D3A84C",LK.elder,"Verification gate"),intro:"Open the contributor handoff and inspect the release link, issue, or verifiable artifact before accepting the work.",practice:true,workspace:"Contribution review",action:"Open the submitted release and verify its artifact",button:"Open contribution",result:"Contribution evidence inspected."}),
+taskStep({label:"Submit your first contribution",spot:"c",npc:mkSign("Nneka James","Contributor guide","#6A4FC8",LK.woman,"Pathway desk"),intro:"Pick a real starter issue, attach a useful piece of work, and submit it for maintainer review.",practice:true,workspace:"Contributor board",action:"Attach work to a scoped starter issue and submit for review",button:"Submit contribution",result:"Your first contribution is queued for maintainer review."}),
 {label:"Enter the T3Kit Hub",spot:"h",npc:mkSign("T3Kit Hub Concierge","Final access steward","#D3A84C",LK.elder,"The Web3 World"),run(){talk(this.npc,'<div class="who"><span class="av" style="background:#D3A84C">90</span><div><b>The final gate is open.</b><small>KitCity · T3Kit Hub</small></div></div><p>You have practised trading, security, DeFi, community, creation and contribution.</p><p><b>Welcome to the T3Kit Hub.</b> Keep learning, verify what you use, build with care and contribute work people can trust.</p>',[{t:"Enter the Web3 World",f:finishStep}]);}}
 ]});
 return list;
