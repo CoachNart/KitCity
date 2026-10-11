@@ -121,114 +121,55 @@ const RAW_MISSIONS = [
     "chapterId": "ch01",
     "title": "Just Another Day",
     "state": "Lagos",
-    "location": "Lagos story district",
-    "npcIds": [
-      "softstorm",
-      "iamabdul"
-    ],
-    "npcs": [
-      "Softstorm",
-      "IamAbdul"
-    ],
-    "narrativePurpose": "The player overhears two neighbours debating an unfamiliar digital world. A strange contact card turns curiosity into a journey.",
+    "location": "Lagos roadside electronics shop",
+    "npcIds": ["softstorm", "iamabdul"],
+    "npcs": ["Softstorm", "IamAbdul"],
+    "narrativePurpose": "The player gets pulled into a dispute after a buyer claims to have paid for a laptop with crypto. The shop has no matching payment, and the player must help verify what really happened before the laptop is handed over.",
     "openingPanels": [
-      {
-        "id": "m01-panel-1",
-        "type": "establishing",
-        "caption": "The player overhears two neighbours debating an unfamiliar digital world. A strange contact card turns curiosity into a journey."
-      },
-      {
-        "id": "m01-panel-2",
-        "type": "dialogue",
-        "speaker": "Softstorm",
-        "text": "People are building businesses online, but nobody starts by knowing everything."
-      },
-      {
-        "id": "m01-panel-3",
-        "type": "dialogue",
-        "speaker": "IamAbdul",
-        "text": "First, let's find out what this Web3 word means and who it helps."
-      }
+      { "id": "m01-panel-1", "type": "establishing", "caption": "8:17 AM in Lagos. Danfo horns, roadside vendors, and a normal morning—until an argument about a missing crypto payment catches your attention." },
+      { "id": "m01-panel-2", "type": "dialogue", "speaker": "Softstorm", "text": "The buyer says he sent 120 USDC. All I have is a screenshot, and the money hasn't arrived." },
+      { "id": "m01-panel-3", "type": "dialogue", "speaker": "IamAbdul", "text": "Then don't release the laptop yet. Let's check the transaction instead of guessing." }
     ],
     "dialogue": [
-      {
-        "id": "m01-dialogue-1",
-        "speaker": "Softstorm",
-        "text": "People are building businesses online, but nobody starts by knowing everything."
-      },
-      {
-        "id": "m01-dialogue-2",
-        "speaker": "IamAbdul",
-        "text": "First, let's find out what this Web3 word means and who it helps."
-      },
-      {
-        "id": "m01-dialogue-player",
-        "speaker": "PLAYER",
-        "text": "Show me the evidence. I'll work through it step by step."
-      }
+      { "id": "m01-dialogue-1", "speaker": "Softstorm", "text": "If the payment is fake, na me go explain why the laptop is gone." },
+      { "id": "m01-dialogue-2", "speaker": "IamAbdul", "text": "A confirmed transaction can still go to the wrong address. We need to check the details." },
+      { "id": "m01-dialogue-player", "speaker": "PLAYER", "text": "Abeg, wetin una dey argue about? Let me see what happened." }
     ],
-    "learningObjectives": [
-      "Web3 fundamentals",
-      "digital opportunity literacy"
-    ],
+    "learningObjectives": ["Verify a blockchain transaction", "Compare recipient addresses", "Avoid treating screenshots as proof of payment"],
     "prerequisites": [],
     "objectives": [
-      {
-        "id": "m01-obj-1",
-        "label": "Explore the neighbourhood",
-        "interactionTarget": "story:m01:objective:1",
-        "required": true
-      },
-      {
-        "id": "m01-obj-2",
-        "label": "speak with Softstorm and IamAbdul",
-        "interactionTarget": "story:m01:objective:2",
-        "required": true
-      },
-      {
-        "id": "m01-obj-3",
-        "label": "investigate three digital-opportunity spots",
-        "interactionTarget": "story:m01:objective:3",
-        "required": true
-      },
-      {
-        "id": "m01-obj-4",
-        "label": "return and explain one thing learned.",
-        "interactionTarget": "story:m01:objective:4",
-        "required": true
-      }
+      { "id": "m01-obj-1", "label": "Find out why Softstorm is worried about the laptop", "interactionTarget": "story:m01:join-dispute", "required": true },
+      { "id": "m01-obj-2", "label": "Ask IamAbdul how to verify a crypto payment", "interactionTarget": "story:m01:verification", "required": true },
+      { "id": "m01-obj-3", "label": "Inspect the buyer's payment screenshot", "interactionTarget": "story:m01:screenshot", "required": true },
+      { "id": "m01-obj-4", "label": "Check the shop's own payment records", "interactionTarget": "story:m01:shop-records", "required": true },
+      { "id": "m01-obj-5", "label": "Ask the buyer for transaction details", "interactionTarget": "story:m01:buyer", "required": true },
+      { "id": "m01-obj-6", "label": "Compare the transaction recipient with the shop's address", "interactionTarget": "story:m01:ledger", "required": true },
+      { "id": "m01-obj-7", "label": "Tell Softstorm what the evidence means", "interactionTarget": "story:m01:resolution", "required": true }
     ],
     "successConditions": [
-      "All required mission objectives are completed",
-      "The player submits or reviews the relevant evidence",
-      "The mission's completion narrative is triggered"
+      "The player checks the shop's payment records and the simulated public transaction record",
+      "The player identifies that the recipient address does not match the shop's expected address",
+      "The player decides not to release the laptop until the correct payment arrives"
     ],
     "failureAndRetry": {
-      "onFailure": "If the player leaves without a clue, the mentors point back to the three nearby places. Completed discoveries stay saved.",
-      "retry": "Retry the current objective without losing completed objectives or saved story flags."
+      "onFailure": "If the player trusts the screenshot or misreads the confirmed transaction, Softstorm and IamAbdul challenge the assumption and let the player compare the evidence again.",
+      "retry": "Retry the current decision without losing completed investigation steps. All transaction details are simulated."
     },
     "rewards": {
       "xp": 100,
-      "skillBadges": [
-        "Discovery"
-      ],
-      "portfolioArtifacts": [
-        "Journey journal · T3Kit clue card"
-      ]
+      "skillBadges": ["Verification"],
+      "portfolioArtifacts": ["Lagos payment-dispute incident report"]
     },
-    "storyFlags": [
-      "m01_complete",
-      "t3kit_clue_001"
-    ],
+    "storyFlags": ["m01_complete", "payment_dispute_resolved", "web3_first_lesson"],
     "nextMissionId": "m02",
-    "ending": "Softstorm gives the player an old contact card marked T3Kit. The name becomes the first unanswered question in the journey.",
-    "cliffhanger": "A new clue points toward the next part of the journey.",
+    "ending": "The player helps Softstorm discover that the confirmed transaction went to a different address. The laptop stays in the shop until the correct payment arrives.",
+    "cliffhanger": "The buyer's mistake raises a bigger question: how do people read blockchain records, manage addresses, and avoid making the same mistake themselves?",
     "safeSimulationRequired": true
   },
   {
     "id": "m02",
     "chapterId": "ch01",
-    "title": "The Name That Keeps Appearing",
+    "title": "The Name on the Ledger",
     "state": "Lagos",
     "location": "Lagos story district",
     "npcIds": [
@@ -239,12 +180,12 @@ const RAW_MISSIONS = [
       "Joe_Sef",
       "Larai"
     ],
-    "narrativePurpose": "A T3Kit mark appears inside a small technology workspace, where the player learns that the internet has changed in layers.",
+    "narrativePurpose": "The wrong-address payment sends the player to a small technology workspace, where Joe_Sef and Larai help trace how wallets, blockchain records and online platforms fit together.",
     "openingPanels": [
       {
         "id": "m02-panel-1",
         "type": "establishing",
-        "caption": "A T3Kit mark appears inside a small technology workspace, where the player learns that the internet has changed in layers."
+        "caption": "A Web3 mark appears inside a small technology workspace, where the player learns that the internet has changed in layers."
       },
       {
         "id": "m02-panel-2",
@@ -332,7 +273,7 @@ const RAW_MISSIONS = [
       "m02_complete"
     ],
     "nextMissionId": "m03",
-    "ending": "Joe_Sef explains that T3Kit connects people working across Web3, but he cannot explain the whole archive. Larai points the player toward wallets.",
+    "ending": "Joe_Sef helps the player understand how a blockchain record can be checked independently. Larai shows how wallet addresses and networks fit into the payment trail.",
     "cliffhanger": "A new clue points toward the next part of the journey.",
     "safeSimulationRequired": true
   },
@@ -566,10 +507,10 @@ const RAW_MISSIONS = [
     },
     "storyFlags": [
       "m04_complete",
-      "t3kit_ledger_record"
+      "web3_ledger_record"
     ],
     "nextMissionId": "m05",
-    "ending": "Semi finds an old transaction referencing T3Kit. The player saves the evidence in the journey journal.",
+    "ending": "Semi finds an old transaction referencing Web3. The player saves the evidence in the journey journal.",
     "cliffhanger": "A new clue points toward the next part of the journey.",
     "safeSimulationRequired": true
   },
@@ -1213,7 +1154,7 @@ const RAW_MISSIONS = [
       {
         "id": "m10-dialogue-3",
         "speaker": "Craftore",
-        "text": "Craftore: The evidence from this mission will help connect the T3Kit story."
+        "text": "Craftore: The evidence from this mission will help connect the Web3 story."
       },
       {
         "id": "m10-dialogue-player",
@@ -1641,7 +1582,7 @@ const RAW_MISSIONS = [
       "m13_complete"
     ],
     "nextMissionId": "m14",
-    "ending": "The live discussion succeeds because the player creates a useful conversation. An old poster carries the T3Kit mark.",
+    "ending": "The live discussion succeeds because the player creates a useful conversation. An old poster carries the Web3 mark.",
     "cliffhanger": "A new clue points toward the next part of the journey.",
     "safeSimulationRequired": false
   },
@@ -2701,7 +2642,7 @@ const RAW_MISSIONS = [
       "m22_complete"
     ],
     "nextMissionId": "m23",
-    "ending": "The player discovers that cross-chain connections create both new capabilities and extra dependencies. T3Kit's archive spans multiple disciplines.",
+    "ending": "The player discovers that cross-chain connections create both new capabilities and extra dependencies. Web3's archive spans multiple disciplines.",
     "cliffhanger": "A new clue points toward the next part of the journey.",
     "safeSimulationRequired": true
   },
@@ -2935,7 +2876,7 @@ const RAW_MISSIONS = [
       "m24_complete"
     ],
     "nextMissionId": "m25",
-    "ending": "The launch is delayed until the vulnerability is fixed and verified. The finding matches a pattern in the T3Kit archive.",
+    "ending": "The launch is delayed until the vulnerability is fixed and verified. The finding matches a pattern in the Web3 archive.",
     "cliffhanger": "A new clue points toward the next part of the journey.",
     "safeSimulationRequired": false
   },
@@ -3088,7 +3029,7 @@ const RAW_MISSIONS = [
         "id": "m26-panel-3",
         "type": "dialogue",
         "speaker": "IamAbdul",
-        "text": "The old notes say T3Kit connects people, skills, and products—not just one app."
+        "text": "The old notes say Web3 connects people, skills, and products—not just one app."
       }
     ],
     "dialogue": [
@@ -3100,7 +3041,7 @@ const RAW_MISSIONS = [
       {
         "id": "m26-dialogue-2",
         "speaker": "IamAbdul",
-        "text": "The old notes say T3Kit connects people, skills, and products—not just one app."
+        "text": "The old notes say Web3 connects people, skills, and products—not just one app."
       },
       {
         "id": "m26-dialogue-player",
@@ -3169,10 +3110,10 @@ const RAW_MISSIONS = [
     },
     "storyFlags": [
       "m26_complete",
-      "t3kit_archive_fragment"
+      "web3_archive_fragment"
     ],
     "nextMissionId": "m27",
-    "ending": "Softstorm and IamAbdul reveal that T3Kit was designed as an ecosystem of people, skills and products, not a single app.",
+    "ending": "Softstorm and IamAbdul reveal that Web3 was designed as an ecosystem of people, skills and products, not a single app.",
     "cliffhanger": "The player now has enough context to connect the archive's missing pieces.",
     "safeSimulationRequired": false
   },
@@ -3282,7 +3223,7 @@ const RAW_MISSIONS = [
         "Evidence Synthesis"
       ],
       "portfolioArtifacts": [
-        "T3Kit archive reconstruction"
+        "Web3 archive reconstruction"
       ]
     },
     "storyFlags": [
@@ -3461,7 +3402,7 @@ const RAW_MISSIONS = [
       {
         "id": "m29-dialogue-3",
         "speaker": "Craftore",
-        "text": "Craftore: The evidence from this mission will help connect the T3Kit story."
+        "text": "Craftore: The evidence from this mission will help connect the Web3 story."
       },
       {
         "id": "m29-dialogue-player",
@@ -3586,27 +3527,27 @@ const RAW_MISSIONS = [
       {
         "id": "m30-dialogue-3",
         "speaker": "Joe_Sef",
-        "text": "Joe_Sef: The evidence from this mission will help connect the T3Kit story."
+        "text": "Joe_Sef: The evidence from this mission will help connect the Web3 story."
       },
       {
         "id": "m30-dialogue-4",
         "speaker": "Larai",
-        "text": "Larai: The evidence from this mission will help connect the T3Kit story."
+        "text": "Larai: The evidence from this mission will help connect the Web3 story."
       },
       {
         "id": "m30-dialogue-5",
         "speaker": "Unique",
-        "text": "Unique: The evidence from this mission will help connect the T3Kit story."
+        "text": "Unique: The evidence from this mission will help connect the Web3 story."
       },
       {
         "id": "m30-dialogue-6",
         "speaker": "Christol",
-        "text": "Christol: The evidence from this mission will help connect the T3Kit story."
+        "text": "Christol: The evidence from this mission will help connect the Web3 story."
       },
       {
         "id": "m30-dialogue-7",
         "speaker": "Craftore",
-        "text": "Craftore: The evidence from this mission will help connect the T3Kit story."
+        "text": "Craftore: The evidence from this mission will help connect the Web3 story."
       },
       {
         "id": "m30-dialogue-player",
@@ -3703,12 +3644,12 @@ const RAW_MISSIONS = [
       "Christol",
       "Craftore"
     ],
-    "narrativePurpose": "The returning mentors reveal how their clues, work and relationships connected to the T3Kit archive.",
+    "narrativePurpose": "The returning mentors reveal how their clues, work and relationships connected to the Web3 archive.",
     "openingPanels": [
       {
         "id": "m31-panel-1",
         "type": "establishing",
-        "caption": "The returning mentors reveal how their clues, work and relationships connected to the T3Kit archive."
+        "caption": "The returning mentors reveal how their clues, work and relationships connected to the Web3 archive."
       },
       {
         "id": "m31-panel-2",
@@ -3737,27 +3678,27 @@ const RAW_MISSIONS = [
       {
         "id": "m31-dialogue-3",
         "speaker": "Joe_Sef",
-        "text": "Joe_Sef: The evidence from this mission will help connect the T3Kit story."
+        "text": "Joe_Sef: The evidence from this mission will help connect the Web3 story."
       },
       {
         "id": "m31-dialogue-4",
         "speaker": "Larai",
-        "text": "Larai: The evidence from this mission will help connect the T3Kit story."
+        "text": "Larai: The evidence from this mission will help connect the Web3 story."
       },
       {
         "id": "m31-dialogue-5",
         "speaker": "Unique",
-        "text": "Unique: The evidence from this mission will help connect the T3Kit story."
+        "text": "Unique: The evidence from this mission will help connect the Web3 story."
       },
       {
         "id": "m31-dialogue-6",
         "speaker": "Christol",
-        "text": "Christol: The evidence from this mission will help connect the T3Kit story."
+        "text": "Christol: The evidence from this mission will help connect the Web3 story."
       },
       {
         "id": "m31-dialogue-7",
         "speaker": "Craftore",
-        "text": "Craftore: The evidence from this mission will help connect the T3Kit story."
+        "text": "Craftore: The evidence from this mission will help connect the Web3 story."
       },
       {
         "id": "m31-dialogue-player",
@@ -3821,7 +3762,7 @@ const RAW_MISSIONS = [
       "main_story_complete"
     ],
     "nextMissionId": null,
-    "ending": "The T3Kit mystery is resolved: the journey connected people and skills across the ecosystem. The city stays open for new adventures.",
+    "ending": "The Web3 mystery is resolved: the journey connected people and skills across the ecosystem. The city stays open for new adventures.",
     "cliffhanger": "A new message appears: “We've got something new to build.”",
     "safeSimulationRequired": false
   }
