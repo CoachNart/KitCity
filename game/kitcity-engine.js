@@ -3003,7 +3003,7 @@ function renderHub(){
   });
   const retiredFocusClass=['web3','focus'].join('-');
   hubBody.querySelectorAll('[class*="'+retiredFocusClass+'"],[data-legacy-mission],.legacy-mission-card,.old-mission-card,.mission-card-old').forEach(node=>node.remove());
-  const focusLabelPattern=new RegExp(['web3','\\\\s*','focus'].join(''),'ig');
+  const focusLabelPattern=new RegExp(['web3','\\s*','focus'].join(''),'ig');
   const textWalker=document.createTreeWalker(hubBody,NodeFilter.SHOW_TEXT),staleTextNodes=[];
   while(textWalker.nextNode()){
     const node=textWalker.currentNode;
@@ -3012,7 +3012,7 @@ function renderHub(){
   staleTextNodes.forEach(node=>{node.nodeValue=(node.nodeValue||'').replace(focusLabelPattern,'').trim();});
   hubBody.querySelectorAll('.card,article,section').forEach(node=>{
     if(!node.matches('.map-card,.destination-card,.mission-card')&&!node.textContent.trim()&&!node.querySelector('button,svg,img')) node.remove();
-    else if(!node.matches('.mission-card')&&/mission\\s+\\d+\\s*:/i.test(node.textContent||'')) node.remove();
+    else if(!node.matches('.mission-card')&&/mission\s+\d+\s*:/i.test(node.textContent||'')) node.remove();
   });
 }
 $('#hub').addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.closest('.map g[data-a="city"]')){e.preventDefault();e.target.dispatchEvent(new MouseEvent('click',{bubbles:true}));}});
