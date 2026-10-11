@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "npm run test:story && next build",
     "start": "next start",
     "test:story": "node scripts/validate-kitcity-story.mjs"
   },
