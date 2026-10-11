@@ -2375,15 +2375,34 @@ const STORY_BRIDGES={
 };
 function chronicleNpcStep(m,name,index){
   const npc=STORY_NPCS[name];
-  const partnerName=(m.npcs||[]).find(candidate=>candidate!==name)||'';
   const step={kind:'character',characterIndex:index,label:'Talk to '+name,spot:index===0?'a':index===1?'story':['b','c','d','e','f','g','h'][index%7],npc};
   step.run=function(){
-    const line=index===0?(STORY_BRIDGES[m.id]||chronicleNpcLine(m,name,index)):(m.id==='m02'&&index===1?'I checked the hash against the network record. The transaction succeeded, but the recipient is not the shop address. That proves where the funds went; it does not prove why the buyer sent them there.':chronicleNpcLine(m,name,index));
-    const opener=m.id==='m02'&&index===0?'Can we trace the hash and compare the recipient address before we make any accusation?':m.id==='m02'&&index===1?'So a successful transaction can still miss the intended person?':'I have heard the other side. What should I check before I make a call?';
-    const response=m.id==='m02'&&index===0?'Bring the hash and network to the workstation. We will check the public record, not rely on the screenshot.':m.id==='m02'&&index===1?'Exactly. Save the details for Softstorm, then we can warn the group about the recovery-phrase scam nearby.':index===0?'Hear the other side too, then bring the evidence to the workbench.':'Bring what you found and we will put the evidence side by side.';
-    const partnerTalk='';
-    const html='<p><b>'+escapeStoryHtml(name.toUpperCase())+':</b> '+escapeStoryHtml(line)+'</p>'+partnerTalk+'<p><b>YOU:</b> '+escapeStoryHtml(opener)+'</p><p><b>'+escapeStoryHtml(name.toUpperCase())+':</b> '+escapeStoryHtml(response)+'</p>';
-    talk(npc,html,[{t:'Alright. Show me where to start.',f:()=>{G.evidence['met_'+name]=true;finishStep();}}]);
+    const line=m.id==='m02'&&index===0
+      ?'Softstorm sent you over, abi? The buyer says he copied the shop address from an online account page. He has sent a transaction hash, but we need to confirm the network before trusting the result.'
+      :m.id==='m02'&&index===1
+      ?'Joe has confirmed the hash and network. I can open the public record now, but we still need to compare the exact recipient with the address Softstorm gave the buyer.'
+      :index===0?(STORY_BRIDGES[m.id]||chronicleNpcLine(m,name,index))
+      :chronicleNpcLine(m,name,index);
+    const html=m.id==='m02'&&index===0
+      ?'<p><b>'+escapeStoryHtml(name.toUpperCase())+':</b> '+escapeStoryHtml(line)+'</p><p><b>YOU:</b> So the screenshot alone no settle anything. Wetin you need from me?</p>'
+      :m.id==='m02'&&index===1
+      ?'<p><b>'+escapeStoryHtml(name.toUpperCase())+':</b> '+escapeStoryHtml(line)+'</p><p><b>YOU:</b> Let us check the public record before we accuse anybody.</p>'
+      :'<p><b>'+escapeStoryHtml(name.toUpperCase())+':</b> '+escapeStoryHtml(line)+'</p><p><b>YOU:</b> What should we check first, and who else has seen this?</p>';
+    const buttons=m.id==='m02'&&index===0
+      ?[
+        {t:'Confirm the hash and network first',f:()=>{G.evidence.hash_and_network_confirmed=true;talk(npc,'<p><b>'+escapeStoryHtml(name.toUpperCase())+':</b> Good. The hash points to one transaction, and the network tells us which ledger to search. Let us inspect the record before deciding what happened.</p>',[{t:'Head to the transaction record',f:()=>{G.evidence['met_'+name]=true;finishStep();}}]);}},
+        {t:'The successful screenshot should be enough',f:()=>talk(npc,'<p><b>'+escapeStoryHtml(name.toUpperCase())+':</b> Not yet. A screenshot can show a claim, but it cannot prove the shop received the funds. We can check the public record ourselves.</p>',[{t:'Alright, let us verify it',f:()=>{G.evidence.hash_and_network_confirmed=true;G.evidence['met_'+name]=true;finishStep();}}])}
+      ]
+      :m.id==='m02'&&index===1
+      ?[
+        {t:'Compare the recipient with the shop address',f:()=>{G.evidence.larai_opened_explorer=true;finishStep();}},
+        {t:'If it says Confirmed, the shop got paid',f:()=>talk(npc,'<p><b>'+escapeStoryHtml(name.toUpperCase())+':</b> Confirmed means the transaction was recorded on that network. It does not tell us whether the recipient was the shop. We need the exact address.</p>',[{t:'Show me the recipient field',f:()=>{G.evidence.larai_opened_explorer=true;finishStep();}}])}
+      ]
+      :[
+        {t:'Start with the evidence we can verify',f:()=>{G.evidence['met_'+name]=true;G.evidence['approach_'+m.id]='verify';finishStep();}},
+        {t:'Hear the other person’s side first',f:()=>talk(npc,'<p><b>'+escapeStoryHtml(name.toUpperCase())+':</b> Fair. We should hear them out, but keep their claims separate from what the evidence proves.</p>',[{t:'Then let us compare both accounts',f:()=>{G.evidence['met_'+name]=true;G.evidence['approach_'+m.id]='hear-both-sides';finishStep();}}])}
+      ];
+    talk(npc,html,buttons);
   };
   return step;
 }
@@ -2685,12 +2704,17 @@ const MISSIONS=CHRONICLE_MISSIONS.map((story,index)=>{
       }
     ];
   }else{
-    steps=people.slice();
-    const objectives=story.objectives||[],spots=['execution'];
+    steps=[];
+    const objectives=story.objectives||[];
+    const objectiveSpots=['ledger','screenshot','shopdesk','buyer','b','c','d','e','f','g','h','i','j','k','l','m','n','o'];
+    let personIndex=0;
     objectives.forEach((obj,j)=>{
-      const npcIndex=j%Math.max(1,story.npcs.length),spot=spots[(j+(index%3))%spots.length];
-      steps.push(j===0?chronicleChallengeStep(story,obj,npcIndex,spot):chronicleClueStep(story,obj,j,spot));
+      if(personIndex<people.length) steps.push(people[personIndex++]);
+      const spot=objectiveSpots[(j+index)%objectiveSpots.length];
+      const npcIndex=Math.min(personIndex,Math.max(0,story.npcs.length-1));
+      steps.push(j===0?chronicleChallengeStep(story,obj,npcIndex,spot):chronicleClueStep(story,obj,npcIndex,spot));
     });
+    while(personIndex<people.length) steps.push(people[personIndex++]);
     steps.push({label:'Bring the evidence together',spot:'a',npc:STORY_NPCS[story.npcs[0]],run(){
       const npc=STORY_NPCS[story.npcs[0]],partner=STORY_NPCS[story.npcs[1]]||npc;
       const ending=story.ending||('We have enough evidence to close '+story.title+'.');
@@ -2763,7 +2787,7 @@ function bannerSprite(text,sub){
 function loadStep(){
   clearGroup(missionGroup); storyNPCActors.length=0; colliders.length=cityCols; smoke=[]; ents=[]; goal=null;
   const m=G.m,st=m.steps[G.i];
-  if(st.kind==='character'&&G.i<m.characterStepCount&&(m.id==='m01'||m.npcs.length===2)){
+  if(m.id==='m01'&&st.kind==='character'&&G.i<m.characterStepCount){
     let target=null;
     const fallbackSpots=['b','c','d','e','f','g','h'];
     if(m.id==='m01') placeStoryOffice(SPOTS.story);
@@ -2778,14 +2802,14 @@ function loadStep(){
     });
     goal=target||ents[0]||null;
   }else{
-    if(m.id!=='m01'&&G.i>=m.characterStepCount&&G.i<m.steps.length-1){
-      const base=SPOTS.execution,station=storyExecutionStation(m,G.i);
-      const entity=placeExecutionCenter(st,base,station);
+    if(st.kind==='character'){
+      const entity=placeNPC(st.npc,SPOTS[st.spot]||SPOTS.a);
       entity.talk=()=>st.run();entity.active=()=>true;ents.push(entity);goal=entity;
-      const mentor=placeNPC(st.npc,{x:station.x+3.1,z:station.z+1.6,f:-1});
-      mentor.active=()=>false;mentor.talk=()=>{};ents.push(mentor);
+    }else if(st.kind==='clue'||st.kind==='challenge'){
+      const entity=placeStoryClue(st,SPOTS[st.spot]||SPOTS.execution);
+      entity.talk=()=>st.run();entity.active=()=>true;ents.push(entity);goal=entity;
     }else{
-      const entity=st.kind==='clue'?placeStoryClue(st,SPOTS[st.spot]):placeNPC(st.npc,SPOTS[st.spot]);
+      const entity=placeNPC(st.npc,SPOTS[st.spot]||SPOTS.a);
       entity.talk=()=>st.run();entity.active=()=>true;ents.push(entity);goal=entity;
     }
     if(m.id==='m01'&&st.id==='m01-transaction-record'){
