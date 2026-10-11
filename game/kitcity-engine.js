@@ -100,9 +100,7 @@ function mergeCloudProgress(remote){
 }
 delete P.xp;
 save();
-const QUESTION_REWARD=.10,QUESTION_PENALTY=.10,MISSION_CLEAR_REWARD=.50,MISSION_RETRY_REWARD=.10;
-function awardUSDC(amount,message){ P.usdc=Math.max(0,Math.round((P.usdc+amount)*100)/100); save(); updateHUD(); if(message) toast(message); }
-function settleAnswer(good){ if(!G) return; if(good){ G.correct=(G.correct||0)+1; awardUSDC(QUESTION_REWARD,'Correct answer · +0.10 USDC'); } else { G.wrong=(G.wrong||0)+1; awardUSDC(-QUESTION_PENALTY,'Wrong answer · −0.10 USDC'); } }
+const MISSION_CLEAR_REWARD=.50,MISSION_RETRY_REWARD=.10;
 function playerName(){ return (P.name||'Player').trim(); }
 function neutralizeGenderedPronouns(value){
   let out=String(value==null?'':value);
@@ -2168,14 +2166,6 @@ function talk(def,html,btns){
   const wrapped=(btns||[]).map(b=>({t:personalize(tr(b.t)),g:b.g,m:b.m,f:()=>{ chat.log.push({me:1,html:personalize(tr(b.t))}); b.f(); }}));
   openSheet(whoOf(def)+'<div class="chat">'+prev+'<div class="b npc dots"><i></i><i></i><i></i></div><div class="b npc new"><small class="speaker-tag">'+npcName.toUpperCase()+'</small>'+html+'</div></div>',wrapped,Math.min(1100,320+pl.length*4),true);
 }
-function busy(def,txt,ms,next){ openSheet(whoOf(def)+'<div class="busy"><span class="spin"></span><p>'+txt+'</p></div>',[]); setTimeout(next,ms); }
-const TX=()=>'0x'+hex(32);
-function needFunds(n){ if(P.usdc<n-1e-9){ P.usdc=n; save(); updateHUD(); toast('Practice top-up added'); } }
-function confirmTx(def,o){
-  talk(def,'<h3>'+o.title+'</h3>'+o.rows.map(r=>'<div class="kv"><span>'+r[0]+'</span><b'+(r[2]?' class="mono"':'')+'>'+r[1]+'</b></div>').join('')+(o.note?'<p class="note">'+o.note+'</p>':''),
-    [{t:o.btn,f:()=>busy(def,o.busyText||'Confirming\u2026',1500,()=>{ Snd.sfx('coin'); o.after(TX()); })},{t:'Cancel',g:1,f:closeSheet}]);
-}
-const FEE0='\u20A60, covered for you';
 function badgeSVG(n,on,size){
   const num=Number(n),idx=Number.isFinite(num)&&num>0?Math.floor(num)-1:Math.abs(String(n).split('').reduce((a,c)=>a+c.charCodeAt(0),0))%12;
   const colors=['#F4B942','#28C7A5','#5CA8FF','#C084FC','#FF8066','#F472B6','#A3D95B','#4DD0E1','#FFA64D','#818CF8','#E879F9','#7DD3A7'];
@@ -2402,7 +2392,8 @@ const CHRONICLE_ACTIVITY_RULES=[
 {r:/submit the result/i,q:'What should accompany your practical result?',o:['The work, your decisions and evidence that it meets the criteria','Only a claim that it is finished','Someone else’s work'],a:0,w:'A reviewer needs the result and enough context to assess your contribution.'},
 {r:/retry if needed/i,q:'If your first attempt fails, what should you do?',o:['Use the feedback, retry the task and explain what changed','Hide the failure','Repeat the same attempt without learning'],a:0,w:'Retries are part of learning. Use the feedback and document the improvement.'},
 {r:/receive the practitioner record/i,q:'What should your practitioner record represent?',o:['The work and skills you demonstrated, not a guaranteed job or income','A guarantee of future profit','A claim that you know everything'],a:0,w:'The record reflects completed practice and demonstrated skills; it is not a job or income guarantee.'}
-
+,
+{r:/present the result/i,q:'How should you present the team result?',o:['Demonstrate the prototype, explain each contribution and show what the test proved','Show only the final screen with no explanation','Claim success without evidence'],a:0,w:'A good demo connects the problem, the team’s work, the result and the evidence.'}
 ];
 function chronicleActivityFor(obj){
   const label=String(obj.label||'');
@@ -2540,7 +2531,7 @@ function bannerSprite(text,sub){
 function loadStep(){
   clearGroup(missionGroup); colliders.length=cityCols; smoke=[]; ents=[]; goal=null;
   const m=G.m,st=m.steps[G.i];
-  if(st.kind==='character'&&G.i<m.characterStepCount){
+  if(st.kind==='character'&&G.i<m.characterStepCount&&(m.id==='m01'||m.npcs.length===2)){
     let target=null;
     const fallbackSpots=['b','c','d','e','f','g','h'];
     m.npcs.forEach((name,index)=>{
@@ -3120,18 +3111,10 @@ function carHit(dt){ if(hitCd>0)hitCd=Math.max(0,hitCd-dt);
     if(Math.abs(p.x-cx)<hx+.9&&Math.abs(p.z-cz)<hz+.9){
       if(c.axis==='x')p.z=cz+(p.z>=cz?1:-1)*(hz+3.5);else p.x=cx+(p.x>=cx?1:-1)*(hx+3.5);
       hitCd=2.2;fallTimer=1.5;fallLean=(p.x-cx)>=0?1:-1;shake=1.2;
-      const missionToRestart=G?G.m.id:null;
-      const penalty=Math.min(.50,P.usdc);
-      P.usdc=Math.round((P.usdc-penalty)*100)/100;save();updateHUD();Snd.sfx('bump');
+      Snd.sfx('bump');
       resolve(p,1);resolve(p,1);
       const shout=pick(HAZARD_LINES[P.lang==='pcm'?'pcm':'en']);
-      const hitMessage=shout+' '+(penalty>0?'(−'+penalty.toFixed(2)+' USDC)':'(no USDC left to deduct)');
-      if(P.usdc<=1e-9&&missionToRestart){
-        toast(hitMessage+' No USDC left — mission restarting!',{bubble:true,duration:8500});
-        startMission(missionToRestart);
-      } else {
-        toast(hitMessage,{bubble:true,duration:8500});
-      }
+      toast(shout,{bubble:true,duration:8500});
       break;
     }
   }
