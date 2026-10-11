@@ -137,12 +137,12 @@ function personalize(html,mission,preferredNPC){
     const missionNPCs=mission?missionNPCObjects(mission):[];
     const originalBelongsToAnother=missionNPCs.some(npc=>npc!==preferredNPC&&String(npc.name||'').trim().toLowerCase()===original.toLowerCase());
     if(original&&current&&original!==current&&!originalBelongsToAnother){
-      const escaped=original.replace(/ /g,'\\s+');
+      const escaped=original.replace(/ /g,'\s+');
       out=out.replace(new RegExp('\\b'+escaped+'\\b','gi'),current);
     }
   }
   Object.keys(aliases).sort((a,b)=>b.length-a.length).forEach(original=>{
-    const pattern=original.replace(/ /g,'\\s+');
+    const pattern=original.replace(/ /g,'\s+');
     out=out.replace(new RegExp('\\b'+pattern+'\\b','gi'),aliases[original]);
   });
   return neutralizeGenderedPronouns(out);
@@ -2331,8 +2331,8 @@ function runPracticeTask(o){
     const renderPanel=(p)=>{
       let caption=String(p&&p[2]||'');
       /* The script is spoken in bubbles; comic captions must not repeat those lines. */
-      caption=caption.replace(/(?:PLAYER|[A-Z][A-Za-z0-9_. ]{1,32}):\\s*[“"][^”"]*[”"]/g,'');
-      caption=caption.replace(/[“"][^”"]*[”"]/g,'').replace(/\\s+/g,' ').replace(/^[\\s,;:.–—-]+|[\\s,;:.–—-]+$/g,'');
+      caption=caption.replace(/(?:PLAYER|[A-Z][A-Za-z0-9_. ]{1,32}):\s*[“"][^”"]*[”"]/g,'');
+      caption=caption.replace(/[“"][^”"]*[”"]/g,'').replace(/\s+/g,' ').replace(/^[\s,;:.–—-]+|[\s,;:.–—-]+$/g,'');
       return panel(p&&p[0]||'THE SCENE',p&&p[1]||'💬',caption);
     };
     if(!o.sceneDialogue.length){
