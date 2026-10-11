@@ -32,6 +32,10 @@ requireText("startMission(missionId,true)", "mission restart after three hazards
 requireText("P.storyProgress[G.m.id]", "per-mission progress save");
 requireText("const CHRONICLE_ACTIVITY_RULES=[", "objective activity bank");
 requireText("function applyChronicleActivityEffect", "safe simulated activity effects");
+requireText("effect==='payment-dispute-trace'", "persisted transaction evidence from the Lagos follow-up");
+requireText("effect==='payment-dispute-report'", "saved recipient-mismatch incident report");
+requireText("Before investigating the payment, what information should you confirm with Joe_Sef?", "Lagos follow-up asks for transaction hash and network");
+requireText("The record is confirmed on Base for 120 USDC in block 1842031.", "Lagos transaction evidence has a concrete amount, network and block");
 requireText("function placeExecutionCenter", "physical execution centre and task workbench");
 requireText("const objectives=story.objectives||[],spots=['execution'];", "all remaining mission objectives target the execution centre");
 requireText("const base=SPOTS.execution,station=storyExecutionStation(m,G.i)", "mission-specific execution station placement");
