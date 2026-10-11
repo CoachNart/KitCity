@@ -2647,8 +2647,10 @@ const MISSIONS=CHRONICLE_MISSIONS.map((story,index)=>{
       steps.push(j===0?chronicleChallengeStep(story,obj,npcIndex,spot):chronicleClueStep(story,obj,j,spot));
     });
     steps.push({label:'Bring the evidence together',spot:'a',npc:STORY_NPCS[story.npcs[0]],run(){
-      const npc=STORY_NPCS[story.npcs[0]];
-      talk(npc,'<p>'+escapeStoryHtml(story.ending)+'</p><p><b>'+escapeStoryHtml(story.cliffhanger)+'</b></p><p class="note">Your findings are saved in this journey. The next chapter builds on what you discovered here.</p>',[{t:'Save the chapter findings',f:()=>{P.storyFlags=Object.assign({},P.storyFlags||{},Object.fromEntries((story.storyFlags||[]).map(flag=>[flag,true])));G.evidence.chapterSummary=true;finishStep();}}]);
+      const npc=STORY_NPCS[story.npcs[0]],partner=STORY_NPCS[story.npcs[1]]||npc;
+      const recap='We checked the evidence, tested our assumptions and got a clearer answer than we had at the start.';
+      const nextLine=story.id==='m31'?'So, after all that, what do you want to build or contribute next?':'We should keep going. There is another problem ahead, and now we know to ask better questions.';
+      talk(npc,'<p><b>'+escapeStoryHtml(npc.name.toUpperCase())+':</b> '+escapeStoryHtml(recap)+'</p><p><b>'+escapeStoryHtml(partner.name.toUpperCase())+':</b> '+escapeStoryHtml(nextLine)+'</p><p><b>YOU:</b> I am taking the lesson with me. Next time, I will check the facts before I decide.</p>',[{t:'Save the chapter findings',f:()=>{P.storyFlags=Object.assign({},P.storyFlags||{},Object.fromEntries((story.storyFlags||[]).map(flag=>[flag,true])));G.evidence.chapterSummary=true;finishStep();}}]});
     }});
   }
   return {id:story.id,n:index+1,city,title:story.title,goal:story.narrativePurpose,state:story.state,story,npcs:story.npcs,characterStepCount:story.id==='m01'?2:people.length,steps,extras:[],storyFlags:story.storyFlags||[],xp:story.rewards&&story.rewards.xp||100,safeSimulationRequired:true};
