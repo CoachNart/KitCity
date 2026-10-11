@@ -2560,7 +2560,7 @@ const list=specs.map((s,i)=>{
     }
     function end(path){
      P.storyFlags=P.storyFlags||{};P.storyFlags["ending-"+path]=true;P.storyFlags["t3kit-mystery-resolved"]=true;P.storyFlags["main-story-complete"]=true;P.storyFlags["post-story-unlocked"]=true;save();
-     talk(npcFor("IamAbdul"),'<p><b>Softstorm:</b> “You don't have to know everything. Keep learning, build with care, and contribute something useful.”</p><p><b>IamAbdul:</b> “Omo, next time we build something, you’re joining us.”</p><p><b>WELCOME TO KITCITY.</b></p>',[{t:"Finish the main story",f:finishStep}]);
+     talk(npcFor("IamAbdul"),'<p><b>Softstorm:</b> “You don\'t have to know everything. Keep learning, build with care, and contribute something useful.”</p><p><b>IamAbdul:</b> “Omo, next time we build something, you’re joining us.”</p><p><b>WELCOME TO KITCITY.</b></p>',[{t:"Finish the main story",f:finishStep}]);
     }
    }});
   } else {
