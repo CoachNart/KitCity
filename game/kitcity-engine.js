@@ -2610,10 +2610,10 @@ const list=specs.map((s,i)=>{
     storyId:story.id,
     storyObjectives:story.id==="tc-30"?[{id:"tc30-assessment",text:task}]:story.objectives,
     taskIntro:story.id==="tc-30"?"Complete this safe, simulated task for your chosen path: "+task:"Let's handle this one step at a time.",
-    reaction:story.id==="tc-30"?"You completed the sandbox task. Your evidence is ready for review.":"You and "+lead+" worked through the problem together.",
-    result:story.id==="tc-30"?"You completed the sandbox task. Your evidence is ready for review.":"You and "+lead+" worked through the problem together.",
+    reaction:story.id==="tc-30"?"Your evidence is ready for review.":(story.cliffhanger?"We have a lead. "+story.cliffhanger:"We've got what we need for the next step."),
+    result:story.id==="tc-30"?"Your evidence is ready for review.":(story.cliffhanger?"We have a lead. "+story.cliffhanger:"We've got what we need for the next step."),
     lesson:story.learningObjectives[0]||"",
-    storyHook:story.cliffhanger||"",
+    storyHook:story.id==="tc-30"?(story.cliffhanger||""):"",
     busyText:story.id==="tc-30"?"You work through the assessment in the safe practice environment…":"You and "+lead+" work through it together…",
     transaction:false
    }));
