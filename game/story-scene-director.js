@@ -4,18 +4,20 @@ const SPEAKER_LABELS = {
 };
 
 const OPENING_PANELS = [
-  { shot: 'wide', kicker: 'LAGOS · 3:42 PM', caption: 'Nothing unusual. Just another day.', next: 'next' },
-  { shot: 'conversation', speaker: 'IamAbdul', text: 'So this T3Kit thing connects all these people?', next: 'next' },
-  { shot: 'conversation', speaker: 'Softstorm', text: 'That’s what I’m trying to figure out. The same name keeps showing up in places that should have nothing in common.', next: 'next' },
-  { shot: 'conversation', speaker: 'IamAbdul', text: 'Then why does nobody explain what it is?', next: 'next' },
-  { shot: 'player', kicker: 'YOUR THOUGHTS', caption: 'T3Kit? First time you’ve heard that name. But now you want to know why it keeps appearing.', next: 'next' },
-  { shot: 'wide', kicker: 'YOUR MOVE', caption: 'What do you do?', choices: [
-    { label: 'Walk over and ask them', target: 6 },
-    { label: 'Stay back and listen a little longer', target: 7 },
+  { shot: 'wide', kicker: 'CHAPTER 01 · LAGOS STATE', caption: 'Morning in Lagos. Danfo horns compete with music from a nearby shop. Hawkers weave through traffic. Just another day.', next: 'next' },
+  { shot: 'player', kicker: 'A LITTLE WHILE LATER', caption: 'You sit outside a neighbourhood shop, scrolling through your phone. Crypto is a word you have heard. Beyond that? Not much.', next: 'next' },
+  { shot: 'conversation', speaker: 'IamAbdul', text: 'I’m telling you, people are building businesses on the internet and getting paid from anywhere.', next: 'next' },
+  { shot: 'conversation', speaker: 'Softstorm', text: 'You make it sound like everybody can do it overnight.', next: 'next' },
+  { shot: 'player', kicker: 'YOU SPEAK UP', speaker: 'PLAYER', text: 'Abeg, wetin una dey talk about?', next: 'next' },
+  { shot: 'softstorm', speaker: 'Softstorm', text: 'Web3.', next: 'next' },
+  { shot: 'abdul', speaker: 'IamAbdul', text: 'Omo, we need to start from the beginning.', next: 'next' },
+  { shot: 'wide', kicker: 'YOUR FIRST MOVE', caption: 'You don’t know enough to know what to ask yet. How do you start?', choices: [
+    { label: 'Ask what Web3 means', target: 8 },
+    { label: 'Ask where a beginner should start', target: 9 },
   ] },
-  { shot: 'softstorm', speaker: 'Softstorm', text: 'You heard us, abi? Fair enough. If you want answers, start with the people and places connected to that name.', next: 'next' },
-  { shot: 'abdul', speaker: 'IamAbdul', text: 'I saw that symbol on an old meetup poster too. Same mark. Different place. That can’t be a coincidence.', next: 'next' },
-  { shot: 'clue', kicker: 'CLUE ACQUIRED · 001', caption: 'A cyan mark. One name. Two people who don’t have the full story. Your journey starts here.', card: true, finish: true },
+  { shot: 'softstorm', speaker: 'Softstorm', text: 'Web3 is a broad world of blockchain networks, apps, digital assets, and people building new ways to work together online. That’s the short version.', next: 'next' },
+  { shot: 'abdul', speaker: 'IamAbdul', text: 'Start with the people around you. Find out what they use, what they’re building, and what problems they’re trying to solve. Don’t believe every promise you hear.', next: 'next' },
+  { shot: 'clue', kicker: 'MISSION 01 · JUST ANOTHER DAY', caption: 'You don’t have to understand the whole industry today. Start by asking questions and checking what you discover.', text: 'Speak to Softstorm and IamAbdul. Then investigate three nearby places where people discuss digital opportunities. Return and share one useful thing you learned.', card: true, finish: true },
 ];
 
 function escapeHtml(value) {
