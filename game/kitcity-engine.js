@@ -2321,7 +2321,7 @@ function pickStep(o){
     }})));
 }
 const MISSIONS=[
-{id:'m0',n:2,city:'lagos',title:'Just Another Day',goal:'Two strangers, one unfamiliar name, and a clue that refuses to make sense.',
+{id:'m0',n:1,city:'lagos',title:'Just Another Day',goal:'Two strangers, one unfamiliar name, and a clue that refuses to make sense.',
  steps:[
   {label:'Ask Softstorm about the T3Kit card',spot:'a',npc:MAMA,run(){
     talk(MAMA,'<p>You noticed the card, didn’t you? I didn’t put it there. Someone left it beside the counter.</p><p><b>T3Kit.</b> I’ve seen that name in places that should have nothing in common.</p>',[
@@ -2337,7 +2337,7 @@ const MISSIONS=[
  ],
  extras:[{id:'iamabdul-story',spot:SPOTS.j,npc:SUYA,run(){talk(SUYA,'<p>You heard us talking about T3Kit? I only know the name keeps turning up. Ask me after you speak with Softstorm.</p>',[{t:'I’ll come back',f:closeSheet}]);}}]
 },
-{id:'m1',n:3,city:'lagos',title:'Your first wallet',goal:'Create a wallet, receive USDC and make your first payment.',
+{id:'m1',n:2,city:'lagos',title:'Your first wallet',goal:'Create a wallet, receive USDC and make your first payment.',
  steps:[
   {label:'Open your wallet and claim USDC',spot:'a',npc:MAMA,run(){
     if(P.wallet){
