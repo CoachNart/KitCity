@@ -1,8 +1,9 @@
 import { readFile } from "node:fs/promises";
-import { CHARACTER_ORDER, MISSIONS, validateChronicles } from "./chronicles.js";
+import { CHARACTER_ORDER, FIRST_ENCOUNTER_ORDER, MISSIONS, validateChronicles } from "./chronicles.js";
 
 const engine = await readFile(new URL("../kitcity-engine.js", import.meta.url), "utf8");
 const sceneDirector = await readFile(new URL("../story-scene-director.js", import.meta.url), "utf8");
+const styles = await readFile(new URL("../../app/globals.css", import.meta.url), "utf8");
 const errors = [...validateChronicles().errors];
 const requireText = (text, label) => {
   if (!engine.includes(text)) errors.push("Runtime integration missing: " + label);
@@ -86,6 +87,33 @@ if (activityStart < 0 || activityEnd < 0) {
 }
 
 if (CHARACTER_ORDER.length !== 50) errors.push("Expected all 50 supplied character names");
+const firstEncounterSet = new Set();
+const runtimeFirstEncounters = [];
+for (const mission of MISSIONS) {
+  for (const name of mission.npcs) {
+    if (!firstEncounterSet.has(name)) {
+      firstEncounterSet.add(name);
+      runtimeFirstEncounters.push(name);
+    }
+  }
+}
+if (runtimeFirstEncounters.length !== CHARACTER_ORDER.length ||
+    runtimeFirstEncounters.some((name, index) => name !== CHARACTER_ORDER[index]) ||
+    FIRST_ENCOUNTER_ORDER.some((name, index) => name !== CHARACTER_ORDER[index])) {
+  errors.push("Runtime NPC first encounters must use all 50 supplied names in the exact provided order.");
+}
+const runtimeNames = new Set(MISSIONS.flatMap((mission) => mission.npcs));
+for (const name of CHARACTER_ORDER) {
+  if (!runtimeNames.has(name)) errors.push("Supplied NPC is missing from all mission casts: " + name);
+}
+if (!engine.includes('class="card mission-card')) errors.push("Canonical responsive mission-card renderer is missing.");
+if (engine.includes("else if(hubTab==='cityhub')")) errors.push("Duplicate legacy cityhub mission-card renderer remains.");
+if (styles.includes(".comic-scene{") || styles.includes("#sheet.chronicle-briefing{")) {
+  errors.push("Retired comic/briefing UI styles remain beside the current mission implementation.");
+}
+if (!styles.includes("#hubBody .mission-card .ch small") || !styles.includes("overflow-wrap:anywhere")) {
+  errors.push("Mission card text is missing responsive wrapping rules.");
+}
 if (errors.length) {
   console.error("CHRONICLES RUNTIME VALIDATION FAILED");
   errors.forEach((error) => console.error(" - " + error));
