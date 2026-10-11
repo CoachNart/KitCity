@@ -37,7 +37,7 @@ requireText("const CHRONICLE_ACTIVITY_RULES=[", "objective activity bank");
 requireText("function applyChronicleActivityEffect", "safe simulated activity effects");
 requireText("effect==='payment-dispute-trace'", "persisted transaction evidence from the Lagos follow-up");
 requireText("effect==='payment-dispute-report'", "saved recipient-mismatch incident report");
-requireText("Before investigating the payment, what information should you confirm with Joe_Sef?", "Lagos follow-up asks for transaction hash and network");
+requireText("The copied page and transaction record disagree. What is the strongest next step?", "new mission-specific Lagos follow-up decision");
 requireText("The record is confirmed on Base for 120 USDC in block 1842031.", "Lagos transaction evidence has a concrete amount, network and block");
 requireText("function placeExecutionCenter", "physical execution centre and task workbench");
 requireText("const objectiveSpots=['ledger','screenshot','shopdesk','buyer','b','c','d','e','f','g','h','i','j','k','l','m','n','o'];", "mission objectives use a route of distinct world locations");
