@@ -4013,7 +4013,7 @@ function startMission(id){
     $('#hub').classList.add('hidden'); $('#hub').setAttribute('aria-hidden','true'); $('#title').classList.add('hidden'); $('#hud').classList.remove('hidden');
     S.phase='play'; closeSheet(); Snd.setMode('play'); lastLoc=''; resetPlayer(); loadStep();
     $('#loading').classList.add('hidden');
-    if(m.id==='m0'){
+    if(m.id==='m0'&&!P.storyPrologueSeen){
       storyCastGroup.visible=true; storyDirector.playOpening(()=>{ storyCastGroup.visible=false; P.storyPrologueSeen=true; if(G) G.used['iamabdul-story']=true; save(); briefing(); });
     }else briefing();
   },60);
