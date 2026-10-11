@@ -157,47 +157,59 @@ const RAW_MISSIONS = [
       }
     ],
     "learningObjectives": [
-      "Explore the neighbourhood",
-      "speak with Softstorm and IamAbdul",
-      "investigate three digital-opportunity spots",
-      "return and explain one thing learned."
+      "Web3 fundamentals",
+      "digital opportunity literacy"
     ],
     "prerequisites": [],
     "objectives": [
       {
         "id": "m01-obj-1",
-        "label": "Web3 basics",
+        "label": "Explore the neighbourhood",
         "interactionTarget": "story:m01:objective:1",
         "required": true
       },
       {
         "id": "m01-obj-2",
-        "label": "opportunity literacy",
+        "label": "speak with Softstorm and IamAbdul",
         "interactionTarget": "story:m01:objective:2",
+        "required": true
+      },
+      {
+        "id": "m01-obj-3",
+        "label": "investigate three digital-opportunity spots",
+        "interactionTarget": "story:m01:objective:3",
+        "required": true
+      },
+      {
+        "id": "m01-obj-4",
+        "label": "return and explain one thing learned.",
+        "interactionTarget": "story:m01:objective:4",
         "required": true
       }
     ],
     "successConditions": [
-      "All required objectives are complete",
-      "The player reviews the mission evidence"
+      "Web3 basics opportunity literacy",
+      "The player reviews the evidence or feedback"
     ],
     "failureAndRetry": {
-      "onFailure": "Show a short in-world hint tied to the failed objective.",
+      "onFailure": "If the player leaves without a clue, the mentors point back to the three nearby places. Completed discoveries stay saved.",
       "retry": "Retry the current objective without losing completed objectives or saved story flags."
     },
     "rewards": {
       "xp": 100,
       "skillBadges": [
-        "Receive the T3Kit contact card."
+        "Discovery"
       ],
-      "portfolioArtifacts": []
+      "portfolioArtifacts": [
+        "The Player Mistakes A Buzzword For A Shortcut"
+      ]
     },
     "storyFlags": [
-      "the_player_mistakes_a_buzzword_for_a_shortcut"
+      "web3_basics_opportunity_literacy"
     ],
     "nextMissionId": "m02",
-    "ending": "The player mistakes a buzzword for a shortcut; retry by asking questions and checking evidence.",
-    "cliffhanger": "The player mistakes a buzzword for a shortcut; retry by asking questions and checking evidence.",
+    "ending": "Web3 basics opportunity literacy",
+    "cliffhanger": "A new piece of evidence points toward the next chapter.",
     "safeSimulationRequired": true
   },
   {
@@ -241,10 +253,9 @@ const RAW_MISSIONS = [
       }
     ],
     "learningObjectives": [
-      "Explore the internet-history exhibit",
-      "classify Web1, Web2 and Web3 examples",
-      "compare platform control with blockchain-based systems",
-      "ask about the mark."
+      "internet history",
+      "centralized platforms",
+      "blockchain-based systems"
     ],
     "prerequisites": [
       "m01"
@@ -252,44 +263,52 @@ const RAW_MISSIONS = [
     "objectives": [
       {
         "id": "m02-obj-1",
-        "label": "Internet history",
+        "label": "Explore the internet-history exhibit",
         "interactionTarget": "story:m02:objective:1",
         "required": true
       },
       {
         "id": "m02-obj-2",
-        "label": "centralization",
+        "label": "classify Web1, Web2 and Web3 examples",
         "interactionTarget": "story:m02:objective:2",
         "required": true
       },
       {
         "id": "m02-obj-3",
-        "label": "decentralization",
+        "label": "compare platform control with blockchain-based systems",
         "interactionTarget": "story:m02:objective:3",
+        "required": true
+      },
+      {
+        "id": "m02-obj-4",
+        "label": "ask about the mark.",
+        "interactionTarget": "story:m02:objective:4",
         "required": true
       }
     ],
     "successConditions": [
-      "All required objectives are complete",
-      "The player reviews the mission evidence"
+      "Internet history centralization decentralization",
+      "The player reviews the evidence or feedback"
     ],
     "failureAndRetry": {
-      "onFailure": "Show a short in-world hint tied to the failed objective.",
+      "onFailure": "Incorrect classifications return the player to the exhibit with a visual hint.",
       "retry": "Retry the current objective without losing completed objectives or saved story flags."
     },
     "rewards": {
       "xp": 110,
       "skillBadges": [
-        "The wallet becomes the next lead."
+        "Internet History"
       ],
-      "portfolioArtifacts": []
+      "portfolioArtifacts": [
+        "Misclassifications Return To The Exhibit With A Hint "
+      ]
     },
     "storyFlags": [
-      "misclassifications_return_to_the_exhibit_with_a_hint_"
+      "internet_history_centralization_decentralization"
     ],
     "nextMissionId": "m03",
-    "ending": "Misclassifications return to the exhibit with a hint.",
-    "cliffhanger": "Misclassifications return to the exhibit with a hint.",
+    "ending": "Internet history centralization decentralization",
+    "cliffhanger": "A new piece of evidence points toward the next chapter.",
     "safeSimulationRequired": true
   },
   {
@@ -333,11 +352,10 @@ const RAW_MISSIONS = [
       }
     ],
     "learningObjectives": [
-      "Create a sandbox wallet",
-      "receive test tokens",
-      "send a simulated transaction",
-      "reject a malicious request",
-      "explain recovery-phrase secrecy."
+      "wallet addresses",
+      "private keys",
+      "recovery phrases",
+      "transaction approvals"
     ],
     "prerequisites": [
       "m02"
@@ -345,56 +363,58 @@ const RAW_MISSIONS = [
     "objectives": [
       {
         "id": "m03-obj-1",
-        "label": "Wallets",
+        "label": "Create a sandbox wallet",
         "interactionTarget": "story:m03:objective:1",
         "required": true
       },
       {
         "id": "m03-obj-2",
-        "label": "keys",
+        "label": "receive test tokens",
         "interactionTarget": "story:m03:objective:2",
         "required": true
       },
       {
         "id": "m03-obj-3",
-        "label": "addresses",
+        "label": "send a simulated transaction",
         "interactionTarget": "story:m03:objective:3",
         "required": true
       },
       {
         "id": "m03-obj-4",
-        "label": "approvals",
+        "label": "reject a malicious request",
         "interactionTarget": "story:m03:objective:4",
         "required": true
       },
       {
         "id": "m03-obj-5",
-        "label": "scam recognition",
+        "label": "explain recovery-phrase secrecy.",
         "interactionTarget": "story:m03:objective:5",
         "required": true
       }
     ],
     "successConditions": [
-      "All required objectives are complete",
-      "The player reviews the mission evidence"
+      "Wallets keys addresses approvals scam recognition",
+      "The player reviews the evidence or feedback"
     ],
     "failureAndRetry": {
-      "onFailure": "Show a short in-world hint tied to the failed objective.",
+      "onFailure": "The fake request is safely reset; the player can retry without real funds.",
       "retry": "Retry the current objective without losing completed objectives or saved story flags."
     },
     "rewards": {
       "xp": 120,
       "skillBadges": [
-        "A note points toward the shared ledger."
+        "Wallet Safety"
       ],
-      "portfolioArtifacts": []
+      "portfolioArtifacts": [
+        "The Scam Attempt Resets Safely"
+      ]
     },
     "storyFlags": [
-      "the_scam_attempt_resets_safely"
+      "wallets_keys_addresses_approvals_scam_recognition"
     ],
     "nextMissionId": "m04",
-    "ending": "The scam attempt resets safely; no real funds are used.",
-    "cliffhanger": "The scam attempt resets safely; no real funds are used.",
+    "ending": "Wallets keys addresses approvals scam recognition",
+    "cliffhanger": "A new piece of evidence points toward the next chapter.",
     "safeSimulationRequired": true
   },
   {
@@ -438,11 +458,10 @@ const RAW_MISSIONS = [
       }
     ],
     "learningObjectives": [
-      "Inspect a simulated explorer",
-      "trace a transaction",
-      "identify its block",
-      "investigate a proposed record change",
-      "explain consensus."
+      "blocks",
+      "transactions",
+      "distributed ledgers",
+      "consensus"
     ],
     "prerequisites": [
       "m03"
@@ -450,56 +469,58 @@ const RAW_MISSIONS = [
     "objectives": [
       {
         "id": "m04-obj-1",
-        "label": "Blocks",
+        "label": "Inspect a simulated explorer",
         "interactionTarget": "story:m04:objective:1",
         "required": true
       },
       {
         "id": "m04-obj-2",
-        "label": "transactions",
+        "label": "trace a transaction",
         "interactionTarget": "story:m04:objective:2",
         "required": true
       },
       {
         "id": "m04-obj-3",
-        "label": "nodes",
+        "label": "identify its block",
         "interactionTarget": "story:m04:objective:3",
         "required": true
       },
       {
         "id": "m04-obj-4",
-        "label": "consensus",
+        "label": "investigate a proposed record change",
         "interactionTarget": "story:m04:objective:4",
         "required": true
       },
       {
         "id": "m04-obj-5",
-        "label": "explorers",
+        "label": "explain consensus.",
         "interactionTarget": "story:m04:objective:5",
         "required": true
       }
     ],
     "successConditions": [
-      "All required objectives are complete",
-      "The player reviews the mission evidence"
+      "Blocks transactions nodes consensus explorers",
+      "The player reviews the evidence or feedback"
     ],
     "failureAndRetry": {
-      "onFailure": "Show a short in-world hint tied to the failed objective.",
+      "onFailure": "The explorer highlights the transaction path after an incorrect trace.",
       "retry": "Retry the current objective without losing completed objectives or saved story flags."
     },
     "rewards": {
       "xp": 130,
       "skillBadges": [
-        "An old transaction references T3Kit."
+        "Ledger Explorer"
       ],
-      "portfolioArtifacts": []
+      "portfolioArtifacts": [
+        "Incorrect Traces Can Be Retried With Highlighted Clues "
+      ]
     },
     "storyFlags": [
-      "incorrect_traces_can_be_retried_with_highlighted_clues_"
+      "blocks_transactions_nodes_consensus_explorers"
     ],
     "nextMissionId": "m05",
-    "ending": "Incorrect traces can be retried with highlighted clues.",
-    "cliffhanger": "Incorrect traces can be retried with highlighted clues.",
+    "ending": "Blocks transactions nodes consensus explorers",
+    "cliffhanger": "A new piece of evidence points toward the next chapter.",
     "safeSimulationRequired": true
   },
   {
@@ -543,11 +564,10 @@ const RAW_MISSIONS = [
       }
     ],
     "learningObjectives": [
-      "Interview two simulated users",
-      "test the core flow",
-      "isolate the biggest failure",
-      "recommend a fix",
-      "present evidence."
+      "dapps",
+      "frontend/backend",
+      "APIs",
+      "user research"
     ],
     "prerequisites": [
       "m04"
@@ -555,50 +575,58 @@ const RAW_MISSIONS = [
     "objectives": [
       {
         "id": "m05-obj-1",
-        "label": "Dapps",
+        "label": "Interview two simulated users",
         "interactionTarget": "story:m05:objective:1",
         "required": true
       },
       {
         "id": "m05-obj-2",
-        "label": "frontend/backend",
+        "label": "test the core flow",
         "interactionTarget": "story:m05:objective:2",
         "required": true
       },
       {
         "id": "m05-obj-3",
-        "label": "APIs",
+        "label": "isolate the biggest failure",
         "interactionTarget": "story:m05:objective:3",
         "required": true
       },
       {
         "id": "m05-obj-4",
-        "label": "user research",
+        "label": "recommend a fix",
         "interactionTarget": "story:m05:objective:4",
+        "required": true
+      },
+      {
+        "id": "m05-obj-5",
+        "label": "present evidence.",
+        "interactionTarget": "story:m05:objective:5",
         "required": true
       }
     ],
     "successConditions": [
-      "All required objectives are complete",
-      "The player reviews the mission evidence"
+      "Dapps frontend/backend APIs user research",
+      "The player reviews the evidence or feedback"
     ],
     "failureAndRetry": {
-      "onFailure": "Show a short in-world hint tied to the failed objective.",
+      "onFailure": "The team asks for user evidence again if the recommendation is feature-first.",
       "retry": "Retry the current objective without losing completed objectives or saved story flags."
     },
     "rewards": {
       "xp": 140,
       "skillBadges": [
-        "The team needs a smart-contract review."
+        "Product Thinking"
       ],
-      "portfolioArtifacts": []
+      "portfolioArtifacts": [
+        "Players Can Repeat User Interviews If The Diagnosis Is Weak "
+      ]
     },
     "storyFlags": [
-      "players_can_repeat_user_interviews_if_the_diagnosis_is_weak_"
+      "dapps_frontend_backend_apis_user_research"
     ],
     "nextMissionId": "m06",
-    "ending": "Players can repeat user interviews if the diagnosis is weak.",
-    "cliffhanger": "Players can repeat user interviews if the diagnosis is weak.",
+    "ending": "Dapps frontend/backend APIs user research",
+    "cliffhanger": "A new piece of evidence points toward the next chapter.",
     "safeSimulationRequired": false
   },
   {
@@ -642,11 +670,10 @@ const RAW_MISSIONS = [
       }
     ],
     "learningObjectives": [
-      "Inspect a sandbox contract",
-      "reproduce the bug",
-      "identify the faulty assumption",
-      "propose a fix",
-      "describe tests needed before deployment."
+      "smart contracts",
+      "conditions",
+      "testing",
+      "security"
     ],
     "prerequisites": [
       "m05"
@@ -654,56 +681,58 @@ const RAW_MISSIONS = [
     "objectives": [
       {
         "id": "m06-obj-1",
-        "label": "Smart contracts",
+        "label": "Inspect a sandbox contract",
         "interactionTarget": "story:m06:objective:1",
         "required": true
       },
       {
         "id": "m06-obj-2",
-        "label": "conditions",
+        "label": "reproduce the bug",
         "interactionTarget": "story:m06:objective:2",
         "required": true
       },
       {
         "id": "m06-obj-3",
-        "label": "state",
+        "label": "identify the faulty assumption",
         "interactionTarget": "story:m06:objective:3",
         "required": true
       },
       {
         "id": "m06-obj-4",
-        "label": "testing",
+        "label": "propose a fix",
         "interactionTarget": "story:m06:objective:4",
         "required": true
       },
       {
         "id": "m06-obj-5",
-        "label": "security",
+        "label": "describe tests needed before deployment.",
         "interactionTarget": "story:m06:objective:5",
         "required": true
       }
     ],
     "successConditions": [
-      "All required objectives are complete",
-      "The player reviews the mission evidence"
+      "Smart contracts conditions state testing security",
+      "The player reviews the evidence or feedback"
     ],
     "failureAndRetry": {
-      "onFailure": "Show a short in-world hint tied to the failed objective.",
+      "onFailure": "Deployment remains paused until the test passes; the player can revise the fix.",
       "retry": "Retry the current objective without losing completed objectives or saved story flags."
     },
     "rewards": {
       "xp": 150,
       "skillBadges": [
-        "The player earns an introduction to contract security."
+        "Contract Safety"
       ],
-      "portfolioArtifacts": []
+      "portfolioArtifacts": [
+        "The Launch Remains Paused"
+      ]
     },
     "storyFlags": [
-      "the_launch_remains_paused"
+      "smart_contracts_conditions_state_testing_security"
     ],
     "nextMissionId": "m07",
-    "ending": "The launch remains paused; player retries the test case safely.",
-    "cliffhanger": "The launch remains paused; player retries the test case safely.",
+    "ending": "Smart contracts conditions state testing security",
+    "cliffhanger": "A new piece of evidence points toward the next chapter.",
     "safeSimulationRequired": true
   },
   {
@@ -747,11 +776,10 @@ const RAW_MISSIONS = [
       }
     ],
     "learningObjectives": [
-      "Compare simulated pools",
-      "estimate price impact",
-      "execute a test swap",
-      "inspect token approval",
-      "explain liquidity and slippage."
+      "DEXs",
+      "liquidity pools",
+      "slippage",
+      "approvals"
     ],
     "prerequisites": [
       "m06"
@@ -759,62 +787,58 @@ const RAW_MISSIONS = [
     "objectives": [
       {
         "id": "m07-obj-1",
-        "label": "DEXs",
+        "label": "Compare simulated pools",
         "interactionTarget": "story:m07:objective:1",
         "required": true
       },
       {
         "id": "m07-obj-2",
-        "label": "pools",
+        "label": "estimate price impact",
         "interactionTarget": "story:m07:objective:2",
         "required": true
       },
       {
         "id": "m07-obj-3",
-        "label": "AMMs",
+        "label": "execute a test swap",
         "interactionTarget": "story:m07:objective:3",
         "required": true
       },
       {
         "id": "m07-obj-4",
-        "label": "slippage",
+        "label": "inspect token approval",
         "interactionTarget": "story:m07:objective:4",
         "required": true
       },
       {
         "id": "m07-obj-5",
-        "label": "gas",
+        "label": "explain liquidity and slippage.",
         "interactionTarget": "story:m07:objective:5",
-        "required": true
-      },
-      {
-        "id": "m07-obj-6",
-        "label": "approvals",
-        "interactionTarget": "story:m07:objective:6",
         "required": true
       }
     ],
     "successConditions": [
-      "All required objectives are complete",
-      "The player reviews the mission evidence"
+      "DEXs pools AMMs slippage gas approvals",
+      "The player reviews the evidence or feedback"
     ],
     "failureAndRetry": {
-      "onFailure": "Show a short in-world hint tied to the failed objective.",
+      "onFailure": "The player retries with a smaller simulated swap and a fee breakdown.",
       "retry": "Retry the current objective without losing completed objectives or saved story flags."
     },
     "rewards": {
       "xp": 160,
       "skillBadges": [
-        "An invitation leads to a centralized exchange."
+        "DEX Literacy"
       ],
-      "portfolioArtifacts": []
+      "portfolioArtifacts": [
+        "Retry With A Smaller Simulated Trade And A Fee Breakdown "
+      ]
     },
     "storyFlags": [
-      "retry_with_a_smaller_simulated_trade_and_a_fee_breakdown_"
+      "dexs_pools_amms_slippage_gas_approvals"
     ],
     "nextMissionId": "m08",
-    "ending": "Retry with a smaller simulated trade and a fee breakdown.",
-    "cliffhanger": "Retry with a smaller simulated trade and a fee breakdown.",
+    "ending": "DEXs pools AMMs slippage gas approvals",
+    "cliffhanger": "A new piece of evidence points toward the next chapter.",
     "safeSimulationRequired": true
   },
   {
@@ -858,11 +882,10 @@ const RAW_MISSIONS = [
       }
     ],
     "learningObjectives": [
-      "Place simulated market and limit orders",
-      "compare bid/ask",
-      "inspect a fictional withdrawal incident",
-      "draft a verified status update",
-      "compare custody models."
+      "CEXs",
+      "order books",
+      "custody",
+      "incident communication"
     ],
     "prerequisites": [
       "m07"
@@ -870,62 +893,58 @@ const RAW_MISSIONS = [
     "objectives": [
       {
         "id": "m08-obj-1",
-        "label": "CEXs",
+        "label": "Place simulated market and limit orders",
         "interactionTarget": "story:m08:objective:1",
         "required": true
       },
       {
         "id": "m08-obj-2",
-        "label": "order books",
+        "label": "compare bid/ask",
         "interactionTarget": "story:m08:objective:2",
         "required": true
       },
       {
         "id": "m08-obj-3",
-        "label": "custody",
+        "label": "inspect a fictional withdrawal incident",
         "interactionTarget": "story:m08:objective:3",
         "required": true
       },
       {
         "id": "m08-obj-4",
-        "label": "deposits",
+        "label": "draft a verified status update",
         "interactionTarget": "story:m08:objective:4",
         "required": true
       },
       {
         "id": "m08-obj-5",
-        "label": "withdrawals",
+        "label": "compare custody models.",
         "interactionTarget": "story:m08:objective:5",
-        "required": true
-      },
-      {
-        "id": "m08-obj-6",
-        "label": "incident communication",
-        "interactionTarget": "story:m08:objective:6",
         "required": true
       }
     ],
     "successConditions": [
-      "All required objectives are complete",
-      "The player reviews the mission evidence"
+      "CEXs order books custody deposits withdrawals incident communication",
+      "The player reviews the evidence or feedback"
     ],
     "failureAndRetry": {
-      "onFailure": "Show a short in-world hint tied to the failed objective.",
+      "onFailure": "Unverified claims are rejected and rewritten before the player can submit.",
       "retry": "Retry the current objective without losing completed objectives or saved story flags."
     },
     "rewards": {
       "xp": 170,
       "skillBadges": [
-        "The player learns that account access is not control of the exchange."
+        "Exchange Literacy"
       ],
-      "portfolioArtifacts": []
+      "portfolioArtifacts": [
+        "Unverified Claims Are Flagged And Rewritten Before Submission "
+      ]
     },
     "storyFlags": [
-      "unverified_claims_are_flagged_and_rewritten_before_submission_"
+      "cexs_order_books_custody_deposits_withdrawals_incident_communication"
     ],
     "nextMissionId": "m09",
-    "ending": "Unverified claims are flagged and rewritten before submission.",
-    "cliffhanger": "Unverified claims are flagged and rewritten before submission.",
+    "ending": "CEXs order books custody deposits withdrawals incident communication",
+    "cliffhanger": "A new piece of evidence points toward the next chapter.",
     "safeSimulationRequired": true
   },
   {
@@ -969,11 +988,10 @@ const RAW_MISSIONS = [
       }
     ],
     "learningObjectives": [
-      "Read a simulated chart",
-      "mark a possible entry and invalidation",
-      "calculate risk",
-      "execute a paper trade",
-      "record the outcome."
+      "spot trading",
+      "position sizing",
+      "risk",
+      "trading journals"
     ],
     "prerequisites": [
       "m08"
@@ -981,56 +999,58 @@ const RAW_MISSIONS = [
     "objectives": [
       {
         "id": "m09-obj-1",
-        "label": "Spot trading",
+        "label": "Read a simulated chart",
         "interactionTarget": "story:m09:objective:1",
         "required": true
       },
       {
         "id": "m09-obj-2",
-        "label": "market structure",
+        "label": "mark a possible entry and invalidation",
         "interactionTarget": "story:m09:objective:2",
         "required": true
       },
       {
         "id": "m09-obj-3",
-        "label": "position sizing",
+        "label": "calculate risk",
         "interactionTarget": "story:m09:objective:3",
         "required": true
       },
       {
         "id": "m09-obj-4",
-        "label": "risk",
+        "label": "execute a paper trade",
         "interactionTarget": "story:m09:objective:4",
         "required": true
       },
       {
         "id": "m09-obj-5",
-        "label": "journaling",
+        "label": "record the outcome.",
         "interactionTarget": "story:m09:objective:5",
         "required": true
       }
     ],
     "successConditions": [
-      "All required objectives are complete",
-      "The player reviews the mission evidence"
+      "Spot trading market structure position sizing risk journaling",
+      "The player reviews the evidence or feedback"
     ],
     "failureAndRetry": {
-      "onFailure": "Show a short in-world hint tied to the failed objective.",
+      "onFailure": "A revenge-trade choice opens a review; no real funds are involved.",
       "retry": "Retry the current objective without losing completed objectives or saved story flags."
     },
     "rewards": {
       "xp": 180,
       "skillBadges": [
-        "The player unlocks a paper-trading journal."
+        "Risk Management"
       ],
-      "portfolioArtifacts": []
+      "portfolioArtifacts": [
+        "A Revenge Trade Choice Triggers A Review And Retry Not A Real Loss "
+      ]
     },
     "storyFlags": [
-      "a_revenge_trade_choice_triggers_a_review_and_retry_not_a_real_loss_"
+      "spot_trading_market_structure_position_sizing_risk_journaling"
     ],
     "nextMissionId": "m10",
-    "ending": "A revenge-trade choice triggers a review and retry, not a real loss.",
-    "cliffhanger": "A revenge-trade choice triggers a review and retry, not a real loss.",
+    "ending": "Spot trading market structure position sizing risk journaling",
+    "cliffhanger": "A new piece of evidence points toward the next chapter.",
     "safeSimulationRequired": true
   },
   {
@@ -1076,11 +1096,10 @@ const RAW_MISSIONS = [
       }
     ],
     "learningObjectives": [
-      "Open a simulated futures position",
-      "compare leverage",
-      "estimate margin",
-      "identify liquidation risk",
-      "review the loss and close plan."
+      "futures",
+      "leverage",
+      "margin",
+      "liquidation"
     ],
     "prerequisites": [
       "m09"
@@ -1088,62 +1107,58 @@ const RAW_MISSIONS = [
     "objectives": [
       {
         "id": "m10-obj-1",
-        "label": "Futures",
+        "label": "Open a simulated futures position",
         "interactionTarget": "story:m10:objective:1",
         "required": true
       },
       {
         "id": "m10-obj-2",
-        "label": "long/short",
+        "label": "compare leverage",
         "interactionTarget": "story:m10:objective:2",
         "required": true
       },
       {
         "id": "m10-obj-3",
-        "label": "leverage",
+        "label": "estimate margin",
         "interactionTarget": "story:m10:objective:3",
         "required": true
       },
       {
         "id": "m10-obj-4",
-        "label": "margin",
+        "label": "identify liquidation risk",
         "interactionTarget": "story:m10:objective:4",
         "required": true
       },
       {
         "id": "m10-obj-5",
-        "label": "liquidation",
+        "label": "review the loss and close plan.",
         "interactionTarget": "story:m10:objective:5",
-        "required": true
-      },
-      {
-        "id": "m10-obj-6",
-        "label": "funding",
-        "interactionTarget": "story:m10:objective:6",
         "required": true
       }
     ],
     "successConditions": [
-      "All required objectives are complete",
-      "The player reviews the mission evidence"
+      "Futures long/short leverage margin liquidation funding",
+      "The player reviews the evidence or feedback"
     ],
     "failureAndRetry": {
-      "onFailure": "Show a short in-world hint tied to the failed objective.",
+      "onFailure": "The player can retry with lower exposure and a clear invalidation rule.",
       "retry": "Retry the current objective without losing completed objectives or saved story flags."
     },
     "rewards": {
       "xp": 190,
       "skillBadges": [
-        "The player understands why confidence cannot replace risk limits."
+        "Leverage Safety"
       ],
-      "portfolioArtifacts": []
+      "portfolioArtifacts": [
+        "Retry With Lower Exposure And Clear Invalidation Rules "
+      ]
     },
     "storyFlags": [
-      "retry_with_lower_exposure_and_clear_invalidation_rules_"
+      "futures_long_short_leverage_margin_liquidation_funding"
     ],
     "nextMissionId": "m11",
-    "ending": "Retry with lower exposure and clear invalidation rules.",
-    "cliffhanger": "Retry with lower exposure and clear invalidation rules.",
+    "ending": "Futures long/short leverage margin liquidation funding",
+    "cliffhanger": "A new piece of evidence points toward the next chapter.",
     "safeSimulationRequired": true
   },
   {
@@ -1187,11 +1202,9 @@ const RAW_MISSIONS = [
       }
     ],
     "learningObjectives": [
-      "Inspect onboarding",
-      "interview members",
-      "locate the drop-off",
-      "redesign the first session",
-      "choose a meaningful retention metric."
+      "community onboarding",
+      "retention",
+      "feedback"
     ],
     "prerequisites": [
       "m10"
@@ -1199,56 +1212,58 @@ const RAW_MISSIONS = [
     "objectives": [
       {
         "id": "m11-obj-1",
-        "label": "Community strategy",
+        "label": "Inspect onboarding",
         "interactionTarget": "story:m11:objective:1",
         "required": true
       },
       {
         "id": "m11-obj-2",
-        "label": "onboarding",
+        "label": "interview members",
         "interactionTarget": "story:m11:objective:2",
         "required": true
       },
       {
         "id": "m11-obj-3",
-        "label": "engagement",
+        "label": "locate the drop-off",
         "interactionTarget": "story:m11:objective:3",
         "required": true
       },
       {
         "id": "m11-obj-4",
-        "label": "retention",
+        "label": "redesign the first session",
         "interactionTarget": "story:m11:objective:4",
         "required": true
       },
       {
         "id": "m11-obj-5",
-        "label": "feedback",
+        "label": "choose a meaningful retention metric.",
         "interactionTarget": "story:m11:objective:5",
         "required": true
       }
     ],
     "successConditions": [
-      "All required objectives are complete",
-      "The player reviews the mission evidence"
+      "Community strategy onboarding engagement retention feedback",
+      "The player reviews the evidence or feedback"
     ],
     "failureAndRetry": {
-      "onFailure": "Show a short in-world hint tied to the failed objective.",
+      "onFailure": "The player tests another onboarding flow if newcomers still get stuck.",
       "retry": "Retry the current objective without losing completed objectives or saved story flags."
     },
     "rewards": {
       "xp": 200,
       "skillBadges": [
-        "The project sees a path to healthier participation."
+        "Community Design"
       ],
-      "portfolioArtifacts": []
+      "portfolioArtifacts": [
+        "Try Another Onboarding Flow If Newcomers Still Get Stuck "
+      ]
     },
     "storyFlags": [
-      "try_another_onboarding_flow_if_newcomers_still_get_stuck_"
+      "community_strategy_onboarding_engagement_retention_feedback"
     ],
     "nextMissionId": "m12",
-    "ending": "Try another onboarding flow if newcomers still get stuck.",
-    "cliffhanger": "Try another onboarding flow if newcomers still get stuck.",
+    "ending": "Community strategy onboarding engagement retention feedback",
+    "cliffhanger": "A new piece of evidence points toward the next chapter.",
     "safeSimulationRequired": false
   },
   {
@@ -1292,11 +1307,9 @@ const RAW_MISSIONS = [
       }
     ],
     "learningObjectives": [
-      "Identify impersonation",
-      "contain a dangerous message",
-      "guide a user to secure an account",
-      "de-escalate a dispute",
-      "publish a clear notice."
+      "moderation",
+      "scam response",
+      "conflict resolution"
     ],
     "prerequisites": [
       "m11"
@@ -1304,50 +1317,58 @@ const RAW_MISSIONS = [
     "objectives": [
       {
         "id": "m12-obj-1",
-        "label": "Moderation",
+        "label": "Identify impersonation",
         "interactionTarget": "story:m12:objective:1",
         "required": true
       },
       {
         "id": "m12-obj-2",
-        "label": "security",
+        "label": "contain a dangerous message",
         "interactionTarget": "story:m12:objective:2",
         "required": true
       },
       {
         "id": "m12-obj-3",
-        "label": "conflict resolution",
+        "label": "guide a user to secure an account",
         "interactionTarget": "story:m12:objective:3",
         "required": true
       },
       {
         "id": "m12-obj-4",
-        "label": "escalation",
+        "label": "de-escalate a dispute",
         "interactionTarget": "story:m12:objective:4",
+        "required": true
+      },
+      {
+        "id": "m12-obj-5",
+        "label": "publish a clear notice.",
+        "interactionTarget": "story:m12:objective:5",
         "required": true
       }
     ],
     "successConditions": [
-      "All required objectives are complete",
-      "The player reviews the mission evidence"
+      "Moderation security conflict resolution escalation",
+      "The player reviews the evidence or feedback"
     ],
     "failureAndRetry": {
-      "onFailure": "Show a short in-world hint tied to the failed objective.",
+      "onFailure": "A safety checklist helps the player retry the response.",
       "retry": "Retry the current objective without losing completed objectives or saved story flags."
     },
     "rewards": {
       "xp": 210,
       "skillBadges": [
-        "The attack is contained without blaming innocent members."
+        "Community Safety"
       ],
-      "portfolioArtifacts": []
+      "portfolioArtifacts": [
+        "A Safety Checklist Helps The Player Retry The Response "
+      ]
     },
     "storyFlags": [
-      "a_safety_checklist_helps_the_player_retry_the_response_"
+      "moderation_security_conflict_resolution_escalation"
     ],
     "nextMissionId": "m13",
-    "ending": "A safety checklist helps the player retry the response.",
-    "cliffhanger": "A safety checklist helps the player retry the response.",
+    "ending": "Moderation security conflict resolution escalation",
+    "cliffhanger": "A new piece of evidence points toward the next chapter.",
     "safeSimulationRequired": false
   },
   {
@@ -1391,12 +1412,9 @@ const RAW_MISSIONS = [
       }
     ],
     "learningObjectives": [
-      "Research the topic",
-      "prepare an opening",
-      "arrange questions",
-      "host a simulated space",
-      "handle a difficult question",
-      "write a recap."
+      "live hosting",
+      "interviewing",
+      "event coordination"
     ],
     "prerequisites": [
       "m12"
@@ -1404,50 +1422,64 @@ const RAW_MISSIONS = [
     "objectives": [
       {
         "id": "m13-obj-1",
-        "label": "Live hosting",
+        "label": "Research the topic",
         "interactionTarget": "story:m13:objective:1",
         "required": true
       },
       {
         "id": "m13-obj-2",
-        "label": "interviewing",
+        "label": "prepare an opening",
         "interactionTarget": "story:m13:objective:2",
         "required": true
       },
       {
         "id": "m13-obj-3",
-        "label": "coordination",
+        "label": "arrange questions",
         "interactionTarget": "story:m13:objective:3",
         "required": true
       },
       {
         "id": "m13-obj-4",
-        "label": "event promotion",
+        "label": "host a simulated space",
         "interactionTarget": "story:m13:objective:4",
+        "required": true
+      },
+      {
+        "id": "m13-obj-5",
+        "label": "handle a difficult question",
+        "interactionTarget": "story:m13:objective:5",
+        "required": true
+      },
+      {
+        "id": "m13-obj-6",
+        "label": "write a recap.",
+        "interactionTarget": "story:m13:objective:6",
         "required": true
       }
     ],
     "successConditions": [
-      "All required objectives are complete",
-      "The player reviews the mission evidence"
+      "Live hosting interviewing coordination event promotion",
+      "The player reviews the evidence or feedback"
     ],
     "failureAndRetry": {
-      "onFailure": "Show a short in-world hint tied to the failed objective.",
+      "onFailure": "The player can revise weak questions and host the simulation again.",
       "retry": "Retry the current objective without losing completed objectives or saved story flags."
     },
     "rewards": {
       "xp": 220,
       "skillBadges": [
-        "An old event poster carries the T3Kit symbol."
+        "Live Hosting"
       ],
-      "portfolioArtifacts": []
+      "portfolioArtifacts": [
+        "The Player Can Revise Weak Questions And Host Again "
+      ]
     },
     "storyFlags": [
-      "the_player_can_revise_weak_questions_and_host_again_"
+      "live_hosting_interviewing_coordination_event_promotion"
     ],
     "nextMissionId": "m14",
-    "ending": "The player can revise weak questions and host again.",
-    "cliffhanger": "The player can revise weak questions and host again.",
+    "ending": "Live hosting interviewing coordination event promotion",
+    "cliffhanger": "A new piece of evidence points toward the next chapter.",
     "safeSimulationRequired": false
   },
   {
@@ -1491,11 +1523,9 @@ const RAW_MISSIONS = [
       }
     ],
     "learningObjectives": [
-      "Research the product",
-      "identify the audience",
-      "rewrite an announcement",
-      "create an educational post",
-      "verify each claim."
+      "content writing",
+      "technical communication",
+      "fact checking"
     ],
     "prerequisites": [
       "m13"
@@ -1503,50 +1533,58 @@ const RAW_MISSIONS = [
     "objectives": [
       {
         "id": "m14-obj-1",
-        "label": "Content writing",
+        "label": "Research the product",
         "interactionTarget": "story:m14:objective:1",
         "required": true
       },
       {
         "id": "m14-obj-2",
-        "label": "technical communication",
+        "label": "identify the audience",
         "interactionTarget": "story:m14:objective:2",
         "required": true
       },
       {
         "id": "m14-obj-3",
-        "label": "research",
+        "label": "rewrite an announcement",
         "interactionTarget": "story:m14:objective:3",
         "required": true
       },
       {
         "id": "m14-obj-4",
-        "label": "positioning",
+        "label": "create an educational post",
         "interactionTarget": "story:m14:objective:4",
+        "required": true
+      },
+      {
+        "id": "m14-obj-5",
+        "label": "verify each claim.",
+        "interactionTarget": "story:m14:objective:5",
         "required": true
       }
     ],
     "successConditions": [
-      "All required objectives are complete",
-      "The player reviews the mission evidence"
+      "Content writing technical communication research positioning",
+      "The player reviews the evidence or feedback"
     ],
     "failureAndRetry": {
-      "onFailure": "Show a short in-world hint tied to the failed objective.",
+      "onFailure": "Unverified claims must be removed or clearly qualified.",
       "retry": "Retry the current objective without losing completed objectives or saved story flags."
     },
     "rewards": {
       "xp": 230,
       "skillBadges": [
-        "The team asks the player to show evidence of the work."
+        "Technical Communication"
       ],
-      "portfolioArtifacts": []
+      "portfolioArtifacts": [
+        "Claims That Cannot Be Verified Must Be Removed Or Qualified "
+      ]
     },
     "storyFlags": [
-      "claims_that_cannot_be_verified_must_be_removed_or_qualified_"
+      "content_writing_technical_communication_research_positioning"
     ],
     "nextMissionId": "m15",
-    "ending": "Claims that cannot be verified must be removed or qualified.",
-    "cliffhanger": "Claims that cannot be verified must be removed or qualified.",
+    "ending": "Content writing technical communication research positioning",
+    "cliffhanger": "A new piece of evidence points toward the next chapter.",
     "safeSimulationRequired": false
   },
   {
@@ -1590,11 +1628,9 @@ const RAW_MISSIONS = [
       }
     ],
     "learningObjectives": [
-      "Choose a direction",
-      "write a bio",
-      "organize work samples",
-      "assemble a portfolio",
-      "identify missing evidence."
+      "professional positioning",
+      "portfolios",
+      "networking"
     ],
     "prerequisites": [
       "m14"
@@ -1602,56 +1638,58 @@ const RAW_MISSIONS = [
     "objectives": [
       {
         "id": "m15-obj-1",
-        "label": "Personal branding",
+        "label": "Choose a direction",
         "interactionTarget": "story:m15:objective:1",
         "required": true
       },
       {
         "id": "m15-obj-2",
-        "label": "positioning",
+        "label": "write a bio",
         "interactionTarget": "story:m15:objective:2",
         "required": true
       },
       {
         "id": "m15-obj-3",
-        "label": "portfolio",
+        "label": "organize work samples",
         "interactionTarget": "story:m15:objective:3",
         "required": true
       },
       {
         "id": "m15-obj-4",
-        "label": "networking",
+        "label": "assemble a portfolio",
         "interactionTarget": "story:m15:objective:4",
         "required": true
       },
       {
         "id": "m15-obj-5",
-        "label": "building in public",
+        "label": "identify missing evidence.",
         "interactionTarget": "story:m15:objective:5",
         "required": true
       }
     ],
     "successConditions": [
-      "All required objectives are complete",
-      "The player reviews the mission evidence"
+      "Personal branding positioning portfolio networking building in public",
+      "The player reviews the evidence or feedback"
     ],
     "failureAndRetry": {
-      "onFailure": "Show a short in-world hint tied to the failed objective.",
+      "onFailure": "The reviewer highlights unsupported claims for revision.",
       "retry": "Retry the current objective without losing completed objectives or saved story flags."
     },
     "rewards": {
       "xp": 240,
       "skillBadges": [
-        "A credible portfolio unlocks the next application."
+        "Portfolio Building"
       ],
-      "portfolioArtifacts": []
+      "portfolioArtifacts": [
+        "The Reviewer Highlights Unsupported Claims For Revision "
+      ]
     },
     "storyFlags": [
-      "the_reviewer_highlights_unsupported_claims_for_revision_"
+      "personal_branding_positioning_portfolio_networking_building_in_public"
     ],
     "nextMissionId": "m16",
-    "ending": "The reviewer highlights unsupported claims for revision.",
-    "cliffhanger": "The reviewer highlights unsupported claims for revision.",
+    "ending": "Personal branding positioning portfolio networking building in public",
+    "cliffhanger": "A new piece of evidence points toward the next chapter.",
     "safeSimulationRequired": false
   },
   {
@@ -1695,11 +1733,9 @@ const RAW_MISSIONS = [
       }
     ],
     "learningObjectives": [
-      "Review a role",
-      "map required skills",
-      "complete a work sample",
-      "submit an application",
-      "respond to feedback."
+      "applications",
+      "work samples",
+      "interviews"
     ],
     "prerequisites": [
       "m15"
@@ -1707,56 +1743,58 @@ const RAW_MISSIONS = [
     "objectives": [
       {
         "id": "m16-obj-1",
-        "label": "Applications",
+        "label": "Review a role",
         "interactionTarget": "story:m16:objective:1",
         "required": true
       },
       {
         "id": "m16-obj-2",
-        "label": "recruitment",
+        "label": "map required skills",
         "interactionTarget": "story:m16:objective:2",
         "required": true
       },
       {
         "id": "m16-obj-3",
-        "label": "communication",
+        "label": "complete a work sample",
         "interactionTarget": "story:m16:objective:3",
         "required": true
       },
       {
         "id": "m16-obj-4",
-        "label": "interviews",
+        "label": "submit an application",
         "interactionTarget": "story:m16:objective:4",
         "required": true
       },
       {
         "id": "m16-obj-5",
-        "label": "job-scam awareness",
+        "label": "respond to feedback.",
         "interactionTarget": "story:m16:objective:5",
         "required": true
       }
     ],
     "successConditions": [
-      "All required objectives are complete",
-      "The player reviews the mission evidence"
+      "Applications recruitment communication interviews job-scam awareness",
+      "The player reviews the evidence or feedback"
     ],
     "failureAndRetry": {
-      "onFailure": "Show a short in-world hint tied to the failed objective.",
+      "onFailure": "Feedback identifies what to improve before the application is resubmitted.",
       "retry": "Retry the current objective without losing completed objectives or saved story flags."
     },
     "rewards": {
       "xp": 250,
       "skillBadges": [
-        "The player gets a first chance to contribute."
+        "First Contribution"
       ],
-      "portfolioArtifacts": []
+      "portfolioArtifacts": [
+        "Feedback Identifies What To Improve Before Resubmission "
+      ]
     },
     "storyFlags": [
-      "feedback_identifies_what_to_improve_before_resubmission_"
+      "applications_recruitment_communication_interviews_job_scam_awareness"
     ],
     "nextMissionId": "m17",
-    "ending": "Feedback identifies what to improve before resubmission.",
-    "cliffhanger": "Feedback identifies what to improve before resubmission.",
+    "ending": "Applications recruitment communication interviews job-scam awareness",
+    "cliffhanger": "A new piece of evidence points toward the next chapter.",
     "safeSimulationRequired": false
   },
   {
@@ -1800,11 +1838,9 @@ const RAW_MISSIONS = [
       }
     ],
     "learningObjectives": [
-      "Interview users",
-      "map their journey",
-      "find the main friction",
-      "prioritize one fix",
-      "test the revised flow."
+      "product management",
+      "UX",
+      "prioritization"
     ],
     "prerequisites": [
       "m16"
@@ -1812,56 +1848,58 @@ const RAW_MISSIONS = [
     "objectives": [
       {
         "id": "m17-obj-1",
-        "label": "Product management",
+        "label": "Interview users",
         "interactionTarget": "story:m17:objective:1",
         "required": true
       },
       {
         "id": "m17-obj-2",
-        "label": "UX",
+        "label": "map their journey",
         "interactionTarget": "story:m17:objective:2",
         "required": true
       },
       {
         "id": "m17-obj-3",
-        "label": "prioritization",
+        "label": "find the main friction",
         "interactionTarget": "story:m17:objective:3",
         "required": true
       },
       {
         "id": "m17-obj-4",
-        "label": "usability",
+        "label": "prioritize one fix",
         "interactionTarget": "story:m17:objective:4",
         "required": true
       },
       {
         "id": "m17-obj-5",
-        "label": "product-market fit",
+        "label": "test the revised flow.",
         "interactionTarget": "story:m17:objective:5",
         "required": true
       }
     ],
     "successConditions": [
-      "All required objectives are complete",
-      "The player reviews the mission evidence"
+      "Product management UX prioritization usability product-market fit",
+      "The player reviews the evidence or feedback"
     ],
     "failureAndRetry": {
-      "onFailure": "Show a short in-world hint tied to the failed objective.",
+      "onFailure": "A second user test checks whether the chosen fix worked.",
       "retry": "Retry the current objective without losing completed objectives or saved story flags."
     },
     "rewards": {
       "xp": 260,
       "skillBadges": [
-        "The product becomes easier to use."
+        "Product Management"
       ],
-      "portfolioArtifacts": []
+      "portfolioArtifacts": [
+        "A Second Test Round Reveals Whether The Fix Worked "
+      ]
     },
     "storyFlags": [
-      "a_second_test_round_reveals_whether_the_fix_worked_"
+      "product_management_ux_prioritization_usability_product_market_fit"
     ],
     "nextMissionId": "m18",
-    "ending": "A second test round reveals whether the fix worked.",
-    "cliffhanger": "A second test round reveals whether the fix worked.",
+    "ending": "Product management UX prioritization usability product-market fit",
+    "cliffhanger": "A new piece of evidence points toward the next chapter.",
     "safeSimulationRequired": false
   },
   {
@@ -1905,12 +1943,9 @@ const RAW_MISSIONS = [
       }
     ],
     "learningObjectives": [
-      "Define target users",
-      "form a hypothesis",
-      "prepare a campaign brief",
-      "choose success metrics",
-      "interpret results",
-      "assess a suspicious growth offer."
+      "growth experiments",
+      "funnels",
+      "metrics"
     ],
     "prerequisites": [
       "m17"
@@ -1918,62 +1953,64 @@ const RAW_MISSIONS = [
     "objectives": [
       {
         "id": "m18-obj-1",
-        "label": "Growth",
+        "label": "Define target users",
         "interactionTarget": "story:m18:objective:1",
         "required": true
       },
       {
         "id": "m18-obj-2",
-        "label": "funnels",
+        "label": "form a hypothesis",
         "interactionTarget": "story:m18:objective:2",
         "required": true
       },
       {
         "id": "m18-obj-3",
-        "label": "partnerships",
+        "label": "prepare a campaign brief",
         "interactionTarget": "story:m18:objective:3",
         "required": true
       },
       {
         "id": "m18-obj-4",
-        "label": "acquisition",
+        "label": "choose success metrics",
         "interactionTarget": "story:m18:objective:4",
         "required": true
       },
       {
         "id": "m18-obj-5",
-        "label": "retention",
+        "label": "interpret results",
         "interactionTarget": "story:m18:objective:5",
         "required": true
       },
       {
         "id": "m18-obj-6",
-        "label": "analytics",
+        "label": "assess a suspicious growth offer.",
         "interactionTarget": "story:m18:objective:6",
         "required": true
       }
     ],
     "successConditions": [
-      "All required objectives are complete",
-      "The player reviews the mission evidence"
+      "Growth funnels partnerships acquisition retention analytics",
+      "The player reviews the evidence or feedback"
     ],
     "failureAndRetry": {
-      "onFailure": "Show a short in-world hint tied to the failed objective.",
+      "onFailure": "If the metrics are vanity-only, the player revises the experiment.",
       "retry": "Retry the current objective without losing completed objectives or saved story flags."
     },
     "rewards": {
       "xp": 270,
       "skillBadges": [
-        "The team rejects a suspicious promise of instant users."
+        "Growth Strategy"
       ],
-      "portfolioArtifacts": []
+      "portfolioArtifacts": [
+        "If Metrics Are Vanity Only Revise The Experiment "
+      ]
     },
     "storyFlags": [
-      "if_metrics_are_vanity_only_revise_the_experiment_"
+      "growth_funnels_partnerships_acquisition_retention_analytics"
     ],
     "nextMissionId": "m19",
-    "ending": "If metrics are vanity-only, revise the experiment.",
-    "cliffhanger": "If metrics are vanity-only, revise the experiment.",
+    "ending": "Growth funnels partnerships acquisition retention analytics",
+    "cliffhanger": "A new piece of evidence points toward the next chapter.",
     "safeSimulationRequired": false
   },
   {
@@ -2017,11 +2054,9 @@ const RAW_MISSIONS = [
       }
     ],
     "learningObjectives": [
-      "Review a fictional budget",
-      "compare proposals",
-      "inspect allocation and vesting",
-      "flag conflicts",
-      "recommend a responsible option."
+      "grants",
+      "venture capital",
+      "tokenomics"
     ],
     "prerequisites": [
       "m18"
@@ -2029,56 +2064,58 @@ const RAW_MISSIONS = [
     "objectives": [
       {
         "id": "m19-obj-1",
-        "label": "Startup finance",
+        "label": "Review a fictional budget",
         "interactionTarget": "story:m19:objective:1",
         "required": true
       },
       {
         "id": "m19-obj-2",
-        "label": "grants",
+        "label": "compare proposals",
         "interactionTarget": "story:m19:objective:2",
         "required": true
       },
       {
         "id": "m19-obj-3",
-        "label": "venture capital",
+        "label": "inspect allocation and vesting",
         "interactionTarget": "story:m19:objective:3",
         "required": true
       },
       {
         "id": "m19-obj-4",
-        "label": "tokenomics",
+        "label": "flag conflicts",
         "interactionTarget": "story:m19:objective:4",
         "required": true
       },
       {
         "id": "m19-obj-5",
-        "label": "fundraising",
+        "label": "recommend a responsible option.",
         "interactionTarget": "story:m19:objective:5",
         "required": true
       }
     ],
     "successConditions": [
-      "All required objectives are complete",
-      "The player reviews the mission evidence"
+      "Startup finance grants venture capital tokenomics fundraising",
+      "The player reviews the evidence or feedback"
     ],
     "failureAndRetry": {
-      "onFailure": "Show a short in-world hint tied to the failed objective.",
+      "onFailure": "A comparison worksheet exposes missing assumptions.",
       "retry": "Retry the current objective without losing completed objectives or saved story flags."
     },
     "rewards": {
       "xp": 280,
       "skillBadges": [
-        "The founders choose a funding route that fits their obligations."
+        "Funding Analysis"
       ],
-      "portfolioArtifacts": []
+      "portfolioArtifacts": [
+        "A Comparison Worksheet Exposes Missing Assumptions "
+      ]
     },
     "storyFlags": [
-      "a_comparison_worksheet_exposes_missing_assumptions_"
+      "startup_finance_grants_venture_capital_tokenomics_fundraising"
     ],
     "nextMissionId": "m20",
-    "ending": "A comparison worksheet exposes missing assumptions.",
-    "cliffhanger": "A comparison worksheet exposes missing assumptions.",
+    "ending": "Startup finance grants venture capital tokenomics fundraising",
+    "cliffhanger": "A new piece of evidence points toward the next chapter.",
     "safeSimulationRequired": true
   },
   {
@@ -2122,11 +2159,10 @@ const RAW_MISSIONS = [
       }
     ],
     "learningObjectives": [
-      "Review documentation",
-      "find missing ownership evidence",
-      "inspect custody/redemption",
-      "test claims against evidence",
-      "write questions required before launch."
+      "tokenization",
+      "custody",
+      "redemption",
+      "due diligence"
     ],
     "prerequisites": [
       "m19"
@@ -2134,56 +2170,58 @@ const RAW_MISSIONS = [
     "objectives": [
       {
         "id": "m20-obj-1",
-        "label": "RWA tokenization",
+        "label": "Review documentation",
         "interactionTarget": "story:m20:objective:1",
         "required": true
       },
       {
         "id": "m20-obj-2",
-        "label": "custody",
+        "label": "find missing ownership evidence",
         "interactionTarget": "story:m20:objective:2",
         "required": true
       },
       {
         "id": "m20-obj-3",
-        "label": "verification",
+        "label": "inspect custody/redemption",
         "interactionTarget": "story:m20:objective:3",
         "required": true
       },
       {
         "id": "m20-obj-4",
-        "label": "redemption",
+        "label": "test claims against evidence",
         "interactionTarget": "story:m20:objective:4",
         "required": true
       },
       {
         "id": "m20-obj-5",
-        "label": "legal and operational risk",
+        "label": "write questions required before launch.",
         "interactionTarget": "story:m20:objective:5",
         "required": true
       }
     ],
     "successConditions": [
-      "All required objectives are complete",
-      "The player reviews the mission evidence"
+      "RWA tokenization custody verification redemption legal and operational risk",
+      "The player reviews the evidence or feedback"
     ],
     "failureAndRetry": {
-      "onFailure": "Show a short in-world hint tied to the failed objective.",
+      "onFailure": "Missing evidence stays an explicit blocker; the game never invents legal proof.",
       "retry": "Retry the current objective without losing completed objectives or saved story flags."
     },
     "rewards": {
       "xp": 290,
       "skillBadges": [
-        "The announcement is paused until claims are supported."
+        "Due Diligence"
       ],
-      "portfolioArtifacts": []
+      "portfolioArtifacts": [
+        "Missing Evidence Remains An Explicit Blocker Never Guessed "
+      ]
     },
     "storyFlags": [
-      "missing_evidence_remains_an_explicit_blocker_never_guessed_"
+      "rwa_tokenization_custody_verification_redemption_legal_and_operational_risk"
     ],
     "nextMissionId": "m21",
-    "ending": "Missing evidence remains an explicit blocker, never guessed.",
-    "cliffhanger": "Missing evidence remains an explicit blocker, never guessed.",
+    "ending": "RWA tokenization custody verification redemption legal and operational risk",
+    "cliffhanger": "A new piece of evidence points toward the next chapter.",
     "safeSimulationRequired": true
   },
   {
@@ -2227,11 +2265,9 @@ const RAW_MISSIONS = [
       }
     ],
     "learningObjectives": [
-      "Inspect report",
-      "verify on-chain claims in a simulator",
-      "find false assumptions",
-      "improve instructions",
-      "retest output."
+      "AI verification",
+      "on-chain analysis",
+      "human oversight"
     ],
     "prerequisites": [
       "m20"
@@ -2239,56 +2275,58 @@ const RAW_MISSIONS = [
     "objectives": [
       {
         "id": "m21-obj-1",
-        "label": "AI in Web3",
+        "label": "Inspect report",
         "interactionTarget": "story:m21:objective:1",
         "required": true
       },
       {
         "id": "m21-obj-2",
-        "label": "automation",
+        "label": "verify on-chain claims in a simulator",
         "interactionTarget": "story:m21:objective:2",
         "required": true
       },
       {
         "id": "m21-obj-3",
-        "label": "on-chain analysis",
+        "label": "find false assumptions",
         "interactionTarget": "story:m21:objective:3",
         "required": true
       },
       {
         "id": "m21-obj-4",
-        "label": "verification",
+        "label": "improve instructions",
         "interactionTarget": "story:m21:objective:4",
         "required": true
       },
       {
         "id": "m21-obj-5",
-        "label": "human oversight",
+        "label": "retest output.",
         "interactionTarget": "story:m21:objective:5",
         "required": true
       }
     ],
     "successConditions": [
-      "All required objectives are complete",
-      "The player reviews the mission evidence"
+      "AI in Web3 automation on-chain analysis verification human oversight",
+      "The player reviews the evidence or feedback"
     ],
     "failureAndRetry": {
-      "onFailure": "Show a short in-world hint tied to the failed objective.",
+      "onFailure": "A source-check checklist helps the player correct the AI report.",
       "retry": "Retry the current objective without losing completed objectives or saved story flags."
     },
     "rewards": {
       "xp": 300,
       "skillBadges": [
-        "The tool improves while high-impact decisions remain reviewed by people."
+        "AI Verification"
       ],
-      "portfolioArtifacts": []
+      "portfolioArtifacts": [
+        "The Player Retries With A Source Check Checklist "
+      ]
     },
     "storyFlags": [
-      "the_player_retries_with_a_source_check_checklist_"
+      "ai_in_web3_automation_on_chain_analysis_verification_human_oversight"
     ],
     "nextMissionId": "m22",
-    "ending": "The player retries with a source-check checklist.",
-    "cliffhanger": "The player retries with a source-check checklist.",
+    "ending": "AI in Web3 automation on-chain analysis verification human oversight",
+    "cliffhanger": "A new piece of evidence points toward the next chapter.",
     "safeSimulationRequired": false
   },
   {
@@ -2332,11 +2370,9 @@ const RAW_MISSIONS = [
       }
     ],
     "learningObjectives": [
-      "Compare simulated networks",
-      "trace a transfer",
-      "inspect the bridge role",
-      "identify a fake interface",
-      "explain risks and fees."
+      "layer-one/two networks",
+      "bridges",
+      "cross-chain risk"
     ],
     "prerequisites": [
       "m21"
@@ -2344,62 +2380,58 @@ const RAW_MISSIONS = [
     "objectives": [
       {
         "id": "m22-obj-1",
-        "label": "L1/L2",
+        "label": "Compare simulated networks",
         "interactionTarget": "story:m22:objective:1",
         "required": true
       },
       {
         "id": "m22-obj-2",
-        "label": "interoperability",
+        "label": "trace a transfer",
         "interactionTarget": "story:m22:objective:2",
         "required": true
       },
       {
         "id": "m22-obj-3",
-        "label": "bridges",
+        "label": "inspect the bridge role",
         "interactionTarget": "story:m22:objective:3",
         "required": true
       },
       {
         "id": "m22-obj-4",
-        "label": "cross-chain transfers",
+        "label": "identify a fake interface",
         "interactionTarget": "story:m22:objective:4",
         "required": true
       },
       {
         "id": "m22-obj-5",
-        "label": "fees",
+        "label": "explain risks and fees.",
         "interactionTarget": "story:m22:objective:5",
-        "required": true
-      },
-      {
-        "id": "m22-obj-6",
-        "label": "security",
-        "interactionTarget": "story:m22:objective:6",
         "required": true
       }
     ],
     "successConditions": [
-      "All required objectives are complete",
-      "The player reviews the mission evidence"
+      "L1/L2 interoperability bridges cross-chain transfers fees security",
+      "The player reviews the evidence or feedback"
     ],
     "failureAndRetry": {
-      "onFailure": "Show a short in-world hint tied to the failed objective.",
+      "onFailure": "A suspicious bridge interface is safely rejected.",
       "retry": "Retry the current objective without losing completed objectives or saved story flags."
     },
     "rewards": {
       "xp": 310,
       "skillBadges": [
-        "The archive reveals T3Kit connects people across different disciplines."
+        "Interoperability"
       ],
-      "portfolioArtifacts": []
+      "portfolioArtifacts": [
+        "A Suspicious Interface Is Safely Rejected "
+      ]
     },
     "storyFlags": [
-      "a_suspicious_interface_is_safely_rejected_"
+      "l1_l2_interoperability_bridges_cross_chain_transfers_fees_security"
     ],
     "nextMissionId": "m23",
-    "ending": "A suspicious interface is safely rejected.",
-    "cliffhanger": "A suspicious interface is safely rejected.",
+    "ending": "L1/L2 interoperability bridges cross-chain transfers fees security",
+    "cliffhanger": "A new piece of evidence points toward the next chapter.",
     "safeSimulationRequired": true
   },
   {
@@ -2443,11 +2475,9 @@ const RAW_MISSIONS = [
       }
     ],
     "learningObjectives": [
-      "Read proposals",
-      "compare trade-offs",
-      "inspect a simulated treasury",
-      "cast a test vote",
-      "explain the outcome and participation limits."
+      "DAOs",
+      "governance",
+      "treasury management"
     ],
     "prerequisites": [
       "m22"
@@ -2455,56 +2485,58 @@ const RAW_MISSIONS = [
     "objectives": [
       {
         "id": "m23-obj-1",
-        "label": "DAOs",
+        "label": "Read proposals",
         "interactionTarget": "story:m23:objective:1",
         "required": true
       },
       {
         "id": "m23-obj-2",
-        "label": "governance",
+        "label": "compare trade-offs",
         "interactionTarget": "story:m23:objective:2",
         "required": true
       },
       {
         "id": "m23-obj-3",
-        "label": "voting",
+        "label": "inspect a simulated treasury",
         "interactionTarget": "story:m23:objective:3",
         "required": true
       },
       {
         "id": "m23-obj-4",
-        "label": "proposals",
+        "label": "cast a test vote",
         "interactionTarget": "story:m23:objective:4",
         "required": true
       },
       {
         "id": "m23-obj-5",
-        "label": "treasury management",
+        "label": "explain the outcome and participation limits.",
         "interactionTarget": "story:m23:objective:5",
         "required": true
       }
     ],
     "successConditions": [
-      "All required objectives are complete",
-      "The player reviews the mission evidence"
+      "DAOs governance voting proposals treasury management",
+      "The player reviews the evidence or feedback"
     ],
     "failureAndRetry": {
-      "onFailure": "Show a short in-world hint tied to the failed objective.",
+      "onFailure": "A proposal comparison guide supports a second attempt.",
       "retry": "Retry the current objective without losing completed objectives or saved story flags."
     },
     "rewards": {
       "xp": 320,
       "skillBadges": [
-        "Members must decide how to restore accountability."
+        "Governance"
       ],
-      "portfolioArtifacts": []
+      "portfolioArtifacts": [
+        "A Proposal Comparison Guide Supports A Second Attempt "
+      ]
     },
     "storyFlags": [
-      "a_proposal_comparison_guide_supports_a_second_attempt_"
+      "daos_governance_voting_proposals_treasury_management"
     ],
     "nextMissionId": "m24",
-    "ending": "A proposal comparison guide supports a second attempt.",
-    "cliffhanger": "A proposal comparison guide supports a second attempt.",
+    "ending": "DAOs governance voting proposals treasury management",
+    "cliffhanger": "A new piece of evidence points toward the next chapter.",
     "safeSimulationRequired": true
   },
   {
@@ -2548,11 +2580,9 @@ const RAW_MISSIONS = [
       }
     ],
     "learningObjectives": [
-      "Read a simulated finding",
-      "estimate impact",
-      "prioritize a fix",
-      "prepare disclosure",
-      "verify the patch in a test environment."
+      "audits",
+      "threat modeling",
+      "disclosure"
     ],
     "prerequisites": [
       "m23"
@@ -2560,56 +2590,58 @@ const RAW_MISSIONS = [
     "objectives": [
       {
         "id": "m24-obj-1",
-        "label": "Threat modeling",
+        "label": "Read a simulated finding",
         "interactionTarget": "story:m24:objective:1",
         "required": true
       },
       {
         "id": "m24-obj-2",
-        "label": "testing",
+        "label": "estimate impact",
         "interactionTarget": "story:m24:objective:2",
         "required": true
       },
       {
         "id": "m24-obj-3",
-        "label": "audits",
+        "label": "prioritize a fix",
         "interactionTarget": "story:m24:objective:3",
         "required": true
       },
       {
         "id": "m24-obj-4",
-        "label": "disclosure",
+        "label": "prepare disclosure",
         "interactionTarget": "story:m24:objective:4",
         "required": true
       },
       {
         "id": "m24-obj-5",
-        "label": "incident response",
+        "label": "verify the patch in a test environment.",
         "interactionTarget": "story:m24:objective:5",
         "required": true
       }
     ],
     "successConditions": [
-      "All required objectives are complete",
-      "The player reviews the mission evidence"
+      "Threat modeling testing audits disclosure incident response",
+      "The player reviews the evidence or feedback"
     ],
     "failureAndRetry": {
-      "onFailure": "Show a short in-world hint tied to the failed objective.",
+      "onFailure": "The launch remains blocked until the remediation test passes.",
       "retry": "Retry the current objective without losing completed objectives or saved story flags."
     },
     "rewards": {
       "xp": 330,
       "skillBadges": [
-        "The vulnerability pattern matches earlier T3Kit archive records."
+        "Security Review"
       ],
-      "portfolioArtifacts": []
+      "portfolioArtifacts": [
+        "The Launch Stays Blocked Until The Test Passes "
+      ]
     },
     "storyFlags": [
-      "the_launch_stays_blocked_until_the_test_passes_"
+      "threat_modeling_testing_audits_disclosure_incident_response"
     ],
     "nextMissionId": "m25",
-    "ending": "The launch stays blocked until the test passes.",
-    "cliffhanger": "The launch stays blocked until the test passes.",
+    "ending": "Threat modeling testing audits disclosure incident response",
+    "cliffhanger": "A new piece of evidence points toward the next chapter.",
     "safeSimulationRequired": false
   },
   {
@@ -2653,11 +2685,10 @@ const RAW_MISSIONS = [
       }
     ],
     "learningObjectives": [
-      "Inspect a fictional collectible",
-      "read license terms",
-      "identify buyer rights",
-      "compare creator revenue models",
-      "rewrite unclear terms."
+      "NFTs",
+      "copyright",
+      "licensing",
+      "creator economies"
     ],
     "prerequisites": [
       "m24"
@@ -2665,62 +2696,58 @@ const RAW_MISSIONS = [
     "objectives": [
       {
         "id": "m25-obj-1",
-        "label": "NFTs",
+        "label": "Inspect a fictional collectible",
         "interactionTarget": "story:m25:objective:1",
         "required": true
       },
       {
         "id": "m25-obj-2",
-        "label": "copyright",
+        "label": "read license terms",
         "interactionTarget": "story:m25:objective:2",
         "required": true
       },
       {
         "id": "m25-obj-3",
-        "label": "licensing",
+        "label": "identify buyer rights",
         "interactionTarget": "story:m25:objective:3",
         "required": true
       },
       {
         "id": "m25-obj-4",
-        "label": "creator economy",
+        "label": "compare creator revenue models",
         "interactionTarget": "story:m25:objective:4",
         "required": true
       },
       {
         "id": "m25-obj-5",
-        "label": "gated access",
+        "label": "rewrite unclear terms.",
         "interactionTarget": "story:m25:objective:5",
-        "required": true
-      },
-      {
-        "id": "m25-obj-6",
-        "label": "publishing",
-        "interactionTarget": "story:m25:objective:6",
         "required": true
       }
     ],
     "successConditions": [
-      "All required objectives are complete",
-      "The player reviews the mission evidence"
+      "NFTs copyright licensing creator economy gated access publishing",
+      "The player reviews the evidence or feedback"
     ],
     "failureAndRetry": {
-      "onFailure": "Show a short in-world hint tied to the failed objective.",
+      "onFailure": "Ambiguous ownership language must be clarified before publishing.",
       "retry": "Retry the current objective without losing completed objectives or saved story flags."
     },
     "rewards": {
       "xp": 340,
       "skillBadges": [
-        "The player sees that Web3 extends beyond trading."
+        "Creator Rights"
       ],
-      "portfolioArtifacts": []
+      "portfolioArtifacts": [
+        "Ambiguous Ownership Language Must Be Clarified "
+      ]
     },
     "storyFlags": [
-      "ambiguous_ownership_language_must_be_clarified_"
+      "nfts_copyright_licensing_creator_economy_gated_access_publishing"
     ],
     "nextMissionId": "m26",
-    "ending": "Ambiguous ownership language must be clarified.",
-    "cliffhanger": "Ambiguous ownership language must be clarified.",
+    "ending": "NFTs copyright licensing creator economy gated access publishing",
+    "cliffhanger": "A new piece of evidence points toward the next chapter.",
     "safeSimulationRequired": false
   },
   {
@@ -2764,11 +2791,10 @@ const RAW_MISSIONS = [
       }
     ],
     "learningObjectives": [
-      "Explore a simulated repository",
-      "find an issue",
-      "improve documentation",
-      "propose a contribution",
-      "explain version control and review."
+      "Git",
+      "documentation",
+      "pull requests",
+      "collaboration"
     ],
     "prerequisites": [
       "m25"
@@ -2776,56 +2802,58 @@ const RAW_MISSIONS = [
     "objectives": [
       {
         "id": "m26-obj-1",
-        "label": "Git",
+        "label": "Explore a simulated repository",
         "interactionTarget": "story:m26:objective:1",
         "required": true
       },
       {
         "id": "m26-obj-2",
-        "label": "issues",
+        "label": "find an issue",
         "interactionTarget": "story:m26:objective:2",
         "required": true
       },
       {
         "id": "m26-obj-3",
-        "label": "pull requests",
+        "label": "improve documentation",
         "interactionTarget": "story:m26:objective:3",
         "required": true
       },
       {
         "id": "m26-obj-4",
-        "label": "documentation",
+        "label": "propose a contribution",
         "interactionTarget": "story:m26:objective:4",
         "required": true
       },
       {
         "id": "m26-obj-5",
-        "label": "open-source collaboration",
+        "label": "explain version control and review.",
         "interactionTarget": "story:m26:objective:5",
         "required": true
       }
     ],
     "successConditions": [
-      "All required objectives are complete",
-      "The player reviews the mission evidence"
+      "Git issues pull requests documentation open-source collaboration",
+      "The player reviews the evidence or feedback"
     ],
     "failureAndRetry": {
-      "onFailure": "Show a short in-world hint tied to the failed objective.",
+      "onFailure": "A contribution checklist helps the player revise the proposed change.",
       "retry": "Retry the current objective without losing completed objectives or saved story flags."
     },
     "rewards": {
       "xp": 350,
       "skillBadges": [
-        "An early design document explains T3Kit as an ecosystem, not a single product."
+        "Open Source"
       ],
-      "portfolioArtifacts": []
+      "portfolioArtifacts": [
+        "A Contribution Checklist Helps The Player Revise "
+      ]
     },
     "storyFlags": [
-      "a_contribution_checklist_helps_the_player_revise_"
+      "git_issues_pull_requests_documentation_open_source_collaboration"
     ],
     "nextMissionId": "m27",
-    "ending": "A contribution checklist helps the player revise.",
-    "cliffhanger": "A contribution checklist helps the player revise.",
+    "ending": "Git issues pull requests documentation open-source collaboration",
+    "cliffhanger": "A new piece of evidence points toward the next chapter.",
     "safeSimulationRequired": false
   },
   {
@@ -2869,11 +2897,9 @@ const RAW_MISSIONS = [
       }
     ],
     "learningObjectives": [
-      "Review saved evidence",
-      "connect clues",
-      "identify contradictions",
-      "map professional roles",
-      "submit a reconstruction."
+      "evidence evaluation",
+      "ecosystem roles",
+      "research synthesis"
     ],
     "prerequisites": [
       "m26"
@@ -2881,44 +2907,58 @@ const RAW_MISSIONS = [
     "objectives": [
       {
         "id": "m27-obj-1",
-        "label": "Research synthesis",
+        "label": "Review saved evidence",
         "interactionTarget": "story:m27:objective:1",
         "required": true
       },
       {
         "id": "m27-obj-2",
-        "label": "evidence evaluation",
+        "label": "connect clues",
         "interactionTarget": "story:m27:objective:2",
         "required": true
       },
       {
         "id": "m27-obj-3",
-        "label": "ecosystem coordination",
+        "label": "identify contradictions",
         "interactionTarget": "story:m27:objective:3",
+        "required": true
+      },
+      {
+        "id": "m27-obj-4",
+        "label": "map professional roles",
+        "interactionTarget": "story:m27:objective:4",
+        "required": true
+      },
+      {
+        "id": "m27-obj-5",
+        "label": "submit a reconstruction.",
+        "interactionTarget": "story:m27:objective:5",
         "required": true
       }
     ],
     "successConditions": [
-      "All required objectives are complete",
-      "The player reviews the mission evidence"
+      "Research synthesis evidence evaluation ecosystem coordination",
+      "The player reviews the evidence or feedback"
     ],
     "failureAndRetry": {
-      "onFailure": "Show a short in-world hint tied to the failed objective.",
+      "onFailure": "Contradictions must be supported by evidence or left unresolved.",
       "retry": "Retry the current objective without losing completed objectives or saved story flags."
     },
     "rewards": {
       "xp": 360,
       "skillBadges": [
-        "The archive unlocks KitCity as the destination."
+        "Evidence Synthesis"
       ],
-      "portfolioArtifacts": []
+      "portfolioArtifacts": [
+        "Contradictions Must Be Supported By Evidence Or Left Unresolved "
+      ]
     },
     "storyFlags": [
-      "contradictions_must_be_supported_by_evidence_or_left_unresolved_"
+      "research_synthesis_evidence_evaluation_ecosystem_coordination"
     ],
     "nextMissionId": "m28",
-    "ending": "Contradictions must be supported by evidence or left unresolved.",
-    "cliffhanger": "Contradictions must be supported by evidence or left unresolved.",
+    "ending": "Research synthesis evidence evaluation ecosystem coordination",
+    "cliffhanger": "A new piece of evidence points toward the next chapter.",
     "safeSimulationRequired": false
   },
   {
@@ -2962,11 +3002,9 @@ const RAW_MISSIONS = [
       }
     ],
     "learningObjectives": [
-      "Identify the problem",
-      "choose relevant skills",
-      "coordinate a simulated team",
-      "build a safe prototype",
-      "present the result."
+      "systems thinking",
+      "teamwork",
+      "practical judgment"
     ],
     "prerequisites": [
       "m27"
@@ -2974,44 +3012,58 @@ const RAW_MISSIONS = [
     "objectives": [
       {
         "id": "m28-obj-1",
-        "label": "Systems thinking",
+        "label": "Identify the problem",
         "interactionTarget": "story:m28:objective:1",
         "required": true
       },
       {
         "id": "m28-obj-2",
-        "label": "teamwork",
+        "label": "choose relevant skills",
         "interactionTarget": "story:m28:objective:2",
         "required": true
       },
       {
         "id": "m28-obj-3",
-        "label": "practical judgment",
+        "label": "coordinate a simulated team",
         "interactionTarget": "story:m28:objective:3",
+        "required": true
+      },
+      {
+        "id": "m28-obj-4",
+        "label": "build a safe prototype",
+        "interactionTarget": "story:m28:objective:4",
+        "required": true
+      },
+      {
+        "id": "m28-obj-5",
+        "label": "present the result.",
+        "interactionTarget": "story:m28:objective:5",
         "required": true
       }
     ],
     "successConditions": [
-      "All required objectives are complete",
-      "The player reviews the mission evidence"
+      "Systems thinking teamwork practical judgment",
+      "The player reviews the evidence or feedback"
     ],
     "failureAndRetry": {
-      "onFailure": "Show a short in-world hint tied to the failed objective.",
+      "onFailure": "The assessment gives targeted feedback and can be retried.",
       "retry": "Retry the current objective without losing completed objectives or saved story flags."
     },
     "rewards": {
       "xp": 370,
       "skillBadges": [
-        "Christol hands the player the final map to KitCity."
+        "Systems Thinking"
       ],
-      "portfolioArtifacts": []
+      "portfolioArtifacts": [
+        "The Assessment Points To Gaps And Can Be Retried "
+      ]
     },
     "storyFlags": [
-      "the_assessment_points_to_gaps_and_can_be_retried_"
+      "systems_thinking_teamwork_practical_judgment"
     ],
     "nextMissionId": "m29",
-    "ending": "The assessment points to gaps and can be retried.",
-    "cliffhanger": "The assessment points to gaps and can be retried.",
+    "ending": "Systems thinking teamwork practical judgment",
+    "cliffhanger": "A new piece of evidence points toward the next chapter.",
     "safeSimulationRequired": false
   },
   {
@@ -3057,10 +3109,8 @@ const RAW_MISSIONS = [
       }
     ],
     "learningObjectives": [
-      "Explore the central district",
-      "meet representatives",
-      "choose a specialization",
-      "register for a practical assessment."
+      "career exploration",
+      "specialization"
     ],
     "prerequisites": [
       "m28"
@@ -3068,38 +3118,52 @@ const RAW_MISSIONS = [
     "objectives": [
       {
         "id": "m29-obj-1",
-        "label": "Career exploration",
+        "label": "Explore the central district",
         "interactionTarget": "story:m29:objective:1",
         "required": true
       },
       {
         "id": "m29-obj-2",
-        "label": "ecosystem literacy",
+        "label": "meet representatives",
         "interactionTarget": "story:m29:objective:2",
+        "required": true
+      },
+      {
+        "id": "m29-obj-3",
+        "label": "choose a specialization",
+        "interactionTarget": "story:m29:objective:3",
+        "required": true
+      },
+      {
+        "id": "m29-obj-4",
+        "label": "register for a practical assessment.",
+        "interactionTarget": "story:m29:objective:4",
         "required": true
       }
     ],
     "successConditions": [
-      "All required objectives are complete",
-      "The player reviews the mission evidence"
+      "Career exploration ecosystem literacy",
+      "The player reviews the evidence or feedback"
     ],
     "failureAndRetry": {
-      "onFailure": "Show a short in-world hint tied to the failed objective.",
+      "onFailure": "The player can explore KitCity and return to the assessment later.",
       "retry": "Retry the current objective without losing completed objectives or saved story flags."
     },
     "rewards": {
       "xp": 380,
       "skillBadges": [
-        "The gates open and the player receives the Prove Yourself challenge."
+        "KitCity Explorer"
       ],
-      "portfolioArtifacts": []
+      "portfolioArtifacts": [
+        "The Player May Explore And Return To The Assessment Later "
+      ]
     },
     "storyFlags": [
-      "the_player_may_explore_and_return_to_the_assessment_later_"
+      "career_exploration_ecosystem_literacy"
     ],
     "nextMissionId": "m30",
-    "ending": "The player may explore and return to the assessment later.",
-    "cliffhanger": "The player may explore and return to the assessment later.",
+    "ending": "Career exploration ecosystem literacy",
+    "cliffhanger": "The gates open; the practical assessment awaits.",
     "safeSimulationRequired": false
   },
   {
@@ -3239,11 +3303,8 @@ const RAW_MISSIONS = [
       }
     ],
     "learningObjectives": [
-      "Select a specialization",
-      "complete its safe practical challenge",
-      "review feedback",
-      "submit the result",
-      "retry if needed."
+      "practical execution",
+      "professional judgment"
     ],
     "prerequisites": [
       "m29"
@@ -3251,56 +3312,58 @@ const RAW_MISSIONS = [
     "objectives": [
       {
         "id": "m30-obj-1",
-        "label": "Practical execution",
+        "label": "Select a specialization",
         "interactionTarget": "story:m30:objective:1",
         "required": true
       },
       {
         "id": "m30-obj-2",
-        "label": "problem-solving",
+        "label": "complete its safe practical challenge",
         "interactionTarget": "story:m30:objective:2",
         "required": true
       },
       {
         "id": "m30-obj-3",
-        "label": "security",
+        "label": "review feedback",
         "interactionTarget": "story:m30:objective:3",
         "required": true
       },
       {
         "id": "m30-obj-4",
-        "label": "communication",
+        "label": "submit the result",
         "interactionTarget": "story:m30:objective:4",
         "required": true
       },
       {
         "id": "m30-obj-5",
-        "label": "collaboration",
+        "label": "retry if needed.",
         "interactionTarget": "story:m30:objective:5",
         "required": true
       }
     ],
     "successConditions": [
-      "All required objectives are complete",
-      "The player reviews the mission evidence"
+      "Practical execution problem-solving security communication collaboration",
+      "The player reviews the evidence or feedback"
     ],
     "failureAndRetry": {
-      "onFailure": "Show a short in-world hint tied to the failed objective.",
+      "onFailure": "Every specialization includes feedback and a retry route.",
       "retry": "Retry the current objective without losing completed objectives or saved story flags."
     },
     "rewards": {
       "xp": 390,
       "skillBadges": [
-        "A Practitioner Profile records demonstrated work, not an externally accredited qualification."
+        "Practitioner Assessment"
       ],
-      "portfolioArtifacts": []
+      "portfolioArtifacts": [
+        "Every Path Includes Feedback And A Retry Route "
+      ]
     },
     "storyFlags": [
-      "every_path_includes_feedback_and_a_retry_route_"
+      "practical_execution_problem_solving_security_communication_collaboration"
     ],
     "nextMissionId": "m31",
-    "ending": "Every path includes feedback and a retry route.",
-    "cliffhanger": "Every path includes feedback and a retry route.",
+    "ending": "Practical execution problem-solving security communication collaboration",
+    "cliffhanger": "A new piece of evidence points toward the next chapter.",
     "safeSimulationRequired": false
   },
   {
@@ -3354,10 +3417,8 @@ const RAW_MISSIONS = [
       }
     ],
     "learningObjectives": [
-      "Review the journey",
-      "choose what Web3 means to the player now",
-      "select a future direction",
-      "receive the practitioner record."
+      "reflection",
+      "career planning"
     ],
     "prerequisites": [
       "m30"
@@ -3365,44 +3426,52 @@ const RAW_MISSIONS = [
     "objectives": [
       {
         "id": "m31-obj-1",
-        "label": "Reflection",
+        "label": "Review the journey",
         "interactionTarget": "story:m31:objective:1",
         "required": true
       },
       {
         "id": "m31-obj-2",
-        "label": "synthesis",
+        "label": "choose what Web3 means to the player now",
         "interactionTarget": "story:m31:objective:2",
         "required": true
       },
       {
         "id": "m31-obj-3",
-        "label": "career planning",
+        "label": "select a future direction",
         "interactionTarget": "story:m31:objective:3",
+        "required": true
+      },
+      {
+        "id": "m31-obj-4",
+        "label": "receive the practitioner record.",
+        "interactionTarget": "story:m31:objective:4",
         "required": true
       }
     ],
     "successConditions": [
-      "All required objectives are complete",
-      "The player reviews the mission evidence"
+      "Reflection synthesis career planning",
+      "The player reviews the evidence or feedback"
     ],
     "failureAndRetry": {
-      "onFailure": "Show a short in-world hint tied to the failed objective.",
+      "onFailure": "The player can revisit the reveal and journal at any time.",
       "retry": "Retry the current objective without losing completed objectives or saved story flags."
     },
     "rewards": {
       "xp": 400,
       "skillBadges": [
-        "The player is welcomed as a KitCity Web3 Practitioner and the open world remains explorable."
+        "Ecosystem Practitioner"
       ],
-      "portfolioArtifacts": []
+      "portfolioArtifacts": [
+        "The Player Can Revisit The Reveal And Journal At Any Time "
+      ]
     },
     "storyFlags": [
-      "the_player_can_revisit_the_reveal_and_journal_at_any_time_"
+      "reflection_synthesis_career_planning"
     ],
     "nextMissionId": null,
-    "ending": "The player can revisit the reveal and journal at any time.",
-    "cliffhanger": "A new message arrives: We've got something new to build.",
+    "ending": "Reflection synthesis career planning",
+    "cliffhanger": "A new message appears: “We've got something new to build.”",
     "safeSimulationRequired": false
   }
 ];
@@ -3420,6 +3489,18 @@ export const MISSIONS = RAW_MISSIONS.map((mission) => Object.freeze({
   rewards: Object.freeze({ ...mission.rewards, skillBadges: Object.freeze(mission.rewards.skillBadges), portfolioArtifacts: Object.freeze(mission.rewards.portfolioArtifacts) }),
   failureAndRetry: Object.freeze({ ...mission.failureAndRetry })
 }));
+
+
+export const STATE_ROUTE = NIGERIAN_STATES.map((state, index) => {
+  const mission = MISSIONS.find((item) => item.state === state);
+  return Object.freeze({
+    state,
+    routeIndex: index + 1,
+    routeStatus: mission ? "mission-stop" : "planned-story-stop",
+    missionId: mission ? mission.id : null,
+    note: mission ? "Main-story mission stop." : "Planned narrative stop to be connected to the journey; no FCT detour."
+  });
+});
 
 export const MISSION_BY_ID = Object.freeze(Object.fromEntries(MISSIONS.map((mission) => [mission.id, mission])));
 
@@ -3443,6 +3524,6 @@ export function validateChronicles() {
   if (names.size !== 50) errors.push("Expected 50 unique supplied character names.");
   if (NIGERIAN_STATES.length !== 36 || NIGERIAN_STATES.includes("Federal Capital Territory")) errors.push("State route must contain all 36 states and no FCT.");
   const covered = new Set(MISSIONS.map((mission) => mission.state));
-  const plannedStateCoverage = NIGERIAN_STATES.map((state) => ({ state, coveredByMission: covered.has(state), routeStatus: covered.has(state) ? "mission-state" : "planned-travel-stop" }));
+  const plannedStateCoverage = STATE_ROUTE.map((stop) => ({ ...stop, coveredByMission: covered.has(stop.state) }));
   return { valid: errors.length === 0, errors, missionCount: MISSIONS.length, characterCount: CHARACTER_ORDER.length, plannedStateCoverage };
 }
