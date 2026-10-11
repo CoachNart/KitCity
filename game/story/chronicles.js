@@ -222,7 +222,7 @@ const RAW_MISSIONS = [
       "Joe_Sef",
       "Larai"
     ],
-    "narrativePurpose": "You follow the laptop-payment trail to Joe_Sef and Larai's workspace. They help you trace the buyer's actual transaction, compare the destination with the shop's address, and work out why an online display name is not proof of who received the funds.",
+    "narrativePurpose": "You follow the laptop-payment trail to Joe_Sef and Larai's workspace. They help you use the transaction hash to find the public record, compare the recipient address with the shop's address, and work out why an online display name is not proof of who received the funds.",
     "learningObjectives": [
       "transaction hashes and networks",
       "recipient-address verification",
