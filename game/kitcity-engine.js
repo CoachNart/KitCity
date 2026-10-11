@@ -2279,12 +2279,46 @@ function chronicleNpcLine(m,name,index=0){
   if(index%2===0) return 'I keep hearing people talk about '+title+', but talk is cheap. Start with '+subject.toLowerCase()+' and see what the evidence actually tells us.';
   return 'That is why I want you to look closely at '+subject.toLowerCase()+'. If the facts do not support the story, we change our mind — simple.';
 }
+const STORY_BRIDGES={
+  m02:'That cyan mark from the Lagos noticeboard turned up here too. Joe_Sef says it is not a shortcut to money; it is a reason to ask better questions.',
+  m03:'The mark led you to a small wallet demo. Just as you arrive, someone claims they can double your test tokens if you hand over your recovery phrase.',
+  m04:'The wallet scare is settled, but one transfer has two different records. Goodness wants you to find out which details can be verified.',
+  m05:'You followed the transaction trail to a team whose app keeps failing. The argument is loud; nobody has asked the users what they need.',
+  m06:'The app team found its real problem. Now a bug in a fictional contract could put people at risk, and the launch date is getting close.',
+  m07:'The team delayed the launch and sent you toward a swap that paid out less than its screen promised. Someone needs to check the pool.',
+  m08:'The swap figures make sense now. But an exchange has paused withdrawals, and rumours are spreading faster than confirmed facts.',
+  m09:'The order book helped separate evidence from rumour. Now a spot trade has gone wrong, and the price moved before anyone could react.',
+  m10:'The spot trade was only half the lesson. A trader has opened a leveraged position and is learning how quickly a small move can hurt.',
+  m11:'After seeing the cost of a rushed decision, you reach a group trying to turn a crowd of online followers into a community that can work together.',
+  m12:'The community is growing, but access to its server has been changed without agreement. The group needs to work out who should hold the keys.',
+  m13:'The server dispute is settled. In Enugu, a local event needs someone to tell its story—and nobody has volunteered to take the microphone.',
+  m14:'Your words got people listening. Now a contact wants to know whether you can turn that attention into a useful professional connection.',
+  m15:'The connection opened a door, but your profile does not show what you can do. A recruiter has asked for proof, not another promise.',
+  m16:'The updated profile earned a reply. The first opportunity has arrived, but the details need checking before you say yes.',
+  m17:'That opportunity exposed a bigger problem: a product team has built plenty of features but still cannot explain who needs them.',
+  m18:'The team finally understands the user. Now it needs to test whether its growth plan brings the right people—or just bigger numbers.',
+  m19:'The growth experiment got attention from an investor. The offer looks promising, but the terms need a closer look.',
+  m20:'The funding conversation uncovered an asset listed in a pitch deck. The paperwork says it exists; nobody has shown how to verify it.',
+  m21:'The asset record is clearer now, but an AI tool is flagging a mismatch that the team cannot explain away.',
+  m22:'The AI check caught the mismatch. The next test crosses a different blockchain, where familiar assumptions may no longer hold.',
+  m23:'The cross-chain test worked, but it raised a harder question: who gets to make decisions when the system belongs to many people?',
+  m24:'The vote is over. Before anyone celebrates, an auditor has found a record that does not match what the community was told.',
+  m25:'The audit exposed a token allocation problem. A creator wants to prove who owns what without relying on a screenshot.',
+  m26:'Ownership is now verifiable. A new team asks whether people can contribute code openly without giving up credit or control.',
+  m27:'The code is open, but trust is still missing. Contributors disagree about who made decisions and how the work should be credited.',
+  m28:'The trust dispute reveals the last missing clue. Notes from every stop point toward one destination: KitCity.',
+  m29:'You have reached KitCity. Craftore has seen the evidence you gathered across the journey, but a familiar logo will not get you through the gate.',
+  m30:'Craftore lets you in, then sets one last practical test. This time, there is no one-step answer to copy.',
+  m31:'You have reached the end of the trail. The final question is not whether you can repeat the lessons—it is what you choose to build with them.'
+};
 function chronicleNpcStep(m,name,index){
   const npc=STORY_NPCS[name];
   const step={kind:'character',characterIndex:index,label:'Talk to '+name,spot:index===0?'a':index===1?'story':['b','c','d','e','f','g','h'][index%7],npc};
   step.run=function(){
     const line=chronicleNpcLine(m,name,index);
-    talk(npc,'<p>'+escapeStoryHtml(line)+'</p>',[{t:'Got it. What should I check?',f:()=>{G.evidence['met_'+name]=true;finishStep();}}]);
+    const bridge=index===0?STORY_BRIDGES[m.id]:'';
+    const playerOpener=m.id==='m01'&&name==='Softstorm'?'<p><b>YOU</b> · Abeg, wetin una dey talk about?</p>':'';
+    talk(npc,playerOpener+(bridge?'<p>'+escapeStoryHtml(bridge)+'</p>':'')+'<p>'+escapeStoryHtml(line)+'</p>',[{t:'Got it. What should I check?',f:()=>{G.evidence['met_'+name]=true;finishStep();}}]);
   };
   return step;
 }
