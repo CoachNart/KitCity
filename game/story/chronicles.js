@@ -234,7 +234,7 @@ const RAW_MISSIONS = [
     "objectives": [
       {
         "id": "m02-obj-1",
-        "label": "Ask Joe_Sef for the buyer's transaction hash and network",
+        "label": "Confirm the buyer's transaction hash and network with Joe_Sef",
         "interactionTarget": "story:m02:objective:1",
         "required": true
       },
