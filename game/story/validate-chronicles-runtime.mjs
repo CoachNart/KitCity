@@ -32,6 +32,11 @@ requireText("startMission(missionId,true)", "mission restart after three hazards
 requireText("P.storyProgress[G.m.id]", "per-mission progress save");
 requireText("const CHRONICLE_ACTIVITY_RULES=[", "objective activity bank");
 requireText("function applyChronicleActivityEffect", "safe simulated activity effects");
+requireText("function placeExecutionCenter", "physical execution centre and task workbench");
+requireText("const objectives=story.objectives||[],spots=['execution'];", "all remaining mission objectives target the execution centre");
+requireText("const base=SPOTS.execution,station=storyExecutionStation(m,G.i)", "mission-specific execution station placement");
+if (/sandbox|simulated|simulation|simulator|fictional practice record/i.test(engine)) errors.push("Player-facing sandbox/simulation disclaimer remains in the mission runtime.");
+if (/sandbox|simulated|simulation|simulator|fictional/i.test(JSON.stringify(MISSIONS))) errors.push("Player-facing sandbox/simulation disclaimer remains in mission dialogue or objective copy.");
 requireText("P.storyFlags.future_direction=options[choice]", "player-owned ending choice");
 if (!engine.includes("if(m.id==='m01'&&P.chroniclesPrologueVersion!==2)")) errors.push("First-time intro cinematic gate is missing");
 const lagosOpening = MISSIONS.find((mission) => mission.id === "m01");
