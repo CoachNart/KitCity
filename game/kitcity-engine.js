@@ -2305,25 +2305,27 @@ const payStep=o=>({label:o.label,spot:o.spot,npc:o.npc,run(){
 function taskStep(o){ return {label:o.label,spot:o.spot,npc:o.npc,run(){ if(o.practice){ runPracticeTask(o); } else { pickStep(o); } }}; }
 function runPracticeTask(o){
   const esc=v=>String(v==null?'':v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
-  const panel=(tag,art,caption)=>'<div style="border:3px solid #20232a;border-radius:12px;overflow:hidden;margin:0 0 12px;background:#fff7d6;color:#20232a;box-shadow:4px 4px 0 #20232a"><div style="padding:5px 10px;background:#20232a;color:#ffe27a;font-weight:900;letter-spacing:1.4px;font-size:10px">KITCITY COMICS · '+esc(tag)+'</div><div style="padding:14px 12px 10px;background:radial-gradient(circle at 85% 15%,#fff 0 8%,transparent 9%),linear-gradient(135deg,#ffe8a3,#ffcf83);font-size:30px;line-height:1.2">'+art+'</div><div style="padding:8px 12px 12px;font-weight:800;font-size:14px;line-height:1.4">'+esc(caption)+'</div></div>';
-  const characterLine=panel(o.panelTag||'THE SCENE',o.art||'💬',o.intro||'');
-  const finishAction=()=>{
+  const panel=(tag,art,caption)=>'<div style="border:3px solid #20232a;border-radius:12px;overflow:hidden;margin:0 0 10px;background:#fff7d6;color:#20232a;box-shadow:4px 4px 0 #20232a"><div style="padding:5px 10px;background:#20232a;color:#ffe27a;font-weight:900;letter-spacing:1.2px;font-size:10px">KITCITY COMICS · '+esc(tag)+'</div><div style="padding:10px 12px;background:radial-gradient(circle at 85% 15%,#fff 0 8%,transparent 9%),linear-gradient(135deg,#ffe8a3,#ffcf83);font-size:28px;line-height:1.1">'+art+'</div><div style="padding:8px 12px 10px;font-weight:800;font-size:14px;line-height:1.35">'+esc(caption)+'</div></div>';
+  const scene=panel(o.panelTag||'THE SCENE',o.art||'💬',o.intro||'');
+  const showResult=()=>{
     Snd.sfx('good');
-    talk(o.npc,characterLine+'<p>'+esc(o.reaction||o.result||'Thanks for helping me out!')+'</p>'+(o.lesson?'<p style="border-left:4px solid #f2bd3d;padding:8px 10px;background:#fff7d6;color:#292929"><b>Little takeaway:</b> '+esc(o.lesson)+'</p>':''),[{t:o.nextReply||'Glad I could help',f:finishStep}]);
+    const hook=o.storyHook?'<p style="margin-top:8px;font-weight:800;color:#8b4b14">'+esc(o.storyHook)+'</p>':'';
+    talk(o.npc,panel('WHAT HAPPENS NEXT','✨',o.reaction||o.result||'We did it.')+(o.lesson?'<p style="margin:7px 0 0;border-left:3px solid #f2bd3d;padding:5px 9px;background:#fff7d6;color:#292929;font-size:12px"><b>Quick takeaway:</b> '+esc(o.lesson)+'</p>':'')+hook,[{t:o.nextReply||'Keep going',f:finishStep}]);
   };
   const doAction=()=>{
     if(o.transaction){
       const amount=Number(o.amount||1);
       needFunds(amount);
-      confirmTx(o.npc,{title:o.action,rows:[["Seller or recipient",o.recipient||"Mission character"],["What you are sending",amount.toFixed(2)+" USDC"],["Network","Base"]],note:"Check the name and amount before you confirm.",btn:"Confirm payment",after:h=>{
+      confirmTx(o.npc,{title:o.action,rows:[["Recipient",o.recipient||"Mission character"],["Amount",amount.toFixed(2)+" USDC"],["Network","Base"]],note:"Check the name, amount and network.",btn:"Confirm payment",after:h=>{
         P.usdc=Math.max(0,Math.round((P.usdc-amount)*100)/100);save();updateHUD();Snd.sfx('good');
-        talk(o.npc,panel('PAYMENT CONFIRMED','🧾✨','Cha-ching! The receipt is in.')+'<p>'+esc(o.reaction||o.result||'Payment complete!')+'</p><div class="kv"><span>Receipt</span><b class="mono">'+short(h)+'</b></div>'+(o.lesson?'<p><b>Little takeaway:</b> '+esc(o.lesson)+'</p>':''),[{t:o.nextReply||'Nice, all sorted',f:finishStep}]);
+        const hook=o.storyHook?'<p style="margin-top:8px;font-weight:800;color:#8b4b14">'+esc(o.storyHook)+'</p>':'';
+        talk(o.npc,panel('PAYMENT LANDED','🧾✨',o.reaction||'Payment confirmed.')+'<div class="kv"><span>Receipt</span><b class="mono">'+short(h)+'</b></div>'+(o.lesson?'<p style="font-size:12px"><b>Quick takeaway:</b> '+esc(o.lesson)+'</p>':'')+hook,[{t:o.nextReply||'Keep going',f:finishStep}]);
       }});
       return;
     }
-    busy(o.npc,o.busyText||'You get stuck in…',420,finishAction);
+    busy(o.npc,o.busyText||'You get to work…',360,showResult);
   };
-  talk(o.npc,characterLine+(o.action?'<div style="border:2px dashed #df9c2c;border-radius:9px;padding:10px 12px;background:#fffdf3;color:#242424"><b>YOUR MOVE</b><p style="margin:5px 0 0">'+esc(o.action)+'</p></div>':''),[{t:o.button||o.playerReply||'Let me help',f:doAction}]);
+  talk(o.npc,scene,[{t:o.button||o.playerReply||"I'll help",f:doAction}]);
 }
 function pickStep(o){
   talk(o.npc,'<p>'+o.intro+'</p>'+(o.q?'<p><b>'+o.q+'</b></p>':''),
@@ -2479,13 +2481,16 @@ function missionChallenges(s){
   {name:"Chidi",art:"🧰🐛",open:"A builder has reported a problem around "+topic+". I want to fix it without breaking something else. Can you help me work through it?",reply:"Let's make the change clear and test that it really works.",reaction:"Nice. We can show what changed and how we checked it, instead of asking people to trust us blindly.",lesson:"Small, testable changes make open-source work easier for others to verify."}
  ];
  const p=cast[s.cat]||cast[0];
- const label=(s.title||"City mission");
+ const nextName=s.nextCat==null?"the next neighbour":(["Tobi","Zainab","Amina","Amaka","Ada","Dami","Nneka","Efe","Chidi"][s.nextCat]||"the next neighbour");
+ const prevName=s.prevName||"the crew";
+ const label=s.title||"City mission";
+ const firstIntro=s.missionNo===1?p.open:(p.open+" "+prevName+" said you were the person to call.");
+ const hook=s.nextTitle?"Before I forget — "+nextName+" just messaged about “"+s.nextTitle+"”. Go see what's happening.":"The city still needs us. This story isn't over yet.";
  const variants=[
-  {label:"Meet the problem",spot:"a",panelTag:"PANEL 01 · THE PROBLEM",art:p.art,intro:p.open,playerReply:p.reply,action:"Talk it through with "+p.name+".",button:"I'm listening — let's look",reaction:"Thanks for hearing me out. Come on, let's take a closer look.",lesson:"Listen to the person affected before jumping into a solution.",nextReply:"Show me what to do"},
-  {label:"Take action",spot:"c",panelTag:"PANEL 02 · YOUR MOVE",art:s.cat===0?"📊🎯":s.cat===1?"💸📲":s.cat===2?"🔐🛡️":s.cat===3?"🪙⚖️":s.cat===4?"🧹💬":s.cat===5?"📣🧩":s.cat===6?"📝🔎":s.cat===7?"🎨🔍":"🛠️🧪",intro:p.name+": “Okay, here's what I need us to do: "+action+" Can you handle that with me?”",playerReply:"I've got this. Let's do it together.",action:action,button:"Let's do it",reaction:p.reaction,lesson:p.lesson,nextReply:"That makes sense now"},
-  {label:"See the result",spot:"d",panelTag:"PANEL 03 · THE PAYOFF",art:"✨🙌",intro:p.name+": “Look at that! We worked through "+topic+" together. Let me show you what changed.”",playerReply:"Nice! I get why that matters now.",action:"Look at the result and hear what changed.",button:"Show me what changed",reaction:p.reaction,lesson:p.lesson,nextReply:"On to the next adventure"}
+  {label:label+" · Meet "+p.name,spot:"a",panelTag:"PANEL 01 · THE CONVERSATION",art:p.art,intro:firstIntro,playerReply:p.reply,button:p.reply,action:"",reaction:"",lesson:"",nextReply:"Tell me what happened",busyText:""},
+  {label:label+" · Help "+p.name,spot:"c",panelTag:"PANEL 02 · MAKE IT RIGHT",art:s.cat===0?"📊🎯":s.cat===1?"💸📲":s.cat===2?"🔐🛡️":s.cat===3?"🪙⚖️":s.cat===4?"🧹💬":s.cat===5?"📣🧩":s.cat===6?"📝🔎":s.cat===7?"🎨🔍":"🛠️🧪",intro:p.name+": “Here's the part I'm stuck on: "+topic+". Can you "+action.charAt(0).toLowerCase()+action.slice(1).replace(/[.!?]$/,'')+" with me?”",playerReply:"I'll take care of that now.",button:s.cat===0?"I'll mark the risk first":s.cat===1?"I'll check the transfer details":s.cat===2?"I'll secure the wallet":s.cat===3?"I'll check the risks and fees":s.cat===4?"I'll handle this fairly":s.cat===5?"I'll focus on real users":s.cat===6?"I'll check the facts":s.cat===7?"I'll verify the artwork": "I'll test the change",action:action,actionButton:action,reaction:p.reaction,lesson:p.lesson,nextReply:"What's next?",storyHook:hook,busyText:"You work through it together…"}
  ];
- return variants.map((v,si)=>({label:label+" · "+v.label,spot:v.spot,panelTag:v.panelTag,art:v.art,intro:v.intro,playerReply:v.playerReply,action:v.action,button:v.button,reaction:v.reaction,result:v.reaction,lesson:v.lesson,nextReply:v.nextReply,busyText:si===1?"You jump into action…":"Let's see what happens…",doneTitle:si===2?"Panel complete!":"Nice one!",transaction:false}));
+ return variants.map((v,si)=>({label:v.label,spot:v.spot,panelTag:v.panelTag,art:v.art,intro:v.intro,playerReply:v.playerReply,action:v.action,button:v.button,reaction:v.reaction,result:v.reaction,lesson:v.lesson,nextReply:v.nextReply,busyText:v.busyText,storyHook:v.storyHook,doneTitle:"Scene complete",transaction:false}));
 }
 const npcData=[["Tobi Adeyemi","Trading coach","#2266A3",0],["Zainab Bello","Exchange guide","#2D6FB3",1],["Amina Okoro","Wallet safety lead","#0B7A70",2],["Amaka George","DeFi analyst","#6A4FC8",2],["Ada Nwosu","Community lead","#C7457E",2],["Dami Ogun","Growth strategist","#6A4FC8",2],["Nneka James","Content editor","#C7457E",2],["Efe Osagie","Digital artist","#C7457E",2],["Chidi Okafor","Open-source maintainer","#2D6FB3",0]];
 const spots=["a","c","d"];
@@ -2500,7 +2505,7 @@ const list=specs.map((s,i)=>{
    taskStep({label:"Collect your suya",spot:"d",npc,intro:"Abdul hands you the suya and points at the receipt. “My customer has food, I have payment, everybody happy. Make we check this receipt so we know exactly what happened!”",practice:true,panelTag:"PANEL 03 · SUYA DELIVERED",art:"🍢😋🧾",playerReply:"Let's check the receipt and make sure the payment went through.",action:"Verify that the receipt shows IamAbdul and 1.00 USDC.",button:"Check the receipt",reaction:"“Correct! Now you know how a digital payment works, and you didn't have to guess.”",lesson:"A transaction receipt helps you confirm the details of a payment.",transaction:false})
   ];
  } else {
-  steps=missionChallenges(s).map(c=>taskStep({...c,npc,practice:true}));
+  steps=missionChallenges({...s,missionNo:i+1,prevName:i>0?(npcData[specs[i-1].cat]?.[0]||'the crew'):null,nextTitle:specs[i+1]?.title,nextCat:specs[i+1]?.cat}).map(c=>taskStep({...c,npc,practice:true}));
  }
  return {id:"web3-m"+(i+1),n:i+1,city:s.city,title:s.title,goal:s.goal,steps};
 });
