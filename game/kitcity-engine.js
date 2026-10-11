@@ -2325,7 +2325,7 @@ function runPracticeTask(o){
     }
     busy(o.npc,o.busyText||'You get to work…',360,showResult);
   };
-  talk(o.npc,scene,[{t:o.button||o.playerReply||"I'll help",f:doAction}]);
+  talk(o.npc,scene,[{t:o.button||o.playerReply||"I'll help",f:()=>{if(o.conversationOnly){finishStep();return;}doAction();}}]);
 }
 function pickStep(o){
   talk(o.npc,'<p>'+o.intro+'</p>'+(o.q?'<p><b>'+o.q+'</b></p>':''),
@@ -2487,7 +2487,7 @@ function missionChallenges(s){
  const firstIntro=s.missionNo===1?p.open:(p.open+" "+prevName+" said you were the person to call.");
  const hook=s.nextTitle?"Before I forget — "+nextName+" just messaged about “"+s.nextTitle+"”. Go see what's happening.":"The city still needs us. This story isn't over yet.";
  const variants=[
-  {label:label+" · Meet "+p.name,spot:"a",panelTag:"PANEL 01 · THE CONVERSATION",art:p.art,intro:firstIntro,playerReply:p.reply,button:p.reply,action:"",reaction:"",lesson:"",nextReply:"Tell me what happened",busyText:""},
+  {label:label+" · Meet "+p.name,spot:"a",panelTag:"PANEL 01 · THE CONVERSATION",art:p.art,intro:firstIntro,playerReply:p.reply,button:p.reply,action:"",reaction:"",lesson:"",nextReply:"Tell me what happened",busyText:"",conversationOnly:true},
   {label:label+" · Help "+p.name,spot:"c",panelTag:"PANEL 02 · MAKE IT RIGHT",art:s.cat===0?"📊🎯":s.cat===1?"💸📲":s.cat===2?"🔐🛡️":s.cat===3?"🪙⚖️":s.cat===4?"🧹💬":s.cat===5?"📣🧩":s.cat===6?"📝🔎":s.cat===7?"🎨🔍":"🛠️🧪",intro:p.name+": “Here's the part I'm stuck on: "+topic+". Can you "+action.charAt(0).toLowerCase()+action.slice(1).replace(/[.!?]$/,'')+" with me?”",playerReply:"I'll take care of that now.",button:s.cat===0?"I'll mark the risk first":s.cat===1?"I'll check the transfer details":s.cat===2?"I'll secure the wallet":s.cat===3?"I'll check the risks and fees":s.cat===4?"I'll handle this fairly":s.cat===5?"I'll focus on real users":s.cat===6?"I'll check the facts":s.cat===7?"I'll verify the artwork": "I'll test the change",action:action,actionButton:action,reaction:p.reaction,lesson:p.lesson,nextReply:"What's next?",storyHook:hook,busyText:"You work through it together…"}
  ];
  return variants.map((v,si)=>({label:v.label,spot:v.spot,panelTag:v.panelTag,art:v.art,intro:v.intro,playerReply:v.playerReply,action:v.action,button:v.button,reaction:v.reaction,result:v.reaction,lesson:v.lesson,nextReply:v.nextReply,busyText:v.busyText,storyHook:v.storyHook,doneTitle:"Scene complete",transaction:false}));
