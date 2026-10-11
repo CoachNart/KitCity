@@ -2062,11 +2062,22 @@ function placeStoryClue(def,spot){
 function placeNPC(def,spot){
   if(def.stall) buildStall(def,spot);
   else {
-    const p=buildPerson(def.look); p.userData.storyCharacter=def.name; p.userData.storyRole=def.role; p.position.set(spot.x,.05,spot.z); p.rotation.y=spot.f>0?Math.PI/2:-Math.PI/2; if(G&&G.m&&G.m.id==='m01'&&(def.name==='Softstorm'||def.name==='IamAbdul')) p.rotation.y=def.name==='Softstorm'?Math.PI/2:-Math.PI/2; missionGroup.add(p);
-    const sp=label(tr(def.sign||def.name),def.signBg,def.signFg); sp.position.set(spot.x,6,spot.z); missionGroup.add(sp);
-    colliders.push({x0:spot.x-1,x1:spot.x+1,z0:spot.z-1,z1:spot.z+1});
+    const p=buildPerson(def.look);
+    const angle=Math.random()*Math.PI*2, radius=.45+Math.random()*.95;
+    p.userData.storyCharacter=def.name; p.userData.storyRole=def.role;
+    p.userData.storyAnchorX=spot.x+Math.cos(angle)*radius;
+    p.userData.storyAnchorZ=spot.z+Math.sin(angle)*radius;
+    p.userData.storyPhase=Math.random()*Math.PI*2;
+    p.userData.storyGestureAt=Math.random()*3;
+    p.position.set(p.userData.storyAnchorX,.05,p.userData.storyAnchorZ);
+    p.rotation.y=Math.atan2(spot.x-p.position.x,spot.z-p.position.z);
+    missionGroup.add(p);
+    const sp=label(tr(def.sign||def.name),def.signBg,def.signFg); sp.position.set(p.position.x,6,p.position.z); missionGroup.add(sp);
+    colliders.push({x0:p.position.x-1,x1:p.position.x+1,z0:p.position.z-1,z1:p.position.z+1});
+    storyNPCActors.push(p);
+    return {x:p.position.x,z:p.position.z,r:6.5,object:p};
   }
-  return {x:spot.x,z:spot.z,r:def.stall?7.5:6.5};
+  return {x:spot.x,z:spot.z,r:7.5};
 }
 
 /* ---- player + beacon ---- */
@@ -2092,6 +2103,7 @@ const beacon=new THREE.Group();
 /* =====================  state  ===================== */
 const S={phase:'title',modal:false};
 let G=null,ents=[],goal=null,nearEnt=null;
+const storyNPCActors=[];
 let hubTab='missions',hubCity='lagos',resetArm=false;
 const SUYA_ADDR='0x'+hex(20);
 // Dedicated cinematic actors: the regular Softstorm/IamAbdul NPC definitions are stalls,
@@ -2158,14 +2170,12 @@ const whoOf=d=>who(d.name.charAt(0),d.name,d.role,d.color);
 const plain=h=>h.replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim();
 function talk(def,html,btns){
   html=tx(personalize(html,G&&G.m,def));
-  if(!S.modal||chat.npc!==def.name) chat={npc:def.name,log:[]};
   const npcName=String(def.name||'Local resident');
-  const playerLabel=playerName().toUpperCase();
-  const prev=chat.log.slice(-3).map(m=>'<div class="b '+(m.me?'me':'npc old')+'"><small class="speaker-tag">'+(m.me?playerLabel:npcName.toUpperCase())+'</small>'+m.html+'</div>').join('');
-  const pl=plain(html);
-  chat.log.push({html:pl.slice(0,80)+(pl.length>80?'\u2026':'')});
-  const wrapped=(btns||[]).map(b=>({t:personalize(tr(b.t)),g:b.g,m:b.m,f:()=>{ chat.log.push({me:1,html:personalize(tr(b.t))}); b.f(); }}));
-  openSheet(whoOf(def)+'<div class="chat">'+prev+'<div class="b npc dots"><i></i><i></i><i></i></div><div class="b npc new"><small class="speaker-tag">'+npcName.toUpperCase()+'</small>'+html+'</div></div>',wrapped,Math.min(1100,320+pl.length*4),true);
+  const role=String(def.role||'KITCITY RESIDENT');
+  const wrapped=(btns||[]).map(b=>({t:personalize(tr(b.t)),g:b.g,m:b.m,f:b.f}));
+  const card='<div class="chronicle-talk-head"><span class="chronicle-talk-avatar" style="--npc-accent:'+escapeStoryHtml(def.color||BRAND)+'">'+escapeStoryHtml(npcName.slice(0,1).toUpperCase())+'</span><div class="chronicle-talk-identity"><small>IN THE MOMENT · '+escapeStoryHtml(G&&G.m?CITIES[G.m.city]?.name||G.m.state||'KITCITY':'KITCITY')+'</small><h3>'+escapeStoryHtml(npcName)+'</h3><span>'+escapeStoryHtml(role)+'</span></div><span class="chronicle-talk-mark">T3K</span></div><div class="chronicle-talk-body"><small class="chronicle-talk-speaker">'+escapeStoryHtml(npcName.toUpperCase())+'</small><div class="chronicle-talk-line">'+html+'</div></div>';
+  openSheet(card,wrapped,0,true);
+  sheetEl.classList.add('chronicle-dialogue-card');
 }
 function badgeSVG(n,on,size){
   const num=Number(n),idx=Number.isFinite(num)&&num>0?Math.floor(num)-1:Math.abs(String(n).split('').reduce((a,c)=>a+c.charCodeAt(0),0))%12;
@@ -2250,14 +2260,23 @@ m30:{q:'What best proves you are ready to enter KitCity?',o:['Use what you learn
 m31:{q:'What is the central idea behind the T3Kit trail?',o:['A connected ecosystem helps people learn, build, participate, earn and contribute','One token solves every problem','Only traders belong in Web3'],a:0,w:'The clues point to a connected ecosystem: different people, products and opportunities working together.'}
 };
 function escapeStoryHtml(value){return String(value==null?'':value).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-function chronicleNpcLine(m,name){
+function chronicleNpcLine(m,name,index=0){
   const found=(m.dialogue||[]).find(d=>String(d.speaker||'').toLowerCase()===String(name||'').toLowerCase());
-  return found&&found.text?found.text:(name+' has a part to play in this chapter. Follow the evidence and ask questions before deciding.');
+  if(found&&found.text) return found.text;
+  const objectives=m.objectives||[];
+  const objective=objectives[Math.min(index,Math.max(0,objectives.length-1))];
+  const subject=objective&&objective.label?objective.label.replace(/[.!?]+$/,''):'this problem';
+  const title=m.title||'this situation';
+  if(index%2===0) return 'I keep hearing people talk about '+title+', but talk is cheap. Start with '+subject.toLowerCase()+' and see what the evidence actually tells us.';
+  return 'That is why I want you to look closely at '+subject.toLowerCase()+'. If the facts do not support the story, we change our mind — simple.';
 }
 function chronicleNpcStep(m,name,index){
   const npc=STORY_NPCS[name];
   const step={kind:'character',characterIndex:index,label:'Talk to '+name,spot:index===0?'a':index===1?'story':['b','c','d','e','f','g','h'][index%7],npc};
-  step.run=function(){talk(npc,'<p>'+escapeStoryHtml(chronicleNpcLine(m,name))+'</p><p>'+escapeStoryHtml(m.narrativePurpose)+'</p>',[{t:'Keep the clue. What next?',f:()=>{G.evidence['met_'+name]=true;finishStep();}}]);};
+  step.run=function(){
+    const line=chronicleNpcLine(m,name,index);
+    talk(npc,'<p>'+escapeStoryHtml(line)+'</p>',[{t:'Got it. What should I check?',f:()=>{G.evidence['met_'+name]=true;finishStep();}}]);
+  };
   return step;
 }
 const CHRONICLE_ACTIVITY_RULES=[
@@ -2545,7 +2564,7 @@ function bannerSprite(text,sub){
  const t=new THREE.CanvasTexture(c);t.needsUpdate=true;const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:t,transparent:true,depthTest:true}));sp.scale.set(12,3,1);return sp;
 }
 function loadStep(){
-  clearGroup(missionGroup); colliders.length=cityCols; smoke=[]; ents=[]; goal=null;
+  clearGroup(missionGroup); storyNPCActors.length=0; colliders.length=cityCols; smoke=[]; ents=[]; goal=null;
   const m=G.m,st=m.steps[G.i];
   if(st.kind==='character'&&G.i<m.characterStepCount&&(m.id==='m01'||m.npcs.length===2)){
     let target=null;
@@ -3189,6 +3208,27 @@ function crosserStep(w,dt){
   if(d<=st){ p.x=to.x; p.z=to.z; w.fwd=!w.fwd; w.state='rest'; w.timer=rand(2,6); return; }
   p.x+=dx/d*st; p.z+=dz/d*st; g.rotation.y=Math.atan2(dx,dz); w.ph+=dt*w.sp*2.4; if(w.near) animatePerson(g,w.ph,1,0);
 }
+function updateStoryNPCActors(dt,time){
+  for(const actor of storyNPCActors){
+    if(!actor||!actor.parent) continue;
+    const u=actor.userData||{},phase=(u.storyPhase||0)+time*.72;
+    const ax=u.storyAnchorX==null?actor.position.x:u.storyAnchorX;
+    const az=u.storyAnchorZ==null?actor.position.z:u.storyAnchorZ;
+    actor.position.x=ax+Math.sin(phase)*.22;
+    actor.position.z=az+Math.sin(phase*.63+(u.storyPhase||0))*.16;
+    const close=G&&Math.hypot(player.position.x-actor.position.x,player.position.z-actor.position.z)<9;
+    if(close){
+      actor.rotation.y=Math.atan2(player.position.x-actor.position.x,player.position.z-actor.position.z);
+      animatePerson(actor,time*1.35+(u.storyPhase||0),.12,.012);
+      const gestureCycle=(time+(u.storyGestureAt||0))%6.5;
+      if(gestureCycle<1.15) gesture(actor,time+(u.storyPhase||0),.45);
+      if(u.head) u.head.rotation.y=Math.sin(time*1.1+(u.storyPhase||0))*.1;
+    }else{
+      actor.rotation.y+=Math.sin(time*.45+(u.storyPhase||0))*dt*.12;
+      animatePerson(actor,time*.8+(u.storyPhase||0),.055,0);
+    }
+  }
+}
 function updateWalkers(dt,time){
   const pp=player.position,play=S.phase==='play',rx=play?pp.x:25,rz=play?pp.z:-55;
   for(const w of walkers){
@@ -3273,7 +3313,9 @@ function update(dt,time){
     }
   }
   nearEnt=null; let best=1e9;
+  updateStoryNPCActors(dt,time);
   for(const e of ents){
+    if(e.object){e.x=e.object.position.x;e.z=e.object.position.z;}
     if(e.hidden||!e.active()) continue;
     const d=Math.hypot(player.position.x-e.x,player.position.z-e.z);
     if(d<e.r&&d<best){ best=d; nearEnt=e; }
