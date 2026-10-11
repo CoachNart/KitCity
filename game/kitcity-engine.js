@@ -2072,7 +2072,7 @@ function placeNPC(def,spot){
     p.position.set(p.userData.storyAnchorX,.05,p.userData.storyAnchorZ);
     p.rotation.y=Math.atan2(spot.x-p.position.x,spot.z-p.position.z);
     missionGroup.add(p);
-    const sp=label(tr(def.sign||def.name),def.signBg,def.signFg); sp.position.set(p.position.x,6,p.position.z); missionGroup.add(sp);
+    const sp=label(tr(def.sign||def.name),def.signBg,def.signFg); sp.position.set(p.position.x,6,p.position.z); p.userData.storyNameLabel=sp; missionGroup.add(sp);
     colliders.push({x0:p.position.x-1,x1:p.position.x+1,z0:p.position.z-1,z1:p.position.z+1});
     storyNPCActors.push(p);
     return {x:p.position.x,z:p.position.z,r:6.5,object:p};
@@ -3216,6 +3216,7 @@ function updateStoryNPCActors(dt,time){
     const az=u.storyAnchorZ==null?actor.position.z:u.storyAnchorZ;
     actor.position.x=ax+Math.sin(phase)*.22;
     actor.position.z=az+Math.sin(phase*.63+(u.storyPhase||0))*.16;
+    if(u.storyNameLabel) u.storyNameLabel.position.set(actor.position.x,6,actor.position.z);
     const close=G&&Math.hypot(player.position.x-actor.position.x,player.position.z-actor.position.z)<9;
     if(close){
       actor.rotation.y=Math.atan2(player.position.x-actor.position.x,player.position.z-actor.position.z);
