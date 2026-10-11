@@ -2317,42 +2317,42 @@ function chronicleNpcLine(m,name,index=0){
   return 'I checked '+subject+', but something still feels off. Let us compare what we know and work it out together.';
 }
 const STORY_BRIDGES={
-  m02:'The payment went to the wrong address, and the shop wants to understand how records and online platforms work. A cyan mark on an old noticeboard points to Joe_Sef and Larai.',
-  m03:'The internet-history exhibit raised questions about control and ownership. At a wallet demo, a stranger now offers to double your test tokens if you reveal your recovery phrase.',
-  m04:'The wallet scam has been stopped, but a new question remains: two records describe one transfer differently. Goodness wants you to trace the evidence.',
-  m05:'The transaction trail brings you to a product team whose app keeps failing. Everyone has a theory, but nobody has watched real users try it.',
-  m06:'The app team found the problem by testing the user journey. Now a fictional smart contract has a bug, and the launch deadline is closing in.',
-  m07:'The contract launch is delayed until the fix is reviewed. Nearby, a swap has returned less than the displayed quote, and the pool data may explain why.',
-  m08:'The swap numbers make sense now. At a nearby exchange, withdrawals are paused and rumours are spreading faster than verified information.',
-  m09:'The exchange team has separated confirmed facts from rumours. A spot trader has taken a loss and must decide whether to review the plan or chase it.',
-  m10:'The spot-trade review exposed the danger of abandoning a plan after a loss. Toza has opened a leveraged position, and the margin is shrinking.',
-  m11:'The trading room has learned to define risk. Next, a project with thousands of followers needs help turning attention into meaningful participation.',
-  m12:'The community has found where newcomers drop off. Now someone is impersonating a moderator, and the team must protect members without spreading panic.',
-  m13:'The impersonation attempt is contained. A community event is meant to rebuild trust, but the scheduled host has cancelled at the last minute.',
-  m14:'The live session gave people useful answers. Now a product team needs help explaining what it does without hiding behind jargon or unsupported promises.',
-  m15:'The product message is clearer, and a contact has asked what you can contribute professionally. Your profile needs evidence, not a long list of claims.',
-  m16:'The portfolio earned a reply. A small opportunity is available, but the role, brief and terms need to be checked before you accept.',
-  m17:'The first task points to a startup with too many features and no clear user problem. The team needs a simpler journey, not another brainstorm.',
-  m18:'The product team has identified its main friction. Now the growth team wants a costly campaign without proof that it will reach the right people.',
-  m19:'A small growth experiment has produced useful evidence and attracted an investor. The offer looks promising, but the conditions matter as much as the amount.',
-  m20:'The funding discussion surfaced a tokenized property in a pitch deck. The token exists in the mock-up, but the ownership and redemption claims are unproven.',
-  m21:'The asset team has listed the evidence it still needs. Meanwhile, an AI report confidently makes a claim that does not match the source data.',
-  m22:'The AI report has been corrected against the source. Its next lead crosses another blockchain, where network and bridge details need careful checking.',
-  m23:'The cross-network test exposed extra dependencies. Now a DAO must decide how to spend its treasury and explain the consequences to its members.',
-  m24:'The DAO has voted, but the work is not ready to ship. Joe and Mike have reproduced a serious vulnerability in the release candidate.',
-  m25:'The vulnerability is being fixed and retested. A creator now asks what a digital collectible buyer actually owns—and what the licence does not grant.',
-  m26:'The creator terms are clearer. An old repository contains another piece of the archive, but its contributors have stopped collaborating.',
-  m27:'The repository history gives the player another source to compare. Joe_Sef and Larai want the clues assembled into a timeline that preserves uncertainty.',
-  m28:'The archive is reconstructed, and the route points toward KitCity. Before the final gate, the player must combine people, skills and a safe prototype.',
-  m29:'The player has reached KitCity. Softstorm and White Coach welcome them, but Craftore wants to see curiosity, judgement and practical contribution—not a familiar logo.',
-  m30:'The gate is open. Craftore now offers a practical assessment based on the path the player chooses; the result must be supported by the player’s own work.',
-  m31:'The practical assessment is complete. The mentors gather to connect the clues from Lagos onward and ask what the player wants to build next.'
+  m02:'That wrong-address payment raised a bigger question. Who controls the records we rely on every day, and how can we check them ourselves?',
+  m03:'This guy says he can double your test tokens, but first he wants your recovery phrase. Sounds generous, abi? Something is off.',
+  m04:'I have two records for one transfer, and they do not agree. Help me trace what actually happened before we blame anyone.',
+  m05:'Our app keeps failing and everyone has a theory. Can you watch a few people use it before the team adds yet another feature?',
+  m06:'The app finally works, but this contract still has a bug. Launch is tomorrow, and people are acting like the deadline can fix the code.',
+  m07:'That swap returned less than the quote. Before we blame the market, help me check liquidity, fees and price impact.',
+  m08:'Withdrawals are paused and the group chat is on fire. Help me separate what we know from the rumours before people panic.',
+  m09:'I took a loss this morning. Everybody is telling me to win it back right now. Please help me review the plan before I do something foolish.',
+  m10:'I thought leverage would make this position worth the risk. Now my margin is shrinking fast. Tell me what I might be missing.',
+  m11:'We have thousands of followers, but nobody is showing up to do the work. Help us turn this crowd into a community people can rely on.',
+  m12:'Someone is pretending to be support and asking members for recovery phrases. We need to stop the scam without spreading it everywhere.',
+  m13:'Our host just cancelled, and people are already joining the live session. Help me keep it useful without pretending we planned this.',
+  m14:'This announcement sounds impressive, but nobody can tell what the product does. Help me explain it plainly without promising what we cannot prove.',
+  m15:'A recruiter asked what you have actually done. A polished bio will not answer that. Let us build a portfolio that shows your work.',
+  m16:'This opportunity looks good, but they want an upfront fee before sharing the brief. Help me check the terms before anybody pays.',
+  m17:'We keep adding features and still do not know why users leave. Help us find the real problem before we build another thing.',
+  m18:'The campaign budget is ready, but nobody has defined success. Let us design a small experiment we can measure before spending it all.',
+  m19:'The investor is waving a big number around. Before anyone signs, I want us to read the terms, milestones and risks properly.',
+  m20:'This pitch deck says the property is fully backed by tokens. I want proof of ownership and redemption rights before I believe it.',
+  m21:'This AI report sounds confident, but one claim does not match the source. Help me trace where the answer went wrong.',
+  m22:'We need to move a test asset to another network. One wrong network or bridge assumption can cost us the transfer. Let us check every detail.',
+  m23:'The DAO has a vote coming up, and half the room only read the headline. Help us understand who benefits and what the proposal costs.',
+  m24:'We found a serious bug in the release candidate. The team wants to hide it until after launch. I need your help documenting it properly.',
+  m25:'This seller says the token gives the buyer ownership of the artwork and commercial rights. The licence does not say that. Let us check what is really included.',
+  m26:'I found a repository with useful work, but the contributors have stopped trusting each other. Let us see how to contribute without making things worse.',
+  m27:'We have clues from different places, but some details conflict. Help me build a timeline without forcing every clue to fit one theory.',
+  m28:'The clues point to KitCity, but different tools and teams are involved. Let us figure out how their parts fit together.',
+  m29:'You made it to KitCity. We do not need you to repeat definitions. Craftore wants to see how you think when a real problem lands.',
+  m30:'You are through the gate, but this final test is not a quiz. Show me how you use evidence, ask for help and build something safely.',
+  m31:'You have travelled a long way. The mentors want to hear what you learned and what kind of work you want to take on next.'
 };
 function chronicleNpcStep(m,name,index){
   const npc=STORY_NPCS[name];
   const step={kind:'character',characterIndex:index,label:'Talk to '+name,spot:index===0?'a':index===1?'story':['b','c','d','e','f','g','h'][index%7],npc};
   step.run=function(){
-    const line=chronicleNpcLine(m,name,index);
+    const line=index===0?(STORY_BRIDGES[m.id]||chronicleNpcLine(m,name,index)):chronicleNpcLine(m,name,index);
     const opener=index===0?'Okay, tell me what is going on.':'I have spoken to the other person. What should I understand before I make a call?';
     const response=index===0?'Good. Stay with me and we will check the facts one step at a time.':'You are asking the right questions. Let us work through the evidence instead of guessing.';
     const html='<p><b>'+escapeStoryHtml(name.toUpperCase())+':</b> '+escapeStoryHtml(line)+'</p><p><b>YOU:</b> '+escapeStoryHtml(opener)+'</p><p><b>'+escapeStoryHtml(name.toUpperCase())+':</b> '+escapeStoryHtml(response)+'</p>';
