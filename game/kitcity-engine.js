@@ -2081,7 +2081,7 @@ function toast(msg,opts){
   },duration);
 }
 function openSheet(html,btns,typingMs,preserveIdentity){
-  html=tx(preserveIdentity?html:personalize(html)); S.modal=true; joy.reset(); btns=btns||[]; cbs=btns.map(b=>b.f);
+  html=tx(neutralizeGenderedPronouns(preserveIdentity?html:personalize(html))); S.modal=true; joy.reset(); btns=btns||[]; cbs=btns.map(b=>b.f);
   const row=btns.length?'<div class="row">'+btns.map((b,i)=>'<button class="btn'+(b.g?' ghost':'')+(b.m?' mono':'')+'" data-i="'+i+'" type="button">'+tr(b.t)+'</button>').join('')+'</div>':'';
   const tok=++sheetTok;
   sheetEl.innerHTML=html+row; sheetEl.scrollTop=0;
