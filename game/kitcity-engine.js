@@ -2658,10 +2658,24 @@ function startMission(id,restart){
     const restored=(!restart&&savedStory)||null;
     G={m,i:Math.max(0,Math.min(restored&&Number.isInteger(restored.step)?restored.step:0,m.steps.length-1)),correct:restored&&restored.correct||0,wrong:restored&&restored.wrong||0,lives:3,used:{},evidence:Object.assign({},restored&&restored.evidence||{}),words:null,addr:null,slip:null,nameAliases:buildMissionNameAliases(m)};
     $('#hub').classList.add('hidden'); $('#hub').setAttribute('aria-hidden','true'); $('#title').classList.add('hidden'); $('#hud').classList.remove('hidden');
-    S.phase='play'; closeSheet(); Snd.setMode('play'); lastLoc=''; resetPlayer(); loadStep();
+    S.phase='play'; closeSheet(); Snd.setMode('play'); lastLoc=''; resetPlayer();
     $('#loading').classList.add('hidden');
     updateHUD();
-    toast('Look around. Walk up to someone and press Talk when you are ready.',{duration:3600});
+    if(m.id==='m01'&&!P.chroniclesPrologueSeen){
+      missionGroup.visible=false;
+      storyCastGroup.visible=true;
+      storyDirector.playOpening(()=>{
+        storyCastGroup.visible=false;
+        missionGroup.visible=true;
+        P.chroniclesPrologueSeen=true;
+        save();
+        loadStep();
+        toast('Your turn. Walk up to someone and press Talk when you are ready.',{duration:3600});
+      });
+    }else{
+      loadStep();
+      toast('Look around. Walk up to someone and press Talk when you are ready.',{duration:3600});
+    }
   },60);
 }
 function finishStep(){
