@@ -2323,6 +2323,30 @@ function runPracticeTask(o){
   const esc=v=>String(v==null?'':v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
   const panel=(tag,art,caption)=>'<div style="border:3px solid #20232a;border-radius:12px;overflow:hidden;margin:0 0 10px;background:#fff7d6;color:#20232a;box-shadow:4px 4px 0 #20232a"><div style="padding:5px 10px;background:#20232a;color:#ffe27a;font-weight:900;letter-spacing:1.2px;font-size:10px">KITCITY COMICS · '+esc(tag)+'</div><div style="padding:10px 12px;background:radial-gradient(circle at 85% 15%,#fff 0 8%,transparent 9%),linear-gradient(135deg,#ffe8a3,#ffcf83);font-size:28px;line-height:1.1">'+art+'</div><div style="padding:8px 12px 10px;font-weight:800;font-size:14px;line-height:1.35">'+esc(caption)+'</div></div>';
   const scene=panel(o.panelTag||'THE SCENE',o.art||'💬',o.intro||'');
+  if(Array.isArray(o.sceneDialogue)&&o.sceneDialogue.length){
+    const panels=Array.isArray(o.scenePanels)&&o.scenePanels.length?o.scenePanels:[];
+    const sceneCast=Array.isArray(o.sceneCast)?o.sceneCast:[];
+    const castByName=new Map(sceneCast.map(n=>[String(n.name||'').toLowerCase(),n]));
+    const playerActor={name:playerName(),role:'The player',color:'#E4572E',look:LK.guy,sign:'YOU'};
+    const renderPanel=(p)=>panel(p&&p[0]||'THE SCENE',p&&p[1]||'💬',p&&p[2]||o.intro||'');
+    const playLine=(lineIndex)=>{
+      if(lineIndex>=o.sceneDialogue.length){
+        const nextPanel=Number(o.sceneIndex||0)+1;
+        if(nextPanel<panels.length){finishStep();return;}
+        if(typeof o.afterScene==='function'){o.afterScene();return;}
+        finishStep();return;
+      }
+      const line=o.sceneDialogue[lineIndex];
+      const speaker=String(line.speaker||'').trim();
+      const actor=speaker.toUpperCase()==='PLAYER'?playerActor:(castByName.get(speaker.toLowerCase())||sceneCast.find(n=>String(n.name||'').toLowerCase()===speaker.toLowerCase())||o.npc);
+      const lineHtml='<div style="padding:12px 13px;background:#fff7d6;color:#20232a;border:3px solid #20232a;border-radius:14px;box-shadow:4px 4px 0 #20232a;font-size:16px;line-height:1.5;font-weight:750"><div style="font-size:10px;letter-spacing:1.5px;font-weight:950;color:#8b4b14;margin-bottom:5px">SCRIPT · '+(lineIndex+1)+' / '+o.sceneDialogue.length+'</div>'+esc(line.text||'')+'</div>';
+      const last=lineIndex===o.sceneDialogue.length-1;
+      const label=last?(Number(o.sceneIndex||0)<panels.length-1?'Next scene':'Continue'):'Next line';
+      talk(actor,renderPanel(panels[Number(o.sceneIndex||0)])+lineHtml,[{t:label,f:()=>playLine(lineIndex+1)}]);
+    };
+    talk(o.npc,renderPanel(panels[Number(o.sceneIndex||0)])+'<p style="font-weight:800">The scene is playing in script order. Every character listed for this scene is present; each line appears under its actual speaker.</p>',[{t:'Play scene',f:()=>playLine(0)}]);
+    return;
+  }
   const showResult=()=>{
     Snd.sfx('good');
     const hook=o.storyHook?'<p style="margin-top:8px;font-weight:800;color:#8b4b14">'+esc(o.storyHook)+'</p>':'';
@@ -2537,22 +2561,30 @@ const list=specs.map((s,i)=>{
  let steps;
  if(s.story){
   const story=s.story;
-  const characterAt=idx=>story.characters[idx%Math.max(1,story.characters.length)]||"KitCity neighbour";
-  const npcFor=name=>mkSign(name,"Chronicles character","#2D6FB3",looks[Math.max(0,T3KIT_CHRONICLES.characterOrder.indexOf(name))%looks.length],story.state);
-  const playerLine=story.dialogue.find(d=>d.speaker==="PLAYER"&&typeof d.text==="string")?.text||"Let's take a closer look.";
+  const npcFor=name=>mkSign(name,"Chronicles character","#2D6FB3",looks[Math.max(0,T3KIT_CHRONICLES.characterOrder.findIndex(n=>n.toLowerCase()===String(name).toLowerCase()))%looks.length],story.state);
   const panels=story.panels||[];
-  steps=panels.map((p,pi)=>taskStep({
-   label:pi===0?story.title+" · Opening":story.title+" · Panel "+(pi+1),
-   spot:pi===0?"a":pi===1?"c":"d",
-   npc:npcFor(characterAt(Math.min(pi,story.characters.length-1))),
-   intro:p[2]||story.purpose,
-   practice:true,
-   panelTag:p[0]||("PANEL "+String(pi+1).padStart(2,"0")),
-   art:p[1]||"💬",
-   button:pi===0?playerLine:"Continue the story",
-   playerReply:playerLine,
-   conversationOnly:true
-  }));
+  const dialogue=Array.isArray(story.dialogue)?story.dialogue:[];
+  const castNames=[...new Set([...(story.characters||[]),...dialogue.filter(d=>d.speaker&&d.speaker.toUpperCase()!=="PLAYER").map(d=>d.speaker)])];
+  const sceneCast=castNames.map(npcFor);
+  const dialoguePerPanel=Math.max(1,Math.ceil(dialogue.length/Math.max(1,panels.length)));
+  steps=panels.map((p,pi)=>{
+   const start=pi*dialoguePerPanel;
+   const lines=dialogue.slice(start,start+dialoguePerPanel);
+   return taskStep({
+    label:story.title+" · Scene "+(pi+1),
+    spot:pi===0?"a":pi===1?"c":pi===2?"d":"e",
+    npc:sceneCast[0]||npcFor("KitCity neighbour"),
+    intro:p[2]||story.purpose,
+    practice:true,
+    panelTag:p[0]||("PANEL "+String(pi+1).padStart(2,"0")),
+    art:p[1]||"💬",
+    scenePanels:panels,
+    sceneIndex:pi,
+    sceneDialogue:lines,
+    sceneCast,
+    scriptOffset:start
+   });
+  });
   const lead=story.characters[story.characters.length-1]||story.characters[0]||"Your neighbour";
   const objective=story.objectives[0]?.text||"Help with the problem";
   if(story.id==="tc-29"){
@@ -2765,7 +2797,16 @@ function bannerSprite(text,sub){
 function loadStep(){
   clearGroup(missionGroup); colliders.length=cityCols; smoke=[]; ents=[]; goal=null;
   const m=G.m,st=m.steps[G.i];
-  const e=placeNPC(st.npc,SPOTS[st.spot]); e.talk=()=>st.run(); e.active=()=>true; ents.push(e); goal=e;
+  const anchor=SPOTS[st.spot];
+  const e=placeNPC(st.npc,anchor); e.talk=()=>st.run(); e.active=()=>true; ents.push(e); goal=e;
+  if(Array.isArray(st.sceneCast)){
+    st.sceneCast.forEach((actor,index)=>{
+      if(!actor||String(actor.name||'').toLowerCase()===String(st.npc&&st.npc.name||'').toLowerCase()) return;
+      const angle=(index+1)*Math.PI*2/Math.max(2,st.sceneCast.length);
+      const radius=6.5;
+      placeNPC(actor,{x:anchor.x+Math.cos(angle)*radius,z:anchor.z+Math.sin(angle)*radius,f:Math.cos(angle)>=0?1:-1});
+    });
+  }
   for(const ex of (m.extras||[])){
     if(G.used[ex.id]) continue;
     const e2=placeNPC(ex.npc,ex.spot); e2.ex=ex; e2.talk=()=>ex.run(e2); e2.active=()=>!G.used[ex.id]; ents.push(e2);
