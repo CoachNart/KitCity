@@ -1,8 +1,8 @@
 /**
  * Canonical narrative registry for KitCity: The T3Kit Chronicles.
- * Story content lives here; the engine should consume stable IDs, never infer
- * progression from display names. This registry is narrative data, not a claim
- * that all 31 missions or all 36 state environments are already playable.
+ * The runtime consumes stable mission IDs, character order and objective data.
+ * All 31 story missions are wired to the game loop; the 36-state route is a
+ * coverage plan, and not every state yet has its own dedicated mission or world.
  */
 export const CHARACTER_ORDER = [
   "Softstorm",
