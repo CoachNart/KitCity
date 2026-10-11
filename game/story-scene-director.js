@@ -1,6 +1,7 @@
 const SPEAKER_LABELS = {
   Softstorm: 'SOFTSTORM',
-  IamAbdul: 'THE ONE WHO HEARD IT FIRST',
+  IamAbdul: 'IAMABDUL',
+  PLAYER: 'YOU',
 };
 
 const OPENING_PANELS = [
@@ -53,7 +54,7 @@ export function createStorySceneDirector({ camera, player, getCharacter, animate
     overlay.innerHTML = `
       <div class="comic-scene-top"><span class="comic-brand">KITCITY <i>·</i> THE T3KIT CHRONICLES</span><button type="button" class="comic-skip">SKIP SCENE ↗</button></div>
       <div class="comic-scene-frame">
-        <div class="comic-frame-stamp">ISSUE 001</div>
+        <div class="comic-frame-stamp">CHAPTER 01 · LAGOS</div>
         <div class="comic-card-symbol" aria-hidden="true"><span> T3 </span><b>KIT</b></div>
         <div class="comic-caption"><small class="comic-kicker"></small><p class="comic-caption-text"></p></div>
       </div>
