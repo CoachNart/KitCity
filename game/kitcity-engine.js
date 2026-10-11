@@ -2230,10 +2230,25 @@ CITIES.kitcity={...CITIES.lagos,name:'KitCity',tag:'The final city · T3Kit Hub'
 const STORY_CITY_BY_STATE={'Lagos':'lagos','Oyo':'ibadan','Osun':'osun','Ekiti':'adoekiti','Delta':'asaba','Anambra':'anambra','Enugu':'enugu','Plateau':'jos','Kano':'kano','Edo':'benin','Cross River':'calabar','Bauchi':'bauchi','Abia':'abia','Niger':'minna','Kogi':'kogi','KitCity':'kitcity'};
 const STORY_COLORS=['#0897A8','#2D6FB3','#C7457E','#0B7A43','#6a3fb5','#E4572E','#7a4a2e','#1f4f82'];
 const STORY_LOOKS=[LK.mama,LK.suya,LK.guy,LK.trader,LK.clerk,LK.elder,LK.man,LK.woman];
+const STORY_ROLES={
+  Softstorm:'Neighbour · community builder',IamAbdul:'Neighbour · curious builder',
+  Joe_Sef:'Community guide',Larai:'Workshop host',Unique:'Wallet mentor', 'Smrt huntr':'Security researcher',
+  Goodness:'Transaction analyst',Semi:'Ledger researcher',Blockqueen:'Product designer',Christol:'Application developer',
+  Laloba:'Smart-contract auditor',BigSam:'Engineering lead',LunaX:'Liquidity analyst',OxNight:'Market trader',
+  Moon:'Exchange analyst','The Cryptonian':'Exchange operations', 'Joseph Nnadi':'Spot trader','The Don':'Trading mentor',
+  Praise:'Risk analyst',Toza:'Derivatives trader',Craftore:'KitCity gatekeeper',Kodavic:'Community organiser',
+  Cybersage:'Community security lead',Reina:'Community coordinator',Cclya:'Server administrator',Leemah:'Event host',
+  Kenny:'Public speaker',Kore:'Storyteller',Veedima:'Talent connector','Web3_Esta':'Career mentor',Love:'Portfolio reviewer',
+  'J.Jonathan':'Hiring lead',Essa:'Opportunity scout','White Coach':'Product mentor',Abdul:'Product designer',
+  David:'Growth lead',Kanyin:'Growth analyst',Mcbond:'Investor','Alpha.RWA':'Investment analyst',
+  BigWealth:'Asset issuer',Blessing:'AI engineer',Odion:'Quality analyst',Princess:'Interoperability engineer',
+  Racheal:'Protocol developer',Seun:'Governance delegate',Dorcas:'Independent auditor',Joe:'Audit investigator',
+  Mike:'Smart-contract reviewer',Gbemi:'Digital creator',FemiY:'Creator-economy builder'
+};
 const STORY_NPCS=Object.create(null);
 CHARACTER_ORDER.forEach((name,index)=>{
   const color=STORY_COLORS[index%STORY_COLORS.length];
-  const npc=NPC(name,index<2?'Neighbour':'Local resident',color,STORY_LOOKS[index%STORY_LOOKS.length],null,name);
+  const npc=NPC(name,STORY_ROLES[name]||'Local resident',color,STORY_LOOKS[index%STORY_LOOKS.length],null,name);
   npc.name=name;npc.originalName=name;npc.signBg=color;npc.signFg='#ffffff';STORY_NPCS[name]=npc;
 });
 const CHRONICLE_CHALLENGES={
