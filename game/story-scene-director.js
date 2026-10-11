@@ -247,6 +247,16 @@ export function createStorySceneDirector({ camera, player, getCharacter, animate
     const lead = speaker === 'Softstorm' ? cast.softstorm : speaker === 'IamAbdul' ? cast.abdul : null;
     const other = lead === cast.softstorm ? cast.abdul : cast.softstorm;
     if (lead && other) {
+      // Give both actors a little lived-in movement while keeping their blocking readable.
+      // The speaker leans and gestures; the listener shifts weight and reacts instead of freezing.
+      [lead, other].forEach((actor, actorIndex) => {
+        const u = actor.userData || {};
+        if (u.cinematicBaseX == null) u.cinematicBaseX = actor.position.x;
+        if (u.cinematicBaseZ == null) u.cinematicBaseZ = actor.position.z;
+        const phase = time * (actorIndex === 0 ? 0.72 : 0.53) + actorIndex * 1.7;
+        actor.position.x = u.cinematicBaseX + Math.sin(phase) * (actorIndex === 0 ? 0.13 : 0.18);
+        actor.position.z = u.cinematicBaseZ + Math.sin(phase * 0.7) * 0.1;
+      });
       const a = worldPosition(lead), b = worldPosition(other);
       // Keep the pair facing each other and frame both, rather than cutting to an isolated NPC.
       if (a && b) {
