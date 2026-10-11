@@ -2,6 +2,7 @@ import fs from "node:fs";
 import assert from "node:assert/strict";
 
 const source = fs.readFileSync(new URL("../game/kitcity-story.js", import.meta.url), "utf8");
+const engine = fs.readFileSync(new URL("../game/kitcity-engine.js", import.meta.url), "utf8");
 const section = (start, end) => {
   const a = source.indexOf(start);
   const b = source.indexOf(end, a + start.length);
@@ -61,4 +62,18 @@ assert.ok(source.includes('revealMissionId: "tc-31"'), "The T3Kit mystery must r
 assert.ok(source.includes("realFundsRequired:false"), "The story must not require real funds");
 assert.ok(source.includes("realBlockchainTransactionsRequired:false"), "The story must not require real transactions");
 
-console.log("T3Kit Chronicles validation passed: 31 missions, 36 states, 50 characters, ordered progression, and sandbox-only finance.");
+/* A story script is a playable sequence, not a paragraph attached to one NPC. */
+assert.ok(engine.includes("if(Array.isArray(o.sceneDialogue)&&o.sceneDialogue.length)"), "Story dialogue must be played line by line");
+assert.ok(engine.includes("const sceneCast=Array.isArray(o.sceneCast)?o.sceneCast:[]"), "Scene dialogue must resolve its speaker cast");
+assert.ok(engine.includes("if(Array.isArray(st.sceneCast))"), "Every listed scene character must be placed in the 3D world");
+assert.ok(engine.includes("SCRIPT · '+scriptLine+' / '+scriptTotal"), "Each bubble must show its script speaker and position");
+const opening = missions[0];
+assert.ok(opening.includes('characters:["Softstorm","IamAbdul"]'), "Opening scene must cast both Softstorm and IamAbdul");
+assert.ok(opening.includes('speaker:"Softstorm"') && opening.includes('speaker:"IamAbdul"'), "Both opening characters must actually speak in dialogue bubbles");
+for (const line of missions) {
+  const id = line.match(/\\{id:"(tc-\\d+)"\\}/)[1];
+  assert.ok(line.includes("dialogue:[{speaker:"), `${id} must contain actual spoken dialogue`);
+  assert.ok(line.includes("panels:["), `${id} must contain comic scene panels`);
+}
+
+console.log("T3Kit Chronicles validation passed: 31 missions, 36 states, 50 characters, ordered progression, playable speaker-by-speaker scripts, and sandbox-only finance.");
