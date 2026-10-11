@@ -11,7 +11,7 @@ const requireText = (text, label) => {
 requireText("MISSIONS as CHRONICLE_MISSIONS, CHARACTER_ORDER", "canonical registry import");
 requireText("const MISSIONS=CHRONICLE_MISSIONS.map", "runtime mission adapter");
 requireText("toast('Look around. Walk up to someone and press Talk when you are ready.'", "player-led mission start");
-requireText("if(m.id==='m01'&&!P.chroniclesPrologueSeen)", "first-time opening cinematic gate");
+requireText("if(m.id==='m01'&&P.chroniclesPrologueVersion!==2)", "first-time opening cinematic gate");
 requireText("storyDirector.playOpening(()=>{", "intro cinematic completion callback");
 requireText("storyDirector.update(dt,time);", "speech bubbles update during free movement");
 if (!sceneDirector.includes("const OPENING_LINES = [")) errors.push("Automatic Lagos opening dialogue is missing");
@@ -25,7 +25,7 @@ requireText("P.storyProgress[G.m.id]", "per-mission progress save");
 requireText("const CHRONICLE_ACTIVITY_RULES=[", "objective activity bank");
 requireText("function applyChronicleActivityEffect", "safe simulated activity effects");
 requireText("P.storyFlags.future_direction=options[choice]", "player-owned ending choice");
-if (!engine.includes("if(m.id==='m01'&&!P.chroniclesPrologueSeen)")) errors.push("First-time intro cinematic gate is missing");
+if (!engine.includes("if(m.id==='m01'&&P.chroniclesPrologueVersion!==2)")) errors.push("First-time intro cinematic gate is missing");
 const lagosOpening = MISSIONS.find((mission) => mission.id === "m01");
 if (!lagosOpening || !/payment|transaction/i.test(lagosOpening.narrativePurpose)) errors.push("Lagos opening is not driven by a player-relevant payment dispute");
 if (lagosOpening && /T3Kit|t3kit/i.test(JSON.stringify(lagosOpening))) errors.push("Lagos opening still uses T3Kit as a plot device");
