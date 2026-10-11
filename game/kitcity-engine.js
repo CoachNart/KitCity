@@ -973,16 +973,16 @@ const LOOK={
 };
 /* KitCity is a fictional Web3 destination, not another regional street-grid city. */
 CITIES.kitcity={
- name:'KitCity',tag:'The Web3 World · Built by T3kit',lon:14.15,lat:13.05,seed:811,
+ name:'KitCity',tag:'The Web3 World',lon:14.15,lat:13.05,seed:811,
  sky:0x07182D,fog:[180,520],ground:'#07121F',slab:'#172B3D',dirt:'#07121F',
  leaf:'#10C8DC',paint:['#10263A','#17384B','#203D54','#0D2A3B'],h:[24,88],market:1,palm:0,tree:0,
  fleet:[],pal:{},localLanguage:'web3',
  barks:['Welcome to KitCity.','Build something that lasts.','Your next chapter starts here.'],
  barksEn:['Welcome to KitCity.','Build something that lasts.','Your next chapter starts here.'],
- hawk:['Learn it. Verify it. Build it.'],conductor:['T3Kit Hub ahead.'],
- nsRoads:['Genesis Boulevard','Validator Avenue','Builder Parkway','Open Protocol Road','T3Kit Way','Creator Avenue','Consensus Drive'],
+ hawk:['Learn it. Verify it. Build it.'],conductor:['KitCity Core ahead.'],
+ nsRoads:['Genesis Boulevard','Validator Avenue','Builder Parkway','Open Protocol Road','Open Web Road','Creator Avenue','Consensus Drive'],
  ewRoads:['Wallet Way','Onchain Boulevard','DAO Crescent','Smart Contract Street','Learning Loop','Public Goods Road','Mainnet Avenue'],
- districts:['Genesis Quarter','Builder District','Protocol Row','Creator Campus','DAO Commons','Learning Quarter','Validator Park','Open Finance District','T3Kit Hub']
+ districts:['Genesis Quarter','Builder District','Protocol Row','Creator Campus','DAO Commons','Learning Quarter','Validator Park','Open Finance District','KitCity Core']
 };
 Object.assign(LOOK,{
  kitcity:{h:'#07182D',z:'#123B63',sun:'#7CEBFF',sI:1.35,hS:'#C5E8F8',hG:'#07121F',hI:.9,off:[-42,74,36],exp:1.12,sat:1.16,con:1.12,fade:0,lift:[0,.01,.025],gain:[.94,1.04,1.12],vig:.16,grain:.012,bloom:.72,veil:['#0A2340',.025],cl:.22,cc:'#8CEBFF',fog:[150,500],dust:0,mil:0,rust:0,lat:0,dash:'#36E5F5',roof:'#17384B',ground:'#07121F',slab:'#172B3D',dirt:'#07121F',leaf:'#10C8DC',paint:['#10263A','#17384B','#203D54','#0D2A3B'],zinc:['#123047','#17384B','#0C2337']}
@@ -1856,7 +1856,7 @@ function buildKitCity(C){
       cyl(.55,.75,2.2,white,nx,1.7,nz,{emissive:glow,emissiveIntensity:.3});
     }
   }
-  // T3Kit Hub: a monumental, multi-tier glass-and-metal headquarters.
+  // KitCity Core: a monumental, multi-tier glass-and-metal headquarters.
   const hx=0,hz=-140;
   box(78,2,68,'#0D2438',hx,1.25,hz,{metalness:.8,roughness:.25});
   box(68,1,58,'#1A3D55',hx,2.8,hz,{metalness:.65,roughness:.2});
@@ -1872,7 +1872,7 @@ function buildKitCity(C){
   }
   cyl(1.7,2.4,30,white,hx,68,hz,{emissive:glow,emissiveIntensity:1.2,metalness:.3});
   add(new THREE.OctahedronGeometry(4,1),glow,hx,85,hz,{emissive:glow,emissiveIntensity:2,metalness:.7});
-  // Four monumental entrance pylons frame the T3Kit Hub gate.
+  // Four monumental entrance pylons frame the KitCity Core gate.
   for(const x of [-30,30]){
     for(const z of [-176,-169]){
       box(2.2,18,2.2,white,x,9,z,{emissive:glow,emissiveIntensity:1.3,metalness:.7});
@@ -1932,7 +1932,7 @@ function buildKitCity(C){
     p.position.set(x,.05,z); p.rotation.y=(i%2?Math.PI:0); trafficGroup.add(p);
   });
   // Landmark labels and a clear route into the Hub.
-  const hubTitle=label('T3KIT HUB',white,'#071827',2.1); hubTitle.position.set(0,58,-140); cityGroup.add(hubTitle);
+  const hubTitle=label('KITCITY CORE',white,'#071827',2.1); hubTitle.position.set(0,58,-140); cityGroup.add(hubTitle);
   const hubSub=label('THE WEB3 WORLD',gold,'#071827',1.25); hubSub.position.set(0,53,-140); cityGroup.add(hubSub);
   const gate=label('WELCOME TO KITCITY',white,'#062638',1.4); gate.position.set(0,23,-176); cityGroup.add(gate);
   const access=label('LEARN  •  BUILD  •  CONTRIBUTE',glow,'#071827',1.05); access.position.set(0,20,-180); cityGroup.add(access);
@@ -2226,7 +2226,7 @@ function updateHUD(){
    Wallet, trading and identity scenarios are practice simulations only.
 */
 const NPC=(name,role,color,look,stall,sign)=>({name,role,color,look,stall,sign});
-CITIES.kitcity={...CITIES.lagos,name:'KitCity',tag:'The final city · T3Kit Hub',lon:7.3,lat:6.1,seed:991,sky:0x142C3B,ground:'#18272E',slab:'#657985',paint:['#1B3440','#234653','#2D5360','#18313D','#37616A','#203B49'],h:[14,42],market:3,palm:.25};
+CITIES.kitcity={...CITIES.lagos,name:'KitCity',tag:'The final city · Web3 District',lon:7.3,lat:6.1,seed:991,sky:0x142C3B,ground:'#18272E',slab:'#657985',paint:['#1B3440','#234653','#2D5360','#18313D','#37616A','#203B49'],h:[14,42],market:3,palm:.25};
 const STORY_CITY_BY_STATE={'Lagos':'lagos','Oyo':'ibadan','Osun':'osun','Ekiti':'adoekiti','Delta':'asaba','Anambra':'anambra','Enugu':'enugu','Plateau':'jos','Kano':'kano','Edo':'benin','Cross River':'calabar','Bauchi':'bauchi','Abia':'abia','Niger':'minna','Kogi':'kogi','KitCity':'kitcity'};
 const STORY_COLORS=['#0897A8','#2D6FB3','#C7457E','#0B7A43','#6a3fb5','#E4572E','#7a4a2e','#1f4f82'];
 const STORY_LOOKS=[LK.mama,LK.suya,LK.guy,LK.trader,LK.clerk,LK.elder,LK.man,LK.woman];
@@ -2281,7 +2281,7 @@ m27:{q:'How should you respond to a claim that sounds too good to be true?',o:['
 m28:{q:'Why do separate tools in an ecosystem need to work together?',o:['Shared standards and clear hand-offs help people move between them','Each tool should hide its rules','Integration removes the need for security'],a:0,w:'Clear interfaces and standards let products work together, while each part still needs security and testing.'},
 m29:{q:'The gatekeeper offers access if you accept a claim without proof. What do you do?',o:['Ask for evidence and verify it before proceeding','Agree so you can enter faster','Share private credentials'],a:0,w:'The journey rewards judgement, not blind trust. Ask what the claim means and how it can be verified.'},
 m30:{q:'What best proves you are ready to enter KitCity?',o:['Use what you learned to solve a problem and explain your decisions','Repeat definitions without applying them','Claim you never make mistakes'],a:0,w:'Readiness means applying knowledge, checking evidence, explaining decisions and learning when something goes wrong.'},
-m31:{q:'What is the central idea behind the T3Kit trail?',o:['A connected ecosystem helps people learn, build, participate, earn and contribute','One token solves every problem','Only traders belong in Web3'],a:0,w:'The clues point to a connected ecosystem: different people, products and opportunities working together.'}
+m31:{q:'What is the central idea behind the Web3 journey?',o:['A connected ecosystem helps people learn, build, participate, earn and contribute','One token solves every problem','Only traders belong in Web3'],a:0,w:'The clues point to a connected ecosystem: different people, products and opportunities working together.'}
 };
 function escapeStoryHtml(value){return String(value==null?'':value).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function chronicleNpcLine(m,name,index=0){
@@ -2542,7 +2542,7 @@ const MISSIONS=CHRONICLE_MISSIONS.map((story,index)=>{
   const people=story.npcs.map((name,i)=>chronicleNpcStep(story,name,i));
   let steps;
   if(story.id==='m01'){
-    const buyerNpc=NPC('Buyer','CUSTOMER',EMBER,STORY_LOOKS[8],null,'BUYER');
+    const buyerNpc=NPC('Buyer','CUSTOMER',EMBER,STORY_LOOKS[4],null,'BUYER');
     steps=[
       {
         kind:'character',id:'m01-join-dispute',label:'Find out what happened',spot:'a',npc:STORY_NPCS.Softstorm,
@@ -2762,7 +2762,7 @@ function completeMission(){
   btns.push({t:'Back to hub',g:1,f:exitToHub});
   openSheet('<div class="who"><span class="av" style="background:'+INK+'">'+m.n+'</span><div><h3 style="margin:0">Mission '+m.n+' complete</h3><small>'+CITIES[m.city].name+' · '+personalize(m.title,null)+'</small></div></div>'+
     (first?'<div class="kv"><span>Mission reward</span><b>+'+missionReward.toFixed(2)+' USDC</b></div><p class="note">'+(wrong===0?'Clean run reward collected.':'Completed after '+wrong+' retry attempt'+(wrong===1?'':'s')+'. No practice funds were deducted for wrong answers.')+'</p>':'<p class="note">Replay complete. The first-clear reward has already been collected.</p>')+
-    (m.city==='kitcity'?'<p><b>Welcome to the T3Kit Hub. The journey through Nigeria was your preparation; KitCity is the destination.</b></p>':'')+
+    (m.city==='kitcity'?'<p><b>Welcome to KitCity. Your journey through Nigeria has brought you here to see how Web3 works in the real world.</b></p>':'')+
     (cityComplete?'<p><b>All missions in '+CITIES[m.city].name+' are complete. Your city badge is available.</b></p>':'')+
     '<div class="kv"><span>Practice balance</span><b>'+P.usdc.toFixed(2)+' USDC</b></div>',btns);
 }
@@ -2860,7 +2860,7 @@ function mapSVG(){
     pins+='<g data-a="city" data-v="'+k+'" role="button" aria-label="'+escMapText(c.name)+(open?'':' locked')+'" tabindex="0" class="map-city'+(sel?' selected':'')+'" style="cursor:'+(open?'pointer':'not-allowed')+'">'+
       (sel?'<circle cx="'+p.x.toFixed(1)+'" cy="'+p.y.toFixed(1)+'" r="8.2" class="map-selected-ring"/>':'')+
       '<circle cx="'+p.x.toFixed(1)+'" cy="'+p.y.toFixed(1)+'" r="'+(sel?4.5:(k==='kitcity'?4:2.8))+'" fill="'+color+'" class="map-city-dot"/>'+
-      '<title>'+escMapText(k==='kitcity'?'FINAL DESTINATION · T3Kit Hub':c.name)+' · '+done+'/'+total+' missions</title>'+label+'</g>';
+      '<title>'+escMapText(k==='kitcity'?'FINAL DESTINATION · KitCity':c.name)+' · '+done+'/'+total+' missions</title>'+label+'</g>';
   }
   return '<section class="map-card"><div class="map-card-head"><div><span>EXPLORE NIGERIA</span><h2>City Map</h2></div><b>'+cityOrder.length+' cities</b></div>'+
     '<svg viewBox="0 0 360 300" class="map" role="img" aria-label="Interactive geographic overview of Nigeria. Select a labelled city marker or use the city list below to view missions">'+
@@ -2905,7 +2905,7 @@ function renderHub(){
   if(hubTab==='missions'){
     const C=CITIES[hubCity];
     h+=mapSVG()+'<div class="map-selected"><div><span>SELECTED CITY</span><b>'+C.name+'</b><small>'+C.tag+'</small></div><strong>'+cityMissions(hubCity).filter(m=>P.done[m.id]).length+' / '+cityMissions(hubCity).length+' missions</strong></div>';
-    if(hubCity==='kitcity') h+='<section class="destination-card"><span class="destination-kicker">THE FINAL DESTINATION</span><h2>T3Kit Hub</h2><p>Every city prepared you for this. KitCity is the Web3 World: a premium campus for learning, building, verification, creators, open finance and community contribution.</p><div class="destination-pillars"><span>LEARN</span><span>BUILD</span><span>VERIFY</span><span>CONTRIBUTE</span></div></section>';
+    if(hubCity==='kitcity') h+='<section class="destination-card"><span class="destination-kicker">THE FINAL DESTINATION</span><h2>KitCity</h2><p>Every city prepared you for this. KitCity is the Web3 World: a premium campus for learning, building, verification, creators, open finance and community contribution.</p><div class="destination-pillars"><span>LEARN</span><span>BUILD</span><span>VERIFY</span><span>CONTRIBUTE</span></div></section>';
     h+='<div class="chips">'+cityOrder.map(k=>'<button class="chip'+(k===hubCity?' on':'')+'" data-a="city" data-v="'+k+'" type="button" '+(isCityUnlocked(k)?'':'disabled')+'>'+CITIES[k].name+(isCityUnlocked(k)?'':' · Locked')+'</button>').join('')+'</div>';
     h+=cityMissions(hubCity).map(m=>missionCard(m)).join('');
   } else if(hubTab==='cityhub'){
