@@ -2328,7 +2328,13 @@ function runPracticeTask(o){
     const sceneCast=Array.isArray(o.sceneCast)?o.sceneCast:[];
     const castByName=new Map(sceneCast.map(n=>[String(n.name||'').toLowerCase(),n]));
     const playerActor={name:playerName(),role:'The player',color:'#E4572E',look:LK.guy,sign:'YOU'};
-    const renderPanel=(p)=>panel(p&&p[0]||'THE SCENE',p&&p[1]||'💬',p&&p[2]||o.intro||'');
+    const renderPanel=(p)=>{
+      let caption=String(p&&p[2]||'');
+      /* The script is spoken in bubbles; comic captions must not repeat those lines. */
+      caption=caption.replace(/(?:PLAYER|[A-Z][A-Za-z0-9_. ]{1,32}):\\s*[“"][^”"]*[”"]/g,'');
+      caption=caption.replace(/[“"][^”"]*[”"]/g,'').replace(/\\s+/g,' ').replace(/^[\\s,;:.–—-]+|[\\s,;:.–—-]+$/g,'');
+      return panel(p&&p[0]||'THE SCENE',p&&p[1]||'💬',caption);
+    };
     if(!o.sceneDialogue.length){
       talk(o.npc,renderPanel(panels[Number(o.sceneIndex||0)]),[{t:'Continue scene',f:finishStep}]);
       return;
