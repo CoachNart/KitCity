@@ -628,3 +628,79 @@ html.kitcity-story-active #modal{
  .comic-scene-frame,.comic-card-symbol{transition:none}
  .comic-scene .panel-enter,.comic-scene .dialogue-enter{animation:none}
 }
+
+
+/* The T3Kit Chronicles: story-first cinematic UI refresh */
+.comic-scene{
+  --comic-cyan:#00E5FF;
+  padding:calc(12px + env(safe-area-inset-top)) 12px calc(10px + env(safe-area-inset-bottom));
+  background:linear-gradient(180deg,rgba(4,10,16,.08) 0%,rgba(4,10,16,.02) 36%,rgba(4,10,16,.42) 52%,rgba(4,10,16,.94) 100%);
+  gap:12px;
+}
+.comic-scene-top{flex:none;z-index:4}
+.comic-brand{font-size:10px;letter-spacing:.1em}
+.comic-skip{min-height:38px;padding:8px 12px;font-size:10px;letter-spacing:.04em}
+.comic-scene-frame{
+  inset:calc(58px + env(safe-area-inset-top)) 12px 40%;
+  border:1px solid rgba(255,255,255,.76);
+  border-radius:12px 12px 4px 4px;
+  background:linear-gradient(135deg,rgba(0,229,255,.045),rgba(4,10,16,.015));
+  box-shadow:0 0 0 1px rgba(0,229,255,.12),0 12px 32px rgba(0,0,0,.2);
+}
+.comic-frame-stamp{top:10px;left:10px;padding:5px 8px;border-radius:4px;background:rgba(4,10,16,.72);font-size:9px;letter-spacing:.1em}
+.comic-card-symbol{opacity:.22;transform:translate(-50%,-54%) scale(.8)}
+.comic-caption{
+  left:12px;right:12px;bottom:12px;max-width:560px;
+  padding:12px 14px;background:rgba(4,10,16,.76);
+  border:1px solid rgba(255,255,255,.17);border-left:3px solid var(--comic-cyan);
+  border-radius:8px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+}
+.comic-caption small{font:900 9px/1.3 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.12em;color:var(--comic-cyan)}
+.comic-caption p{margin-top:5px;font-size:clamp(13px,3.6vw,17px);line-height:1.4;font-weight:650}
+.comic-dialogue{
+  position:relative;z-index:3;flex:none;width:min(100%,720px);margin:0 auto 0;
+  max-height:39dvh;overflow-y:auto;overscroll-behavior:contain;
+  padding:14px 15px calc(12px + env(safe-area-inset-bottom));
+  border:1px solid rgba(255,255,255,.18);border-top:3px solid var(--comic-cyan);
+  border-radius:14px 14px 8px 8px;background:rgba(5,13,21,.97);
+  box-shadow:0 16px 42px rgba(0,0,0,.36);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+}
+.comic-dialogue-meta{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
+.comic-speaker{font:900 10px/1.25 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.13em;color:var(--comic-cyan)}
+.comic-counter{font:800 10px/1 ui-monospace,SFMono-Regular,Menlo,monospace;color:rgba(255,255,255,.6)}
+.comic-dialogue-text{font-size:clamp(15px,4vw,19px);line-height:1.45;font-weight:650;letter-spacing:-.01em;margin:0 0 12px}
+.comic-choices{display:grid;grid-template-columns:1fr;gap:8px;margin:10px 0 4px}
+.comic-choice{
+  width:100%;min-height:46px;text-align:left;padding:11px 13px;
+  border:1px solid rgba(0,229,255,.6);border-radius:8px;background:rgba(0,229,255,.08);
+  color:#f4fbff;font:750 14px/1.35 system-ui,-apple-system,"Segoe UI",sans-serif;cursor:pointer;
+}
+.comic-choice:after{content:" ↗";float:right;color:var(--comic-cyan)}
+.comic-choice:focus-visible,.comic-next:focus-visible,.comic-skip:focus-visible{outline:3px solid #fff;outline-offset:3px}
+.comic-actions{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:12px}
+.comic-hint{font:800 9px/1.35 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.07em;color:rgba(255,255,255,.52)}
+.comic-next{
+  flex:none;min-height:44px;padding:10px 14px;border:0;border-radius:8px;
+  background:var(--comic-cyan);color:#07111a;font:950 11px/1 system-ui,sans-serif;letter-spacing:.05em;cursor:pointer;
+}
+.comic-next:active,.comic-choice:active{transform:translateY(1px)}
+.comic-scene.has-card .comic-dialogue{border-top-color:#f6b21a}
+.comic-scene.has-card .comic-caption{border-left-color:#f6b21a}
+.comic-scene.has-choices .comic-dialogue{max-height:45dvh}
+.comic-scene [hidden]{display:none!important}
+@media (min-width:700px){
+  .comic-scene{padding:20px 24px 22px}
+  .comic-scene-frame{inset:78px 7% 34%}
+  .comic-dialogue{max-height:36vh;padding:18px 22px 16px}
+  .comic-choices{grid-template-columns:1fr 1fr}
+}
+@media (max-width:380px){
+  .comic-scene{padding-left:8px;padding-right:8px;gap:8px}
+  .comic-scene-frame{inset:calc(54px + env(safe-area-inset-top)) 8px 43%}
+  .comic-dialogue{max-height:43dvh;padding:12px 12px calc(10px + env(safe-area-inset-bottom))}
+  .comic-caption{left:8px;right:8px;bottom:8px;padding:9px 10px}
+  .comic-caption p{font-size:13px}
+  .comic-actions{align-items:flex-end}
+  .comic-hint{max-width:42%;font-size:8px}
+  .comic-next{padding:10px 11px;font-size:10px}
+}
