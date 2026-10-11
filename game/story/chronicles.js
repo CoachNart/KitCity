@@ -3527,7 +3527,15 @@ export const MISSIONS = RAW_MISSIONS.map((mission) => Object.freeze({
 }));
 
 
-export const STATE_ROUTE = NIGERIAN_STATES.map((state, index) => {
+export const STORY_ROUTE_ORDER = [
+  "Lagos","Ogun","Oyo","Osun","Ekiti","Ondo","Delta","Bayelsa","Rivers",
+  "Akwa Ibom","Anambra","Enugu","Ebonyi","Abia","Imo","Plateau","Nasarawa",
+  "Benue","Kano","Jigawa","Bauchi","Gombe","Yobe","Borno","Adamawa","Taraba",
+  "Kaduna","Katsina","Zamfara","Sokoto","Kebbi","Edo","Cross River","Niger",
+  "Kogi","Kwara"
+];
+
+export const STATE_ROUTE = STORY_ROUTE_ORDER.map((state, index) => {
   const mission = MISSIONS.find((item) => item.state === state);
   return Object.freeze({
     state,
@@ -3558,7 +3566,7 @@ export function validateChronicles() {
   });
   const names = new Set(CHARACTER_ORDER);
   if (names.size !== 50) errors.push("Expected 50 unique supplied character names.");
-  if (NIGERIAN_STATES.length !== 36 || NIGERIAN_STATES.includes("Federal Capital Territory")) errors.push("State route must contain all 36 states and no FCT.");
+  if (NIGERIAN_STATES.length !== 36 || NIGERIAN_STATES.includes("Federal Capital Territory") || STORY_ROUTE_ORDER.length !== 36 || new Set(STORY_ROUTE_ORDER).size !== 36 || STORY_ROUTE_ORDER.some((state) => !NIGERIAN_STATES.includes(state))) errors.push("State route must cover all 36 states exactly once and exclude FCT.");
   const covered = new Set(MISSIONS.map((mission) => mission.state));
   const plannedStateCoverage = STATE_ROUTE.map((stop) => ({ ...stop, coveredByMission: covered.has(stop.state) }));
   return { valid: errors.length === 0, errors, missionCount: MISSIONS.length, characterCount: CHARACTER_ORDER.length, plannedStateCoverage };
