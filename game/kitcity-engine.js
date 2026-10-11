@@ -93,7 +93,8 @@ function mergeCloudProgress(remote){
   merged.dodged=Math.max(Number(remote.dodged)||0,Number(local.dodged)||0);
   merged.fell=Math.max(Number(remote.fell)||0,Number(local.fell)||0);
   merged.web3=local.web3||remote.web3||null;
-  merged.storyPrologueSeen=!!(remote.storyPrologueSeen||local.storyPrologueSeen);\n  merged.chroniclesPrologueSeen=!!(remote.chroniclesPrologueSeen||local.chroniclesPrologueSeen);
+  merged.storyPrologueSeen=!!(remote.storyPrologueSeen||local.storyPrologueSeen);
+  merged.chroniclesPrologueSeen=!!(remote.chroniclesPrologueSeen||local.chroniclesPrologueSeen);
   merged.storyProgress=Object.assign({},remote.storyProgress||{},local.storyProgress||{});
   merged.storyFlags=Object.assign({},remote.storyFlags||{},local.storyFlags||{});
   replacePlayerState(merged);
