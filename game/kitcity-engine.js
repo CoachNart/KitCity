@@ -2556,11 +2556,15 @@ function chronicleChallengeStep(m,obj,index,spot){
   const step={kind:'challenge',id:obj.id,label:obj.label,spot,npc};
   step.run=function(){
     const buttons=challenge.o.map((option,choice)=>({t:option,g:choice!==challenge.a,f:()=>{
-      if(choice!==challenge.a){G.wrong=(G.wrong||0)+1;talk(npc,'<h3>Not quite. Try again.</h3><p>'+escapeStoryHtml(challenge.w)+'</p>',[{t:'Try the decision again',f:()=>step.run()}]);return;}
+      if(choice!==challenge.a){
+        G.wrong=(G.wrong||0)+1;
+        talk(npc,'<p><b>'+escapeStoryHtml(npc.name.toUpperCase())+':</b> Not quite. '+escapeStoryHtml(challenge.w)+'</p><p><b>YOU:</b> Fair. Let me think again.</p>',[{t:'Try the decision again',f:()=>step.run()}]);
+        return;
+      }
       G.correct=(G.correct||0)+1;
-      talk(npc,'<h3>Good call.</h3><p>'+escapeStoryHtml(challenge.w)+'</p><p class="note">This is a practice scenario. No real funds, wallets or transactions are involved.</p>',[{t:'Record the decision',f:()=>{applyChronicleActivityEffect(challenge.effect,m,obj,choice,challenge.o);G.evidence[obj.id]=true;P.storyFlags=Object.assign({},P.storyFlags||{},{['challenge_'+m.id]:true});finishStep();}}]);
+      talk(npc,'<p><b>'+escapeStoryHtml(npc.name.toUpperCase())+':</b> Good call. '+escapeStoryHtml(challenge.w)+'</p><p><b>YOU:</b> I can explain that choice now.</p><p class="note">Practice scenario only. No real funds, wallets or transactions are involved.</p>',[{t:'Record the decision',f:()=>{applyChronicleActivityEffect(challenge.effect,m,obj,choice,challenge.o);G.evidence[obj.id]=true;P.storyFlags=Object.assign({},P.storyFlags||{},{['challenge_'+m.id]:true});finishStep();}}]);
     }}));
-    talk(npc,'<p><b>'+escapeStoryHtml(challenge.q)+'</b></p><small class="soft">YOUR CALL · '+escapeStoryHtml(obj.label)+'</small>',buttons);
+    talk(npc,'<p><b>'+escapeStoryHtml(npc.name.toUpperCase())+':</b> '+escapeStoryHtml(challenge.q)+'</p><p><b>YOU:</b> What are my options?</p><p><b>'+escapeStoryHtml(npc.name.toUpperCase())+':</b> Look at the choices and tell me what you would do.</p>',buttons);
   };
   return step;
 }
