@@ -9,12 +9,18 @@ const requireText = (text, label) => {
 
 requireText("MISSIONS as CHRONICLE_MISSIONS, CHARACTER_ORDER", "canonical registry import");
 requireText("const MISSIONS=CHRONICLE_MISSIONS.map", "runtime mission adapter");
-requireText("if(m.id==='m01'&&!P.chroniclesPrologueSeen)", "versioned opening cinematic gate");
+requireText("toast('Look around. Walk up to someone and press Talk when you are ready.'", "player-led mission start");
+requireText("const STORY_BRIDGES={", "connected story transitions");
+requireText("function updateLivesHUD()", "three-heart life display");
+requireText("G.lives=Math.max(0", "hazard life loss");
+requireText("startMission(missionId,true)", "mission restart after three hazards");
 requireText("P.storyProgress[G.m.id]", "per-mission progress save");
-requireText("missionGroup.visible=false; storyCastGroup.visible=true", "opening scene staging");
 requireText("const CHRONICLE_ACTIVITY_RULES=[", "objective activity bank");
 requireText("function applyChronicleActivityEffect", "safe simulated activity effects");
 requireText("P.storyFlags.future_direction=options[choice]", "player-owned ending choice");
+if (engine.includes("if(m.id==='m01'&&!P.chroniclesPrologueSeen)")) errors.push("Automatic opening scene still interrupts player-led exploration");
+if (engine.includes("escapeStoryHtml(m.narrativePurpose)+'</p><p><b>'+escapeStoryHtml(activity.q)")) errors.push("Generic mission exposition remains above activity dialogue");
+if (engine.includes("THE T3KIT CHRONICLES") || engine.includes("T3Kit Chronicles")) errors.push("Retired story branding remains in the runtime UI");
 if (engine.includes("No USDC left — mission restarting!")) errors.push("Legacy collision reset remains");
 if (engine.includes("const MISSIONS=[")) errors.push("Legacy hard-coded mission array still exists");
 for (const stale of ["function askStep(o)", "function taskStep(o)", "function confirmTx(def,o)", "function needFunds(n)", "QUESTION_PENALTY"]) {
