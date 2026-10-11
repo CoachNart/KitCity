@@ -2538,24 +2538,66 @@ const list=specs.map((s,i)=>{
   }));
   const lead=story.characters[story.characters.length-1]||story.characters[0]||"Your neighbour";
   const objective=story.objectives[0]?.text||"Help with the problem";
-  steps.push(taskStep({
-   label:story.title+" · Your move",
-   spot:"c",
-   npc:npcFor(lead),
-   intro:lead+": "+(story.dialogue.find(d=>d.speaker===lead)?.text||"We've got one thing left to sort. Can you help?"),
-   practice:true,
-   panelTag:"YOUR MOVE",
-   art:"🎮🗨️",
-   button:objective,
-   action:objective,
-   actionButton:objective,
-   reaction:"You and "+lead+" worked through the problem together.",
-   result:"You and "+lead+" worked through the problem together.",
-   lesson:story.learningObjectives[0]||"",
-   storyHook:story.cliffhanger||"",
-   busyText:"You and "+lead+" work through it together…",
-   transaction:false
-  }));
+  if(story.id==="tc-29"){
+   steps.push({label:"Choose your KitCity path",spot:"c",npc:npcFor("White Coach"),run(){
+    const options=["Developer","Smart Contract Specialist","Trader","Community Manager","Moderator","Content Creator","Growth Strategist","Researcher","Product Manager","Security Specialist","AI Specialist","Business Development Specialist"];
+    talk(this.npc,'<p><b>White Coach:</b> “You’ve seen how the roles connect. Which path do you want to prove yourself in?”</p>',options.map(path=>({t:path,f:()=>{P.specialization=path;P.storyFlags=P.storyFlags||{};P.storyFlags["specialization-"+path.toLowerCase().replace(/[^a-z0-9]+/g,"-")]=true;save();talk(npcFor("Craftore"),'<p><b>Craftore:</b> “Good. Your assessment will focus on <b>'+path+'</b>. You can change direction later through advanced missions.”</p>',[{t:"Register for assessment",f:finishStep}]);}})));
+   }});
+  } else if(story.id==="tc-31"){
+   steps.push({label:"The Reveal · Your answer",spot:"h",npc:npcFor("Softstorm"),run(){
+    talk(this.npc,'<p><b>Softstorm:</b> “When you started, what did you think Web3 was?”</p>',[
+     {t:"A way to make money",f:()=>{P.storyFlags=P.storyFlags||{};P.storyFlags["reflection-money-first"]=true;save();askEnding();}},
+     {t:"A complicated technology",f:()=>{P.storyFlags=P.storyFlags||{};P.storyFlags["reflection-complicated"]=true;save();askEnding();}},
+     {t:"An opportunity I didn't understand",f:()=>{P.storyFlags=P.storyFlags||{};P.storyFlags["reflection-newcomer"]=true;save();askEnding();}}
+    ]);
+    function askEnding(){
+     talk(npcFor("Softstorm"),'<p><b>Softstorm:</b> “And what do you think now?”</p>',[
+      {t:"A world I can build in",f:()=>end("builder")},
+      {t:"An ecosystem I can contribute to",f:()=>end("contributor")},
+      {t:"A career path I can pursue",f:()=>end("career")},
+      {t:"A space I want to keep exploring",f:()=>end("explorer")}
+     ]);
+    }
+    function end(path){
+     P.storyFlags=P.storyFlags||{};P.storyFlags["ending-"+path]=true;P.storyFlags["t3kit-mystery-resolved"]=true;P.storyFlags["main-story-complete"]=true;P.storyFlags["post-story-unlocked"]=true;save();
+     talk(npcFor("IamAbdul"),'<p><b>Softstorm:</b> “You don't have to know everything. Keep learning, build with care, and contribute something useful.”</p><p><b>IamAbdul:</b> “Omo, next time we build something, you’re joining us.”</p><p><b>WELCOME TO KITCITY.</b></p>',[{t:"Finish the main story",f:finishStep}]);
+    }
+   }});
+  } else {
+   const assessment={
+    "Developer":"Diagnose the app failure, apply a prepared fix and run the test.",
+    "Smart Contract Specialist":"Reproduce a test-contract vulnerability and verify the correction.",
+    "Trader":"Build a simulated trade plan with entry, invalidation and risk limits.",
+    "Community Manager":"Improve onboarding and choose a meaningful retention metric.",
+    "Moderator":"Contain a simulated scam incident and publish a verified safety update.",
+    "Content Creator":"Create an accurate beginner-friendly explainer and verify its claims.",
+    "Growth Strategist":"Design a small campaign experiment and evaluate its result.",
+    "Researcher":"Check a fictional project's claims against its source documents.",
+    "Product Manager":"Identify the main user blocker and test a focused improvement.",
+    "Security Specialist":"Rank a simulated threat and verify a mitigation.",
+    "AI Specialist":"Correct an AI report by tracing claims to source data.",
+    "Business Development Specialist":"Evaluate a partnership proposal and flag its risks."
+   };
+   const task=story.id==="tc-30"?(assessment[P.specialization]||"Complete a practical sandbox challenge and explain the evidence."):objective;
+   steps.push(taskStep({
+    label:story.title+" · Your move",
+    spot:story.id==="tc-30"?"h":"c",
+    npc:npcFor(lead),
+    intro:story.id==="tc-30"?"Craftore: “Your path is "+(P.specialization||"Web3 Practitioner")+". Show us how you work through this safely.”":lead+": "+(story.dialogue.find(d=>d.speaker===lead)?.text||"We've got one thing left to sort. Can you help?"),
+    practice:true,
+    panelTag:story.id==="tc-30"?"PRACTICAL ASSESSMENT":"YOUR MOVE",
+    art:story.id==="tc-30"?"🧰🏁":"🎮🗨️",
+    button:task,
+    action:task,
+    actionButton:task,
+    reaction:story.id==="tc-30"?"You completed the sandbox task. Your evidence is ready for review.":"You and "+lead+" worked through the problem together.",
+    result:story.id==="tc-30"?"You completed the sandbox task. Your evidence is ready for review.":"You and "+lead+" worked through the problem together.",
+    lesson:story.learningObjectives[0]||"",
+    storyHook:story.cliffhanger||"",
+    busyText:story.id==="tc-30"?"You work through the assessment in the safe practice environment…":"You and "+lead+" work through it together…",
+    transaction:false
+   }));
+  }
  } else if(s.title==="Pay IamAbdul for Suya"){
   steps=[
    taskStep({label:"Abdul needs a hand",spot:"a",npc,intro:"Abdul wipes his hands on his apron. “Oga, customer wants to pay with USDC. I sell suya, not confusion! Help me check this order?”",practice:true,panelTag:"PANEL 01 · ABDUL'S SUYA SPOT",art:"🔥🍢😅",playerReply:"No wahala, Abdul. Let's check the order together.",button:"No wahala, let's check",reaction:"",lesson:"",transaction:false,conversationOnly:true}),
