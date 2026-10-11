@@ -1,18 +1,15 @@
 const OPENING_LINES = [
   { speaker: 'Softstorm', text: "I'm telling you, the transfer went through. He sent me the screenshot twice." },
-  { speaker: 'IamAbdul', text: "And I told you twice: screenshot no be money, abeg." },
+  { speaker: 'IamAbdul', text: "Screenshot no be money, abeg. Has the shop actually received it?" },
   { speaker: 'Softstorm', text: "The buyer is already coming for the laptop. If this payment is fake, na me go explain." },
-  { speaker: 'IamAbdul', text: "Then no release anything until we verify it." },
-  { speaker: 'Softstorm', text: "Verify am how? I no get time for all this." },
-  { speaker: 'IamAbdul', text: "Get the transaction details. If na blockchain transfer, we can check the public record. No guessing." },
+  { speaker: 'IamAbdul', text: "Then hold the laptop. Get the transaction details and check the recipient address. No guessing." },
   { speaker: 'PLAYER', text: "Abeg, wetin una dey argue about?" },
-  { speaker: 'Softstorm', text: "Buyer says he paid for a laptop with crypto. All we have is this screenshot." },
+  { speaker: 'Softstorm', text: "Buyer says he paid 120 USDC. All we have is a screenshot." },
   { speaker: 'PLAYER', text: "So the money never show, but he wants to collect the laptop?" },
-  { speaker: 'IamAbdul', text: "Exactly. Help us check what really happened before he gets here." },
-  { speaker: 'PLAYER', text: "Omo. I came here to buy breakfast, not solve case." },
+  { speaker: 'IamAbdul', text: "Exactly. Help us verify it before he gets here." },
   { speaker: 'Softstorm', text: "Help us first. If you're right, breakfast is on me." },
   { speaker: 'PLAYER', text: "Now you're speaking my language." },
-];
+];;
 
 function escapeHtml(value) {
   return String(value == null ? '' : value).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
@@ -79,7 +76,7 @@ export function createStorySceneDirector({ camera, player, getCharacter, animate
     void bubble.offsetWidth;
     bubble.classList.add('bubble-pop');
     lineIndex = index;
-    const readTime = Math.min(3900, Math.max(2300, line.text.length * 39));
+    const readTime = Math.min(3100, Math.max(1900, line.text.length * 30));
     nextLineAt = performance.now() + readTime;
   }
 
