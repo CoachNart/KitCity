@@ -2422,7 +2422,7 @@ function chronicleChallengeStep(m,obj,index,spot){
     const buttons=challenge.o.map((option,choice)=>({t:option,g:choice!==challenge.a,f:()=>{
       if(choice!==challenge.a){G.wrong=(G.wrong||0)+1;talk(npc,'<h3>Not quite. Try again.</h3><p>'+escapeStoryHtml(challenge.w)+'</p>',[{t:'Try the decision again',f:()=>step.run()}]);return;}
       G.correct=(G.correct||0)+1;
-      talk(npc,'<h3>Good call.</h3><p>'+escapeStoryHtml(challenge.w)+'</p><p class="note">This is a practice scenario. No real funds, wallets or transactions are involved.</p>',[{t:'Record the decision',f:()=>{G.evidence[obj.id]=true;P.storyFlags=Object.assign({},P.storyFlags||{},{['challenge_'+m.id]:true});finishStep();}}]);
+      talk(npc,'<h3>Good call.</h3><p>'+escapeStoryHtml(challenge.w)+'</p><p class="note">This is a practice scenario. No real funds, wallets or transactions are involved.</p>',[{t:'Record the decision',f:()=>{applyChronicleActivityEffect(challenge.effect,m,obj,choice,challenge.o);G.evidence[obj.id]=true;P.storyFlags=Object.assign({},P.storyFlags||{},{['challenge_'+m.id]:true});finishStep();}}]);
     }}));
     talk(npc,'<p>'+escapeStoryHtml(m.narrativePurpose)+'</p><p><b>'+escapeStoryHtml(challenge.q)+'</b></p>',buttons);
   };
