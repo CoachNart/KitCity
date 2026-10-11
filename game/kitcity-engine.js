@@ -2495,7 +2495,22 @@ const isUnlocked=m=>{ const k=MISSIONS.indexOf(m); return k===0||!!P.done[MISSIO
 const cityOrder=[...new Set(MISSIONS.map(m=>m.city))];
 
 /* Chronicles names are canonical: never rename characters by array position. */
-for(const npc of allNPCObjects) if(!npc.originalName) npc.originalName=npc.name;
+function missionNPCObjects(mission){
+  const found=new Set();
+  const add=value=>{
+    const name=typeof value==='string'?value:(value&&value.name);
+    const npc=name&&STORY_NPCS[name];
+    if(npc) found.add(npc);
+  };
+  (mission&&mission.npcs||[]).forEach(add);
+  (mission&&mission.steps||[]).forEach(step=>{
+    add(step.npc);
+    (step.npcs||[]).forEach(add);
+  });
+  (mission&&mission.extras||[]).forEach(extra=>add(extra.npc));
+  return Array.from(found);
+}
+for(const npc of Object.values(STORY_NPCS)) if(!npc.originalName) npc.originalName=npc.name;
 function buildMissionNameAliases(mission){
   const candidates=Object.create(null),ambiguous=new Set(),currentNames=new Set();
   const npcs=missionNPCObjects(mission);
