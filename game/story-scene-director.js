@@ -121,17 +121,16 @@ export function createStorySceneDirector({ camera, player, getCharacter, animate
     if (key === 'wide' || key === 'clue' || key === 'conversation') {
       if (soft && abdul) target = soft.clone().add(abdul).multiplyScalar(.5);
       else target = soft || abdul || target;
-      // Portrait phones need a much tighter camera: desktop distances leave the cast tiny.
-      // A portrait phone has a very narrow horizontal field of view. Keep enough
-      // distance to fit both people side-by-side instead of cropping them at the edges.
+      // Keep the full pair visible on portrait phones: the narrow screen needs
+      // a wider establishing shot, not a close-up that crops either character.
       const height = key === 'clue'
-        ? (mobilePortrait ? 9 : 11)
-        : key === 'conversation' ? (mobilePortrait ? 6.5 : 5.8)
-        : (mobilePortrait ? 11 : 17);
+        ? (mobilePortrait ? 8 : 11)
+        : key === 'conversation' ? (mobilePortrait ? 8.5 : 5.8)
+        : (mobilePortrait ? 10 : 17);
       const distance = key === 'clue'
-        ? (mobilePortrait ? 18 : 20)
-        : key === 'conversation' ? (mobilePortrait ? 14 : 13.5)
-        : (mobilePortrait ? 22 : 28);
+        ? (mobilePortrait ? 27 : 20)
+        : key === 'conversation' ? (mobilePortrait ? 30 : 13.5)
+        : (mobilePortrait ? 32 : 28);
       position = target.clone().add(new camera.position.constructor(0, height, distance));
     } else if (key === 'abdul') {
       target = abdul || soft || target;
