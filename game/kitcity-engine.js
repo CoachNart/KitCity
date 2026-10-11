@@ -3824,13 +3824,6 @@ for(const npc of orderedNPCObjects){
   priorityAssignedNPCs.add(npc);
   usedNPCNameKeys.add(nextName.toLowerCase());
 }
-const lalobaNPC=orderedNPCObjects.find(npc=>npc.name==='Laloba');
-const kanoNPC=orderedNPCObjects.find(npc=>npcFirstCity.get(npc)==='kano');
-if(lalobaNPC&&kanoNPC&&lalobaNPC!==kanoNPC){
-  const swap=lalobaNPC.name;
-  lalobaNPC.name=kanoNPC.name;
-  kanoNPC.name=swap;
-}
 for(const npc of orderedNPCObjects){
   if(priorityAssignedNPCs.has(npc)) continue;
   const city=npcFirstCity.get(npc)||'kitcity';
@@ -4404,10 +4397,10 @@ function carHit(dt){ if(hitCd>0)hitCd=Math.max(0,hitCd-dt);
       const shout=pick(HAZARD_LINES[P.lang==='pcm'?'pcm':'en']);
       const hitMessage=shout+' '+(penalty>0?'(−'+penalty.toFixed(2)+' USDC)':'(no USDC left to deduct)');
       if(P.usdc<=1e-9&&missionToRestart){
-        toast(hitMessage+' No USDC left — mission restarting!',{bubble:true,duration:5600});
+        toast(hitMessage+' No USDC left — mission restarting!',{bubble:true,duration:7000});
         startMission(missionToRestart);
       } else {
-        toast(hitMessage,{bubble:true,duration:5600});
+        toast(hitMessage,{bubble:true,duration:7000});
       }
       break;
     }
