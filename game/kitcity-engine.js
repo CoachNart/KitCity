@@ -2312,10 +2312,9 @@ function chronicleNpcLine(m,name,index=0){
   if(found&&found.text) return found.text;
   const objectives=m.objectives||[];
   const objective=objectives[Math.min(index,Math.max(0,objectives.length-1))];
-  const subject=objective&&objective.label?objective.label.replace(/[.!?]+$/,''):'this problem';
-  const title=m.title||'this situation';
-  if(index%2===0) return 'I keep hearing people talk about '+title+', but talk is cheap. Start with '+subject.toLowerCase()+' and see what the evidence actually tells us.';
-  return 'That is why I want you to look closely at '+subject.toLowerCase()+'. If the facts do not support the story, we change our mind — simple.';
+  const subject=objective&&objective.label?objective.label.replace(/[.!?]+$/,'').toLowerCase():'this problem';
+  if(index%2===0) return 'I have been trying to get to the bottom of '+subject+'. Can you take a look with me before we jump to conclusions?';
+  return 'I checked '+subject+', but something still feels off. Let us compare what we know and work it out together.';
 }
 const STORY_BRIDGES={
   m02:'The payment went to the wrong address, and the shop wants to understand how records and online platforms work. A cyan mark on an old noticeboard points to Joe_Sef and Larai.',
@@ -2354,9 +2353,10 @@ function chronicleNpcStep(m,name,index){
   const step={kind:'character',characterIndex:index,label:'Talk to '+name,spot:index===0?'a':index===1?'story':['b','c','d','e','f','g','h'][index%7],npc};
   step.run=function(){
     const line=chronicleNpcLine(m,name,index);
-    const bridge=index===0?STORY_BRIDGES[m.id]:'';
-    const playerOpener=m.id==='m01'&&name==='Softstorm'?'<p><b>YOU</b> · Abeg, wetin una dey talk about?</p>':'';
-    talk(npc,playerOpener+(bridge?'<p>'+escapeStoryHtml(bridge)+'</p>':'')+'<p>'+escapeStoryHtml(line)+'</p>',[{t:'Got it. What should I check?',f:()=>{G.evidence['met_'+name]=true;finishStep();}}]);
+    const opener=index===0?'Okay, tell me what is going on.':'I have spoken to the other person. What should I understand before I make a call?';
+    const response=index===0?'Good. Stay with me and we will check the facts one step at a time.':'You are asking the right questions. Let us work through the evidence instead of guessing.';
+    const html='<p><b>'+escapeStoryHtml(name.toUpperCase())+':</b> '+escapeStoryHtml(line)+'</p><p><b>YOU:</b> '+escapeStoryHtml(opener)+'</p><p><b>'+escapeStoryHtml(name.toUpperCase())+':</b> '+escapeStoryHtml(response)+'</p>';
+    talk(npc,html,[{t:'Alright. Show me where to start.',f:()=>{G.evidence['met_'+name]=true;finishStep();}}]);
   };
   return step;
 }
