@@ -1,24 +1,17 @@
-const SPEAKER_LABELS = {
-  Softstorm: 'SOFTSTORM',
-  IamAbdul: 'IAMABDUL',
-  PLAYER: 'YOU',
-};
-
-const OPENING_PANELS = [
-  { shot: 'wide', kicker: 'CHAPTER 01 · LAGOS STATE', caption: 'Morning in Lagos. Danfo horns compete with music from a nearby shop. Hawkers weave through traffic. Just another day.', next: 'next' },
-  { shot: 'player', kicker: 'A LITTLE WHILE LATER', caption: 'You sit outside a neighbourhood shop, scrolling through your phone. Crypto is a word you have heard. Beyond that? Not much.', next: 'next' },
-  { shot: 'conversation', speaker: 'IamAbdul', text: 'I’m telling you, people are building businesses on the internet and getting paid from anywhere.', next: 'next' },
-  { shot: 'conversation', speaker: 'Softstorm', text: 'You make it sound like everybody can do it overnight.', next: 'next' },
-  { shot: 'player', kicker: 'YOU SPEAK UP', speaker: 'PLAYER', text: 'Abeg, wetin una dey talk about?', next: 'next' },
-  { shot: 'softstorm', speaker: 'Softstorm', text: 'Web3.', next: 'next' },
-  { shot: 'abdul', speaker: 'IamAbdul', text: 'Omo, we need to start from the beginning.', next: 'next' },
-  { shot: 'wide', kicker: 'YOUR FIRST MOVE', caption: 'You don’t know enough to know what to ask yet. How do you start?', choices: [
-    { label: 'Ask what Web3 means', target: 8 },
-    { label: 'Ask where a beginner should start', target: 9 },
-  ] },
-  { shot: 'softstorm', speaker: 'Softstorm', text: 'Web3 is a broad world of blockchain networks, apps, digital assets, and people building new ways to work together online. That’s the short version.', next: 'next' },
-  { shot: 'abdul', speaker: 'IamAbdul', text: 'Start with the people around you. Find out what they use, what they’re building, and what problems they’re trying to solve. Don’t believe every promise you hear.', next: 'next' },
-  { shot: 'clue', kicker: 'MISSION 01 · JUST ANOTHER DAY', caption: 'You don’t have to understand the whole industry today. Start by asking questions and checking what you discover.', text: 'Speak to Softstorm and IamAbdul. Then investigate three nearby places where people discuss digital opportunities. Return and share one useful thing you learned.', card: true, finish: true },
+const OPENING_LINES = [
+  { speaker: 'Softstorm', text: "I'm telling you, the transfer went through. He sent me the screenshot twice." },
+  { speaker: 'IamAbdul', text: "And I told you twice: screenshot no be money, abeg." },
+  { speaker: 'Softstorm', text: "The buyer is already coming for the laptop. If this payment is fake, na me go explain." },
+  { speaker: 'IamAbdul', text: "Then no release anything until we verify it." },
+  { speaker: 'Softstorm', text: "Verify am how? I no get time for all this." },
+  { speaker: 'IamAbdul', text: "Get the transaction details. If na blockchain transfer, we can check the public record. No guessing." },
+  { speaker: 'PLAYER', text: "Abeg, wetin una dey argue about?" },
+  { speaker: 'Softstorm', text: "Buyer says he paid for a laptop with crypto. All we have is this screenshot." },
+  { speaker: 'PLAYER', text: "So the money never show, but he wants to collect the laptop?" },
+  { speaker: 'IamAbdul', text: "Exactly. Help us check what really happened before he gets here." },
+  { speaker: 'PLAYER', text: "Omo. I came here to buy breakfast, not solve case." },
+  { speaker: 'Softstorm', text: "Help us first. If you're right, breakfast is on me." },
+  { speaker: 'PLAYER', text: "Now you're speaking my language." },
 ];
 
 function escapeHtml(value) {
@@ -27,193 +20,79 @@ function escapeHtml(value) {
 
 export function createStorySceneDirector({ camera, player, getCharacter, animateCharacter, setModal }) {
   let active = false;
-  let panelIndex = 0;
-  let cameraGoal = null;
   let startedAt = 0;
+  let nextLineAt = 0;
+  let lineIndex = -1;
   let onComplete = null;
-  let overlay = null;
-  let captionEl = null;
-  let kickerEl = null;
-  let speakerEl = null;
-  let dialogueEl = null;
-  let choicesEl = null;
-  let counterEl = null;
-  let nextBtn = null;
-  let reduceMotion = false;
-  let lastAdvanceAt = 0;
-  let autoAdvanceAt = 0;
+  let titleCard = null;
+  let skipButton = null;
+  let bubbles = [];
+  let bubbleBySpeaker = Object.create(null);
+  let titleTimer = 0;
+  let closingTimer = 0;
 
-  function ensureOverlay() {
-    if (overlay) return;
-    overlay = document.createElement('section');
-    overlay.id = 'kitcity-comic-scene';
-    overlay.className = 'comic-scene hidden';
-    overlay.setAttribute('role', 'dialog');
-    overlay.setAttribute('aria-modal', 'true');
-    overlay.setAttribute('aria-label', 'KitCity story scene');
-    overlay.innerHTML = `
-      <div class="comic-scene-top"><span class="comic-brand">KITCITY <i>·</i> THE ROAD AHEAD</span><button type="button" class="comic-skip">SKIP SCENE ↗</button></div>
-      <div class="comic-scene-frame">
-        <div class="comic-frame-stamp">CHAPTER 01 · LAGOS</div>
-        <div class="comic-card-symbol" aria-hidden="true"><span> T3 </span><b>KIT</b></div>
-        <div class="comic-caption"><small class="comic-kicker"></small><p class="comic-caption-text"></p></div>
-      </div>
-      <div class="comic-dialogue">
-        <div class="comic-dialogue-meta"><span class="comic-speaker"></span><span class="comic-counter"></span></div>
-        <p class="comic-dialogue-text"></p>
-        <div class="comic-choices"></div>
-        <div class="comic-actions"><span class="comic-hint">A STORY IN MOTION · LAGOS</span><button type="button" class="comic-next">NEXT PANEL →</button></div>
-      </div>`;
-    document.body.appendChild(overlay);
-    captionEl = overlay.querySelector('.comic-caption-text');
-    kickerEl = overlay.querySelector('.comic-kicker');
-    speakerEl = overlay.querySelector('.comic-speaker');
-    dialogueEl = overlay.querySelector('.comic-dialogue-text');
-    choicesEl = overlay.querySelector('.comic-choices');
-    counterEl = overlay.querySelector('.comic-counter');
-    nextBtn = overlay.querySelector('.comic-next');
-    overlay.querySelector('.comic-skip').addEventListener('click', event => {
+  function ensureScene() {
+    if (titleCard) return;
+    titleCard = document.createElement('div');
+    titleCard.className = 'kitcity-intro-card';
+    titleCard.innerHTML = '<div class="kitcity-intro-copy"><small>KITCITY · LAGOS STATE</small><strong>JUST ANOTHER DAY</strong><span>8:17 AM · Lagos, Nigeria</span></div><button type="button" class="kitcity-intro-skip">Skip intro</button>';
+    document.body.appendChild(titleCard);
+    skipButton = titleCard.querySelector('.kitcity-intro-skip');
+    skipButton.addEventListener('click', event => {
       event.preventDefault();
       finish();
     });
-    // Mobile browsers can occasionally lose a synthetic click over a full-screen canvas.
-    // Advance on touch pointer-up, and debounce the follow-up click so one tap means one panel.
-    nextBtn.addEventListener('pointerup', event => {
-      if (event.pointerType !== 'touch') return;
-      event.preventDefault();
-      requestAdvance();
+    bubbles = [];
+    bubbleBySpeaker = Object.create(null);
+    ['Softstorm', 'IamAbdul', 'PLAYER'].forEach(speaker => {
+      const el = document.createElement('div');
+      el.className = 'kitcity-speech-bubble hidden';
+      el.setAttribute('role', 'status');
+      el.setAttribute('aria-live', 'polite');
+      el.innerHTML = '<small class="kitcity-bubble-speaker"></small><p></p>';
+      document.body.appendChild(el);
+      el.dataset.speaker = speaker;
+      bubbles.push(el);
+      bubbleBySpeaker[speaker] = el;
     });
-    nextBtn.addEventListener('click', event => {
-      event.preventDefault();
-      requestAdvance();
-    });
-    overlay.addEventListener('keydown', event => {
-      if (event.key === 'Escape') {
-        event.preventDefault();
-        finish();
-      } else if ((event.key === 'Enter' || event.key === ' ') && event.target === overlay) {
-        event.preventDefault();
-        requestAdvance();
-      }
-    });
-    reduceMotion = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
   }
 
-  function worldPosition(object) {
-    if (!object) return null;
-    const point = new camera.position.constructor();
-    object.getWorldPosition(point);
-    return point;
+  function actorFor(speaker) {
+    if (speaker === 'PLAYER') return player;
+    return getCharacter(speaker);
   }
 
-  function characters() {
-    return {
-      softstorm: getCharacter('Softstorm'),
-      abdul: getCharacter('IamAbdul'),
-    };
+  function hideBubbles() {
+    bubbles.forEach(el => el.classList.add('hidden'));
   }
 
-  function shotFor(key) {
-    const cast = characters();
-    const soft = worldPosition(cast.softstorm);
-    const abdul = worldPosition(cast.abdul);
-    const hero = worldPosition(player);
-    let target = hero || new camera.position.constructor(0, 0, 0);
-    let position;
-    const mobilePortrait = window.matchMedia('(max-width: 699px) and (orientation: portrait)').matches;
-    if (key === 'wide' || key === 'clue' || key === 'conversation') {
-      if (soft && abdul) target = soft.clone().add(abdul).multiplyScalar(.5);
-      else target = soft || abdul || target;
-      // Keep the full pair visible on portrait phones: the narrow screen needs
-      // a wider establishing shot, not a close-up that crops either character.
-      const height = key === 'clue'
-        ? (mobilePortrait ? 8 : 11)
-        : key === 'conversation' ? (mobilePortrait ? 8.5 : 5.8)
-        : (mobilePortrait ? 10 : 17);
-      const distance = key === 'clue'
-        ? (mobilePortrait ? 27 : 20)
-        : key === 'conversation' ? (mobilePortrait ? 30 : 13.5)
-        : (mobilePortrait ? 32 : 28);
-      position = target.clone().add(new camera.position.constructor(0, height, distance));
-    } else if (key === 'abdul') {
-      target = abdul || soft || target;
-      position = target.clone().add(new camera.position.constructor(8, 4.5, 8));
-    } else if (key === 'softstorm') {
-      target = soft || abdul || target;
-      position = target.clone().add(new camera.position.constructor(-8, 4.5, 8));
-    } else {
-      target = hero || soft || abdul || target;
-      position = target.clone().add(new camera.position.constructor(7, 4, 8));
-    }
-    return { position, target: target.clone().add(new camera.position.constructor(0, 1.8, 0)) };
-  }
-
-  function show(index) {
-    panelIndex = Math.max(0, Math.min(index, OPENING_PANELS.length - 1));
-    const panel = OPENING_PANELS[panelIndex];
-    const frame = overlay.querySelector('.comic-scene-frame');
-    overlay.dataset.shot = panel.shot;
-    overlay.classList.toggle('has-card', !!panel.card);
-    overlay.classList.toggle('has-dialogue', !!panel.speaker);
-    overlay.classList.toggle('has-choices', !!panel.choices);
-    kickerEl.textContent = panel.kicker || (panel.speaker ? 'LAGOS · A CONVERSATION' : '');
-    captionEl.textContent = panel.caption || '';
-    speakerEl.textContent = panel.speaker ? (SPEAKER_LABELS[panel.speaker] || panel.speaker.toUpperCase()) : '';
-    dialogueEl.textContent = panel.text || '';
-    counterEl.textContent = String(panelIndex + 1).padStart(2, '0') + ' / ' + String(OPENING_PANELS.length).padStart(2, '0');
-    choicesEl.innerHTML = '';
-    if (panel.choices) {
-      panel.choices.forEach(choice => {
-        const button = document.createElement('button');
-        button.type = 'button';
-        button.className = 'comic-choice';
-        button.textContent = choice.label;
-        button.addEventListener('click', () => show(choice.target));
-        choicesEl.appendChild(button);
-      });
-    }
-    choicesEl.classList.toggle('hidden', !panel.choices);
-    nextBtn.classList.toggle('hidden', !!panel.choices);
-    nextBtn.textContent = panel.finish ? 'BEGIN MISSION →' : 'CONTINUE →';
-    cameraGoal = shotFor(panel.shot);
-    startedAt = performance.now();
-    // Cinematic panels advance on their own; dialogue stays up long enough to read.
-    const textLength = (panel.text || panel.caption || '').length;
-    // Panels stay visible until the player chooses to continue.
-    autoAdvanceAt = 0;
-    frame.classList.remove('panel-enter');
-    void frame.offsetWidth;
-    frame.classList.add('panel-enter');
-    overlay.querySelector('.comic-dialogue').classList.remove('dialogue-enter');
-    void overlay.querySelector('.comic-dialogue').offsetWidth;
-    overlay.querySelector('.comic-dialogue').classList.add('dialogue-enter');
-  }
-
-  function requestAdvance() {
-    const now = performance.now();
-    if (now - lastAdvanceAt < 350) return;
-    lastAdvanceAt = now;
-    advance();
-  }
-
-  function advance() {
-    const panel = OPENING_PANELS[panelIndex];
-    if (panel && panel.finish) {
-      finish();
-      return;
-    }
-    if (panel && panel.next === 'next') show(panelIndex + 1);
+  function showLine(index) {
+    const line = OPENING_LINES[index];
+    if (!line) return;
+    hideBubbles();
+    const bubble = bubbleBySpeaker[line.speaker];
+    if (!bubble) return;
+    bubble.querySelector('.kitcity-bubble-speaker').textContent =
+      line.speaker === 'PLAYER' ? 'YOU' : line.speaker.toUpperCase();
+    bubble.querySelector('p').textContent = line.text;
+    bubble.classList.remove('hidden', 'bubble-pop');
+    void bubble.offsetWidth;
+    bubble.classList.add('bubble-pop');
+    lineIndex = index;
+    const readTime = Math.min(3900, Math.max(2300, line.text.length * 39));
+    nextLineAt = performance.now() + readTime;
   }
 
   function finish() {
     if (!active) return;
     active = false;
-    document.body.classList.remove('kitcity-story-active');
-    document.documentElement.classList.remove('kitcity-story-active');
-    if (overlay) overlay.classList.add('hidden');
-    setModal(false);
-    cameraGoal = null;
-    autoAdvanceAt = 0;
+    clearTimeout(titleTimer);
+    clearTimeout(closingTimer);
+    hideBubbles();
+    if (titleCard) titleCard.classList.add('hidden');
+    document.body.classList.remove('kitcity-intro-active');
+    document.documentElement.classList.remove('kitcity-intro-active');
+    if (setModal) setModal(false);
     if (onComplete) {
       const done = onComplete;
       onComplete = null;
@@ -222,61 +101,74 @@ export function createStorySceneDirector({ camera, player, getCharacter, animate
   }
 
   function playOpening(done) {
-    ensureOverlay();
+    ensureScene();
     onComplete = done;
     active = true;
-    panelIndex = 0;
-    lastAdvanceAt = 0;
-    autoAdvanceAt = 0;
-    document.body.classList.add('kitcity-story-active');
-    document.documentElement.classList.add('kitcity-story-active');
-    setModal(true);
-    overlay.classList.remove('hidden');
-    show(0);
+    lineIndex = -1;
+    startedAt = performance.now();
+    nextLineAt = startedAt + 1050;
+    document.body.classList.add('kitcity-intro-active');
+    document.documentElement.classList.add('kitcity-intro-active');
+    titleCard.classList.remove('hidden');
+    hideBubbles();
+    if (setModal) setModal(false);
+    titleTimer = setTimeout(() => {
+      if (titleCard) titleCard.classList.add('intro-card-fade');
+    }, 2600);
+  }
+
+  function positionBubble(el, speaker) {
+    const actor = actorFor(speaker);
+    if (!actor || !actor.visible) {
+      el.classList.add('hidden');
+      return;
+    }
+    const point = new camera.position.constructor();
+    actor.getWorldPosition(point);
+    point.y += speaker === 'PLAYER' ? 4.1 : 4.5;
+    point.project(camera);
+    const canvas = document.querySelector('#gl');
+    const rect = canvas ? canvas.getBoundingClientRect() : { left: 0, top: 0, width: innerWidth, height: innerHeight };
+    const x = rect.left + (point.x * .5 + .5) * rect.width;
+    const y = rect.top + (-point.y * .5 + .5) * rect.height;
+    const visible = point.z > -1 && point.z < 1 && x > rect.left + 20 && x < rect.right - 20 && y > rect.top + 30 && y < rect.bottom - 70;
+    if (!visible) {
+      el.classList.add('offscreen');
+      return;
+    }
+    el.classList.remove('offscreen');
+    el.style.left = x + 'px';
+    el.style.top = y + 'px';
   }
 
   function update(dt, time) {
     if (!active) return;
-    if (!cameraGoal) cameraGoal = shotFor('wide');
-    const smooth = reduceMotion ? 1 : 1 - Math.pow(.0008, Math.max(0, dt));
-    camera.position.lerp(cameraGoal.position, smooth);
-    const look = cameraGoal.target;
-    camera.lookAt(look.x, look.y, look.z);
-    const cast = characters();
-    const speaker = OPENING_PANELS[panelIndex] && OPENING_PANELS[panelIndex].speaker;
-    const lead = speaker === 'Softstorm' ? cast.softstorm : speaker === 'IamAbdul' ? cast.abdul : null;
-    const other = lead === cast.softstorm ? cast.abdul : cast.softstorm;
-    if (lead && other) {
-      // Give both actors a little lived-in movement while keeping their blocking readable.
-      // The speaker leans and gestures; the listener shifts weight and reacts instead of freezing.
-      [lead, other].forEach((actor, actorIndex) => {
-        const u = actor.userData || {};
-        if (u.cinematicBaseX == null) u.cinematicBaseX = actor.position.x;
-        if (u.cinematicBaseZ == null) u.cinematicBaseZ = actor.position.z;
-        const phase = time * (actorIndex === 0 ? 0.72 : 0.53) + actorIndex * 1.7;
-        actor.position.x = u.cinematicBaseX + Math.sin(phase) * (actorIndex === 0 ? 0.13 : 0.18);
-        actor.position.z = u.cinematicBaseZ + Math.sin(phase * 0.7) * 0.1;
-      });
-      const a = worldPosition(lead), b = worldPosition(other);
-      // Keep the pair facing each other and frame both, rather than cutting to an isolated NPC.
-      if (a && b) {
-        lead.rotation.y = Math.atan2(b.x - a.x, b.z - a.z);
-        other.rotation.y = Math.atan2(a.x - b.x, a.z - b.z);
+    const now = performance.now();
+    if (lineIndex < 0 && now >= nextLineAt) showLine(0);
+    else if (lineIndex >= 0 && now >= nextLineAt) {
+      if (lineIndex + 1 < OPENING_LINES.length) showLine(lineIndex + 1);
+      else {
+        hideBubbles();
+        if (titleCard) {
+          titleCard.querySelector('.kitcity-intro-copy').innerHTML =
+            '<small>YOUR STORY STARTS HERE</small><strong>DON\'T TRUST A SCREENSHOT.</strong><span>Find out what really happened.</span>';
+          titleCard.classList.remove('intro-card-fade');
+        }
+        closingTimer = setTimeout(finish, 1750);
+        nextLineAt = Number.POSITIVE_INFINITY;
       }
-      if (animateCharacter) {
-        animateCharacter(lead, time * 2.4, .16, -.025);
-        animateCharacter(other, time * 1.35, .045, 0);
-      }
-      const u = lead.userData || {};
-      if (u.armR && u.armR.sh) u.armR.sh.rotation.z = Math.sin(time * 2.4) * .22 - .22;
-      if (u.head) u.head.rotation.y = Math.sin(time * 1.8) * .08;
-      const listener = other.userData || {};
-      if (listener.head) listener.head.rotation.y = Math.sin(time * 1.3 + .7) * .09;
     }
-    // Story progression is deliberate: never auto-skip dialogue or objectives.
-    const hero = player;
-    if (hero && panelIndex === 4 && animateCharacter) animateCharacter(hero, time * 1.4, .04, 0);
-    overlay.style.setProperty('--panel-beat', String((performance.now() - startedAt) / 1000));
+    camera.updateMatrixWorld();
+    bubbles.forEach(el => positionBubble(el, el.dataset.speaker));
+    ['Softstorm', 'IamAbdul'].forEach((name, index) => {
+      const actor = getCharacter(name);
+      if (!actor || !actor.visible) return;
+      const other = getCharacter(name === 'Softstorm' ? 'IamAbdul' : 'Softstorm');
+      if (other) actor.rotation.y = Math.atan2(other.position.x - actor.position.x, other.position.z - actor.position.z);
+      if (animateCharacter) animateCharacter(actor, time * (index ? 1.2 : 1.7), index ? .08 : .18, -.01);
+      const u = actor.userData || {};
+      if (u.head) u.head.rotation.y = Math.sin(time * (index ? 1.1 : 1.6)) * .09;
+    });
   }
 
   return { playOpening, update, get active() { return active; } };
