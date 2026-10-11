@@ -123,13 +123,13 @@ export function createStorySceneDirector({ camera, player, getCharacter, animate
       else target = soft || abdul || target;
       // Portrait phones need a much tighter camera: desktop distances leave the cast tiny.
       const height = key === 'clue'
-        ? (mobilePortrait ? 6.5 : 11)
-        : key === 'conversation' ? (mobilePortrait ? 4.2 : 5.8)
-        : (mobilePortrait ? 10.5 : 17);
+        ? (mobilePortrait ? 4.2 : 11)
+        : key === 'conversation' ? (mobilePortrait ? 2.7 : 5.8)
+        : (mobilePortrait ? 5.2 : 17);
       const distance = key === 'clue'
-        ? (mobilePortrait ? 13 : 20)
-        : key === 'conversation' ? (mobilePortrait ? 10.5 : 13.5)
-        : (mobilePortrait ? 18 : 28);
+        ? (mobilePortrait ? 8.5 : 20)
+        : key === 'conversation' ? (mobilePortrait ? 5.8 : 13.5)
+        : (mobilePortrait ? 9.5 : 28);
       position = target.clone().add(new camera.position.constructor(0, height, distance));
     } else if (key === 'abdul') {
       target = abdul || soft || target;
