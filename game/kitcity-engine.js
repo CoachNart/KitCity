@@ -2323,8 +2323,7 @@ function runPracticeTask(o){
     }
     busy(o.npc,o.busyText||'You get stuck in…',420,finishAction);
   };
-  const reply=o.playerReply||'I can help. Show me what happened.';
-  talk(o.npc,characterLine+'<p style="margin-top:10px;font-style:italic;color:#8a5b18">You: “'+esc(reply)+'”</p>'+(o.action?'<div style="border:2px dashed #df9c2c;border-radius:9px;padding:10px 12px;background:#fffdf3;color:#242424"><b>YOUR MOVE</b><p style="margin:5px 0 0">'+esc(o.action)+'</p></div>':''),[{t:o.button||'Let me help',f:doAction}]);
+  talk(o.npc,characterLine+(o.action?'<div style="border:2px dashed #df9c2c;border-radius:9px;padding:10px 12px;background:#fffdf3;color:#242424"><b>YOUR MOVE</b><p style="margin:5px 0 0">'+esc(o.action)+'</p></div>':''),[{t:o.button||o.playerReply||'Let me help',f:doAction}]);
 }
 function pickStep(o){
   talk(o.npc,'<p>'+o.intro+'</p>'+(o.q?'<p><b>'+o.q+'</b></p>':''),
@@ -2669,8 +2668,8 @@ function startMission(id){
 }
 function briefing(){
   const m=G.m,C=CITIES[m.city];
-  openSheet('<div class="who"><span class="av" style="background:'+INK+'">'+m.n+'</span><div><b>'+personalize('Mission '+m.n+': '+m.title,null)+'</b><small>'+C.name+' · '+C.tag+'</small></div></div><p>'+personalize(m.goal,null)+'</p><p class="note">Follow the arrow, talk to the character and make your choices.</p>',
-    [{t:'Let’s go',f:closeSheet},{t:'Back to hub',g:1,f:exitToHub}]);
+  openSheet('<div style="border:3px solid #20232a;border-radius:14px;overflow:hidden;background:#fff2c9;color:#20232a;box-shadow:5px 5px 0 #20232a"><div style="padding:7px 12px;background:#20232a;color:#ffe27a;font-size:10px;font-weight:900;letter-spacing:2px">KITCITY COMICS · NEW CHAPTER</div><div style="padding:20px 14px 18px;background:radial-gradient(circle at 10% 15%,#fff9dd 0 2px,transparent 3px),radial-gradient(circle at 80% 60%,#f7c76b 0 2px,transparent 3px),linear-gradient(135deg,#ffdf92,#fff3ce)"><div style="font-size:11px;font-weight:900;letter-spacing:1.5px;color:#875315">'+C.name.toUpperCase()+' · CHAPTER '+m.n+'</div><h2 style="font-size:26px;line-height:1.05;margin:8px 0 10px;text-transform:uppercase;font-weight:1000">'+personalize(m.title,null)+'</h2><p style="font-size:14px;line-height:1.5;font-weight:700;margin:0">A new story is unfolding in the city. Find the character with the marker, hear what happened, and help them work through it.</p><div style="margin-top:12px;display:inline-block;padding:5px 9px;background:#e65e35;color:white;font-weight:900;transform:rotate(-2deg);border:2px solid #20232a">YOUR MOVE, HERO!</div></div></div>',
+    [{t:'Enter the story',f:closeSheet},{t:'Back to hub',g:1,f:exitToHub}]);
 }
 function finishStep(){
   closeSheet(); if(!G) return;
