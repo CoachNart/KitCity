@@ -585,6 +585,17 @@ html.kitcity-story-active #modal{
 .comic-scene[data-shot="conversation"] .comic-frame-stamp{opacity:.72}
 .comic-scene[data-shot="abdul"] .comic-scene-frame{clip-path:polygon(0 0,100% 0,98% 100%,0 96%)}
 .comic-scene[data-shot="softstorm"] .comic-scene-frame{clip-path:polygon(2% 0,100% 2%,100% 100%,0 100%)}
+@media(max-width:699px) and (orientation:portrait) and (min-height:561px){
+ .comic-scene{height:100vh;height:100dvh;min-height:100svh;padding:calc(10px + env(safe-area-inset-top)) 10px calc(10px + env(safe-area-inset-bottom));gap:8px}
+ .comic-scene-frame{inset:8% 3% 34%}
+ .comic-scene[data-shot="conversation"] .comic-scene-frame{inset:8% 3% 34%}
+ .comic-dialogue{width:100%;max-height:31dvh;padding:9px 10px 8px;flex-shrink:0}
+ .comic-dialogue-meta{margin-bottom:6px}
+ .comic-dialogue-text{font-size:15px;line-height:1.3}
+ .comic-actions{flex-wrap:wrap}
+ .comic-hint{font-size:7px}
+ .comic-next{min-height:40px}
+}
 .comic-scene[data-shot="player"] .comic-caption{left:8%;right:8%;transform:rotate(-1deg)}
 .comic-scene[data-shot="clue"] .comic-frame-stamp{background:#F6B21A;transform:rotate(-4deg)}
 .comic-scene .panel-enter{animation:comic-panel-enter .32s cubic-bezier(.2,.8,.2,1) both}
