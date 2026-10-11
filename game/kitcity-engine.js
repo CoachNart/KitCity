@@ -66,6 +66,8 @@ function replacePlayerState(data){
   Object.keys(P).forEach(k=>delete P[k]);
   Object.assign(P,DEFAULT_PLAYER,data||{});
   if(!P.done||typeof P.done!=='object') P.done={};
+  if(!P.storyProgress||typeof P.storyProgress!=='object') P.storyProgress={};
+  if(!P.storyFlags||typeof P.storyFlags!=='object') P.storyFlags={};
 }
 function activateUserProgress(uid){
   const nextKey=KEY+'_user_'+uid;
@@ -2061,7 +2063,7 @@ function placeStoryClue(def,spot){
 function placeNPC(def,spot){
   if(def.stall) buildStall(def,spot);
   else {
-    const p=buildPerson(def.look); p.userData.storyCharacter=def.name; p.userData.storyRole=def.role; p.position.set(spot.x,.05,spot.z); p.rotation.y=spot.f>0?Math.PI/2:-Math.PI/2; missionGroup.add(p);
+    const p=buildPerson(def.look); p.userData.storyCharacter=def.name; p.userData.storyRole=def.role; p.position.set(spot.x,.05,spot.z); p.rotation.y=spot.f>0?Math.PI/2:-Math.PI/2; if(G&&G.m&&G.m.id==='m01'&&(def.name==='Softstorm'||def.name==='IamAbdul')) p.rotation.y=def.name==='Softstorm'?Math.PI/2:-Math.PI/2; missionGroup.add(p);
     const sp=label(tr(def.sign||def.name),def.signBg,def.signFg); sp.position.set(spot.x,6,spot.z); missionGroup.add(sp);
     colliders.push({x0:spot.x-1,x1:spot.x+1,z0:spot.z-1,z1:spot.z+1});
   }
@@ -2322,8 +2324,6 @@ const MISSIONS=CHRONICLE_MISSIONS.map((story,index)=>{
 });
 
 const MBY={}; MISSIONS.forEach(m=>{ MBY[m.id]=m; });
-const loc=(name,role,color,look,sub)=>NPC(name,role,color,look,{body:color,a:'#ffffff',b:YELLOW,sub:sub});
-const BADGES=['Wallet Starter','Swap Smart','Scam Spotter','Key Keeper','Safe Sender','Passport Holder','Community Voice','Cash-out Pro','Fare Payer','Club Skeptic','Gas Watcher','Escrow Trader','Off-ramp Pro','Depeg Calm','Mint Checker','Pump Spotter','Buffer Keeper','Pool Wise','Hardware Holder','Multisig Team','Wallet Splitter','Record Keeper','Phone Buyer','Phish Doubter','School Donor','Review Reader','Remit Careful','Lost Phone Calm','Invoice Checker','Crowdfund Skeptic','Gate Watcher','Ledger Clear','Oil Money Smart','Creek Careful','Tailor Shield','Bank Alert Calm','Loan Sense','Herd Wise','Flyer Doubter','Relief Guard','Gift Pool Wise','Clearance Check','Lucky Draw Skeptic','Cocoa Careful','Gold Audit','Tour Verifier','Lease Check','Supply Watch','Scholar Shield','Fee Guard','Rent Shield','Franchise Check','Loan Sense','Course Skeptic','Input Verified','Bureau Wise','PIN Guard','Bulk Buyer Check','Partner Guard','Recharge Safe','Abia Shoe Check','Land Title Check','Net Co-op','Produce Guard','Pump Verifier','Travel Licence','Seed Scheme Sense','Pond Skeptic','Job Fee Guard','Bond Checker','Permit Honest','Feed Invoice','Ticket Honest','Grove Trust','Cocoa Terms','Park Permit','Solar Limit','Export Office','Gold Licence','Cattle Terms','Genesis Access'];
 /* Progress is tracked by completed missions and practice USDC. */
 const isUnlocked=m=>{ const k=MISSIONS.indexOf(m); return k===0||!!P.done[MISSIONS[k-1].id]; };
 
@@ -2443,14 +2443,14 @@ function completeMission(){
   if(next)btns.push({t:next.city!==m.city?'Continue to '+CITIES[next.city].name:'Next: '+next.title,f:()=>startMission(next.id)});
   btns.push({t:'Back to hub',g:1,f:exitToHub});
   openSheet('<div class="who"><span class="av" style="background:'+INK+'">'+m.n+'</span><div><h3 style="margin:0">Mission '+m.n+' complete</h3><small>'+CITIES[m.city].name+' · '+personalize(m.title,null)+'</small></div></div>'+
-    (first?'<div class="kv"><span>Mission reward</span><b>+'+missionReward.toFixed(2)+' USDC</b></div><p class="note">'+(wrong===0?'Clean run reward collected.':'Completed with '+wrong+' wrong answer'+(wrong===1?'':'s')+'. Correct answers and mistakes have already adjusted your USDC balance.')+'</p>':'<p class="note">Replay complete. The first-clear reward has already been collected.</p>')+
+    (first?'<div class="kv"><span>Mission reward</span><b>+'+missionReward.toFixed(2)+' USDC</b></div><p class="note">'+(wrong===0?'Clean run reward collected.':'Completed after '+wrong+' retry attempt'+(wrong===1?'':'s')+'. No practice funds were deducted for wrong answers.')+'</p>':'<p class="note">Replay complete. The first-clear reward has already been collected.</p>')+
     (m.city==='kitcity'?'<p><b>Welcome to the T3Kit Hub. The journey through Nigeria was your preparation; KitCity is the destination.</b></p>':'')+
     (cityComplete?'<p><b>All missions in '+CITIES[m.city].name+' are complete. Your city badge is available.</b></p>':'')+
     '<div class="kv"><span>Practice balance</span><b>'+P.usdc.toFixed(2)+' USDC</b></div>',btns);
 }
 function showCityBadge(city,after){
  const name=CITIES[city]?.name||city;
- openSheet('<div class="badge">'+badgeSVG('★',true,96)+'<div><h3 style="margin-top:0">'+name+' Pathfinder</h3><small>City journey completed</small></div></div><p>You completed both missions and earned the '+name+' city badge.</p>',[{t:'Continue journey',f:()=>{closeSheet();if(after)after();}}]);
+ openSheet('<div class="badge">'+badgeSVG('★',true,96)+'<div><h3 style="margin-top:0">'+name+' Pathfinder</h3><small>City journey completed</small></div></div><p>You completed the story missions in '+name+' and earned the city badge.</p>',[{t:'Continue journey',f:()=>{closeSheet();if(after)after();}}]);
 }
 function certificate(){
   const totalMissions=MISSIONS.length;
