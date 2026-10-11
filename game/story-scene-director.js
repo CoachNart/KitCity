@@ -117,12 +117,19 @@ export function createStorySceneDirector({ camera, player, getCharacter, animate
     const hero = worldPosition(player);
     let target = hero || new camera.position.constructor(0, 0, 0);
     let position;
+    const mobilePortrait = window.matchMedia('(max-width: 699px) and (orientation: portrait)').matches;
     if (key === 'wide' || key === 'clue' || key === 'conversation') {
       if (soft && abdul) target = soft.clone().add(abdul).multiplyScalar(.5);
       else target = soft || abdul || target;
-      // Keep the two speakers large enough to read as people interacting on a phone.
-      const height = key === 'clue' ? 11 : key === 'conversation' ? 5.8 : 17;
-      const distance = key === 'clue' ? 20 : key === 'conversation' ? 13.5 : 28;
+      // Portrait phones need a much tighter camera: desktop distances leave the cast tiny.
+      const height = key === 'clue'
+        ? (mobilePortrait ? 6.5 : 11)
+        : key === 'conversation' ? (mobilePortrait ? 4.2 : 5.8)
+        : (mobilePortrait ? 10.5 : 17);
+      const distance = key === 'clue'
+        ? (mobilePortrait ? 13 : 20)
+        : key === 'conversation' ? (mobilePortrait ? 10.5 : 13.5)
+        : (mobilePortrait ? 18 : 28);
       position = target.clone().add(new camera.position.constructor(0, height, distance));
     } else if (key === 'abdul') {
       target = abdul || soft || target;
