@@ -130,7 +130,7 @@ const RAW_MISSIONS = [
       "Softstorm",
       "IamAbdul"
     ],
-    "narrativePurpose": "The player gets pulled into a dispute after a buyer claims to have paid for a laptop with crypto. The shop has no matching payment, and the player must help verify what really happened before the laptop is handed over.",
+    "narrativePurpose": "At a Lagos electronics shop, a buyer insists he paid 120 USDC for a laptop. Softstorm cannot find the payment. You help him and IamAbdul check the screenshot, shop records, transaction hash and recipient address before anyone releases the laptop.",
     "learningObjectives": [
       "Verify a blockchain transaction",
       "Compare recipient addresses",
@@ -205,8 +205,8 @@ const RAW_MISSIONS = [
       "web3_first_lesson"
     ],
     "nextMissionId": "m02",
-    "ending": "The player helps Softstorm discover that the confirmed transaction went to a different address. The laptop stays in the shop until the correct payment arrives.",
-    "cliffhanger": "The buyer's mistake raises a bigger question: how do people read blockchain records, manage addresses, and avoid making the same mistake themselves?",
+    "ending": "You confirm that the transaction succeeded but went to an address the shop does not control. Softstorm keeps the laptop until the correct payment arrives; the evidence settles the argument without accusing anyone of lying.",
+    "cliffhanger": "The buyer says he copied the address from an online account page. Softstorm sends you to Joe_Sef and Larai to find out how that page, the wallet and the public transaction record got mixed up."
   },
   {
     "id": "m02",
@@ -222,11 +222,11 @@ const RAW_MISSIONS = [
       "Joe_Sef",
       "Larai"
     ],
-    "narrativePurpose": "The wrong-address payment sends the player to a small technology workspace, where Joe_Sef and Larai help trace how wallets, blockchain records and online platforms fit together.",
+    "narrativePurpose": "You follow the laptop-payment trail to Joe_Sef and Larai's workspace. They help you trace the buyer's actual transaction, compare the destination with the shop's address, and work out why an online display name is not proof of who received the funds.",
     "learningObjectives": [
-      "internet history",
-      "centralized platforms",
-      "blockchain-based systems"
+      "transaction hashes and networks",
+      "recipient-address verification",
+      "the difference between platform identities and wallet addresses"
     ],
     "prerequisites": [
       "m01"
@@ -234,53 +234,54 @@ const RAW_MISSIONS = [
     "objectives": [
       {
         "id": "m02-obj-1",
-        "label": "Explore the internet-history exhibit",
+        "label": "Ask Joe_Sef for the buyer's transaction hash and network",
         "interactionTarget": "story:m02:objective:1",
         "required": true
       },
       {
         "id": "m02-obj-2",
-        "label": "classify Web1, Web2 and Web3 examples",
+        "label": "Inspect the transaction explorer record",
         "interactionTarget": "story:m02:objective:2",
         "required": true
       },
       {
         "id": "m02-obj-3",
-        "label": "compare platform control with blockchain-based systems",
+        "label": "Trace the transaction and compare the recipient address",
         "interactionTarget": "story:m02:objective:3",
         "required": true
       },
       {
         "id": "m02-obj-4",
-        "label": "ask about the mark.",
+        "label": "Record the address mismatch for Softstorm",
         "interactionTarget": "story:m02:objective:4",
         "required": true
       }
     ],
     "successConditions": [
-      "All required mission objectives are completed",
-      "The player submits or reviews the relevant evidence",
-      "The mission's completion narrative is triggered"
+      "The player matches the supplied transaction hash and network to the public transaction record",
+      "The player confirms that the recipient address differs from the shop's expected address",
+      "The player records the finding without treating a display name or screenshot as proof"
     ],
     "failureAndRetry": {
-      "onFailure": "Incorrect classifications return the player to the exhibit with a visual hint.",
-      "retry": "Retry the current objective without losing completed objectives or saved story flags."
+      "onFailure": "If the player trusts the display name, checks the wrong network or skips the recipient, Larai points to the missing evidence and lets the player inspect the record again.",
+      "retry": "Retry the current evidence check without losing completed investigation steps."
     },
     "rewards": {
       "xp": 110,
       "skillBadges": [
-        "Internet History"
+        "Transaction Verification"
       ],
       "portfolioArtifacts": [
-        "Internet evolution comparison"
+        "Verified transaction trace and recipient-mismatch report"
       ]
     },
     "storyFlags": [
-      "m02_complete"
+      "m02_complete",
+      "payment_recipient_mismatch_confirmed"
     ],
     "nextMissionId": "m03",
-    "ending": "Joe_Sef connects the payment trail to the wider question of who controls online services. Larai helps the player compare the trade-offs instead of treating Web3 as magic.",
-    "cliffhanger": "A wallet workshop nearby is attracting a crowd. Someone is promising to double people's tokens if they hand over a recovery phrase.",
+    "ending": "You match the transaction hash to the public record and confirm the destination mismatch. Joe_Sef saves the evidence for Softstorm; Larai shows how a familiar platform screen can still leave users responsible for checking the address and network.",
+    "cliffhanger": "While you are leaving, a crowd gathers around a stranger promising to double their tokens. He says the only thing he needs is their wallet recovery phrase."
   },
   {
     "id": "m03",
@@ -296,7 +297,7 @@ const RAW_MISSIONS = [
       "Unique",
       "Smrt huntr"
     ],
-    "narrativePurpose": "A wallet demo becomes a security lesson when a fake helper offers to double the player's tokens.",
+    "narrativePurpose": "In Oyo, a wallet setup session turns urgent when a stranger offers to double the tokens in your new wallet in exchange for its recovery phrase. Unique and Smrt huntr ask you to inspect the request before you risk your funds.",
     "learningObjectives": [
       "wallet addresses",
       "private keys",
@@ -360,8 +361,8 @@ const RAW_MISSIONS = [
       "m03_complete"
     ],
     "nextMissionId": "m04",
-    "ending": "The player creates a wallet, receives tokens and rejects the fake helper. Unique praises the decision; Smrt huntr points out that security often means refusing a tempting shortcut.",
-    "cliffhanger": "One transfer has appeared in two different records. Goodness wants to know which details can be checked independently.",
+    "ending": "You set up a practice wallet, receive a small test amount and reject the request for your recovery phrase. Unique records the suspicious approach so the others can warn the group.",
+    "cliffhanger": "The test transfer appears in a message and an explorer record, but one person says the records can be edited. Goodness and Semi want you to trace it before the rumour spreads."
   },
   {
     "id": "m04",
@@ -377,7 +378,7 @@ const RAW_MISSIONS = [
       "Goodness",
       "Semi"
     ],
-    "narrativePurpose": "Two records disagree. The player traces a transaction and investigates what makes a shared ledger difficult to rewrite.",
+    "narrativePurpose": "Goodness and Semi bring you two conflicting accounts of the same test transfer. You trace its hash, block and confirmation details, then decide whether the proposed correction is supported by evidence or just someone's claim.",
     "learningObjectives": [
       "blocks",
       "transactions",
@@ -442,8 +443,8 @@ const RAW_MISSIONS = [
       "web3_ledger_record"
     ],
     "nextMissionId": "m05",
-    "ending": "The player traces a transaction to its block and challenges an unsupported edit. Semi saves the trace as evidence instead of relying on memory.",
-    "cliffhanger": "The trail leads to a product team whose app keeps failing. The team has opinions about the design, but nobody has asked the users.",
+    "ending": "You locate the transaction in the chain and record the details that can be independently checked. Semi uses your trace to correct the group chat without claiming that a confirmed record makes every surrounding story true.",
+    "cliffhanger": "One person who saw your evidence asks for help with a failing app used by the same group. Blockqueen and Christol need someone to find the real user problem before the next release."
   },
   {
     "id": "m05",
@@ -459,7 +460,7 @@ const RAW_MISSIONS = [
       "Blockqueen",
       "Christol"
     ],
-    "narrativePurpose": "A hyped application is failing because its team built features before understanding its users.",
+    "narrativePurpose": "Blockqueen and Christol's app keeps failing for new users, and the team is blaming the wrong things. You watch real users try the main flow, identify where they get stuck and recommend a fix based on what you observed.",
     "learningObjectives": [
       "dapps",
       "frontend/backend",
@@ -523,8 +524,8 @@ const RAW_MISSIONS = [
       "m05_complete"
     ],
     "nextMissionId": "m06",
-    "ending": "The team stops arguing over taste and tests the core journey with users. The player identifies the biggest failure and recommends a focused fix backed by evidence.",
-    "cliffhanger": "The app's repair exposes another risk: a smart contract is about to launch with a bug nobody has reproduced properly.",
+    "ending": "You identify the step where users repeatedly get stuck and propose a focused change. The team agrees to test it with users before adding more features.",
+    "cliffhanger": "During the retest, the app's payment feature exposes a separate problem: its smart contract behaves incorrectly under a condition the team never tested. Laloba and BigSam are preparing to launch."
   },
   {
     "id": "m06",
@@ -540,7 +541,7 @@ const RAW_MISSIONS = [
       "Laloba",
       "BigSam"
     ],
-    "narrativePurpose": "A contract has a bug before launch. Pressure to ship collides with the duty to protect users.",
+    "narrativePurpose": "Laloba and BigSam are under pressure to launch a contract that handles user funds, but the payment bug still reproduces. You isolate the condition, propose a correction and choose the tests needed before the team can safely release it.",
     "learningObjectives": [
       "smart contracts",
       "conditions",
@@ -604,8 +605,8 @@ const RAW_MISSIONS = [
       "m06_complete"
     ],
     "nextMissionId": "m07",
-    "ending": "The player reproduces the contract bug in a workspace and proposes a fix with tests. BigSam delays launch until the change is reviewed; Laloba records why the delay was necessary.",
-    "cliffhanger": "A trader says a swap returned less than the screen promised. The quote looked good; the pool tells a different story.",
+    "ending": "You reproduce the bug, document the failing condition and propose a fix with tests. BigSam pauses the release until the patch passes review, while Laloba records the evidence for the team.",
+    "cliffhanger": "A trader says a token swap returned less than the quote shown on screen. LunaX and OxNight ask you to inspect the pool and transaction before deciding whether the app or the market caused it."
   },
   {
     "id": "m07",
@@ -621,7 +622,7 @@ const RAW_MISSIONS = [
       "LunaX",
       "OxNight"
     ],
-    "narrativePurpose": "A swap returns less than expected. The player investigates liquidity and the hidden costs behind a displayed price.",
+    "narrativePurpose": "LunaX and OxNight investigate a swap that returned less than the displayed quote. You compare pool liquidity, fees, price impact and token approvals, then explain which costs were visible and which risks needed closer inspection.",
     "learningObjectives": [
       "DEXs",
       "liquidity pools",
@@ -685,8 +686,8 @@ const RAW_MISSIONS = [
       "m07_complete"
     ],
     "nextMissionId": "m08",
-    "ending": "The player compares pool depth, estimates price impact, performs a swap and checks the token approval. LunaX explains the difference between a displayed quote and actual execution.",
-    "cliffhanger": "The next stop is an exchange where withdrawals are paused. Rumours are already travelling faster than the official update.",
+    "ending": "You compare the available pools, identify the main causes of the execution difference and review the approval before confirming the practice swap. The team updates its guidance instead of promising that a quote is a guaranteed price.",
+    "cliffhanger": "The same group now uses a centralized exchange, where withdrawals have suddenly paused. Moon and The Cryptonian need a clear update that separates confirmed facts from chat-room rumours."
   },
   {
     "id": "m08",
@@ -702,7 +703,7 @@ const RAW_MISSIONS = [
       "Moon",
       "The Cryptonian"
     ],
-    "narrativePurpose": "A withdrawal pause triggers rumours. The player must understand exchange mechanics and communicate only verified facts.",
+    "narrativePurpose": "Withdrawals have paused at an exchange used by the group, and rumours are spreading faster than the official notice. Moon and The Cryptonian ask you to inspect the available information, understand the order types involved and draft a factual update without guessing at the cause.",
     "learningObjectives": [
       "CEXs",
       "order books",
@@ -766,8 +767,8 @@ const RAW_MISSIONS = [
       "m08_complete"
     ],
     "nextMissionId": "m09",
-    "ending": "The player distinguishes market and limit orders, examines a withdrawal incident and drafts a verified status update. The team communicates clearly without pretending to know more than it does.",
-    "cliffhanger": "A spot trader nearby has taken a loss. The next decision is whether to review the plan—or try to win it back immediately.",
+    "ending": "You distinguish market orders from limit orders, record what the withdrawal notice does and does not confirm, and publish a cautious update that gives users a useful next step.",
+    "cliffhanger": "A trader in the same group has just taken a loss and wants to enter another position immediately. Joseph Nnadi asks you to review the plan before frustration becomes another trade."
   },
   {
     "id": "m09",
@@ -783,7 +784,7 @@ const RAW_MISSIONS = [
       "Joseph Nnadi",
       "The Don"
     ],
-    "narrativePurpose": "A planned spot trade loses. The real test is whether the player reviews the process instead of chasing the loss.",
+    "narrativePurpose": "Joseph Nnadi is helping a spot trader review a losing position. You reconstruct the original setup, entry, invalidation and risk, then decide whether the evidence supports a new trade or a pause.",
     "learningObjectives": [
       "spot trading",
       "position sizing",
@@ -847,8 +848,8 @@ const RAW_MISSIONS = [
       "m09_complete"
     ],
     "nextMissionId": "m10",
-    "ending": "The spot trade loses, but the player records the original setup, defined risk and outcome without revenge trading. Joseph Nnadi leaves with a reviewable process instead of a recovery fantasy.",
-    "cliffhanger": "Praise calls from the next block: Toza has opened a leveraged position, and the margin number is shrinking.",
+    "ending": "You record the original plan and the loss without changing the rules after the fact. Joseph uses the review to show what can be learned from a losing trade without chasing the money back.",
+    "cliffhanger": "Toza has watched the group discuss risk and opened a leveraged position anyway. Praise calls you over as the margin buffer begins to shrink; Craftore wants the numbers checked now."
   },
   {
     "id": "m10",
@@ -866,7 +867,7 @@ const RAW_MISSIONS = [
       "Toza",
       "Craftore"
     ],
-    "narrativePurpose": "A leveraged position moves against Toza. Craftore helps the player model the risk before the situation escalates.",
+    "narrativePurpose": "Toza's leveraged position is moving against him, and the margin buffer is shrinking. With Praise and Craftore, you calculate the exposure, compare leverage choices and follow a pre-agreed risk plan rather than trying to predict a rescue.",
     "learningObjectives": [
       "futures",
       "leverage",
@@ -930,8 +931,8 @@ const RAW_MISSIONS = [
       "m10_complete"
     ],
     "nextMissionId": "m11",
-    "ending": "The player models a futures position and spots how leverage compresses the room for an adverse move. Toza follows the close plan before the loss grows.",
-    "cliffhanger": "The trading room is full of people, but a community project with thousands of followers has almost nobody completing its first useful task.",
+    "ending": "You calculate how leverage changes the position's exposure and identify the point at which the trade no longer fits the plan. Toza follows the agreed close plan before the loss grows.",
+    "cliffhanger": "Craftore introduces you to a project with thousands of followers but very few people completing its first useful task. Kodavic and Cybersage want to know where participation breaks down."
   },
   {
     "id": "m11",
@@ -947,7 +948,7 @@ const RAW_MISSIONS = [
       "Kodavic",
       "Cybersage"
     ],
-    "narrativePurpose": "A project has thousands of followers but few active users. A giveaway will not fix an onboarding problem.",
+    "narrativePurpose": "Kodavic and Cybersage have a large audience but almost nobody completes the project's first useful task. You trace the onboarding journey, speak with members and redesign the first session around one meaningful action instead of another giveaway.",
     "learningObjectives": [
       "community onboarding",
       "retention",
@@ -1010,8 +1011,8 @@ const RAW_MISSIONS = [
       "m11_complete"
     ],
     "nextMissionId": "m12",
-    "ending": "The player maps the first session, interviews members and redesigns the first useful action. The team begins measuring meaningful participation and return visits instead of raw follower count.",
-    "cliffhanger": "A new member has received a message from someone pretending to be a moderator. The community needs a calm response before more people click.",
+    "ending": "You find the point where newcomers give up and recommend a simpler first task with a clear result. The team begins measuring completed work and return visits rather than celebrating member counts alone.",
+    "cliffhanger": "As the team invites new members back, one receives a message from an account impersonating a moderator and asking for wallet access. Reina and Cclya need help containing it."
   },
   {
     "id": "m12",
@@ -1027,7 +1028,7 @@ const RAW_MISSIONS = [
       "Reina",
       "Cclya"
     ],
-    "narrativePurpose": "An impersonator sends malicious links while the community turns on itself. The player joins the response team.",
+    "narrativePurpose": "A fake moderator is messaging members and asking them to connect wallets or reveal recovery phrases. Reina and Cclya ask you to preserve the evidence, contain the message, help the affected member secure their account and communicate without exposing private details.",
     "learningObjectives": [
       "moderation",
       "scam response",
@@ -1090,8 +1091,8 @@ const RAW_MISSIONS = [
       "m12_complete"
     ],
     "nextMissionId": "m13",
-    "ending": "The player helps contain the impersonation attempt, guides a member to secure their account and publishes a factual notice. The community protects people without spreading private information or blame.",
-    "cliffhanger": "The incident is under control, but the group needs a public event to explain what happened and rebuild trust. The scheduled host has just cancelled.",
+    "ending": "You help the member secure their account, report the impersonator and publish a calm notice using verified facts. The team removes the dangerous message without reposting its link or blaming the victim.",
+    "cliffhanger": "The incident is under control, but members have questions and the scheduled host has cancelled. Leemah and Kenny need you to lead a useful live session at short notice."
   },
   {
     "id": "m13",
@@ -1107,7 +1108,7 @@ const RAW_MISSIONS = [
       "Leemah",
       "Kenny"
     ],
-    "narrativePurpose": "A live host cancels. The player must turn a last-minute crisis into a useful discussion.",
+    "narrativePurpose": "After the impersonation incident, the community wants answers and practical safety steps. With Leemah and Kenny, you prepare and host a live session, handle a difficult question honestly and publish a recap with actions members can take.",
     "learningObjectives": [
       "live hosting",
       "interviewing",
@@ -1176,8 +1177,8 @@ const RAW_MISSIONS = [
       "m13_complete"
     ],
     "nextMissionId": "m14",
-    "ending": "The player hosts a live session with a clear opening, thoughtful questions and a calm response to a difficult question. The recap gives people useful next steps.",
-    "cliffhanger": "After the session, a founder asks for help explaining a good product without drowning the audience in technical language.",
+    "ending": "You host the session, separate confirmed facts from unanswered questions and publish a recap with clear next steps. The community leaves with guidance rather than promises that the problem can never happen again.",
+    "cliffhanger": "A founder who attended the session asks for help explaining a useful product. Kore and Veedima say the current announcement sounds impressive but leaves readers unsure what the product does."
   },
   {
     "id": "m14",
@@ -1193,7 +1194,7 @@ const RAW_MISSIONS = [
       "Kore",
       "Veedima"
     ],
-    "narrativePurpose": "A useful product is being misunderstood. The player joins its communications team and turns technical claims into clear language.",
+    "narrativePurpose": "Kore and Veedima's product announcement is full of technical claims but does not tell its intended audience what the product does. You check the evidence, rewrite the message for a real audience and remove claims the team cannot support.",
     "learningObjectives": [
       "content writing",
       "technical communication",
@@ -1256,8 +1257,8 @@ const RAW_MISSIONS = [
       "m14_complete"
     ],
     "nextMissionId": "m15",
-    "ending": "The player turns a confusing product announcement into clear, audience-specific communication with verifiable claims and a useful next step.",
-    "cliffhanger": "A contact asks whether the player can help with a professional opportunity. The first thing they want to see is work—not another impressive bio.",
+    "ending": "You produce a clear announcement that explains the problem, what the product can do today and what readers should do next. Every claim is tied to evidence the team can stand behind.",
+    "cliffhanger": "Your rewrite gets shared by someone hiring for a Web3 role. Web3_Esta and Love ask you to prepare examples of real work before replying with a list of skills."
   },
   {
     "id": "m15",
@@ -1273,7 +1274,7 @@ const RAW_MISSIONS = [
       "Web3_Esta",
       "Love"
     ],
-    "narrativePurpose": "The player wants an opportunity but their profile is scattered and full of claims unsupported by work.",
+    "narrativePurpose": "Web3_Esta and Love help you turn the work you have done so far into a credible portfolio. You choose a direction, show your actual contribution, organise evidence and identify the skill gap that could block your next opportunity.",
     "learningObjectives": [
       "professional positioning",
       "portfolios",
@@ -1336,8 +1337,8 @@ const RAW_MISSIONS = [
       "m15_complete"
     ],
     "nextMissionId": "m16",
-    "ending": "The player shapes a focused profile and portfolio around verifiable work. Love identifies the strongest sample and gives a concrete next step instead of promising instant success.",
-    "cliffhanger": "The portfolio earns a reply. J.Jonathan has a small task available—but the brief, terms and recruiter still need checking.",
+    "ending": "You assemble a focused portfolio with clear samples, context and an honest account of your contribution. Love points out one missing proof point to work on next instead of promising that a polished profile guarantees a job.",
+    "cliffhanger": "A small opportunity arrives from J.Jonathan, but the recruiter wants an upfront fee before sharing the full brief. Essa asks you to verify the offer before sending anything."
   },
   {
     "id": "m16",
@@ -1353,7 +1354,7 @@ const RAW_MISSIONS = [
       "J.Jonathan",
       "Essa"
     ],
-    "narrativePurpose": "A small startup needs help researching its audience. The player applies with a practical sample instead of empty promises.",
+    "narrativePurpose": "J.Jonathan has a small research task that could become useful experience, but the recruiter attached to it asks for an upfront fee and vague personal details. With Essa, you inspect the brief, verify the contact and submit a practical sample only when the terms make sense.",
     "learningObjectives": [
       "applications",
       "work samples",
@@ -1416,8 +1417,8 @@ const RAW_MISSIONS = [
       "m16_complete"
     ],
     "nextMissionId": "m17",
-    "ending": "The player completes a practical work sample, submits a clear application and turns feedback into a targeted revision. The opportunity is a chance to contribute—not a guarantee of a job.",
-    "cliffhanger": "That small assignment points to a startup in Kano. The team has built a long list of features but still cannot explain the user's main problem.",
+    "ending": "You identify the warning signs, refuse the suspicious fee and complete a safe work sample for the verifiable part of the opportunity. The feedback gives you a concrete revision to make, not a guaranteed job.",
+    "cliffhanger": "The sample reaches a startup in Kano. White Coach and Abdul say the team is about to build another feature, even though it still cannot explain why users leave."
   },
   {
     "id": "m17",
@@ -1433,7 +1434,7 @@ const RAW_MISSIONS = [
       "White Coach",
       "Abdul"
     ],
-    "narrativePurpose": "A startup has too many features and one unresolved user problem. The player helps the team simplify the product.",
+    "narrativePurpose": "White Coach and Abdul have inherited a startup with too many features and a leaky user journey. You interview users, find the main point of friction and test a smaller change against the problem they actually reported.",
     "learningObjectives": [
       "product management",
       "UX",
@@ -1496,8 +1497,8 @@ const RAW_MISSIONS = [
       "m17_complete"
     ],
     "nextMissionId": "m18",
-    "ending": "The player maps the user journey and helps the team simplify the main flow. The revised version is tested against the original problem instead of judged by how many features it contains.",
-    "cliffhanger": "The product is easier to use. Now the growth team wants a big campaign—but nobody can show whether the audience is right.",
+    "ending": "You map the user journey and test a simpler core flow. The team keeps the change that addresses the observed problem and moves the rest of the feature list out of the way.",
+    "cliffhanger": "The improved flow is ready for more users, but David and Kanyin want to spend the whole campaign budget before defining what success should look like."
   },
   {
     "id": "m18",
@@ -1513,7 +1514,7 @@ const RAW_MISSIONS = [
       "David",
       "Kanyin"
     ],
-    "narrativePurpose": "A startup wants a costly campaign before understanding its audience. The player designs a smaller experiment.",
+    "narrativePurpose": "David and Kanyin want to launch a costly campaign for the revised product. You define the audience, make a testable prediction, choose meaningful measures and examine a growth offer that promises users without explaining where they come from.",
     "learningObjectives": [
       "growth experiments",
       "funnels",
@@ -1582,8 +1583,8 @@ const RAW_MISSIONS = [
       "m18_complete"
     ],
     "nextMissionId": "m19",
-    "ending": "The player designs a measurable growth experiment and rejects an offer that cannot explain its source or prove genuine users. The team learns more from a small honest test than a large vanity number.",
-    "cliffhanger": "The experiment gets attention from an investor. The offer looks generous, but the terms could change who controls the project.",
+    "ending": "You design a small measurable campaign, define what evidence would count as success and reject the unverifiable growth offer. The team learns from the test before committing the full budget.",
+    "cliffhanger": "The experiment attracts an investor. Mcbond and Alpha.RWA want your help comparing the offer with the startup's runway, control and obligations before anyone signs."
   },
   {
     "id": "m19",
@@ -1599,7 +1600,7 @@ const RAW_MISSIONS = [
       "Mcbond",
       "Alpha.RWA"
     ],
-    "narrativePurpose": "A startup compares grants, investors and token-based funding while balancing runway, obligations and control.",
+    "narrativePurpose": "An investor offers the startup a large headline valuation, but the terms include milestones, allocation and control conditions. Mcbond and Alpha.RWA ask you to compare the proposal with the budget and identify obligations the founders could be overlooking.",
     "learningObjectives": [
       "grants",
       "venture capital",
@@ -1662,8 +1663,8 @@ const RAW_MISSIONS = [
       "m19_complete"
     ],
     "nextMissionId": "m20",
-    "ending": "The player reviews the budget and compares funding proposals, vesting and conflicts of interest. The founders choose a route that fits their obligations and runway.",
-    "cliffhanger": "One pitch deck lists a tokenized property as fully backed. The team has shown a token page—but not the evidence behind the asset.",
+    "ending": "You compare the proposals against runway, milestones, vesting and control rights. The founders choose the option they can responsibly deliver on rather than the one with the largest headline number.",
+    "cliffhanger": "The investor's deck also promotes a tokenized property as fully backed. BigWealth asks you to find the legal and operational evidence behind that claim before it reaches the public."
   },
   {
     "id": "m20",
@@ -1679,7 +1680,7 @@ const RAW_MISSIONS = [
       "BigWealth",
       "BigSam"
     ],
-    "narrativePurpose": "A project claims to tokenize property, but its legal rights, custody and redemption promises are unclear.",
+    "narrativePurpose": "BigWealth's property-token pitch claims that every token is fully backed, but the deck does not show enough proof of ownership, custody or redemption. You examine the documents and prepare the questions the issuer must answer before marketing the asset.",
     "learningObjectives": [
       "tokenization",
       "custody",
@@ -1743,8 +1744,8 @@ const RAW_MISSIONS = [
       "m20_complete"
     ],
     "nextMissionId": "m21",
-    "ending": "The player finds missing ownership, custody and redemption evidence and drafts the questions the issuer must answer. The team pauses its announcement rather than making a claim it cannot support.",
-    "cliffhanger": "While the asset team checks its records, an AI report confidently flags a transaction that does not match the source data.",
+    "ending": "You identify the missing evidence around ownership, custody and redemption and write a clear due-diligence list. The team pauses the claim until the issuer can support it.",
+    "cliffhanger": "During the review, an AI-generated risk report flags a transaction that does not match the source records. Blessing and Odion need you to find out whether the report or the data is wrong."
   },
   {
     "id": "m21",
@@ -1760,7 +1761,7 @@ const RAW_MISSIONS = [
       "Blessing",
       "Odion"
     ],
-    "narrativePurpose": "An AI report sounds certain but contains incorrect blockchain analysis. The player checks its claims against the source data.",
+    "narrativePurpose": "Blessing and Odion receive an AI report that confidently accuses a wallet of suspicious activity, but one claim conflicts with the source record. You trace the claim, identify the unsupported assumption and retest the analysis before it affects a real person.",
     "learningObjectives": [
       "AI verification",
       "on-chain analysis",
@@ -1823,8 +1824,8 @@ const RAW_MISSIONS = [
       "m21_complete"
     ],
     "nextMissionId": "m22",
-    "ending": "The player checks AI-generated claims against source data, corrects a false assumption and retests the workflow. The team keeps human review for decisions that can affect people or funds.",
-    "cliffhanger": "The corrected report mentions a transfer between networks. Princess wants to trace it without assuming both chains work the same way.",
+    "ending": "You find the mismatch between the AI report and the source record, correct the prompt or input and rerun the check. The team keeps human review in place for conclusions that could affect people or funds.",
+    "cliffhanger": "The corrected report reveals a transfer between two networks. Princess and Racheal want you to trace the route without assuming that a bridge works like either chain."
   },
   {
     "id": "m22",
@@ -1840,7 +1841,7 @@ const RAW_MISSIONS = [
       "Princess",
       "Racheal"
     ],
-    "narrativePurpose": "A dapp needs to interact with another network. The player investigates a bridge and its dependencies.",
+    "narrativePurpose": "Princess and Racheal are tracing a transfer across networks after the AI report exposed a gap in the team's records. You check the network, bridge role, destination and fees, and distinguish a real interface from a fake one before recommending the next step.",
     "learningObjectives": [
       "layer-one/two networks",
       "bridges",
@@ -1903,8 +1904,8 @@ const RAW_MISSIONS = [
       "m22_complete"
     ],
     "nextMissionId": "m23",
-    "ending": "The player traces a cross-network transfer, checks the bridge's role and identifies a fake interface. The team records both what worked and the extra trust assumptions the bridge introduced.",
-    "cliffhanger": "The networks disagree on some details, but the bigger decision belongs to the people funding the next upgrade. The DAO has called a vote.",
+    "ending": "You reconstruct the cross-network transfer and document the bridge's dependencies, fees and remaining uncertainties. The team records what the evidence proves instead of treating a successful transfer as proof that every bridge is safe.",
+    "cliffhanger": "The team needs funding for a safer integration, and the DAO must decide how to use its treasury. Seun and Dorcas want you to read the proposal beyond its headline."
   },
   {
     "id": "m23",
@@ -1920,7 +1921,7 @@ const RAW_MISSIONS = [
       "Seun",
       "Dorcas"
     ],
-    "narrativePurpose": "A DAO must choose how to use its treasury, but inactivity and unclear proposals undermine trust.",
+    "narrativePurpose": "The DAO is voting on a treasury proposal that would fund the next integration. Seun and Dorcas ask you to compare costs, beneficiaries and execution limits, inspect the treasury and cast an informed vote rather than following the loudest member.",
     "learningObjectives": [
       "DAOs",
       "governance",
@@ -1983,8 +1984,8 @@ const RAW_MISSIONS = [
       "m23_complete"
     ],
     "nextMissionId": "m24",
-    "ending": "The player reviews the treasury and proposal, casts a vote and explains the outcome alongside participation and execution limits. The group sees that accountability does not end when voting closes.",
-    "cliffhanger": "Before the approved work ships, Joe and Mike find a serious vulnerability in the release candidate. The team wants to launch anyway.",
+    "ending": "You compare the proposal with the treasury, cast your vote and explain both the result and its limits. The group records who is responsible for carrying the decision out after voting closes.",
+    "cliffhanger": "Before the approved integration can ship, Joe and Mike find a serious vulnerability in the release candidate. The launch team wants to keep the date; the evidence says stop."
   },
   {
     "id": "m24",
@@ -2000,7 +2001,7 @@ const RAW_MISSIONS = [
       "Joe",
       "Mike"
     ],
-    "narrativePurpose": "A serious vulnerability appears before launch. The player helps the team prioritize remediation and communicate responsibly.",
+    "narrativePurpose": "Joe and Mike discover a vulnerability in the integration approved by the DAO. You assess its likely impact, reproduce the failure in a review environment, document a responsible disclosure and verify the patch before the team resumes release planning.",
     "learningObjectives": [
       "audits",
       "threat modeling",
@@ -2063,8 +2064,8 @@ const RAW_MISSIONS = [
       "m24_complete"
     ],
     "nextMissionId": "m25",
-    "ending": "The player prioritizes a vulnerability, prepares a responsible disclosure and verifies the patch in a review environment. The launch waits until the evidence supports a safe release.",
-    "cliffhanger": "During the review, a creator asks a deceptively simple question: if someone buys a digital collectible, what rights did they actually buy?",
+    "ending": "You document the vulnerability, verify the correction in a review environment and give the team evidence for a safer release decision. The launch remains paused until the fix has been reviewed.",
+    "cliffhanger": "While the team prepares the corrected release, Gbemi and FemiY ask what buyers really receive when they purchase a digital collectible promoted by the project."
   },
   {
     "id": "m25",
@@ -2080,7 +2081,7 @@ const RAW_MISSIONS = [
       "Gbemi",
       "FemiY"
     ],
-    "narrativePurpose": "Creators disagree about what an NFT buyer actually owns. The player examines terms before recommending a model.",
+    "narrativePurpose": "Gbemi and FemiY are preparing a digital collectible release, but the sales page promises ownership and commercial rights that the licence may not grant. You compare the token, the written terms and the creator's actual obligations before rewriting the offer.",
     "learningObjectives": [
       "NFTs",
       "copyright",
@@ -2144,8 +2145,8 @@ const RAW_MISSIONS = [
       "m25_complete"
     ],
     "nextMissionId": "m26",
-    "ending": "The player checks the collectible's licence, identifies the rights it grants and clarifies creator revenue limitations. The creators publish terms that say what buyers receive without promising rights the token cannot provide.",
-    "cliffhanger": "The corrected terms are added to the archive. An old repository nearby contains the code behind one of the clues—and its contributors have stopped talking.",
+    "ending": "You identify the rights the licence actually grants and remove unsupported promises from the sales copy. The creators publish clearer terms so buyers can understand what they are and are not receiving.",
+    "cliffhanger": "The corrected release links to an old public repository containing part of the project's history. Softstorm and IamAbdul recognise a contributor dispute in its commit history and ask you to help reopen the work responsibly."
   },
   {
     "id": "m26",
@@ -2161,7 +2162,7 @@ const RAW_MISSIONS = [
       "Softstorm",
       "IamAbdul"
     ],
-    "narrativePurpose": "The player reunites with the first mentors to inspect an abandoned repository whose code survives but whose collaboration has stalled.",
+    "narrativePurpose": "Softstorm and IamAbdul reconnect with you over an abandoned repository linked to the collectible project's history. You inspect the issues and contribution rules, choose a small fix, improve the documentation and prepare a change that others can review.",
     "learningObjectives": [
       "Git",
       "documentation",
@@ -2226,8 +2227,8 @@ const RAW_MISSIONS = [
       "web3_archive_fragment"
     ],
     "nextMissionId": "m27",
-    "ending": "The player finds a scoped issue, improves documentation and proposes a reviewable contribution. Softstorm and IamAbdul show how shared work depends on clear licences, credit and collaboration.",
-    "cliffhanger": "The repository history contains a reference to the same archive. Joe_Sef and Larai may be able to connect it with the evidence collected across the journey.",
+    "ending": "You submit a focused contribution with clear documentation and a reviewable change. Softstorm and IamAbdul use the example to restart the conversation around credit, licences and how to disagree without losing the work.",
+    "cliffhanger": "The repository references the same archive Joe_Sef and Larai helped you investigate in Lagos. They ask you to assemble the evidence from the journey and distinguish proven facts from assumptions."
   },
   {
     "id": "m27",
@@ -2243,7 +2244,7 @@ const RAW_MISSIONS = [
       "Joe_Sef",
       "Larai"
     ],
-    "narrativePurpose": "The player returns to the workspace and reconstructs an incomplete archive from evidence gathered across the journey.",
+    "narrativePurpose": "Joe_Sef and Larai ask you to reconstruct an archive that connects the Lagos payment dispute, the product teams and the later investigations. You compare saved evidence, resolve contradictions where possible and map the different skills and people involved.",
     "learningObjectives": [
       "evidence evaluation",
       "ecosystem roles",
@@ -2307,8 +2308,8 @@ const RAW_MISSIONS = [
       "kitcity_destination_unlocked"
     ],
     "nextMissionId": "m28",
-    "ending": "The player assembles a timeline, resolves contradictions where the evidence allows and maps the roles represented across the journey. The archive reveals a route to KitCity.",
-    "cliffhanger": "The map points to a final field challenge in Kogi. The player must combine several skills instead of solving one isolated quiz.",
+    "ending": "You assemble a timeline, label what is verified and leave unresolved claims clearly marked. The combined evidence reveals a route to KitCity and explains why the earlier incidents were connected by the people and work around them.",
+    "cliffhanger": "The archive's final clue points to a field challenge in Kogi. Unique and Christol want you to combine the skills you have practised on one problem with real constraints."
   },
   {
     "id": "m28",
@@ -2324,7 +2325,7 @@ const RAW_MISSIONS = [
       "Unique",
       "Christol"
     ],
-    "narrativePurpose": "Before the final road, the player solves a combined problem involving technology, users, product choices and communication.",
+    "narrativePurpose": "Unique and Christol give you a field challenge that combines a user problem, a product decision, a security concern and a public explanation. You coordinate the right people, build a small safe prototype and defend the result with evidence.",
     "learningObjectives": [
       "systems thinking",
       "teamwork",
@@ -2387,8 +2388,8 @@ const RAW_MISSIONS = [
       "m28_complete"
     ],
     "nextMissionId": "m29",
-    "ending": "The player coordinates a team, builds a small safe prototype and presents the evidence. Unique and Christol hand over the final route because the player has learned to connect skills to a real problem.",
-    "cliffhanger": "The road ends at KitCity's gate. The people inside have seen plenty of visitors arrive with claims; Craftore wants to see what this player can actually do.",
+    "ending": "You deliver a small prototype, explain the trade-offs and show which evidence supports the result. The team signs off the route because you can connect technical choices with the people affected by them.",
+    "cliffhanger": "The route ends at KitCity's gate. Softstorm, White Coach and Craftore have heard the story of your work; now they want to see how you handle a new problem without a scripted answer."
   },
   {
     "id": "m29",
@@ -2406,7 +2407,7 @@ const RAW_MISSIONS = [
       "White Coach",
       "Craftore"
     ],
-    "narrativePurpose": "The player arrives in KitCity and sees builders, educators, researchers, traders and creators working side by side.",
+    "narrativePurpose": "You arrive in KitCity, where builders, educators, researchers, traders and creators work side by side. Softstorm welcomes you, White Coach shows the available paths and Craftore asks you to choose the kind of practical challenge you want to attempt.",
     "learningObjectives": [
       "career exploration",
       "specialization"
@@ -2462,8 +2463,8 @@ const RAW_MISSIONS = [
       "m29_complete"
     ],
     "nextMissionId": "m30",
-    "ending": "Softstorm welcomes the player to KitCity, while White Coach introduces the city's different disciplines and Craftore asks the player to choose a practical direction.",
-    "cliffhanger": "Craftore opens the assessment hall. The challenge will adapt to the player's chosen specialization, and the evidence must come from their own work.",
+    "ending": "You meet the people who run KitCity's different workspaces and choose a specialization for the assessment. Craftore makes it clear that the city values demonstrated work, honest limits and the ability to ask for help.",
+    "cliffhanger": "The assessment hall is ready. Your challenge will follow the path you chose, and the result must show your own decisions rather than memorised answers."
   },
   {
     "id": "m30",
@@ -2489,7 +2490,7 @@ const RAW_MISSIONS = [
       "Christol",
       "Craftore"
     ],
-    "narrativePurpose": "A practical assessment adapts to the specialization chosen by the player; it tests demonstrated skill rather than requiring mastery of every path.",
+    "narrativePurpose": "Your KitCity assessment follows the specialization you selected. With the mentors available as collaborators, you work through a hands-on challenge, review feedback and improve the result before submitting evidence of what you can do.",
     "learningObjectives": [
       "practical execution",
       "professional judgment"
@@ -2551,8 +2552,8 @@ const RAW_MISSIONS = [
       "m30_complete"
     ],
     "nextMissionId": "m31",
-    "ending": "The player completes a specialization-based practical assessment, reviews feedback and retries when needed. The practitioner record reflects demonstrated work and improvement—not a job offer or external accreditation.",
-    "cliffhanger": "The mentors gather for one last conversation. They have watched the player change; now the player must decide what to carry forward.",
+    "ending": "You complete the practical task, review the feedback and make a targeted improvement before submitting your work. Your practitioner record reflects demonstrated skills and progress, not a promise of employment or external accreditation.",
+    "cliffhanger": "The mentors gather to discuss the choices you made throughout the journey. They want to hear which problems you now feel ready to take on and what you intend to build next."
   },
   {
     "id": "m31",
@@ -2578,7 +2579,7 @@ const RAW_MISSIONS = [
       "Christol",
       "Craftore"
     ],
-    "narrativePurpose": "The returning mentors reveal how their clues, work and relationships connected to the Web3 archive.",
+    "narrativePurpose": "The mentors revisit the clues and decisions from your journey, from the Lagos payment dispute to the KitCity assessment. You choose what Web3 means to you now, select a direction and receive a record of the work you demonstrated.",
     "learningObjectives": [
       "reflection",
       "career planning"
@@ -2635,8 +2636,8 @@ const RAW_MISSIONS = [
       "main_story_complete"
     ],
     "nextMissionId": null,
-    "ending": "The mentors connect the clues from the entire journey: Web3 is not one app or one career, but a network of people, products, skills and responsibilities. The player receives a practitioner record and can continue exploring KitCity.",
-    "cliffhanger": "A new message appears on the city board: “We've got something new to build.” The next adventure is yours to choose.",
+    "ending": "You connect the journey's incidents to the people, products and responsibilities behind them, then choose a direction for your next project. Your practitioner record captures the work you completed and the skills you demonstrated.",
+    "cliffhanger": "A new request appears on KitCity's board: someone has a problem that needs a team. This time, you get to choose how to begin."
   }
 ];
 
