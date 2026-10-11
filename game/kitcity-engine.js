@@ -2089,7 +2089,7 @@ function placeExecutionCenter(def,base,station){
   const screenBar=new THREE.Mesh(new THREE.BoxGeometry(1.12,.08,.05),lam(BRAND));screenBar.position.set(0,2.05,-.3);stationGroup.add(screenBar);
   const screenDot=new THREE.Mesh(new THREE.CircleGeometry(.1,12),lam('#55E6C1'));screenDot.position.set(.54,1.66,-.3);stationGroup.add(screenDot);
   missionGroup.add(stationGroup);
-  const stationSign=label(tr(def.sign||def.title||'WORKSTATION'),BRAND,'#071827',1.1);stationSign.position.set(station.x,4.1,station.z);missionGroup.add(stationSign);
+  const stationSign=label(tr(def.sign||def.title||def.label||'WORKSTATION'),BRAND,'#071827',1.1);stationSign.position.set(station.x,4.1,station.z);missionGroup.add(stationSign);
   return {x:station.x,z:station.z,r:7.2,clue:true};
 }
 function placeStoryOffice(spot){
@@ -2441,7 +2441,7 @@ const CHRONICLE_ACTIVITY_RULES=[
 {r:/organize work samples|assemble a portfolio/i,q:'How should work samples be presented?',o:['Explain the goal, your role, the result and what can be verified','Post links with no context','Claim work created by someone else'],a:0,w:'Context helps a reviewer understand your actual contribution and assess the evidence.'},
 {r:/identify missing evidence/i,q:'Your portfolio makes a claim without proof. What next?',o:['Create a relevant work sample or remove the unsupported claim','Make the claim louder','Use a fake testimonial'],a:0,w:'Fill evidence gaps with real work or make the claim more precise.'},
 {r:/review a role/i,q:'What should you check in a role description?',o:['Responsibilities, required skills, terms and who is hiring','Only the promised salary','Whether the recruiter uses a famous logo'],a:0,w:'Verify the role, expectations and employer before sharing information or accepting terms.'},
-{r:/map required skills/i,q:'How should you plan a skill gap?',o:['Compare requirements with current proof and choose one practice task','Claim every skill already','Avoid checking the requirements'],a:0,w:'A specific skill gap can become a practical learning plan.'},
+{r:/map required skills/i,q:'How should you plan a skill gap?',o:['Compare requirements with current proof and choose one focused task','Claim every skill already','Avoid checking the requirements'],a:0,w:'A specific skill gap can become a practical learning plan.'},
 {r:/complete a work sample/i,q:'What makes a work sample useful?',o:['It follows the brief and shows your reasoning','It ignores the brief to look impressive','It copies another person’s output'],a:0,w:'Follow the brief and explain your choices so the reviewer can assess your work.'},
 {r:/submit an application/i,q:'What strengthens an application?',o:['A tailored note with relevant, verifiable evidence','A mass message with no context','An upfront payment to the recruiter'],a:0,w:'Show how your evidence matches the role and keep the application clear.'},
 {r:/respond to feedback/i,q:'How should you use useful feedback?',o:['Clarify it, make a targeted revision and show what changed','Argue before understanding it','Ignore every suggestion'],a:0,w:'Turn actionable feedback into a revision and explain the change.'},
@@ -2451,7 +2451,7 @@ const CHRONICLE_ACTIVITY_RULES=[
 {r:/choose success metrics/i,q:'Which metric should you choose?',o:['One tied to the behaviour the experiment is meant to change','Any number that rises','Only impressions regardless of the goal'],a:0,w:'Choose a metric connected to the intended behaviour, then compare it with a baseline.'},
 {r:/interpret results/i,q:'How should you interpret an experiment?',o:['Compare results with the hypothesis and note limits','Claim success from one lucky data point','Hide results that disagree'],a:0,w:'Report what the evidence shows, what it does not show and what to test next.'},
 {r:/suspicious growth offer/i,q:'A service promises thousands of real users overnight. What do you check?',o:['Source, consent, quality and whether the offer relies on fake engagement','Only the discount','Nothing if the numbers look good'],a:0,w:'Fake engagement can harm trust and mislead decisions. Verify the source and quality of growth.'},
-{r:/fictional budget/i,q:'What should you review in a project budget?',o:['Costs, runway, milestones and assumptions','Only the largest projected revenue','A guaranteed return'],a:0,w:'Understand costs, runway and assumptions before recommending funding.'},
+{r:/budget/i,q:'What should you review in a project budget?',o:['Costs, runway, milestones and assumptions','Only the largest projected revenue','A guaranteed return'],a:0,w:'Understand costs, runway and assumptions before recommending funding.'},
 {r:/allocation and vesting/i,q:'What does a vesting schedule describe?',o:['When allocated tokens or shares become available','A guaranteed token price','The project’s daily active users'],a:0,w:'Vesting sets a release schedule; it does not guarantee value or future price.'},
 {r:/flag conflicts/i,q:'A decision-maker may benefit personally from a proposal. What should happen?',o:['Disclose the conflict and use a transparent review process','Hide the relationship','Approve it without discussion'],a:0,w:'Disclose conflicts and use a fair process so the decision can be evaluated.'},
 {r:/missing ownership evidence/i,q:'The asset file lacks proof of ownership. What next?',o:['Pause the claim and request verifiable legal and custody records','Mint a token anyway','Treat the screenshot as proof'],a:0,w:'Do not claim ownership without the relevant evidence and rights.'},
@@ -2520,7 +2520,7 @@ const CHRONICLE_ACTIVITY_RULES=[
 {r:/review feedback/i,q:'What is a useful response to assessment feedback?',o:['Identify the gap, revise the work and show the improvement','Argue without reviewing the feedback','Delete the first attempt'],a:0,w:'Use feedback to make a targeted improvement and keep the evidence of what changed.'},
 {r:/submit the result/i,q:'What should accompany your practical result?',o:['The work, your decisions and evidence that it meets the criteria','Only a claim that it is finished','Someone else’s work'],a:0,w:'A reviewer needs the result and enough context to assess your contribution.'},
 {r:/retry if needed/i,q:'If your first attempt fails, what should you do?',o:['Use the feedback, retry the task and explain what changed','Hide the failure','Repeat the same attempt without learning'],a:0,w:'Retries are part of learning. Use the feedback and document the improvement.'},
-{r:/receive the practitioner record/i,q:'What should your practitioner record represent?',o:['The work and skills you demonstrated, not a guaranteed job or income','A guarantee of future profit','A claim that you know everything'],a:0,w:'The record reflects completed practice and demonstrated skills; it is not a job or income guarantee.'}
+{r:/receive the practitioner record/i,q:'What should your practitioner record represent?',o:['The work and skills you demonstrated, not a guaranteed job or income','A guarantee of future profit','A claim that you know everything'],a:0,w:'The record reflects completed work and demonstrated skills; it is not a job or income guarantee.'}
 ,
 {r:/present the result/i,q:'How should you present the team result?',o:['Demonstrate the prototype, explain each contribution and show what the test proved','Show only the final screen with no explanation','Claim success without evidence'],a:0,w:'A good demo connects the problem, the team’s work, the result and the evidence.'}
 ];
@@ -2687,7 +2687,7 @@ const MISSIONS=CHRONICLE_MISSIONS.map((story,index)=>{
 });
 
 const MBY={}; MISSIONS.forEach(m=>{ MBY[m.id]=m; });
-/* Progress is tracked by completed missions and practice USDC. */
+/* Progress is tracked by completed missions and the in-game wallet balance. */
 const isUnlocked=m=>{ const k=MISSIONS.indexOf(m); return k===0||!!P.done[MISSIONS[k-1].id]; };
 
 
@@ -2844,10 +2844,10 @@ function completeMission(){
   if(next)btns.push({t:next.city!==m.city?'Continue to '+CITIES[next.city].name:'Next: '+next.title,f:()=>startMission(next.id)});
   btns.push({t:'Back to hub',g:1,f:exitToHub});
   openSheet('<div class="who"><span class="av" style="background:'+INK+'">'+m.n+'</span><div><h3 style="margin:0">Mission '+m.n+' complete</h3><small>'+CITIES[m.city].name+' · '+personalize(m.title,null)+'</small></div></div>'+
-    (first?'<div class="kv"><span>Mission reward</span><b>+'+missionReward.toFixed(2)+' USDC</b></div><p class="note">'+(wrong===0?'Clean run reward collected.':'Completed after '+wrong+' retry attempt'+(wrong===1?'':'s')+'. No practice funds were deducted for wrong answers.')+'</p>':'<p class="note">Replay complete. The first-clear reward has already been collected.</p>')+
+    (first?'<div class="kv"><span>Mission reward</span><b>+'+missionReward.toFixed(2)+' USDC</b></div><p class="note">'+(wrong===0?'Clean run reward collected.':'Completed after '+wrong+' retry attempt'+(wrong===1?'':'s')+'.')+'</p>':'<p class="note">Replay complete. The first-clear reward has already been collected.</p>')+
     (m.city==='kitcity'?'<p><b>Welcome to KitCity. Your journey through Nigeria has brought you here to see how Web3 works in the real world.</b></p>':'')+
     (cityComplete?'<p><b>All missions in '+CITIES[m.city].name+' are complete. Your city badge is available.</b></p>':'')+
-    '<div class="kv"><span>Practice balance</span><b>'+P.usdc.toFixed(2)+' USDC</b></div>',btns);
+    '<div class="kv"><span>Wallet balance</span><b>'+P.usdc.toFixed(2)+' USDC</b></div>',btns);
 }
 function showCityBadge(city,after){
  const name=CITIES[city]?.name||city;
@@ -2856,7 +2856,7 @@ function showCityBadge(city,after){
 function certificate(){
   const totalMissions=MISSIONS.length;
   const msg=encodeURIComponent(L('I finished all '+totalMissions+' KitCity missions and learned how to use a crypto wallet safely. Can you survive Naija with your wallet?','I don finish all '+totalMissions+' KitCity missions and I don learn how to use crypto wallet safely. You fit survive Naija with your wallet?'));
-  openSheet('<div class="badge">'+badgeSVG('\u2605',true,96)+'<div><h3 style="margin-top:0">KitCity Graduate</h3><small>All '+totalMissions+' missions complete</small></div></div><p>You completed the full KitCity mission journey across all cities. Your practice balance is <b>'+P.usdc.toFixed(2)+' USDC</b>.</p>',
+  openSheet('<div class="badge">'+badgeSVG('\u2605',true,96)+'<div><h3 style="margin-top:0">KitCity Graduate</h3><small>All '+totalMissions+' missions complete</small></div></div><p>You completed the full KitCity mission journey across all cities. Your wallet balance is <b>'+P.usdc.toFixed(2)+' USDC</b>.</p>',
     [{t:'Back to hub',f:exitToHub}]);
   sheetEl.insertAdjacentHTML('beforeend',tx('<div class="row"><a class="btn" href="https://wa.me/?text='+msg+'" target="_blank" rel="noopener">Share on WhatsApp</a></div>'));
 }
@@ -3003,9 +3003,16 @@ function renderHub(){
   });
   const retiredFocusClass=['web3','focus'].join('-');
   hubBody.querySelectorAll('[class*="'+retiredFocusClass+'"],[data-legacy-mission],.legacy-mission-card,.old-mission-card,.mission-card-old').forEach(node=>node.remove());
-  hubBody.querySelectorAll('*').forEach(node=>{
-    if(node.children.length===0&&new RegExp(['web3','\\s*','focus'].join(''),'i').test(node.textContent||'')) node.remove();
-    else if(node.matches('.card,article,section')&&!node.matches('.mission-card')&&/mission\\s+\\d+\\s*:/i.test(node.textContent||'')) node.remove();
+  const focusLabelPattern=new RegExp(['web3','\\\\s*','focus'].join(''),'ig');
+  const textWalker=document.createTreeWalker(hubBody,NodeFilter.SHOW_TEXT),staleTextNodes=[];
+  while(textWalker.nextNode()){
+    const node=textWalker.currentNode;
+    if(focusLabelPattern.test(node.nodeValue||'')){staleTextNodes.push(node);focusLabelPattern.lastIndex=0;}
+  }
+  staleTextNodes.forEach(node=>{node.nodeValue=(node.nodeValue||'').replace(focusLabelPattern,'').trim();});
+  hubBody.querySelectorAll('.card,article,section').forEach(node=>{
+    if(!node.matches('.map-card,.destination-card,.mission-card')&&!node.textContent.trim()&&!node.querySelector('button,svg,img')) node.remove();
+    else if(!node.matches('.mission-card')&&/mission\\s+\\d+\\s*:/i.test(node.textContent||'')) node.remove();
   });
 }
 $('#hub').addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.closest('.map g[data-a="city"]')){e.preventDefault();e.target.dispatchEvent(new MouseEvent('click',{bubbles:true}));}});
