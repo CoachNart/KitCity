@@ -2,6 +2,7 @@ import { readFile } from "node:fs/promises";
 import { CHARACTER_ORDER, MISSIONS, validateChronicles } from "./chronicles.js";
 
 const engine = await readFile(new URL("../kitcity-engine.js", import.meta.url), "utf8");
+const sceneDirector = await readFile(new URL("./story-scene-director.js", import.meta.url), "utf8");
 const errors = [...validateChronicles().errors];
 const requireText = (text, label) => {
   if (!engine.includes(text)) errors.push("Runtime integration missing: " + label);
@@ -12,9 +13,9 @@ requireText("const MISSIONS=CHRONICLE_MISSIONS.map", "runtime mission adapter");
 requireText("toast('Look around. Walk up to someone and press Talk when you are ready.'", "player-led mission start");
 requireText("if(m.id==='m01'&&!P.chroniclesPrologueSeen)", "first-time opening cinematic gate");
 requireText("storyDirector.playOpening(()=>{", "intro cinematic completion callback");
-requireText("const OPENING_LINES = [", "automatic Lagos opening dialogue");
-requireText("kitcity-speech-bubble", "world-anchored speech bubbles");
 requireText("storyDirector.update(dt,time);", "speech bubbles update during free movement");
+if (!sceneDirector.includes("const OPENING_LINES = [")) errors.push("Automatic Lagos opening dialogue is missing");
+if (!sceneDirector.includes("kitcity-speech-bubble")) errors.push("World-anchored speech bubbles are missing");
 requireText("Your turn. Walk up to someone and press Talk when you are ready.", "player-led interaction after intro");
 requireText("const STORY_BRIDGES={", "connected story transitions");
 requireText("function updateLivesHUD()", "three-heart life display");
