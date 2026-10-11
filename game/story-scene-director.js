@@ -37,6 +37,7 @@ export function createStorySceneDirector({ camera, player, getCharacter, animate
   let counterEl = null;
   let nextBtn = null;
   let reduceMotion = false;
+  let lastAdvanceAt = 0;
 
   function ensureOverlay() {
     if (overlay) return;
@@ -67,8 +68,30 @@ export function createStorySceneDirector({ camera, player, getCharacter, animate
     choicesEl = overlay.querySelector('.comic-choices');
     counterEl = overlay.querySelector('.comic-counter');
     nextBtn = overlay.querySelector('.comic-next');
-    overlay.querySelector('.comic-skip').addEventListener('click', finish);
-    nextBtn.addEventListener('click', advance);
+    overlay.querySelector('.comic-skip').addEventListener('click', event => {
+      event.preventDefault();
+      finish();
+    });
+    // Mobile browsers can occasionally lose a synthetic click over a full-screen canvas.
+    // Advance on touch pointer-up, and debounce the follow-up click so one tap means one panel.
+    nextBtn.addEventListener('pointerup', event => {
+      if (event.pointerType !== 'touch') return;
+      event.preventDefault();
+      requestAdvance();
+    });
+    nextBtn.addEventListener('click', event => {
+      event.preventDefault();
+      requestAdvance();
+    });
+    overlay.addEventListener('keydown', event => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        finish();
+      } else if ((event.key === 'Enter' || event.key === ' ') && event.target === overlay) {
+        event.preventDefault();
+        requestAdvance();
+      }
+    });
     reduceMotion = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
   }
 
@@ -96,8 +119,9 @@ export function createStorySceneDirector({ camera, player, getCharacter, animate
     if (key === 'wide' || key === 'clue' || key === 'conversation') {
       if (soft && abdul) target = soft.clone().add(abdul).multiplyScalar(.5);
       else target = soft || abdul || target;
-      const height = key === 'clue' ? 11 : key === 'conversation' ? 6 : 17;
-      const distance = key === 'clue' ? 20 : key === 'conversation' ? 20 : 28;
+      // Keep the two speakers large enough to read as people interacting on a phone.
+      const height = key === 'clue' ? 11 : key === 'conversation' ? 5.8 : 17;
+      const distance = key === 'clue' ? 20 : key === 'conversation' ? 13.5 : 28;
       position = target.clone().add(new camera.position.constructor(0, height, distance));
     } else if (key === 'abdul') {
       target = abdul || soft || target;
@@ -149,6 +173,13 @@ export function createStorySceneDirector({ camera, player, getCharacter, animate
     overlay.querySelector('.comic-dialogue').classList.add('dialogue-enter');
   }
 
+  function requestAdvance() {
+    const now = performance.now();
+    if (now - lastAdvanceAt < 350) return;
+    lastAdvanceAt = now;
+    advance();
+  }
+
   function advance() {
     const panel = OPENING_PANELS[panelIndex];
     if (panel && panel.finish) {
@@ -161,6 +192,8 @@ export function createStorySceneDirector({ camera, player, getCharacter, animate
   function finish() {
     if (!active) return;
     active = false;
+    document.body.classList.remove('kitcity-story-active');
+    document.documentElement.classList.remove('kitcity-story-active');
     if (overlay) overlay.classList.add('hidden');
     setModal(false);
     cameraGoal = null;
@@ -176,6 +209,9 @@ export function createStorySceneDirector({ camera, player, getCharacter, animate
     onComplete = done;
     active = true;
     panelIndex = 0;
+    lastAdvanceAt = 0;
+    document.body.classList.add('kitcity-story-active');
+    document.documentElement.classList.add('kitcity-story-active');
     setModal(true);
     overlay.classList.remove('hidden');
     show(0);
