@@ -11,7 +11,7 @@ import {
 const report = validateChronicles();
 const expectedMissionFields = [
   "id", "chapterId", "title", "state", "location", "npcs",
-  "openingPanels", "dialogue", "narrativePurpose", "learningObjectives",
+  "narrativePurpose", "learningObjectives",
   "prerequisites", "objectives", "successConditions", "failureAndRetry",
   "rewards", "storyFlags", "nextMissionId", "ending", "cliffhanger",
 ];
@@ -21,8 +21,7 @@ for (const mission of MISSIONS) {
   for (const field of expectedMissionFields) {
     if (!(field in mission)) errors.push(mission.id + " missing field " + field);
   }
-  if (!mission.openingPanels.length) errors.push(mission.id + " has no comic panels");
-  if (!mission.dialogue.length) errors.push(mission.id + " has no dialogue");
+  if ("openingPanels" in mission || "dialogue" in mission) errors.push(mission.id + " still contains retired duplicate panel/dialogue data");
   if (!mission.failureAndRetry.retry) errors.push(mission.id + " has no retry path");
   if (!mission.rewards.skillBadges.length) errors.push(mission.id + " has no skill reward");
 }
