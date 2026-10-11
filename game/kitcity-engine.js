@@ -2944,6 +2944,13 @@ function renderHub(){
     h+='<p class="soft">Prototype: wallets, balances and payments are simulated. Rates are samples. Nothing here is financial advice.</p>';
   }
   $('#hubBody').innerHTML=tx(h);
+  /* Render only canonical registry missions; discard any orphaned or duplicate legacy cards. */
+  const currentMissionIds=new Set(MISSIONS.map(m=>m.id)),renderedMissionIds=new Set();
+  $('#hubBody').querySelectorAll('.mission-card[data-mission-id]').forEach(card=>{
+    const id=card.dataset.missionId;
+    if(!currentMissionIds.has(id)||renderedMissionIds.has(id)) card.remove();
+    else renderedMissionIds.add(id);
+  });
 }
 $('#hub').addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.closest('.map g[data-a="city"]')){e.preventDefault();e.target.dispatchEvent(new MouseEvent('click',{bubbles:true}));}});
 $('#hub').addEventListener('click',async e=>{
