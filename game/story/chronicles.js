@@ -1,5 +1,5 @@
 /**
- * Canonical narrative registry for KitCity: The T3Kit Chronicles.
+ * Canonical narrative registry for KitCity's connected story missions.
  * The runtime consumes stable mission IDs, character order and objective data.
  * All 31 story missions are wired to the game loop; the 36-state route is a
  * coverage plan, and not every state yet has its own dedicated mission or world.
