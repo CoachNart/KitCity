@@ -2362,7 +2362,7 @@ const STORY_BRIDGES={
   m19:'The investor is waving a big number around. Before anyone signs, I want us to read the terms, milestones and risks properly.',
   m20:'This pitch deck says the property is fully backed by tokens. I want proof of ownership and redemption rights before I believe it.',
   m21:'This AI report sounds confident, but one claim does not match the source. Help me trace where the answer went wrong.',
-  m22:'We need to move a test asset to another network. One wrong network or bridge assumption can cost us the transfer. Let us check every detail.',
+  m22:'We need to move an asset to another network. One wrong network or bridge assumption can cost us the transfer. Let us check every detail.',
   m23:'The DAO has a vote coming up, and half the room only read the headline. Help us understand who benefits and what the proposal costs.',
   m24:'We found a serious bug in the release candidate. The team wants to hide it until after launch. I need your help documenting it properly.',
   m25:'This seller says the token gives the buyer ownership of the artwork and commercial rights. The licence does not say that. Let us check what is really included.',
@@ -2541,13 +2541,13 @@ function applyChronicleActivityEffect(effect,m,obj,choice,options){
     P.wallet=P.wallet||('0x'+hex(20));P.storyFlags[once]=true;
   }else if(effect==='transaction'){
     P.wallet=P.wallet||('0x'+hex(20));
-    P.storyFlags.last_transaction={hash:'0x'+hex(32),network:'Base',status:'Confirmed in ',realTransaction:false};
+    P.storyFlags.last_transaction={hash:'0x'+hex(32),network:'Base',status:'Confirmed',realTransaction:false};
   }else if(effect==='swap'){
-    P.storyFlags.last_swap={pair:'TEST-A / TEST-B',status:'Completed in ',realTransaction:false};
+    P.storyFlags.last_swap={pair:'TEST-A / TEST-B',status:'Completed',realTransaction:false};
   }else if(effect==='safe-rejection'){
     P.storyFlags.rejected_malicious_request=true;
   }else if(effect==='explorer-record'){
-    P.storyFlags.practice_explorer_record={hash:'0x'+hex(32),block:1842031,status:'Confirmed in ',realTransaction:false};
+    P.storyFlags.practice_explorer_record={hash:'0x'+hex(32),block:1842031,status:'Confirmed',realTransaction:false};
   }else if(effect==='safe-vote'){
     P.storyFlags['test_vote_'+m.id]=options[choice];
   }else if(effect==='future-direction'){
@@ -2651,7 +2651,7 @@ const MISSIONS=CHRONICLE_MISSIONS.map((story,index)=>{
       {
         kind:'clue',id:'m01-transaction-record',label:'Meet Abdul at the verification centre',spot:'ledger',title:'Public transaction record',sign:'VERIFY TX',
         run(){
-          talk(STORY_NPCS.IamAbdul,"<p><b>VERIFICATION CENTRE · PRACTICE RECORD</b></p><p>Abdul points out each field as you check it:<br>Status: Confirmed<br>Amount: 120 USDC<br>Network: Base<br>Recipient: <b>0x73A…2B1</b><br>Shop's expected address: <b>0x91C…7F0</b></p><p>Compare the last part of the recipient address with the shop's saved address. They don't match. The transaction succeeded, but it went to a different address. </p>",[
+          talk(STORY_NPCS.IamAbdul,"<p><b>VERIFICATION CENTRE · TRANSACTION RECORD</b></p><p>Abdul points out each field as you check it:<br>Status: Confirmed<br>Amount: 120 USDC<br>Network: Base<br>Recipient: <b>0x73A…2B1</b><br>Shop's expected address: <b>0x91C…7F0</b></p><p>Compare the last part of the recipient address with the shop's saved address. They don't match. The transaction succeeded, but it went to a different address. </p>",[
             {t:"It was sent to the wrong address. Don't release the laptop.",f:()=>{G.evidence.transaction_checked=true;G.evidence.recipient_mismatch=true;finishStep();}},
             {t:"It's confirmed, so the shop has been paid.",f:()=>talk(STORY_NPCS.IamAbdul,"<p>Not quite. ‘Confirmed’ describes the transaction, not whether this shop received it. Check the destination against the shop's saved address, then tell me what you notice.</p>",[{t:"The addresses don't match. Hold the laptop.",f:()=>{G.evidence.transaction_checked=true;G.evidence.recipient_mismatch=true;finishStep();}}])}
           ]);
@@ -2676,9 +2676,11 @@ const MISSIONS=CHRONICLE_MISSIONS.map((story,index)=>{
     });
     steps.push({label:'Bring the evidence together',spot:'a',npc:STORY_NPCS[story.npcs[0]],run(){
       const npc=STORY_NPCS[story.npcs[0]],partner=STORY_NPCS[story.npcs[1]]||npc;
-      const recap='We got through '+story.title+'. We checked the evidence instead of guessing, and that gave us something solid to work with.';
-      const nextLine=story.id==='m31'?'So, after all that, what do you want to build or contribute next?':'We should keep going. There is another problem ahead, and now we know to ask better questions.';
-      talk(npc,'<p><b>'+escapeStoryHtml(npc.name.toUpperCase())+':</b> '+escapeStoryHtml(recap)+'</p><p><b>'+escapeStoryHtml(partner.name.toUpperCase())+':</b> '+escapeStoryHtml(nextLine)+'</p><p><b>YOU:</b> I am taking the lesson with me. Next time, I will check the facts before I decide.</p>',[{t:'Save the chapter findings',f:()=>{P.storyFlags=Object.assign({},P.storyFlags||{},Object.fromEntries((story.storyFlags||[]).map(flag=>[flag,true])));G.evidence.chapterSummary=true;finishStep();}}]);
+      const ending=story.ending||('We have enough evidence to close '+story.title+'.');
+      const recap=ending.replace(/^The player ([a-z]+)/i,(_,verb)=>'You '+({is:'are',has:'have',does:'do'}[verb.toLowerCase()]||verb.replace(/s$/i,'')));
+      const nextLine=story.cliffhanger||'There is another problem ahead, and now we know to ask better questions.';
+      const playerReply=story.id==='m31'?'I know what I want to build next.':'I understand the result now. Let us keep moving.';
+      talk(npc,'<p><b>'+escapeStoryHtml(npc.name.toUpperCase())+':</b> Here is what we can stand behind: '+escapeStoryHtml(recap)+'</p><p><b>'+escapeStoryHtml(partner.name.toUpperCase())+':</b> Next, we need to deal with this: '+escapeStoryHtml(nextLine)+'</p><p><b>YOU:</b> '+escapeStoryHtml(playerReply)+'</p>',[{t:'Save the chapter findings',f:()=>{P.storyFlags=Object.assign({},P.storyFlags||{},Object.fromEntries((story.storyFlags||[]).map(flag=>[flag,true])));G.evidence.chapterSummary=true;finishStep();}}]);
     }});
   }
   return {id:story.id,n:index+1,city,title:story.title,goal:story.narrativePurpose,state:story.state,story,npcs:story.npcs,characterStepCount:story.id==='m01'?2:people.length,steps,extras:[],storyFlags:story.storyFlags||[],xp:story.rewards&&story.rewards.xp||100};
@@ -3002,7 +3004,7 @@ function renderHub(){
   const retiredFocusClass=['web3','focus'].join('-');
   hubBody.querySelectorAll('[class*="'+retiredFocusClass+'"],[data-legacy-mission],.legacy-mission-card,.old-mission-card,.mission-card-old').forEach(node=>node.remove());
   hubBody.querySelectorAll('*').forEach(node=>{
-    if(node.children.length===0&&new RegExp(['web3','\\\\s*','focus'].join(''),'i').test(node.textContent||'')) node.remove();
+    if(node.children.length===0&&new RegExp(['web3','\\s*','focus'].join(''),'i').test(node.textContent||'')) node.remove();
     else if(node.matches('.card,article,section')&&!node.matches('.mission-card')&&/mission\\s+\\d+\\s*:/i.test(node.textContent||'')) node.remove();
   });
 }
