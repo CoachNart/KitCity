@@ -2711,7 +2711,7 @@ const MISSIONS=CHRONICLE_MISSIONS.map((story,index)=>{
     objectives.forEach((obj,j)=>{
       if(personIndex<people.length) steps.push(people[personIndex++]);
       const spot=objectiveSpots[(j+index)%objectiveSpots.length];
-      const npcIndex=Math.min(personIndex,Math.max(0,story.npcs.length-1));
+      const npcIndex=Math.max(0,Math.min(personIndex-1,story.npcs.length-1));
       steps.push(j===0?chronicleChallengeStep(story,obj,npcIndex,spot):chronicleClueStep(story,obj,npcIndex,spot));
     });
     while(personIndex<people.length) steps.push(people[personIndex++]);
