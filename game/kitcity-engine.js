@@ -95,9 +95,25 @@ const QUESTION_REWARD=.10,QUESTION_PENALTY=.10,MISSION_CLEAR_REWARD=.50,MISSION_
 function awardUSDC(amount,message){ P.usdc=Math.max(0,Math.round((P.usdc+amount)*100)/100); save(); updateHUD(); if(message) toast(message); }
 function settleAnswer(good){ if(!G) return; if(good){ G.correct=(G.correct||0)+1; awardUSDC(QUESTION_REWARD,'Correct answer · +0.10 USDC'); } else { G.wrong=(G.wrong||0)+1; awardUSDC(-QUESTION_PENALTY,'Wrong answer · −0.10 USDC'); } }
 function playerName(){ return (P.name||'Player').trim(); }
-function personalize(html){
+function personalize(html,mission,preferredNPC){
+  let out=String(html==null?'':html).replace(/Agent Kit/g,playerName()).replace(/agent kit/g,playerName());
+  const aliases=mission?buildMissionNameAliases(mission):(G&&G.nameAliases||{});
+  if(preferredNPC){
+    const original=String(preferredNPC.originalName||'').trim();
+    const current=String(preferredNPC.name||'').trim();
+    if(original&&current&&original!==current){
+      const escaped=original.replace(/[.*+?^{}()|[\]\\]/g,'\\function personalize(html){
   let out=String(html==null?'':html).replace(/Agent Kit/g,playerName()).replace(/agent kit/g,playerName());
   const aliases=G&&G.nameAliases||{};
+  Object.keys(aliases).sort((a,b)=>b.length-a.length).forEach(original=>{
+    const pattern=original.replace(/ /g,'\\s+');
+    out=out.replace(new RegExp('\\b'+pattern+'\\b','gi'),aliases[original]);
+  });
+  return out;
+}');
+      out=out.replace(new RegExp('\\b'+escaped+'\\b','gi'),current);
+    }
+  }
   Object.keys(aliases).sort((a,b)=>b.length-a.length).forEach(original=>{
     const pattern=original.replace(/ /g,'\\s+');
     out=out.replace(new RegExp('\\b'+pattern+'\\b','gi'),aliases[original]);
@@ -2062,7 +2078,7 @@ const who=(i,n,r,bg)=>'<div class="who"><span class="av" style="background:'+bg+
 const whoOf=d=>who(d.name.charAt(0),d.name,d.role,d.color);
 const plain=h=>h.replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim();
 function talk(def,html,btns){
-  html=tx(personalize(html));
+  html=tx(personalize(html,G&&G.m,def));
   if(!S.modal||chat.npc!==def.name) chat={npc:def.name,log:[]};
   const npcName=String(def.name||'Local resident');
   const playerLabel=playerName().toUpperCase();
@@ -2109,8 +2125,8 @@ function badgeSVG(n,on,size){
 /* =====================  HUD  ===================== */
 function updateHUD(){
   if(G){
-    $('#mTitle').textContent=tr('Mission '+G.m.n+': '+G.m.title);
-    $('#steps').innerHTML=G.m.steps.map((s,i)=>'<li class="'+(G.i>i?'done':(G.i===i?'now':''))+'">'+personalize(tr(s.label))+'</li>').join('');
+    $('#mTitle').textContent=tr(personalize('Mission '+G.m.n+': '+G.m.title,G.m));
+    $('#steps').innerHTML=G.m.steps.map((s,i)=>'<li class="'+(G.i>i?'done':(G.i===i?'now':''))+'">'+personalize(tr(s.label),G.m,s.npc)+'</li>').join('');
   }
   $('#wallet').innerHTML=P.wallet?('<b>'+P.usdc.toFixed(2)+' USDC</b>'+(P.ngn>0?fmtN(P.ngn)+' token':short(P.wallet))):tr('No wallet yet');
 }
@@ -3896,7 +3912,7 @@ function startMission(id){
 }
 function briefing(){
   const m=G.m,C=CITIES[m.city];
-  openSheet('<div class="who"><span class="av" style="background:'+INK+'">'+m.n+'</span><div><b>'+'Mission '+m.n+': '+m.title+'</b><small>'+C.name+', '+C.tag+'</small></div></div><p>'+personalize(m.goal)+'</p><ul class="pts">'+m.steps.map(s=>'<li>'+personalize(tr(s.label))+'</li>').join('')+'</ul>'+(m.n===1?'<p class="note">Move with the left stick or WASD. Hold Run or Shift to run. Tap Talk or press E to speak. Follow the arrow.</p>':'<p class="note">Follow the arrow to the next person. Watch for traffic.</p>'),
+  openSheet('<div class="who"><span class="av" style="background:'+INK+'">'+m.n+'</span><div><b>'+personalize('Mission '+m.n+': '+m.title,m)+'</b><small>'+C.name+', '+C.tag+'</small></div></div><p>'+personalize(m.goal,m)+'</p><ul class="pts">'+m.steps.map(s=>'<li>'+personalize(tr(s.label),m,s.npc)+'</li>').join('')+'</ul>'+(m.n===1?'<p class="note">Move with the left stick or WASD. Hold Run or Shift to run. Tap Talk or press E to speak. Follow the arrow.</p>':'<p class="note">Follow the arrow to the next person. Watch for traffic.</p>'),
     [{t:'Start mission',f:closeSheet},{t:'Back to hub',g:1,f:exitToHub}]);
 }
 function finishStep(){
@@ -3917,7 +3933,7 @@ function completeMission(){
   if(cityComplete)btns.push({t:'Collect city badge',f:()=>showCityBadge(m.city,()=>next?startMission(next.id):exitToHub())});
   if(next)btns.push({t:next.city!==m.city?'Continue to '+CITIES[next.city].name:'Next: '+next.title,f:()=>startMission(next.id)});
   btns.push({t:'Back to hub',g:1,f:exitToHub});
-  openSheet('<div class="who"><span class="av" style="background:'+INK+'">'+m.n+'</span><div><h3 style="margin:0">Mission '+m.n+' complete</h3><small>'+CITIES[m.city].name+' · '+m.title+'</small></div></div>'+
+  openSheet('<div class="who"><span class="av" style="background:'+INK+'">'+m.n+'</span><div><h3 style="margin:0">Mission '+m.n+' complete</h3><small>'+CITIES[m.city].name+' · '+personalize(m.title,m)+'</small></div></div>'+
     (first?'<div class="kv"><span>Mission reward</span><b>+'+missionReward.toFixed(2)+' USDC</b></div><p class="note">'+(wrong===0?'Clean run reward collected.':'Completed with '+wrong+' wrong answer'+(wrong===1?'':'s')+'. Correct answers and mistakes have already adjusted your USDC balance.')+'</p>':'<p class="note">Replay complete. The first-clear reward has already been collected.</p>')+
     (m.city==='kitcity'?'<p><b>Welcome to the T3Kit Hub. The journey through Nigeria was your preparation; KitCity is the destination.</b></p>':'')+
     (cityComplete?'<p><b>All missions in '+CITIES[m.city].name+' are complete. Your city badge is available.</b></p>':'')+
@@ -3943,7 +3959,7 @@ function exitToHub(){
 }
 $('#pauseBtn').addEventListener('click',()=>{
   if(S.phase!=='play'||S.modal) return;
-  openSheet('<h3>Paused</h3><p class="note">'+('Mission '+G.m.n)+': '+G.m.title+'</p>',[
+  openSheet('<h3>Paused</h3><p class="note">'+personalize('Mission '+G.m.n+': '+G.m.title,G.m)+'</p>',[
     {t:'Resume',f:closeSheet},
     {t:'Restart mission',g:1,f:()=>startMission(G.m.id)},
     {t:'Back to hub',g:1,f:exitToHub}
@@ -4033,7 +4049,7 @@ function mapSVG(){
 
 function missionCard(m){
   const un=isUnlocked(m),dn=!!P.done[m.id];
-  return '<div class="card'+(un?'':' lock')+(m.city==='kitcity'?' final-destination':'')+'"><div class="ch">'+badgeSVG(m.n,false,46)+'<div><b>'+'Mission '+m.n+': '+m.title+'</b><small>'+m.goal+'</small></div></div><div class="cf"><span>'+(dn?'Completed':'Up to +0.50 USDC')+'</span>'+(un?'<button class="btn brand" data-a="play" data-v="'+m.id+'" type="button">'+(dn?'Replay':'Play')+'</button>':'<span>Finish mission '+(m.n-1)+' first</span>')+'</div></div>';
+  return '<div class="card'+(un?'':' lock')+(m.city==='kitcity'?' final-destination':'')+'"><div class="ch">'+badgeSVG(m.n,false,46)+'<div><b>'+personalize('Mission '+m.n+': '+m.title,m)+'</b><small>'+personalize(m.goal,m)+'</small></div></div><div class="cf"><span>'+(dn?'Completed':'Up to +0.50 USDC')+'</span>'+(un?'<button class="btn brand" data-a="play" data-v="'+m.id+'" type="button">'+(dn?'Replay':'Play')+'</button>':'<span>Finish mission '+(m.n-1)+' first</span>')+'</div></div>';
 }
 function renderHub(){
   $('#hubTop').innerHTML=tx('<span class="wm"><img class="header-logo" src="https://i.postimg.cc/qqbdTXky/file-00000000958881f4a776df689a235dec.png" alt="KitCity" /></span><div class="lvl"><b>Practice wallet</b><div class="balance-line"><strong>'+P.usdc.toFixed(2)+' USDC</strong><small>'+Object.keys(P.done).filter(k=>P.done[k]).length+' missions completed</small></div></div>');
@@ -4055,7 +4071,7 @@ function renderHub(){
     const allMissions=MISSIONS;
     const done=allMissions.filter(m=>P.done[m.id]).length,all=done===allMissions.length;
     const completedCities=cityOrder.filter(city=>isCityComplete(city)).length;
-    h+='<div class="h2">Mission badges</div><div class="grid2">'+allMissions.map((m,i)=>'<div class="bd'+(P.done[m.id]?' earned':' off')+'">'+badgeSVG(m.n,!!P.done[m.id],64)+'<b>Mission '+m.n+': '+m.title+'</b><span class="badge-status">'+(P.done[m.id]?'ACHIEVEMENT EARNED':'NOT EARNED YET')+'</span></div>').join('')+'</div>';
+    h+='<div class="h2">Mission badges</div><div class="grid2">'+allMissions.map((m,i)=>'<div class="bd'+(P.done[m.id]?' earned':' off')+'">'+badgeSVG(m.n,!!P.done[m.id],64)+'<b>'+personalize('Mission '+m.n+': '+m.title,m)+'</b><span class="badge-status">'+(P.done[m.id]?'ACHIEVEMENT EARNED':'NOT EARNED YET')+'</span></div>').join('')+'</div>';
     h+='<div class="h2">Journey progress</div><div class="stat"><span>Missions complete</span><b>'+done+' of '+allMissions.length+'</b></div><div class="stat"><span>City journeys complete</span><b>'+completedCities+' of '+cityOrder.length+'</b></div>';
     h+='<div class="h2">Wallet</div>'+(P.wallet?'<div class="stat"><span>Address</span><b style="font-family:ui-monospace,Menlo,monospace;font-size:13px">'+short(P.wallet)+'</b></div><div class="stat"><span>USDC</span><b>'+P.usdc.toFixed(2)+'</b></div><div class="stat"><span>Naira token</span><b>'+fmtN(P.ngn)+'</b></div>':'<p class="soft">No wallet yet. Finish mission 1 to open one.</p>');
     if(all) h+='<div class="row"><button class="btn brand" data-a="cert" type="button">View certificate</button></div>';
