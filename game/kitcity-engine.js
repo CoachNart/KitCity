@@ -2534,14 +2534,19 @@ function chronicleClueStep(m,obj,index,spot){
     const activity=chronicleActivityFor(obj);
     const buttons=activity.o.map((option,choice)=>({t:option,g:!(Array.isArray(activity.a)?activity.a.includes(choice):choice===activity.a),f:()=>{
       const correct=Array.isArray(activity.a)?activity.a.includes(choice):choice===activity.a;
-      if(!correct){G.wrong=(G.wrong||0)+1;talk(npc,'<h3>Not quite. Try again.</h3><p>'+escapeStoryHtml(activity.w)+'</p>',[{t:'Try the activity again',f:()=>step.run()}]);return;}
+      if(!correct){
+        G.wrong=(G.wrong||0)+1;
+        talk(npc,'<p><b>'+escapeStoryHtml(npc.name.toUpperCase())+':</b> Not quite. '+escapeStoryHtml(activity.w)+'</p><p><b>YOU:</b> Fair. Let me look again.</p>',[{t:'Try it again',f:()=>step.run()}]);
+        return;
+      }
       G.correct=(G.correct||0)+1;
-      talk(npc,'<h3>Good call.</h3><p>'+escapeStoryHtml(activity.w)+'</p><p class="note">Practice only: no real funds, wallets or transactions are used.</p>',[{t:'Record the finding',f:()=>{
+      talk(npc,'<p><b>'+escapeStoryHtml(npc.name.toUpperCase())+':</b> Exactly. '+escapeStoryHtml(activity.w)+'</p><p><b>YOU:</b> That makes sense. I can explain why I chose it now.</p><p class="note">Practice scenario only. No real funds, wallets or transactions are used.</p>',[{t:'Save what we found',f:()=>{
         applyChronicleActivityEffect(activity.effect,m,obj,choice,activity.o);
         G.evidence[obj.id]=true;P.storyFlags=Object.assign({},P.storyFlags||{},{['evidence_'+obj.id]:true});save();finishStep();
       }}]);
     }}));
-    talk(npc,'<p><b>'+escapeStoryHtml(activity.q)+'</b></p><small class="soft">FIELD CHECK · '+escapeStoryHtml(title)+'</small>',buttons);
+    const prompt='<p><b>'+escapeStoryHtml(npc.name.toUpperCase())+':</b> Let us look at '+escapeStoryHtml(title.toLowerCase())+'. '+escapeStoryHtml(activity.q)+'</p><p><b>YOU:</b> Okay. What should I be paying attention to?</p><p><b>'+escapeStoryHtml(npc.name.toUpperCase())+':</b> Think it through, then choose what you would do.</p>';
+    talk(npc,prompt,buttons);
   };
   return step;
 }
