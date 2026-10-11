@@ -282,7 +282,11 @@ const RAW_MISSIONS = [
     ],
     "nextMissionId": "m03",
     "ending": "The record proves where the funds went, not why. The buyer recognises the page but cannot explain the altered address. Joe_Sef saves the URL and timestamp before the page disappears.",
-    "cliffhanger": "A nearby student says the same page offered to 'restore' a wallet if users entered twelve secret words. You leave Lagos with a second case: someone is targeting newcomers."
+    "cliffhanger": "A nearby student says the same page offered to 'restore' a wallet if users entered twelve secret words. You leave Lagos with a second case: someone is targeting newcomers.",
+    "sceneLines": [
+      "The transaction went through, but not to the shop. I want the page history before we decide whether it was a mistake or something worse.",
+      "The page used the shop's name, but the recipient address was different. I saved the URL and timestamp before it changed."
+    ]
   },
   {
     "id": "m03",
@@ -357,7 +361,11 @@ const RAW_MISSIONS = [
     ],
     "nextMissionId": "m04",
     "ending": "Timi closes the page before entering the words. Smrt huntr helps the student verify the official support route, and Unique turns the incident into a warning that does not expose the victim.",
-    "cliffhanger": "A forwarded screenshot now claims the wallet was drained anyway. Goodness and Semi want you to prove what happened before the group chat blames the wrong person."
+    "cliffhanger": "A forwarded screenshot now claims the wallet was drained anyway. Goodness and Semi want you to prove what happened before the group chat blames the wrong person.",
+    "sceneLines": [
+      "Timi is scared they'll lose everything if they close the page. We need to show them that stopping is safer than giving away the recovery words.",
+      "I checked the recovery flow. A real support route should never need the secret phrase itself."
+    ]
   },
   {
     "id": "m04",
@@ -433,7 +441,11 @@ const RAW_MISSIONS = [
     ],
     "nextMissionId": "m05",
     "ending": "The transaction record does not support the rumour that Timi's wallet was drained. The group posts a correction, and the edited screenshots are retained as evidence rather than passed around as proof.",
-    "cliffhanger": "Goodness's correction gets shared by a small team building a payment app for local traders. In Osun, Blockqueen and Christol are arguing over why customers abandon it halfway through checkout."
+    "cliffhanger": "Goodness's correction gets shared by a small team building a payment app for local traders. In Osun, Blockqueen and Christol are arguing over why customers abandon it halfway through checkout.",
+    "sceneLines": [
+      "The screenshot was cropped before it reached the group. Let's keep the original and compare it with the public record.",
+      "The block reference matches the transfer, but it doesn't tell us who edited the picture. We should correct the claim, not invent a culprit."
+    ]
   },
   {
     "id": "m05",
@@ -508,7 +520,11 @@ const RAW_MISSIONS = [
     ],
     "nextMissionId": "m06",
     "ending": "The clearer network labels reduce confusion in the retest. Christol postpones the dashboard and asks the team to measure completed payments instead of celebrating a prettier demo.",
-    "cliffhanger": "During the retest, a payment succeeds twice when a customer taps the button again. Laloba and BigSam are preparing the contract release and need someone to stop a costly mistake."
+    "cliffhanger": "During the retest, a payment succeeds twice when a customer taps the button again. Laloba and BigSam are preparing the contract release and need someone to stop a costly mistake.",
+    "sceneLines": [
+      "I thought traders needed more features. Watching them use checkout showed me the network screen is where they get stuck.",
+      "Both traders hesitated at the same step. Let's test a clearer label before we spend another week on the dashboard."
+    ]
   },
   {
     "id": "m06",
@@ -583,7 +599,11 @@ const RAW_MISSIONS = [
     ],
     "nextMissionId": "m07",
     "ending": "The duplicate-processing path is fixed in the test build, and the team refuses to treat a successful demo as proof of safety. BigSam postpones launch until the full test suite passes.",
-    "cliffhanger": "A trader who watched the test asks why a swap still returned less than its quote. In Ekiti, LunaX and OxNight are investigating a pool that looks deep until the actual trade lands."
+    "cliffhanger": "A trader who watched the test asks why a swap still returned less than its quote. In Ekiti, LunaX and OxNight are investigating a pool that looks deep until the actual trade lands.",
+    "sceneLines": [
+      "The duplicate payment is not a button problem. The contract must reject the second processing attempt too.",
+      "I reproduced it three times. Until the regression test passes, the launch date is just a date."
+    ]
   },
   {
     "id": "m07",
@@ -658,7 +678,11 @@ const RAW_MISSIONS = [
     ],
     "nextMissionId": "m08",
     "ending": "The trader learns that the quote was an estimate, not a promise. LunaX flags the suspicious token listing and updates the team's checklist before anyone makes another swap.",
-    "cliffhanger": "The group now relies on a centralized exchange for cash-outs, but withdrawals have paused. Moon and The Cryptonian are at the branch office where customers are demanding answers."
+    "cliffhanger": "The group now relies on a centralized exchange for cash-outs, but withdrawals have paused. Moon and The Cryptonian are at the branch office where customers are demanding answers.",
+    "sceneLines": [
+      "The token symbol looked right, but the address and pool depth told a different story. Check those before touching the approval.",
+      "The quote changed because the trade was large for that pool. We still need to check fees and permissions separately."
+    ]
   },
   {
     "id": "m08",
@@ -733,7 +757,11 @@ const RAW_MISSIONS = [
     ],
     "nextMissionId": "m09",
     "ending": "The update does not promise a timeline the team cannot support. Customers still have questions, but they know where to check official updates and what not to share with fake support accounts.",
-    "cliffhanger": "One customer has been trading through the night trying to recover a loss. In Delta, Joseph Nnadi and The Don are asking whether a trade plan can survive the trader's emotions."
+    "cliffhanger": "One customer has been trading through the night trying to recover a loss. In Delta, Joseph Nnadi and The Don are asking whether a trade plan can survive the trader's emotions.",
+    "sceneLines": [
+      "Customers keep asking if their funds are gone. The notice only confirms that withdrawals are paused, so we must not promise more.",
+      "I want the update to give people a safe next step, not another rumour to forward."
+    ]
   },
   {
     "id": "m09",
@@ -808,7 +836,11 @@ const RAW_MISSIONS = [
     ],
     "nextMissionId": "m10",
     "ending": "The trader decides not to force a new entry. The journal records the loss without rewriting the rules, and The Don admits that following a plan can mean sitting out.",
-    "cliffhanger": "Toza has been telling everyone that more leverage would have made the recovery faster. Praise calls you over when the margin buffer on his open position starts shrinking."
+    "cliffhanger": "Toza has been telling everyone that more leverage would have made the recovery faster. Praise calls you over when the margin buffer on his open position starts shrinking.",
+    "sceneLines": [
+      "The loss hurts, but the original plan was clear. Let's review where it failed before deciding whether another trade even exists.",
+      "If you change the rules after every loss, the journal becomes fiction. Record the plan you actually followed."
+    ]
   },
   {
     "id": "m10",
@@ -885,7 +917,11 @@ const RAW_MISSIONS = [
     ],
     "nextMissionId": "m11",
     "ending": "Toza closes the position according to the plan. It is not the outcome he wanted, but the loss is bounded and the team has a record of what happened.",
-    "cliffhanger": "Craftore shares the case with a project that has thousands of online followers but few people doing useful work. In Anambra, Kodavic and Cybersage want to know where newcomers disappear."
+    "cliffhanger": "Craftore shares the case with a project that has thousands of online followers but few people doing useful work. In Anambra, Kodavic and Cybersage want to know where newcomers disappear.",
+    "sceneLines": [
+      "Toza keeps watching the price instead of the margin buffer. We need to show him what the position can lose.",
+      "Adding leverage won't repair a broken idea. Let's follow the limit he set before entering."
+    ]
   },
   {
     "id": "m11",
@@ -960,7 +996,11 @@ const RAW_MISSIONS = [
     ],
     "nextMissionId": "m12",
     "ending": "The next session starts with one practical task, a short explanation and a clear next step. More people finish it, and the team finally has a useful baseline.",
-    "cliffhanger": "A newcomer who returned receives a direct message from someone impersonating a moderator. Reina and Cclya are already moving through the hall to contain it."
+    "cliffhanger": "A newcomer who returned receives a direct message from someone impersonating a moderator. Reina and Cclya are already moving through the hall to contain it.",
+    "sceneLines": [
+      "People joined because the campaign promised rewards, then left when they couldn't see what to do. The first task has to make sense.",
+      "Let's stop counting joins for a moment. I want to know who finished the task and came back."
+    ]
   },
   {
     "id": "m12",
@@ -1035,7 +1075,11 @@ const RAW_MISSIONS = [
     ],
     "nextMissionId": "m13",
     "ending": "The fake account is reported and the community gets a clear warning without the victim becoming the story. The group asks for a live session to explain what happened.",
-    "cliffhanger": "The scheduled host cancels minutes before the session. Leemah and Kenny hand you the mic, a stack of questions and a room full of people who want honest answers."
+    "cliffhanger": "The scheduled host cancels minutes before the session. Leemah and Kenny hand you the mic, a stack of questions and a room full of people who want honest answers.",
+    "sceneLines": [
+      "The fake moderator copied our profile picture. The official list and message history are better evidence than appearance.",
+      "Please don't repost the scam link. We can warn people without sending more of them into the trap."
+    ]
   },
   {
     "id": "m13",
@@ -1110,7 +1154,11 @@ const RAW_MISSIONS = [
     ],
     "nextMissionId": "m14",
     "ending": "The audience leaves with a checklist and a reporting route. Kenny clips the practical section, not the argument, and sends the recap to the people who missed the session.",
-    "cliffhanger": "A founder asks why the recap reached people but their product announcement never does. Kore and Veedima are waiting at the next street corner with a message nobody understands."
+    "cliffhanger": "A founder asks why the recap reached people but their product announcement never does. Kore and Veedima are waiting at the next street corner with a message nobody understands.",
+    "sceneLines": [
+      "People want a straight answer, even when the answer is that we don't know yet. Keep the session useful and honest.",
+      "I have the questions sorted by what we can verify. If one goes beyond the evidence, say so and give a follow-up route."
+    ]
   },
   {
     "id": "m14",
@@ -1185,7 +1233,11 @@ const RAW_MISSIONS = [
     ],
     "nextMissionId": "m15",
     "ending": "The founder approves a shorter announcement that explains what the product does now and what it does not do yet. It is less dramatic and far more useful.",
-    "cliffhanger": "Someone who read the post offers you a chance to apply for a Web3 role. Web3_Esta and Love say the next step is not another impressive bio; it is evidence of work."
+    "cliffhanger": "Someone who read the post offers you a chance to apply for a Web3 role. Web3_Esta and Love say the next step is not another impressive bio; it is evidence of work.",
+    "sceneLines": [
+      "The announcement says 'revolutionary infrastructure' three times and never tells a trader what the product does.",
+      "I checked the feature myself. Let's explain what works today and leave the roadmap out of the claim."
+    ]
   },
   {
     "id": "m15",
@@ -1260,7 +1312,11 @@ const RAW_MISSIONS = [
     ],
     "nextMissionId": "m16",
     "ending": "The hiring lead can now inspect the case files and understand your contribution without taking your word for it. You are invited to complete a small paid-work screening task.",
-    "cliffhanger": "The screening task comes with an unusual condition: pay an upfront 'activation fee' before the recruiter reveals the work. J.Jonathan and Essa ask you to investigate the offer."
+    "cliffhanger": "The screening task comes with an unusual condition: pay an upfront 'activation fee' before the recruiter reveals the work. J.Jonathan and Essa ask you to investigate the offer.",
+    "sceneLines": [
+      "The hiring lead doesn't need another list of titles. They need to see what you made, what you did and what changed.",
+      "Your sample is strong, but this claim has no evidence attached. Add the notes or narrow the wording."
+    ]
   },
   {
     "id": "m16",
@@ -1335,7 +1391,11 @@ const RAW_MISSIONS = [
     ],
     "nextMissionId": "m17",
     "ending": "The fee demand fails the verification check. You submit the work sample through the company's official channel and report the suspicious contact without making public accusations you cannot prove.",
-    "cliffhanger": "The role's product team needs help with a real user problem in Kano. White Coach and Abdul are testing a service that could help small traders reconcile payments."
+    "cliffhanger": "The role's product team needs help with a real user problem in Kano. White Coach and Abdul are testing a service that could help small traders reconcile payments.",
+    "sceneLines": [
+      "The recruiter keeps pushing the fee and avoiding the company email. Let's verify the role without handing over money or private details.",
+      "A real application can be assessed through your work. An upfront payment doesn't prove you deserve the job."
+    ]
   },
   {
     "id": "m17",
@@ -1410,7 +1470,11 @@ const RAW_MISSIONS = [
     ],
     "nextMissionId": "m18",
     "ending": "The trader can reconcile the sample sale without switching between three screens. Abdul records the remaining edge cases instead of claiming the product is finished.",
-    "cliffhanger": "David sees the test and offers to help the team grow it. Kanyin warns that the last campaign brought thousands of clicks and almost no completed tasks."
+    "cliffhanger": "David sees the test and offers to help the team grow it. Kanyin warns that the last campaign brought thousands of clicks and almost no completed tasks.",
+    "sceneLines": [
+      "The trader records the order in one place and the payment in another. The gap between those records is the real problem.",
+      "Let's test the simplest reconciliation flow with an actual sale before we promise it solves every case."
+    ]
   },
   {
     "id": "m18",
@@ -1485,7 +1549,11 @@ const RAW_MISSIONS = [
     ],
     "nextMissionId": "m19",
     "ending": "The team pauses the paid-user offer and runs a smaller experiment with real traders. The results show where onboarding needs work instead of hiding the drop-off behind traffic numbers.",
-    "cliffhanger": "A founder offers to fund the next stage, but the proposed terms promise fixed returns and skip milestone reporting. In Edo, Mcbond and Alpha.RWA need you to inspect the deal."
+    "cliffhanger": "A founder offers to fund the next stage, but the proposed terms promise fixed returns and skip milestone reporting. In Edo, Mcbond and Alpha.RWA need you to inspect the deal.",
+    "sceneLines": [
+      "Our last campaign bought attention, not completed work. This time we need one hypothesis and a metric tied to the product.",
+      "The seller's user numbers cannot be independently checked. I'd rather have twenty traders finish the task than ten thousand fake joins."
+    ]
   },
   {
     "id": "m19",
@@ -1560,7 +1628,11 @@ const RAW_MISSIONS = [
     ],
     "nextMissionId": "m20",
     "ending": "The team asks for written milestones, reporting duties and clear risk disclosures before considering the offer. The founder is disappointed by the delay but no longer has to guess what the deal requires.",
-    "cliffhanger": "Alpha.RWA takes you to a project claiming its token represents a warehouse full of goods. BigWealth and Blessing say the photos look convincing, but the ownership file is missing."
+    "cliffhanger": "Alpha.RWA takes you to a project claiming its token represents a warehouse full of goods. BigWealth and Blessing say the photos look convincing, but the ownership file is missing.",
+    "sceneLines": [
+      "The headline amount looks attractive, but the reporting terms are missing. We need to know what happens after the money arrives.",
+      "I want every cost tied to a milestone. If someone benefits from the decision, disclose it before the vote."
+    ]
   },
   {
     "id": "m20",
@@ -1635,7 +1707,11 @@ const RAW_MISSIONS = [
     ],
     "nextMissionId": "m21",
     "ending": "The warehouse exists, but the evidence does not yet support the advertised ownership claim. BigWealth pauses the promotion until the issuer can prove the rights and explain redemption.",
-    "cliffhanger": "The missing file includes a machine-generated summary that confidently names a different owner. In Cross River, Odion and Princess are testing an AI tool that helped create it."
+    "cliffhanger": "The missing file includes a machine-generated summary that confidently names a different owner. In Cross River, Odion and Princess are testing an AI tool that helped create it.",
+    "sceneLines": [
+      "The warehouse is real; the rights behind this token are still unproven. Those are two different questions.",
+      "I cannot show you a signed inventory record yet. We should pause the claim instead of asking buyers to trust the photos."
+    ]
   },
   {
     "id": "m21",
@@ -1710,7 +1786,11 @@ const RAW_MISSIONS = [
     ],
     "nextMissionId": "m22",
     "ending": "The corrected report marks the ownership field as unresolved rather than inventing a new owner. Princess adds a human review gate for any output that could affect legal or financial decisions.",
-    "cliffhanger": "The records were sent across two blockchain networks, and one copy appears to be missing. Racheal and Seun are tracing the transfer route before anyone retries it."
+    "cliffhanger": "The records were sent across two blockchain networks, and one copy appears to be missing. Racheal and Seun are tracing the transfer route before anyone retries it.",
+    "sceneLines": [
+      "The summary invented certainty where the source file had a blank. We need the workflow to show its work or admit it doesn't know.",
+      "The revised prompt helps, but the output still needs a human checking the original records before it is shared."
+    ]
   },
   {
     "id": "m22",
@@ -1785,7 +1865,11 @@ const RAW_MISSIONS = [
     ],
     "nextMissionId": "m23",
     "ending": "The receiving network is delayed, not missing. The sender waits for the official status update instead of creating a second transfer, and the fake recovery page is reported.",
-    "cliffhanger": "The transfer's project treasury now wants community approval for a new route. In Bauchi, Dorcas and Joe say the proposal is already being shared before its costs have been explained."
+    "cliffhanger": "The transfer's project treasury now wants community approval for a new route. In Bauchi, Dorcas and Joe say the proposal is already being shared before its costs have been explained.",
+    "sceneLines": [
+      "The source transaction is confirmed. That doesn't mean the destination side has finished processing it.",
+      "Don't send it twice. Let's check the official bridge status and receiving record before we touch anything else."
+    ]
   },
   {
     "id": "m23",
@@ -1860,7 +1944,11 @@ const RAW_MISSIONS = [
     ],
     "nextMissionId": "m24",
     "ending": "The vote is delayed until the treasury costs and delivery owner are published. Some members are annoyed, but the group now knows exactly what information is missing.",
-    "cliffhanger": "During the review, Mike finds a critical permission in the route contract that nobody listed in the proposal. The audit was scheduled for next week; the launch is tomorrow."
+    "cliffhanger": "During the review, Mike finds a critical permission in the route contract that nobody listed in the proposal. The audit was scheduled for next week; the launch is tomorrow.",
+    "sceneLines": [
+      "The proposal asks for treasury money but doesn't name who owns delivery. The vote can wait until the terms are clear.",
+      "I don't mind a difficult vote. I mind asking people to vote without showing them the cost and the trade-offs."
+    ]
   },
   {
     "id": "m24",
@@ -1935,7 +2023,11 @@ const RAW_MISSIONS = [
     ],
     "nextMissionId": "m25",
     "ending": "The launch is held until the constrained permission passes review. The team discloses the risk through the agreed channel and keeps the evidence available for an independent reviewer.",
-    "cliffhanger": "A creator who helped explain the finding wants to sell a digital collectible tied to the project. In Abia, Gbemi's colleague FemiY is checking whether the creator really owns the work."
+    "cliffhanger": "A creator who helped explain the finding wants to sell a digital collectible tied to the project. In Abia, Gbemi's colleague FemiY is checking whether the creator really owns the work.",
+    "sceneLines": [
+      "This permission can redirect funds. The launch team needs the reproduction steps, not a softened summary.",
+      "We can disclose this through the agreed channel and verify the patch without publishing a live exploit."
+    ]
   },
   {
     "id": "m25",
@@ -2008,7 +2100,11 @@ const RAW_MISSIONS = [
     ],
     "nextMissionId": "m26",
     "ending": "The listing is paused until both artists' claims are reviewed. FemiY replaces the word 'exclusive' with a precise statement of the rights that can be proven.",
-    "cliffhanger": "The disputed listing was built from an open-source component whose licence was copied incorrectly. Softstorm and IamAbdul ask you to trace the contribution before the same mistake reaches another project."
+    "cliffhanger": "The disputed listing was built from an open-source component whose licence was copied incorrectly. Softstorm and IamAbdul ask you to trace the contribution before the same mistake reaches another project.",
+    "sceneLines": [
+      "Owning the token and owning the copyright are not the same thing. We need to read the licence before promising exclusivity.",
+      "The creator's claim is disputed. I won't publish the listing until we know what rights can actually be granted."
+    ]
   },
   {
     "id": "m26",
@@ -2083,7 +2179,11 @@ const RAW_MISSIONS = [
     ],
     "nextMissionId": "m27",
     "ending": "The project restores attribution and opens a focused change for review. The maintainer contacts the original author rather than pretending the code appeared from nowhere.",
-    "cliffhanger": "The author replies with a question: who is accountable when a product combines code, wallets, AI and community promises? Joe_Sef and Larai have been tracking the same cyan mark across the cases."
+    "cliffhanger": "The author replies with a question: who is accountable when a product combines code, wallets, AI and community promises? Joe_Sef and Larai have been tracking the same cyan mark across the cases.",
+    "sceneLines": [
+      "The component's history shows where it came from. We should restore that trail instead of pretending the project wrote it.",
+      "A clean patch needs the correct licence, attribution and a review that another maintainer can follow."
+    ]
   },
   {
     "id": "m27",
@@ -2158,7 +2258,11 @@ const RAW_MISSIONS = [
     ],
     "nextMissionId": "m28",
     "ending": "The evidence shows a shared visual mark across several tools, but not a proven common operator. Joe_Sef finds a deployment note referencing a public build route that leads north toward Kogi.",
-    "cliffhanger": "The route's integration notes are incomplete. Unique and Christol have been asked to test whether the separate tools can hand a user from one step to the next without losing context or safety."
+    "cliffhanger": "The route's integration notes are incomplete. Unique and Christol have been asked to test whether the separate tools can hand a user from one step to the next without losing context or safety.",
+    "sceneLines": [
+      "The mark repeats, but the publishers don't all match. Let's keep both facts in the timeline.",
+      "The evidence gives us a lead, not a name. I want a source for every conclusion before we take it to KitCity."
+    ]
   },
   {
     "id": "m28",
@@ -2233,7 +2337,11 @@ const RAW_MISSIONS = [
     ],
     "nextMissionId": "m29",
     "ending": "The connected flow now carries forward the evidence needed for the next step without copying private data. The deployment note points to a final destination called KitCity.",
-    "cliffhanger": "KitCity is not another ordinary stop. Softstorm is waiting at its gate, and the cyan mark is etched into the entry panel. He says the city will open only when you can explain the journey with evidence."
+    "cliffhanger": "KitCity is not another ordinary stop. Softstorm is waiting at its gate, and the cyan mark is etched into the entry panel. He says the city will open only when you can explain the journey with evidence.",
+    "sceneLines": [
+      "Each screen works alone, but the source reference disappears at the hand-off. That's the failure users experience.",
+      "Let's run the entire journey from the first record to the final screen. Passing isolated screens is not enough."
+    ]
   },
   {
     "id": "m29",
@@ -2310,7 +2418,11 @@ const RAW_MISSIONS = [
     ],
     "nextMissionId": "m30",
     "ending": "The gate opens after the evidence is checked, not because you guessed the right answer. Craftore says the next test will ask you to do the work, not just explain it.",
-    "cliffhanger": "Inside the gate, three teams are waiting with a live problem. Softstorm says you can choose where to start, but every team must be able to review what you deliver."
+    "cliffhanger": "Inside the gate, three teams are waiting with a live problem. Softstorm says you can choose where to start, but every team must be able to review what you deliver.",
+    "sceneLines": [
+      "The mark on the gate matches the earlier cases, but that alone cannot open it. Show me how you traced it.",
+      "I will review your reasoning, including the contradictions. A case file that admits uncertainty is stronger than a confident guess."
+    ]
   },
   {
     "id": "m30",
@@ -2395,7 +2507,11 @@ const RAW_MISSIONS = [
     ],
     "nextMissionId": "m31",
     "ending": "The three teams sign off on the evidence, the safety response and the repeatable test. The review chamber marks the work complete but leaves one question unanswered: who commissioned the connected tools?",
-    "cliffhanger": "The deployment trail is unlocked. Softstorm takes you to the central records room, where the cyan mark finally appears beside a name: T3Kit."
+    "cliffhanger": "The deployment trail is unlocked. Softstorm takes you to the central records room, where the cyan mark finally appears beside a name: T3Kit.",
+    "sceneLines": [
+      "We have one afternoon. Split the checks, keep the evidence linked and make sure somebody else can repeat the test.",
+      "I will not sign off on a screenshot. Show the test steps, the result and the limits we still know about."
+    ]
   },
   {
     "id": "m31",
@@ -2481,7 +2597,11 @@ const RAW_MISSIONS = [
     ],
     "nextMissionId": null,
     "ending": "The signal was never a promise of easy money. T3Kit's trail connects the people, tools and lessons you encountered; the city opens because you can verify, build, communicate and contribute. You leave with a portfolio of work and a direction you chose yourself.",
-    "cliffhanger": "The city square fills with new teams looking for people who can do the work. Your next chapter begins outside the mission list—with the skill and evidence you carry forward."
+    "cliffhanger": "The city square fills with new teams looking for people who can do the work. Your next chapter begins outside the mission list—with the skill and evidence you carry forward.",
+    "sceneLines": [
+      "The deployment record names T3Kit. The cyan mark was the breadcrumb; the signed record is the proof.",
+      "The point was never to promise easy money. It was to connect people to useful work they can learn, test and contribute."
+    ]
   }
 ];
 
