@@ -115,7 +115,7 @@ export const CHAPTERS = [
   { id:"final", title:"KitCity", state:"KitCity", missionIds:["m29","m30","m31"] }
 ];
 
-const RAW_MISSIONS = const RAW_MISSIONS = [
+const RAW_MISSIONS = [
   {
     "id": "m01",
     "chapterId": "ch01",
