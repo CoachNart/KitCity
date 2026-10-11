@@ -563,7 +563,7 @@ html.kitcity-story-active #modal{
 .comic-caption{position:absolute;left:12px;right:12px;bottom:12px;z-index:3;max-width:560px;padding:12px 13px;background:#fff;color:#101820;border:2px solid #101820;box-shadow:3px 3px 0 rgba(0,0,0,.75);clip-path:polygon(0 0,100% 0,100% 90%,97% 100%,0 100%)}
 .comic-kicker{display:block;margin-bottom:5px;color:#007D8D;font:900 9px/1.2 ui-monospace,monospace;letter-spacing:.15em;text-transform:uppercase}
 .comic-caption-text{font:800 clamp(13px,3.7vw,17px)/1.35 system-ui,sans-serif;letter-spacing:-.02em}
-.comic-dialogue{position:relative;z-index:3;margin-top:auto;width:100%;max-width:760px;max-height:27vh;overflow-y:auto;overscroll-behavior:contain;align-self:center;padding:10px 11px 8px;background:#F8FBFC;color:#101820;border:3px solid #07111A;box-shadow:5px 6px 0 rgba(0,0,0,.62),0 0 0 1px rgba(0,229,255,.6);clip-path:polygon(0 0,99% 0,100% 3%,100% 100%,1% 100%,0 96%)}
+.comic-dialogue{position:relative;z-index:3;margin-top:auto;width:100%;max-width:760px;max-height:27vh;overflow-y:auto;overscroll-behavior:contain;align-self:center;padding:10px 11px 8px;background:#F8FBFC;color:#101820;border:3px solid #07111A;box-shadow:5px 6px 0 rgba(0,0,0,.62),0 0 0 1px rgba(0,229,255,.6);clip-path:none;border-radius:5px}
 .comic-dialogue:before{content:"";position:absolute;top:-11px;left:24px;width:18px;height:18px;transform:rotate(45deg);background:#F8FBFC;border-left:3px solid #07111A;border-top:3px solid #07111A}
 .comic-dialogue-meta{position:relative;display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px}
 .comic-speaker{font:900 10px/1.2 ui-monospace,monospace;letter-spacing:.12em;color:#008697;text-transform:uppercase}
@@ -585,16 +585,20 @@ html.kitcity-story-active #modal{
 .comic-scene[data-shot="conversation"] .comic-frame-stamp{opacity:.72}
 .comic-scene[data-shot="abdul"] .comic-scene-frame{clip-path:polygon(0 0,100% 0,98% 100%,0 96%)}
 .comic-scene[data-shot="softstorm"] .comic-scene-frame{clip-path:polygon(2% 0,100% 2%,100% 100%,0 100%)}
-@media(max-width:699px) and (orientation:portrait) and (min-height:561px){
- .comic-scene{height:100vh;height:100dvh;min-height:100svh;padding:calc(10px + env(safe-area-inset-top)) 10px calc(10px + env(safe-area-inset-bottom));gap:8px}
- .comic-scene-frame{inset:8% 3% 34%}
- .comic-scene[data-shot="conversation"] .comic-scene-frame{inset:8% 3% 34%}
- .comic-dialogue{width:100%;max-height:31dvh;padding:9px 10px 8px;flex-shrink:0}
- .comic-dialogue-meta{margin-bottom:6px}
- .comic-dialogue-text{font-size:15px;line-height:1.3}
- .comic-actions{flex-wrap:wrap}
- .comic-hint{font-size:7px}
- .comic-next{min-height:40px}
+@media(max-width:699px) and (orientation:portrait){
+ .comic-scene{height:100vh;height:100dvh;min-height:100svh;padding:calc(8px + env(safe-area-inset-top)) 9px calc(8px + env(safe-area-inset-bottom));gap:6px;justify-content:flex-start}
+ .comic-scene-top{flex:0 0 auto;min-height:30px}
+ .comic-scene-frame{inset:8% 3% 39%}
+ .comic-scene[data-shot="conversation"] .comic-scene-frame{inset:8% 3% 39%}
+ .comic-dialogue{width:100%;max-height:36dvh;min-height:0;margin-top:auto;padding:9px 10px 8px;flex:0 0 auto;overflow-y:auto;clip-path:none;border-radius:5px}
+ .comic-dialogue:before{display:none}
+ .comic-dialogue-meta{margin-bottom:5px}
+ .comic-dialogue-text{font-size:14px;line-height:1.28;overflow-wrap:anywhere}
+ .comic-actions{flex-wrap:nowrap;gap:6px;margin-top:7px;padding-top:6px}
+ .comic-hint{font-size:6.5px;letter-spacing:.035em;min-width:0}
+ .comic-next{min-height:38px;padding:0 8px;font-size:9px;white-space:nowrap}
+ .comic-choices{margin-top:8px;gap:6px}
+ .comic-choice{min-height:40px;padding:8px 10px;font-size:12px}
 }
 .comic-scene[data-shot="player"] .comic-caption{left:8%;right:8%;transform:rotate(-1deg)}
 .comic-scene[data-shot="clue"] .comic-frame-stamp{background:#F6B21A;transform:rotate(-4deg)}
