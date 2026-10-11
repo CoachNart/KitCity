@@ -2547,27 +2547,26 @@ const MISSIONS=CHRONICLE_MISSIONS.map((story,index)=>{
       {
         kind:'character',id:'m01-join-dispute',label:'Find out what happened',spot:'a',npc:STORY_NPCS.Softstorm,
         run(){
-          talk(STORY_NPCS.Softstorm,"<p><b>PLAYER</b> · Abeg, wetin una dey argue about?</p><p>Softstorm explains that a buyer says they sent 120 USDC for a laptop. The buyer has a screenshot, but the shop has not received the payment.</p><p><b>Softstorm:</b> He is already on his way. If I hand over the laptop and the money never came, na me lose.</p>",[
-            {t:"I'll help check the payment.",f:()=>{G.evidence.joined_dispute=true;talk(STORY_NPCS.Softstorm,"<p>Thank you. Please, no let that screenshot confuse you. We need to find out what actually happened before the buyer gets here.</p>",[{t:"Let's check what the shop received.",f:()=>finishStep()}]);}},
-            {t:"Show me the screenshot first.",f:()=>{G.evidence.joined_dispute=true;finishStep();}}
+          talk(STORY_NPCS.Softstorm,"<p><b>SOFTSTORM:</b> You weren't joking about helping. I owe you breakfast if we sort this out.</p><p><b>PLAYER:</b> So, where do we start?</p><p><b>SOFTSTORM:</b> Ask Abdul. He knows how to trace a transfer. I'll keep the laptop here till we know where that money went.</p>",[
+            {t:"I'm on it. Let's check the evidence.",f:()=>{G.evidence.joined_dispute=true;finishStep();}}
           ]);
         }
       },
       {
         kind:'character',id:'m01-ask-abdul',label:'Ask IamAbdul how to verify it',spot:'story',npc:STORY_NPCS.IamAbdul,
         run(){
-          talk(STORY_NPCS.IamAbdul,"<p><b>IAMABDUL:</b> Before anybody starts shouting scam, let's check the facts.</p><p>A blockchain transfer can be confirmed on a public explorer. But a successful transaction only tells you that a transaction happened. We still need to compare the amount, network and recipient address.</p><p><b>PLAYER:</b> So the green tick alone no settle anything?</p>",[
-            {t:"We need to check the actual details.",f:()=>{G.evidence.knows_verification_steps=true;finishStep();}},
-            {t:"If the screenshot says successful, it's enough.",f:()=>talk(STORY_NPCS.IamAbdul,"<p>And if the screenshot is old, edited, or shows money sent to the wrong address? Abeg, let's check the records before anybody loses a laptop.</p>",[{t:"Fine. Let's check the records.",f:()=>{G.evidence.knows_verification_steps=true;finishStep();}}])}
+          talk(STORY_NPCS.IamAbdul,"<p><b>IAMABDUL:</b> Good. Here's the plan: compare the screenshot with the shop's own records. If the payment isn't there, we'll need the transaction hash and check where it actually went.</p><p><b>PLAYER:</b> So first we compare what he claims with what the shop received?</p><p><b>IAMABDUL:</b> Exactly. Start with the screenshot, then we'll check the shop records.</p>",[
+            {t:"Got it. Let's inspect the screenshot.",f:()=>{G.evidence.knows_verification_steps=true;finishStep();}},
+            {t:"A successful screenshot should be enough.",f:()=>talk(STORY_NPCS.IamAbdul,"<p><b>IAMABDUL:</b> The screenshot is only a claim. We still need to compare its details with the shop's own records.</p>",[{t:"Fine. Show me what to check.",f:()=>{G.evidence.knows_verification_steps=true;finishStep();}}])}
           ]);
         }
       },
       {
         kind:'clue',id:'m01-screenshot',label:'Inspect the buyer’s payment screenshot',spot:'screenshot',title:'Payment screenshot',sign:'CHECK SCREENSHOT',
         run(){
-          talk(STORY_NPCS.Softstorm,"<p>The screenshot shows <b>120 USDC · Successful</b>. It looks convincing at first glance, but it was supplied by the buyer. It does not prove the shop received the funds.</p><p><b>PLAYER:</b> E look real sha.</p>",[
-            {t:"Accept the screenshot as proof.",f:()=>talk(STORY_NPCS.Softstorm,"<p>You'd release a whole laptop because of a picture? My brother, let's check the shop's own records first.</p>",[{t:"Check the shop's payment records.",f:()=>{G.evidence.screenshot_inspected=true;finishStep();}}])},
-            {t:"Treat it as a claim and check the records.",f:()=>{G.evidence.screenshot_inspected=true;finishStep();}}
+          talk(STORY_NPCS.Softstorm,"<p>The screenshot claims <b>120 USDC · Successful</b>. Look closely: it still doesn't tell us whether the money reached this shop.</p><p><b>PLAYER:</b> E look real sha. But we need to match it with the shop's records.</p>",[
+            {t:"Compare it with the shop's payment records.",f:()=>{G.evidence.screenshot_inspected=true;finishStep();}},
+            {t:"That green tick proves the payment arrived.",f:()=>talk(STORY_NPCS.Softstorm,"<p>A green tick on a screenshot only tells us what the picture claims. Let's compare it with the shop's account before we decide.</p>",[{t:"Check the shop's payment records.",f:()=>{G.evidence.screenshot_inspected=true;finishStep();}}])}
           ]);
         }
       },
