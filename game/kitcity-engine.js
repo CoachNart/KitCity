@@ -2067,6 +2067,49 @@ function placeStoryClue(def,spot){
   const sign=label(tr(def.sign||def.title),BRAND,'#071827',1.25); sign.position.set(spot.x,6.6,spot.z); missionGroup.add(sign);
   return {x:spot.x,z:spot.z,r:6.5,clue:true};
 }
+function placeMissionEvidence(def,mission,spot){
+  const g=new THREE.Group();g.position.set(spot.x,0,spot.z);
+  const title=String(def.title||def.label||'Evidence').replace(/[.!?]+$/,'');
+  const labelText=tr(def.sign||title.toUpperCase().slice(0,28));
+  const dark=lam('#17242C'),desk=lam('#465760'),screen=lam('#0D202B',{emissive:0x073C4A,emissiveIntensity:.7}),cyan=lam(BRAND),paper=lam('#F4F5F0'),wood=lam('#45352A');
+  const add=(mesh,x,y,z)=>{mesh.position.set(x,y,z);g.add(mesh);return mesh;};
+  const box=(w,h,d,mat,x,y,z)=>add(new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat),x,y,z);
+  const monitor=(w=2.5,h=1.6)=>{box(w,.12,1.2,desk,0,.65,.1);box(w*.78,h,.14,screen,0,1.85,-.38);box(w*.52,.08,.05,cyan,0,2.18,-.47);};
+  const text=title.toLowerCase()+' '+String(def.label||'').toLowerCase();
+  if(mission.id==='m02'&&/transaction explorer|transaction hash|ledger|recipient address|trace a transaction/.test(text)){
+    if(/record the address mismatch|incident note/.test(text)){
+      box(2.8,.8,1.8,desk,0,.4,0);box(1.75,.05,1.25,paper,0,.84,-.05);box(.85,.06,.08,cyan,-.28,.89,-.55);box(1.1,.04,.07,dark,.18,.89,-.28);
+      for(let i=0;i<3;i++)box(1.6-i*.15,.035,.05,dark,0,.89-i*.14,.22);
+    }else if(/trace a transaction|recipient address/.test(text)){
+      box(3.5,.75,1.4,desk,0,.38,0);
+      box(1.3,1.5,.12,screen,-.85,1.55,-.48);box(1.3,1.5,.12,screen,.85,1.55,-.48);
+      box(.8,.08,.05,cyan,-.85,1.9,-.56);box(.8,.08,.05,cyan,.85,1.9,-.56);
+      box(.95,.06,.05,paper,-.85,1.62,-.56);box(.95,.06,.05,paper,.85,1.62,-.56);
+    }else monitor(2.7,1.7);
+  }else if(/wallet|recovery phrase|seed phrase|scam|malicious|security|support impersonat/.test(text)){
+    box(2.6,.9,1.8,desk,0,.45,0);box(1.15,1.9,.18,dark,0,1.85,-.25);box(.88,1.35,.06,screen,0,1.85,-.37);box(.6,.08,.04,cyan,0,2.2,-.42);
+    box(.45,.5,.35,wood,-1.05,.65,.25);box(.2,.25,.06,cyan,-1.05,.65,.45);
+  }else if(/app|user|test|bug|contract|code|repository|audit|developer|software/.test(text)){
+    box(3.1,.8,1.8,desk,0,.4,0);monitor(2.7,1.6);box(.7,.08,.06,cyan,-.55,1.9,-.47);box(.45,.08,.06,paper,.35,1.7,-.47);box(.8,.08,.06,paper,.2,1.5,-.47);
+  }else if(/liquidity|swap|pool|market|trade|leverage|margin|chart|withdraw|exchange/.test(text)){
+    box(3.2,.75,1.7,desk,0,.38,0);box(2.5,1.55,.13,screen,0,1.75,-.45);
+    for(let i=0;i<5;i++)box(.16,.28+(i%3)*.22,.05,i%2?cyan:paper,-.8+i*.4,1.25+(i%3)*.11,-.55);
+    box(1.6,.07,.05,cyan,.1,2.15,-.55);
+  }else if(/investor|property|ownership|licen[cs]e|artwork|tokenized|asset/.test(text)){
+    box(3.1,.7,1.8,wood,0,.35,0);box(1.65,.06,1.2,paper,0,.75,-.1);box(1.2,.06,.05,dark,0,.82,-.35);box(.9,.05,.05,cyan,-.1,.82,-.12);box(.9,.05,.05,dark,0,.82,.12);
+  }else if(/campaign|community|event|message|governance|vote|dao|announcement|creator|portfolio|career|opportunity/.test(text)){
+    box(.15,3.5,.15,wood,-1.45,1.75,0);box(.15,3.5,.15,wood,1.45,1.75,0);box(3.1,2.8,.15,wood,0,2.25,0);box(2.65,2.35,.06,paper,0,2.25,.1);box(1.6,.08,.04,cyan,0,2.8,.16);
+    for(let i=0;i<3;i++)box(1.9-i*.2,.05,.04,dark,0,2.45-i*.28,.16);
+  }else if(/bridge|network|chain|interoperab|transfer|cross-chain/.test(text)){
+    box(.55,2.5,.55,cyan,-1.05,1.25,0);box(.55,2.5,.55,cyan,1.05,1.25,0);box(1.7,.12,.5,dark,0,1.6,0);box(1.2,.1,.1,paper,0,1.8,0);
+  }else{
+    box(2.8,.75,1.6,desk,0,.38,0);box(2.15,2,.14,wood,0,2.05,-.35);box(1.75,1.6,.06,paper,0,2.05,-.25);
+    box(1.1,.08,.05,cyan,0,2.55,-.2);for(let i=0;i<3;i++)box(1.35-i*.12,.045,.04,dark,0,2.25-i*.2,-.2);
+  }
+  missionGroup.add(g);
+  const sign=label(labelText,BRAND,'#071827',1.25);sign.position.set(spot.x,6.5,spot.z);missionGroup.add(sign);
+  return {x:spot.x,z:spot.z,r:6.7,clue:true};
+}
 function storyExecutionStation(m,stepIndex){
   const base=SPOTS.execution;
   const objectiveIndex=Math.max(0,stepIndex-(m.characterStepCount||0));
@@ -2806,7 +2849,7 @@ function loadStep(){
       const entity=placeNPC(st.npc,SPOTS[st.spot]||SPOTS.a);
       entity.talk=()=>st.run();entity.active=()=>true;ents.push(entity);goal=entity;
     }else if(st.kind==='clue'||st.kind==='challenge'){
-      const entity=placeStoryClue(st,SPOTS[st.spot]||SPOTS.execution);
+      const entity=m.id==='m01'?placeStoryClue(st,SPOTS[st.spot]||SPOTS.execution):placeMissionEvidence(st,m,SPOTS[st.spot]||SPOTS.execution);
       entity.talk=()=>st.run();entity.active=()=>true;ents.push(entity);goal=entity;
     }else{
       const entity=placeNPC(st.npc,SPOTS[st.spot]||SPOTS.a);
