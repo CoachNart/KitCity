@@ -47,7 +47,7 @@ const Store=(function(){
   };
 })();
 const KEY='kitnaija_v1';
-const DEFAULT_PLAYER={wallet:null,usdc:0,ngn:0,done:{},dodged:0,fell:0,low:false,music:true,sfx:true,lang:'en',pl:'',name:'',scores:{},web3:null,storyPrologueSeen:false,storyProgress:{},storyFlags:{}};
+const DEFAULT_PLAYER={wallet:null,usdc:0,ngn:0,done:{},dodged:0,fell:0,low:false,music:true,sfx:true,lang:'en',pl:'',name:'',scores:{},web3:null,storyPrologueSeen:false,chroniclesPrologueSeen:false,storyProgress:{},storyFlags:{}};
 let activeUid=Store.get('kitcity_active_uid',null);
 let storageKey=activeUid?KEY+'_user_'+activeUid:KEY;
 const P=Object.assign({},DEFAULT_PLAYER,Store.get(storageKey,{}));
@@ -55,7 +55,7 @@ if(!P.done||typeof P.done!=='object') P.done={};
 if(!P.storyProgress||typeof P.storyProgress!=='object') P.storyProgress={};
 if(!P.storyFlags||typeof P.storyFlags!=='object') P.storyFlags={};
 let cloudSyncReady=false;
-function progressSnapshot(){ return {wallet:P.wallet,usdc:P.usdc,ngn:P.ngn,done:P.done,dodged:P.dodged,fell:P.fell,low:P.low,music:P.music,sfx:P.sfx,lang:P.lang,pl:P.pl,name:P.name,scores:P.scores,web3:P.web3,storyPrologueSeen:!!P.storyPrologueSeen,storyProgress:P.storyProgress||{},storyFlags:P.storyFlags||{}}; }
+function progressSnapshot(){ return {wallet:P.wallet,usdc:P.usdc,ngn:P.ngn,done:P.done,dodged:P.dodged,fell:P.fell,low:P.low,music:P.music,sfx:P.sfx,lang:P.lang,pl:P.pl,name:P.name,scores:P.scores,web3:P.web3,storyPrologueSeen:!!P.storyPrologueSeen,chroniclesPrologueSeen:!!P.chroniclesPrologueSeen,storyProgress:P.storyProgress||{},storyFlags:P.storyFlags||{}}; }
 function save(){
   const snapshot=progressSnapshot();
   Store.set(storageKey,snapshot);
@@ -93,7 +93,7 @@ function mergeCloudProgress(remote){
   merged.dodged=Math.max(Number(remote.dodged)||0,Number(local.dodged)||0);
   merged.fell=Math.max(Number(remote.fell)||0,Number(local.fell)||0);
   merged.web3=local.web3||remote.web3||null;
-  merged.storyPrologueSeen=!!(remote.storyPrologueSeen||local.storyPrologueSeen);
+  merged.storyPrologueSeen=!!(remote.storyPrologueSeen||local.storyPrologueSeen);\n  merged.chroniclesPrologueSeen=!!(remote.chroniclesPrologueSeen||local.chroniclesPrologueSeen);
   merged.storyProgress=Object.assign({},remote.storyProgress||{},local.storyProgress||{});
   merged.storyFlags=Object.assign({},remote.storyFlags||{},local.storyFlags||{});
   replacePlayerState(merged);
@@ -2567,8 +2567,8 @@ function startMission(id,restart){
     $('#hub').classList.add('hidden'); $('#hub').setAttribute('aria-hidden','true'); $('#title').classList.add('hidden'); $('#hud').classList.remove('hidden');
     S.phase='play'; closeSheet(); Snd.setMode('play'); lastLoc=''; resetPlayer(); loadStep();
     $('#loading').classList.add('hidden');
-    if(m.id==='m01'&&!P.storyPrologueSeen){
-      missionGroup.visible=false; storyCastGroup.visible=true; storyDirector.playOpening(()=>{ storyCastGroup.visible=false; missionGroup.visible=true; P.storyPrologueSeen=true; save(); loadStep(); briefing(); });
+    if(m.id==='m01'&&!P.chroniclesPrologueSeen){
+      missionGroup.visible=false; storyCastGroup.visible=true; storyDirector.playOpening(()=>{ storyCastGroup.visible=false; missionGroup.visible=true; P.chroniclesPrologueSeen=true; save(); loadStep(); briefing(); });
     }else briefing();
   },60);
 }
@@ -2812,7 +2812,7 @@ $('#hub').addEventListener('click',async e=>{
   else if(a==='snd'){ P[v]=!P[v]; save(); Snd.set(v,P[v]); Snd.sfx('click'); renderHub(); }
   else if(a==='reset'){
     if(!resetArm){ resetArm=true; renderHub(); return; }
-    Store.del(KEY); Object.assign(P,{wallet:null,usdc:0,ngn:0,done:{},dodged:0,fell:0,scores:{},web3:null,storyPrologueSeen:false,storyProgress:{},storyFlags:{}}); save(); resetArm=false; hubCity='lagos'; hubTab='missions'; renderHub(); toast('Progress erased');
+    Store.del(KEY); Object.assign(P,{wallet:null,usdc:0,ngn:0,done:{},dodged:0,fell:0,scores:{},web3:null,storyPrologueSeen:false,chroniclesPrologueSeen:false,storyProgress:{},storyFlags:{}}); save(); resetArm=false; hubCity='lagos'; hubTab='missions'; renderHub(); toast('Progress erased');
   }
 });
 const LOCAL_GUEST_TEST=process.env.NODE_ENV==='development'&&window.location.hostname==='localhost';
