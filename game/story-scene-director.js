@@ -5,9 +5,9 @@ const SPEAKER_LABELS = {
 
 const OPENING_PANELS = [
   { shot: 'wide', kicker: 'LAGOS · 3:42 PM', caption: 'Nothing unusual. Just another day.', next: 'next' },
-  { shot: 'abdul', speaker: 'IamAbdul', text: 'So this T3Kit thing connects all these people?', next: 'next' },
-  { shot: 'softstorm', speaker: 'Softstorm', text: 'That’s what I’m trying to figure out. The same name keeps showing up in places that should have nothing in common.', next: 'next' },
-  { shot: 'abdul', speaker: 'IamAbdul', text: 'Then why does nobody explain what it is?', next: 'next' },
+  { shot: 'conversation', speaker: 'IamAbdul', text: 'So this T3Kit thing connects all these people?', next: 'next' },
+  { shot: 'conversation', speaker: 'Softstorm', text: 'That’s what I’m trying to figure out. The same name keeps showing up in places that should have nothing in common.', next: 'next' },
+  { shot: 'conversation', speaker: 'IamAbdul', text: 'Then why does nobody explain what it is?', next: 'next' },
   { shot: 'player', kicker: 'YOUR THOUGHTS', caption: 'T3Kit? First time you’ve heard that name. But now you want to know why it keeps appearing.', next: 'next' },
   { shot: 'wide', kicker: 'YOUR MOVE', caption: 'What do you do?', choices: [
     { label: 'Walk over and ask them', target: 6 },
@@ -93,10 +93,12 @@ export function createStorySceneDirector({ camera, player, getCharacter, animate
     const hero = worldPosition(player);
     let target = hero || new camera.position.constructor(0, 0, 0);
     let position;
-    if (key === 'wide' || key === 'clue') {
+    if (key === 'wide' || key === 'clue' || key === 'conversation') {
       if (soft && abdul) target = soft.clone().add(abdul).multiplyScalar(.5);
       else target = soft || abdul || target;
-      position = target.clone().add(new camera.position.constructor(0, key === 'clue' ? 11 : 17, key === 'clue' ? 20 : 28));
+      const height = key === 'clue' ? 11 : key === 'conversation' ? 6 : 17;
+      const distance = key === 'clue' ? 20 : key === 'conversation' ? 20 : 28;
+      position = target.clone().add(new camera.position.constructor(0, height, distance));
     } else if (key === 'abdul') {
       target = abdul || soft || target;
       position = target.clone().add(new camera.position.constructor(8, 4.5, 8));
