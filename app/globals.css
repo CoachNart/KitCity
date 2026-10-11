@@ -537,7 +537,7 @@ html,body{height:100%;overflow:hidden;background:var(--ink);color:var(--ink);fon
 #sheet .web3-focus{margin:2px 0 8px}
 
 
-/* ===================== KitCity comic-story director ===================== */
+/* ===================== In-world mission HUD and dialogue ===================== */
 /* Story-first mission card and cleaner in-world objective HUD */
 #mission{
   max-width:min(68vw,300px);padding:11px 13px;
