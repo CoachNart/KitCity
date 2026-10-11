@@ -604,7 +604,7 @@ const SPOTS={
   a:{x:10,z:-30,f:-1}, b:{x:-10,z:-105,f:1}, c:{x:80,z:-35,f:-1}, d:{x:60,z:-105,f:1},
   e:{x:-80,z:-35,f:1}, f:{x:-60,z:-105,f:-1}, g:{x:10,z:-175,f:-1}, h:{x:-10,z:-175,f:1},
   i:{x:150,z:-35,f:-1}, j:{x:130,z:-175,f:1}, k:{x:-150,z:-35,f:1}, l:{x:-130,z:-175,f:-1},
-  m:{x:80,z:35,f:-1}, n:{x:-80,z:105,f:1}, o:{x:10,z:175,f:-1}, x1:{x:60,z:-105,f:1}
+  m:{x:80,z:35,f:-1}, n:{x:-80,z:105,f:1}, o:{x:10,z:175,f:-1}, story:{x:24,z:-32,f:1}, x1:{x:60,z:-105,f:1}
 };
 const special=Object.keys(SPOTS).map(k=>SPOTS[k]).concat([SPAWN]);
 const nearSpecial=(x,z,d)=>special.some(s=>Math.hypot(s.x-x,s.z-z)<d);
@@ -2329,13 +2329,13 @@ const MISSIONS=[
       {t:'I’ll ask IamAbdul',f:finishStep}
     ]);
   }},
-  {label:'Ask IamAbdul what he heard',spot:'j',npc:SUYA,run(){
+  {label:'Ask IamAbdul what he heard',spot:'story',npc:SUYA,run(){
     talk(SUYA,'<p>That symbol? I saw it on an old meetup poster. Same mark, different place.</p><p>Softstorm thinks it’s connected to people learning, building, and finding opportunities. But neither of us knows how the pieces fit.</p>',[
       {t:'Where was the poster?',f:()=>talk(SUYA,'<p>Near the noticeboard down the street. Check it when you get a chance. If you find another clue, bring it back here.</p><p class="note">You’ve got your first lead. The mystery is bigger than one shop.</p>',[{t:'Keep the clue',f:finishStep}])}
     ]);
   }}
  ],
- extras:[{id:'iamabdul-story',spot:SPOTS.j,npc:SUYA,run(){talk(SUYA,'<p>You heard us talking about T3Kit? I only know the name keeps turning up. Ask me after you speak with Softstorm.</p>',[{t:'I’ll come back',f:closeSheet}]);}}]
+ extras:[{id:'iamabdul-story',spot:SPOTS.story,npc:SUYA,run(){talk(SUYA,'<p>You heard us talking about T3Kit? I only know the name keeps turning up. Ask me after you speak with Softstorm.</p>',[{t:'I’ll come back',f:closeSheet}]);}}]
 },
 {id:'m1',n:2,city:'lagos',title:'Your first wallet',goal:'Create a wallet, receive USDC and make your first payment.',
  steps:[
