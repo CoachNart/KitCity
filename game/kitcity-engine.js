@@ -2376,6 +2376,8 @@ m31:{q:"What finally proves the cyan mark's connection to T3Kit?",o:["The signed
 };
 function escapeStoryHtml(value){return String(value==null?'':value).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function chronicleNpcLine(m,name,index=0){
+  const authoredLine=Array.isArray(m.sceneLines)?m.sceneLines[index]:null;
+  if(authoredLine) return authoredLine;
   const found=(m.dialogue||[]).find(d=>String(d.speaker||'').toLowerCase()===String(name||'').toLowerCase());
   if(found&&found.text) return found.text;
   const objectives=m.objectives||[];
