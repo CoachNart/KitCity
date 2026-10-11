@@ -2304,22 +2304,24 @@ const payStep=o=>({label:o.label,spot:o.spot,npc:o.npc,run(){
 /* task step: pick the right action (network, address, signature, token), then do it */
 function taskStep(o){ return {label:o.label,spot:o.spot,npc:o.npc,run(){ if(o.practice){ runPracticeTask(o); } else { pickStep(o); } }}; }
 function runPracticeTask(o){
-  const esc=v=>String(v||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
-  const openAction=()=>{
-    talk(o.npc,'<h3>'+esc(o.workspace)+'</h3><div class="kv"><span>Task</span><b>'+esc(o.action)+'</b></div><p>'+esc(o.intro)+'</p><p>Review the details, then apply the action in this practice workspace.</p>',[
-      {t:o.button||'Apply action',f:()=>{
-        if(o.transaction){
-          const amount=Number(o.amount||2);
-          needFunds(amount);
-          confirmTx(o.npc,{title:o.action,rows:[["Workspace",o.workspace],["Action",o.action],["Network","Base"],["Recipient",o.recipient||"Verified mission address"],["Amount",amount.toFixed(2)+" USDC"]],note:"Review the transaction details before confirming.",btn:"Confirm and submit",after:h=>{P.usdc=Math.max(0,P.usdc-amount);save();updateHUD();Snd.sfx('good');talk(o.npc,'<h3>Action complete</h3><div class="kv"><span>Receipt</span><b class="mono">'+short(h)+'</b></div><p>'+esc(o.result)+'</p>',[{t:'Continue',f:finishStep}]);}});
-        } else {
-          busy(o.npc,'Applying action…',650,()=>{Snd.sfx('good');talk(o.npc,'<h3>Saved</h3><div class="kv"><span>Status</span><b>Complete</b></div><p>'+esc(o.result)+'</p>',[{t:'Continue',f:finishStep}]);});
-        }
-      }},
-      {t:'Review details',g:1,f:()=>runPracticeTask(o)}
-    ]);
+  const esc=v=>String(v==null?'':v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+  const finishAction=()=>{
+    Snd.sfx('good');
+    talk(o.npc,'<h3>'+esc(o.doneTitle||'Nice one!')+'</h3><p>'+esc(o.result||'You handled the situation.')+'</p>'+(o.lesson?'<p><b>Remember:</b> '+esc(o.lesson)+'</p>':''),[{t:'Keep going',f:finishStep}]);
   };
-  talk(o.npc,'<p>'+esc(o.intro)+'</p><div class="kv"><span>Workspace</span><b>'+esc(o.workspace)+'</b></div><div class="kv"><span>Action</span><b>'+esc(o.action)+'</b></div><p>Head into the workspace and carry out the task.</p>',[{t:'Open workspace',f:openAction}]);
+  const doAction=()=>{
+    if(o.transaction){
+      const amount=Number(o.amount||1);
+      needFunds(amount);
+      confirmTx(o.npc,{title:o.action,rows:[["Seller or recipient",o.recipient||"Mission character"],["What you are sending",amount.toFixed(2)+" USDC"],["Network","Base"]],note:"Check the name and amount before you confirm.",btn:"Confirm payment",after:h=>{
+        P.usdc=Math.max(0,Math.round((P.usdc-amount)*100)/100);save();updateHUD();Snd.sfx('good');
+        talk(o.npc,'<h3>Payment sent!</h3><div class="kv"><span>Receipt</span><b class="mono">'+short(h)+'</b></div><p>'+esc(o.result||'The payment is complete.')+'</p>'+(o.lesson?'<p><b>Remember:</b> '+esc(o.lesson)+'</p>':''),[{t:'Keep going',f:finishStep}]);
+      }});
+      return;
+    }
+    busy(o.npc,o.busyText||'On it…',500,finishAction);
+  };
+  talk(o.npc,'<p>'+esc(o.intro)+'</p>'+(o.action?'<p><b>'+esc(o.action)+'</b></p>':''),[{t:o.button||'Do it',f:doAction}]);
 }
 function pickStep(o){
   talk(o.npc,'<p>'+o.intro+'</p>'+(o.q?'<p><b>'+o.q+'</b></p>':''),
@@ -2364,42 +2366,212 @@ const scenarioActions=[
  ["write steps, expected result, actual result and environment","request a focused diff and tests for the stated fix","add a repeatable test for the original failure and edge case","describe verified changes and migration impact accurately","record network, commit, address and test results","follow private disclosure and verify affected versions","run the guide on the current release and update stale commands","rank reports by severity, reproducibility and user impact","request targeted evidence for the changed critical path","clarify acceptance criteria and give the contributor a reproducible start"]
 ];
 function missionChallenges(s){
- const topic=(scenarioTopics[s.cat]||scenarioTopics[0])[s.variant%10];
- const action=(scenarioActions[s.cat]||scenarioActions[0])[s.variant%10];
- const verbSets=[
-  ["Open risk planner","Set order details","Save trade plan"],
-  ["Open exchange desk","Prepare account action","Submit exchange record"],
-  ["Open wallet security","Apply wallet protection","Verify wallet activity"],
-  ["Open protocol dashboard","Adjust position settings","Save DeFi position"],
-  ["Open moderation queue","Apply moderation action","Close community case"],
-  ["Open campaign workspace","Configure campaign","Publish campaign record"],
-  ["Open content studio","Edit and verify draft","Publish content task"],
-  ["Open collection manager","Update asset details","Submit listing review"],
-  ["Open contributor board","Prepare contribution","Submit work for review"]
+ const rawTopic=(scenarioTopics[s.cat]||scenarioTopics[0])[s.variant%10];
+ const rawAction=(scenarioActions[s.cat]||scenarioActions[0])[s.variant%10];
+ const topicPlain={
+  "invalidation below a support break":"the price falling below a level people expected to hold",
+  "a confirmed resistance breakout":"the price finally moving above a level it kept hitting",
+  "a pullback into a demand zone":"the price returning to an area where buyers showed up before",
+  "a rejection at range resistance":"the price failing again near the top of its recent range",
+  "a sudden volatility expansion":"the price suddenly moving much faster than usual",
+  "a poor reward-to-risk ratio":"a trade where the possible loss is too big for the possible gain",
+  "leverage near liquidation":"a borrowed trade close to being forcibly closed",
+  "a planned partial exit":"selling part of a trade instead of waiting with everything",
+  "perpetual funding costs":"the extra cost of keeping a futures trade open",
+  "discipline in a trade journal":"keeping honest notes about each trade",
+  "exchange account hardening":"keeping an exchange account safe",
+  "matching a deposit network":"choosing the same network on both sides of a transfer",
+  "a withdrawal address allowlist":"a list of approved addresses money can be sent to",
+  "a thin order-book spread":"a big gap between the buy and sell prices",
+  "an unfilled limit order":"an order that has not found a buyer or seller yet",
+  "a withdrawal fee receipt":"the fee taken when money leaves an exchange",
+  "a delayed withdrawal":"money that has not arrived yet",
+  "spot versus perpetual products":"the difference between buying a coin and using a futures contract",
+  "a partial order fill":"an order where only some of the amount was traded",
+  "an unfamiliar login alert":"a sign that someone else may have entered the account",
+  "recovery-phrase impersonation":"someone pretending to help but asking for secret wallet words",
+  "an unlimited token allowance":"a request to let an app spend as many tokens as it wants",
+  "an opaque wallet signature":"a wallet message you cannot understand",
+  "address poisoning in transfer history":"a fake address placed in your past transfers to trick you",
+  "a counterfeit token contract":"a fake copy of a real token",
+  "a mismatched bridge route":"sending tokens through the wrong network route",
+  "an unexpected gas-fee spike":"a sudden jump in the network fee",
+  "a hardware-wallet confirmation":"checking the details on a separate wallet device",
+  "a suspicious dApp domain":"a website address that may be pretending to be the real one",
+  "a lost-device response":"what to do after losing the phone that has your wallet",
+  "liquidity-pool composition":"which two tokens people have put into a shared pool",
+  "a falling lending health factor":"a loan getting closer to being liquidated",
+  "an unexplained high-yield offer":"a promise of unusually large returns with no clear explanation",
+  "a stablecoin depeg":"a digital dollar slipping below its intended one-dollar value",
+  "an upcoming token unlock":"more tokens becoming available to sell soon",
+  "two competing swap routes":"two different ways to exchange tokens",
+  "a stale price oracle":"a price feed that has stopped updating",
+  "an upgradeable admin key":"a key that lets someone change how a protocol works",
+  "low liquidity at exit":"not enough buyers when you want to leave a position",
+  "a narrow liquidation buffer":"too little room before a loan or trade can be liquidated",
+  "fake support in community DMs":"a stranger pretending to be official support in private messages",
+  "a wallet-connect bug report":"a report that a wallet connection is not working",
+  "an end-of-shift moderator handover":"passing a community problem to the next moderator",
+  "a heated governance disagreement":"a community argument about a project decision",
+  "a sudden spam raid":"a flood of unwanted messages",
+  "a new contributor onboarding":"helping a newcomer make their first useful contribution",
+  "a private bug-bounty report":"a security flaw reported privately",
+  "an unverified treasury rumour":"a claim about project funds that has not been checked",
+  "unclear referral-link rules":"confusion about how referral rewards work",
+  "a scam-incident postmortem":"reviewing what happened after a scam",
+  "researching the target audience":"figuring out who a campaign is actually for",
+  "referral quality over raw signups":"people who really use a product instead of empty signups",
+  "airdrop sybil resistance":"stopping people from using many fake accounts to claim rewards",
+  "campaign attribution overlap":"two campaigns both claiming credit for the same signup",
+  "creator-partnership fit":"choosing a creator whose audience suits the project",
+  "a leaking conversion funnel":"people dropping out before finishing signup",
+  "quest participation abuse":"people repeating tasks just to farm rewards",
+  "a campaign postmortem":"checking what worked after a campaign ends",
+  "trust-first launch disclosure":"being honest about a launch's limits and risks",
+  "a sustainable community referral loop":"helping real users invite other useful users",
+  "a plain-language content hook":"an opening line that makes a topic easy to understand",
+  "a claim needing fact-checking":"a statement that needs proof before it is posted",
+  "a technical explainer for newcomers":"explaining a difficult idea to a beginner",
+  "an unconfirmed founder quote":"a quote that may not be real",
+  "a non-repetitive content calendar":"planning posts that each add something new",
+  "primary-source research":"checking the original source instead of repeating a rumour",
+  "a misleading chart scale":"a chart that makes a change look bigger or smaller than it is",
+  "a public correction":"fixing a mistake where everyone can see the correction",
+  "a sponsor brief with a profit promise":"an ad asking you to promise people they will make money",
+  "a useful Spaces recap":"notes that help people catch up on an audio discussion",
+  "permission to mint an artwork":"getting the artist's okay before turning their work into an NFT",
+  "mismatched NFT metadata":"an NFT whose picture or details do not match the listing",
+  "unverified collection utility":"benefits promised by an NFT project that have not been proved",
+  "marketplace royalty disclosure":"being clear about whether creators get resale royalties",
+  "a fake collection clone":"a copycat NFT collection pretending to be the original",
+  "a mint-supply discrepancy":"a mismatch between the promised number of NFTs and the actual number",
+  "missing licence details":"unclear permission to use or share an artwork",
+  "an unexplained reveal process":"not knowing how hidden NFT artwork will be revealed",
+  "an NFT community launch plan":"a plan for launching a collection with clear rules",
+  "digital-art attribution":"giving the artist proper credit",
+  "a reproducible bug report":"a bug report that explains how to make the problem happen again",
+  "an oversized pull request":"a code change so large it is hard to review",
+  "a regression test":"a test that makes sure an old bug does not return",
+  "a release changelog":"a plain record of what changed in a new version",
+  "a testnet deployment record":"proof of what was tested on a practice blockchain",
+  "a private security disclosure":"telling a project privately about a security problem",
+  "outdated setup documentation":"instructions that no longer work",
+  "issue-severity triage":"deciding which bug needs attention first",
+  "evidence for code review":"proof that a code change works as intended",
+  "an open-source starter issue":"a small first task that helps a new contributor get started"
+ };
+ const actionPlain={
+  "define the entry trigger and invalidation before sizing":"mark where you would enter and where you would stop if the idea fails",
+  "wait for confirmation and write the breakout-failure level":"wait for the move to prove itself and mark where it would fail",
+  "let support hold and calculate risk from the stop distance":"check that the price holds, then decide how much you could lose",
+  "trade only after the rejection is confirmed":"wait until the price clearly turns away before entering",
+  "reduce size or wait until the range normalises":"use a smaller amount or wait for the price to calm down",
+  "skip the setup until the potential reward justifies its risk":"walk away when the possible loss is too large",
+  "lower exposure and preserve a liquidation buffer":"reduce the borrowed amount so a small price move will not wipe the trade",
+  "follow the prewritten partial-exit plan":"sell only the planned part and protect the rest with your rules",
+  "include funding in the holding-cost estimate":"check the extra fee before keeping the trade open",
+  "grade rule adherence as well as paper PnL":"write down whether you followed your plan, not just whether you won",
+  "enable unique credentials and two-factor authentication":"use a unique password and turn on the extra sign-in check",
+  "match the sending and receiving networks exactly":"choose the same network on both screens before sending",
+  "verify the full address through a trusted source":"compare the full address with the one from the official source",
+  "inspect spread and depth before placing the order":"check the buy and sell prices before placing an order",
+  "respect the actual order status and wait or reprice deliberately":"check whether the order filled before trying again",
+  "reconcile the fee against the net amount received":"check the fee and the amount that actually arrived",
+  "check the official status before retrying":"check the official update before sending again",
+  "confirm product type and margin settings":"make sure you understand whether this is a normal buy or a borrowed trade",
+  "review filled and remaining quantities separately":"check how much was traded and how much is still waiting",
+  "revoke unknown sessions and inspect account activity":"sign out unknown devices and check recent activity",
+  "refuse the request and report the impersonator":"keep your secret words private and report the fake helper",
+  "inspect the spender and limit approval to the required amount":"check which app wants access and give it only the amount it needs",
+  "cancel until the wallet signature is understandable":"cancel if you cannot understand what the wallet is asking you to approve",
+  "compare the entire destination address from a trusted source":"check every part of the address before sending",
+  "verify the full contract address against official sources":"compare the token's full address with the project's official link",
+  "correct the source and destination networks before proceeding":"choose the right network on both sides before moving tokens",
+  "review the fee estimate and wait if it is unreasonable":"check the fee and wait if it is much higher than normal",
+  "confirm recipient and amount on the hardware device itself":"check the name and amount on the separate device before approving",
+  "disconnect and verify the exact official domain":"disconnect and open the website from its official link",
+  "secure linked accounts and follow documented recovery steps":"secure your email and other accounts, then follow the official recovery steps",
+  "review asset mix, fee tier and impermanent-loss exposure":"check which tokens are in the pool and what could happen if their prices move differently",
+  "reduce borrowing or add eligible collateral according to plan":"borrow less or add approved backup funds before the loan gets risky",
+  "trace the yield source, liquidity and contract risks":"find where the promised rewards come from before putting money in",
+  "review reserves, redemption terms and exit liquidity":"check whether there is enough backing and whether people can cash out",
+  "estimate supply changes and possible market pressure":"check how many new tokens may enter the market and when",
+  "compare net output after fees, gas and slippage":"compare how much you will really receive after all fees",
+  "inspect feed freshness and stale-price handling":"check when the displayed price was last updated",
+  "check upgrade permissions, key control and timelock":"find out who can change the rules and whether changes have a delay",
+  "estimate exit impact before choosing exposure":"check whether selling later could push the price down",
+  "stress-test collateral value and reduce borrowing if needed":"see what happens if your backup value falls, then borrow less if needed",
+  "remove and report the account and post the verified support route":"remove the fake helper and point people to the official support page",
+  "collect reproducible steps and route the report to support":"write down the steps and pass the problem to the support team",
+  "handover severity, actions, evidence and the next owner":"leave the next moderator a clear note about what happened and what is left",
+  "apply conduct rules consistently and summarise the dispute fairly":"apply the same rules to everyone and explain the decision calmly",
+  "rate-limit spam and preserve evidence for review":"slow the spam down and keep examples for the review",
+  "give the newcomer one verified guide and a clear starter task":"share one trusted guide and a small first task",
+  "use the private security process and limit access to details":"share the security issue only with the people who need to fix it",
+  "verify authorised sources and label unknowns honestly":"check official sources and clearly mark anything you cannot confirm",
+  "publish clear examples and enforce the same rule consistently":"show simple examples and apply the rule fairly",
+  "record the timeline, cause and owned prevention actions":"write down what happened, why, and who will prevent it next time",
+  "identify the audience problem before choosing a channel":"decide who needs the product and what problem it solves before promoting it",
+  "measure activated and retained users, not signup volume alone":"count people who actually use the product and come back",
+  "publish transparent eligibility rules and an appeal path":"explain who qualifies and how to ask for a review",
+  "deduplicate conversions with one attribution method":"count each real signup once instead of crediting it to every campaign",
+  "check audience relevance, content quality and disclosure":"check whether the audience fits and the promotion is honest",
+  "inspect each funnel step before buying more reach":"find where people get stuck before spending more on ads",
+  "reward valid contributions rather than repetitive empty posts":"reward useful work, not people repeating the same empty task",
+  "compare outcomes with the original objective and user feedback":"check what worked against the original goal and user feedback",
+  "publish limitations and verified support before promotion":"state the limits clearly and share trusted help links",
+  "improve the newcomer experience and measure return visits":"make the first visit easier and check whether people return",
+  "open with the reader's problem and a concrete benefit":"start with the reader's problem and explain the real benefit",
+  "remove or qualify the claim unless a reliable benchmark supports it":"remove the claim or add reliable proof before posting",
+  "explain the terms separately using plain language":"explain each new term with everyday words",
+  "verify the quote and preserve its uncertainty":"check the original quote and do not present guesses as facts",
+  "give each post a distinct purpose and audience need":"make this post useful in a different way from the last one",
+  "trace claims to dated primary sources and label unknowns":"link to the original source and say what is still unknown",
+  "show a fair axis and disclose source and time range":"label the chart clearly and show where the numbers came from",
+  "correct the error visibly and notify readers who may rely on it":"publish the correction where readers can see it",
+  "decline guarantees and use verifiable claims with disclosure":"refuse to promise profit and clearly label the promotion",
+  "separate confirmed decisions from opinions and open questions":"make clear what is confirmed, what is opinion, and what is still open",
+  "obtain permission and agree attribution before minting":"get the artist's permission and agree how they will be credited",
+  "inspect contract, token ID, metadata URI and provenance":"check the NFT's official record and that its details match",
+  "state only deliverable benefits with clear limits":"promise only benefits the project can actually deliver",
+  "describe the marketplace's actual royalty policy":"check and explain the marketplace's real royalty rules",
+  "compare verified creator links and the canonical contract":"use the artist's trusted link and check the official collection address",
+  "verify contract supply, mint price and published allocation":"check the number available, the price, and the published plan",
+  "confirm the creator's licence and provenance":"check who made the art and what permission they gave",
+  "explain the reveal method and its verifiable assumptions":"explain how the hidden artwork will be revealed and what can be checked",
+  "prepare rules, verified links and an escalation owner":"publish clear rules, trusted links and a person to contact if something goes wrong",
+  "add accurate credit and confirm the licence permits the use":"credit the artist and make sure the licence allows this use",
+  "write steps, expected result, actual result and environment":"write the steps, what should happen, what happened, and what device you used",
+  "request a focused diff and tests for the stated fix":"ask for a smaller change and a test that proves the fix",
+  "add a repeatable test for the original failure and edge case":"add a test that makes sure the bug does not come back",
+  "describe verified changes and migration impact accurately":"list what really changed and what users need to do differently",
+  "record network, commit, address and test results":"record where it ran, which version was used, and what the test showed",
+  "follow private disclosure and verify affected versions":"report the flaw privately and check which versions are affected",
+  "run the guide on the current release and update stale commands":"follow the guide and fix any steps that no longer work",
+  "rank reports by severity, reproducibility and user impact":"fix the most serious and repeatable problems first",
+  "request targeted evidence for the changed critical path":"ask for proof that the important part of the change works",
+  "clarify acceptance criteria and give the contributor a reproducible start":"make the task clear and give the new contributor steps they can follow"
+ };
+ const topic=topicPlain[rawTopic]||rawTopic.replace(/\b(wallet|liquidity|protocol|attribution|governance|oracle|perpetual|sybil|metadata|provenance|collateral|slippage|mint|dApp)\b/gi,m=>({"wallet":"wallet","liquidity":"available money","protocol":"project","attribution":"credit","governance":"community voting","oracle":"price feed","perpetual":"futures","sybil":"fake-account","metadata":"details","provenance":"origin","collateral":"backup funds","slippage":"price change","mint":"create","dApp":"app"}[m.toLowerCase()]||m));
+ const action=actionPlain[rawAction]||rawAction;
+ const scenes=[
+  ["The trading coach points at the price board. The price has been moving around, and they want you to help make a careful plan for "+topic+".","Before anyone places a practice trade, decide what would make the idea wrong. "+action+".","The plan is now clear before any coins are put at risk.","Mark the safer plan","Show me the price board","Check the trade plan"],
+  ["At the exchange counter, a customer is confused about "+topic+". The guide asks you to help them avoid a costly mistake.","Look at the details together, then "+action+".","You checked the important details before taking action. That habit helps prevent avoidable exchange mistakes.","Help at the counter","Check the details","Finish the exchange task"],
+  ["A neighbour has come to the wallet desk worried about "+topic+". They are new to Web3 and need a safe next step.","Help them protect their wallet: "+action+".","You chose a safer path. With wallets, slowing down before approving or sending can protect your money.","Help the neighbour","Protect the wallet","Check the safety step"],
+  ["A DeFi guide shows you a pool or loan affected by "+topic+". They ask you to help before anyone puts more money in.","Check the possible downside and "+action+".","You looked at the risk before chasing a reward. A big number on a screen does not make an offer safe.","Help at the DeFi desk","Check the risk","Review the result"],
+  ["The community is dealing with "+topic+". People are asking for help, and the team needs someone to take the next sensible step.","Help the community by "+action+".","You made the situation clearer and safer for everyone involved.","Help the community","Take the safe action","Check the handover"],
+  ["The campaign team is planning around "+topic+". They want real people to benefit, not just impressive-looking numbers.","Help the team by "+action+".","A useful campaign measures real value and treats the community honestly.","Help the campaign","Make the change","Check the campaign result"],
+  ["A creator is preparing content about "+topic+". They want the post to be interesting without misleading new users.","Work on the draft: "+action+".","Clear, honest content earns trust. If something is uncertain, say so instead of dressing it up as fact.","Help the creator","Improve the post","Read the final version"],
+  ["An artist has a collection question about "+topic+". Before anything goes live, help make sure the details are fair and accurate.","Help the artist by "+action+".","People can make better choices when ownership, permissions and promises are clear.","Help the artist","Check the collection","Review the listing"],
+  ["A new contributor is helping the project with "+topic+". The maintainer wants a useful change that others can verify.","Help the contributor: "+action+".","Good Web3 work is easier to trust when other people can understand and reproduce it.","Help the contributor","Make the improvement","Check the work"]
  ];
- const verbs=verbSets[s.cat]||verbSets[0];
- const detailSets=[
-  ["Review the market structure, available balance and planned risk for "+topic+".","Set the entry, stop and target using the plan for "+topic+".","Save the entry, invalidation level and target in the trade journal."],
-  ["Open the practice exchange panel and inspect "+topic+".","Apply this exchange action: "+action+".","Check the order or account record for "+topic+" and save the result."],
-  ["Open the wallet panel and inspect "+topic+".","Apply this wallet-safety action: "+action+".","Review the resulting permission or activity record for "+topic+"."],
-  ["Open the protocol position panel and inspect "+topic+".","Adjust the practice position using this action: "+action+".","Save the position details and risk settings for "+topic+"."],
-  ["Open the community operations queue and locate "+topic+".","Apply the moderation action: "+action+".","Save the case status, evidence and next owner for "+topic+"."],
-  ["Open the campaign workspace and inspect "+topic+".","Configure the campaign using this action: "+action+".","Save the audience, measurement and approval details for "+topic+"."],
-  ["Open the content draft and inspect "+topic+".","Edit the draft using this action: "+action+".","Save the verified version and its sources for "+topic+"."],
-  ["Open the collection manager and inspect "+topic+".","Update the asset or listing using this action: "+action+".","Save the provenance, rights and listing review for "+topic+"."],
-  ["Open the contributor board and inspect "+topic+".","Prepare the contribution using this action: "+action+".","Submit the evidence, test result or issue record for "+topic+"."]
+ const scene=scenes[s.cat]||scenes[0];
+ const variants=[
+  {spot:"a",label:"Look into the situation",intro:scene[0],action:"Go over the details with "+(s.cat===0?"the trading coach":s.cat===1?"the exchange guide":s.cat===2?"the wallet guide":s.cat===3?"the DeFi guide":s.cat===4?"the community lead":s.cat===5?"the campaign team":s.cat===6?"the creator":s.cat===7?"the artist":"the maintainer")+".",button:scene[4],result:"You took a moment to understand the problem before acting.",lesson:"In Web3, check what is happening before you click, send, approve or share."},
+  {spot:"c",label:"Take the practical step",intro:scene[1],action:action,button:scene[5],result:scene[2],lesson: s.cat===0?"A trade plan sets the limits before emotions take over.":s.cat===1?"Check the network, amount and account details before confirming.":s.cat===2?"Never hand over secret recovery words, and do not approve anything you cannot understand.":s.cat===3?"Look at the risk and how you can get your money back, not only the reward.":s.cat===4?"Use trusted information, clear rules and calm judgement.":s.cat===5?"Real engagement matters more than empty signups or clicks.":s.cat===6?"Share proof, explain uncertainty and never promise guaranteed profit.":s.cat===7?"Check the creator, collection details and permission before buying or sharing.":"Make changes small, clear and testable so others can check your work."},
+  {spot:"d",label:"See what your action changed",intro:"The character looks over what you did. "+scene[2]+" Now take one last look so the lesson sticks.",action:"Check the outcome and keep the safer habit in mind.",button:scene[6],result:"Task complete. The character thanks you and the city journey continues.",lesson:"You learned by doing the task, not by memorising a quiz answer."}
  ];
- const details=detailSets[s.cat]||detailSets[0];
- return details.map((detail,si)=>({
-  label:[verbs[0]+": ",verbs[1]+": ",verbs[2]+": "][si]+topic,
-  spot:["a","c","d"][si],
-  intro:detail,
-  workspace:["Field workspace","Action panel","Result record"][si],
-  action:[verbs[0]+" · "+topic,action,verbs[2]+" · "+topic][si],
-  button:[verbs[0], "Apply action", "Save and finish"][si],
-  result:["Workspace opened for "+topic+".","Action applied: "+action+".","Record saved for "+topic+"."][si],
-  transaction:si===1&&(s.cat===1||s.cat===2||s.cat===3)
- }));
+ return variants.map((v,si)=>({label:v.label+" · "+(topic.length>54?topic.slice(0,51)+"…":topic),spot:v.spot,intro:v.intro,action:v.action,button:v.button,result:v.result,lesson:v.lesson,busyText:si===1?"Working on it…":"Checking…",doneTitle:si===2?"Good work!":"Done!",transaction:false}));
 }
 const npcData=[["Tobi Adeyemi","Trading coach","#2266A3",0],["Zainab Bello","Exchange guide","#2D6FB3",1],["Amina Okoro","Wallet safety lead","#0B7A70",2],["Amaka George","DeFi analyst","#6A4FC8",2],["Ada Nwosu","Community lead","#C7457E",2],["Dami Ogun","Growth strategist","#6A4FC8",2],["Nneka James","Content editor","#C7457E",2],["Efe Osagie","Digital artist","#C7457E",2],["Chidi Okafor","Open-source maintainer","#2D6FB3",0]];
 const spots=["a","c","d"];
