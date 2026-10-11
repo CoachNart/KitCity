@@ -2300,7 +2300,7 @@ CHARACTER_ORDER.forEach((name,index)=>{
   npc.name=name;npc.originalName=name;npc.signBg=color;npc.signFg='#ffffff';STORY_NPCS[name]=npc;
 });
 const CHRONICLE_CHALLENGES={
-m02:{q:'What is the best way to understand Web3?',o:['Learn how the technology works and what problem it solves','Assume every project will make money','Follow the loudest account'],a:0,w:'Web3 includes networks, apps, digital ownership and people building together. Understand the use before trusting the promise.'},
+m02:{q:'Joe_Sef has the buyer’s transaction hash. What should we check before deciding who received the payment?',o:['Open the correct network record and compare the exact recipient address','Trust the display name on the screenshot','Assume a successful status means the shop received the funds'],a:0,w:'A confirmed transaction can still go to the wrong address. Match the hash, network and recipient before drawing a conclusion.'},
 m03:{q:'How should you begin with a new wallet?',o:['Set up your wallet and keep its recovery details private','Connect a wallet and share its recovery phrase','Send money to a stranger first'],a:0,w:'A wallet helps you manage keys and addresses. Keep the recovery phrase private.',effect:'wallet-create'},
 m04:{q:'What makes a shared ledger useful?',o:['Records can be checked against shared history','Anyone can secretly rewrite accepted records','It makes every transaction private'],a:0,w:'Shared records can be independently checked. Network rules make rewriting accepted history difficult.'},
 m05:{q:'The app is failing. What should the team do first?',o:['Find what users struggle with and test the cause','Add more features immediately','Blame the newest user'],a:0,w:'A useful product starts with the user problem. Test it before spending time on a solution.'},
@@ -2342,8 +2342,8 @@ function chronicleNpcLine(m,name,index=0){
   return 'I checked '+subject+', but something still feels off. Let us compare what we know and work it out together.';
 }
 const STORY_BRIDGES={
-  m02:'That wrong-address payment raised a bigger question. Who controls the records we rely on every day, and how can we check them ourselves?',
-  m03:'This guy says he can double your tokens, but first he wants your recovery phrase. Sounds generous, abi? Something is off.',
+  m02:'The buyer says he copied the shop address from an online account page. We know the transaction succeeded, but the shop never received it. Help us trace the exact destination before anyone blames the wrong person.',
+  m03:'After the payment dispute, I promised myself I would understand wallets properly. Now someone is offering to double my tokens if I give him my recovery phrase. Can you check this before I touch anything?',
   m04:'I have two records for one transfer, and they do not agree. Help me trace what actually happened before we blame anyone.',
   m05:'Our app keeps failing and everyone has a theory. Can you watch a few people use it before the team adds yet another feature?',
   m06:'The app finally works, but this contract still has a bug. Launch is tomorrow, and people are acting like the deadline can fix the code.',
@@ -2378,10 +2378,9 @@ function chronicleNpcStep(m,name,index){
   const partnerName=(m.npcs||[]).find(candidate=>candidate!==name)||'';
   const step={kind:'character',characterIndex:index,label:'Talk to '+name,spot:index===0?'a':index===1?'story':['b','c','d','e','f','g','h'][index%7],npc};
   step.run=function(){
-    const line=index===0?(STORY_BRIDGES[m.id]||chronicleNpcLine(m,name,index)):chronicleNpcLine(m,name,index);
-    const opener=index===0?'I am new to this. Can you show me what happened?':'I have heard the other side. What should I check before I make a call?';
-    const partnerLine='';
-    const response=index===0?'Good. Hear the other side too, then meet us at the execution centre. We will work through the evidence there.':'Now come to the execution centre. Bring what you found and we will put the evidence side by side.';
+    const line=index===0?(STORY_BRIDGES[m.id]||chronicleNpcLine(m,name,index)):(m.id==='m02'&&index===1?'I checked the hash against the network record. The transaction succeeded, but the recipient is not the shop address. That proves where the funds went; it does not prove why the buyer sent them there.':chronicleNpcLine(m,name,index));
+    const opener=m.id==='m02'&&index===0?'Can we trace the hash and compare the recipient address before we make any accusation?':m.id==='m02'&&index===1?'So a successful transaction can still miss the intended person?':'I have heard the other side. What should I check before I make a call?';
+    const response=m.id==='m02'&&index===0?'Bring the hash and network to the workstation. We will check the public record, not rely on the screenshot.':m.id==='m02'&&index===1?'Exactly. Save the details for Softstorm, then we can warn the group about the recovery-phrase scam nearby.':index===0?'Hear the other side too, then bring the evidence to the workbench.':'Bring what you found and we will put the evidence side by side.';
     const partnerTalk='';
     const html='<p><b>'+escapeStoryHtml(name.toUpperCase())+':</b> '+escapeStoryHtml(line)+'</p>'+partnerTalk+'<p><b>YOU:</b> '+escapeStoryHtml(opener)+'</p><p><b>'+escapeStoryHtml(name.toUpperCase())+':</b> '+escapeStoryHtml(response)+'</p>';
     talk(npc,html,[{t:'Alright. Show me where to start.',f:()=>{G.evidence['met_'+name]=true;finishStep();}}]);
@@ -2396,6 +2395,7 @@ const CHRONICLE_ACTIVITY_RULES=[
 {r:/recovery-phrase secrecy/i,q:'Where should a recovery phrase go?',o:['Keep it private and securely backed up offline','Send it to support','Paste it into a website'],a:0,w:'Anyone with the recovery phrase may control the wallet.'},
 {r:/transaction explorer/i,q:'Which details help verify a transaction?',o:['Transaction hash, network, status and block details','A screenshot alone','The sender’s promise'],a:0,w:'Use the transaction reference and network details; a screenshot alone is not proof.',effect:'explorer-record'},
 {r:/trace a transaction/i,q:'How do you trace the payment?',o:['Match the hash, recipient, amount and status','Guess from the wallet name','Trust a forwarded screenshot'],a:0,w:'Trace the transaction using the hash and verify the recipient, amount and status.'},
+{r:/record the address mismatch/i,q:'You have confirmed that the transaction went to a different address. What should go into the incident note?',o:['The hash, network, amount, recipient and the shop address for comparison','A guess about who intended to receive the money','A screenshot with no transaction reference'],a:0,w:'Record verifiable transaction details and the address comparison. Do not guess about intent.'},
 {r:/identify its block/i,q:'What does a block reference help you find?',o:['Where the transaction was recorded in the chain','The owner’s password','A guaranteed transaction reversal'],a:0,w:'A block reference helps locate a transaction in the network’s recorded history.'},
 {r:/proposed record change/i,q:'An unknown person proposes changing a confirmed record without evidence. What do you do?',o:['Reject the unsupported change and check the history','Accept it to keep the peace','Delete the original evidence'],a:0,w:'Preserve the history and require verifiable authorization for proposed changes.'},
 {r:/explain consensus/i,q:'What helps a distributed network agree on accepted records?',o:['Network participants following shared consensus rules','One person secretly editing the ledger','A popular social post'],a:0,w:'Consensus rules help independent participants agree on the accepted state.'},
@@ -2573,7 +2573,7 @@ function chronicleClueStep(m,obj,index,spot){
         G.evidence[obj.id]=true;P.storyFlags=Object.assign({},P.storyFlags||{},{['evidence_'+obj.id]:true});save();finishStep();
       }}]);
     }}));
-    const prompt='<p><b>'+escapeStoryHtml(npc.name.toUpperCase())+':</b> Welcome to the execution centre. I have opened the workbench for <b>'+escapeStoryHtml(title)+'</b>. '+escapeStoryHtml(activity.q)+'</p><p><b>YOU:</b> Alright. Talk me through what matters here.</p><p><b>'+escapeStoryHtml(npc.name.toUpperCase())+':</b> Look at the details, make your call, and be ready to explain it.</p>';
+    const prompt='<p><b>'+escapeStoryHtml(npc.name.toUpperCase())+':</b> '+(m.id==='m02'?'I have pulled up the buyer’s transaction record. ':'Let us work through <b>'+escapeStoryHtml(title)+'</b>. ') +escapeStoryHtml(activity.q)+'</p><p><b>YOU:</b> Show me the evidence that matters.</p><p><b>'+escapeStoryHtml(npc.name.toUpperCase())+':</b> Check the details, make your call, and be ready to explain it.</p>';
     talk(npc,prompt,buttons);
   };
   return step;
@@ -2592,7 +2592,7 @@ function chronicleChallengeStep(m,obj,index,spot){
       G.correct=(G.correct||0)+1;
       talk(npc,'<p><b>'+escapeStoryHtml(npc.name.toUpperCase())+':</b> Good call. '+escapeStoryHtml(challenge.w)+'</p><p><b>YOU:</b> I can explain that choice now.</p>',[{t:'Record the decision',f:()=>{applyChronicleActivityEffect(challenge.effect,m,obj,choice,challenge.o);G.evidence[obj.id]=true;P.storyFlags=Object.assign({},P.storyFlags||{},{['challenge_'+m.id]:true});finishStep();}}]);
     }}));
-    talk(npc,'<p><b>'+escapeStoryHtml(npc.name.toUpperCase())+':</b> We are at the execution centre. The workbench is ready for <b>'+escapeStoryHtml(m.title)+'</b>. '+escapeStoryHtml(challenge.q)+'</p><p><b>YOU:</b> What are my options?</p><p><b>'+escapeStoryHtml(npc.name.toUpperCase())+':</b> Look at the evidence, choose your next move, and tell me why.</p>',buttons);
+    talk(npc,'<p><b>'+escapeStoryHtml(npc.name.toUpperCase())+':</b> '+(m.id==='m02'?'We have the buyer’s transaction details in front of us. ':'This is the decision in <b>'+escapeStoryHtml(m.title)+'</b> that could change what happens next. ')+escapeStoryHtml(challenge.q)+'</p><p><b>YOU:</b> Let me check before I decide.</p><p><b>'+escapeStoryHtml(npc.name.toUpperCase())+':</b> Use the evidence, choose your next move, and tell me why.</p>',buttons);
   };
   return step;
 }
@@ -2677,10 +2677,10 @@ const MISSIONS=CHRONICLE_MISSIONS.map((story,index)=>{
     steps.push({label:'Bring the evidence together',spot:'a',npc:STORY_NPCS[story.npcs[0]],run(){
       const npc=STORY_NPCS[story.npcs[0]],partner=STORY_NPCS[story.npcs[1]]||npc;
       const ending=story.ending||('We have enough evidence to close '+story.title+'.');
-      const recap=ending.replace(/^The player ([a-z]+)/i,(_,verb)=>'You '+({is:'are',has:'have',does:'do'}[verb.toLowerCase()]||verb.replace(/s$/i,'')));
+      const recap=ending.replace(/^The player\s+/i,'You ').replace(/^You\b/,'We');
       const nextLine=story.cliffhanger||'There is another problem ahead, and now we know to ask better questions.';
       const playerReply=story.id==='m31'?'I know what I want to build next.':'I understand the result now. Let us keep moving.';
-      talk(npc,'<p><b>'+escapeStoryHtml(npc.name.toUpperCase())+':</b> Here is what we can stand behind: '+escapeStoryHtml(recap)+'</p><p><b>'+escapeStoryHtml(partner.name.toUpperCase())+':</b> Next, we need to deal with this: '+escapeStoryHtml(nextLine)+'</p><p><b>YOU:</b> '+escapeStoryHtml(playerReply)+'</p>',[{t:'Save the chapter findings',f:()=>{P.storyFlags=Object.assign({},P.storyFlags||{},Object.fromEntries((story.storyFlags||[]).map(flag=>[flag,true])));G.evidence.chapterSummary=true;finishStep();}}]);
+      talk(npc,'<p><b>'+escapeStoryHtml(npc.name.toUpperCase())+':</b> '+escapeStoryHtml(recap)+'</p><p><b>'+escapeStoryHtml(partner.name.toUpperCase())+':</b> Next, we need to deal with this: '+escapeStoryHtml(nextLine)+'</p><p><b>YOU:</b> '+escapeStoryHtml(playerReply)+'</p>',[{t:'Save the chapter findings',f:()=>{P.storyFlags=Object.assign({},P.storyFlags||{},Object.fromEntries((story.storyFlags||[]).map(flag=>[flag,true])));G.evidence.chapterSummary=true;finishStep();}}]);
     }});
   }
   return {id:story.id,n:index+1,city,title:story.title,goal:story.narrativePurpose,state:story.state,story,npcs:story.npcs,characterStepCount:story.id==='m01'?2:people.length,steps,extras:[],storyFlags:story.storyFlags||[],xp:story.rewards&&story.rewards.xp||100};
