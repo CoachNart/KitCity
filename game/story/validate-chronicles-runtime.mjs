@@ -35,6 +35,8 @@ requireText("function applyChronicleActivityEffect", "safe simulated activity ef
 requireText("function placeExecutionCenter", "physical execution centre and task workbench");
 requireText("const objectives=story.objectives||[],spots=['execution'];", "all remaining mission objectives target the execution centre");
 requireText("const base=SPOTS.execution,station=storyExecutionStation(m,G.i)", "mission-specific execution station placement");
+requireText("document.createTreeWalker(hubBody,NodeFilter.SHOW_TEXT)", "retired Web3 focus text cleanup");
+requireText("if(hubTab==='missions') hubBody.querySelectorAll('.card:not(.mission-card),article:not(.mission-card)')", "state mission lists remove every non-canonical legacy card");
 if (/sandbox|simulated|simulation|simulator|fictional practice record/i.test(engine)) errors.push("Player-facing sandbox/simulation disclaimer remains in the mission runtime.");
 if (/sandbox|simulated|simulation|simulator|fictional/i.test(JSON.stringify(MISSIONS))) errors.push("Player-facing sandbox/simulation disclaimer remains in mission dialogue or objective copy.");
 requireText("P.storyFlags.future_direction=options[choice]", "player-owned ending choice");
