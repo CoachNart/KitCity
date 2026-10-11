@@ -2357,7 +2357,7 @@ function runPracticeTask(o){
       const last=lineIndex===o.sceneDialogue.length-1;
       const label=last?(Number(o.sceneIndex||0)<panels.length-1?'Next scene':'Continue'):'Next line';
       if(Array.isArray(line.choices)&&line.choices.length){
-        talk(actor,renderPanel(panels[Number(o.sceneIndex||0)])+lineHtml,line.choices.map(choice=>({t:choice,f:()=>{P.storyFlags=P.storyFlags||{};P.storyFlags['script-choice-'+story.id+'-'+lineIndex]=choice;P.lastStoryChoice=choice;save();playLine(lineIndex+1);}})));
+        talk(actor,renderPanel(panels[Number(o.sceneIndex||0)])+lineHtml,line.choices.map(choice=>({t:choice,f:()=>{P.storyFlags=P.storyFlags||{};P.storyFlags['script-choice-'+(o.storyId||o.missionId||o.label||'scene')+'-'+lineIndex]=choice;P.lastStoryChoice=choice;save();playLine(lineIndex+1);}})));
       } else {
         talk(actor,renderPanel(panels[Number(o.sceneIndex||0)])+lineHtml,[{t:label,f:()=>playLine(lineIndex+1)}]);
       }
