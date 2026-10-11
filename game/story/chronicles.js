@@ -141,19 +141,30 @@ const RAW_MISSIONS = [
         "id": "m01-panel-2",
         "type": "dialogue",
         "speaker": "Softstorm",
-        "text": "Let's look at what happened before we decide what to do next."
+        "text": "People are building businesses online, but nobody starts by knowing everything."
+      },
+      {
+        "id": "m01-panel-3",
+        "type": "dialogue",
+        "speaker": "IamAbdul",
+        "text": "First, let's find out what this Web3 word means and who it helps."
       }
     ],
     "dialogue": [
       {
         "id": "m01-dialogue-1",
         "speaker": "Softstorm",
-        "text": "The player overhears two neighbours debating an unfamiliar digital world. A strange contact card turns curiosity into a journey."
+        "text": "People are building businesses online, but nobody starts by knowing everything."
       },
       {
         "id": "m01-dialogue-2",
+        "speaker": "IamAbdul",
+        "text": "First, let's find out what this Web3 word means and who it helps."
+      },
+      {
+        "id": "m01-dialogue-player",
         "speaker": "PLAYER",
-        "text": "Show me what I should check first."
+        "text": "Show me the evidence. I'll work through it step by step."
       }
     ],
     "learningObjectives": [
@@ -239,19 +250,30 @@ const RAW_MISSIONS = [
         "id": "m02-panel-2",
         "type": "dialogue",
         "speaker": "Joe_Sef",
-        "text": "Let's look at what happened before we decide what to do next."
+        "text": "Don't believe every claim you hear. Learn how the technology works for yourself."
+      },
+      {
+        "id": "m02-panel-3",
+        "type": "dialogue",
+        "speaker": "Larai",
+        "text": "Start with wallets. People use them every day without understanding the risks."
       }
     ],
     "dialogue": [
       {
         "id": "m02-dialogue-1",
         "speaker": "Joe_Sef",
-        "text": "A T3Kit mark appears inside a small technology workspace, where the player learns that the internet has changed in layers."
+        "text": "Don't believe every claim you hear. Learn how the technology works for yourself."
       },
       {
         "id": "m02-dialogue-2",
+        "speaker": "Larai",
+        "text": "Start with wallets. People use them every day without understanding the risks."
+      },
+      {
+        "id": "m02-dialogue-player",
         "speaker": "PLAYER",
-        "text": "Show me what I should check first."
+        "text": "Show me the evidence. I'll work through it step by step."
       }
     ],
     "learningObjectives": [
@@ -339,19 +361,30 @@ const RAW_MISSIONS = [
         "id": "m03-panel-2",
         "type": "dialogue",
         "speaker": "Unique",
-        "text": "Let's look at what happened before we decide what to do next."
+        "text": "Your wallet is your way to interact with the network."
+      },
+      {
+        "id": "m03-panel-3",
+        "type": "dialogue",
+        "speaker": "Smrt huntr",
+        "text": "And nobody legitimate needs your recovery phrase. Not even me."
       }
     ],
     "dialogue": [
       {
         "id": "m03-dialogue-1",
         "speaker": "Unique",
-        "text": "A wallet demo becomes a security lesson when a fake helper offers to double the player's test tokens."
+        "text": "Your wallet is your way to interact with the network."
       },
       {
         "id": "m03-dialogue-2",
+        "speaker": "Smrt huntr",
+        "text": "And nobody legitimate needs your recovery phrase. Not even me."
+      },
+      {
+        "id": "m03-dialogue-player",
         "speaker": "PLAYER",
-        "text": "Show me what I should check first."
+        "text": "Show me the evidence. I'll work through it step by step."
       }
     ],
     "learningObjectives": [
@@ -446,19 +479,30 @@ const RAW_MISSIONS = [
         "id": "m04-panel-2",
         "type": "dialogue",
         "speaker": "Goodness",
-        "text": "Let's look at what happened before we decide what to do next."
+        "text": "Can you trace this transaction back to the block that recorded it?"
+      },
+      {
+        "id": "m04-panel-3",
+        "type": "dialogue",
+        "speaker": "Semi",
+        "text": "If the record is shared, what stops one person from quietly rewriting it?"
       }
     ],
     "dialogue": [
       {
         "id": "m04-dialogue-1",
         "speaker": "Goodness",
-        "text": "Two records disagree. The player traces a transaction and investigates what makes a shared ledger difficult to rewrite."
+        "text": "Can you trace this transaction back to the block that recorded it?"
       },
       {
         "id": "m04-dialogue-2",
+        "speaker": "Semi",
+        "text": "If the record is shared, what stops one person from quietly rewriting it?"
+      },
+      {
+        "id": "m04-dialogue-player",
         "speaker": "PLAYER",
-        "text": "Show me what I should check first."
+        "text": "Show me the evidence. I'll work through it step by step."
       }
     ],
     "learningObjectives": [
@@ -554,19 +598,30 @@ const RAW_MISSIONS = [
         "id": "m05-panel-2",
         "type": "dialogue",
         "speaker": "Blockqueen",
-        "text": "Let's look at what happened before we decide what to do next."
+        "text": "Before adding another feature, find out what the user is struggling with."
+      },
+      {
+        "id": "m05-panel-3",
+        "type": "dialogue",
+        "speaker": "Christol",
+        "text": "I thought the bug was technical. The test shows we built the wrong thing."
       }
     ],
     "dialogue": [
       {
         "id": "m05-dialogue-1",
         "speaker": "Blockqueen",
-        "text": "A hyped application is failing because its team built features before understanding its users."
+        "text": "Before adding another feature, find out what the user is struggling with."
       },
       {
         "id": "m05-dialogue-2",
+        "speaker": "Christol",
+        "text": "I thought the bug was technical. The test shows we built the wrong thing."
+      },
+      {
+        "id": "m05-dialogue-player",
         "speaker": "PLAYER",
-        "text": "Show me what I should check first."
+        "text": "Show me the evidence. I'll work through it step by step."
       }
     ],
     "learningObjectives": [
@@ -661,19 +716,30 @@ const RAW_MISSIONS = [
         "id": "m06-panel-2",
         "type": "dialogue",
         "speaker": "Laloba",
-        "text": "Let's look at what happened before we decide what to do next."
+        "text": "We do not deploy until we understand the contract bug."
+      },
+      {
+        "id": "m06-panel-3",
+        "type": "dialogue",
+        "speaker": "BigSam",
+        "text": "Delaying a launch is hard. Explaining a preventable loss is harder."
       }
     ],
     "dialogue": [
       {
         "id": "m06-dialogue-1",
         "speaker": "Laloba",
-        "text": "A fictional contract has a bug before launch. Pressure to ship collides with the duty to protect users."
+        "text": "We do not deploy until we understand the contract bug."
       },
       {
         "id": "m06-dialogue-2",
+        "speaker": "BigSam",
+        "text": "Delaying a launch is hard. Explaining a preventable loss is harder."
+      },
+      {
+        "id": "m06-dialogue-player",
         "speaker": "PLAYER",
-        "text": "Show me what I should check first."
+        "text": "Show me the evidence. I'll work through it step by step."
       }
     ],
     "learningObjectives": [
@@ -768,19 +834,30 @@ const RAW_MISSIONS = [
         "id": "m07-panel-2",
         "type": "dialogue",
         "speaker": "LunaX",
-        "text": "Let's look at what happened before we decide what to do next."
+        "text": "Check the pool before trusting the price on the screen."
+      },
+      {
+        "id": "m07-panel-3",
+        "type": "dialogue",
+        "speaker": "OxNight",
+        "text": "The quote looked good. The amount I received told a different story."
       }
     ],
     "dialogue": [
       {
         "id": "m07-dialogue-1",
         "speaker": "LunaX",
-        "text": "A swap returns less than expected. The player investigates liquidity and the hidden costs behind a displayed price."
+        "text": "Check the pool before trusting the price on the screen."
       },
       {
         "id": "m07-dialogue-2",
+        "speaker": "OxNight",
+        "text": "The quote looked good. The amount I received told a different story."
+      },
+      {
+        "id": "m07-dialogue-player",
         "speaker": "PLAYER",
-        "text": "Show me what I should check first."
+        "text": "Show me the evidence. I'll work through it step by step."
       }
     ],
     "learningObjectives": [
@@ -875,19 +952,30 @@ const RAW_MISSIONS = [
         "id": "m08-panel-2",
         "type": "dialogue",
         "speaker": "Moon",
-        "text": "Let's look at what happened before we decide what to do next."
+        "text": "Let's look at the order book before we guess what happened."
+      },
+      {
+        "id": "m08-panel-3",
+        "type": "dialogue",
+        "speaker": "The Cryptonian",
+        "text": "Withdrawals are paused while the security team verifies the incident. Don't spread rumours."
       }
     ],
     "dialogue": [
       {
         "id": "m08-dialogue-1",
         "speaker": "Moon",
-        "text": "A withdrawal pause triggers rumours. The player must understand exchange mechanics and communicate only verified facts."
+        "text": "Let's look at the order book before we guess what happened."
       },
       {
         "id": "m08-dialogue-2",
+        "speaker": "The Cryptonian",
+        "text": "Withdrawals are paused while the security team verifies the incident. Don't spread rumours."
+      },
+      {
+        "id": "m08-dialogue-player",
         "speaker": "PLAYER",
-        "text": "Show me what I should check first."
+        "text": "Show me the evidence. I'll work through it step by step."
       }
     ],
     "learningObjectives": [
@@ -982,19 +1070,30 @@ const RAW_MISSIONS = [
         "id": "m09-panel-2",
         "type": "dialogue",
         "speaker": "Joseph Nnadi",
-        "text": "Let's look at what happened before we decide what to do next."
+        "text": "Plan what you can lose before thinking about what you could make."
+      },
+      {
+        "id": "m09-panel-3",
+        "type": "dialogue",
+        "speaker": "The Don",
+        "text": "One chart is not a promise. Show me the invalidation level."
       }
     ],
     "dialogue": [
       {
         "id": "m09-dialogue-1",
         "speaker": "Joseph Nnadi",
-        "text": "A planned spot trade loses. The real test is whether the player reviews the process instead of chasing the loss."
+        "text": "Plan what you can lose before thinking about what you could make."
       },
       {
         "id": "m09-dialogue-2",
+        "speaker": "The Don",
+        "text": "One chart is not a promise. Show me the invalidation level."
+      },
+      {
+        "id": "m09-dialogue-player",
         "speaker": "PLAYER",
-        "text": "Show me what I should check first."
+        "text": "Show me the evidence. I'll work through it step by step."
       }
     ],
     "learningObjectives": [
@@ -1091,19 +1190,35 @@ const RAW_MISSIONS = [
         "id": "m10-panel-2",
         "type": "dialogue",
         "speaker": "Praise",
-        "text": "Let's look at what happened before we decide what to do next."
+        "text": "Leverage multiplies exposure, not skill."
+      },
+      {
+        "id": "m10-panel-3",
+        "type": "dialogue",
+        "speaker": "Toza",
+        "text": "I thought I had more room before liquidation. Help me calculate it."
       }
     ],
     "dialogue": [
       {
         "id": "m10-dialogue-1",
         "speaker": "Praise",
-        "text": "A leveraged position moves against Toza. Craftore helps the player model the risk before the situation escalates."
+        "text": "Leverage multiplies exposure, not skill."
       },
       {
         "id": "m10-dialogue-2",
+        "speaker": "Toza",
+        "text": "I thought I had more room before liquidation. Help me calculate it."
+      },
+      {
+        "id": "m10-dialogue-3",
+        "speaker": "Craftore",
+        "text": "Craftore: The evidence from this mission will help connect the T3Kit story."
+      },
+      {
+        "id": "m10-dialogue-player",
         "speaker": "PLAYER",
-        "text": "Show me what I should check first."
+        "text": "Show me the evidence. I'll work through it step by step."
       }
     ],
     "learningObjectives": [
@@ -1198,19 +1313,30 @@ const RAW_MISSIONS = [
         "id": "m11-panel-2",
         "type": "dialogue",
         "speaker": "Kodavic",
-        "text": "Let's look at what happened before we decide what to do next."
+        "text": "We have followers, but new members don't stay long enough to contribute."
+      },
+      {
+        "id": "m11-panel-3",
+        "type": "dialogue",
+        "speaker": "Cybersage",
+        "text": "Let's watch the onboarding journey and find where people get lost."
       }
     ],
     "dialogue": [
       {
         "id": "m11-dialogue-1",
         "speaker": "Kodavic",
-        "text": "A project has thousands of followers but few active users. A giveaway will not fix an onboarding problem."
+        "text": "We have followers, but new members don't stay long enough to contribute."
       },
       {
         "id": "m11-dialogue-2",
+        "speaker": "Cybersage",
+        "text": "Let's watch the onboarding journey and find where people get lost."
+      },
+      {
+        "id": "m11-dialogue-player",
         "speaker": "PLAYER",
-        "text": "Show me what I should check first."
+        "text": "Show me the evidence. I'll work through it step by step."
       }
     ],
     "learningObjectives": [
@@ -1304,19 +1430,30 @@ const RAW_MISSIONS = [
         "id": "m12-panel-2",
         "type": "dialogue",
         "speaker": "Reina",
-        "text": "Let's look at what happened before we decide what to do next."
+        "text": "Protect the members first. We can investigate the blame later."
+      },
+      {
+        "id": "m12-panel-3",
+        "type": "dialogue",
+        "speaker": "Cclya",
+        "text": "Clear updates stop confusion from becoming another part of the attack."
       }
     ],
     "dialogue": [
       {
         "id": "m12-dialogue-1",
         "speaker": "Reina",
-        "text": "An impersonator sends malicious links while the community turns on itself. The player joins the response team."
+        "text": "Protect the members first. We can investigate the blame later."
       },
       {
         "id": "m12-dialogue-2",
+        "speaker": "Cclya",
+        "text": "Clear updates stop confusion from becoming another part of the attack."
+      },
+      {
+        "id": "m12-dialogue-player",
         "speaker": "PLAYER",
-        "text": "Show me what I should check first."
+        "text": "Show me the evidence. I'll work through it step by step."
       }
     ],
     "learningObjectives": [
@@ -1410,19 +1547,30 @@ const RAW_MISSIONS = [
         "id": "m13-panel-2",
         "type": "dialogue",
         "speaker": "Leemah",
-        "text": "Let's look at what happened before we decide what to do next."
+        "text": "The host cancelled, but the conversation can still be useful."
+      },
+      {
+        "id": "m13-panel-3",
+        "type": "dialogue",
+        "speaker": "Kenny",
+        "text": "Ask questions that let people explain what they know. You don't need to dominate the mic."
       }
     ],
     "dialogue": [
       {
         "id": "m13-dialogue-1",
         "speaker": "Leemah",
-        "text": "A live host cancels. The player must turn a last-minute crisis into a useful discussion."
+        "text": "The host cancelled, but the conversation can still be useful."
       },
       {
         "id": "m13-dialogue-2",
+        "speaker": "Kenny",
+        "text": "Ask questions that let people explain what they know. You don't need to dominate the mic."
+      },
+      {
+        "id": "m13-dialogue-player",
         "speaker": "PLAYER",
-        "text": "Show me what I should check first."
+        "text": "Show me the evidence. I'll work through it step by step."
       }
     ],
     "learningObjectives": [
@@ -1522,19 +1670,30 @@ const RAW_MISSIONS = [
         "id": "m14-panel-2",
         "type": "dialogue",
         "speaker": "Kore",
-        "text": "Let's look at what happened before we decide what to do next."
+        "text": "The product may be useful, but this announcement makes it sound confusing."
+      },
+      {
+        "id": "m14-panel-3",
+        "type": "dialogue",
+        "speaker": "Veedima",
+        "text": "Make the claim clear, specific, and something we can verify."
       }
     ],
     "dialogue": [
       {
         "id": "m14-dialogue-1",
         "speaker": "Kore",
-        "text": "A useful product is being misunderstood. The player joins its communications team and turns technical claims into clear language."
+        "text": "The product may be useful, but this announcement makes it sound confusing."
       },
       {
         "id": "m14-dialogue-2",
+        "speaker": "Veedima",
+        "text": "Make the claim clear, specific, and something we can verify."
+      },
+      {
+        "id": "m14-dialogue-player",
         "speaker": "PLAYER",
-        "text": "Show me what I should check first."
+        "text": "Show me the evidence. I'll work through it step by step."
       }
     ],
     "learningObjectives": [
@@ -1628,19 +1787,30 @@ const RAW_MISSIONS = [
         "id": "m15-panel-2",
         "type": "dialogue",
         "speaker": "Web3_Esta",
-        "text": "Let's look at what happened before we decide what to do next."
+        "text": "Your profile should show the direction you want to grow in."
+      },
+      {
+        "id": "m15-panel-3",
+        "type": "dialogue",
+        "speaker": "Love",
+        "text": "You don't need to pretend to be an expert. Show the work you've done."
       }
     ],
     "dialogue": [
       {
         "id": "m15-dialogue-1",
         "speaker": "Web3_Esta",
-        "text": "The player wants an opportunity but their profile is scattered and full of claims unsupported by work."
+        "text": "Your profile should show the direction you want to grow in."
       },
       {
         "id": "m15-dialogue-2",
+        "speaker": "Love",
+        "text": "You don't need to pretend to be an expert. Show the work you've done."
+      },
+      {
+        "id": "m15-dialogue-player",
         "speaker": "PLAYER",
-        "text": "Show me what I should check first."
+        "text": "Show me the evidence. I'll work through it step by step."
       }
     ],
     "learningObjectives": [
@@ -1734,19 +1904,30 @@ const RAW_MISSIONS = [
         "id": "m16-panel-2",
         "type": "dialogue",
         "speaker": "J.Jonathan",
-        "text": "Let's look at what happened before we decide what to do next."
+        "text": "Show me how you would do the work, not just what your bio says."
+      },
+      {
+        "id": "m16-panel-3",
+        "type": "dialogue",
+        "speaker": "Essa",
+        "text": "Feedback is part of your first opportunity. Use it."
       }
     ],
     "dialogue": [
       {
         "id": "m16-dialogue-1",
         "speaker": "J.Jonathan",
-        "text": "A small startup needs help researching its audience. The player applies with a practical sample instead of empty promises."
+        "text": "Show me how you would do the work, not just what your bio says."
       },
       {
         "id": "m16-dialogue-2",
+        "speaker": "Essa",
+        "text": "Feedback is part of your first opportunity. Use it."
+      },
+      {
+        "id": "m16-dialogue-player",
         "speaker": "PLAYER",
-        "text": "Show me what I should check first."
+        "text": "Show me the evidence. I'll work through it step by step."
       }
     ],
     "learningObjectives": [
@@ -1840,19 +2021,30 @@ const RAW_MISSIONS = [
         "id": "m17-panel-2",
         "type": "dialogue",
         "speaker": "White Coach",
-        "text": "Let's look at what happened before we decide what to do next."
+        "text": "Which problem hurts the user most? Start there."
+      },
+      {
+        "id": "m17-panel-3",
+        "type": "dialogue",
+        "speaker": "Abdul",
+        "text": "A simpler product can be more useful than one with every feature."
       }
     ],
     "dialogue": [
       {
         "id": "m17-dialogue-1",
         "speaker": "White Coach",
-        "text": "A startup has too many features and one unresolved user problem. The player helps the team simplify the product."
+        "text": "Which problem hurts the user most? Start there."
       },
       {
         "id": "m17-dialogue-2",
+        "speaker": "Abdul",
+        "text": "A simpler product can be more useful than one with every feature."
+      },
+      {
+        "id": "m17-dialogue-player",
         "speaker": "PLAYER",
-        "text": "Show me what I should check first."
+        "text": "Show me the evidence. I'll work through it step by step."
       }
     ],
     "learningObjectives": [
@@ -1946,19 +2138,30 @@ const RAW_MISSIONS = [
         "id": "m18-panel-2",
         "type": "dialogue",
         "speaker": "David",
-        "text": "Let's look at what happened before we decide what to do next."
+        "text": "Let's test a small idea before spending the whole budget."
+      },
+      {
+        "id": "m18-panel-3",
+        "type": "dialogue",
+        "speaker": "Kanyin",
+        "text": "Measure who stays and gets value, not only who clicks."
       }
     ],
     "dialogue": [
       {
         "id": "m18-dialogue-1",
         "speaker": "David",
-        "text": "A startup wants a costly campaign before understanding its audience. The player designs a smaller experiment."
+        "text": "Let's test a small idea before spending the whole budget."
       },
       {
         "id": "m18-dialogue-2",
+        "speaker": "Kanyin",
+        "text": "Measure who stays and gets value, not only who clicks."
+      },
+      {
+        "id": "m18-dialogue-player",
         "speaker": "PLAYER",
-        "text": "Show me what I should check first."
+        "text": "Show me the evidence. I'll work through it step by step."
       }
     ],
     "learningObjectives": [
@@ -2058,19 +2261,30 @@ const RAW_MISSIONS = [
         "id": "m19-panel-2",
         "type": "dialogue",
         "speaker": "Mcbond",
-        "text": "Let's look at what happened before we decide what to do next."
+        "text": "Compare the runway, control, and obligations before choosing funding."
+      },
+      {
+        "id": "m19-panel-3",
+        "type": "dialogue",
+        "speaker": "Alpha.RWA",
+        "text": "Money can help build the product. It cannot prove the product deserves to exist."
       }
     ],
     "dialogue": [
       {
         "id": "m19-dialogue-1",
         "speaker": "Mcbond",
-        "text": "A startup compares grants, investors and token-based funding while balancing runway, obligations and control."
+        "text": "Compare the runway, control, and obligations before choosing funding."
       },
       {
         "id": "m19-dialogue-2",
+        "speaker": "Alpha.RWA",
+        "text": "Money can help build the product. It cannot prove the product deserves to exist."
+      },
+      {
+        "id": "m19-dialogue-player",
         "speaker": "PLAYER",
-        "text": "Show me what I should check first."
+        "text": "Show me the evidence. I'll work through it step by step."
       }
     ],
     "learningObjectives": [
@@ -2164,19 +2378,30 @@ const RAW_MISSIONS = [
         "id": "m20-panel-2",
         "type": "dialogue",
         "speaker": "BigWealth",
-        "text": "Let's look at what happened before we decide what to do next."
+        "text": "What legal right does this token actually represent?"
+      },
+      {
+        "id": "m20-panel-3",
+        "type": "dialogue",
+        "speaker": "BigSam",
+        "text": "If custody or redemption is unclear, don't sell the promise."
       }
     ],
     "dialogue": [
       {
         "id": "m20-dialogue-1",
         "speaker": "BigWealth",
-        "text": "A project claims to tokenize property, but its legal rights, custody and redemption promises are unclear."
+        "text": "What legal right does this token actually represent?"
       },
       {
         "id": "m20-dialogue-2",
+        "speaker": "BigSam",
+        "text": "If custody or redemption is unclear, don't sell the promise."
+      },
+      {
+        "id": "m20-dialogue-player",
         "speaker": "PLAYER",
-        "text": "Show me what I should check first."
+        "text": "Show me the evidence. I'll work through it step by step."
       }
     ],
     "learningObjectives": [
@@ -2271,19 +2496,30 @@ const RAW_MISSIONS = [
         "id": "m21-panel-2",
         "type": "dialogue",
         "speaker": "Blessing",
-        "text": "Let's look at what happened before we decide what to do next."
+        "text": "The AI report sounds certain, but the underlying data disagrees."
+      },
+      {
+        "id": "m21-panel-3",
+        "type": "dialogue",
+        "speaker": "Odion",
+        "text": "Verify the claim against the source before trusting the conclusion."
       }
     ],
     "dialogue": [
       {
         "id": "m21-dialogue-1",
         "speaker": "Blessing",
-        "text": "An AI report sounds certain but contains incorrect blockchain analysis. The player checks its claims against the source data."
+        "text": "The AI report sounds certain, but the underlying data disagrees."
       },
       {
         "id": "m21-dialogue-2",
+        "speaker": "Odion",
+        "text": "Verify the claim against the source before trusting the conclusion."
+      },
+      {
+        "id": "m21-dialogue-player",
         "speaker": "PLAYER",
-        "text": "Show me what I should check first."
+        "text": "Show me the evidence. I'll work through it step by step."
       }
     ],
     "learningObjectives": [
@@ -2377,19 +2613,30 @@ const RAW_MISSIONS = [
         "id": "m22-panel-2",
         "type": "dialogue",
         "speaker": "Princess",
-        "text": "Let's look at what happened before we decide what to do next."
+        "text": "This transfer crosses a network boundary. Let's trace the route."
+      },
+      {
+        "id": "m22-panel-3",
+        "type": "dialogue",
+        "speaker": "Racheal",
+        "text": "Every bridge adds dependencies. Check the destination and the risks."
       }
     ],
     "dialogue": [
       {
         "id": "m22-dialogue-1",
         "speaker": "Princess",
-        "text": "A dapp needs to interact with another network. The player investigates a bridge and its dependencies."
+        "text": "This transfer crosses a network boundary. Let's trace the route."
       },
       {
         "id": "m22-dialogue-2",
+        "speaker": "Racheal",
+        "text": "Every bridge adds dependencies. Check the destination and the risks."
+      },
+      {
+        "id": "m22-dialogue-player",
         "speaker": "PLAYER",
-        "text": "Show me what I should check first."
+        "text": "Show me the evidence. I'll work through it step by step."
       }
     ],
     "learningObjectives": [
@@ -2483,19 +2730,30 @@ const RAW_MISSIONS = [
         "id": "m23-panel-2",
         "type": "dialogue",
         "speaker": "Seun",
-        "text": "Let's look at what happened before we decide what to do next."
+        "text": "A vote is only useful if members understand the proposal."
+      },
+      {
+        "id": "m23-panel-3",
+        "type": "dialogue",
+        "speaker": "Dorcas",
+        "text": "Make the treasury and trade-offs visible before asking people to choose."
       }
     ],
     "dialogue": [
       {
         "id": "m23-dialogue-1",
         "speaker": "Seun",
-        "text": "A DAO must choose how to use its treasury, but inactivity and unclear proposals undermine trust."
+        "text": "A vote is only useful if members understand the proposal."
       },
       {
         "id": "m23-dialogue-2",
+        "speaker": "Dorcas",
+        "text": "Make the treasury and trade-offs visible before asking people to choose."
+      },
+      {
+        "id": "m23-dialogue-player",
         "speaker": "PLAYER",
-        "text": "Show me what I should check first."
+        "text": "Show me the evidence. I'll work through it step by step."
       }
     ],
     "learningObjectives": [
@@ -2589,19 +2847,30 @@ const RAW_MISSIONS = [
         "id": "m24-panel-2",
         "type": "dialogue",
         "speaker": "Joe",
-        "text": "Let's look at what happened before we decide what to do next."
+        "text": "We found a serious issue. Don't bury it to protect the launch date."
+      },
+      {
+        "id": "m24-panel-3",
+        "type": "dialogue",
+        "speaker": "Mike",
+        "text": "Document the impact, fix it, and verify the patch in a safe test."
       }
     ],
     "dialogue": [
       {
         "id": "m24-dialogue-1",
         "speaker": "Joe",
-        "text": "A serious vulnerability appears before launch. The player helps the team prioritize remediation and communicate responsibly."
+        "text": "We found a serious issue. Don't bury it to protect the launch date."
       },
       {
         "id": "m24-dialogue-2",
+        "speaker": "Mike",
+        "text": "Document the impact, fix it, and verify the patch in a safe test."
+      },
+      {
+        "id": "m24-dialogue-player",
         "speaker": "PLAYER",
-        "text": "Show me what I should check first."
+        "text": "Show me the evidence. I'll work through it step by step."
       }
     ],
     "learningObjectives": [
@@ -2695,19 +2964,30 @@ const RAW_MISSIONS = [
         "id": "m25-panel-2",
         "type": "dialogue",
         "speaker": "Gbemi",
-        "text": "Let's look at what happened before we decide what to do next."
+        "text": "What does the buyer actually own when they buy this collectible?"
+      },
+      {
+        "id": "m25-panel-3",
+        "type": "dialogue",
+        "speaker": "FemiY",
+        "text": "Write the licence so nobody has to guess what rights transfer."
       }
     ],
     "dialogue": [
       {
         "id": "m25-dialogue-1",
         "speaker": "Gbemi",
-        "text": "Creators disagree about what an NFT buyer actually owns. The player examines terms before recommending a model."
+        "text": "What does the buyer actually own when they buy this collectible?"
       },
       {
         "id": "m25-dialogue-2",
+        "speaker": "FemiY",
+        "text": "Write the licence so nobody has to guess what rights transfer."
+      },
+      {
+        "id": "m25-dialogue-player",
         "speaker": "PLAYER",
-        "text": "Show me what I should check first."
+        "text": "Show me the evidence. I'll work through it step by step."
       }
     ],
     "learningObjectives": [
@@ -2802,19 +3082,30 @@ const RAW_MISSIONS = [
         "id": "m26-panel-2",
         "type": "dialogue",
         "speaker": "Softstorm",
-        "text": "Let's look at what happened before we decide what to do next."
+        "text": "This repository has outlived the original team, but its purpose is still here."
+      },
+      {
+        "id": "m26-panel-3",
+        "type": "dialogue",
+        "speaker": "IamAbdul",
+        "text": "The old notes say T3Kit connects people, skills, and products—not just one app."
       }
     ],
     "dialogue": [
       {
         "id": "m26-dialogue-1",
         "speaker": "Softstorm",
-        "text": "The player reunites with the first mentors to inspect an abandoned repository whose code survives but whose collaboration has stalled."
+        "text": "This repository has outlived the original team, but its purpose is still here."
       },
       {
         "id": "m26-dialogue-2",
+        "speaker": "IamAbdul",
+        "text": "The old notes say T3Kit connects people, skills, and products—not just one app."
+      },
+      {
+        "id": "m26-dialogue-player",
         "speaker": "PLAYER",
-        "text": "Show me what I should check first."
+        "text": "Show me the evidence. I'll work through it step by step."
       }
     ],
     "learningObjectives": [
@@ -2910,19 +3201,30 @@ const RAW_MISSIONS = [
         "id": "m27-panel-2",
         "type": "dialogue",
         "speaker": "Joe_Sef",
-        "text": "Let's look at what happened before we decide what to do next."
+        "text": "You have clues from different states. Now connect the evidence."
+      },
+      {
+        "id": "m27-panel-3",
+        "type": "dialogue",
+        "speaker": "Larai",
+        "text": "Put the pieces together, but leave any claim you cannot support unresolved."
       }
     ],
     "dialogue": [
       {
         "id": "m27-dialogue-1",
         "speaker": "Joe_Sef",
-        "text": "The player returns to the workspace and reconstructs an incomplete archive from evidence gathered across the journey."
+        "text": "You have clues from different states. Now connect the evidence."
       },
       {
         "id": "m27-dialogue-2",
+        "speaker": "Larai",
+        "text": "Put the pieces together, but leave any claim you cannot support unresolved."
+      },
+      {
+        "id": "m27-dialogue-player",
         "speaker": "PLAYER",
-        "text": "Show me what I should check first."
+        "text": "Show me the evidence. I'll work through it step by step."
       }
     ],
     "learningObjectives": [
@@ -3017,19 +3319,30 @@ const RAW_MISSIONS = [
         "id": "m28-panel-2",
         "type": "dialogue",
         "speaker": "Unique",
-        "text": "Let's look at what happened before we decide what to do next."
+        "text": "Show us how the skills work together on one real problem."
+      },
+      {
+        "id": "m28-panel-3",
+        "type": "dialogue",
+        "speaker": "Christol",
+        "text": "The final map is yours when your solution stands up to testing."
       }
     ],
     "dialogue": [
       {
         "id": "m28-dialogue-1",
         "speaker": "Unique",
-        "text": "Before the final road, the player solves a combined problem involving technology, users, product choices and communication."
+        "text": "Show us how the skills work together on one real problem."
       },
       {
         "id": "m28-dialogue-2",
+        "speaker": "Christol",
+        "text": "The final map is yours when your solution stands up to testing."
+      },
+      {
+        "id": "m28-dialogue-player",
         "speaker": "PLAYER",
-        "text": "Show me what I should check first."
+        "text": "Show me the evidence. I'll work through it step by step."
       }
     ],
     "learningObjectives": [
@@ -3125,19 +3438,35 @@ const RAW_MISSIONS = [
         "id": "m29-panel-2",
         "type": "dialogue",
         "speaker": "Softstorm",
-        "text": "Let's look at what happened before we decide what to do next."
+        "text": "KitCity isn't a shortcut. It's where your learning gets put to the test."
+      },
+      {
+        "id": "m29-panel-3",
+        "type": "dialogue",
+        "speaker": "White Coach",
+        "text": "Choose a path you can demonstrate, not one that only sounds impressive."
       }
     ],
     "dialogue": [
       {
         "id": "m29-dialogue-1",
         "speaker": "Softstorm",
-        "text": "The player arrives in KitCity and sees builders, educators, researchers, traders and creators working side by side."
+        "text": "KitCity isn't a shortcut. It's where your learning gets put to the test."
       },
       {
         "id": "m29-dialogue-2",
+        "speaker": "White Coach",
+        "text": "Choose a path you can demonstrate, not one that only sounds impressive."
+      },
+      {
+        "id": "m29-dialogue-3",
+        "speaker": "Craftore",
+        "text": "Craftore: The evidence from this mission will help connect the T3Kit story."
+      },
+      {
+        "id": "m29-dialogue-player",
         "speaker": "PLAYER",
-        "text": "Show me what I should check first."
+        "text": "Show me the evidence. I'll work through it step by step."
       }
     ],
     "learningObjectives": [
@@ -3211,51 +3540,8 @@ const RAW_MISSIONS = [
       "joe-sef",
       "larai",
       "unique",
-      "smrt-huntr",
-      "goodness",
-      "semi",
-      "blockqueen",
       "christol",
-      "laloba",
-      "bigsam",
-      "lunax",
-      "oxnight",
-      "moon",
-      "the-cryptonian",
-      "joseph-nnadi",
-      "the-don",
-      "praise",
-      "toza",
-      "craftore",
-      "kodavic",
-      "cybersage",
-      "reina",
-      "cclya",
-      "leemah",
-      "kenny",
-      "kore",
-      "veedima",
-      "web3-esta",
-      "love",
-      "j-jonathan",
-      "essa",
-      "white-coach",
-      "abdul",
-      "david",
-      "kanyin",
-      "mcbond",
-      "alpha-rwa",
-      "bigwealth",
-      "blessing",
-      "odion",
-      "princess",
-      "racheal",
-      "seun",
-      "dorcas",
-      "joe",
-      "mike",
-      "gbemi",
-      "femiy"
+      "craftore"
     ],
     "npcs": [
       "Softstorm",
@@ -3263,51 +3549,8 @@ const RAW_MISSIONS = [
       "Joe_Sef",
       "Larai",
       "Unique",
-      "Smrt huntr",
-      "Goodness",
-      "Semi",
-      "Blockqueen",
       "Christol",
-      "Laloba",
-      "BigSam",
-      "LunaX",
-      "OxNight",
-      "Moon",
-      "The Cryptonian",
-      "Joseph Nnadi",
-      "The Don",
-      "Praise",
-      "Toza",
-      "Craftore",
-      "Kodavic",
-      "Cybersage",
-      "Reina",
-      "Cclya",
-      "Leemah",
-      "Kenny",
-      "Kore",
-      "Veedima",
-      "Web3_Esta",
-      "Love",
-      "J.Jonathan",
-      "Essa",
-      "White Coach",
-      "Abdul",
-      "David",
-      "Kanyin",
-      "Mcbond",
-      "Alpha.RWA",
-      "BigWealth",
-      "Blessing",
-      "Odion",
-      "Princess",
-      "Racheal",
-      "Seun",
-      "Dorcas",
-      "Joe",
-      "Mike",
-      "Gbemi",
-      "FemiY"
+      "Craftore"
     ],
     "narrativePurpose": "A practical assessment adapts to the specialization chosen by the player; it tests demonstrated skill rather than requiring mastery of every path.",
     "openingPanels": [
@@ -3320,19 +3563,55 @@ const RAW_MISSIONS = [
         "id": "m30-panel-2",
         "type": "dialogue",
         "speaker": "Softstorm",
-        "text": "Let's look at what happened before we decide what to do next."
+        "text": "Your assessment is about what you can demonstrate today."
+      },
+      {
+        "id": "m30-panel-3",
+        "type": "dialogue",
+        "speaker": "IamAbdul",
+        "text": "You don't need to master every profession. Pick a path, do the work, and learn from feedback."
       }
     ],
     "dialogue": [
       {
         "id": "m30-dialogue-1",
         "speaker": "Softstorm",
-        "text": "A practical assessment adapts to the specialization chosen by the player; it tests demonstrated skill rather than requiring mastery of every path."
+        "text": "Your assessment is about what you can demonstrate today."
       },
       {
         "id": "m30-dialogue-2",
+        "speaker": "IamAbdul",
+        "text": "You don't need to master every profession. Pick a path, do the work, and learn from feedback."
+      },
+      {
+        "id": "m30-dialogue-3",
+        "speaker": "Joe_Sef",
+        "text": "Joe_Sef: The evidence from this mission will help connect the T3Kit story."
+      },
+      {
+        "id": "m30-dialogue-4",
+        "speaker": "Larai",
+        "text": "Larai: The evidence from this mission will help connect the T3Kit story."
+      },
+      {
+        "id": "m30-dialogue-5",
+        "speaker": "Unique",
+        "text": "Unique: The evidence from this mission will help connect the T3Kit story."
+      },
+      {
+        "id": "m30-dialogue-6",
+        "speaker": "Christol",
+        "text": "Christol: The evidence from this mission will help connect the T3Kit story."
+      },
+      {
+        "id": "m30-dialogue-7",
+        "speaker": "Craftore",
+        "text": "Craftore: The evidence from this mission will help connect the T3Kit story."
+      },
+      {
+        "id": "m30-dialogue-player",
         "speaker": "PLAYER",
-        "text": "Show me what I should check first."
+        "text": "Show me the evidence. I'll work through it step by step."
       }
     ],
     "learningObjectives": [
@@ -3435,19 +3714,55 @@ const RAW_MISSIONS = [
         "id": "m31-panel-2",
         "type": "dialogue",
         "speaker": "Softstorm",
-        "text": "Let's look at what happened before we decide what to do next."
+        "text": "When you began, Web3 was just a word you didn't understand."
+      },
+      {
+        "id": "m31-panel-3",
+        "type": "dialogue",
+        "speaker": "IamAbdul",
+        "text": "Now you know how to find answers, build skills, and work with people."
       }
     ],
     "dialogue": [
       {
         "id": "m31-dialogue-1",
         "speaker": "Softstorm",
-        "text": "The returning mentors reveal how their clues, work and relationships connected to the T3Kit archive."
+        "text": "When you began, Web3 was just a word you didn't understand."
       },
       {
         "id": "m31-dialogue-2",
+        "speaker": "IamAbdul",
+        "text": "Now you know how to find answers, build skills, and work with people."
+      },
+      {
+        "id": "m31-dialogue-3",
+        "speaker": "Joe_Sef",
+        "text": "Joe_Sef: The evidence from this mission will help connect the T3Kit story."
+      },
+      {
+        "id": "m31-dialogue-4",
+        "speaker": "Larai",
+        "text": "Larai: The evidence from this mission will help connect the T3Kit story."
+      },
+      {
+        "id": "m31-dialogue-5",
+        "speaker": "Unique",
+        "text": "Unique: The evidence from this mission will help connect the T3Kit story."
+      },
+      {
+        "id": "m31-dialogue-6",
+        "speaker": "Christol",
+        "text": "Christol: The evidence from this mission will help connect the T3Kit story."
+      },
+      {
+        "id": "m31-dialogue-7",
+        "speaker": "Craftore",
+        "text": "Craftore: The evidence from this mission will help connect the T3Kit story."
+      },
+      {
+        "id": "m31-dialogue-player",
         "speaker": "PLAYER",
-        "text": "Show me what I should check first."
+        "text": "Show me the evidence. I'll work through it step by step."
       }
     ],
     "learningObjectives": [
