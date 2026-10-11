@@ -63,11 +63,13 @@ assert.ok(source.includes("realFundsRequired:false"), "The story must not requir
 assert.ok(source.includes("realBlockchainTransactionsRequired:false"), "The story must not require real transactions");
 
 /* A story script is a playable sequence, not a paragraph attached to one NPC. */
-assert.ok(engine.includes("if(Array.isArray(o.sceneDialogue)&&o.sceneDialogue.length)"), "Story dialogue must be played line by line");
+assert.ok(engine.includes("if(Array.isArray(o.sceneDialogue))"), "Story dialogue must be played line by line");
 assert.ok(engine.includes("const sceneCast=Array.isArray(o.sceneCast)?o.sceneCast:[]"), "Scene dialogue must resolve its speaker cast");
 assert.ok(engine.includes("if(Array.isArray(st.sceneCast))"), "Every listed scene character must be placed in the 3D world");
 assert.ok(engine.includes("sceneCast:o.sceneCast"), "The scene cast must survive task-step construction");
 assert.ok(engine.includes("SCRIPT · '+scriptLine+' / '+scriptTotal"), "Each bubble must show its script speaker and position");
+assert.ok(engine.includes("const speakerLabel=speaker.toUpperCase()==='PLAYER'?playerName():speaker"), "Every dialogue bubble must display the actual speaker name");
+assert.ok(engine.includes("Array.isArray(line.choices)&&line.choices.length"), "Script choices must be playable, not blank dialogue lines");
 const opening = missions[0];
 assert.ok(opening.includes('characters:["Softstorm","IamAbdul"]'), "Opening scene must cast both Softstorm and IamAbdul");
 assert.ok(opening.includes('speaker:"Softstorm"') && opening.includes('speaker:"IamAbdul"'), "Both opening characters must actually speak in dialogue bubbles");
