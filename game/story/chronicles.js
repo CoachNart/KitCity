@@ -115,36 +115,107 @@ export const CHAPTERS = [
   { id:"final", title:"KitCity", state:"KitCity", missionIds:["m29","m30","m31"] }
 ];
 
-const RAW_MISSIONS = [
+const RAW_MISSIONS = const RAW_MISSIONS = [
   {
     "id": "m01",
     "chapterId": "ch01",
     "title": "Just Another Day",
     "state": "Lagos",
     "location": "Lagos roadside electronics shop",
-    "npcIds": ["softstorm", "iamabdul"],
-    "npcs": ["Softstorm", "IamAbdul"],
+    "npcIds": [
+      "softstorm",
+      "iamabdul"
+    ],
+    "npcs": [
+      "Softstorm",
+      "IamAbdul"
+    ],
     "narrativePurpose": "The player gets pulled into a dispute after a buyer claims to have paid for a laptop with crypto. The shop has no matching payment, and the player must help verify what really happened before the laptop is handed over.",
     "openingPanels": [
-      { "id": "m01-panel-1", "type": "establishing", "caption": "8:17 AM in Lagos. Danfo horns, roadside vendors, and a normal morning—until an argument about a missing crypto payment catches your attention." },
-      { "id": "m01-panel-2", "type": "dialogue", "speaker": "Softstorm", "text": "The buyer says he sent 120 USDC. All I have is a screenshot, and the money hasn't arrived." },
-      { "id": "m01-panel-3", "type": "dialogue", "speaker": "IamAbdul", "text": "Then don't release the laptop yet. Let's check the transaction instead of guessing." }
+      {
+        "id": "m01-panel-1",
+        "type": "establishing",
+        "caption": "8:17 AM in Lagos. Danfo horns, roadside vendors, and a normal morning—until an argument about a missing crypto payment catches your attention."
+      },
+      {
+        "id": "m01-panel-2",
+        "type": "dialogue",
+        "speaker": "Softstorm",
+        "text": "The buyer says he sent 120 USDC. All I have is a screenshot, and the money hasn't arrived."
+      },
+      {
+        "id": "m01-panel-3",
+        "type": "dialogue",
+        "speaker": "IamAbdul",
+        "text": "Then don't release the laptop yet. Let's check the transaction instead of guessing."
+      }
     ],
     "dialogue": [
-      { "id": "m01-dialogue-1", "speaker": "Softstorm", "text": "If the payment is fake, na me go explain why the laptop is gone." },
-      { "id": "m01-dialogue-2", "speaker": "IamAbdul", "text": "A confirmed transaction can still go to the wrong address. We need to check the details." },
-      { "id": "m01-dialogue-player", "speaker": "PLAYER", "text": "Abeg, wetin una dey argue about? Let me see what happened." }
+      {
+        "id": "m01-dialogue-1",
+        "speaker": "Softstorm",
+        "text": "If the payment is fake, na me go explain why the laptop is gone."
+      },
+      {
+        "id": "m01-dialogue-2",
+        "speaker": "IamAbdul",
+        "text": "A confirmed transaction can still go to the wrong address. We need to check the details."
+      },
+      {
+        "id": "m01-dialogue-player",
+        "speaker": "PLAYER",
+        "text": "Abeg, wetin una dey argue about? Let me see what happened."
+      }
     ],
-    "learningObjectives": ["Verify a blockchain transaction", "Compare recipient addresses", "Avoid treating screenshots as proof of payment"],
+    "learningObjectives": [
+      "Verify a blockchain transaction",
+      "Compare recipient addresses",
+      "Avoid treating screenshots as proof of payment"
+    ],
     "prerequisites": [],
     "objectives": [
-      { "id": "m01-obj-1", "label": "Find out why Softstorm is worried about the laptop", "interactionTarget": "story:m01:join-dispute", "required": true },
-      { "id": "m01-obj-2", "label": "Ask IamAbdul how to verify a crypto payment", "interactionTarget": "story:m01:verification", "required": true },
-      { "id": "m01-obj-3", "label": "Inspect the buyer's payment screenshot", "interactionTarget": "story:m01:screenshot", "required": true },
-      { "id": "m01-obj-4", "label": "Check the shop's own payment records", "interactionTarget": "story:m01:shop-records", "required": true },
-      { "id": "m01-obj-5", "label": "Ask the buyer for transaction details", "interactionTarget": "story:m01:buyer", "required": true },
-      { "id": "m01-obj-6", "label": "Compare the transaction recipient with the shop's address", "interactionTarget": "story:m01:ledger", "required": true },
-      { "id": "m01-obj-7", "label": "Tell Softstorm what the evidence means", "interactionTarget": "story:m01:resolution", "required": true }
+      {
+        "id": "m01-obj-1",
+        "label": "Find out why Softstorm is worried about the laptop",
+        "interactionTarget": "story:m01:join-dispute",
+        "required": true
+      },
+      {
+        "id": "m01-obj-2",
+        "label": "Ask IamAbdul how to verify a crypto payment",
+        "interactionTarget": "story:m01:verification",
+        "required": true
+      },
+      {
+        "id": "m01-obj-3",
+        "label": "Inspect the buyer's payment screenshot",
+        "interactionTarget": "story:m01:screenshot",
+        "required": true
+      },
+      {
+        "id": "m01-obj-4",
+        "label": "Check the shop's own payment records",
+        "interactionTarget": "story:m01:shop-records",
+        "required": true
+      },
+      {
+        "id": "m01-obj-5",
+        "label": "Ask the buyer for transaction details",
+        "interactionTarget": "story:m01:buyer",
+        "required": true
+      },
+      {
+        "id": "m01-obj-6",
+        "label": "Compare the transaction recipient with the shop's address",
+        "interactionTarget": "story:m01:ledger",
+        "required": true
+      },
+      {
+        "id": "m01-obj-7",
+        "label": "Tell Softstorm what the evidence means",
+        "interactionTarget": "story:m01:resolution",
+        "required": true
+      }
     ],
     "successConditions": [
       "The player checks the shop's payment records and the simulated public transaction record",
@@ -157,10 +228,18 @@ const RAW_MISSIONS = [
     },
     "rewards": {
       "xp": 100,
-      "skillBadges": ["Verification"],
-      "portfolioArtifacts": ["Lagos payment-dispute incident report"]
+      "skillBadges": [
+        "Verification"
+      ],
+      "portfolioArtifacts": [
+        "Lagos payment-dispute incident report"
+      ]
     },
-    "storyFlags": ["m01_complete", "payment_dispute_resolved", "web3_first_lesson"],
+    "storyFlags": [
+      "m01_complete",
+      "payment_dispute_resolved",
+      "web3_first_lesson"
+    ],
     "nextMissionId": "m02",
     "ending": "The player helps Softstorm discover that the confirmed transaction went to a different address. The laptop stays in the shop until the correct payment arrives.",
     "cliffhanger": "The buyer's mistake raises a bigger question: how do people read blockchain records, manage addresses, and avoid making the same mistake themselves?",
@@ -185,36 +264,36 @@ const RAW_MISSIONS = [
       {
         "id": "m02-panel-1",
         "type": "establishing",
-        "caption": "A Web3 mark appears inside a small technology workspace, where the player learns that the internet has changed in layers."
+        "caption": "The wrong-address payment sends the player to a small technology workspace, where Joe_Sef and Larai help trace how wallets, blockchain records and online platforms fit together."
       },
       {
         "id": "m02-panel-2",
         "type": "dialogue",
         "speaker": "Joe_Sef",
-        "text": "Don't believe every claim you hear. Learn how the technology works for yourself."
+        "text": "You’re the person from the laptop shop, right? That payment trail brought you here. Before we chase another screenshot, let’s understand who gets to keep records and who gets to change the rules."
       },
       {
         "id": "m02-panel-3",
         "type": "dialogue",
         "speaker": "Larai",
-        "text": "Start with wallets. People use them every day without understanding the risks."
+        "text": "And no, Web3 is not just a new app with a coin attached. Look at these examples: who owns the account, who controls the platform, and what happens if the platform shuts its door?"
       }
     ],
     "dialogue": [
       {
         "id": "m02-dialogue-1",
         "speaker": "Joe_Sef",
-        "text": "Don't believe every claim you hear. Learn how the technology works for yourself."
+        "text": "You’re the person from the laptop shop, right? That payment trail brought you here. Before we chase another screenshot, let’s understand who gets to keep records and who gets to change the rules."
       },
       {
         "id": "m02-dialogue-2",
         "speaker": "Larai",
-        "text": "Start with wallets. People use them every day without understanding the risks."
+        "text": "And no, Web3 is not just a new app with a coin attached. Look at these examples: who owns the account, who controls the platform, and what happens if the platform shuts its door?"
       },
       {
-        "id": "m02-dialogue-player",
+        "id": "m02-dialogue-3",
         "speaker": "PLAYER",
-        "text": "Show me the evidence. I'll work through it step by step."
+        "text": "So I shouldn't just memorise the names. I should look at who has control—and what the system lets people do."
       }
     ],
     "learningObjectives": [
@@ -273,8 +352,8 @@ const RAW_MISSIONS = [
       "m02_complete"
     ],
     "nextMissionId": "m03",
-    "ending": "Joe_Sef helps the player understand how a blockchain record can be checked independently. Larai shows how wallet addresses and networks fit into the payment trail.",
-    "cliffhanger": "A new clue points toward the next part of the journey.",
+    "ending": "Joe_Sef connects the payment trail to the wider question of who controls online services. Larai helps the player compare the trade-offs instead of treating Web3 as magic.",
+    "cliffhanger": "A wallet demo nearby is attracting a crowd. Someone is promising to double people's test tokens if they hand over a recovery phrase.",
     "safeSimulationRequired": true
   },
   {
@@ -302,30 +381,30 @@ const RAW_MISSIONS = [
         "id": "m03-panel-2",
         "type": "dialogue",
         "speaker": "Unique",
-        "text": "Your wallet is your way to interact with the network."
+        "text": "Wallet ready. Now, before you celebrate, remember: a wallet is a key to your assets, not a bank that can reverse every mistake."
       },
       {
         "id": "m03-panel-3",
         "type": "dialogue",
         "speaker": "Smrt huntr",
-        "text": "And nobody legitimate needs your recovery phrase. Not even me."
+        "text": "Hold on—this fellow says he can double the player's test tokens. His price? The recovery phrase. That's not a deal; that's somebody asking for the keys to your house."
       }
     ],
     "dialogue": [
       {
         "id": "m03-dialogue-1",
         "speaker": "Unique",
-        "text": "Your wallet is your way to interact with the network."
+        "text": "Wallet ready. Now, before you celebrate, remember: a wallet is a key to your assets, not a bank that can reverse every mistake."
       },
       {
         "id": "m03-dialogue-2",
         "speaker": "Smrt huntr",
-        "text": "And nobody legitimate needs your recovery phrase. Not even me."
+        "text": "Hold on—this fellow says he can double the player's test tokens. His price? The recovery phrase. That's not a deal; that's somebody asking for the keys to your house."
       },
       {
-        "id": "m03-dialogue-player",
+        "id": "m03-dialogue-3",
         "speaker": "PLAYER",
-        "text": "Show me the evidence. I'll work through it step by step."
+        "text": "If the phrase gives control, why would I hand it to the person claiming to help me? No be so."
       }
     ],
     "learningObjectives": [
@@ -391,8 +470,8 @@ const RAW_MISSIONS = [
       "m03_complete"
     ],
     "nextMissionId": "m04",
-    "ending": "Unique confirms the player understands the basic safety rules and sends them to learn how transactions are recorded.",
-    "cliffhanger": "A new clue points toward the next part of the journey.",
+    "ending": "The player creates a sandbox wallet, receives test tokens and rejects the fake helper. Unique praises the decision; Smrt huntr points out that security often means refusing a tempting shortcut.",
+    "cliffhanger": "One test transfer has appeared in two different records. Goodness wants to know which details can be checked independently.",
     "safeSimulationRequired": true
   },
   {
@@ -420,30 +499,30 @@ const RAW_MISSIONS = [
         "id": "m04-panel-2",
         "type": "dialogue",
         "speaker": "Goodness",
-        "text": "Can you trace this transaction back to the block that recorded it?"
+        "text": "Two screenshots, two stories, one transaction. I don't want guesses; I want the record we can trace."
       },
       {
         "id": "m04-panel-3",
         "type": "dialogue",
         "speaker": "Semi",
-        "text": "If the record is shared, what stops one person from quietly rewriting it?"
+        "text": "Follow the transaction into its block, then look at the history around it. If someone proposes changing an accepted record, ask what proof and network rules would allow that."
       }
     ],
     "dialogue": [
       {
         "id": "m04-dialogue-1",
         "speaker": "Goodness",
-        "text": "Can you trace this transaction back to the block that recorded it?"
+        "text": "Two screenshots, two stories, one transaction. I don't want guesses; I want the record we can trace."
       },
       {
         "id": "m04-dialogue-2",
         "speaker": "Semi",
-        "text": "If the record is shared, what stops one person from quietly rewriting it?"
+        "text": "Follow the transaction into its block, then look at the history around it. If someone proposes changing an accepted record, ask what proof and network rules would allow that."
       },
       {
-        "id": "m04-dialogue-player",
+        "id": "m04-dialogue-3",
         "speaker": "PLAYER",
-        "text": "Show me the evidence. I'll work through it step by step."
+        "text": "So we're not trusting the neatest-looking record. We're checking where it came from and whether the history supports it."
       }
     ],
     "learningObjectives": [
@@ -510,8 +589,8 @@ const RAW_MISSIONS = [
       "web3_ledger_record"
     ],
     "nextMissionId": "m05",
-    "ending": "Semi finds an old transaction referencing Web3. The player saves the evidence in the journey journal.",
-    "cliffhanger": "A new clue points toward the next part of the journey.",
+    "ending": "The player traces a simulated transaction to its block and challenges an unsupported edit. Semi saves the trace as evidence instead of relying on memory.",
+    "cliffhanger": "The trail leads to a product team whose app keeps failing. The team has opinions about the design, but nobody has asked the users.",
     "safeSimulationRequired": true
   },
   {
@@ -539,30 +618,30 @@ const RAW_MISSIONS = [
         "id": "m05-panel-2",
         "type": "dialogue",
         "speaker": "Blockqueen",
-        "text": "Before adding another feature, find out what the user is struggling with."
+        "text": "Three redesigns, twelve new features, and people still can't finish the first task. Please tell me we're not about to add another button."
       },
       {
         "id": "m05-panel-3",
         "type": "dialogue",
         "speaker": "Christol",
-        "text": "I thought the bug was technical. The test shows we built the wrong thing."
+        "text": "I can fix the code, but I need to know where the flow breaks. Give me a reproducible failure—not 'it feels buggy'."
       }
     ],
     "dialogue": [
       {
         "id": "m05-dialogue-1",
         "speaker": "Blockqueen",
-        "text": "Before adding another feature, find out what the user is struggling with."
+        "text": "Three redesigns, twelve new features, and people still can't finish the first task. Please tell me we're not about to add another button."
       },
       {
         "id": "m05-dialogue-2",
         "speaker": "Christol",
-        "text": "I thought the bug was technical. The test shows we built the wrong thing."
+        "text": "I can fix the code, but I need to know where the flow breaks. Give me a reproducible failure—not 'it feels buggy'."
       },
       {
-        "id": "m05-dialogue-player",
+        "id": "m05-dialogue-3",
         "speaker": "PLAYER",
-        "text": "Show me the evidence. I'll work through it step by step."
+        "text": "Let's watch two people try it. If they get stuck at the same point, we'll have something real to work with."
       }
     ],
     "learningObjectives": [
@@ -628,8 +707,8 @@ const RAW_MISSIONS = [
       "m05_complete"
     ],
     "nextMissionId": "m06",
-    "ending": "The team realizes its main problem is not a missing feature; it has misunderstood its users. A smart-contract review is next.",
-    "cliffhanger": "A new clue points toward the next part of the journey.",
+    "ending": "The team stops arguing over taste and tests the core journey with users. The player identifies the biggest failure and recommends a focused fix backed by evidence.",
+    "cliffhanger": "The app's repair exposes another risk: a fictional smart contract is about to launch with a bug nobody has reproduced properly.",
     "safeSimulationRequired": false
   },
   {
@@ -657,30 +736,30 @@ const RAW_MISSIONS = [
         "id": "m06-panel-2",
         "type": "dialogue",
         "speaker": "Laloba",
-        "text": "We do not deploy until we understand the contract bug."
+        "text": "The launch countdown is loud. The permission check is missing. Guess which one can cost users more?"
       },
       {
         "id": "m06-panel-3",
         "type": "dialogue",
         "speaker": "BigSam",
-        "text": "Delaying a launch is hard. Explaining a preventable loss is harder."
+        "text": "We promised a date, and the team is tired. But if the bug lets the wrong caller move funds, shipping it just transfers our deadline pressure to users."
       }
     ],
     "dialogue": [
       {
         "id": "m06-dialogue-1",
         "speaker": "Laloba",
-        "text": "We do not deploy until we understand the contract bug."
+        "text": "The launch countdown is loud. The permission check is missing. Guess which one can cost users more?"
       },
       {
         "id": "m06-dialogue-2",
         "speaker": "BigSam",
-        "text": "Delaying a launch is hard. Explaining a preventable loss is harder."
+        "text": "We promised a date, and the team is tired. But if the bug lets the wrong caller move funds, shipping it just transfers our deadline pressure to users."
       },
       {
-        "id": "m06-dialogue-player",
+        "id": "m06-dialogue-3",
         "speaker": "PLAYER",
-        "text": "Show me the evidence. I'll work through it step by step."
+        "text": "Let's reproduce it in the sandbox, fix the rule, and test the normal path and the bad path before anyone launches."
       }
     ],
     "learningObjectives": [
@@ -746,8 +825,8 @@ const RAW_MISSIONS = [
       "m06_complete"
     ],
     "nextMissionId": "m07",
-    "ending": "The launch is postponed until the contract fix is tested. The player learns that responsible builders must be willing to delay a release.",
-    "cliffhanger": "A new clue points toward the next part of the journey.",
+    "ending": "The player reproduces the contract bug in a sandbox and proposes a fix with tests. BigSam delays launch until the change is reviewed; Laloba records why the delay was necessary.",
+    "cliffhanger": "A trader says a swap returned less than the screen promised. The quote looked good; the pool tells a different story.",
     "safeSimulationRequired": true
   },
   {
@@ -775,30 +854,30 @@ const RAW_MISSIONS = [
         "id": "m07-panel-2",
         "type": "dialogue",
         "speaker": "LunaX",
-        "text": "Check the pool before trusting the price on the screen."
+        "text": "The quote showed a nice number. The final amount didn't. People blame the app, but first we need to inspect the pool and the trade size."
       },
       {
         "id": "m07-panel-3",
         "type": "dialogue",
         "speaker": "OxNight",
-        "text": "The quote looked good. The amount I received told a different story."
+        "text": "And please don't tell me the token's logo looked familiar. Check the token address, liquidity, fee and price impact before pressing confirm."
       }
     ],
     "dialogue": [
       {
         "id": "m07-dialogue-1",
         "speaker": "LunaX",
-        "text": "Check the pool before trusting the price on the screen."
+        "text": "The quote showed a nice number. The final amount didn't. People blame the app, but first we need to inspect the pool and the trade size."
       },
       {
         "id": "m07-dialogue-2",
         "speaker": "OxNight",
-        "text": "The quote looked good. The amount I received told a different story."
+        "text": "And please don't tell me the token's logo looked familiar. Check the token address, liquidity, fee and price impact before pressing confirm."
       },
       {
-        "id": "m07-dialogue-player",
+        "id": "m07-dialogue-3",
         "speaker": "PLAYER",
-        "text": "Show me the evidence. I'll work through it step by step."
+        "text": "Let's compare both simulated pools first. If the cheaper-looking quote moves the price more, it wasn't cheaper after all."
       }
     ],
     "learningObjectives": [
@@ -864,8 +943,8 @@ const RAW_MISSIONS = [
       "m07_complete"
     ],
     "nextMissionId": "m08",
-    "ending": "OxNight understands why a displayed token price can differ from the final swap result. An exchange operations team offers the next lead.",
-    "cliffhanger": "A new clue points toward the next part of the journey.",
+    "ending": "The player compares pool depth, estimates price impact, performs a test swap and checks the token approval. LunaX explains the difference between a displayed quote and actual execution.",
+    "cliffhanger": "The next stop is an exchange where withdrawals are paused. Rumours are already travelling faster than the official update.",
     "safeSimulationRequired": true
   },
   {
@@ -893,30 +972,30 @@ const RAW_MISSIONS = [
         "id": "m08-panel-2",
         "type": "dialogue",
         "speaker": "Moon",
-        "text": "Let's look at the order book before we guess what happened."
+        "text": "Withdrawals are delayed, and the group chat has already invented four explanations. We have one confirmed status and several unanswered questions."
       },
       {
         "id": "m08-panel-3",
         "type": "dialogue",
         "speaker": "The Cryptonian",
-        "text": "Withdrawals are paused while the security team verifies the incident. Don't spread rumours."
+        "text": "We can explain what is known, when we will update people, and how custody works. We cannot promise a cause or a deadline nobody has verified."
       }
     ],
     "dialogue": [
       {
         "id": "m08-dialogue-1",
         "speaker": "Moon",
-        "text": "Let's look at the order book before we guess what happened."
+        "text": "Withdrawals are delayed, and the group chat has already invented four explanations. We have one confirmed status and several unanswered questions."
       },
       {
         "id": "m08-dialogue-2",
         "speaker": "The Cryptonian",
-        "text": "Withdrawals are paused while the security team verifies the incident. Don't spread rumours."
+        "text": "We can explain what is known, when we will update people, and how custody works. We cannot promise a cause or a deadline nobody has verified."
       },
       {
-        "id": "m08-dialogue-player",
+        "id": "m08-dialogue-3",
         "speaker": "PLAYER",
-        "text": "Show me the evidence. I'll work through it step by step."
+        "text": "I'll separate confirmed facts from rumours, then write an update that tells users what to do next."
       }
     ],
     "learningObjectives": [
@@ -982,8 +1061,8 @@ const RAW_MISSIONS = [
       "m08_complete"
     ],
     "nextMissionId": "m09",
-    "ending": "The player drafts a calm update based on verified facts. They learn that access to an exchange is not control over the exchange.",
-    "cliffhanger": "A new clue points toward the next part of the journey.",
+    "ending": "The player distinguishes market and limit orders, examines a fictional withdrawal incident and drafts a verified status update. The team communicates clearly without pretending to know more than it does.",
+    "cliffhanger": "A spot trader nearby has taken a loss. The next decision is whether to review the plan—or try to win it back immediately.",
     "safeSimulationRequired": true
   },
   {
@@ -1011,30 +1090,30 @@ const RAW_MISSIONS = [
         "id": "m09-panel-2",
         "type": "dialogue",
         "speaker": "Joseph Nnadi",
-        "text": "Plan what you can lose before thinking about what you could make."
+        "text": "The trade hit my invalidation. I know the rule. What I don't know is why my first thought was to enter again twice as big."
       },
       {
         "id": "m09-panel-3",
         "type": "dialogue",
         "speaker": "The Don",
-        "text": "One chart is not a promise. Show me the invalidation level."
+        "text": "Because a loss can make a bad idea feel urgent. Show me the plan you wrote before the trade—not the story you're telling yourself now."
       }
     ],
     "dialogue": [
       {
         "id": "m09-dialogue-1",
         "speaker": "Joseph Nnadi",
-        "text": "Plan what you can lose before thinking about what you could make."
+        "text": "The trade hit my invalidation. I know the rule. What I don't know is why my first thought was to enter again twice as big."
       },
       {
         "id": "m09-dialogue-2",
         "speaker": "The Don",
-        "text": "One chart is not a promise. Show me the invalidation level."
+        "text": "Because a loss can make a bad idea feel urgent. Show me the plan you wrote before the trade—not the story you're telling yourself now."
       },
       {
-        "id": "m09-dialogue-player",
+        "id": "m09-dialogue-3",
         "speaker": "PLAYER",
-        "text": "Show me the evidence. I'll work through it step by step."
+        "text": "We'll mark the setup, risk and invalidation, then record the result honestly. One loss doesn't give us permission to abandon the plan."
       }
     ],
     "learningObjectives": [
@@ -1100,8 +1179,8 @@ const RAW_MISSIONS = [
       "m09_complete"
     ],
     "nextMissionId": "m10",
-    "ending": "The trade loses, but the player reviews the plan instead of chasing the loss. The paper-trading journal records the decision.",
-    "cliffhanger": "A new clue points toward the next part of the journey.",
+    "ending": "The simulated spot trade loses, but the player records the original setup, defined risk and outcome without revenge trading. Joseph Nnadi leaves with a reviewable process instead of a recovery fantasy.",
+    "cliffhanger": "Praise calls from the next block: Toza has opened a leveraged position, and the margin number is shrinking.",
     "safeSimulationRequired": true
   },
   {
@@ -1131,35 +1210,35 @@ const RAW_MISSIONS = [
         "id": "m10-panel-2",
         "type": "dialogue",
         "speaker": "Praise",
-        "text": "Leverage multiplies exposure, not skill."
+        "text": "Toza keeps saying the position only needs one bounce. The liquidation estimate says otherwise. Can you walk through the risk before this turns into a bigger problem?"
       },
       {
         "id": "m10-panel-3",
         "type": "dialogue",
         "speaker": "Toza",
-        "text": "I thought I had more room before liquidation. Help me calculate it."
+        "text": "I saw the leverage multiplier and thought it meant I could do more with less. Nobody puts the scary part in the big font."
       }
     ],
     "dialogue": [
       {
         "id": "m10-dialogue-1",
         "speaker": "Praise",
-        "text": "Leverage multiplies exposure, not skill."
+        "text": "Toza keeps saying the position only needs one bounce. The liquidation estimate says otherwise. Can you walk through the risk before this turns into a bigger problem?"
       },
       {
         "id": "m10-dialogue-2",
         "speaker": "Toza",
-        "text": "I thought I had more room before liquidation. Help me calculate it."
+        "text": "I saw the leverage multiplier and thought it meant I could do more with less. Nobody puts the scary part in the big font."
       },
       {
         "id": "m10-dialogue-3",
         "speaker": "Craftore",
-        "text": "Craftore: The evidence from this mission will help connect the Web3 story."
+        "text": "The scary part is exactly what we calculate: exposure, margin, adverse movement and a close plan. This is a simulator; use it to understand the mechanics, not to chase a win."
       },
       {
-        "id": "m10-dialogue-player",
+        "id": "m10-dialogue-4",
         "speaker": "PLAYER",
-        "text": "Show me the evidence. I'll work through it step by step."
+        "text": "Let's compare the exposure first, then decide what the plan says to do if the idea fails."
       }
     ],
     "learningObjectives": [
@@ -1225,8 +1304,8 @@ const RAW_MISSIONS = [
       "m10_complete"
     ],
     "nextMissionId": "m11",
-    "ending": "Toza closes the simulated position before the loss grows. The player unlocks the next set of ecosystem skills.",
-    "cliffhanger": "A new clue points toward the next part of the journey.",
+    "ending": "The player models a simulated futures position and spots how leverage compresses the room for an adverse move. Toza follows the close plan before the loss grows.",
+    "cliffhanger": "The trading room is full of people, but a community project with thousands of followers has almost nobody completing its first useful task.",
     "safeSimulationRequired": true
   },
   {
@@ -1254,30 +1333,30 @@ const RAW_MISSIONS = [
         "id": "m11-panel-2",
         "type": "dialogue",
         "speaker": "Kodavic",
-        "text": "We have followers, but new members don't stay long enough to contribute."
+        "text": "Our follower count looks beautiful in a pitch deck. Our onboarding chat is quiet enough to hear a pin drop."
       },
       {
         "id": "m11-panel-3",
         "type": "dialogue",
         "speaker": "Cybersage",
-        "text": "Let's watch the onboarding journey and find where people get lost."
+        "text": "We keep celebrating joins, but we haven't asked where new members get confused or what makes them return. Let's find the drop-off before we buy another giveaway."
       }
     ],
     "dialogue": [
       {
         "id": "m11-dialogue-1",
         "speaker": "Kodavic",
-        "text": "We have followers, but new members don't stay long enough to contribute."
+        "text": "Our follower count looks beautiful in a pitch deck. Our onboarding chat is quiet enough to hear a pin drop."
       },
       {
         "id": "m11-dialogue-2",
         "speaker": "Cybersage",
-        "text": "Let's watch the onboarding journey and find where people get lost."
+        "text": "We keep celebrating joins, but we haven't asked where new members get confused or what makes them return. Let's find the drop-off before we buy another giveaway."
       },
       {
-        "id": "m11-dialogue-player",
+        "id": "m11-dialogue-3",
         "speaker": "PLAYER",
-        "text": "Show me the evidence. I'll work through it step by step."
+        "text": "Let's watch a newcomer go through the first session and ask where they get stuck. The metric should tell us whether they found value—not just whether they arrived."
       }
     ],
     "learningObjectives": [
@@ -1342,8 +1421,8 @@ const RAW_MISSIONS = [
       "m11_complete"
     ],
     "nextMissionId": "m12",
-    "ending": "The project improves onboarding and begins measuring useful participation rather than follower counts.",
-    "cliffhanger": "A new clue points toward the next part of the journey.",
+    "ending": "The player maps the first session, interviews members and redesigns the first useful action. The team begins measuring meaningful participation and return visits instead of raw follower count.",
+    "cliffhanger": "A new member has received a message from someone pretending to be a moderator. The community needs a calm response before more people click.",
     "safeSimulationRequired": false
   },
   {
@@ -1371,30 +1450,30 @@ const RAW_MISSIONS = [
         "id": "m12-panel-2",
         "type": "dialogue",
         "speaker": "Reina",
-        "text": "Protect the members first. We can investigate the blame later."
+        "text": "A member nearly gave a stranger access because the account had my display name and profile picture. They're embarrassed. Please don't turn this into a public pile-on."
       },
       {
         "id": "m12-panel-3",
         "type": "dialogue",
         "speaker": "Cclya",
-        "text": "Clear updates stop confusion from becoming another part of the attack."
+        "text": "I've preserved the message and blocked the link. Now we need to guide the affected user through account security and tell everyone how to verify staff."
       }
     ],
     "dialogue": [
       {
         "id": "m12-dialogue-1",
         "speaker": "Reina",
-        "text": "Protect the members first. We can investigate the blame later."
+        "text": "A member nearly gave a stranger access because the account had my display name and profile picture. They're embarrassed. Please don't turn this into a public pile-on."
       },
       {
         "id": "m12-dialogue-2",
         "speaker": "Cclya",
-        "text": "Clear updates stop confusion from becoming another part of the attack."
+        "text": "I've preserved the message and blocked the link. Now we need to guide the affected user through account security and tell everyone how to verify staff."
       },
       {
-        "id": "m12-dialogue-player",
+        "id": "m12-dialogue-3",
         "speaker": "PLAYER",
-        "text": "Show me the evidence. I'll work through it step by step."
+        "text": "We'll warn people, protect the member's privacy and publish what we know. No naming-and-shaming guesses; we deal with the impersonator and the risk."
       }
     ],
     "learningObjectives": [
@@ -1459,8 +1538,8 @@ const RAW_MISSIONS = [
       "m12_complete"
     ],
     "nextMissionId": "m13",
-    "ending": "The impersonation attempt is contained. The moderation team thanks the player for protecting members without escalating blame.",
-    "cliffhanger": "A new clue points toward the next part of the journey.",
+    "ending": "The player helps contain the impersonation attempt, guides a member to secure their account and publishes a factual notice. The community protects people without spreading private information or blame.",
+    "cliffhanger": "The incident is under control, but the group needs a public event to explain what happened and rebuild trust. The scheduled host has just cancelled.",
     "safeSimulationRequired": false
   },
   {
@@ -1488,30 +1567,30 @@ const RAW_MISSIONS = [
         "id": "m13-panel-2",
         "type": "dialogue",
         "speaker": "Leemah",
-        "text": "The host cancelled, but the conversation can still be useful."
+        "text": "The host has cancelled twenty minutes before we go live. The speakers are ready, the audience is waiting, and my backup plan is a cup of tea."
       },
       {
         "id": "m13-panel-3",
         "type": "dialogue",
         "speaker": "Kenny",
-        "text": "Ask questions that let people explain what they know. You don't need to dominate the mic."
+        "text": "You can take the mic. You don't need to know everything; you need a clear opening, good questions and the honesty to say when you need to check something."
       }
     ],
     "dialogue": [
       {
         "id": "m13-dialogue-1",
         "speaker": "Leemah",
-        "text": "The host cancelled, but the conversation can still be useful."
+        "text": "The host has cancelled twenty minutes before we go live. The speakers are ready, the audience is waiting, and my backup plan is a cup of tea."
       },
       {
         "id": "m13-dialogue-2",
         "speaker": "Kenny",
-        "text": "Ask questions that let people explain what they know. You don't need to dominate the mic."
+        "text": "You can take the mic. You don't need to know everything; you need a clear opening, good questions and the honesty to say when you need to check something."
       },
       {
-        "id": "m13-dialogue-player",
+        "id": "m13-dialogue-3",
         "speaker": "PLAYER",
-        "text": "Show me the evidence. I'll work through it step by step."
+        "text": "Okay. Give me the topic, the audience and the three questions people actually need answered. We'll make this useful."
       }
     ],
     "learningObjectives": [
@@ -1582,8 +1661,8 @@ const RAW_MISSIONS = [
       "m13_complete"
     ],
     "nextMissionId": "m14",
-    "ending": "The live discussion succeeds because the player creates a useful conversation. An old poster carries the Web3 mark.",
-    "cliffhanger": "A new clue points toward the next part of the journey.",
+    "ending": "The player hosts a simulated live session with a clear opening, thoughtful questions and a calm response to a difficult question. The recap gives people useful next steps.",
+    "cliffhanger": "After the session, a founder asks for help explaining a good product without drowning the audience in technical language.",
     "safeSimulationRequired": false
   },
   {
@@ -1611,30 +1690,30 @@ const RAW_MISSIONS = [
         "id": "m14-panel-2",
         "type": "dialogue",
         "speaker": "Kore",
-        "text": "The product may be useful, but this announcement makes it sound confusing."
+        "text": "The product works, but our announcement reads like it was written for a server room with no windows. Who is this supposed to help?"
       },
       {
         "id": "m14-panel-3",
         "type": "dialogue",
         "speaker": "Veedima",
-        "text": "Make the claim clear, specific, and something we can verify."
+        "text": "A good message starts with the person's problem, says what the product can honestly do, and gives them one clear next step. No miracle claims."
       }
     ],
     "dialogue": [
       {
         "id": "m14-dialogue-1",
         "speaker": "Kore",
-        "text": "The product may be useful, but this announcement makes it sound confusing."
+        "text": "The product works, but our announcement reads like it was written for a server room with no windows. Who is this supposed to help?"
       },
       {
         "id": "m14-dialogue-2",
         "speaker": "Veedima",
-        "text": "Make the claim clear, specific, and something we can verify."
+        "text": "A good message starts with the person's problem, says what the product can honestly do, and gives them one clear next step. No miracle claims."
       },
       {
-        "id": "m14-dialogue-player",
+        "id": "m14-dialogue-3",
         "speaker": "PLAYER",
-        "text": "Show me the evidence. I'll work through it step by step."
+        "text": "Let's pick the audience first, then rewrite the announcement and check every claim before it goes out."
       }
     ],
     "learningObjectives": [
@@ -1699,8 +1778,8 @@ const RAW_MISSIONS = [
       "m14_complete"
     ],
     "nextMissionId": "m15",
-    "ending": "The product becomes easier to understand because its claims are clear, specific and verified.",
-    "cliffhanger": "A new clue points toward the next part of the journey.",
+    "ending": "The player turns a confusing product announcement into clear, audience-specific communication with verifiable claims and a useful next step.",
+    "cliffhanger": "A contact asks whether the player can help with a professional opportunity. The first thing they want to see is work—not another impressive bio.",
     "safeSimulationRequired": false
   },
   {
@@ -1728,30 +1807,30 @@ const RAW_MISSIONS = [
         "id": "m15-panel-2",
         "type": "dialogue",
         "speaker": "Web3_Esta",
-        "text": "Your profile should show the direction you want to grow in."
+        "text": "Your bio says you can do everything from growth to engineering to research. Which one can you show me today?"
       },
       {
         "id": "m15-panel-3",
         "type": "dialogue",
         "speaker": "Love",
-        "text": "You don't need to pretend to be an expert. Show the work you've done."
+        "text": "You don't need to pretend to be senior. Pick a direction, show two honest samples, explain your part and tell me what you're still learning."
       }
     ],
     "dialogue": [
       {
         "id": "m15-dialogue-1",
         "speaker": "Web3_Esta",
-        "text": "Your profile should show the direction you want to grow in."
+        "text": "Your bio says you can do everything from growth to engineering to research. Which one can you show me today?"
       },
       {
         "id": "m15-dialogue-2",
         "speaker": "Love",
-        "text": "You don't need to pretend to be an expert. Show the work you've done."
+        "text": "You don't need to pretend to be senior. Pick a direction, show two honest samples, explain your part and tell me what you're still learning."
       },
       {
-        "id": "m15-dialogue-player",
+        "id": "m15-dialogue-3",
         "speaker": "PLAYER",
-        "text": "Show me the evidence. I'll work through it step by step."
+        "text": "I'll choose the work I can actually demonstrate, make the evidence easy to review, and be clear about the gaps."
       }
     ],
     "learningObjectives": [
@@ -1816,8 +1895,8 @@ const RAW_MISSIONS = [
       "m15_complete"
     ],
     "nextMissionId": "m16",
-    "ending": "Love reviews the portfolio and identifies a credible next step. The player can show evidence of skills without pretending to be an expert.",
-    "cliffhanger": "A new clue points toward the next part of the journey.",
+    "ending": "The player shapes a focused profile and portfolio around verifiable work. Love identifies the strongest sample and gives a concrete next step instead of promising instant success.",
+    "cliffhanger": "The portfolio earns a reply. J.Jonathan has a small task available—but the brief, terms and recruiter still need checking.",
     "safeSimulationRequired": false
   },
   {
@@ -1845,30 +1924,30 @@ const RAW_MISSIONS = [
         "id": "m16-panel-2",
         "type": "dialogue",
         "speaker": "J.Jonathan",
-        "text": "Show me how you would do the work, not just what your bio says."
+        "text": "I don't need a perfect CV. I need to see whether you can understand a brief, do the work and explain your choices."
       },
       {
         "id": "m16-panel-3",
         "type": "dialogue",
         "speaker": "Essa",
-        "text": "Feedback is part of your first opportunity. Use it."
+        "text": "And before you get excited: verify the role and its terms. If anyone asks you to pay an upfront fee to unlock the opportunity, stop and check."
       }
     ],
     "dialogue": [
       {
         "id": "m16-dialogue-1",
         "speaker": "J.Jonathan",
-        "text": "Show me how you would do the work, not just what your bio says."
+        "text": "I don't need a perfect CV. I need to see whether you can understand a brief, do the work and explain your choices."
       },
       {
         "id": "m16-dialogue-2",
         "speaker": "Essa",
-        "text": "Feedback is part of your first opportunity. Use it."
+        "text": "And before you get excited: verify the role and its terms. If anyone asks you to pay an upfront fee to unlock the opportunity, stop and check."
       },
       {
-        "id": "m16-dialogue-player",
+        "id": "m16-dialogue-3",
         "speaker": "PLAYER",
-        "text": "Show me the evidence. I'll work through it step by step."
+        "text": "I'll complete a small sample tied to the role, submit it with context, and use the feedback to improve the next attempt."
       }
     ],
     "learningObjectives": [
@@ -1933,8 +2012,8 @@ const RAW_MISSIONS = [
       "m16_complete"
     ],
     "nextMissionId": "m17",
-    "ending": "The player earns a chance to contribute to a real-looking simulated task. Feedback becomes a plan for further growth.",
-    "cliffhanger": "A new clue points toward the next part of the journey.",
+    "ending": "The player completes a practical work sample, submits a clear application and turns feedback into a targeted revision. The opportunity is a chance to contribute—not a guarantee of a job.",
+    "cliffhanger": "That small assignment points to a startup in Kano. The team has built a long list of features but still cannot explain the user's main problem.",
     "safeSimulationRequired": false
   },
   {
@@ -1962,30 +2041,30 @@ const RAW_MISSIONS = [
         "id": "m17-panel-2",
         "type": "dialogue",
         "speaker": "White Coach",
-        "text": "Which problem hurts the user most? Start there."
+        "text": "The team wants a dashboard, a marketplace, a chatbot and a token page. I asked what the user came to do. They sent me the feature list again."
       },
       {
         "id": "m17-panel-3",
         "type": "dialogue",
         "speaker": "Abdul",
-        "text": "A simpler product can be more useful than one with every feature."
+        "text": "Let's map the actual journey. Where does the user arrive, what are they trying to finish, and at which step do they give up?"
       }
     ],
     "dialogue": [
       {
         "id": "m17-dialogue-1",
         "speaker": "White Coach",
-        "text": "Which problem hurts the user most? Start there."
+        "text": "The team wants a dashboard, a marketplace, a chatbot and a token page. I asked what the user came to do. They sent me the feature list again."
       },
       {
         "id": "m17-dialogue-2",
         "speaker": "Abdul",
-        "text": "A simpler product can be more useful than one with every feature."
+        "text": "Let's map the actual journey. Where does the user arrive, what are they trying to finish, and at which step do they give up?"
       },
       {
-        "id": "m17-dialogue-player",
+        "id": "m17-dialogue-3",
         "speaker": "PLAYER",
-        "text": "Show me the evidence. I'll work through it step by step."
+        "text": "We'll interview users, find the biggest friction and test one focused fix before adding anything else."
       }
     ],
     "learningObjectives": [
@@ -2050,8 +2129,8 @@ const RAW_MISSIONS = [
       "m17_complete"
     ],
     "nextMissionId": "m18",
-    "ending": "The team removes unnecessary complexity and improves the user journey.",
-    "cliffhanger": "A new clue points toward the next part of the journey.",
+    "ending": "The player maps the user journey and helps the team simplify the main flow. The revised version is tested against the original problem instead of judged by how many features it contains.",
+    "cliffhanger": "The product is easier to use. Now the growth team wants a big campaign—but nobody can show whether the audience is right.",
     "safeSimulationRequired": false
   },
   {
@@ -2079,30 +2158,30 @@ const RAW_MISSIONS = [
         "id": "m18-panel-2",
         "type": "dialogue",
         "speaker": "David",
-        "text": "Let's test a small idea before spending the whole budget."
+        "text": "The agency says they can bring ten thousand users by Friday. They won't explain where those users come from, but they want the full budget today."
       },
       {
         "id": "m18-panel-3",
         "type": "dialogue",
         "speaker": "Kanyin",
-        "text": "Measure who stays and gets value, not only who clicks."
+        "text": "Let's run a smaller experiment first. We need a hypothesis, a real audience and a metric tied to useful behaviour. Otherwise we are paying for a number."
       }
     ],
     "dialogue": [
       {
         "id": "m18-dialogue-1",
         "speaker": "David",
-        "text": "Let's test a small idea before spending the whole budget."
+        "text": "The agency says they can bring ten thousand users by Friday. They won't explain where those users come from, but they want the full budget today."
       },
       {
         "id": "m18-dialogue-2",
         "speaker": "Kanyin",
-        "text": "Measure who stays and gets value, not only who clicks."
+        "text": "Let's run a smaller experiment first. We need a hypothesis, a real audience and a metric tied to useful behaviour. Otherwise we are paying for a number."
       },
       {
-        "id": "m18-dialogue-player",
+        "id": "m18-dialogue-3",
         "speaker": "PLAYER",
-        "text": "Show me the evidence. I'll work through it step by step."
+        "text": "Let's define what success means before launch. If the offer can't explain its source or prove quality, we don't use it."
       }
     ],
     "learningObjectives": [
@@ -2173,8 +2252,8 @@ const RAW_MISSIONS = [
       "m18_complete"
     ],
     "nextMissionId": "m19",
-    "ending": "The startup runs a measurable growth experiment and rejects an offer that cannot prove its user claims.",
-    "cliffhanger": "A new clue points toward the next part of the journey.",
+    "ending": "The player designs a measurable growth experiment and rejects an offer that cannot explain its source or prove genuine users. The team learns more from a small honest test than a large vanity number.",
+    "cliffhanger": "The experiment gets attention from an investor. The offer looks generous, but the terms could change who controls the project.",
     "safeSimulationRequired": false
   },
   {
@@ -2202,30 +2281,30 @@ const RAW_MISSIONS = [
         "id": "m19-panel-2",
         "type": "dialogue",
         "speaker": "Mcbond",
-        "text": "Compare the runway, control, and obligations before choosing funding."
+        "text": "I can put money into this, but funding comes with terms. The headline amount is not the whole deal."
       },
       {
         "id": "m19-panel-3",
         "type": "dialogue",
         "speaker": "Alpha.RWA",
-        "text": "Money can help build the product. It cannot prove the product deserves to exist."
+        "text": "Compare the runway, milestones, allocation, vesting and control. Also disclose who benefits from each option. A big cheque can still be the wrong fit."
       }
     ],
     "dialogue": [
       {
         "id": "m19-dialogue-1",
         "speaker": "Mcbond",
-        "text": "Compare the runway, control, and obligations before choosing funding."
+        "text": "I can put money into this, but funding comes with terms. The headline amount is not the whole deal."
       },
       {
         "id": "m19-dialogue-2",
         "speaker": "Alpha.RWA",
-        "text": "Money can help build the product. It cannot prove the product deserves to exist."
+        "text": "Compare the runway, milestones, allocation, vesting and control. Also disclose who benefits from each option. A big cheque can still be the wrong fit."
       },
       {
-        "id": "m19-dialogue-player",
+        "id": "m19-dialogue-3",
         "speaker": "PLAYER",
-        "text": "Show me the evidence. I'll work through it step by step."
+        "text": "I'll compare the full proposals and explain the trade-offs, not pick the biggest number just because it looks good."
       }
     ],
     "learningObjectives": [
@@ -2290,8 +2369,8 @@ const RAW_MISSIONS = [
       "m19_complete"
     ],
     "nextMissionId": "m20",
-    "ending": "The founders choose a funding route that fits their runway and obligations. They learn that money alone cannot validate a product.",
-    "cliffhanger": "A new clue points toward the next part of the journey.",
+    "ending": "The player reviews the fictional budget and compares funding proposals, vesting and conflicts of interest. The founders choose a route that fits their obligations and runway.",
+    "cliffhanger": "One pitch deck lists a tokenized property as fully backed. The team has shown a token page—but not the evidence behind the asset.",
     "safeSimulationRequired": true
   },
   {
@@ -2319,30 +2398,30 @@ const RAW_MISSIONS = [
         "id": "m20-panel-2",
         "type": "dialogue",
         "speaker": "BigWealth",
-        "text": "What legal right does this token actually represent?"
+        "text": "The property is in the deck, the token is on the mock-up, and the announcement is ready. Surely we can launch while legal finishes the paperwork?"
       },
       {
         "id": "m20-panel-3",
         "type": "dialogue",
         "speaker": "BigSam",
-        "text": "If custody or redemption is unclear, don't sell the promise."
+        "text": "No. A token doesn't create legal ownership by itself. Who owns the property, who holds the documents, and what exactly can a holder redeem?"
       }
     ],
     "dialogue": [
       {
         "id": "m20-dialogue-1",
         "speaker": "BigWealth",
-        "text": "What legal right does this token actually represent?"
+        "text": "The property is in the deck, the token is on the mock-up, and the announcement is ready. Surely we can launch while legal finishes the paperwork?"
       },
       {
         "id": "m20-dialogue-2",
         "speaker": "BigSam",
-        "text": "If custody or redemption is unclear, don't sell the promise."
+        "text": "No. A token doesn't create legal ownership by itself. Who owns the property, who holds the documents, and what exactly can a holder redeem?"
       },
       {
-        "id": "m20-dialogue-player",
+        "id": "m20-dialogue-3",
         "speaker": "PLAYER",
-        "text": "Show me the evidence. I'll work through it step by step."
+        "text": "We'll list the claims, match each one to evidence and pause anything we cannot verify before launch."
       }
     ],
     "learningObjectives": [
@@ -2408,8 +2487,8 @@ const RAW_MISSIONS = [
       "m20_complete"
     ],
     "nextMissionId": "m21",
-    "ending": "The team pauses the tokenization announcement until ownership, custody and redemption claims have evidence.",
-    "cliffhanger": "A new clue points toward the next part of the journey.",
+    "ending": "The player finds missing ownership, custody and redemption evidence and drafts the questions the issuer must answer. The team pauses its announcement rather than making a claim it cannot support.",
+    "cliffhanger": "While the asset team checks its records, an AI report confidently flags a transaction that does not match the source data.",
     "safeSimulationRequired": true
   },
   {
@@ -2437,30 +2516,30 @@ const RAW_MISSIONS = [
         "id": "m21-panel-2",
         "type": "dialogue",
         "speaker": "Blessing",
-        "text": "The AI report sounds certain, but the underlying data disagrees."
+        "text": "The assistant says this wallet drained the funds. It gives a confident summary, but the transaction reference points to something else."
       },
       {
         "id": "m21-panel-3",
         "type": "dialogue",
         "speaker": "Odion",
-        "text": "Verify the claim against the source before trusting the conclusion."
+        "text": "A polished answer is still just an answer. We'll check the source record, identify which assumption failed, and retest the instructions with known cases."
       }
     ],
     "dialogue": [
       {
         "id": "m21-dialogue-1",
         "speaker": "Blessing",
-        "text": "The AI report sounds certain, but the underlying data disagrees."
+        "text": "The assistant says this wallet drained the funds. It gives a confident summary, but the transaction reference points to something else."
       },
       {
         "id": "m21-dialogue-2",
         "speaker": "Odion",
-        "text": "Verify the claim against the source before trusting the conclusion."
+        "text": "A polished answer is still just an answer. We'll check the source record, identify which assumption failed, and retest the instructions with known cases."
       },
       {
-        "id": "m21-dialogue-player",
+        "id": "m21-dialogue-3",
         "speaker": "PLAYER",
-        "text": "Show me the evidence. I'll work through it step by step."
+        "text": "Let's separate what the AI says from what the evidence shows. If it can't support a claim, it doesn't belong in the report."
       }
     ],
     "learningObjectives": [
@@ -2525,8 +2604,8 @@ const RAW_MISSIONS = [
       "m21_complete"
     ],
     "nextMissionId": "m22",
-    "ending": "The AI tool improves, but the team keeps human verification for consequential decisions.",
-    "cliffhanger": "A new clue points toward the next part of the journey.",
+    "ending": "The player checks AI-generated claims against simulated source data, corrects a false assumption and retests the workflow. The team keeps human review for decisions that can affect people or funds.",
+    "cliffhanger": "The corrected report mentions a transfer between networks. Princess wants to trace it without assuming both chains work the same way.",
     "safeSimulationRequired": false
   },
   {
@@ -2554,30 +2633,30 @@ const RAW_MISSIONS = [
         "id": "m22-panel-2",
         "type": "dialogue",
         "speaker": "Princess",
-        "text": "This transfer crosses a network boundary. Let's trace the route."
+        "text": "The transfer left the source network, but that doesn't automatically mean the destination asset is ready. We need to follow the records on both sides."
       },
       {
         "id": "m22-panel-3",
         "type": "dialogue",
         "speaker": "Racheal",
-        "text": "Every bridge adds dependencies. Check the destination and the risks."
+        "text": "And look carefully at the bridge interface. Fake pages copy the real design and ask people to approve things they don't understand."
       }
     ],
     "dialogue": [
       {
         "id": "m22-dialogue-1",
         "speaker": "Princess",
-        "text": "This transfer crosses a network boundary. Let's trace the route."
+        "text": "The transfer left the source network, but that doesn't automatically mean the destination asset is ready. We need to follow the records on both sides."
       },
       {
         "id": "m22-dialogue-2",
         "speaker": "Racheal",
-        "text": "Every bridge adds dependencies. Check the destination and the risks."
+        "text": "And look carefully at the bridge interface. Fake pages copy the real design and ask people to approve things they don't understand."
       },
       {
-        "id": "m22-dialogue-player",
+        "id": "m22-dialogue-3",
         "speaker": "PLAYER",
-        "text": "Show me the evidence. I'll work through it step by step."
+        "text": "We'll verify the source and destination networks, the transaction references, the supported asset and the fees before calling it complete."
       }
     ],
     "learningObjectives": [
@@ -2642,8 +2721,8 @@ const RAW_MISSIONS = [
       "m22_complete"
     ],
     "nextMissionId": "m23",
-    "ending": "The player discovers that cross-chain connections create both new capabilities and extra dependencies. Web3's archive spans multiple disciplines.",
-    "cliffhanger": "A new clue points toward the next part of the journey.",
+    "ending": "The player traces a simulated cross-network transfer, checks the bridge's role and identifies a fake interface. The team records both what worked and the extra trust assumptions the bridge introduced.",
+    "cliffhanger": "The networks disagree on some details, but the bigger decision belongs to the people funding the next upgrade. The DAO has called a vote.",
     "safeSimulationRequired": true
   },
   {
@@ -2671,30 +2750,30 @@ const RAW_MISSIONS = [
         "id": "m23-panel-2",
         "type": "dialogue",
         "speaker": "Seun",
-        "text": "A vote is only useful if members understand the proposal."
+        "text": "The proposal says 'improve the ecosystem'. That sounds lovely. It still doesn't tell members how much it costs or who will deliver the work."
       },
       {
         "id": "m23-panel-3",
         "type": "dialogue",
         "speaker": "Dorcas",
-        "text": "Make the treasury and trade-offs visible before asking people to choose."
+        "text": "Read the budget, the execution steps and the limits. A vote can pass and still fail if nobody checks whether the rules were followed."
       }
     ],
     "dialogue": [
       {
         "id": "m23-dialogue-1",
         "speaker": "Seun",
-        "text": "A vote is only useful if members understand the proposal."
+        "text": "The proposal says 'improve the ecosystem'. That sounds lovely. It still doesn't tell members how much it costs or who will deliver the work."
       },
       {
         "id": "m23-dialogue-2",
         "speaker": "Dorcas",
-        "text": "Make the treasury and trade-offs visible before asking people to choose."
+        "text": "Read the budget, the execution steps and the limits. A vote can pass and still fail if nobody checks whether the rules were followed."
       },
       {
-        "id": "m23-dialogue-player",
+        "id": "m23-dialogue-3",
         "speaker": "PLAYER",
-        "text": "Show me the evidence. I'll work through it step by step."
+        "text": "I'll compare the trade-offs and who benefits, then cast a test vote based on the proposal—not pressure from the loudest person."
       }
     ],
     "learningObjectives": [
@@ -2759,8 +2838,8 @@ const RAW_MISSIONS = [
       "m23_complete"
     ],
     "nextMissionId": "m24",
-    "ending": "DAO members confront the gap between collecting funds and remaining accountable to the people who fund them.",
-    "cliffhanger": "A new clue points toward the next part of the journey.",
+    "ending": "The player reviews the treasury and proposal, casts a simulated vote and explains the outcome alongside participation and execution limits. The group sees that accountability does not end when voting closes.",
+    "cliffhanger": "Before the approved work ships, Joe and Mike find a serious vulnerability in the release candidate. The team wants to launch anyway.",
     "safeSimulationRequired": true
   },
   {
@@ -2788,30 +2867,30 @@ const RAW_MISSIONS = [
         "id": "m24-panel-2",
         "type": "dialogue",
         "speaker": "Joe",
-        "text": "We found a serious issue. Don't bury it to protect the launch date."
+        "text": "I reproduced the vulnerability twice. It is not a cosmetic warning, and the evidence is clear enough that we need to stop the release."
       },
       {
         "id": "m24-panel-3",
         "type": "dialogue",
         "speaker": "Mike",
-        "text": "Document the impact, fix it, and verify the patch in a safe test."
+        "text": "Then write it so another engineer can reproduce it, assess who could be affected, and prepare a responsible disclosure. Don't publish an exploit that puts users at risk."
       }
     ],
     "dialogue": [
       {
         "id": "m24-dialogue-1",
         "speaker": "Joe",
-        "text": "We found a serious issue. Don't bury it to protect the launch date."
+        "text": "I reproduced the vulnerability twice. It is not a cosmetic warning, and the evidence is clear enough that we need to stop the release."
       },
       {
         "id": "m24-dialogue-2",
         "speaker": "Mike",
-        "text": "Document the impact, fix it, and verify the patch in a safe test."
+        "text": "Then write it so another engineer can reproduce it, assess who could be affected, and prepare a responsible disclosure. Don't publish an exploit that puts users at risk."
       },
       {
-        "id": "m24-dialogue-player",
+        "id": "m24-dialogue-3",
         "speaker": "PLAYER",
-        "text": "Show me the evidence. I'll work through it step by step."
+        "text": "We'll document the impact, agree on a safe fix and retest the exact failure before anyone calls the release ready."
       }
     ],
     "learningObjectives": [
@@ -2876,8 +2955,8 @@ const RAW_MISSIONS = [
       "m24_complete"
     ],
     "nextMissionId": "m25",
-    "ending": "The launch is delayed until the vulnerability is fixed and verified. The finding matches a pattern in the Web3 archive.",
-    "cliffhanger": "A new clue points toward the next part of the journey.",
+    "ending": "The player prioritizes a simulated vulnerability, prepares a responsible disclosure and verifies the patch in a test environment. The launch waits until the evidence supports a safe release.",
+    "cliffhanger": "During the review, a creator asks a deceptively simple question: if someone buys a digital collectible, what rights did they actually buy?",
     "safeSimulationRequired": false
   },
   {
@@ -2905,30 +2984,30 @@ const RAW_MISSIONS = [
         "id": "m25-panel-2",
         "type": "dialogue",
         "speaker": "Gbemi",
-        "text": "What does the buyer actually own when they buy this collectible?"
+        "text": "Someone bought my collectible and now says they own the art, the commercial rights and every future version. That's not what I meant to sell."
       },
       {
         "id": "m25-panel-3",
         "type": "dialogue",
         "speaker": "FemiY",
-        "text": "Write the licence so nobody has to guess what rights transfer."
+        "text": "Then the terms need to say exactly what the buyer receives, what stays with you, and how resale or royalties work. A token can't silently rewrite a licence."
       }
     ],
     "dialogue": [
       {
         "id": "m25-dialogue-1",
         "speaker": "Gbemi",
-        "text": "What does the buyer actually own when they buy this collectible?"
+        "text": "Someone bought my collectible and now says they own the art, the commercial rights and every future version. That's not what I meant to sell."
       },
       {
         "id": "m25-dialogue-2",
         "speaker": "FemiY",
-        "text": "Write the licence so nobody has to guess what rights transfer."
+        "text": "Then the terms need to say exactly what the buyer receives, what stays with you, and how resale or royalties work. A token can't silently rewrite a licence."
       },
       {
-        "id": "m25-dialogue-player",
+        "id": "m25-dialogue-3",
         "speaker": "PLAYER",
-        "text": "Show me the evidence. I'll work through it step by step."
+        "text": "Let's read the actual terms, list the rights and rewrite the unclear parts before another buyer makes the same assumption."
       }
     ],
     "learningObjectives": [
@@ -2994,8 +3073,8 @@ const RAW_MISSIONS = [
       "m25_complete"
     ],
     "nextMissionId": "m26",
-    "ending": "The creators clarify what buyers receive and which rights remain with the original creators.",
-    "cliffhanger": "A new clue points toward the next part of the journey.",
+    "ending": "The player checks the fictional collectible's licence, identifies the rights it grants and clarifies creator revenue limitations. The creators publish terms that say what buyers receive without promising rights the token cannot provide.",
+    "cliffhanger": "The corrected terms are added to the archive. An old repository nearby contains the code behind one of the clues—and its contributors have stopped talking.",
     "safeSimulationRequired": false
   },
   {
@@ -3023,30 +3102,30 @@ const RAW_MISSIONS = [
         "id": "m26-panel-2",
         "type": "dialogue",
         "speaker": "Softstorm",
-        "text": "This repository has outlived the original team, but its purpose is still here."
+        "text": "Look at this repository. The code is still here, but the last issue has been sitting unanswered for months. People say they want open source; then nobody wants to review a small fix."
       },
       {
         "id": "m26-panel-3",
         "type": "dialogue",
         "speaker": "IamAbdul",
-        "text": "The old notes say Web3 connects people, skills, and products—not just one app."
+        "text": "Open source isn't 'take whatever you want'. Check the licence, read the contribution guide, make a focused change and let people review it. Credit matters."
       }
     ],
     "dialogue": [
       {
         "id": "m26-dialogue-1",
         "speaker": "Softstorm",
-        "text": "This repository has outlived the original team, but its purpose is still here."
+        "text": "Look at this repository. The code is still here, but the last issue has been sitting unanswered for months. People say they want open source; then nobody wants to review a small fix."
       },
       {
         "id": "m26-dialogue-2",
         "speaker": "IamAbdul",
-        "text": "The old notes say Web3 connects people, skills, and products—not just one app."
+        "text": "Open source isn't 'take whatever you want'. Check the licence, read the contribution guide, make a focused change and let people review it. Credit matters."
       },
       {
-        "id": "m26-dialogue-player",
+        "id": "m26-dialogue-3",
         "speaker": "PLAYER",
-        "text": "Show me the evidence. I'll work through it step by step."
+        "text": "I'll pick a small issue, document the change and invite review. Better one useful contribution than a giant promise nobody can check."
       }
     ],
     "learningObjectives": [
@@ -3113,8 +3192,8 @@ const RAW_MISSIONS = [
       "web3_archive_fragment"
     ],
     "nextMissionId": "m27",
-    "ending": "Softstorm and IamAbdul reveal that Web3 was designed as an ecosystem of people, skills and products, not a single app.",
-    "cliffhanger": "The player now has enough context to connect the archive's missing pieces.",
+    "ending": "The player finds a scoped issue, improves documentation and proposes a reviewable contribution. Softstorm and IamAbdul show how shared work depends on clear licences, credit and collaboration.",
+    "cliffhanger": "The repository history contains a reference to the same archive. Joe_Sef and Larai may be able to connect it with the evidence collected across the journey.",
     "safeSimulationRequired": false
   },
   {
@@ -3142,30 +3221,30 @@ const RAW_MISSIONS = [
         "id": "m27-panel-2",
         "type": "dialogue",
         "speaker": "Joe_Sef",
-        "text": "You have clues from different states. Now connect the evidence."
+        "text": "We've got the screenshots, transaction traces, product notes and repository history. Don't force them into one story just because you want to finish."
       },
       {
         "id": "m27-panel-3",
         "type": "dialogue",
         "speaker": "Larai",
-        "text": "Put the pieces together, but leave any claim you cannot support unresolved."
+        "text": "Build the timeline. Mark what each source proves, where records disagree, and what remains uncertain. Then connect the people and skills behind each piece."
       }
     ],
     "dialogue": [
       {
         "id": "m27-dialogue-1",
         "speaker": "Joe_Sef",
-        "text": "You have clues from different states. Now connect the evidence."
+        "text": "We've got the screenshots, transaction traces, product notes and repository history. Don't force them into one story just because you want to finish."
       },
       {
         "id": "m27-dialogue-2",
         "speaker": "Larai",
-        "text": "Put the pieces together, but leave any claim you cannot support unresolved."
+        "text": "Build the timeline. Mark what each source proves, where records disagree, and what remains uncertain. Then connect the people and skills behind each piece."
       },
       {
-        "id": "m27-dialogue-player",
+        "id": "m27-dialogue-3",
         "speaker": "PLAYER",
-        "text": "Show me the evidence. I'll work through it step by step."
+        "text": "I'll reconstruct the archive from the evidence we have—not from what I hope the answer will be."
       }
     ],
     "learningObjectives": [
@@ -3231,8 +3310,8 @@ const RAW_MISSIONS = [
       "kitcity_destination_unlocked"
     ],
     "nextMissionId": "m28",
-    "ending": "The player connects evidence from earlier missions and reconstructs the archive. The final destination is unlocked: KitCity.",
-    "cliffhanger": "The archive reveals the road to KitCity.",
+    "ending": "The player assembles a timeline, resolves contradictions where the evidence allows and maps the roles represented across the journey. The archive reveals a route to KitCity.",
+    "cliffhanger": "The map points to a final field challenge in Kogi. The player must combine several skills instead of solving one isolated quiz.",
     "safeSimulationRequired": false
   },
   {
@@ -3260,30 +3339,30 @@ const RAW_MISSIONS = [
         "id": "m28-panel-2",
         "type": "dialogue",
         "speaker": "Unique",
-        "text": "Show us how the skills work together on one real problem."
+        "text": "The challenge looks complicated because you're trying to solve it all at once. First tell us what problem the people actually have."
       },
       {
         "id": "m28-panel-3",
         "type": "dialogue",
         "speaker": "Christol",
-        "text": "The final map is yours when your solution stands up to testing."
+        "text": "Then choose the smallest safe prototype that tests your idea. Give each teammate a clear job, check the hand-off and show what the test proved."
       }
     ],
     "dialogue": [
       {
         "id": "m28-dialogue-1",
         "speaker": "Unique",
-        "text": "Show us how the skills work together on one real problem."
+        "text": "The challenge looks complicated because you're trying to solve it all at once. First tell us what problem the people actually have."
       },
       {
         "id": "m28-dialogue-2",
         "speaker": "Christol",
-        "text": "The final map is yours when your solution stands up to testing."
+        "text": "Then choose the smallest safe prototype that tests your idea. Give each teammate a clear job, check the hand-off and show what the test proved."
       },
       {
-        "id": "m28-dialogue-player",
+        "id": "m28-dialogue-3",
         "speaker": "PLAYER",
-        "text": "Show me the evidence. I'll work through it step by step."
+        "text": "I'll start with the problem, match the work to the right skills and build only enough to test the idea."
       }
     ],
     "learningObjectives": [
@@ -3348,8 +3427,8 @@ const RAW_MISSIONS = [
       "m28_complete"
     ],
     "nextMissionId": "m29",
-    "ending": "The player combines product, technology, user needs and communication into one practical solution. A map to KitCity is handed over.",
-    "cliffhanger": "A new clue points toward the next part of the journey.",
+    "ending": "The player coordinates a simulated team, builds a small safe prototype and presents the evidence. Unique and Christol hand over the final route because the player has learned to connect skills to a real problem.",
+    "cliffhanger": "The road ends at KitCity's gate. The people inside have seen plenty of visitors arrive with claims; Craftore wants to see what this player can actually do.",
     "safeSimulationRequired": false
   },
   {
@@ -3379,35 +3458,35 @@ const RAW_MISSIONS = [
         "id": "m29-panel-2",
         "type": "dialogue",
         "speaker": "Softstorm",
-        "text": "KitCity isn't a shortcut. It's where your learning gets put to the test."
+        "text": "You made it. The city is full of people building, researching, trading, creating and teaching. Don't walk in thinking one job or one token explains the whole place."
       },
       {
         "id": "m29-panel-3",
         "type": "dialogue",
         "speaker": "White Coach",
-        "text": "Choose a path you can demonstrate, not one that only sounds impressive."
+        "text": "Before we give you a desk, find out where you can contribute. You can explore the districts, talk to the people doing the work and choose a path worth practising."
       }
     ],
     "dialogue": [
       {
         "id": "m29-dialogue-1",
         "speaker": "Softstorm",
-        "text": "KitCity isn't a shortcut. It's where your learning gets put to the test."
+        "text": "You made it. The city is full of people building, researching, trading, creating and teaching. Don't walk in thinking one job or one token explains the whole place."
       },
       {
         "id": "m29-dialogue-2",
         "speaker": "White Coach",
-        "text": "Choose a path you can demonstrate, not one that only sounds impressive."
+        "text": "Before we give you a desk, find out where you can contribute. You can explore the districts, talk to the people doing the work and choose a path worth practising."
       },
       {
         "id": "m29-dialogue-3",
         "speaker": "Craftore",
-        "text": "Craftore: The evidence from this mission will help connect the Web3 story."
+        "text": "And don't worry about impressing me with big words. Show me what you've learned, what you can do, and what you still need to work on."
       },
       {
-        "id": "m29-dialogue-player",
+        "id": "m29-dialogue-4",
         "speaker": "PLAYER",
-        "text": "Show me the evidence. I'll work through it step by step."
+        "text": "I came here looking for answers. I want to find the work I can contribute to—and earn my place by doing it."
       }
     ],
     "learningObjectives": [
@@ -3465,8 +3544,8 @@ const RAW_MISSIONS = [
       "m29_complete"
     ],
     "nextMissionId": "m30",
-    "ending": "Softstorm welcomes the player to KitCity and challenges them to choose a professional path and demonstrate practical ability.",
-    "cliffhanger": "A new clue points toward the next part of the journey.",
+    "ending": "Softstorm welcomes the player to KitCity, while White Coach introduces the city's different disciplines and Craftore asks the player to choose a practical direction.",
+    "cliffhanger": "Craftore opens the assessment hall. The challenge will adapt to the player's chosen specialization, and the evidence must come from their own work.",
     "safeSimulationRequired": false
   },
   {
@@ -3504,55 +3583,55 @@ const RAW_MISSIONS = [
         "id": "m30-panel-2",
         "type": "dialogue",
         "speaker": "Softstorm",
-        "text": "Your assessment is about what you can demonstrate today."
+        "text": "You have seen how these skills connect. Now pick one path and do the work. You are allowed to ask questions; you are not allowed to pretend you did something you didn't."
       },
       {
         "id": "m30-panel-3",
         "type": "dialogue",
         "speaker": "IamAbdul",
-        "text": "You don't need to master every profession. Pick a path, do the work, and learn from feedback."
+        "text": "Read the brief, check the criteria, build or analyse safely, and show your evidence. If it fails, the feedback is part of the task—not a reason to hide the result."
       }
     ],
     "dialogue": [
       {
         "id": "m30-dialogue-1",
         "speaker": "Softstorm",
-        "text": "Your assessment is about what you can demonstrate today."
+        "text": "You have seen how these skills connect. Now pick one path and do the work. You are allowed to ask questions; you are not allowed to pretend you did something you didn't."
       },
       {
         "id": "m30-dialogue-2",
         "speaker": "IamAbdul",
-        "text": "You don't need to master every profession. Pick a path, do the work, and learn from feedback."
+        "text": "Read the brief, check the criteria, build or analyse safely, and show your evidence. If it fails, the feedback is part of the task—not a reason to hide the result."
       },
       {
         "id": "m30-dialogue-3",
         "speaker": "Joe_Sef",
-        "text": "Joe_Sef: The evidence from this mission will help connect the Web3 story."
+        "text": "I will check whether the reasoning matches the evidence. A confident explanation cannot rescue a result that doesn't work."
       },
       {
         "id": "m30-dialogue-4",
         "speaker": "Larai",
-        "text": "Larai: The evidence from this mission will help connect the Web3 story."
+        "text": "And explain it so another person can follow your thinking. Clear communication is part of doing the work well."
       },
       {
         "id": "m30-dialogue-5",
         "speaker": "Unique",
-        "text": "Unique: The evidence from this mission will help connect the Web3 story."
+        "text": "If your path involves wallets or assets, keep it in the sandbox and protect private information."
       },
       {
         "id": "m30-dialogue-6",
         "speaker": "Christol",
-        "text": "Christol: The evidence from this mission will help connect the Web3 story."
+        "text": "Make the smallest change that tests the idea, then run the test again. Don't confuse more code with a better result."
       },
       {
         "id": "m30-dialogue-7",
         "speaker": "Craftore",
-        "text": "Craftore: The evidence from this mission will help connect the Web3 story."
+        "text": "No perfect-person test here. Show the work, take the feedback and improve it."
       },
       {
-        "id": "m30-dialogue-player",
+        "id": "m30-dialogue-8",
         "speaker": "PLAYER",
-        "text": "Show me the evidence. I'll work through it step by step."
+        "text": "I'll choose a direction, complete the practical task and let the evidence speak. If I miss something, I'll fix it."
       }
     ],
     "learningObjectives": [
@@ -3616,8 +3695,8 @@ const RAW_MISSIONS = [
       "m30_complete"
     ],
     "nextMissionId": "m31",
-    "ending": "The player passes a specialization-based practical assessment, or receives actionable feedback and retries. The practitioner profile records demonstrated work, not external accreditation.",
-    "cliffhanger": "A new clue points toward the next part of the journey.",
+    "ending": "The player completes a specialization-based practical assessment, reviews feedback and retries when needed. The practitioner record reflects demonstrated work and improvement—not a job offer or external accreditation.",
+    "cliffhanger": "The mentors gather for one last conversation. They have watched the player change; now the player must decide what to carry forward.",
     "safeSimulationRequired": false
   },
   {
@@ -3655,55 +3734,55 @@ const RAW_MISSIONS = [
         "id": "m31-panel-2",
         "type": "dialogue",
         "speaker": "Softstorm",
-        "text": "When you began, Web3 was just a word you didn't understand."
+        "text": "Remember that morning in Lagos? A screenshot nearly settled an argument until you learned to ask where the money actually went."
       },
       {
         "id": "m31-panel-3",
         "type": "dialogue",
         "speaker": "IamAbdul",
-        "text": "Now you know how to find answers, build skills, and work with people."
+        "text": "Then you learned to check a wallet, trace records, test code and protect people. None of those skills worked alone; each needed someone willing to ask a better question."
       }
     ],
     "dialogue": [
       {
         "id": "m31-dialogue-1",
         "speaker": "Softstorm",
-        "text": "When you began, Web3 was just a word you didn't understand."
+        "text": "Remember that morning in Lagos? A screenshot nearly settled an argument until you learned to ask where the money actually went."
       },
       {
         "id": "m31-dialogue-2",
         "speaker": "IamAbdul",
-        "text": "Now you know how to find answers, build skills, and work with people."
+        "text": "Then you learned to check a wallet, trace records, test code and protect people. None of those skills worked alone; each needed someone willing to ask a better question."
       },
       {
         "id": "m31-dialogue-3",
         "speaker": "Joe_Sef",
-        "text": "Joe_Sef: The evidence from this mission will help connect the Web3 story."
+        "text": "The archive was never a secret shortcut. It was evidence of people solving different problems and leaving work others could inspect."
       },
       {
         "id": "m31-dialogue-4",
         "speaker": "Larai",
-        "text": "Larai: The evidence from this mission will help connect the Web3 story."
+        "text": "The important part is what you do with that knowledge now. You can keep learning, build something useful, teach someone else or help a team work better."
       },
       {
         "id": "m31-dialogue-5",
         "speaker": "Unique",
-        "text": "Unique: The evidence from this mission will help connect the Web3 story."
+        "text": "And stay curious. Knowing how to check something is more valuable than pretending you already know everything."
       },
       {
         "id": "m31-dialogue-6",
         "speaker": "Christol",
-        "text": "Christol: The evidence from this mission will help connect the Web3 story."
+        "text": "Keep the work reviewable. Build, test, learn and leave the next person a clearer starting point."
       },
       {
         "id": "m31-dialogue-7",
         "speaker": "Craftore",
-        "text": "Craftore: The evidence from this mission will help connect the Web3 story."
+        "text": "KitCity stays open. The story ends here, but your contribution doesn't have to."
       },
       {
-        "id": "m31-dialogue-player",
+        "id": "m31-dialogue-8",
         "speaker": "PLAYER",
-        "text": "Show me the evidence. I'll work through it step by step."
+        "text": "I came in not knowing much. Now I know how to ask questions, check evidence and choose what I want to build next."
       }
     ],
     "learningObjectives": [
@@ -3762,8 +3841,8 @@ const RAW_MISSIONS = [
       "main_story_complete"
     ],
     "nextMissionId": null,
-    "ending": "The Web3 mystery is resolved: the journey connected people and skills across the ecosystem. The city stays open for new adventures.",
-    "cliffhanger": "A new message appears: “We've got something new to build.”",
+    "ending": "The mentors connect the clues from the entire journey: Web3 is not one app or one career, but a network of people, products, skills and responsibilities. The player receives a practitioner record and can continue exploring KitCity.",
+    "cliffhanger": "A new message appears on the city board: “We've got something new to build.” The next adventure is yours to choose.",
     "safeSimulationRequired": false
   }
 ];
