@@ -2787,6 +2787,15 @@ function choosePlayerIdentity(done){
     P.name=name;P.appearance=style;applyPlayerAppearance(style);save();done();
   }
 }
+function showStoryJournal(){
+  const entries=Array.isArray(P.storyJournal)?P.storyJournal.slice().reverse():[];
+  const esc=v=>String(v==null?"":v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  const rows=entries.length?entries.slice(0,10).map(e=>'<div style="padding:8px 0;border-bottom:1px solid #e2d4ad"><b>'+esc(e.title)+'</b><div style="font-size:11px;opacity:.8">'+esc(e.state)+' · '+esc(e.chapterId)+'</div>'+(e.artifact?'<div style="font-size:12px;margin-top:3px">Artifact: '+esc(e.artifact)+'</div>':'')+'</div>').join(''):'<p>Your journey journal is empty. Complete the first story scene to start collecting clues and artifacts.</p>';
+  const skills=(P.storySkills||[]).map(esc).join(" · ")||"No skills unlocked yet";
+  const artifacts=(P.storyArtifacts||[]).map(esc).join(" · ")||"No artifacts collected yet";
+  const flags=Object.keys(P.storyFlags||{}).length;
+  openSheet('<div style="border:3px solid #20232a;border-radius:12px;padding:14px;background:#fff7d6;color:#20232a;box-shadow:4px 4px 0 #20232a"><div style="font-size:10px;letter-spacing:2px;font-weight:900">KITCITY COMICS · JOURNEY LOG</div><h2 style="margin:6px 0">Your Journey Journal</h2><p style="font-size:12px">Story clues saved: <b>'+flags+'</b> · Story XP: <b>'+(Number(P.storyXP)||0)+'</b></p><h3 style="margin:12px 0 4px">Recent discoveries</h3>'+rows+'<h3 style="margin:12px 0 4px">Artifacts</h3><p style="font-size:12px">'+artifacts+'</p><h3 style="margin:12px 0 4px">Skills</h3><p style="font-size:12px">'+skills+'</p></div>',[{t:"Close journal",f:closeSheet},{t:"Back to hub",g:1,f:exitToHub}]);
+}
 function briefing(){
   const m=G.m;
   if(m.story&&m.story.id==="tc-01"&&(!P.appearance||!P.name)){choosePlayerIdentity(showChapterBriefing);return;}
@@ -2824,6 +2833,7 @@ function completeMission(){
   clearGroup(missionGroup);colliders.length=cityCols;smoke=[];ents=[];goal=null;beacon.visible=false;
   hubCity=next?next.city:m.city;
   const btns=[];
+  if(m.story)btns.push({t:'Journey journal',f:showStoryJournal});
   if(cityComplete)btns.push({t:'Collect city badge',f:()=>showCityBadge(m.city,()=>next?startMission(next.id):exitToHub())});
   if(next)btns.push({t:next.city!==m.city?'Continue to '+CITIES[next.city].name:'Next: '+next.title,f:()=>startMission(next.id)});
   btns.push({t:'Back to hub',g:1,f:exitToHub});
