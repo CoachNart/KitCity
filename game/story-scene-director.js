@@ -1,5 +1,5 @@
 const SPEAKER_LABELS = {
-  Softstorm: 'THE ONE WITH THE CARD',
+  Softstorm: 'SOFTSTORM',
   IamAbdul: 'THE ONE WHO HEARD IT FIRST',
 };
 
