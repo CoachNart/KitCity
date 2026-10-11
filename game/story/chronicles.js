@@ -3546,6 +3546,15 @@ export const STATE_ROUTE = STORY_ROUTE_ORDER.map((state, index) => {
   });
 });
 
+export const FIRST_ENCOUNTER_ORDER = Object.freeze((() => {
+  const seen = new Set();
+  const ordered = [];
+  MISSIONS.forEach((mission) => mission.npcs.forEach((name) => {
+    if (!seen.has(name)) { seen.add(name); ordered.push(name); }
+  }));
+  return ordered;
+})());
+
 export const MISSION_BY_ID = Object.freeze(Object.fromEntries(MISSIONS.map((mission) => [mission.id, mission])));
 
 export function getNextMission(completedIds = []) {
@@ -3566,6 +3575,7 @@ export function validateChronicles() {
   });
   const names = new Set(CHARACTER_ORDER);
   if (names.size !== 50) errors.push("Expected 50 unique supplied character names.");
+  if (FIRST_ENCOUNTER_ORDER.length !== CHARACTER_ORDER.length || FIRST_ENCOUNTER_ORDER.some((name, index) => name !== CHARACTER_ORDER[index])) errors.push("First story encounters must follow the supplied 50-character order.");
   if (NIGERIAN_STATES.length !== 36 || NIGERIAN_STATES.includes("Federal Capital Territory") || STORY_ROUTE_ORDER.length !== 36 || new Set(STORY_ROUTE_ORDER).size !== 36 || STORY_ROUTE_ORDER.some((state) => !NIGERIAN_STATES.includes(state))) errors.push("State route must cover all 36 states exactly once and exclude FCT.");
   const covered = new Set(MISSIONS.map((mission) => mission.state));
   const plannedStateCoverage = STATE_ROUTE.map((stop) => ({ ...stop, coveredByMission: covered.has(stop.state) }));
