@@ -704,3 +704,56 @@ html.kitcity-story-active #modal{
   .comic-hint{max-width:42%;font-size:8px}
   .comic-next{padding:10px 11px;font-size:10px}
 }
+
+
+/* Story-first mission card and cleaner in-world objective HUD */
+#mission{
+  max-width:min(68vw,300px);padding:11px 13px;
+  background:rgba(7,15,23,.84);border:1px solid rgba(0,229,255,.38);
+  border-radius:12px;box-shadow:0 12px 30px rgba(0,0,0,.24);
+}
+#mTitle{font:900 13px/1.2 system-ui,-apple-system,"Segoe UI",sans-serif;letter-spacing:.015em}
+#steps{gap:5px}
+#steps li{font-size:11px;line-height:1.3;opacity:.66}
+#steps li::before{border-color:rgba(0,229,255,.75);border-radius:50%;width:10px;height:10px}
+#steps li.now{color:#fff}
+#steps li.done::before{background:var(--brand)}
+#sheet.chronicle-briefing{
+  padding:0 0 14px;background:#f4f7f9;border:1px solid rgba(0,229,255,.55);
+  border-radius:16px;box-shadow:0 22px 70px rgba(0,0,0,.45);overflow-x:hidden;
+}
+#sheet.chronicle-briefing .chronicle-briefing-head{
+  padding:18px 17px 16px;background:#07111a;color:#f4fbff;
+  border-bottom:3px solid var(--brand);
+}
+.chronicle-eyebrow{display:block;color:var(--brand);font:900 9px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.13em;margin-bottom:8px}
+.chronicle-briefing-head>small{display:block;color:rgba(255,255,255,.58);font:800 10px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.08em}
+#sheet.chronicle-briefing .chronicle-briefing-head h3{font:900 clamp(24px,6vw,32px)/1.05 var(--display);letter-spacing:.005em;margin:8px 0 9px}
+#sheet.chronicle-briefing .chronicle-briefing-head p{font-size:14px;line-height:1.5;color:rgba(255,255,255,.84);margin:0}
+.chronicle-first-objective{margin:14px 14px 12px;padding:13px 14px;border:1px solid #b8eaf0;border-left:4px solid #0099ad;border-radius:9px;background:#e8fbfd}
+.chronicle-first-objective small{display:block;font:900 9px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.12em;color:#006c7a}
+.chronicle-first-objective b{display:block;margin:5px 0 4px;font-size:16px;line-height:1.3;color:#101a20}
+.chronicle-first-objective span{display:block;font-size:12px;line-height:1.45;color:#40545c}
+.chronicle-checklist{margin:0 14px;padding:13px 13px 9px;background:#fff;border:1px solid #dce4e8;border-radius:9px}
+.chronicle-checklist-title{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;font-size:11px}
+.chronicle-checklist-title b{font:900 10px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.09em}
+.chronicle-checklist-title span{font-size:11px;color:#53636b}
+.chronicle-checklist ul{list-style:none;display:grid;gap:7px}
+.chronicle-checklist li{display:grid;grid-template-columns:25px 1fr;align-items:start;gap:8px;font-size:13px;line-height:1.4;color:#25343a}
+.chronicle-checklist li>span{display:grid;place-items:center;width:23px;height:23px;border:1px solid #c5d0d5;border-radius:50%;font:800 10px system-ui;color:#52636a}
+.chronicle-checklist li.current>span{background:#00d5eb;border-color:#00a9bc;color:#07111a}
+.chronicle-checklist li.done>span{background:#07111a;border-color:#07111a;color:#00e5ff}
+.chronicle-checklist li.done b{color:#75828a;text-decoration:line-through}
+.chronicle-controls{margin:12px 16px 2px!important;padding:10px 11px;border-radius:7px;background:#e6ecef;font-size:11px;line-height:1.55;color:#43545c}
+.chronicle-controls b{color:#14242c}
+#sheet.chronicle-briefing .row{padding:0 14px;margin-top:12px}
+#sheet.chronicle-briefing .row .btn:first-child{background:#07111a;color:#00e5ff;border-color:#07111a}
+#sheet.chronicle-briefing .row .btn.ghost{border-color:#c6d2d8;color:#26373e;background:transparent}
+@media (max-width:380px){
+  #mission{max-width:65vw;padding:8px 9px}
+  #mTitle{font-size:12px}
+  #steps li{font-size:10px}
+  #sheet.chronicle-briefing .chronicle-briefing-head{padding:16px 14px 13px}
+  .chronicle-first-objective,.chronicle-checklist{margin-left:10px;margin-right:10px}
+  #sheet.chronicle-briefing .row{padding:0 10px}
+}
