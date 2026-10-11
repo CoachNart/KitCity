@@ -941,3 +941,9 @@ html.kitcity-story-active #modal{
 @media(prefers-reduced-motion:reduce){
   .kitcity-intro-card,.kitcity-speech-bubble{animation:none!important}
 }
+
+/* Keep the cinematic readable without removing mobile movement controls. */
+.kitcity-intro-active #mission,
+.kitcity-intro-active #side,
+.kitcity-intro-active #lives,
+.kitcity-intro-active #toast{visibility:hidden!important;}
