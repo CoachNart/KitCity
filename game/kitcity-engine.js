@@ -2720,13 +2720,14 @@ function startMission(id,restart){
     S.phase='play'; closeSheet(); Snd.setMode('play'); lastLoc=''; resetPlayer();
     $('#loading').classList.add('hidden');
     updateHUD();
-    if(m.id==='m01'&&!P.chroniclesPrologueSeen){
+    if(m.id==='m01'&&P.chroniclesPrologueVersion!==2){
       missionGroup.visible=false;
       storyCastGroup.visible=true;
       storyDirector.playOpening(()=>{
         storyCastGroup.visible=false;
         missionGroup.visible=true;
         P.chroniclesPrologueSeen=true;
+        P.chroniclesPrologueVersion=2;
         save();
         loadStep();
         toast('Your turn. Walk up to someone and press Talk when you are ready.',{duration:3600});
