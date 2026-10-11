@@ -38,6 +38,7 @@ export function createStorySceneDirector({ camera, player, getCharacter, animate
   let nextBtn = null;
   let reduceMotion = false;
   let lastAdvanceAt = 0;
+  let autoAdvanceAt = 0;
 
   function ensureOverlay() {
     if (overlay) return;
@@ -162,9 +163,17 @@ export function createStorySceneDirector({ camera, player, getCharacter, animate
     }
     choicesEl.classList.toggle('hidden', !panel.choices);
     nextBtn.classList.toggle('hidden', !!panel.choices);
-    nextBtn.textContent = panel.finish ? 'ENTER THE STORY →' : 'NEXT PANEL →';
+    nextBtn.textContent = panel.finish ? 'ENTER THE STORY →' : 'TAP TO CONTINUE →';
     cameraGoal = shotFor(panel.shot);
     startedAt = performance.now();
+    // Cinematic panels advance on their own; dialogue stays up long enough to read.
+    const textLength = (panel.text || panel.caption || '').length;
+    const holdMs = panel.choices ? 0
+      : panel.finish ? 3600
+      : panel.speaker ? Math.min(7200, Math.max(3000, 1900 + textLength * 42))
+      : panel.shot === 'wide' ? 2600
+      : Math.min(5200, Math.max(3000, 2100 + textLength * 34));
+    autoAdvanceAt = holdMs ? startedAt + holdMs : 0;
     frame.classList.remove('panel-enter');
     void frame.offsetWidth;
     frame.classList.add('panel-enter');
@@ -197,6 +206,7 @@ export function createStorySceneDirector({ camera, player, getCharacter, animate
     if (overlay) overlay.classList.add('hidden');
     setModal(false);
     cameraGoal = null;
+    autoAdvanceAt = 0;
     if (onComplete) {
       const done = onComplete;
       onComplete = null;
@@ -210,6 +220,7 @@ export function createStorySceneDirector({ camera, player, getCharacter, animate
     active = true;
     panelIndex = 0;
     lastAdvanceAt = 0;
+    autoAdvanceAt = 0;
     document.body.classList.add('kitcity-story-active');
     document.documentElement.classList.add('kitcity-story-active');
     setModal(true);
@@ -230,11 +241,25 @@ export function createStorySceneDirector({ camera, player, getCharacter, animate
     const other = lead === cast.softstorm ? cast.abdul : cast.softstorm;
     if (lead && other) {
       const a = worldPosition(lead), b = worldPosition(other);
-      if (a && b) lead.rotation.y = Math.atan2(b.x - a.x, b.z - a.z);
-      if (animateCharacter) animateCharacter(lead, time * 2.4, .16, -.025);
+      // Keep the pair facing each other and frame both, rather than cutting to an isolated NPC.
+      if (a && b) {
+        lead.rotation.y = Math.atan2(b.x - a.x, b.z - a.z);
+        other.rotation.y = Math.atan2(a.x - b.x, a.z - b.z);
+      }
+      if (animateCharacter) {
+        animateCharacter(lead, time * 2.4, .16, -.025);
+        animateCharacter(other, time * 1.35, .045, 0);
+      }
       const u = lead.userData || {};
-      if (u.armR && u.armR.sh) u.armR.sh.rotation.z = Math.sin(time * 2.4) * .28 - .35;
-      if (other && animateCharacter) animateCharacter(other, time * 1.2, .035, 0);
+      if (u.armR && u.armR.sh) u.armR.sh.rotation.z = Math.sin(time * 2.4) * .22 - .22;
+      if (u.head) u.head.rotation.y = Math.sin(time * 1.8) * .08;
+      const listener = other.userData || {};
+      if (listener.head) listener.head.rotation.y = Math.sin(time * 1.3 + .7) * .09;
+    }
+    // Non-choice panels continue after their reading beat; choices intentionally pause.
+    if (autoAdvanceAt && performance.now() >= autoAdvanceAt) {
+      autoAdvanceAt = 0;
+      advance();
     }
     const hero = player;
     if (hero && panelIndex === 4 && animateCharacter) animateCharacter(hero, time * 1.4, .04, 0);
