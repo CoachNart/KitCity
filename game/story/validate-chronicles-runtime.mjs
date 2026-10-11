@@ -44,7 +44,8 @@ requireText("const objectiveSpots=['ledger','screenshot','shopdesk','buyer','b',
 requireText("if(st.kind==='character'){", "NPC conversations are placed at their own world locations");
 requireText("else if(st.kind==='clue'||st.kind==='challenge'){", "investigation tasks are placed at their own world locations");
 requireText("if(m.id==='m01'&&st.kind==='character'&&G.i<m.characterStepCount)", "Lagos Mission 1's bespoke flow remains intact");
-requireText("const entity=placeStoryClue(st,SPOTS[st.spot]||SPOTS.execution)", "objective-specific world prop placement instead of a shared workstation");
+requireText("placeMissionEvidence(st,m,SPOTS[st.spot]||SPOTS.execution)", "objective-specific physical props instead of one repeated board");
+requireText("function placeMissionEvidence(def,mission,spot)", "mission-specific world evidence props");
 requireText("document.createTreeWalker(hubBody,NodeFilter.SHOW_TEXT)", "retired Web3 focus text cleanup");
 requireText("if(hubTab==='missions') hubBody.querySelectorAll('.card:not(.mission-card),article:not(.mission-card)')", "state mission lists remove every non-canonical legacy card");
 if (/sandbox|simulated|simulation|simulator|fictional practice record/i.test(engine)) errors.push("Player-facing sandbox/simulation disclaimer remains in the mission runtime.");
