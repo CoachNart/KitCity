@@ -126,10 +126,15 @@ if (engine.includes("else if(hubTab==='cityhub')") || engine.includes("else if(h
 if (styles.includes(".comic-scene{") || styles.includes("#sheet.chronicle-briefing{")) {
   errors.push("Retired comic/briefing UI styles remain beside the current mission implementation.");
 }
+if (engine.includes("WEB3 FOCUS") || engine.includes("web3-focus") || styles.includes(".web3-focus")) {
+  errors.push("Retired Web3 focus labels or styles remain in the mission UI.");
+}
+if (!engine.includes("discard any orphaned or duplicate legacy cards")) {
+  errors.push("Mission hub must remove orphaned and duplicate legacy cards after rendering.");
+}
 for (const responsiveRule of [
   "#hubBody .mission-card .ch b",
   "#hubBody .mission-card .ch small",
-  "#hubBody .mission-card .web3-focus",
   "#hubBody .mission-card .cf",
   "overflow-wrap:anywhere",
   "flex-wrap:wrap"
