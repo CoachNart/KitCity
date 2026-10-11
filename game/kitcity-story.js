@@ -3,6 +3,45 @@
  * Narrative data is deliberately separate from the Three.js engine.
  * All finance, wallet and contract interactions described here are sandbox-only.
  */
+const STATE_STORY_BEATS = {
+  "Abia":"A makers' market introduces the player to creators who sell work online and protect attribution.",
+  "Adamawa":"A remote contributor explains how online teams coordinate across distance and unreliable connections.",
+  "Akwa Ibom":"A small creator collective tests a digital membership idea with local users before launch.",
+  "Anambra":"A busy trading hub shows how community trust grows through clear onboarding and useful support.",
+  "Bauchi":"A governance meeting reveals how treasury decisions affect real contributors.",
+  "Bayelsa":"A coastal logistics team traces a payment record and checks the source before acting.",
+  "Benue":"A cooperative tests a product workflow and discovers why user feedback beats assumptions.",
+  "Borno":"A community safety volunteer demonstrates how to verify urgent requests without exposing vulnerable people.",
+  "Cross River":"An AI research group checks a confident report against original data.",
+  "Delta":"A market analyst teaches the player to record risk and learn from a losing trade.",
+  "Ebonyi":"A small team documents a process so the next contributor can reproduce it.",
+  "Edo":"A startup compares funding offers and investigates claims about tokenized assets.",
+  "Ekiti":"A simulated swap shows how liquidity, fees and approvals change the real cost.",
+  "Enugu":"A live event and an educational post show how clear communication connects builders to users.",
+  "Gombe":"A digital marketplace checks provenance and product claims before publishing a listing.",
+  "Imo":"An open-source group reviews a small change and tests it before accepting the contribution.",
+  "Jigawa":"A mobile-first service team investigates a suspicious support message and protects its users.",
+  "Kaduna":"A contributor workshop compares network fees and checks transaction evidence.",
+  "Kano":"A product team improves a confusing app and rejects a fake growth offer.",
+  "Katsina":"A research desk separates documented protocol facts from promotional claims.",
+  "Kebbi":"A cross-border trade group compares records and checks the recipient before a simulated transfer.",
+  "Kogi":"The final route map emerges as different clues begin pointing toward KitCity.",
+  "Kwara":"A small startup turns a broad idea into a testable user problem.",
+  "Lagos":"Two neighbours introduce Web3, and a T3Kit contact card starts the mystery.",
+  "Nasarawa":"A researcher compares project documentation and notes what remains unverified.",
+  "Niger":"The player returns to an abandoned repository and finds the earliest T3Kit design note.",
+  "Ogun":"A builder explains why a reproducible bug report is more useful than a vague complaint.",
+  "Ondo":"A partnership proposal is reviewed for audience fit, incentives and measurable value.",
+  "Osun":"A startup learns to investigate user needs and test smart-contract changes safely.",
+  "Oyo":"A wallet lesson and an old ledger teach the player to protect secrets and follow evidence.",
+  "Plateau":"The player turns learning into a credible profile, portfolio and first contribution.",
+  "Rivers":"A shipping and payments team checks a simulated exchange workflow before publishing an update.",
+  "Sokoto":"A community campaign is reviewed for real participation rather than inflated numbers.",
+  "Taraba":"A remote builder tests a cross-network workflow and documents what could fail.",
+  "Yobe":"A security volunteer turns a confusing incident into clear steps people can follow.",
+  "Zamfara":"A final regional contact contributes one last archive fragment before the journey converges."
+};
+
 export const T3KIT_CHRONICLES = {
   id: "t3kit-chronicles",
   title: "The Journey Across Nigeria",
@@ -19,7 +58,7 @@ export const T3KIT_CHRONICLES = {
   },
   stateJourney: [
     ["Abia","aba"],["Adamawa","yola"],["Akwa Ibom","uyo"],["Anambra","onitsha"],["Bauchi","bauchi"],["Bayelsa","yenagoa"],["Benue","makurdi"],["Borno","maiduguri"],["Cross River","calabar"],["Delta","warri"],["Ebonyi","abakaliki"],["Edo","benin"],["Ekiti","adoekiti"],["Enugu","enugu"],["Gombe","gombe"],["Imo","owerri"],["Jigawa","dutse"],["Kaduna","kaduna"],["Kano","kano"],["Katsina","katsina"],["Kebbi","birnin-kebbi"],["Kogi","lokoja"],["Kwara","ilorin"],["Lagos","lagos"],["Nasarawa","lafia"],["Niger","minna"],["Ogun","abeokuta"],["Ondo","akure"],["Osun","osogbo"],["Oyo","ibadan"],["Plateau","jos"],["Rivers","ph"],["Sokoto","sokoto"],["Taraba","jalingo"],["Yobe","damaturu"],["Zamfara","gusau"]
-  ].map(([state, cityKey], i) => ({ order: i + 1, state, cityKey, stopId: "state-" + String(i + 1).padStart(2, "0") })),
+  ].map(([state, cityKey], i) => ({ order: i + 1, state, cityKey, stopId: "state-" + String(i + 1).padStart(2, "0"), storyBeat: STATE_STORY_BEATS[state] })),
   characterOrder: [
     "Softstorm","IamAbdul","Joe_Sef","Larai","Unique","Smrt huntr","Goodness","Semi","Blockqueen","Christol",
     "Laloba","BigSam","LunaX","OxNight","Moon","The Cryptonian","Joseph Nnadi","The Don","Praise","Toza",
