@@ -52,7 +52,7 @@ export function createStorySceneDirector({ camera, player, getCharacter, animate
     overlay.setAttribute('aria-modal', 'true');
     overlay.setAttribute('aria-label', 'KitCity story scene');
     overlay.innerHTML = `
-      <div class="comic-scene-top"><span class="comic-brand">KITCITY <i>·</i> THE T3KIT CHRONICLES</span><button type="button" class="comic-skip">SKIP SCENE ↗</button></div>
+      <div class="comic-scene-top"><span class="comic-brand">KITCITY <i>·</i> THE ROAD AHEAD</span><button type="button" class="comic-skip">SKIP SCENE ↗</button></div>
       <div class="comic-scene-frame">
         <div class="comic-frame-stamp">CHAPTER 01 · LAGOS</div>
         <div class="comic-card-symbol" aria-hidden="true"><span> T3 </span><b>KIT</b></div>
