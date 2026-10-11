@@ -757,3 +757,64 @@ html.kitcity-story-active #modal{
   .chronicle-first-objective,.chronicle-checklist{margin-left:10px;margin-right:10px}
   #sheet.chronicle-briefing .row{padding:0 10px}
 }
+
+
+/* Chronicles conversation card: a new visual system, no legacy chat bubbles. */
+#modal:has(#sheet.chronicle-dialogue-card){
+  align-items:flex-end;
+  padding:0 10px calc(12px + env(safe-area-inset-bottom));
+  background:linear-gradient(180deg,rgba(2,8,14,.08),rgba(2,8,14,.74));
+  backdrop-filter:blur(3px);
+}
+#sheet.chronicle-dialogue-card{
+  width:min(100%,620px);max-width:620px;max-height:min(48dvh,440px);
+  overflow-y:auto;padding:0 0 12px;margin:0 auto;
+  color:#f4fbff;background:#07131f;
+  border:1px solid rgba(0,229,255,.48);border-top:3px solid #00e5ff;
+  border-radius:20px 20px 12px 12px;
+  box-shadow:0 -14px 55px rgba(0,0,0,.42),0 0 0 1px rgba(0,229,255,.08);
+  touch-action:pan-y;
+}
+.chronicle-talk-head{
+  display:flex;align-items:center;gap:11px;padding:14px 15px 12px;
+  background:linear-gradient(115deg,#102b3a,#0a1724 72%);
+  border-bottom:1px solid rgba(255,255,255,.1);
+}
+.chronicle-talk-avatar{
+  display:grid;place-items:center;flex:none;width:46px;height:46px;
+  border-radius:14px;border:1px solid var(--npc-accent,#00e5ff);
+  background:color-mix(in srgb,var(--npc-accent,#00e5ff) 22%,#07131f);
+  color:#fff;font:950 21px/1 system-ui,sans-serif;
+  box-shadow:inset 0 0 18px rgba(255,255,255,.05);
+}
+.chronicle-talk-identity{min-width:0;flex:1}
+.chronicle-talk-identity small{display:block;color:#00e5ff;font:900 9px/1.4 ui-monospace,monospace;letter-spacing:.13em}
+#sheet.chronicle-dialogue-card .chronicle-talk-identity h3{
+  margin:3px 0 2px;color:#fff;font:900 22px/1.08 system-ui,sans-serif;letter-spacing:-.025em;
+}
+.chronicle-talk-identity span{display:block;color:#b5c8d2;font-size:11px;line-height:1.35}
+.chronicle-talk-mark{
+  flex:none;padding:6px 7px;border:1px solid rgba(0,229,255,.55);border-radius:6px;
+  color:#00e5ff;font:950 10px/1 ui-monospace,monospace;letter-spacing:.04em;
+}
+.chronicle-talk-body{padding:15px 16px 4px}
+.chronicle-talk-speaker{display:block;margin-bottom:8px;color:#7feefa;font:900 10px/1.25 ui-monospace,monospace;letter-spacing:.12em}
+.chronicle-talk-line{color:#f3f8fb;font:550 clamp(15px,4vw,18px)/1.55 system-ui,-apple-system,sans-serif;overflow-wrap:anywhere}
+.chronicle-talk-line p{margin:0 0 8px!important;color:#f3f8fb!important}
+.chronicle-talk-line b,.chronicle-talk-line strong{color:#8ff5ff}
+#sheet.chronicle-dialogue-card .row{display:grid;grid-template-columns:1fr;gap:8px;margin:12px 14px 0}
+#sheet.chronicle-dialogue-card .row .btn{
+  justify-content:space-between;min-height:46px;padding:11px 13px;
+  border:1px solid rgba(0,229,255,.45)!important;border-radius:10px;
+  background:#102735!important;color:#f4fbff!important;
+  box-shadow:none!important;font:750 14px/1.35 system-ui,sans-serif;text-align:left;
+}
+#sheet.chronicle-dialogue-card .row .btn:first-child{background:#00dff4!important;color:#06131b!important;border-color:#00dff4!important}
+#sheet.chronicle-dialogue-card .row .btn:after{content:"↗";margin-left:10px;font-weight:950}
+#sheet.chronicle-dialogue-card .row .btn:active{transform:scale(.99)}
+#sheet.chronicle-dialogue-card .row .btn:focus-visible{outline:3px solid #fff;outline-offset:2px}
+@media(min-width:700px){
+ #modal:has(#sheet.chronicle-dialogue-card){align-items:flex-end;padding-bottom:24px}
+ #sheet.chronicle-dialogue-card{max-height:42vh}
+ #sheet.chronicle-dialogue-card .row{grid-template-columns:1fr 1fr}
+}
