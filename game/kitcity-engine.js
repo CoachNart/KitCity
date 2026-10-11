@@ -611,7 +611,7 @@ const SPOTS={
   a:{x:10,z:-30,f:-1}, b:{x:-10,z:-105,f:1}, c:{x:80,z:-35,f:-1}, d:{x:60,z:-105,f:1},
   e:{x:-80,z:-35,f:1}, f:{x:-60,z:-105,f:-1}, g:{x:10,z:-175,f:-1}, h:{x:-10,z:-175,f:1},
   i:{x:150,z:-35,f:-1}, j:{x:130,z:-175,f:1}, k:{x:-150,z:-35,f:1}, l:{x:-130,z:-175,f:-1},
-  m:{x:80,z:35,f:-1}, n:{x:-80,z:105,f:1}, o:{x:10,z:175,f:-1}, story:{x:24,z:-32,f:1}, x1:{x:60,z:-105,f:1}, shopdesk:{x:7,z:-37,f:1}, screenshot:{x:18,z:-38,f:-1}, buyer:{x:30,z:-30,f:-1}, ledger:{x:8,z:-22,f:1}
+  m:{x:80,z:35,f:-1}, n:{x:-80,z:105,f:1}, o:{x:10,z:175,f:-1}, story:{x:-95,z:-35,f:1}, x1:{x:60,z:-105,f:1}, shopdesk:{x:10,z:85,f:1}, screenshot:{x:80,z:-35,f:-1}, buyer:{x:130,z:105,f:-1}, ledger:{x:-150,z:105,f:1}
 };
 const special=Object.keys(SPOTS).map(k=>SPOTS[k]).concat([SPAWN]);
 const nearSpecial=(x,z,d)=>special.some(s=>Math.hypot(s.x-x,s.z-z)<d);
@@ -2026,10 +2026,8 @@ function buildStall(def,spot){
   const sp=label(tr(def.sign||def.name),def.signBg,def.signFg); sp.position.set(x,8.4,z); missionGroup.add(sp);
   if(o.sub){ const s2=label(tr(o.sub),'#ffffff',INK,1.25); s2.position.set(x,6.4,z); missionGroup.add(s2); }
   const att=buildPerson(def.look); att.userData.storyCharacter=def.name; att.userData.storyRole=def.role;
-  if(G&&G.m&&G.m.id==='m01'&&(def.name==='Softstorm'||def.name==='IamAbdul')){
-    /* Stage the opening pair together in front of their separate stalls for the comic scene. */
-    const soft=def.name==='Softstorm'; att.position.set(soft?15:19,.05,-22.5); att.rotation.y=soft?Math.PI/2:-Math.PI/2;
-  }else{ att.position.set(x+1.6*face,.05,z+4.9*face); att.rotation.y=face>0?Math.PI/2:-Math.PI/2; }
+  /* Keep every character at their own world anchor; the opening-only actors handle the shared cinematic. */
+  att.position.set(x+1.6*face,.05,z+4.9*face); att.rotation.y=face>0?Math.PI/2:-Math.PI/2;
   missionGroup.add(att);
   if(o.grill){
     const gx=x+2.3*face;
@@ -2547,7 +2545,7 @@ const MISSIONS=CHRONICLE_MISSIONS.map((story,index)=>{
       {
         kind:'character',id:'m01-join-dispute',label:'Find out what happened',spot:'a',npc:STORY_NPCS.Softstorm,
         run(){
-          talk(STORY_NPCS.Softstorm,"<p><b>SOFTSTORM:</b> You weren't joking about helping. I owe you breakfast if we sort this out.</p><p><b>PLAYER:</b> So, where do we start?</p><p><b>SOFTSTORM:</b> Ask Abdul. He knows how to trace a transfer. I'll keep the laptop here till we know where that money went.</p>",[
+          talk(STORY_NPCS.Softstorm,"<p><b>SOFTSTORM:</b> You heard the argument. I can't make sense of that screenshot, and I'm not risking the laptop on it.</p><p><b>PLAYER:</b> So wetin I fit do?</p><p><b>SOFTSTORM:</b> Go meet Abdul at his office, far side of the block. He understands this tech better than me. I'll stay here and keep the laptop safe.</p>",[
             {t:"I'm on it. Let's check the evidence.",f:()=>{G.evidence.joined_dispute=true;finishStep();}}
           ]);
         }
@@ -2555,7 +2553,7 @@ const MISSIONS=CHRONICLE_MISSIONS.map((story,index)=>{
       {
         kind:'character',id:'m01-ask-abdul',label:'Ask IamAbdul how to verify it',spot:'story',npc:STORY_NPCS.IamAbdul,
         run(){
-          talk(STORY_NPCS.IamAbdul,"<p><b>IAMABDUL:</b> Good. Here's the plan: compare the screenshot with the shop's own records. If the payment isn't there, we'll need the transaction hash and check where it actually went.</p><p><b>PLAYER:</b> So first we compare what he claims with what the shop received?</p><p><b>IAMABDUL:</b> Exactly. Start with the screenshot, then we'll check the shop records.</p>",[
+          talk(STORY_NPCS.IamAbdul,"<p><b>IAMABDUL:</b> You haven't done this before, abi? No wahala. I'll walk you through it. First, we compare the screenshot with the shop's own records. If nothing landed, we ask the buyer for the transaction hash and network, then check the destination.</p><p><b>PLAYER:</b> I no even know where to start.</p><p><b>IAMABDUL:</b> That's why we're doing it together. Start by looking closely at what he sent.</p>",[
             {t:"Got it. Let's inspect the screenshot.",f:()=>{G.evidence.knows_verification_steps=true;finishStep();}},
             {t:"A successful screenshot should be enough.",f:()=>talk(STORY_NPCS.IamAbdul,"<p><b>IAMABDUL:</b> The screenshot is only a claim. We still need to compare its details with the shop's own records.</p>",[{t:"Fine. Show me what to check.",f:()=>{G.evidence.knows_verification_steps=true;finishStep();}}])}
           ]);
@@ -2564,7 +2562,7 @@ const MISSIONS=CHRONICLE_MISSIONS.map((story,index)=>{
       {
         kind:'clue',id:'m01-screenshot',label:'Inspect the buyer’s payment screenshot',spot:'screenshot',title:'Payment screenshot',sign:'CHECK SCREENSHOT',
         run(){
-          talk(STORY_NPCS.Softstorm,"<p>The screenshot claims <b>120 USDC · Successful</b>. Look closely: it still doesn't tell us whether the money reached this shop.</p><p><b>PLAYER:</b> E look real sha. But we need to match it with the shop's records.</p>",[
+          talk(STORY_NPCS.Softstorm,"<p>Zoom in: the screenshot shows <b>120 USDC · Successful</b>. But this picture doesn't show a destination address we can compare. You can't tell where the money landed from this alone.</p><p><b>PLAYER:</b> So the green tick no tell us who receive am?</p>",[
             {t:"Compare it with the shop's payment records.",f:()=>{G.evidence.screenshot_inspected=true;finishStep();}},
             {t:"That green tick proves the payment arrived.",f:()=>talk(STORY_NPCS.Softstorm,"<p>A green tick on a screenshot only tells us what the picture claims. Let's compare it with the shop's account before we decide.</p>",[{t:"Check the shop's payment records.",f:()=>{G.evidence.screenshot_inspected=true;finishStep();}}])}
           ]);
@@ -2591,9 +2589,9 @@ const MISSIONS=CHRONICLE_MISSIONS.map((story,index)=>{
       {
         kind:'clue',id:'m01-transaction-record',label:'Verify the transaction destination',spot:'ledger',title:'Public transaction record',sign:'VERIFY TX',
         run(){
-          talk(STORY_NPCS.IamAbdul,"<p><b>SIMULATED PUBLIC RECORD</b></p><p>Status: Confirmed<br>Amount: 120 USDC<br>Network: Base test environment<br>Recipient: <b>0x73A…2B1</b><br>Shop's expected address: <b>0x91C…7F0</b></p><p>The transaction is confirmed, but the recipient address does not match the shop's address. This practice record is fictional; no real funds or blockchain are involved.</p>",[
+          talk(STORY_NPCS.IamAbdul,"<p><b>VERIFICATION CENTRE · PRACTICE RECORD</b></p><p>Abdul points out each field as you check it:<br>Status: Confirmed<br>Amount: 120 USDC<br>Network: Base test environment<br>Recipient: <b>0x73A…2B1</b><br>Shop's expected address: <b>0x91C…7F0</b></p><p>Compare the last part of the recipient address with the shop's saved address. They don't match. The transaction succeeded, but it went to a different address. This is a fictional practice record; no real funds or blockchain are involved.</p>",[
             {t:"It was sent to the wrong address. Don't release the laptop.",f:()=>{G.evidence.transaction_checked=true;G.evidence.recipient_mismatch=true;finishStep();}},
-            {t:"It's confirmed, so the shop has been paid.",f:()=>talk(STORY_NPCS.IamAbdul,"<p>Confirmed means the network processed that transaction. It does not mean this shop received it. Compare the recipient address before deciding.</p>",[{t:"The recipient doesn't match. Hold the laptop.",f:()=>{G.evidence.transaction_checked=true;G.evidence.recipient_mismatch=true;finishStep();}}])}
+            {t:"It's confirmed, so the shop has been paid.",f:()=>talk(STORY_NPCS.IamAbdul,"<p>Not quite. ‘Confirmed’ describes the transaction, not whether this shop received it. Check the destination against the shop's saved address, then tell me what you notice.</p>",[{t:"The addresses don't match. Hold the laptop.",f:()=>{G.evidence.transaction_checked=true;G.evidence.recipient_mismatch=true;finishStep();}}])}
           ]);
         }
       },
@@ -2698,6 +2696,11 @@ function loadStep(){
   }else{
     const entity=st.kind==='clue'?placeStoryClue(st,SPOTS[st.spot]):placeNPC(st.npc,SPOTS[st.spot]);
     entity.talk=()=>st.run(); entity.active=()=>true; ents.push(entity); goal=entity;
+    if(m.id==='m01'&&st.id==='m01-transaction-record'){
+      /* Abdul meets the player at the separate verification centre for the guided check. */
+      const guide=placeNPC(STORY_NPCS.IamAbdul,SPOTS[st.spot]);
+      guide.active=()=>false; guide.talk=()=>{}; ents.push(guide);
+    }
   }
   for(const ex of (m.extras||[])){
     if(G.used[ex.id]) continue;
