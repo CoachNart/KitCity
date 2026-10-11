@@ -538,177 +538,6 @@ html,body{height:100%;overflow:hidden;background:var(--ink);color:var(--ink);fon
 
 
 /* ===================== KitCity comic-story director ===================== */
-/* The cinematic owns the screen: hide gameplay controls instead of letting them show through its transparent panels. */
-body.kitcity-story-active #hud,
-html.kitcity-story-active #hud,
-body.kitcity-story-active #modal,
-html.kitcity-story-active #modal{
-  display:none!important;
-}
-.comic-scene{
-  --comic-cyan:#00E5FF;--comic-ink:#07111A;position:fixed;inset:0;z-index:160;
-  display:flex;flex-direction:column;justify-content:space-between;gap:10px;
-  padding:calc(12px + env(safe-area-inset-top)) 12px calc(12px + env(safe-area-inset-bottom));
-  color:#F4FBFF;background:linear-gradient(180deg,rgba(3,9,16,.08) 0%,rgba(3,9,16,.08) 38%,rgba(3,9,16,.7) 55%,rgba(3,9,16,.97) 100%);
-  pointer-events:auto;overflow:hidden;isolation:isolate;
-}
-.comic-scene:before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:.12;background-image:radial-gradient(#fff .65px,transparent .65px);background-size:5px 5px;mask-image:linear-gradient(transparent,black)}
-.comic-scene-top{display:flex;align-items:center;justify-content:space-between;gap:10px;position:relative;z-index:2}
-.comic-brand{font:900 10px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.13em;color:#fff;text-shadow:0 2px 8px #000}
-.comic-brand i{color:var(--comic-cyan);font-style:normal}
-.comic-skip{border:1px solid rgba(255,255,255,.36);border-radius:999px;padding:8px 11px;background:rgba(3,10,17,.55);color:#fff;font:800 9px system-ui;letter-spacing:.08em;cursor:pointer}
-.comic-scene-frame{position:absolute;inset:8% 4% 25%;overflow:hidden;pointer-events:none;border:2px solid rgba(255,255,255,.88);border-radius:4px;background:linear-gradient(135deg,rgba(0,15,26,.12),rgba(0,15,26,.02));box-shadow:5px 6px 0 rgba(0,0,0,.5),0 0 0 1px rgba(0,229,255,.3);transition:border-color .2s,box-shadow .2s}
-.comic-scene-frame:after{content:"";position:absolute;inset:0;background:linear-gradient(135deg,transparent 46%,rgba(0,229,255,.14) 46.2%,transparent 47%),linear-gradient(0deg,rgba(0,0,0,.26),transparent 44%);mix-blend-mode:screen}
-.comic-frame-stamp{position:absolute;right:10px;top:10px;z-index:2;padding:6px 8px;background:var(--comic-cyan);color:#04121A;border:2px solid #04121A;box-shadow:2px 2px 0 #fff;font:900 9px ui-monospace,monospace;letter-spacing:.08em;transform:rotate(3deg)}
-.comic-caption{position:absolute;left:12px;right:12px;bottom:12px;z-index:3;max-width:560px;padding:12px 13px;background:#fff;color:#101820;border:2px solid #101820;box-shadow:3px 3px 0 rgba(0,0,0,.75);clip-path:polygon(0 0,100% 0,100% 90%,97% 100%,0 100%)}
-.comic-kicker{display:block;margin-bottom:5px;color:#007D8D;font:900 9px/1.2 ui-monospace,monospace;letter-spacing:.15em;text-transform:uppercase}
-.comic-caption-text{font:800 clamp(13px,3.7vw,17px)/1.35 system-ui,sans-serif;letter-spacing:-.02em}
-.comic-dialogue{position:relative;z-index:3;margin-top:auto;width:100%;max-width:760px;max-height:27vh;overflow-y:auto;overscroll-behavior:contain;align-self:center;padding:10px 11px 8px;background:#F8FBFC;color:#101820;border:3px solid #07111A;box-shadow:5px 6px 0 rgba(0,0,0,.62),0 0 0 1px rgba(0,229,255,.6);clip-path:none;border-radius:5px}
-.comic-dialogue:before{content:"";position:absolute;top:-11px;left:24px;width:18px;height:18px;transform:rotate(45deg);background:#F8FBFC;border-left:3px solid #07111A;border-top:3px solid #07111A}
-.comic-dialogue-meta{position:relative;display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px}
-.comic-speaker{font:900 10px/1.2 ui-monospace,monospace;letter-spacing:.12em;color:#008697;text-transform:uppercase}
-.comic-counter{font:800 10px ui-monospace,monospace;color:#64727B}
-.comic-dialogue-text{font:750 clamp(14px,3.8vw,18px)/1.3 system-ui,sans-serif;letter-spacing:-.02em;min-height:0}
-.comic-choices{display:grid;grid-template-columns:1fr;gap:8px;margin-top:13px}
-.comic-choice{min-height:46px;text-align:left;padding:10px 13px;background:#07111A;color:#F8FBFC;border:2px solid #07111A;box-shadow:3px 3px 0 var(--comic-cyan);font:800 13px/1.3 system-ui;cursor:pointer}
-.comic-choice:after{content:" ↗";color:var(--comic-cyan)}
-.comic-actions{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:8px;padding-top:7px;border-top:1px solid rgba(7,17,26,.14)}
-.comic-hint{font:800 8px/1.3 ui-monospace,monospace;letter-spacing:.09em;color:#77858D}
-.comic-next{position:relative;z-index:5;flex:none;min-height:38px;padding:0 12px;background:var(--comic-cyan);color:#07111A;border:2px solid #07111A;box-shadow:3px 3px 0 #07111A;font:900 10px system-ui;cursor:pointer;touch-action:manipulation;pointer-events:auto}
-.comic-card-symbol{position:absolute;left:50%;top:45%;transform:translate(-50%,-50%) rotate(-8deg) scale(.7);display:flex;flex-direction:column;align-items:center;justify-content:center;width:clamp(112px,30vw,180px);aspect-ratio:3/4;border:4px solid #07111A;outline:2px solid #fff;outline-offset:4px;background:linear-gradient(145deg,#00E5FF,#B9FBFF 55%,#fff);color:#07111A;box-shadow:8px 10px 0 rgba(0,0,0,.5);opacity:0;transition:transform .5s cubic-bezier(.2,.9,.2,1),opacity .35s}
-.comic-card-symbol span{font:900 clamp(24px,7vw,42px)/1 ui-monospace,monospace;letter-spacing:-.1em}
-.comic-card-symbol b{margin-top:4px;font:900 13px ui-monospace,monospace;letter-spacing:.3em}
-.comic-scene.has-card .comic-card-symbol{opacity:1;transform:translate(-50%,-50%) rotate(-8deg) scale(1)}
-.comic-scene.has-card .comic-scene-frame{border-color:var(--comic-cyan);box-shadow:0 0 0 3px rgba(0,229,255,.18),7px 8px 0 rgba(0,0,0,.6)}
-.comic-scene[data-shot="conversation"] .comic-caption{display:none}
-.comic-scene[data-shot="conversation"] .comic-scene-frame{inset:8% 4% 27%;background:transparent}
-.comic-scene[data-shot="conversation"] .comic-frame-stamp{opacity:.72}
-.comic-scene[data-shot="abdul"] .comic-scene-frame{clip-path:polygon(0 0,100% 0,98% 100%,0 96%)}
-.comic-scene[data-shot="softstorm"] .comic-scene-frame{clip-path:polygon(2% 0,100% 2%,100% 100%,0 100%)}
-@media(max-width:699px) and (orientation:portrait){
- .comic-scene{height:100vh;height:100dvh;min-height:100svh;padding:calc(8px + env(safe-area-inset-top)) 9px calc(8px + env(safe-area-inset-bottom));gap:6px;justify-content:flex-start}
- .comic-scene-top{flex:0 0 auto;min-height:30px}
- .comic-scene-frame{inset:8% 3% 39%}
- .comic-scene[data-shot="conversation"] .comic-scene-frame{inset:8% 3% 39%}
- .comic-dialogue{width:100%;max-height:36dvh;min-height:0;margin-top:auto;padding:9px 10px 8px;flex:0 0 auto;overflow-y:auto;clip-path:none;border-radius:5px}
- .comic-dialogue:before{display:none}
- .comic-dialogue-meta{margin-bottom:5px}
- .comic-dialogue-text{font-size:14px;line-height:1.28;overflow-wrap:anywhere}
- .comic-actions{flex-wrap:nowrap;gap:6px;margin-top:7px;padding-top:6px}
- .comic-hint{font-size:6.5px;letter-spacing:.035em;min-width:0}
- .comic-next{min-height:38px;padding:0 8px;font-size:9px;white-space:nowrap}
- .comic-choices{margin-top:8px;gap:6px}
- .comic-choice{min-height:40px;padding:8px 10px;font-size:12px}
-}
-.comic-scene[data-shot="player"] .comic-caption{left:8%;right:8%;transform:rotate(-1deg)}
-.comic-scene[data-shot="clue"] .comic-frame-stamp{background:#F6B21A;transform:rotate(-4deg)}
-.comic-scene .panel-enter{animation:comic-panel-enter .32s cubic-bezier(.2,.8,.2,1) both}
-.comic-scene .dialogue-enter{animation:comic-dialogue-enter .24s ease-out both}
-@keyframes comic-panel-enter{from{opacity:.5;transform:scale(1.025) translateY(5px)}to{opacity:1;transform:scale(1) translateY(0)}}
-@keyframes comic-dialogue-enter{from{opacity:.5;transform:translateY(9px)}to{opacity:1;transform:translateY(0)}}
-@media(min-width:700px){
- .comic-scene{padding:18px 22px 20px}
- .comic-scene-frame{inset:7% 13% 23%}
- .comic-caption{left:20px;right:auto;bottom:20px;width:min(65%,570px);padding:16px 18px}
- .comic-dialogue{padding:16px 20px 12px;max-height:27vh}
- .comic-choices{grid-template-columns:1fr 1fr}
- .comic-dialogue-text{max-width:64ch}
-}
-@media(max-height:560px){
- .comic-scene{gap:5px;padding-top:calc(6px + env(safe-area-inset-top));padding-bottom:calc(6px + env(safe-area-inset-bottom))}
- .comic-scene-frame{inset:8% 8% 32%}
- .comic-dialogue{padding:8px 11px 7px;max-height:31vh}
- .comic-dialogue-text{font-size:15px;line-height:1.25}
- .comic-actions{margin-top:7px;padding-top:6px}
- .comic-choice{min-height:38px;padding:7px 10px}
- .comic-next{min-height:35px}
- .comic-hint{font-size:7px}
-}
-@media(prefers-reduced-motion:reduce){
- .comic-scene-frame,.comic-card-symbol{transition:none}
- .comic-scene .panel-enter,.comic-scene .dialogue-enter{animation:none}
-}
-
-
-/* Story-first cinematic UI refresh */
-.comic-scene{
-  --comic-cyan:#00E5FF;
-  padding:calc(12px + env(safe-area-inset-top)) 12px calc(10px + env(safe-area-inset-bottom));
-  background:linear-gradient(180deg,rgba(4,10,16,.08) 0%,rgba(4,10,16,.02) 36%,rgba(4,10,16,.42) 52%,rgba(4,10,16,.94) 100%);
-  gap:12px;
-}
-.comic-scene-top{flex:none;z-index:4}
-.comic-brand{font-size:10px;letter-spacing:.1em}
-.comic-skip{min-height:38px;padding:8px 12px;font-size:10px;letter-spacing:.04em}
-.comic-scene-frame{
-  inset:calc(58px + env(safe-area-inset-top)) 12px 40%;
-  border:1px solid rgba(255,255,255,.76);
-  border-radius:12px 12px 4px 4px;
-  background:linear-gradient(135deg,rgba(0,229,255,.045),rgba(4,10,16,.015));
-  box-shadow:0 0 0 1px rgba(0,229,255,.12),0 12px 32px rgba(0,0,0,.2);
-}
-.comic-frame-stamp{top:10px;left:10px;padding:5px 8px;border-radius:4px;background:rgba(4,10,16,.72);font-size:9px;letter-spacing:.1em}
-.comic-card-symbol{opacity:.22;transform:translate(-50%,-54%) scale(.8)}
-.comic-caption{
-  left:12px;right:12px;bottom:12px;max-width:560px;
-  padding:12px 14px;background:rgba(4,10,16,.76);
-  border:1px solid rgba(255,255,255,.17);border-left:3px solid var(--comic-cyan);
-  border-radius:8px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
-}
-.comic-caption small{font:900 9px/1.3 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.12em;color:var(--comic-cyan)}
-.comic-caption p{margin-top:5px;font-size:clamp(13px,3.6vw,17px);line-height:1.4;font-weight:650}
-.comic-dialogue{
-  position:relative;z-index:3;flex:none;width:min(100%,720px);margin:0 auto 0;color:#f4fbff;
-  max-height:39dvh;overflow-y:auto;overscroll-behavior:contain;
-  padding:14px 15px calc(12px + env(safe-area-inset-bottom));
-  border:1px solid rgba(255,255,255,.18);border-top:3px solid var(--comic-cyan);
-  border-radius:14px 14px 8px 8px;background:rgba(5,13,21,.97);
-  box-shadow:0 16px 42px rgba(0,0,0,.36);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-}
-.comic-dialogue-meta{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
-.comic-speaker{font:900 10px/1.25 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.13em;color:#00e5ff}
-.comic-dialogue-text{color:#f4fbff!important;text-shadow:0 1px 1px rgba(0,0,0,.25)}
-.comic-dialogue .comic-hint{color:#b6c8d3}
-.comic-dialogue .comic-counter{color:#b6c8d3}
-.comic-counter{font:800 10px/1 ui-monospace,SFMono-Regular,Menlo,monospace;color:rgba(255,255,255,.6)}
-.comic-dialogue-text{font-size:clamp(15px,4vw,19px);line-height:1.45;font-weight:650;letter-spacing:-.01em;margin:0 0 12px}
-.comic-choices{display:grid;grid-template-columns:1fr;gap:8px;margin:10px 0 4px}
-.comic-choice{
-  width:100%;min-height:46px;text-align:left;padding:11px 13px;
-  border:1px solid rgba(0,229,255,.6);border-radius:8px;background:rgba(0,229,255,.08);
-  color:#f4fbff;font:750 14px/1.35 system-ui,-apple-system,"Segoe UI",sans-serif;cursor:pointer;
-}
-.comic-choice:after{content:" ↗";float:right;color:var(--comic-cyan)}
-.comic-choice:focus-visible,.comic-next:focus-visible,.comic-skip:focus-visible{outline:3px solid #fff;outline-offset:3px}
-.comic-actions{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:12px}
-.comic-hint{font:800 9px/1.35 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.07em;color:rgba(255,255,255,.52)}
-.comic-next{
-  flex:none;min-height:44px;padding:10px 14px;border:0;border-radius:8px;
-  background:var(--comic-cyan);color:#07111a;font:950 11px/1 system-ui,sans-serif;letter-spacing:.05em;cursor:pointer;
-}
-.comic-next:active,.comic-choice:active{transform:translateY(1px)}
-.comic-scene.has-card .comic-dialogue{border-top-color:#f6b21a}
-.comic-scene.has-card .comic-caption{border-left-color:#f6b21a}
-.comic-scene.has-choices .comic-dialogue{max-height:45dvh}
-.comic-scene [hidden]{display:none!important}
-@media (min-width:700px){
-  .comic-scene{padding:20px 24px 22px}
-  .comic-scene-frame{inset:78px 7% 34%}
-  .comic-dialogue{max-height:36vh;padding:18px 22px 16px}
-  .comic-choices{grid-template-columns:1fr 1fr}
-}
-@media (max-width:380px){
-  .comic-scene{padding-left:8px;padding-right:8px;gap:8px}
-  .comic-scene-frame{inset:calc(54px + env(safe-area-inset-top)) 8px 43%}
-  .comic-dialogue{max-height:43dvh;padding:12px 12px calc(10px + env(safe-area-inset-bottom))}
-  .comic-caption{left:8px;right:8px;bottom:8px;padding:9px 10px}
-  .comic-caption p{font-size:13px}
-  .comic-actions{align-items:flex-end}
-  .comic-hint{max-width:42%;font-size:8px}
-  .comic-next{padding:10px 11px;font-size:10px}
-}
-
-
 /* Story-first mission card and cleaner in-world objective HUD */
 #mission{
   max-width:min(68vw,300px);padding:11px 13px;
@@ -721,47 +550,6 @@ html.kitcity-story-active #modal{
 #steps li::before{border-color:rgba(0,229,255,.75);border-radius:50%;width:10px;height:10px}
 #steps li.now{color:#fff}
 #steps li.done::before{background:var(--brand)}
-#sheet.chronicle-briefing{
-  padding:0 0 14px;background:#f4f7f9;border:1px solid rgba(0,229,255,.55);
-  border-radius:16px;box-shadow:0 22px 70px rgba(0,0,0,.45);overflow-x:hidden;
-}
-#sheet.chronicle-briefing .chronicle-briefing-head{
-  padding:18px 17px 16px;background:#07111a;color:#f4fbff;
-  border-bottom:3px solid var(--brand);
-}
-.chronicle-eyebrow{display:block;color:var(--brand);font:900 9px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.13em;margin-bottom:8px}
-.chronicle-briefing-head>small{display:block;color:rgba(255,255,255,.58);font:800 10px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.08em}
-#sheet.chronicle-briefing .chronicle-briefing-head h3{font:900 clamp(24px,6vw,32px)/1.05 var(--display);letter-spacing:.005em;margin:8px 0 9px}
-#sheet.chronicle-briefing .chronicle-briefing-head p{font-size:14px;line-height:1.5;color:rgba(255,255,255,.84);margin:0}
-.chronicle-first-objective{margin:14px 14px 12px;padding:13px 14px;border:1px solid #b8eaf0;border-left:4px solid #0099ad;border-radius:9px;background:#e8fbfd}
-.chronicle-first-objective small{display:block;font:900 9px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.12em;color:#006c7a}
-.chronicle-first-objective b{display:block;margin:5px 0 4px;font-size:16px;line-height:1.3;color:#101a20}
-.chronicle-first-objective span{display:block;font-size:12px;line-height:1.45;color:#40545c}
-.chronicle-checklist{margin:0 14px;padding:13px 13px 9px;background:#fff;border:1px solid #dce4e8;border-radius:9px}
-.chronicle-checklist-title{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;font-size:11px}
-.chronicle-checklist-title b{font:900 10px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.09em}
-.chronicle-checklist-title span{font-size:11px;color:#53636b}
-.chronicle-checklist ul{list-style:none;display:grid;gap:7px}
-.chronicle-checklist li{display:grid;grid-template-columns:25px 1fr;align-items:start;gap:8px;font-size:13px;line-height:1.4;color:#25343a}
-.chronicle-checklist li>span{display:grid;place-items:center;width:23px;height:23px;border:1px solid #c5d0d5;border-radius:50%;font:800 10px system-ui;color:#52636a}
-.chronicle-checklist li.current>span{background:#00d5eb;border-color:#00a9bc;color:#07111a}
-.chronicle-checklist li.done>span{background:#07111a;border-color:#07111a;color:#00e5ff}
-.chronicle-checklist li.done b{color:#75828a;text-decoration:line-through}
-.chronicle-controls{margin:12px 16px 2px!important;padding:10px 11px;border-radius:7px;background:#e6ecef;font-size:11px;line-height:1.55;color:#43545c}
-.chronicle-controls b{color:#14242c}
-#sheet.chronicle-briefing .row{padding:0 14px;margin-top:12px}
-#sheet.chronicle-briefing .row .btn:first-child{background:#07111a;color:#00e5ff;border-color:#07111a}
-#sheet.chronicle-briefing .row .btn.ghost{border-color:#c6d2d8;color:#26373e;background:transparent}
-@media (max-width:380px){
-  #mission{max-width:65vw;padding:8px 9px}
-  #mTitle{font-size:12px}
-  #steps li{font-size:10px}
-  #sheet.chronicle-briefing .chronicle-briefing-head{padding:16px 14px 13px}
-  .chronicle-first-objective,.chronicle-checklist{margin-left:10px;margin-right:10px}
-  #sheet.chronicle-briefing .row{padding:0 10px}
-}
-
-
 /* Chronicles conversation card: a new visual system, no legacy chat bubbles. */
 #modal:has(#sheet.chronicle-dialogue-card){
   align-items:flex-end;
@@ -947,3 +735,21 @@ html.kitcity-story-active #modal{
 .kitcity-intro-active #side,
 .kitcity-intro-active #lives,
 .kitcity-intro-active #toast{visibility:hidden!important;}
+
+
+/* Single current mission-card system: readable on narrow phones and desktop. */
+#hubBody .mission-card{min-width:0;overflow:hidden}
+#hubBody .mission-card .ch{display:flex;align-items:flex-start;gap:clamp(9px,2.5vw,14px);min-width:0}
+#hubBody .mission-card .ch>div{flex:1 1 auto;min-width:0}
+#hubBody .mission-card .ch b{display:block;font-size:clamp(14px,3.8vw,17px);line-height:1.3;overflow-wrap:anywhere}
+#hubBody .mission-card .ch small{display:block;margin-top:6px;font-size:clamp(12px,3.3vw,14px);line-height:1.5;overflow-wrap:anywhere}
+#hubBody .mission-card .web3-focus{display:block;margin-top:8px;color:#8feefa;font-size:clamp(9px,2.6vw,11px);font-weight:800;line-height:1.45;letter-spacing:.045em;overflow-wrap:anywhere}
+#hubBody .mission-card .cf{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:9px;min-width:0}
+#hubBody .mission-card .cf>span{min-width:0;max-width:100%;font-size:clamp(11px,3vw,13px);line-height:1.4;overflow-wrap:anywhere}
+#hubBody .mission-card .cf .btn{flex:0 1 auto;min-width:76px;white-space:normal}
+@media(max-width:360px){
+ #hubBody .mission-card{padding:12px}
+ #hubBody .mission-card .ch{gap:8px}
+ #hubBody .mission-card .mission-medal{width:38px;height:38px}
+ #hubBody .mission-card .cf{align-items:flex-start}
+}
