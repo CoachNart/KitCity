@@ -20,11 +20,11 @@ if (!sceneDirector.includes("const OPENING_LINES = [")) errors.push("Automatic L
 if (!sceneDirector.includes("kitcity-speech-bubble")) errors.push("World-anchored speech bubbles are missing");
 requireText("Your turn. Walk up to someone and press Talk when you are ready.", "player-led interaction after intro");
 requireText("const STORY_BRIDGES={", "connected story transitions");
-requireText("const line=index===0?(STORY_BRIDGES[m.id]||chronicleNpcLine(m,name,index)):chronicleNpcLine(m,name,index)", "mission-specific spoken opening hooks");
+requireText("const line=index===0?(STORY_BRIDGES[m.id]||chronicleNpcLine(m,name,index)):(m.id==='m02'&&index===1?", "mission-specific spoken opening hooks and bespoke Lagos follow-up");
 requireText("function chronicleClueStep(m,obj,index,spot)", "conversation-led mission clue interactions");
-requireText("Talk me through what matters here.", "player engagement in execution-centre clue conversations");
+requireText("Show me the evidence that matters.", "player engagement in contextual clue conversations");
 requireText("function chronicleChallengeStep(m,obj,index,spot)", "conversation-led mission decisions");
-requireText("What are my options?", "player engagement in mission decisions");
+requireText("Let me check before I decide.", "player engagement in mission decisions");
 if (engine.includes("escapeStoryHtml(story.ending)") || engine.includes("escapeStoryHtml(story.cliffhanger)")) errors.push("Narrator-style mission wrap-up is still rendered on a conversation card.");
 requireText("function updateLivesHUD()", "three-heart life display");
 requireText("G.lives=Math.max(0", "hazard life loss");
@@ -41,6 +41,10 @@ if (/sandbox|simulated|simulation|simulator|fictional practice record/i.test(eng
 if (/sandbox|simulated|simulation|simulator|fictional/i.test(JSON.stringify(MISSIONS))) errors.push("Player-facing sandbox/simulation disclaimer remains in mission dialogue or objective copy.");
 requireText("P.storyFlags.future_direction=options[choice]", "player-owned ending choice");
 if (!engine.includes("if(m.id==='m01'&&P.chroniclesPrologueVersion!==2)")) errors.push("First-time intro cinematic gate is missing");
+const lagosFollowUp = MISSIONS.find((mission) => mission.id === "m02");
+if (!lagosFollowUp || !/transaction hash|recipient address/i.test(lagosFollowUp.narrativePurpose)) errors.push("Lagos Mission 2 must directly continue the wrong-address payment investigation.");
+if (lagosFollowUp && /internet-history exhibit|classify Web1|Web1, Web2 and Web3/i.test(JSON.stringify(lagosFollowUp))) errors.push("Disconnected generic internet-history objectives remain in Lagos Mission 2.");
+if (lagosFollowUp && !lagosFollowUp.objectives.some((objective) => /transaction explorer/i.test(objective.label))) errors.push("Lagos Mission 2 must include a transaction-explorer evidence task.");
 const lagosOpening = MISSIONS.find((mission) => mission.id === "m01");
 if (!lagosOpening || !/payment|transaction/i.test(lagosOpening.narrativePurpose)) errors.push("Lagos opening is not driven by a player-relevant payment dispute");
 if (lagosOpening && /T3Kit|t3kit/i.test(JSON.stringify(lagosOpening))) errors.push("Lagos opening still uses T3Kit as a plot device");
