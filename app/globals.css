@@ -658,7 +658,7 @@ html.kitcity-story-active #modal{
 .comic-caption small{font:900 9px/1.3 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.12em;color:var(--comic-cyan)}
 .comic-caption p{margin-top:5px;font-size:clamp(13px,3.6vw,17px);line-height:1.4;font-weight:650}
 .comic-dialogue{
-  position:relative;z-index:3;flex:none;width:min(100%,720px);margin:0 auto 0;
+  position:relative;z-index:3;flex:none;width:min(100%,720px);margin:0 auto 0;color:#f4fbff;
   max-height:39dvh;overflow-y:auto;overscroll-behavior:contain;
   padding:14px 15px calc(12px + env(safe-area-inset-bottom));
   border:1px solid rgba(255,255,255,.18);border-top:3px solid var(--comic-cyan);
@@ -666,7 +666,10 @@ html.kitcity-story-active #modal{
   box-shadow:0 16px 42px rgba(0,0,0,.36);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
 }
 .comic-dialogue-meta{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
-.comic-speaker{font:900 10px/1.25 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.13em;color:var(--comic-cyan)}
+.comic-speaker{font:900 10px/1.25 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.13em;color:#00e5ff}
+.comic-dialogue-text{color:#f4fbff!important;text-shadow:0 1px 1px rgba(0,0,0,.25)}
+.comic-dialogue .comic-hint{color:#b6c8d3}
+.comic-dialogue .comic-counter{color:#b6c8d3}
 .comic-counter{font:800 10px/1 ui-monospace,SFMono-Regular,Menlo,monospace;color:rgba(255,255,255,.6)}
 .comic-dialogue-text{font-size:clamp(15px,4vw,19px);line-height:1.45;font-weight:650;letter-spacing:-.01em;margin:0 0 12px}
 .comic-choices{display:grid;grid-template-columns:1fr;gap:8px;margin:10px 0 4px}
