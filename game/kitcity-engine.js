@@ -24,7 +24,7 @@ const bootStep=(pct,msg)=>{ if(bootProgress) bootProgress.style.width=pct+'%'; i
 bootStep(18,'Loading 3D engine…');
 if(typeof THREE==='undefined'){ bootDone(); $('#err').classList.remove('hidden'); return; }
 
-/* =====================  helpers  ===================== */
+/* ===================== helpers ===================== */
 const rand=(a,b)=>a+Math.random()*(b-a);
 const pick=a=>a[Math.floor(Math.random()*a.length)];
 const shuffle=a=>{ a=a.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); const t=a[i]; a[i]=a[j]; a[j]=t; } return a; };
@@ -36,7 +36,7 @@ const fmtN=n=>'\u20A6'+Math.round(n).toLocaleString('en-US');
 const BRAND='#00E5FF',YELLOW='#F6B21A',INK='#1B1C20',GREEN='#0B7A43',EMBER='#E4572E';
 function mulberry(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return((t^t>>>14)>>>0)/4294967296; }; }
 
-/* =====================  saved progress  ===================== */
+/* ===================== saved progress ===================== */
 const Store=(function(){
   let ls=null; const mem={};
   try{ ls=window.localStorage; ls.setItem('__kn','1'); ls.removeItem('__kn'); }catch(e){ ls=null; }
@@ -140,9 +140,9 @@ function personalize(html,mission,preferredNPC){
   return neutralizeGenderedPronouns(out);
 }
 
-/* =====================  sound (synthesised, no files)  ===================== */
+/* ===================== sound (synthesised, no files) ===================== */
 
-/* =====================  YouTube soundtrack  ===================== */
+/* ===================== YouTube soundtrack ===================== */
 const MUSIC_QUEUES={
   afrobeat:{label:'Naija Afrobeats Mix 2026',videos:['bGgjIvWj2I0']},
   'lagos':{label:"Lagos · Soundtrack",videos:["rhrCG0Vtx3g"]},
@@ -405,7 +405,7 @@ const Snd=(function(){
 })();
 window.addEventListener('pointerdown',()=>Snd.unlock());
 
-/* =====================  language: English / Naija Pidgin  ===================== */
+/* ===================== language: English / Naija Pidgin ===================== */
 const L=(en,pcm)=>P.lang==='pcm'?pcm:en;
 const PCM={
 /*PCM_BEGIN*/
@@ -429,7 +429,7 @@ function tx(html){
   return html.replace(/(^|>)([^<>]+)(?=<|$)/g,(m,a,t)=>a+tr(t));
 }
 
-/* =====================  renderer / scene  ===================== */
+/* ===================== renderer / scene ===================== */
 const renderer=new THREE.WebGLRenderer({canvas:$('#gl'),antialias:true,powerPreference:'high-performance'});
 function setPR(){ renderer.setPixelRatio(P.low?1:Math.min(window.devicePixelRatio||1,1.75)); }
 setPR();
@@ -463,7 +463,7 @@ function setShadows(){
 }
 let mgCount=-1;
 
-/* =====================  people  ===================== */
+/* ===================== people ===================== */
 const SKINS=['#8d5a3b','#6b3f26','#a8744f','#5a3421','#7a4a2e'];
 const matCache={};
 const M=c=>matCache[c]||(matCache[c]=lam(c));
@@ -589,7 +589,7 @@ const LK={
   clerk:{top:'#e9e9e9',bottom:'#2a2d3a',hair:'short',skin:'#8d5a3b',detail:true}
 };
 
-/* =====================  labels  ===================== */
+/* ===================== labels ===================== */
 function label(text,bg,fg,H0){
   const size=44,font='900 '+size+'px "BadaBoom BB","Badaboom BB",Impact,sans-serif';
   const m=document.createElement('canvas').getContext('2d'); m.font=font;
@@ -603,7 +603,7 @@ function label(text,bg,fg,H0){
   const H=H0||1.9; sp.scale.set(H*w/h,H,1); sp.renderOrder=10; return sp;
 }
 
-/* =====================  world  ===================== */
+/* ===================== world ===================== */
 const R=70;
 const colliders=[],buildings=[];
 const SPAWN={x:9.5,z:-9.5};
@@ -955,7 +955,7 @@ Object.keys(NEWC).forEach(k=>{
   const o=NEWC[k],base={h:[10,30],fog:[95,250],bridges:[],bump:10,pud:8,oka:5,pal:{danfo:['#F6B21A','#1B1C20'],keke:['#F6B21A','#1B1C20'],sedan:['#E9E4DA','#2b2b30','#8a8d93','#C8402A','#2D6FB3'],stripe:null}};
   const c=Object.assign({},base,o); c.signs=CITIES.lagos.signs.slice(0,9).concat(o.more||[]); CITIES[k]=c;
 });
-/* =====================  KitCity LOOK: real-city grading, skies, weathering  ===================== */
+/* ===================== KitCity LOOK: real-city grading, skies, weathering ===================== */
 var GR=null,LKT={},LKC={roof:'#9a958a'},LKS={sx:-40,sy:60,sz:30,col:0xFFD59A,dir:[-.5,.7,.4]},ATMO=null,SKY=null,LS=1;
 const LOOK_BASE={h:'#E3C9A0',z:'#6F94B5',sun:'#FFD9A0',sI:.95,hS:'#F4E4C8',hG:'#5A4636',hI:.6,off:[-45,55,32],exp:1.05,sat:1.0,con:1.08,fade:.02,lift:[0,.01,.025],gain:[1.04,1,.94],vig:.3,grain:.03,bloom:.4,veil:['#E8C896',.1],cl:.4,cc:'#F6EBDD',fog:[55,210],dust:.1,mil:.3,rust:.3,lat:.2,dash:'#D9A62A',fx:null,roof:'#9a958a',zinc:['#8a4a2c','#7c4b34','#6b4630','#9a5a38','#7d7266','#5e5b55'],ground:'#2A2A2C',slab:'#A39C8E',dirt:'#8E5638',leaf:'#35603a'};
 const LOOK={
@@ -987,7 +987,7 @@ CITIES.kitcity={
 Object.assign(LOOK,{
  kitcity:{h:'#07182D',z:'#123B63',sun:'#7CEBFF',sI:1.35,hS:'#C5E8F8',hG:'#07121F',hI:.9,off:[-42,74,36],exp:1.12,sat:1.16,con:1.12,fade:0,lift:[0,.01,.025],gain:[.94,1.04,1.12],vig:.16,grain:.012,bloom:.72,veil:['#0A2340',.025],cl:.22,cc:'#8CEBFF',fog:[150,500],dust:0,mil:0,rust:0,lat:0,dash:'#36E5F5',roof:'#17384B',ground:'#07121F',slab:'#172B3D',dirt:'#07121F',leaf:'#10C8DC',paint:['#10263A','#17384B','#203D54','#0D2A3B'],zinc:['#123047','#17384B','#0C2337']}
 });
-/* =====================  modern Nigerian city visual pass  ===================== */
+/* ===================== modern Nigerian city visual pass ===================== */
 /* Keep each city's layout, landmarks, traffic and regional character, but remove
    the heavy sepia/rust treatment and give buildings contemporary urban finishes. */
 (function modernizeCityVisuals(){
@@ -1935,7 +1935,7 @@ function buildKitCity(C){
   const hubTitle=label('KITCITY CORE',white,'#071827',2.1); hubTitle.position.set(0,58,-140); cityGroup.add(hubTitle);
   const hubSub=label('THE WEB3 WORLD',gold,'#071827',1.25); hubSub.position.set(0,53,-140); cityGroup.add(hubSub);
   const gate=label('WELCOME TO KITCITY',white,'#062638',1.4); gate.position.set(0,23,-176); cityGroup.add(gate);
-  const access=label('LEARN  •  BUILD  •  CONTRIBUTE',glow,'#071827',1.05); access.position.set(0,20,-180); cityGroup.add(access);
+  const access=label('LEARN • BUILD • CONTRIBUTE',glow,'#071827',1.05); access.position.set(0,20,-180); cityGroup.add(access);
   cityCols=colliders.length;
   mergeStatic(cityGroup); flagShadows(cityGroup); flagShadows(trafficGroup); freeze(cityGroup);
   setupBarks(C); Snd.setCity('kitcity');
@@ -2148,7 +2148,7 @@ const beacon=new THREE.Group();
   beacon.add(col,ring); beacon.visible=false; scene.add(beacon);
 }
 
-/* =====================  state  ===================== */
+/* ===================== state ===================== */
 const S={phase:'title',modal:false};
 let G=null,ents=[],goal=null,nearEnt=null;
 const storyNPCActors=[];
@@ -2178,7 +2178,7 @@ const storyDirector=createStorySceneDirector({camera,player,getCharacter(name){
   let found=null;missionGroup.traverse(o=>{if(!found&&o.userData&&o.userData.storyCharacter===name) found=o;});return found;
 },animateCharacter:animatePerson,setModal(value){S.modal=value;Snd.duck(value);}});
 
-/* =====================  sheet UI  ===================== */
+/* ===================== sheet UI ===================== */
 const modalEl=$('#modal'),sheetEl=$('#sheet'),talkBtn=$('#talkBtn');
 let cbs=[],toastT=0,chat={npc:null,log:[]},sheetTok=0,pendingReveal=null,hazardSpeechActive=false,pendingFeetLine=false;
 function toast(msg,opts){
@@ -2252,7 +2252,7 @@ function badgeSVG(n,on,size){
   return '<svg class="mission-medal '+(on?'earned':'unearned')+'" width="'+size+'" height="'+size+'" viewBox="0 0 120 120" aria-hidden="true"><path d="M35 76 31 108 51 98 60 113 69 98 89 108 85 76" fill="'+(on?dark:'#303943')+'" stroke="'+accent+'" stroke-width="3" stroke-linejoin="round"/><path d="M60 7 94 21 108 51 94 81 60 95 26 81 12 51 26 21Z" fill="'+dark+'" stroke="'+accent+'" stroke-width="5" stroke-linejoin="round"/><path d="M60 17 86 28 97 51 86 74 60 85 34 74 23 51 34 28Z" fill="'+(on?'#17232D':'#202830')+'" stroke="'+accent+'" stroke-opacity=".65" stroke-width="2"/><g fill="none" stroke="'+accent+'" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" transform="translate(0 0)">'+shape+'</g>'+earned+lock+'</svg>';
 }
 
-/* =====================  HUD  ===================== */
+/* ===================== HUD ===================== */
 function updateLivesHUD(){
   const el=$('#lives');
   if(!el) return;
@@ -2730,7 +2730,7 @@ function buildMissionNameAliases(mission){
 const cityMissions=city=>MISSIONS.filter(m=>m.city===city);
 const isCityComplete=city=>{const ms=cityMissions(city);return ms.length>0&&ms.every(m=>!!P.done[m.id]);};
 const isCityUnlocked=city=>{const ms=cityMissions(city);return ms.length>0&&isUnlocked(ms[0]);};
-/* =====================  mission flow  ===================== */
+/* ===================== mission flow ===================== */
 function hideEnt(e){ e.hidden=true; loadStep(); }
 function resetPlayer(){
   player.position.set(SPAWN.x,.05,SPAWN.z); faceAng=0; player.rotation.y=0; player.rotation.z=0; fallTimer=0; hitCd=0;
@@ -2877,7 +2877,7 @@ $('#pauseBtn').addEventListener('click',()=>{
   ]);
 });
 
-/* =====================  hub  ===================== */
+/* ===================== hub ===================== */
 const mapXY=(lon,lat)=>({x:(lon-2.2)*27+9,y:(14.2-lat)*27+7});
 const mapPoints=coords=>coords.map(p=>{const q=mapXY(p[0],p[1]);return q.x.toFixed(1)+','+q.y.toFixed(1);}).join(' ');
 const mapPath=coords=>coords.map((p,i)=>{const q=mapXY(p[0],p[1]);return (i?'L':'M')+q.x.toFixed(1)+' '+q.y.toFixed(1);}).join(' ');
@@ -3249,7 +3249,7 @@ function applyLang(){
 }
 $('#title').addEventListener('click',e=>{ const b=e.target.closest('[data-lang]'); if(!b) return; P.lang=b.dataset.lang; save(); applyLang(); Snd.unlock(); Snd.sfx('click'); });
 
-/* =====================  input  ===================== */
+/* ===================== input ===================== */
 const keys={};
 let runHeld=false;
 const joy={x:0,y:0,active:false,id:null,reset(){ this.active=false; this.id=null; this.x=0; this.y=0; $('#knob').style.transform='translate(0,0)'; }};
@@ -3282,7 +3282,7 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
 talkBtn.addEventListener('click',()=>interact());
 function interact(){ if(S.phase!=='play'||S.modal||!nearEnt) return; nearEnt.talk(); }
 
-/* =====================  collisions  ===================== */
+/* ===================== collisions ===================== */
 function resolve(p,r){
   for(const c of colliders){
     if(p.x<c.x0-r||p.x>c.x1+r||p.z<c.z0-r||p.z>c.z1+r) continue;
@@ -3402,7 +3402,7 @@ function fadeBuildings(dt,active){
   }
 }
 
-/* =====================  loop  ===================== */
+/* ===================== loop ===================== */
 const clock=new THREE.Clock();
 const camTarget=new THREE.Vector3(),camDesired=new THREE.Vector3();
 let lastDist=-1;
