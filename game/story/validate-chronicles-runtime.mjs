@@ -15,7 +15,7 @@ requireText("missionGroup.visible=false; storyCastGroup.visible=true", "opening 
 requireText("const CHRONICLE_ACTIVITY_RULES=[", "objective activity bank");
 requireText("function applyChronicleActivityEffect", "safe simulated activity effects");
 requireText("P.storyFlags.future_direction=options[choice]", "player-owned ending choice");
-requireText("No USDC left — mission restarting!", "removed legacy collision reset");
+if (engine.includes("No USDC left — mission restarting!")) errors.push("Legacy collision reset remains");
 if (engine.includes("const MISSIONS=[")) errors.push("Legacy hard-coded mission array still exists");
 for (const stale of ["function askStep(o)", "function taskStep(o)", "function confirmTx(def,o)", "function needFunds(n)", "QUESTION_PENALTY"]) {
   if (engine.includes(stale)) errors.push("Legacy mission mechanic remains: " + stale);
