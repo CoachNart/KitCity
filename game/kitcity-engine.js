@@ -611,7 +611,7 @@ const SPOTS={
   a:{x:10,z:-30,f:-1}, b:{x:-10,z:-105,f:1}, c:{x:80,z:-35,f:-1}, d:{x:60,z:-105,f:1},
   e:{x:-80,z:-35,f:1}, f:{x:-60,z:-105,f:-1}, g:{x:10,z:-175,f:-1}, h:{x:-10,z:-175,f:1},
   i:{x:150,z:-35,f:-1}, j:{x:130,z:-175,f:1}, k:{x:-150,z:-35,f:1}, l:{x:-130,z:-175,f:-1},
-  m:{x:80,z:35,f:-1}, n:{x:-80,z:105,f:1}, o:{x:10,z:175,f:-1}, story:{x:-95,z:-35,f:1}, x1:{x:60,z:-105,f:1}, shopdesk:{x:25,z:-42,f:1}, screenshot:{x:18,z:-38,f:-1}, buyer:{x:130,z:105,f:-1}, ledger:{x:-150,z:105,f:1}, ledgerGuide:{x:-156,z:110,f:1}
+  m:{x:80,z:35,f:-1}, n:{x:-80,z:105,f:1}, o:{x:10,z:175,f:-1}, story:{x:-95,z:-35,f:1}, x1:{x:60,z:-105,f:1}, shopdesk:{x:25,z:-42,f:1}, screenshot:{x:18,z:-38,f:-1}, buyer:{x:130,z:105,f:-1}, ledger:{x:-150,z:105,f:1}, ledgerGuide:{x:-156,z:110,f:1}, execution:{x:125,z:165,f:-1}
 };
 const special=Object.keys(SPOTS).map(k=>SPOTS[k]).concat([SPAWN]);
 const nearSpecial=(x,z,d)=>special.some(s=>Math.hypot(s.x-x,s.z-z)<d);
@@ -2067,6 +2067,31 @@ function placeStoryClue(def,spot){
   const sign=label(tr(def.sign||def.title),BRAND,'#071827',1.25); sign.position.set(spot.x,6.6,spot.z); missionGroup.add(sign);
   return {x:spot.x,z:spot.z,r:6.5,clue:true};
 }
+function storyExecutionStation(m,stepIndex){
+  const base=SPOTS.execution;
+  const objectiveIndex=Math.max(0,stepIndex-(m.characterStepCount||0));
+  const angle=objectiveIndex*2.399963229728653;
+  return {x:base.x+Math.cos(angle)*4.15,z:base.z+Math.sin(angle)*3.05,f:-1};
+}
+function placeExecutionCenter(def,base,station){
+  const hall=new THREE.Group();hall.position.set(base.x,0,base.z);
+  const floor=new THREE.Mesh(new THREE.BoxGeometry(15,.24,12),lam('#34434B'));floor.position.y=.12;hall.add(floor);
+  const roof=new THREE.Mesh(new THREE.BoxGeometry(15.5,.28,12.5),lam('#17262F'));roof.position.set(0,4.25,0);hall.add(roof);
+  for(const x of [-7,7]) for(const z of [-5.5,5.5]){
+    const pillar=new THREE.Mesh(new THREE.BoxGeometry(.32,4.2,.32),lam('#637681'));pillar.position.set(x,2.1,z);hall.add(pillar);
+  }
+  const back=new THREE.Mesh(new THREE.BoxGeometry(14,.16,.3),lam('#50616A'));back.position.set(0,2.4,-5.7);hall.add(back);
+  missionGroup.add(hall);
+  const centerSign=label("EXECUTION CENTRE",BRAND,'#071827',1.45);centerSign.position.set(base.x,6.3,base.z-5.5);missionGroup.add(centerSign);
+  const stationGroup=new THREE.Group();stationGroup.position.set(station.x,0,station.z);
+  const desk=new THREE.Mesh(new THREE.BoxGeometry(2.7,1.05,1.35),lam('#465760'));desk.position.set(0,.55,0);stationGroup.add(desk);
+  const screen=new THREE.Mesh(new THREE.BoxGeometry(1.65,1.1,.12),lam('#0D202B',{emissive:0x073C4A,emissiveIntensity:.75}));screen.position.set(0,1.85,-.22);screen.rotation.x=-.12;stationGroup.add(screen);
+  const screenBar=new THREE.Mesh(new THREE.BoxGeometry(1.12,.08,.05),lam(BRAND));screenBar.position.set(0,2.05,-.3);stationGroup.add(screenBar);
+  const screenDot=new THREE.Mesh(new THREE.CircleGeometry(.1,12),lam('#55E6C1'));screenDot.position.set(.54,1.66,-.3);stationGroup.add(screenDot);
+  missionGroup.add(stationGroup);
+  const stationSign=label(tr(def.sign||def.title||'WORKSTATION'),BRAND,'#071827',1.1);stationSign.position.set(station.x,4.1,station.z);missionGroup.add(stationSign);
+  return {x:station.x,z:station.z,r:7.2,clue:true};
+}
 function placeStoryOffice(spot){
   /* A small open-front office gives Abdul a clear, separate destination from Softstorm. */
   const office=new THREE.Group();
@@ -2246,7 +2271,7 @@ function updateHUD(){
 
 /* ===================== KitCity story runtime =====================
    The story registry drives mission order, character encounters and evidence.
-   Wallet, trading and identity scenarios are practice simulations only.
+   Wallet, trading and identity tasks are handled through hands-on workbenches.
 */
 const NPC=(name,role,color,look,stall,sign)=>({name,role,color,look,stall,sign});
 CITIES.kitcity={...CITIES.lagos,name:'KitCity',tag:'The final city · Web3 District',lon:7.3,lat:6.1,seed:991,sky:0x142C3B,ground:'#18272E',slab:'#657985',paint:['#1B3440','#234653','#2D5360','#18313D','#37616A','#203B49'],h:[14,42],market:3,palm:.25};
@@ -2276,11 +2301,11 @@ CHARACTER_ORDER.forEach((name,index)=>{
 });
 const CHRONICLE_CHALLENGES={
 m02:{q:'What is the best way to understand Web3?',o:['Learn how the technology works and what problem it solves','Assume every project will make money','Follow the loudest account'],a:0,w:'Web3 includes networks, apps, digital ownership and people building together. Understand the use before trusting the promise.'},
-m03:{q:'How should you begin with a new wallet?',o:['Create a local practice wallet for this lesson','Connect a real wallet and share its recovery phrase','Send money to a stranger first'],a:0,w:'This game uses a sandbox wallet only. A recovery phrase is secret, and this practice wallet never creates a real blockchain account.',effect:'wallet-create'},
+m03:{q:'How should you begin with a new wallet?',o:['Set up your wallet and keep its recovery details private','Connect a wallet and share its recovery phrase','Send money to a stranger first'],a:0,w:'A wallet helps you manage keys and addresses. Keep the recovery phrase private.',effect:'wallet-create'},
 m04:{q:'What makes a shared ledger useful?',o:['Records can be checked against shared history','Anyone can secretly rewrite accepted records','It makes every transaction private'],a:0,w:'Shared records can be independently checked. Network rules make rewriting accepted history difficult.'},
 m05:{q:'The app is failing. What should the team do first?',o:['Find what users struggle with and test the cause','Add more features immediately','Blame the newest user'],a:0,w:'A useful product starts with the user problem. Test it before spending time on a solution.'},
 m06:{q:'What should you check before trusting a smart contract?',o:['Its rules, permissions, code review and risks','The name and logo only','Whether an influencer posted it'],a:0,w:'A contract follows coded rules. Review permissions and evidence; a polished page is not an audit.'},
-m07:{q:'Before using a swap service, what matters most?',o:['Compare liquidity, fees, token details and price impact','Choose the pool with the loudest promotion','Approve unlimited spending automatically'],a:0,w:'Check the pool, token address, fees, slippage and permissions before confirming a simulated swap.'},
+m07:{q:'Before using a swap service, what matters most?',o:['Compare liquidity, fees, token details and price impact','Choose the pool with the loudest promotion','Approve unlimited spending automatically'],a:0,w:'Check the pool, token address, fees, slippage and permissions before confirming a swap.'},
 m08:{q:'How do market and limit orders differ?',o:['A market order seeks immediate execution; a limit order sets a price boundary','A limit order guarantees a profit','A market order removes all slippage'],a:0,w:'Market orders prioritize execution; limit orders set a price boundary and may not fill. Neither guarantees profit.'},
 m09:{q:'What belongs in a responsible spot-trade plan?',o:['Entry, invalidation, position size and risk','A prediction with no exit plan','Increasing size after every loss'],a:0,w:'A trade idea needs a clear invalidation point and defined risk. A chart pattern is not a guarantee.'},
 m10:{q:'What does leverage do?',o:['Magnifies both gains and losses','Makes a trade risk-free','Stops liquidation from happening'],a:0,w:'Leverage magnifies gains and losses. Margin and liquidation risk must be understood before entering a position.'},
@@ -2354,9 +2379,9 @@ function chronicleNpcStep(m,name,index){
   const step={kind:'character',characterIndex:index,label:'Talk to '+name,spot:index===0?'a':index===1?'story':['b','c','d','e','f','g','h'][index%7],npc};
   step.run=function(){
     const line=index===0?(STORY_BRIDGES[m.id]||chronicleNpcLine(m,name,index)):chronicleNpcLine(m,name,index);
-    const opener=index===0?'Okay, tell me what is going on.':'I have spoken to the other person. What should I understand before I make a call?';
+    const opener=index===0?'I am new to this. Can you show me what happened?':'I have heard the other side. What should I check before I make a call?';
     const partnerLine=index===0?'I hear you, but let us not settle this with assumptions. We need to check what the evidence actually says.':'';
-    const response=index===0?'Good. Stay with us and we will check the facts one step at a time.':'You are asking the right questions. Let us work through the evidence instead of guessing.';
+    const response=index===0?'Good. We will take it one step at a time. Meet me at the execution centre; I will show you how we work through the evidence.':'That is the right question. Bring what you found to the execution centre and we will put the evidence side by side.';
     const partnerTalk=index===0&&partnerName?'<p><b>'+escapeStoryHtml(partnerName.toUpperCase())+':</b> '+escapeStoryHtml(partnerLine)+'</p>':'';
     const html='<p><b>'+escapeStoryHtml(name.toUpperCase())+':</b> '+escapeStoryHtml(line)+'</p>'+partnerTalk+'<p><b>YOU:</b> '+escapeStoryHtml(opener)+'</p><p><b>'+escapeStoryHtml(name.toUpperCase())+':</b> '+escapeStoryHtml(response)+'</p>';
     talk(npc,html,[{t:'Alright. Show me where to start.',f:()=>{G.evidence['met_'+name]=true;finishStep();}}]);
@@ -2364,28 +2389,28 @@ function chronicleNpcStep(m,name,index){
   return step;
 }
 const CHRONICLE_ACTIVITY_RULES=[
-{r:/create a sandbox wallet/i,q:'Create a practice wallet for this mission?',o:['Generate a local sandbox address','Connect a real wallet'],a:0,w:'This is an offline practice wallet. It does not create an on-chain account.',effect:'wallet-create'},
-{r:/receive test tokens/i,q:'What should you check before receiving test tokens?',o:['The destination address and supported network','A message asking for your recovery phrase','Only the sender’s display name'],a:0,w:'Check the address and network. Never share a recovery phrase.',effect:'wallet-faucet'},
-{r:/send a simulated transaction/i,q:'What should you review before a simulated transfer?',o:['Recipient, network and amount','A stranger’s urgent message','Only the token logo'],a:0,w:'Review the recipient, network and amount. This receipt is simulated and never reaches a blockchain.',effect:'simulated-transaction'},
+{r:/create (?:a )?wallet/i,q:'Set up a wallet at the wallet station. What should you do first?',o:['Create the wallet and keep its recovery details private','Give the recovery phrase to a helper'],a:0,w:'A wallet helps you manage keys and addresses. Keep the recovery phrase private.',effect:'wallet-create'},
+{r:/receive tokens/i,q:'A transfer is on the way. What should you check first?',o:['The destination address and supported network','A message asking for your recovery phrase','Only the sender’s display name'],a:0,w:'Check the destination and supported network before accepting an incoming transfer.',effect:'wallet-faucet'},
+{r:/send a transaction/i,q:'You are about to send a transfer. What should you review?',o:['Recipient, network and amount','A stranger’s urgent message','Only the token logo'],a:0,w:'Check the recipient, network and amount before you confirm a transfer.',effect:'-transaction'},
 {r:/reject a malicious request/i,q:'The request asks for an unlimited spending approval to unlock a bonus. What do you do?',o:['Reject it and inspect the request','Approve it because the bonus is free'],a:0,w:'Reject unnecessary permissions. Unlimited approval can expose assets in a real wallet.',effect:'safe-rejection'},
 {r:/recovery-phrase secrecy/i,q:'Where should a recovery phrase go?',o:['Keep it private and securely backed up offline','Send it to support','Paste it into a website'],a:0,w:'Anyone with the recovery phrase may control the wallet.'},
-{r:/simulated explorer/i,q:'Which details help verify a transaction?',o:['Transaction hash, network, status and block details','A screenshot alone','The sender’s promise'],a:0,w:'Use the transaction reference and relevant network details; a screenshot alone is not proof.',effect:'explorer-record'},
+{r:/transaction explorer/i,q:'Which details help verify a transaction?',o:['Transaction hash, network, status and block details','A screenshot alone','The sender’s promise'],a:0,w:'Use the transaction reference and network details; a screenshot alone is not proof.',effect:'explorer-record'},
 {r:/trace a transaction/i,q:'How do you trace the payment?',o:['Match the hash, recipient, amount and status','Guess from the wallet name','Trust a forwarded screenshot'],a:0,w:'Trace the transaction using the hash and verify the recipient, amount and status.'},
 {r:/identify its block/i,q:'What does a block reference help you find?',o:['Where the transaction was recorded in the chain','The owner’s password','A guaranteed transaction reversal'],a:0,w:'A block reference helps locate a transaction in the network’s recorded history.'},
 {r:/proposed record change/i,q:'An unknown person proposes changing a confirmed record without evidence. What do you do?',o:['Reject the unsupported change and check the history','Accept it to keep the peace','Delete the original evidence'],a:0,w:'Preserve the history and require verifiable authorization for proposed changes.'},
 {r:/explain consensus/i,q:'What helps a distributed network agree on accepted records?',o:['Network participants following shared consensus rules','One person secretly editing the ledger','A popular social post'],a:0,w:'Consensus rules help independent participants agree on the accepted state.'},
-{r:/interview two simulated users/i,q:'Two users describe the same obstacle. What should you do?',o:['Record their exact pain point and ask follow-up questions','Assume you already know the answer','Ignore feedback that challenges your idea'],a:0,w:'Use the users’ evidence to identify the real problem before proposing a fix.'},
+{r:/interview (?:two )?users/i,q:'Two users describe the same obstacle. What should you do?',o:['Record their exact pain point and ask follow-up questions','Assume you already know the answer','Ignore feedback that challenges your idea'],a:0,w:'Use the users’ evidence to identify the real problem before proposing a fix.'},
 {r:/test the core flow/i,q:'What is a useful first test of the app?',o:['Walk through the main task as a user and record where it fails','Add a feature unrelated to the problem','Test only the colour palette'],a:0,w:'Test the main user journey and document the point where it breaks.'},
 {r:/isolate the biggest failure/i,q:'How should you identify the main failure?',o:['Reproduce it and compare evidence from the failing steps','Guess without repeating the issue','Change several things at once'],a:0,w:'Reproduce the failure and isolate its cause before changing the product.'},
 {r:/recommend a fix/i,q:'What is the strongest fix recommendation?',o:['A small change tied to the observed cause, then retest','A full rebuild without evidence','A promise that the bug can never return'],a:0,w:'Tie the fix to the evidence and retest the affected flow.'},
-{r:/sandbox contract/i,q:'What should you inspect first in a contract?',o:['Permissions, conditions and who can call sensitive functions','Only the contract name','The page animation'],a:0,w:'Review permissions and rules in a sandbox before considering deployment.'},
-{r:/reproduce the bug/i,q:'How do you investigate a contract bug?',o:['Reproduce it in the sandbox with a clear test case','Try random changes in production','Ignore the steps that caused it'],a:0,w:'A reproducible test case helps reveal the underlying fault safely.'},
+{r:/contract workspace/i,q:'What should you inspect first in a contract?',o:['Permissions, conditions and who can call sensitive functions','Only the contract name','The page animation'],a:0,w:'Review permissions, conditions and sensitive functions before deployment.'},
+{r:/reproduce the bug/i,q:'How do you investigate a contract bug?',o:['Reproduce it with a clear test case','Try random changes in production','Ignore the steps that caused it'],a:0,w:'A reproducible test case helps reveal the underlying fault.'},
 {r:/faulty assumption/i,q:'Which assumption is dangerous in contract code?',o:['That user input and caller permissions are always trustworthy','That edge cases need testing','That permissions should be explicit'],a:0,w:'Treat inputs and callers as untrusted; enforce permissions and validate edge cases.'},
 {r:/propose a fix/i,q:'What should a contract fix include?',o:['The corrected rule plus tests for normal and adversarial cases','Only a comment saying it is fixed','A deploy before review'],a:0,w:'A fix needs tests that cover the intended behaviour and ways it might fail.'},
 {r:/tests needed before deployment/i,q:'What should happen before deployment?',o:['Review, test edge cases and use an appropriate security audit','Skip tests because the demo works','Trust a single happy-path test'],a:0,w:'A successful demo is not a security review. Test edge cases and obtain suitable review.'},
-{r:/compare simulated pools/i,q:'Which pool is usually better for a small test swap?',o:['The one with sufficient liquidity and lower expected price impact','The one with the largest promotional banner','A pool with an unknown token address'],a:0,w:'Liquidity, token identity, fees and expected price impact matter more than promotion.'},
+{r:/compare liquidity pools/i,q:'Which pool is usually better for a small swap?',o:['The one with sufficient liquidity and lower expected price impact','The one with the largest promotional banner','A pool with an unknown token address'],a:0,w:'Liquidity, token identity, fees and expected price impact matter more than promotion.'},
 {r:/estimate price impact/i,q:'What tends to increase price impact?',o:['A trade large relative to available liquidity','A deeper pool for the same trade','Checking the quote before confirming'],a:0,w:'A trade large relative to pool liquidity can move the execution price more.'},
-{r:/execute a test swap/i,q:'Before confirming a sandbox swap, what should you verify?',o:['Token pair, network, amount, fee and expected output','Only the token symbol','A stranger’s instruction to hurry'],a:0,w:'Verify the pair, network, expected output and fee before confirming the simulation.',effect:'simulated-swap'},
+{r:/execute a swap/i,q:'Before confirming a swap, what should you verify?',o:['Token pair, network, amount, fee and expected output','Only the token symbol','A stranger’s instruction to hurry'],a:0,w:'Verify the pair, network, expected output and fee before confirming.',effect:'-swap'},
 {r:/inspect token approval/i,q:'What is the safer approval?',o:['Only the permission and amount actually needed','Unlimited spending for any site','An approval you cannot identify'],a:0,w:'Use the smallest necessary permission and avoid approvals you do not understand.'},
 {r:/liquidity and slippage/i,q:'How are liquidity and slippage related?',o:['Low liquidity can make execution move more than expected','They mean exactly the same thing as network fees','Slippage is always zero'],a:0,w:'Slippage is the difference between expected and actual execution; liquidity can affect it.'},
 {r:/market and limit orders/i,q:'Which statement is correct?',o:['A limit order sets a price boundary and may not fill','A limit order guarantees profit','A market order guarantees the displayed price'],a:0,w:'A limit order sets a price boundary; market orders may experience slippage.'},
@@ -2393,12 +2418,12 @@ const CHRONICLE_ACTIVITY_RULES=[
 {r:/fictional withdrawal incident/i,q:'Withdrawals appear delayed. What is the responsible response?',o:['Verify the official status and communicate confirmed facts','Invent a cause to calm users','Ask users to share their recovery phrases'],a:0,w:'Verify the source, share what is confirmed and explain the next update time.'},
 {r:/verified status update/i,q:'What belongs in a status update?',o:['Confirmed facts, affected service, next action and next update time','Rumours presented as facts','A promise of an exact resolution without evidence'],a:0,w:'A clear update separates known facts from unknowns and states the next action.'},
 {r:/custody models/i,q:'What is a key difference between custodial and self-custody?',o:['In custodial services the provider controls the keys; in self-custody the user does','They always have identical risks','Self-custody means no responsibility'],a:0,w:'Understand who controls the keys and what recovery and counterparty risks follow.'},
-{r:/read a simulated chart/i,q:'What should a chart-based trade plan include?',o:['A scenario, invalidation point and defined risk','A prediction treated as certainty','An entry with no exit plan'],a:0,w:'Charts describe possible scenarios, not certainty. Define invalidation and risk.'},
+{r:/read a market chart/i,q:'What should a chart-based trade plan include?',o:['A scenario, invalidation point and defined risk','A prediction treated as certainty','An entry with no exit plan'],a:0,w:'Charts describe possible scenarios, not certainty. Define invalidation and risk.'},
 {r:/mark a possible entry and invalidation/i,q:'Why define invalidation before entry?',o:['It identifies where the trade idea no longer holds','It guarantees the trade will win','It removes market risk'],a:0,w:'An invalidation point makes the idea testable and helps prevent impulsive decisions.'},
 {r:/calculate risk/i,q:'How should position size be chosen?',o:['From the defined risk and distance to invalidation','From the size of a hoped-for profit','By doubling after a loss'],a:0,w:'Position size should follow a defined risk limit, not emotion or a profit target.'},
 {r:/paper trade/i,q:'What is the purpose of a paper trade?',o:['Practise a plan and record results without real money','Guarantee future returns','Hide losses from the journal'],a:0,w:'Paper trading lets you test a plan without placing a real order.'},
-{r:/open a simulated futures position/i,q:'What should be clear before a simulated futures position?',o:['Direction, position size, margin and invalidation','Only the leverage multiplier','A promise that price cannot move against you'],a:0,w:'A futures position has directional, margin and liquidation risks even in a simulation.'},
-{r:/compare leverage/i,q:'Which leverage choice is safer for a beginner to study?',o:['Understand the unleveraged risk first and use low simulated exposure','Choose maximum leverage to learn faster','Assume leverage removes risk'],a:0,w:'Learn the underlying risk first. Higher leverage leaves less room for adverse price moves.'},
+{r:/open a futures position/i,q:'What should be clear before opening a futures position?',o:['Direction, position size, margin and invalidation','Only the leverage multiplier','A promise that price cannot move against you'],a:0,w:'A futures position has directional, margin and liquidation risks.'},
+{r:/compare leverage/i,q:'Which leverage choice is safer to study first?',o:['Understand the unleveraged risk first and keep exposure low','Choose maximum leverage to learn faster','Assume leverage removes risk'],a:0,w:'Learn the underlying risk first. Higher leverage leaves less room for adverse price moves.'},
 {r:/estimate margin/i,q:'What does margin represent in a leveraged position?',o:['Collateral supporting the position','Guaranteed profit','A refund of trading fees'],a:0,w:'Margin is collateral, and it can be lost if the position moves against you.'},
 {r:/identify liquidation risk/i,q:'What can trigger liquidation?',o:['Equity falling below the required maintenance margin','A trader reading the chart','A public wallet address'],a:0,w:'If equity falls below maintenance requirements, the position may be liquidated.'},
 {r:/loss and close plan/i,q:'What is a disciplined response when the trade idea is invalidated?',o:['Follow the pre-defined close plan and review the result','Increase size to win it back','Move the stop endlessly'],a:0,w:'Follow the plan, limit further exposure and review the outcome without revenge trading.'},
@@ -2434,26 +2459,26 @@ const CHRONICLE_ACTIVITY_RULES=[
 {r:/verify on-chain claims/i,q:'How should an AI-generated on-chain claim be checked?',o:['Compare it with a reliable explorer or source record','Accept it because it sounds confident','Invent a hash if one is missing'],a:0,w:'Check the source record. AI can misread data or invent details.'},
 {r:/improve instructions/i,q:'What makes an instruction easier for an AI system to follow?',o:['Clear context, constraints, expected format and a verifiable goal','A vague prompt with conflicting requests','Hiding the desired output'],a:0,w:'Clear context and success criteria make outputs easier to assess and improve.'},
 {r:/retest output/i,q:'How should you retest a changed AI workflow?',o:['Use known test cases and check the output against expected results','Trust the first improved answer','Test only one easy example'],a:0,w:'Known test cases help reveal whether a change actually improved reliability.'},
-{r:/compare simulated networks/i,q:'What should you compare across networks?',o:['Supported assets, fees, finality, security assumptions and tooling','Only the network logo','A social media poll'],a:0,w:'Networks differ in fees, finality, security assumptions and supported assets.'},
+{r:/compare blockchain networks/i,q:'What should you compare across networks?',o:['Supported assets, fees, finality, security assumptions and tooling','Only the network logo','A social media poll'],a:0,w:'Networks differ in fees, finality, security assumptions and supported assets.'},
 {r:/inspect the bridge role/i,q:'What is a key risk when using a bridge?',o:['Bridge contracts, validators or custody can introduce additional risk','A bridge removes every network risk','A matching logo proves safety'],a:0,w:'Bridges add components and trust assumptions. Review their design, security and fees.'},
 {r:/identify a fake interface/i,q:'A bridge page asks for your recovery phrase. What do you do?',o:['Leave and verify the official interface','Enter it to continue','Ask the page to prove it is real'],a:0,w:'A website should not need your recovery phrase. Verify the official interface independently.'},
 {r:/read proposals/i,q:'What should you read before casting a governance vote?',o:['The proposal, trade-offs, execution details and who benefits','Only the title','A message telling you how to vote'],a:0,w:'Read the proposal and its consequences before deciding.'},
-{r:/inspect a simulated treasury/i,q:'What helps people assess a treasury decision?',o:['A clear record of balances, allocations and intended use','An unexplained total','A promise that funds cannot be lost'],a:0,w:'Transparent records make it possible to question allocations and monitor use.'},
-{r:/cast a test vote/i,q:'This is a sandbox vote. What should you do?',o:['Choose yes, no or abstain based on the proposal','Assume the vote moves real funds','Share your credentials to vote'],a:[0,1,2],w:'This vote is local practice only. Real governance rules, eligibility and execution vary by system.',effect:'safe-vote'},
+{r:/inspect a treasury/i,q:'What helps people assess a treasury decision?',o:['A clear record of balances, allocations and intended use','An unexplained total','A promise that funds cannot be lost'],a:0,w:'Transparent records make it possible to question allocations and monitor use.'},
+{r:/cast a governance vote/i,q:'How should you decide on a governance proposal?',o:['Choose yes, no or abstain based on the proposal','Assume every vote automatically executes the proposal','Share your credentials to vote'],a:[0,1,2],w:'Check the proposal rules, eligibility, quorum and execution process before you vote.',effect:'safe-vote'},
 {r:/estimate impact/i,q:'How do you prioritize a security finding?',o:['Consider severity, likelihood and affected users or funds','Choose the easiest cosmetic change','Ignore the impact'],a:0,w:'Prioritize based on potential impact and likelihood, then document the reasoning.'},
 {r:/prepare disclosure/i,q:'What belongs in responsible vulnerability disclosure?',o:['Reproducible evidence, impact, affected version and a safe contact route','A public exploit before maintainers can respond','Private data about users'],a:0,w:'Share enough evidence to reproduce the issue safely while protecting users and allowing a fix.'},
 {r:/verify the patch/i,q:'How do you verify a security patch?',o:['Run regression and edge-case tests in a safe test environment','Trust the commit message','Skip tests because the issue disappeared once'],a:0,w:'Reproduce the original issue and test the fix against regressions and edge cases.'},
 {r:/read license terms/i,q:'What do licence terms determine?',o:['Which uses, rights and restrictions apply to the work','The guaranteed resale price','Whether ownership records matter'],a:0,w:'A licence describes permitted use and restrictions; it does not automatically grant every right.'},
 {r:/identify buyer rights/i,q:'What should a buyer check before purchasing a digital collectible?',o:['The exact rights granted and any restrictions','Only the image','A claim that the item is “fully owned”'],a:0,w:'Owning a token does not automatically grant copyright or every commercial right.'},
 {r:/creator revenue models/i,q:'What should a creator know about royalties?',o:['The rules, marketplace support and limits; future revenue is not guaranteed','Royalties are guaranteed on every resale','A token alone enforces every off-chain promise'],a:0,w:'Royalty behaviour depends on the system and marketplace. Future revenue is not guaranteed.'},
-{r:/explore a simulated repository/i,q:'What should you check before contributing to a repository?',o:['Licence, project guidelines, issue scope and existing code','Only the number of stars','Whether you can remove attribution'],a:0,w:'Understand the licence and contribution process before proposing changes.'},
+{r:/explore a repository/i,q:'What should you check before contributing to a repository?',o:['Licence, project guidelines, issue scope and existing code','Only the number of stars','Whether you can remove attribution'],a:0,w:'Understand the licence and contribution process before proposing changes.'},
 {r:/find an issue/i,q:'What makes a good first contribution?',o:['A clearly scoped issue with steps to reproduce and expected behaviour','A vague rewrite of the whole project','An unreviewed change straight to production'],a:0,w:'A scoped issue gives contributors a shared definition of the problem and done.'},
 {r:/propose a contribution/i,q:'What should accompany a code contribution?',o:['A clear explanation, relevant tests and a reviewable change','Only “fixed it”','A demand to merge without review'],a:0,w:'Make the change understandable, test it and invite review.'},
 {r:/version control and review/i,q:'Why use version control and review?',o:['To track changes, compare versions and catch problems collaboratively','To hide who changed the code','To remove the need for tests'],a:0,w:'Version history and review make collaboration more transparent and reversible.'},
 {r:/review saved evidence/i,q:'How should you connect the clues you collected?',o:['Check the sources and timestamps, then compare what they support','Assume every clue proves the same claim','Ignore contradictions'],a:0,w:'Build a reconstruction from evidence, and keep uncertainty where the records do not agree.'},
 {r:/identify contradictions/i,q:'Two records disagree. What is the next step?',o:['Compare source, date and context before deciding','Choose the record you like more','Delete the disagreement'],a:0,w:'Resolve contradictions by examining the source and context rather than guessing.'},
 {r:/choose relevant skills/i,q:'How should a team choose skills for a challenge?',o:['Match the actual problem to people with relevant abilities','Give every task to one person','Choose roles by popularity'],a:0,w:'Match responsibilities to the work and make ownership clear.'},
-{r:/coordinate a simulated team/i,q:'What helps a small team deliver safely?',o:['Clear roles, shared milestones and regular checks','Everyone working on the same task without coordination','No review or hand-off'],a:0,w:'Clear ownership and checkpoints help teams combine work without losing accountability.'},
+{r:/coordinate a team/i,q:'What helps a small team deliver safely?',o:['Clear roles, shared milestones and regular checks','Everyone working on the same task without coordination','No review or hand-off'],a:0,w:'Clear ownership and checkpoints help teams combine work without losing accountability.'},
 {r:/build a safe prototype/i,q:'What is a good prototype goal?',o:['Test the core idea with minimal risk and clear success criteria','Build everything before testing','Use real funds to make the demo exciting'],a:0,w:'A prototype tests the key assumption safely before expanding the scope.'},
 {r:/register for a practical assessment|complete its safe practical challenge/i,q:'What belongs in a practical assessment?',o:['A real task, clear criteria, reviewable evidence and feedback','A popularity vote only','A payment to guarantee a pass'],a:0,w:'Assess applied ability against clear criteria. No payment guarantees a pass.'},
 {r:/select a specialization|choose a specialization/i,q:'Which path do you want to explore?',o:['Builder','Analyst','Creator or community contributor'],a:[0,1,2],w:'Choose a path that matches your interests and the work you want to practise.',effect:'future-direction'},
@@ -2466,7 +2491,7 @@ const CHRONICLE_ACTIVITY_RULES=[
 {r:/redesign the first session/i,q:'How should you improve a weak first session?',o:['Give newcomers one clear first win and a next step','Add more channels before explaining anything','Ask everyone to buy something'],a:0,w:'A focused first experience reduces confusion and gives newcomers a reason to return.'},
 {r:/prepare an opening/i,q:'What should the opening of a live session do?',o:['Set context, explain the value and tell listeners what to expect','Read a long biography with no purpose','Promise an outcome you cannot guarantee'],a:0,w:'A clear opening earns attention by setting context and expectations.'},
 {r:/arrange questions/i,q:'How should you arrange questions for a live session?',o:['Start with context, move to specifics, then invite useful follow-ups','Jump randomly between unrelated topics','Avoid questions from the audience'],a:0,w:'A clear sequence helps listeners follow the conversation and understand the details.'},
-{r:/host a simulated space/i,q:'What helps a host run a useful live session?',o:['Manage time, introduce speakers, moderate and summarise key points','Let one speaker dominate without context','Ignore safety and audience questions'],a:0,w:'The host guides the conversation, protects the room and keeps the session useful.'},
+{r:/host a live session/i,q:'What helps a host run a useful live session?',o:['Manage time, introduce speakers, moderate and summarise key points','Let one speaker dominate without context','Ignore safety and audience questions'],a:0,w:'The host guides the conversation, protects the room and keeps the session useful.'},
 {r:/handle a difficult question/i,q:'You do not know the answer to a difficult question. What should you do?',o:['Say what you know, clarify the uncertainty and follow up with evidence','Invent a confident answer','Dismiss the person asking'],a:0,w:'Honesty builds trust. Clarify what is unknown and follow up when you can verify the answer.'},
 {r:/write a recap/i,q:'What makes a recap useful?',o:['Key points, useful links, decisions and next actions','Only a screenshot of the room','A claim that everyone agreed'],a:0,w:'A recap lets people who missed the session catch up and shows what happens next.'},
 {r:/identify the audience/i,q:'How do you identify the right audience for a product message?',o:['Start with who has the problem and what they need to know','Target everyone with the same message','Choose only the largest account'],a:0,w:'Audience choice follows the problem and context, not simply the biggest possible reach.'},
@@ -2514,11 +2539,11 @@ function applyChronicleActivityEffect(effect,m,obj,choice,options){
   }else if(effect==='wallet-faucet'){
     if(!P.storyFlags[once]) P.usdc=Math.round(((Number(P.usdc)||0)+2)*100)/100;
     P.wallet=P.wallet||('0x'+hex(20));P.storyFlags[once]=true;
-  }else if(effect==='simulated-transaction'){
+  }else if(effect==='-transaction'){
     P.wallet=P.wallet||('0x'+hex(20));
-    P.storyFlags.last_simulated_transaction={hash:'0x'+hex(32),network:'Sandbox Network',status:'Confirmed in simulation',realTransaction:false};
-  }else if(effect==='simulated-swap'){
-    P.storyFlags.last_simulated_swap={pair:'TEST-A / TEST-B',status:'Completed in simulation',realTransaction:false};
+    P.storyFlags.last__transaction={hash:'0x'+hex(32),network:' Network',status:'Confirmed in simulation',realTransaction:false};
+  }else if(effect==='-swap'){
+    P.storyFlags.last__swap={pair:'TEST-A / TEST-B',status:'Completed in simulation',realTransaction:false};
   }else if(effect==='safe-rejection'){
     P.storyFlags.rejected_malicious_request=true;
   }else if(effect==='explorer-record'){
@@ -2543,12 +2568,12 @@ function chronicleClueStep(m,obj,index,spot){
         return;
       }
       G.correct=(G.correct||0)+1;
-      talk(npc,'<p><b>'+escapeStoryHtml(npc.name.toUpperCase())+':</b> Exactly. '+escapeStoryHtml(activity.w)+'</p><p><b>YOU:</b> That makes sense. I can explain why I chose it now.</p><p class="note">Practice scenario only. No real funds, wallets or transactions are used.</p>',[{t:'Save what we found',f:()=>{
+      talk(npc,'<p><b>'+escapeStoryHtml(npc.name.toUpperCase())+':</b> Exactly. '+escapeStoryHtml(activity.w)+'</p><p><b>YOU:</b> That makes sense. I can explain why I chose it now.</p>',[{t:'Save what we found',f:()=>{
         applyChronicleActivityEffect(activity.effect,m,obj,choice,activity.o);
         G.evidence[obj.id]=true;P.storyFlags=Object.assign({},P.storyFlags||{},{['evidence_'+obj.id]:true});save();finishStep();
       }}]);
     }}));
-    const prompt='<p><b>'+escapeStoryHtml(npc.name.toUpperCase())+':</b> Let us look at '+escapeStoryHtml(title.toLowerCase())+'. '+escapeStoryHtml(activity.q)+'</p><p><b>YOU:</b> Okay. What should I be paying attention to?</p><p><b>'+escapeStoryHtml(npc.name.toUpperCase())+':</b> Think it through, then choose what you would do.</p>';
+    const prompt='<p><b>'+escapeStoryHtml(npc.name.toUpperCase())+':</b> Welcome to the execution centre. I have opened the workbench for <b>'+escapeStoryHtml(title)+'</b>. '+escapeStoryHtml(activity.q)+'</p><p><b>YOU:</b> Alright. Talk me through what matters here.</p><p><b>'+escapeStoryHtml(npc.name.toUpperCase())+':</b> Look at the details, make your call, and be ready to explain it.</p>';
     talk(npc,prompt,buttons);
   };
   return step;
@@ -2565,7 +2590,7 @@ function chronicleChallengeStep(m,obj,index,spot){
         return;
       }
       G.correct=(G.correct||0)+1;
-      talk(npc,'<p><b>'+escapeStoryHtml(npc.name.toUpperCase())+':</b> Good call. '+escapeStoryHtml(challenge.w)+'</p><p><b>YOU:</b> I can explain that choice now.</p><p class="note">Practice scenario only. No real funds, wallets or transactions are involved.</p>',[{t:'Record the decision',f:()=>{applyChronicleActivityEffect(challenge.effect,m,obj,choice,challenge.o);G.evidence[obj.id]=true;P.storyFlags=Object.assign({},P.storyFlags||{},{['challenge_'+m.id]:true});finishStep();}}]);
+      talk(npc,'<p><b>'+escapeStoryHtml(npc.name.toUpperCase())+':</b> Good call. '+escapeStoryHtml(challenge.w)+'</p><p><b>YOU:</b> I can explain that choice now.</p>',[{t:'Record the decision',f:()=>{applyChronicleActivityEffect(challenge.effect,m,obj,choice,challenge.o);G.evidence[obj.id]=true;P.storyFlags=Object.assign({},P.storyFlags||{},{['challenge_'+m.id]:true});finishStep();}}]);
     }}));
     talk(npc,'<p><b>'+escapeStoryHtml(npc.name.toUpperCase())+':</b> '+escapeStoryHtml(challenge.q)+'</p><p><b>YOU:</b> What are my options?</p><p><b>'+escapeStoryHtml(npc.name.toUpperCase())+':</b> Look at the choices and tell me what you would do.</p>',buttons);
   };
@@ -2626,7 +2651,7 @@ const MISSIONS=CHRONICLE_MISSIONS.map((story,index)=>{
       {
         kind:'clue',id:'m01-transaction-record',label:'Meet Abdul at the verification centre',spot:'ledger',title:'Public transaction record',sign:'VERIFY TX',
         run(){
-          talk(STORY_NPCS.IamAbdul,"<p><b>VERIFICATION CENTRE · PRACTICE RECORD</b></p><p>Abdul points out each field as you check it:<br>Status: Confirmed<br>Amount: 120 USDC<br>Network: Base test environment<br>Recipient: <b>0x73A…2B1</b><br>Shop's expected address: <b>0x91C…7F0</b></p><p>Compare the last part of the recipient address with the shop's saved address. They don't match. The transaction succeeded, but it went to a different address. This is a fictional practice record; no real funds or blockchain are involved.</p>",[
+          talk(STORY_NPCS.IamAbdul,"<p><b>VERIFICATION CENTRE · PRACTICE RECORD</b></p><p>Abdul points out each field as you check it:<br>Status: Confirmed<br>Amount: 120 USDC<br>Network: Base<br>Recipient: <b>0x73A…2B1</b><br>Shop's expected address: <b>0x91C…7F0</b></p><p>Compare the last part of the recipient address with the shop's saved address. They don't match. The transaction succeeded, but it went to a different address. </p>",[
             {t:"It was sent to the wrong address. Don't release the laptop.",f:()=>{G.evidence.transaction_checked=true;G.evidence.recipient_mismatch=true;finishStep();}},
             {t:"It's confirmed, so the shop has been paid.",f:()=>talk(STORY_NPCS.IamAbdul,"<p>Not quite. ‘Confirmed’ describes the transaction, not whether this shop received it. Check the destination against the shop's saved address, then tell me what you notice.</p>",[{t:"The addresses don't match. Hold the laptop.",f:()=>{G.evidence.transaction_checked=true;G.evidence.recipient_mismatch=true;finishStep();}}])}
           ]);
@@ -2644,7 +2669,7 @@ const MISSIONS=CHRONICLE_MISSIONS.map((story,index)=>{
     ];
   }else{
     steps=people.slice();
-    const objectives=story.objectives||[],spots=['b','c','e','g','h','i','j','k','l','m','n','o'];
+    const objectives=story.objectives||[],spots=['execution'];
     objectives.forEach((obj,j)=>{
       const npcIndex=j%Math.max(1,story.npcs.length),spot=spots[(j+(index%3))%spots.length];
       steps.push(j===0?chronicleChallengeStep(story,obj,npcIndex,spot):chronicleClueStep(story,obj,j,spot));
@@ -2656,7 +2681,7 @@ const MISSIONS=CHRONICLE_MISSIONS.map((story,index)=>{
       talk(npc,'<p><b>'+escapeStoryHtml(npc.name.toUpperCase())+':</b> '+escapeStoryHtml(recap)+'</p><p><b>'+escapeStoryHtml(partner.name.toUpperCase())+':</b> '+escapeStoryHtml(nextLine)+'</p><p><b>YOU:</b> I am taking the lesson with me. Next time, I will check the facts before I decide.</p>',[{t:'Save the chapter findings',f:()=>{P.storyFlags=Object.assign({},P.storyFlags||{},Object.fromEntries((story.storyFlags||[]).map(flag=>[flag,true])));G.evidence.chapterSummary=true;finishStep();}}]);
     }});
   }
-  return {id:story.id,n:index+1,city,title:story.title,goal:story.narrativePurpose,state:story.state,story,npcs:story.npcs,characterStepCount:story.id==='m01'?2:people.length,steps,extras:[],storyFlags:story.storyFlags||[],xp:story.rewards&&story.rewards.xp||100,safeSimulationRequired:true};
+  return {id:story.id,n:index+1,city,title:story.title,goal:story.narrativePurpose,state:story.state,story,npcs:story.npcs,characterStepCount:story.id==='m01'?2:people.length,steps,extras:[],storyFlags:story.storyFlags||[],xp:story.rewards&&story.rewards.xp||100};
 });
 
 const MBY={}; MISSIONS.forEach(m=>{ MBY[m.id]=m; });
@@ -2734,8 +2759,16 @@ function loadStep(){
     });
     goal=target||ents[0]||null;
   }else{
-    const entity=st.kind==='clue'?placeStoryClue(st,SPOTS[st.spot]):placeNPC(st.npc,SPOTS[st.spot]);
-    entity.talk=()=>st.run(); entity.active=()=>true; ents.push(entity); goal=entity;
+    if(m.id!=='m01'&&G.i>=m.characterStepCount&&G.i<m.steps.length-1){
+      const base=SPOTS.execution,station=storyExecutionStation(m,G.i);
+      const entity=placeExecutionCenter(st,base,station);
+      entity.talk=()=>st.run();entity.active=()=>true;ents.push(entity);goal=entity;
+      const mentor=placeNPC(st.npc,{x:station.x+3.1,z:station.z+1.6,f:-1});
+      mentor.active=()=>false;mentor.talk=()=>{};ents.push(mentor);
+    }else{
+      const entity=st.kind==='clue'?placeStoryClue(st,SPOTS[st.spot]):placeNPC(st.npc,SPOTS[st.spot]);
+      entity.talk=()=>st.run();entity.active=()=>true;ents.push(entity);goal=entity;
+    }
     if(m.id==='m01'&&st.id==='m01-transaction-record'){
       /* Abdul meets the player at the separate verification centre for the guided check. */
       const guide=placeNPC(STORY_NPCS.IamAbdul,SPOTS.ledgerGuide);
@@ -2928,7 +2961,7 @@ function missionCard(m){
   return '<article class="card mission-card'+(un?'':' lock')+(m.city==='kitcity'?' final-destination':'')+'" data-mission-id="'+m.id+'"><div class="ch">'+badgeSVG(m.n,dn,46)+'<div><b>'+personalize('Mission '+m.n+': '+m.title,null)+'</b><small>'+personalize(m.goal,null)+'</small></div></div><div class="cf"><span>'+(dn?'Completed':'Up to +'+reward.toFixed(2)+' USDC')+'</span>'+(un?'<button class="btn brand" data-a="play" data-v="'+m.id+'" type="button">'+(dn?'Replay':'Play')+'</button>':'<span>Finish mission '+(m.n-1)+' first</span>')+'</div></article>';
 }
 function renderHub(){
-  $('#hubTop').innerHTML=tx('<span class="wm"><img class="header-logo" src="https://i.postimg.cc/qqbdTXky/file-00000000958881f4a776df689a235dec.png" alt="KitCity" /></span><div class="lvl"><b>Practice wallet</b><div class="balance-line"><strong>'+P.usdc.toFixed(2)+' USDC</strong><small>'+Object.keys(P.done).filter(k=>P.done[k]).length+' missions completed</small></div></div>');
+  $('#hubTop').innerHTML=tx('<span class="wm"><img class="header-logo" src="https://i.postimg.cc/qqbdTXky/file-00000000958881f4a776df689a235dec.png" alt="KitCity" /></span><div class="lvl"><b>Wallet</b><div class="balance-line"><strong>'+P.usdc.toFixed(2)+' USDC</strong><small>'+Object.keys(P.done).filter(k=>P.done[k]).length+' missions completed</small></div></div>');
   document.querySelectorAll('#nav [data-v="kitlab"]').forEach(b=>b.remove());
   if(hubTab==='kitlab'||hubTab==='cityhub') hubTab='missions';
   document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===hubTab));
@@ -2954,16 +2987,22 @@ function renderHub(){
     h+=tg('music','Music','City-based Nigerian music from YouTube. Needs internet.')+'<div class="card"><div class="ch"><div><b>Playlist</b><small>Paste any public YouTube playlist link to use your own songs.</small></div></div><input id="plIn" type="url" inputmode="url" placeholder="https://www.youtube.com/playlist?list=..." value="'+(P.pl||'').replace(/"/g,'&quot;')+'" style="width:100%;margin-top:10px;padding:11px;border-radius:6px;border:2px solid rgba(255,255,255,.35);background:#1B1C20;color:#fff;font:14px system-ui"><div class="row"><button class="btn brand" data-a="plset" type="button">Use playlist</button><button class="btn line" data-a="plnext" type="button">Skip song</button><button class="btn line" data-a="pldef" type="button">Default</button></div></div>'+tg('sfx','Sound effects','Footsteps, chimes and voices.');
     h+='<div class="card"><div class="ch"><div><b>How to play</b><small>Move with the left stick or WASD. Hold Run or Shift to run. Tap Talk or press E near a glowing person. The arrow points to your goal. Avoid traffic.</small></div></div></div>';
     h+='<div class="card"><div class="ch"><div><b>About the streets</b><small>Street and district names are inspired by real places in each city. The layout is a stylised grid, not a survey map.</small></div></div></div>';
-    h+='<div class="card"><div class="ch"><div><b>Reset progress</b><small>Erases badges, mission progress and your practice wallet on this device.</small></div></div><div class="cf"><span>'+(resetArm?'Tap again to confirm':'')+'</span><button class="btn line" data-a="reset" type="button">'+(resetArm?'Yes, erase everything':'Reset')+'</button></div></div>';
-    h+='<p class="soft">Prototype: wallets, balances and payments are simulated. Rates are samples. Nothing here is financial advice.</p>';
+    h+='<div class="card"><div class="ch"><div><b>Reset progress</b><small>Erases badges, mission progress and your wallet on this device.</small></div></div><div class="cf"><span>'+(resetArm?'Tap again to confirm':'')+'</span><button class="btn line" data-a="reset" type="button">'+(resetArm?'Yes, erase everything':'Reset')+'</button></div></div>';
+    h+='';
   }
   $('#hubBody').innerHTML=tx(h);
-  /* Render only canonical registry missions; discard any orphaned or duplicate legacy cards. */
+  /* Canonical mission cards only: strip retired labels, stale templates and duplicates. */
+  const hubBody=$('#hubBody');
   const currentMissionIds=new Set(MISSIONS.map(m=>m.id)),renderedMissionIds=new Set();
-  $('#hubBody').querySelectorAll('.mission-card[data-mission-id]').forEach(card=>{
+  hubBody.querySelectorAll('.mission-card').forEach(card=>{
     const id=card.dataset.missionId;
-    if(!currentMissionIds.has(id)||renderedMissionIds.has(id)) card.remove();
+    if(!id||!currentMissionIds.has(id)||renderedMissionIds.has(id)) card.remove();
     else renderedMissionIds.add(id);
+  });
+  hubBody.querySelectorAll('[class*="web3-focus"],[data-legacy-mission],.legacy-mission-card,.old-mission-card,.mission-card-old').forEach(node=>node.remove());
+  hubBody.querySelectorAll('*').forEach(node=>{
+    if(node.children.length===0&&/web3\\s*focus/i.test(node.textContent||'')) node.remove();
+    else if(node.matches('.card,article,section')&&!node.matches('.mission-card')&&/mission\\s+\\d+\\s*:/i.test(node.textContent||'')) node.remove();
   });
 }
 $('#hub').addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.closest('.map g[data-a="city"]')){e.preventDefault();e.target.dispatchEvent(new MouseEvent('click',{bubbles:true}));}});
