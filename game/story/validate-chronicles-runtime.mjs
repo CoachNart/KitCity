@@ -20,6 +20,12 @@ if (!sceneDirector.includes("const OPENING_LINES = [")) errors.push("Automatic L
 if (!sceneDirector.includes("kitcity-speech-bubble")) errors.push("World-anchored speech bubbles are missing");
 requireText("Your turn. Walk up to someone and press Talk when you are ready.", "player-led interaction after intro");
 requireText("const STORY_BRIDGES={", "connected story transitions");
+requireText("const line=index===0?(STORY_BRIDGES[m.id]||chronicleNpcLine(m,name,index)):chronicleNpcLine(m,name,index)", "mission-specific spoken opening hooks");
+requireText("function chronicleClueStep(m,obj,index,spot)", "conversation-led mission clue interactions");
+requireText("What should I be paying attention to?", "player engagement in clue conversations");
+requireText("function chronicleChallengeStep(m,obj,index,spot)", "conversation-led mission decisions");
+requireText("What are my options?", "player engagement in mission decisions");
+if (engine.includes("escapeStoryHtml(story.ending)") || engine.includes("escapeStoryHtml(story.cliffhanger)")) errors.push("Narrator-style mission wrap-up is still rendered on a conversation card.");
 requireText("function updateLivesHUD()", "three-heart life display");
 requireText("G.lives=Math.max(0", "hazard life loss");
 requireText("startMission(missionId,true)", "mission restart after three hazards");
