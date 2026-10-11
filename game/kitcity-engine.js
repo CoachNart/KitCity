@@ -102,15 +102,7 @@ function personalize(html,mission,preferredNPC){
     const original=String(preferredNPC.originalName||'').trim();
     const current=String(preferredNPC.name||'').trim();
     if(original&&current&&original!==current){
-      const escaped=original.replace(/[.*+?^{}()|[\]\\]/g,'\\function personalize(html){
-  let out=String(html==null?'':html).replace(/Agent Kit/g,playerName()).replace(/agent kit/g,playerName());
-  const aliases=G&&G.nameAliases||{};
-  Object.keys(aliases).sort((a,b)=>b.length-a.length).forEach(original=>{
-    const pattern=original.replace(/ /g,'\\s+');
-    out=out.replace(new RegExp('\\b'+pattern+'\\b','gi'),aliases[original]);
-  });
-  return out;
-}');
+      const escaped=original.replace(/[.*+?^{}()|[\]\\]/g,'\\$&');
       out=out.replace(new RegExp('\\b'+escaped+'\\b','gi'),current);
     }
   }
