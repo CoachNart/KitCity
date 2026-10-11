@@ -246,7 +246,7 @@ const RAW_MISSIONS = [
       },
       {
         "id": "m02-obj-3",
-        "label": "Trace the transaction and compare the recipient address",
+        "label": "Trace a transaction and compare the recipient address",
         "interactionTarget": "story:m02:objective:3",
         "required": true
       },
