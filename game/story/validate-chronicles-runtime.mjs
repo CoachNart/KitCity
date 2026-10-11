@@ -22,7 +22,7 @@ requireText("Your turn. Walk up to someone and press Talk when you are ready.", 
 requireText("const STORY_BRIDGES={", "connected story transitions");
 requireText("const line=index===0?(STORY_BRIDGES[m.id]||chronicleNpcLine(m,name,index)):chronicleNpcLine(m,name,index)", "mission-specific spoken opening hooks");
 requireText("function chronicleClueStep(m,obj,index,spot)", "conversation-led mission clue interactions");
-requireText("What should I be paying attention to?", "player engagement in clue conversations");
+requireText("Talk me through what matters here.", "player engagement in execution-centre clue conversations");
 requireText("function chronicleChallengeStep(m,obj,index,spot)", "conversation-led mission decisions");
 requireText("What are my options?", "player engagement in mission decisions");
 if (engine.includes("escapeStoryHtml(story.ending)") || engine.includes("escapeStoryHtml(story.cliffhanger)")) errors.push("Narrator-style mission wrap-up is still rendered on a conversation card.");
