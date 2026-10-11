@@ -2623,7 +2623,7 @@ function certificate(){
   sheetEl.insertAdjacentHTML('beforeend',tx('<div class="row"><a class="btn" href="https://wa.me/?text='+msg+'" target="_blank" rel="noopener">Share on WhatsApp</a></div>'));
 }
 function exitToHub(){
-  if(G){P.storyProgress=P.storyProgress||{};P.storyProgress[G.m.id]={step:G.i||0,correct:G.correct||0,wrong:G.wrong||0,evidence:G.evidence||{}};save();}
+  if(G&&!P.done[G.m.id]){P.storyProgress=P.storyProgress||{};P.storyProgress[G.m.id]={step:G.i||0,correct:G.correct||0,wrong:G.wrong||0,evidence:G.evidence||{}};save();}
   closeSheet(); S.phase='hub'; Snd.setMode('hub'); G=null;
   clearGroup(missionGroup); colliders.length=cityCols; smoke=[]; ents=[]; goal=null; beacon.visible=false;
   $('#hud').classList.add('hidden'); $('#title').classList.add('hidden');
