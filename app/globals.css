@@ -532,3 +532,6 @@ html,body{height:100%;overflow:hidden;background:var(--ink);color:var(--ink);fon
   .map-city-label.selected{font-size:8.5px}
   .map-legend-note{width:100%;margin-left:0}
 }
+
+.web3-focus{display:inline-flex;align-items:center;gap:5px;margin-top:6px;padding:4px 8px;border:1px solid rgba(0,183,205,.35);border-radius:999px;background:rgba(0,229,255,.09);color:#087f91;font:800 10px/1.3 system-ui,-apple-system,"Segoe UI",sans-serif;letter-spacing:.045em;text-transform:uppercase;max-width:100%;width:max-content}
+#sheet .web3-focus{margin:2px 0 8px}
