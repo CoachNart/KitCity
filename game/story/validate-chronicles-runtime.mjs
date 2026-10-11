@@ -9,7 +9,7 @@ const requireText = (text, label) => {
 
 requireText("MISSIONS as CHRONICLE_MISSIONS, CHARACTER_ORDER", "canonical registry import");
 requireText("const MISSIONS=CHRONICLE_MISSIONS.map", "runtime mission adapter");
-requireText("if(m.id==='m01'&&!P.storyPrologueSeen)", "opening cinematic gate");
+requireText("if(m.id==='m01'&&!P.chroniclesPrologueSeen)", "versioned opening cinematic gate");
 requireText("P.storyProgress[G.m.id]", "per-mission progress save");
 requireText("missionGroup.visible=false; storyCastGroup.visible=true", "opening scene staging");
 requireText("const CHRONICLE_ACTIVITY_RULES=[", "objective activity bank");
