@@ -611,7 +611,7 @@ const SPOTS={
   a:{x:10,z:-30,f:-1}, b:{x:-10,z:-105,f:1}, c:{x:80,z:-35,f:-1}, d:{x:60,z:-105,f:1},
   e:{x:-80,z:-35,f:1}, f:{x:-60,z:-105,f:-1}, g:{x:10,z:-175,f:-1}, h:{x:-10,z:-175,f:1},
   i:{x:150,z:-35,f:-1}, j:{x:130,z:-175,f:1}, k:{x:-150,z:-35,f:1}, l:{x:-130,z:-175,f:-1},
-  m:{x:80,z:35,f:-1}, n:{x:-80,z:105,f:1}, o:{x:10,z:175,f:-1}, story:{x:24,z:-32,f:1}, x1:{x:60,z:-105,f:1}
+  m:{x:80,z:35,f:-1}, n:{x:-80,z:105,f:1}, o:{x:10,z:175,f:-1}, story:{x:24,z:-32,f:1}, x1:{x:60,z:-105,f:1}, shopdesk:{x:7,z:-37,f:1}, screenshot:{x:18,z:-38,f:-1}, buyer:{x:30,z:-30,f:-1}, ledger:{x:8,z:-22,f:1}
 };
 const special=Object.keys(SPOTS).map(k=>SPOTS[k]).concat([SPAWN]);
 const nearSpecial=(x,z,d)=>special.some(s=>Math.hypot(s.x-x,s.z-z)<d);
@@ -2542,12 +2542,71 @@ const MISSIONS=CHRONICLE_MISSIONS.map((story,index)=>{
   const people=story.npcs.map((name,i)=>chronicleNpcStep(story,name,i));
   let steps;
   if(story.id==='m01'){
+    const buyerNpc=NPC('Buyer','CUSTOMER',EMBER,STORY_LOOKS[8],null,'BUYER');
     steps=[
-      people[0],people[1],
-      {kind:'clue',id:'lagos_poster',label:'Inspect the old meetup poster',spot:'b',title:'Old meetup poster',sign:'OLD MEETUP POSTER',run(){openSheet('<div class="who"><span class="av" style="background:'+BRAND+';color:'+INK+'">01</span><div><b>Old meetup poster</b><small>Lagos · First clue</small></div></div><p>The paper is sun-faded, but the cyan mark is clear. The event brought together builders, researchers and community organisers — not just traders.</p><div class="kv"><span>Clue found</span><b>T3Kit symbol</b></div><p class="note">The name connects people with different skills. It is worth following.</p>',[{t:'Save clue · 01',f:()=>{G.evidence.lagos_poster=true;P.storyFlags=Object.assign({},P.storyFlags||{},{t3kit_clue_001:true});save();finishStep();}}]);}},
-      {kind:'clue',id:'lagos_sticker',label:'Check the laptop sticker',spot:'c',title:'Laptop sticker',sign:'CHECK THE STICKER',run(){openSheet('<div class="who"><span class="av" style="background:'+BRAND+';color:'+INK+'">02</span><div><b>Laptop sticker</b><small>Lagos · Second clue</small></div></div><p>A laptop near the repair desk carries the same cyan mark. A handwritten note reads: <b>Learn. Build. Participate. Earn. Contribute.</b></p><div class="kv"><span>Clue found</span><b>Five-part message</b></div><p class="note">This looks like a connected ecosystem, not just one app.</p>',[{t:'Save clue · 02',f:()=>{G.evidence.lagos_sticker=true;P.storyFlags=Object.assign({},P.storyFlags||{},{t3kit_clue_002:true});save();finishStep();}}]);}},
-      {kind:'clue',id:'lagos_noticeboard',label:'Read the community noticeboard',spot:'e',title:'Community noticeboard',sign:'READ THE NOTICEBOARD',run(){openSheet('<div class="who"><span class="av" style="background:'+BRAND+';color:'+INK+'">03</span><div><b>Community noticeboard</b><small>Lagos · Third clue</small></div></div><p>Three notices share the same mark: a beginner workshop, an open-source contribution call and a product testing session. Different activities. One recurring symbol.</p><div class="kv"><span>Clue found</span><b>Three paths · One mark</b></div><p class="note">Bring what you found back to Softstorm.</p>',[{t:'Save clue · 03',f:()=>{G.evidence.lagos_noticeboard=true;P.storyFlags=Object.assign({},P.storyFlags||{},{t3kit_clue_003:true});save();finishStep();}}]);}},
-      {label:'Return to Softstorm with your findings',spot:'a',npc:STORY_NPCS.Softstorm,run(){const count=['lagos_poster','lagos_sticker','lagos_noticeboard'].filter(key=>G.evidence[key]).length;talk(STORY_NPCS.Softstorm,'<p>You found '+count+' clues. Same symbol, different places — a community event, a builder’s workspace and opportunities for people with different skills.</p><p><b>What does that tell you?</b></p>',[{t:'T3Kit may connect different people and paths',f:()=>talk(STORY_NPCS.Softstorm,'<p>That is the strongest lead so far. Do not assume it is only a token or one app. Follow what people are building, who it helps and how the pieces connect.</p><p>Keep the card. You will need it.</p>',[{t:'Keep the T3Kit card',f:()=>{G.evidence.t3kit_card=true;finishStep();}}])},{t:'It is probably just a logo',f:()=>talk(STORY_NPCS.Softstorm,'<p>Maybe. But three unrelated places carrying the same mark is worth investigating. Look at what sits behind the logo.</p>',[{t:'Keep investigating',f:()=>{G.evidence.t3kit_card=true;finishStep();}}])}]);}}
+      {
+        kind:'character',id:'m01-join-dispute',label:'Find out what happened',spot:'a',npc:STORY_NPCS.Softstorm,
+        run(){
+          talk(STORY_NPCS.Softstorm,"<p><b>PLAYER</b> · Abeg, wetin una dey argue about?</p><p>Softstorm explains that a buyer says they sent 120 USDC for a laptop. The buyer has a screenshot, but the shop has not received the payment.</p><p><b>Softstorm:</b> He is already on his way. If I hand over the laptop and the money never came, na me lose.</p>",[
+            {t:"I'll help check the payment.",f:()=>{G.evidence.joined_dispute=true;talk(STORY_NPCS.Softstorm,"<p>Thank you. Please, no let that screenshot confuse you. We need to find out what actually happened before the buyer gets here.</p>",[{t:"Let's check what the shop received.",f:()=>finishStep()}]);}},
+            {t:"Show me the screenshot first.",f:()=>{G.evidence.joined_dispute=true;finishStep();}}
+          ]);
+        }
+      },
+      {
+        kind:'character',id:'m01-ask-abdul',label:'Ask IamAbdul how to verify it',spot:'story',npc:STORY_NPCS.IamAbdul,
+        run(){
+          talk(STORY_NPCS.IamAbdul,"<p><b>IAMABDUL:</b> Before anybody starts shouting scam, let's check the facts.</p><p>A blockchain transfer can be confirmed on a public explorer. But a successful transaction only tells you that a transaction happened. We still need to compare the amount, network and recipient address.</p><p><b>PLAYER:</b> So the green tick alone no settle anything?</p>",[
+            {t:"We need to check the actual details.",f:()=>{G.evidence.knows_verification_steps=true;finishStep();}},
+            {t:"If the screenshot says successful, it's enough.",f:()=>talk(STORY_NPCS.IamAbdul,"<p>And if the screenshot is old, edited, or shows money sent to the wrong address? Abeg, let's check the records before anybody loses a laptop.</p>",[{t:"Fine. Let's check the records.",f:()=>{G.evidence.knows_verification_steps=true;finishStep();}}])}
+          ]);
+        }
+      },
+      {
+        kind:'clue',id:'m01-screenshot',label:'Inspect the buyer’s payment screenshot',spot:'screenshot',title:'Payment screenshot',sign:'CHECK SCREENSHOT',
+        run(){
+          talk(STORY_NPCS.Softstorm,"<p>The screenshot shows <b>120 USDC · Successful</b>. It looks convincing at first glance, but it was supplied by the buyer. It does not prove the shop received the funds.</p><p><b>PLAYER:</b> E look real sha.</p>",[
+            {t:"Accept the screenshot as proof.",f:()=>talk(STORY_NPCS.Softstorm,"<p>You'd release a whole laptop because of a picture? My brother, let's check the shop's own records first.</p>",[{t:"Check the shop's payment records.",f:()=>{G.evidence.screenshot_inspected=true;finishStep();}}])},
+            {t:"Treat it as a claim and check the records.",f:()=>{G.evidence.screenshot_inspected=true;finishStep();}}
+          ]);
+        }
+      },
+      {
+        kind:'clue',id:'m01-shop-records',label:'Check the shop’s payment records',spot:'shopdesk',title:'Shop payment records',sign:'PAYMENT RECORDS',
+        run(){
+          talk(STORY_NPCS.IamAbdul,"<p>The shop's own payment history shows <b>no incoming 120 USDC payment</b>.</p><p><b>PLAYER:</b> So we never receive am?</p><p><b>IAMABDUL:</b> Not in this account. Now we need the transaction details to see where it went.</p>",[
+            {t:"Hold the laptop until we verify the destination.",f:()=>{G.evidence.shop_record_checked=true;G.evidence.laptop_held=true;finishStep();}},
+            {t:"Maybe it's just delayed.",f:()=>talk(STORY_NPCS.IamAbdul,"<p>Could be a delay. Could be the wrong network or address. We don't have to guess; let's compare the transaction details.</p>",[{t:"Keep the laptop here and investigate.",f:()=>{G.evidence.shop_record_checked=true;G.evidence.laptop_held=true;finishStep();}}])}
+          ]);
+        }
+      },
+      {
+        kind:'character',id:'m01-buyer-arrives',label:'Speak to the buyer',spot:'buyer',npc:buyerNpc,
+        run(){
+          talk(buyerNpc,"<p><b>BUYER:</b> I've paid already. Check the screenshot. I came all this way for the laptop.</p><p><b>PLAYER:</b> We checked the shop records. Nothing has arrived.</p><p><b>BUYER:</b> The transaction says successful. What else do you want?</p>",[
+            {t:"Ask for the transaction hash and network.",f:()=>{G.evidence.requested_transaction_details=true;talk(buyerNpc,"<p>Fine. Here's the transaction hash and the network I used. Just check it quickly, abeg.</p>",[{t:"Inspect the transaction details.",f:()=>finishStep()}]);}},
+            {t:"Tell him the screenshot is enough.",f:()=>talk(buyerNpc,"<p>So you'll give me the laptop then?</p><p>Softstorm steps in: <b>Not until we verify the destination.</b></p>",[{t:"Ask for the transaction details.",f:()=>{G.evidence.requested_transaction_details=true;finishStep();}}])}
+          ]);
+        }
+      },
+      {
+        kind:'clue',id:'m01-transaction-record',label:'Verify the transaction destination',spot:'ledger',title:'Public transaction record',sign:'VERIFY TX',
+        run(){
+          talk(STORY_NPCS.IamAbdul,"<p><b>SIMULATED PUBLIC RECORD</b></p><p>Status: Confirmed<br>Amount: 120 USDC<br>Network: Base test environment<br>Recipient: <b>0x73A…2B1</b><br>Shop's expected address: <b>0x91C…7F0</b></p><p>The transaction is confirmed, but the recipient address does not match the shop's address. This practice record is fictional; no real funds or blockchain are involved.</p>",[
+            {t:"It was sent to the wrong address. Don't release the laptop.",f:()=>{G.evidence.transaction_checked=true;G.evidence.recipient_mismatch=true;finishStep();}},
+            {t:"It's confirmed, so the shop has been paid.",f:()=>talk(STORY_NPCS.IamAbdul,"<p>Confirmed means the network processed that transaction. It does not mean this shop received it. Compare the recipient address before deciding.</p>",[{t:"The recipient doesn't match. Hold the laptop.",f:()=>{G.evidence.transaction_checked=true;G.evidence.recipient_mismatch=true;finishStep();}}])}
+          ]);
+        }
+      },
+      {
+        kind:'character',id:'m01-resolve-dispute',label:'Tell Softstorm what you found',spot:'a',npc:STORY_NPCS.Softstorm,
+        run(){
+          talk(STORY_NPCS.Softstorm,"<p>You compare the public record with the shop's expected address. The payment was confirmed, but it went somewhere else.</p><p><b>SOFTSTORM:</b> So the screenshot wasn't necessarily fake. It just didn't prove that the money reached us.</p><p><b>PLAYER:</b> Exactly. No matching payment, no laptop.</p><p>The buyer is asked to resolve the wrong-address transfer before collecting the laptop.</p><p><b>SOFTSTORM:</b> You came here looking for breakfast and ended up saving my business.</p>",[
+            {t:"Keep the laptop until the correct payment arrives.",f:()=>{G.evidence.dispute_resolved=true;P.storyFlags=Object.assign({},P.storyFlags||{},{payment_dispute_resolved:true,web3_first_lesson:true});save();finishStep();}},
+            {t:"Release it because the transaction says confirmed.",f:()=>talk(STORY_NPCS.Softstorm,"<p>Wait. We just proved the recipient address is wrong. A confirmed transaction to another address is not payment to this shop.</p>",[{t:"Keep the laptop until the correct payment arrives.",f:()=>{G.evidence.dispute_resolved=true;P.storyFlags=Object.assign({},P.storyFlags||{},{payment_dispute_resolved:true,web3_first_lesson:true});save();finishStep();}}])}
+          ]);
+        }
+      }
     ];
   }else{
     steps=people.slice();
@@ -2561,7 +2620,7 @@ const MISSIONS=CHRONICLE_MISSIONS.map((story,index)=>{
       talk(npc,'<p>'+escapeStoryHtml(story.ending)+'</p><p><b>'+escapeStoryHtml(story.cliffhanger)+'</b></p><p class="note">Your findings are saved in this journey. The next chapter builds on what you discovered here.</p>',[{t:'Save the chapter findings',f:()=>{P.storyFlags=Object.assign({},P.storyFlags||{},Object.fromEntries((story.storyFlags||[]).map(flag=>[flag,true])));G.evidence.chapterSummary=true;finishStep();}}]);
     }});
   }
-  return {id:story.id,n:index+1,city,title:story.title,goal:story.narrativePurpose,state:story.state,story,npcs:story.npcs,characterStepCount:people.length,steps,extras:[],storyFlags:story.storyFlags||[],xp:story.rewards&&story.rewards.xp||100,safeSimulationRequired:true};
+  return {id:story.id,n:index+1,city,title:story.title,goal:story.narrativePurpose,state:story.state,story,npcs:story.npcs,characterStepCount:story.id==='m01'?2:people.length,steps,extras:[],storyFlags:story.storyFlags||[],xp:story.rewards&&story.rewards.xp||100,safeSimulationRequired:true};
 });
 
 const MBY={}; MISSIONS.forEach(m=>{ MBY[m.id]=m; });
@@ -3418,12 +3477,12 @@ function update(dt,time){
   } else { beacon.visible=false; compass.classList.add('hidden'); }
   { updateBarks(dt);
     locT-=dt; if(locT<=0){ locT=.3; const n=locName(player.position.x,player.position.z); if(n!==lastLoc){ lastLoc=n; $('#loc').textContent=n; } } }
-  if(storyDirector.active){ storyDirector.update(dt,time); fadeBuildings(dt,true); return; }
   camTarget.set(player.position.x,0,player.position.z);
   camDesired.set(camTarget.x,35,camTarget.z+20);
   camera.position.lerp(camDesired,1-Math.pow(.0004,dt));
   if(shake>0){ camera.position.x+=(Math.random()-.5)*shake; camera.position.y+=(Math.random()-.5)*shake*.5; shake=Math.max(0,shake-dt*2); }
   camera.lookAt(camTarget.x,1.5,camTarget.z-1);
+  storyDirector.update(dt,time);
   fadeBuildings(dt,true);
 }
 function tick(){
