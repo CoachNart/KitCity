@@ -557,13 +557,13 @@ html.kitcity-story-active #modal{
 .comic-brand{font:900 10px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.13em;color:#fff;text-shadow:0 2px 8px #000}
 .comic-brand i{color:var(--comic-cyan);font-style:normal}
 .comic-skip{border:1px solid rgba(255,255,255,.36);border-radius:999px;padding:8px 11px;background:rgba(3,10,17,.55);color:#fff;font:800 9px system-ui;letter-spacing:.08em;cursor:pointer}
-.comic-scene-frame{position:absolute;inset:8% 5% 29%;overflow:hidden;pointer-events:none;border:2px solid rgba(255,255,255,.88);border-radius:4px;background:linear-gradient(135deg,rgba(0,15,26,.12),rgba(0,15,26,.02));box-shadow:5px 6px 0 rgba(0,0,0,.5),0 0 0 1px rgba(0,229,255,.3);transition:border-color .2s,box-shadow .2s}
+.comic-scene-frame{position:absolute;inset:8% 4% 25%;overflow:hidden;pointer-events:none;border:2px solid rgba(255,255,255,.88);border-radius:4px;background:linear-gradient(135deg,rgba(0,15,26,.12),rgba(0,15,26,.02));box-shadow:5px 6px 0 rgba(0,0,0,.5),0 0 0 1px rgba(0,229,255,.3);transition:border-color .2s,box-shadow .2s}
 .comic-scene-frame:after{content:"";position:absolute;inset:0;background:linear-gradient(135deg,transparent 46%,rgba(0,229,255,.14) 46.2%,transparent 47%),linear-gradient(0deg,rgba(0,0,0,.26),transparent 44%);mix-blend-mode:screen}
 .comic-frame-stamp{position:absolute;right:10px;top:10px;z-index:2;padding:6px 8px;background:var(--comic-cyan);color:#04121A;border:2px solid #04121A;box-shadow:2px 2px 0 #fff;font:900 9px ui-monospace,monospace;letter-spacing:.08em;transform:rotate(3deg)}
 .comic-caption{position:absolute;left:12px;right:12px;bottom:12px;z-index:3;max-width:560px;padding:12px 13px;background:#fff;color:#101820;border:2px solid #101820;box-shadow:3px 3px 0 rgba(0,0,0,.75);clip-path:polygon(0 0,100% 0,100% 90%,97% 100%,0 100%)}
 .comic-kicker{display:block;margin-bottom:5px;color:#007D8D;font:900 9px/1.2 ui-monospace,monospace;letter-spacing:.15em;text-transform:uppercase}
 .comic-caption-text{font:800 clamp(13px,3.7vw,17px)/1.35 system-ui,sans-serif;letter-spacing:-.02em}
-.comic-dialogue{position:relative;z-index:3;margin-top:auto;width:100%;max-width:760px;max-height:35vh;overflow-y:auto;overscroll-behavior:contain;align-self:center;padding:10px 11px 8px;background:#F8FBFC;color:#101820;border:3px solid #07111A;box-shadow:5px 6px 0 rgba(0,0,0,.62),0 0 0 1px rgba(0,229,255,.6);clip-path:polygon(0 0,99% 0,100% 3%,100% 100%,1% 100%,0 96%)}
+.comic-dialogue{position:relative;z-index:3;margin-top:auto;width:100%;max-width:760px;max-height:27vh;overflow-y:auto;overscroll-behavior:contain;align-self:center;padding:10px 11px 8px;background:#F8FBFC;color:#101820;border:3px solid #07111A;box-shadow:5px 6px 0 rgba(0,0,0,.62),0 0 0 1px rgba(0,229,255,.6);clip-path:polygon(0 0,99% 0,100% 3%,100% 100%,1% 100%,0 96%)}
 .comic-dialogue:before{content:"";position:absolute;top:-11px;left:24px;width:18px;height:18px;transform:rotate(45deg);background:#F8FBFC;border-left:3px solid #07111A;border-top:3px solid #07111A}
 .comic-dialogue-meta{position:relative;display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px}
 .comic-speaker{font:900 10px/1.2 ui-monospace,monospace;letter-spacing:.12em;color:#008697;text-transform:uppercase}
@@ -580,6 +580,9 @@ html.kitcity-story-active #modal{
 .comic-card-symbol b{margin-top:4px;font:900 13px ui-monospace,monospace;letter-spacing:.3em}
 .comic-scene.has-card .comic-card-symbol{opacity:1;transform:translate(-50%,-50%) rotate(-8deg) scale(1)}
 .comic-scene.has-card .comic-scene-frame{border-color:var(--comic-cyan);box-shadow:0 0 0 3px rgba(0,229,255,.18),7px 8px 0 rgba(0,0,0,.6)}
+.comic-scene[data-shot="conversation"] .comic-caption{display:none}
+.comic-scene[data-shot="conversation"] .comic-scene-frame{inset:8% 4% 27%;background:transparent}
+.comic-scene[data-shot="conversation"] .comic-frame-stamp{opacity:.72}
 .comic-scene[data-shot="abdul"] .comic-scene-frame{clip-path:polygon(0 0,100% 0,98% 100%,0 96%)}
 .comic-scene[data-shot="softstorm"] .comic-scene-frame{clip-path:polygon(2% 0,100% 2%,100% 100%,0 100%)}
 .comic-scene[data-shot="player"] .comic-caption{left:8%;right:8%;transform:rotate(-1deg)}
@@ -590,16 +593,16 @@ html.kitcity-story-active #modal{
 @keyframes comic-dialogue-enter{from{opacity:.5;transform:translateY(9px)}to{opacity:1;transform:translateY(0)}}
 @media(min-width:700px){
  .comic-scene{padding:18px 22px 20px}
- .comic-scene-frame{inset:7% 13% 25%}
+ .comic-scene-frame{inset:7% 13% 23%}
  .comic-caption{left:20px;right:auto;bottom:20px;width:min(65%,570px);padding:16px 18px}
- .comic-dialogue{padding:20px 22px 15px}
+ .comic-dialogue{padding:16px 20px 12px;max-height:27vh}
  .comic-choices{grid-template-columns:1fr 1fr}
  .comic-dialogue-text{max-width:64ch}
 }
 @media(max-height:560px){
  .comic-scene{gap:5px;padding-top:calc(6px + env(safe-area-inset-top));padding-bottom:calc(6px + env(safe-area-inset-bottom))}
- .comic-scene-frame{inset:8% 8% 34%}
- .comic-dialogue{padding:9px 12px 8px}
+ .comic-scene-frame{inset:8% 8% 32%}
+ .comic-dialogue{padding:8px 11px 7px;max-height:31vh}
  .comic-dialogue-text{font-size:15px;line-height:1.25}
  .comic-actions{margin-top:7px;padding-top:6px}
  .comic-choice{min-height:38px;padding:7px 10px}
