@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { T3KIT_CHRONICLES } from './kitcity-story.js';
 import {
   authenticateEmailPassword,
   firebaseConfigured,
@@ -45,13 +46,17 @@ const Store=(function(){
   };
 })();
 const KEY='kitnaija_v1';
-const DEFAULT_PLAYER={wallet:null,usdc:0,ngn:0,done:{},dodged:0,fell:0,low:false,music:true,sfx:true,lang:'en',pl:'',name:'',scores:{},web3:null};
+const DEFAULT_PLAYER={wallet:null,usdc:0,ngn:0,done:{},dodged:0,fell:0,low:false,music:true,sfx:true,lang:'en',pl:'',name:'',scores:{},web3:null,storyFlags:{},storyJournal:[],storyArtifacts:[],storySkills:[],storyXP:0,specialization:'',appearance:''};
 let activeUid=Store.get('kitcity_active_uid',null);
 let storageKey=activeUid?KEY+'_user_'+activeUid:KEY;
 const P=Object.assign({},DEFAULT_PLAYER,Store.get(storageKey,{}));
 if(!P.done||typeof P.done!=='object') P.done={};
+if(!P.storyFlags||typeof P.storyFlags!=='object') P.storyFlags={};
+if(!Array.isArray(P.storyJournal)) P.storyJournal=[];
+if(!Array.isArray(P.storyArtifacts)) P.storyArtifacts=[];
+if(!Array.isArray(P.storySkills)) P.storySkills=[];
 let cloudSyncReady=false;
-function progressSnapshot(){ return {wallet:P.wallet,usdc:P.usdc,ngn:P.ngn,done:P.done,dodged:P.dodged,fell:P.fell,low:P.low,music:P.music,sfx:P.sfx,lang:P.lang,pl:P.pl,name:P.name,scores:P.scores,web3:P.web3}; }
+function progressSnapshot(){ return {wallet:P.wallet,usdc:P.usdc,ngn:P.ngn,done:P.done,dodged:P.dodged,fell:P.fell,low:P.low,music:P.music,sfx:P.sfx,lang:P.lang,pl:P.pl,name:P.name,scores:P.scores,web3:P.web3,storyFlags:P.storyFlags,storyJournal:P.storyJournal,storyArtifacts:P.storyArtifacts,storySkills:P.storySkills,storyXP:P.storyXP,specialization:P.specialization,appearance:P.appearance}; }
 function save(){
   const snapshot=progressSnapshot();
   Store.set(storageKey,snapshot);
@@ -62,6 +67,10 @@ function replacePlayerState(data){
   Object.keys(P).forEach(k=>delete P[k]);
   Object.assign(P,DEFAULT_PLAYER,data||{});
   if(!P.done||typeof P.done!=='object') P.done={};
+  if(!P.storyFlags||typeof P.storyFlags!=='object') P.storyFlags={};
+  if(!Array.isArray(P.storyJournal)) P.storyJournal=[];
+  if(!Array.isArray(P.storyArtifacts)) P.storyArtifacts=[];
+  if(!Array.isArray(P.storySkills)) P.storySkills=[];
 }
 function activateUserProgress(uid){
   const nextKey=KEY+'_user_'+uid;
@@ -81,6 +90,13 @@ function mergeCloudProgress(remote){
   const merged=Object.assign({},remote,local);
   merged.done=Object.assign({},remote.done&&typeof remote.done==='object'?remote.done:{},local.done||{});
   merged.scores=Object.assign({},remote.scores&&typeof remote.scores==='object'?remote.scores:{},local.scores||{});
+  merged.storyFlags=Object.assign({},remote.storyFlags&&typeof remote.storyFlags==='object'?remote.storyFlags:{},local.storyFlags||{});
+  merged.storyJournal=[...(Array.isArray(remote.storyJournal)?remote.storyJournal:[]),...(Array.isArray(local.storyJournal)?local.storyJournal:[])].filter((entry,i,all)=>all.findIndex(x=>x&&entry&&x.id===entry.id)===i);
+  merged.storyArtifacts=[...new Set([...(Array.isArray(remote.storyArtifacts)?remote.storyArtifacts:[]),...(Array.isArray(local.storyArtifacts)?local.storyArtifacts:[])])];
+  merged.storySkills=[...new Set([...(Array.isArray(remote.storySkills)?remote.storySkills:[]),...(Array.isArray(local.storySkills)?local.storySkills:[])])];
+  merged.storyXP=Math.max(Number(remote.storyXP)||0,Number(local.storyXP)||0);
+  merged.specialization=local.specialization||remote.specialization||'';
+  merged.appearance=local.appearance||remote.appearance||'';
   merged.wallet=local.wallet||remote.wallet||null;
   merged.usdc=Math.max(Number(remote.usdc)||0,Number(local.usdc)||0);
   merged.ngn=Math.max(Number(remote.ngn)||0,Number(local.ngn)||0);
@@ -121,12 +137,12 @@ function personalize(html,mission,preferredNPC){
     const missionNPCs=mission?missionNPCObjects(mission):[];
     const originalBelongsToAnother=missionNPCs.some(npc=>npc!==preferredNPC&&String(npc.name||'').trim().toLowerCase()===original.toLowerCase());
     if(original&&current&&original!==current&&!originalBelongsToAnother){
-      const escaped=original.replace(/ /g,'\\s+');
+      const escaped=original.replace(/ /g,'\s+');
       out=out.replace(new RegExp('\\b'+escaped+'\\b','gi'),current);
     }
   }
   Object.keys(aliases).sort((a,b)=>b.length-a.length).forEach(original=>{
-    const pattern=original.replace(/ /g,'\\s+');
+    const pattern=original.replace(/ /g,'\s+');
     out=out.replace(new RegExp('\\b'+pattern+'\\b','gi'),aliases[original]);
   });
   return neutralizeGenderedPronouns(out);
@@ -2302,7 +2318,90 @@ const payStep=o=>({label:o.label,spot:o.spot,npc:o.npc,run(){
 }});
 
 /* task step: pick the right action (network, address, signature, token), then do it */
-function taskStep(o){ return {label:o.label,spot:o.spot,npc:o.npc,run(){ pickStep(o); }}; }
+function taskStep(o){ return {label:o.label,spot:o.spot,npc:o.npc,sceneCast:o.sceneCast,run(){ if(o.practice){ runPracticeTask(o); } else { pickStep(o); } }}; }
+function runPracticeTask(o){
+  const esc=v=>String(v==null?'':v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+  const panel=(tag,art,caption)=>'<div style="border:3px solid #20232a;border-radius:12px;overflow:hidden;margin:0 0 10px;background:#fff7d6;color:#20232a;box-shadow:4px 4px 0 #20232a"><div style="padding:5px 10px;background:#20232a;color:#ffe27a;font-weight:900;letter-spacing:1.2px;font-size:10px">KITCITY COMICS · '+esc(tag)+'</div><div style="padding:10px 12px;background:radial-gradient(circle at 85% 15%,#fff 0 8%,transparent 9%),linear-gradient(135deg,#ffe8a3,#ffcf83);font-size:28px;line-height:1.1">'+art+'</div><div style="padding:8px 12px 10px;font-weight:800;font-size:14px;line-height:1.35">'+esc(caption)+'</div></div>';
+  const scene=panel(o.panelTag||'THE SCENE',o.art||'💬',o.intro||'');
+  if(Array.isArray(o.sceneDialogue)){
+    const panels=Array.isArray(o.scenePanels)&&o.scenePanels.length?o.scenePanels:[];
+    const sceneCast=Array.isArray(o.sceneCast)?o.sceneCast:[];
+    const castByName=new Map(sceneCast.map(n=>[String(n.name||'').toLowerCase(),n]));
+    const playerActor={name:playerName(),role:'The player',color:'#E4572E',look:LK.guy,sign:'YOU'};
+    const renderPanel=(p)=>{
+      let caption=String(p&&p[2]||'');
+      /* The script is spoken in bubbles; comic captions must not repeat those lines. */
+      caption=caption.replace(/(?:PLAYER|[A-Z][A-Za-z0-9_. ]{1,32}):\s*[“"][^”"]*[”"]/g,'');
+      caption=caption.replace(/[“"][^”"]*[”"]/g,'').replace(/\s+/g,' ').replace(/^[\s,;:.–—-]+|[\s,;:.–—-]+$/g,'');
+      return panel(p&&p[0]||'THE SCENE',p&&p[1]||'💬',caption);
+    };
+    if(!o.sceneDialogue.length){
+      talk(o.npc,renderPanel(panels[Number(o.sceneIndex||0)]),[{t:'Continue scene',f:finishStep}]);
+      return;
+    }
+    const playLine=(lineIndex)=>{
+      if(lineIndex>=o.sceneDialogue.length){
+        const nextPanel=Number(o.sceneIndex||0)+1;
+        if(nextPanel<panels.length){finishStep();return;}
+        if(typeof o.afterScene==='function'){o.afterScene();return;}
+        finishStep();return;
+      }
+      const line=o.sceneDialogue[lineIndex];
+      const speaker=String(line.speaker||'').trim();
+      const actor=speaker.toUpperCase()==='PLAYER'?playerActor:(castByName.get(speaker.toLowerCase())||sceneCast.find(n=>String(n.name||'').toLowerCase()===speaker.toLowerCase())||o.npc);
+      const scriptLine=Number(o.scriptOffset||0)+lineIndex+1;
+      const scriptTotal=Number(o.sceneDialogueTotal)||o.sceneDialogue.length;
+      const speakerLabel=speaker.toUpperCase()==='PLAYER'?playerName():speaker;
+      const choiceHtml=Array.isArray(line.choices)&&line.choices.length?'<div style="margin-top:8px;font-weight:900;color:#8b4b14">Choose your response</div>':'';
+      const lineHtml='<div style="padding:12px 13px;background:#fff7d6;color:#20232a;border:3px solid #20232a;border-radius:14px;box-shadow:4px 4px 0 #20232a;font-size:16px;line-height:1.5;font-weight:750"><div style="font-size:12px;font-weight:950;color:#20232a;margin-bottom:5px">'+esc(speakerLabel)+'</div><div style="font-size:10px;letter-spacing:1.5px;font-weight:950;color:#8b4b14;margin-bottom:5px">SCRIPT · '+scriptLine+' / '+scriptTotal+'</div>'+esc(line.text||'')+choiceHtml+'</div>';
+      const last=lineIndex===o.sceneDialogue.length-1;
+      const label=last?(Number(o.sceneIndex||0)<panels.length-1?'Next scene':'Continue'):'Next line';
+      if(Array.isArray(line.choices)&&line.choices.length){
+        talk(actor,renderPanel(panels[Number(o.sceneIndex||0)])+lineHtml,line.choices.map(choice=>({t:choice,f:()=>{P.storyFlags=P.storyFlags||{};P.storyFlags['script-choice-'+(o.storyId||o.missionId||o.label||'scene')+'-'+lineIndex]=choice;P.lastStoryChoice=choice;save();playLine(lineIndex+1);}})));
+      } else {
+        talk(actor,renderPanel(panels[Number(o.sceneIndex||0)])+lineHtml,[{t:label,f:()=>playLine(lineIndex+1)}]);
+      }
+    };
+    talk(o.npc,renderPanel(panels[Number(o.sceneIndex||0)])+'<p style="font-weight:800">The scene is playing in script order. Every character listed for this scene is present; each line appears under its actual speaker.</p>',[{t:'Play scene',f:()=>playLine(0)}]);
+    return;
+  }
+  const showResult=()=>{
+    Snd.sfx('good');
+    const hook=o.storyHook?'<p style="margin-top:8px;font-weight:800;color:#8b4b14">'+esc(o.storyHook)+'</p>':'';
+    talk(o.npc,panel('WHAT HAPPENS NEXT','✨',o.reaction||o.result||'We did it.')+(o.lesson?'<p style="margin:7px 0 0;border-left:3px solid #f2bd3d;padding:5px 9px;background:#fff7d6;color:#292929;font-size:12px"><b>Quick takeaway:</b> '+esc(o.lesson)+'</p>':'')+hook,[{t:o.nextReply||'Keep going',f:finishStep}]);
+  };
+  const doAction=()=>{
+    if(o.transaction){
+      const amount=Number(o.amount||1);
+      needFunds(amount);
+      confirmTx(o.npc,{title:o.action,rows:[["Recipient",o.recipient||"Mission character"],["Amount",amount.toFixed(2)+" USDC"],["Network","Base"]],note:"Check the name, amount and network.",btn:"Confirm payment",after:h=>{
+        P.usdc=Math.max(0,Math.round((P.usdc-amount)*100)/100);save();updateHUD();Snd.sfx('good');
+        const hook=o.storyHook?'<p style="margin-top:8px;font-weight:800;color:#8b4b14">'+esc(o.storyHook)+'</p>':'';
+        talk(o.npc,panel('PAYMENT LANDED','🧾✨',o.reaction||'Payment confirmed.')+'<div class="kv"><span>Receipt</span><b class="mono">'+short(h)+'</b></div>'+(o.lesson?'<p style="font-size:12px"><b>Quick takeaway:</b> '+esc(o.lesson)+'</p>':'')+hook,[{t:o.nextReply||'Keep going',f:finishStep}]);
+      }});
+      return;
+    }
+    busy(o.npc,o.busyText||'You get to work…',360,showResult);
+  };
+  const showObjectiveBoard=()=>{
+    const objectives=Array.isArray(o.storyObjectives)?o.storyObjectives:[];
+    const done=objectives.filter(obj=>P.storyFlags&&P.storyFlags["objective-"+o.storyId+"-"+obj.id]).length;
+    if(done>=objectives.length){showResult();return;}
+    const caption=done===0?(o.taskIntro||"Choose an action and work through it with your character."):"Good. "+done+" of "+objectives.length+" tasks done. Keep going.";
+    const body=panel("YOUR MOVE · "+(done+1)+"/"+objectives.length,"🎮🧭",caption);
+    const actions=objectives.filter(obj=>!(P.storyFlags&&P.storyFlags["objective-"+o.storyId+"-"+obj.id])).map(obj=>({t:obj.text,f:()=>{
+      if(!P.storyFlags||typeof P.storyFlags!=="object")P.storyFlags={};
+      P.storyFlags["objective-"+o.storyId+"-"+obj.id]=true;save();Snd.sfx("good");
+      showObjectiveBoard();
+    }}));
+    talk(o.npc,body,actions);
+  };
+  if(Array.isArray(o.storyObjectives)&&o.storyObjectives.length){
+    talk(o.npc,scene,[{t:o.button||"Let's do the work",f:showObjectiveBoard}]);
+    return;
+  }
+  talk(o.npc,scene,[{t:o.button||o.playerReply||"I'll help",f:()=>{if(o.conversationOnly){finishStep();return;}doAction();}}]);
+}
 function pickStep(o){
   talk(o.npc,'<p>'+o.intro+'</p>'+(o.q?'<p><b>'+o.q+'</b></p>':''),
     shuffle(o.opts).map(x=>({t:x[0],m:o.mono?1:0,f:()=>{
@@ -2318,1479 +2417,273 @@ function pickStep(o){
       }
     }})));
 }
-const MISSIONS=[
-{id:'m1',n:1,city:'lagos',title:'Your first wallet',goal:'Create a wallet, receive USDC and make your first payment.',
- steps:[
-  {label:'Open your wallet and claim USDC',spot:'a',npc:MAMA,run(){
-    if(P.wallet){
-      talk(MAMA,'<p>Welcome back, my child. Your wallet is already open. Let me top you up so you can practise.</p>',[{t:'Top up to 5 USDC',f:()=>{ if(P.usdc<5) P.usdc=5; save(); updateHUD(); finishStep(); }}]);
-      return;
-    }
-    talk(MAMA,'<p>Welcome, my child. Nobody buys anything in Lagos without an account. Yours is a wallet.</p><ul class="pts"><li>It lives on your phone, and only you control it.</li><li>Your address is like an account number. It is safe to share.</li><li>Your secret recovery phrase is different. Never share that with anyone.</li></ul><p class="note">Prototype: the wallet is simulated. The live game will use phone or Google sign-in here.</p>',
-      [{t:'Create my wallet',f:createWallet},{t:'Not now',g:1,f:closeSheet}]);
-  }},
-  STEP_OXNIGHT,
-  {label:'Pay IamAbdul 1 USDC',spot:'j',npc:SUYA,run(){
-    needFunds(1);
-    confirmTx(SUYA,{title:'Pay for suya',rows:[['Pay to',short(SUYA_ADDR),1],['Amount','1.00 USDC'],['Network fee',FEE0]],note:'Payments on a blockchain cannot be undone. Always check the address before you pay.',btn:'Pay 1 USDC',
-      after:h=>{ P.usdc=Math.max(0,P.usdc-1); save(); updateHUD();
-        talk(SUYA,'<h3>Payment confirmed</h3><div class="kv"><span>Receipt</span><b class="mono">'+short(h)+'</b></div><div class="kv"><span>Balance</span><b>'+P.usdc.toFixed(2)+' USDC</b></div><p>IamAbdul hands you a hot stick. Your receipt is permanent and public, so anyone can check that you paid.</p>',[{t:'Continue',f:finishStep}]); }});
-  }}
- ],
- extras:[{id:'guy',spot:SPOTS.x1,npc:GUY,run:giveawayGuy}]
-},
-{id:'m2',n:2,city:'lagos',title:'Bureau de Change',goal:'Learn rates, fees and slippage by swapping USDC for a naira token.',
- steps:[
-  {label:'Ask Larai for today\u2019s rate',spot:'e',npc:ALHAJA,run(){
-    talk(ALHAJA,'<p>A Bureau de Change swaps one money for another. On KitCity you can swap USDC for a naira token. Three words to know:</p><ul class="pts"><li><b>Rate:</b> how many naira you get for 1 USDC. It moves through the day.</li><li><b>Fee:</b> the part the service keeps.</li><li><b>Slippage:</b> how far the price can move before your swap is cancelled.</li></ul>',
-      [{t:'Show me today\u2019s rate',f:()=>talk(ALHAJA,'<h3>Today\u2019s rate</h3><div class="kv"><span>1 USDC</span><b>'+fmtN(RATE)+'</b></div><div class="kv"><span>Fee</span><b>0.5%</b></div><p class="note">Sample rate for this prototype. Real rates change all day, so always check the quote before you confirm.</p>',[{t:'Got it',f:finishStep}])}]);
-  }},
-  STEP_MOON,
-  {label:'Swap 2 USDC at the counter',spot:'i',npc:CLERK,run(){
-    needFunds(2);
-    talk(CLERK,'<p>You are swapping <b>2 USDC</b>. First choose your slippage limit. If the price moves more than this, your swap is cancelled instead of giving you a bad deal.</p>',[
-      {t:'Allow 0.5% price move',f:()=>doSwap(0.005)},
-      {t:'Allow 5% price move',g:1,f:()=>doSwap(0.05)}
-    ]);
-    function doSwap(slip){
-      G.slip=slip; settleAnswer(slip<=0.005);
-      const gross=2*RATE,fee=gross*0.005,recv=gross-fee,min=recv*(1-slip);
-      confirmTx(CLERK,{title:'Confirm your swap',rows:[['You pay','2.00 USDC'],['Rate','1 USDC = '+fmtN(RATE)],['Fee (0.5%)',fmtN(fee)],['Slippage limit',(slip*100).toFixed(1)+'%'],['You receive at least',fmtN(min)],['Network fee',FEE0]],btn:'Swap now',
-        after:()=>{ P.usdc=Math.max(0,P.usdc-2); P.ngn+=recv;  save(); updateHUD();
-          talk(CLERK,'<h3>Swap complete</h3><div class="kv"><span>Received</span><b>'+fmtN(recv)+' token</b></div><p>'+(slip<=0.005?'Smart. A tight limit protects you from a bad price.':'This worked, but a wide limit lets the price move against you. Keep slippage low unless you have a reason.')+'</p>',[{t:'Continue',f:finishStep}]); }});
-    }
-  }}
- ]
-},
-{id:'m3',n:3,city:'minna',title:'Spot the scam',goal:'Recognise phishing, fake support and fake airdrops before they cost you.',
- steps:[
-  scamStep({label:'Read the security text',spot:'c',npc:BRIGHT,from:'KitCity Security',msg:'URGENT: Your wallet will be locked in 1 hour. Verify now at kitcity-verify.net and enter your 12-word recovery phrase.',
-    opts:[['Enter my recovery phrase to keep my wallet',0],['Ignore the link and open the official app myself',1],['Reply and ask them to hold my wallet',0]],
-    good:'Nobody real will ever ask for your recovery phrase. Not support, not the app, not a bank. Fake urgency like \u201C1 hour\u201D is how scammers rush you.',
-    bad:'That is phishing. Anyone with your recovery phrase can empty your wallet and nothing can be reversed. Real services never ask for it.'}),
-  scamStep({label:'Answer the stranger\u2019s DM',spot:'n',npc:HASSAN,from:'Goodness (not verified)',msg:'Hi, I am KitCity support. I saw your problem. Connect your wallet to my site and share your screen so I can fix it.',
-    opts:[['Connect and share my screen',0],['Block and report. Real support never messages first',1],['Send a small amount to prove I am real',0]],
-    good:'Scammers pose as support in DMs. Only use the help links inside the official app or website, and never share your screen or connect to a stranger\u2019s site.',
-    bad:'Fake support is common. Connecting your wallet or sharing your screen can give them what they need to drain your funds.'}),
-  scamStep({label:'Judge the airdrop post',spot:'k',npc:CHIOMA,from:'@kitbonus_official',msg:'You won 50,000 $KITBONUS! Connect your wallet and click Approve to claim. Only 10 spots left!',
-    opts:[['Connect and approve to claim it',0],['Share it with my friends first',0],['Skip it. Unknown tokens and links are traps',1]],
-    good:'Free tokens you did not ask for are bait. Approving a strange site can let it take your real tokens. When in doubt, skip it.',
-    bad:'That \u201Cclaim\u201D is a drainer. Clicking Approve gives the site permission over your tokens. Free money plus a countdown is a classic scam.'}),
-  STEP_CRYPT
- ]
-},
-{id:'m4',n:4,city:'minna',title:'Back up your wallet',goal:'Learn what a recovery phrase is and how to keep it safe.',
- steps:[
-  {label:'Get your recovery phrase',spot:'h',npc:KEEPER,run(){
-    if(!G.words) G.words=shuffle(WORDS).slice(0,12);
-    talk(KEEPER,'<p>These 12 words are the master key to your wallet. Lose them and your money is gone. Share them and someone else can take it.</p><div class="words">'+G.words.map((w,i)=>'<span><em>'+(i+1)+'</em>'+w+'</span>').join('')+'</div><ul class="pts"><li>Write them on paper, in order.</li><li>Do not screenshot them or save them in notes, email or cloud storage.</li><li>Never type them into a website. Nobody legitimate will ask.</li></ul><p class="note">Practice words for this game. Your real wallet creates its own, privately.</p>',
-      [{t:'I wrote them down',f:finishStep}]);
-  }},
-  STEP_NNADI,
-  {label:'Prove you remember',spot:'m',npc:NOTARY,run(){
-    if(!G.words) G.words=shuffle(WORDS).slice(0,12);
-    const idxs=shuffle([0,1,2,3,4,5,6,7,8,9,10,11]).slice(0,3).sort((a,b)=>a-b);
-    let q=0,right=0;
-    function ask(){
-      if(q>=idxs.length){
-        /* Individual answers were settled when selected. */
-        talk(NOTARY,'<h3>'+right+' of 3 correct</h3><p>'+(right===3?'Perfect. In real life, check your paper backup the same way, and store a copy in a second safe place.':'Your paper backup is what saves you. Write it clearly, check it twice, and keep a second copy somewhere safe.')+'</p>',[{t:'Continue',f:finishStep}]);
-        return;
-      }
-      const i=idxs[q],correct=G.words[i];
-      const wrong=shuffle(WORDS.filter(w=>G.words.indexOf(w)<0)).slice(0,2);
-      talk(NOTARY,'<p>Question '+(q+1)+' of 3: what was word number <b>'+(i+1)+'</b>?</p>',shuffle([correct].concat(wrong)).map(w=>({t:w,f:()=>{
-        const ok=w===correct; if(ok) right++; settleAnswer(ok);
-        talk(NOTARY,'<h3>'+(ok?'Correct':'Not quite')+'</h3><p>'+(ok?'Yes, it was <b>'+correct+'</b>.':'Word '+(i+1)+' was <b>'+correct+'</b>. In real life you would read it from your paper backup.')+'</p>',[{t:'Next',f:()=>{ q++; ask(); }}]);
-      }})));
-    }
-    ask();
-  }}
- ]
-},
-{id:'m5',n:5,city:'kano',title:'Pay a friend, safely',goal:'Check addresses properly and send a small test first.',
- steps:[
-  {label:'Get Laloba\u2019s address at the motor park',spot:'i',npc:MUSA,run(){
-    if(!G.addr) G.addr='0x'+hex(20);
-    talk(MUSA,'<p>Boss, I am rushing to my stall in the market across town. Take my address, then bring my 1 USDC for the yam there:</p><span class="addr">'+G.addr+'</span><p class="note">Address mistakes cannot be undone. Funds sent to the wrong address are lost.</p>',[{t:'Copy her address',f:()=>{ toast('Address copied'); finishStep(); }}]);
-  }},
-  STEP_DON,
-  {label:'Pay Laloba at her market stall',spot:'o',npc:MUSA,run(){
-    if(!G.addr) G.addr='0x'+hex(20);
-    needFunds(1);
-    const fakeA=addrMutate(G.addr,12,16),fakeB=addrMutate(G.addr,36,40);
-    const opts=shuffle([[G.addr,1],[fakeA,0],[fakeB,0]]);
-    talk(MUSA,'<p>You find Laloba at her stall. Her phone shows:</p><span class="addr">'+G.addr+'</span><p>Your clipboard has an address. <b>Which one matches hers, character for character?</b></p>',
-      opts.map(o=>({t:o[0],m:1,f:()=>{
-        if(o[1]!==1){ settleAnswer(false); talk(MUSA,'<h3>Close, but wrong</h3><p>That address looks similar but is not the same. Scammers make lookalike addresses that match the start and end. Compare the whole address, not just the edges.</p>',[{t:'Try again',f:()=>MISSIONS[4].steps[2].run()}]); return; }
-        settleAnswer(true); talk(MUSA,'<h3>Right address</h3><p>Now decide how to send. A small test payment proves the address works before you risk the full amount.</p>',[
-          {t:'Send 0.10 USDC as a test first',f:()=>{ settleAnswer(true); sendPart(0.10,true); }},
-          {t:'Send all 1.00 USDC now',g:1,f:()=>{ settleAnswer(false); sendPart(1.00,false); }}
-        ]);
-      }})));
-    function sendPart(amt,test){
-      confirmTx(MUSA,{title:test?'Send a test':'Send payment',rows:[['To',short(G.addr),1],['Amount',amt.toFixed(2)+' USDC'],['Network fee',FEE0]],btn:'Send '+amt.toFixed(2)+' USDC',
-        after:()=>{
-          P.usdc=Math.max(0,P.usdc-amt); save(); updateHUD();
-          if(test){
-            
-            talk(MUSA,'<h3>Laloba got it</h3><p>She confirms the test arrived. Now send the rest.</p>',[{t:'Send remaining 0.90 USDC',f:()=>sendRest()}]);
-          } else {
-            talk(MUSA,'<h3>Sent</h3><p>It worked this time. For larger amounts, always send a small test first.</p>',[{t:'Continue',f:finishStep}]);
-          }
-        }});
-    }
-    function sendRest(){
-      confirmTx(MUSA,{title:'Send the rest',rows:[['To',short(G.addr),1],['Amount','0.90 USDC'],['Network fee',FEE0]],btn:'Send 0.90 USDC',
-        after:()=>{ P.usdc=Math.max(0,P.usdc-0.9); save(); updateHUD(); talk(MUSA,'<h3>All paid</h3><p>Laloba thanks you. Test first, then send the rest. That habit saves money.</p>',[{t:'Continue',f:finishStep}]); }});
-    }
-  }}
- ]
-},
-{id:'m6',n:6,city:'kano',title:'Mint your KitCity Passport',goal:'Understand signing messages and why unlimited approvals are risky.',
- steps:[
-  {label:'Sign in at the registry',spot:'f',npc:REG,run(){
-    talk(REG,'<h3>Sign-in request</h3><div class="msg"><small>Message to sign</small>KitCity wants you to sign in. This message cannot move your money. Fee: \u20A60.</div><p>Signing a message proves this wallet is yours. It is different from sending a transaction. Always read what you sign.</p>',[
-      {t:'Sign message',f:()=>busy(REG,'Signing\u2026',1000,()=>talk(REG,'<h3>Signed</h3><p>Welcome. The registry knows this wallet is yours, and no money moved.</p>',[{t:'Continue',f:finishStep}]))},
-      {t:'Reject',g:1,f:()=>talk(REG,'<p>Good habit to pause. Here the message is safe: it only proves ownership. Never sign messages you do not understand, especially ones that mention transfers or permissions.</p>',[{t:'Back',f:()=>MISSIONS[5].steps[0].run()}])}
-    ]);
-  }},
-  STEP_PRAISE,
-  {label:'Mint your free Passport',spot:'j',npc:MINT,run(){
-    confirmTx(MINT,{title:'Mint KitCity Passport',rows:[['Item','KitCity Passport'],['Price','Free'],['Network fee',FEE0]],btn:'Mint free Passport',
-      after:()=>talk(MINT,'<h3>Permission request</h3><div class="msg"><small>BonusMint.xyz</small>Allow this site to spend an <b>unlimited</b> amount of your USDC to unlock extra rewards?</div><p>You already minted your Passport. Do you approve this extra request?</p>',[
-        {t:'Approve',f:()=>{ settleAnswer(false); P.fell++; save(); talk(MINT,'<h3>Dangerous choice</h3><p>An unlimited approval lets that site take all your USDC at any time, even later. Only approve exact amounts, only for sites you trust, and revoke old permissions.</p>',[{t:'Continue',f:finishStep}]); }},
-        {t:'Reject',g:1,f:()=>{ settleAnswer(true); P.dodged++; save(); talk(MINT,'<h3>Smart</h3><p>Minting was free and needed no spending permission. You earned 0.10 USDC for rejecting an unnecessary spending approval.</p>',[{t:'Continue',f:finishStep}]); }}
-      ])});
-  }}
- ]
-},
-{id:'m7',n:7,city:'ph',title:'Vote in the community',goal:'Learn how community votes work and how to read a proposal.',
- steps:[
-  {label:'Meet the Chairlady',spot:'g',npc:CHAIR,run(){
-    talk(CHAIR,'<p>Many communities now decide things together by vote. Members hold a pass, like your Passport, and each vote is a signed message.</p><ul class="pts"><li>Anyone can read the proposal before voting.</li><li>Voting is usually free because it is a signature, not a payment.</li><li>Ask who benefits and who can change the result.</li></ul>',[{t:'Take me to the town hall',f:finishStep}]);
-  }},
-  STEP_BIGSAM,
-  {label:'Cast your vote',spot:'k',npc:HALL,run(){
-    talk(HALL,'<h3>Proposal #12</h3><div class="msg"><small>Solar street lights for Mile 3 market</small>Spend 500 USDC from the community pot to install solar lights, installed by local electricians. Work is paid in two parts, after inspection.</div><p>Read it, then vote. Your Passport lets you vote once.</p>',[
-      {t:'Vote Yes',f:()=>vote('Yes')},{t:'Vote No',g:1,f:()=>vote('No')},{t:'Abstain',g:1,f:()=>vote('Abstain')}
-    ]);
-    function vote(c){
-      busy(HALL,'Signing your vote\u2026',1100,()=>{
-        const t={Yes:142,No:38,Abstain:12}; t[c]++;
-        talk(HALL,'<h3>Vote counted</h3><div class="kv"><span>Yes</span><b>'+t.Yes+'</b></div><div class="kv"><span>No</span><b>'+t.No+'</b></div><div class="kv"><span>Abstain</span><b>'+t.Abstain+'</b></div><p>You voted <b>'+c+'</b>. Signing was free, and your vote is public and permanent. Whatever you choose, read before you sign.</p>',[{t:'Continue',f:finishStep}]);
-      });
-    }
-  }}
- ]
-},
-{id:'m8',n:8,city:'ph',title:'Cash out safely',goal:'Sell USDC for naira with a peer, and never release before you are paid.',
- steps:[
-  {label:'Post your sell offer',spot:'l',npc:ADA,run(){
-    talk(ADA,'<p>Peer-to-peer means you trade with another person. The platform holds your USDC in escrow while they pay your bank. You release only after you see the money.</p><div class="kv"><span>You sell</span><b>1.00 USDC</b></div><div class="kv"><span>Price</span><b>'+fmtN(1480)+'</b></div>',[
-      {t:'Post my offer',f:()=>busy(ADA,'Finding a buyer\u2026',1400,()=>talk(ADA,'<h3>Buyer found</h3><p>Chidi accepted your offer. Your USDC is locked in escrow. He has 15 minutes to pay your bank account.</p>',[{t:'Continue',f:finishStep}]))}
-    ]);
-  }},
-  STEP_LUNAX,
-  {label:'Check your bank before you release',spot:'c',npc:TOLA,run(){
-    needFunds(1);
-    function bank(){
-      talk(TOLA,'<h3>Your bank app</h3><div class="msg"><small>Credit alert</small>'+fmtN(1480)+' received from CHIDI OKAFOR. Balance updated.</div><p>The money is in your own account and the sender name matches your buyer. Now it is safe to release.</p>',[
-        {t:'Release 1 USDC',f:()=>busy(TOLA,'Releasing from escrow\u2026',1300,()=>{
-          P.usdc=Math.max(0,P.usdc-1); save(); updateHUD();
-          talk(TOLA,'<h3>Trade complete</h3><div class="kv"><span>Sold</span><b>1.00 USDC</b></div><div class="kv"><span>Received</span><b>'+fmtN(1480)+'</b></div><p>You cashed out safely. Rule one: your own bank app is the only proof of payment.</p>',[{t:'Continue',f:finishStep}]);
-        })}
-      ]);
-    }
-    talk(TOLA,'<div class="msg"><small>Chidi says</small>I have paid! See my receipt. Please release the USDC now, I am in a hurry.</div><div class="msg"><small>Receipt screenshot</small>Transfer successful. '+fmtN(1480)+' sent.</div><p>What do you do?</p>',[
-      {t:'Release the USDC now',f:()=>{ settleAnswer(false); talk(TOLA,'<h3>Stop, this is a trap</h3><p>Fake receipts are the most common cash-out scam. A screenshot proves nothing. If you release first, the buyer keeps your USDC and your bank shows no money.</p>',[{t:'Check my bank app',f:bank}]); }},
-      {t:'Check my own bank app first',g:1,f:()=>{ settleAnswer(true); bank(); }}
-    ]);
-  }}
- ]
-},
-/* ---- Ibadan ---- */
-{id:'m9',n:9,city:'ibadan',title:'Receive your first payment',goal:'Give the right address, match the network, and send a real payment on it.',
- steps:[
-  taskStep({label:'Give Christol your receiving address',spot:'a',npc:mkSign('Christol','Startup founder','#6a3fb5',LK.woman,'Client'),mono:1,
-    intro:'Christol is ready to send 50 USDC for your logo. She needs something to send it to.',q:'What do you give her?',
-    opts:[['Your public wallet address',1],['Your 12-word recovery phrase',0],['Both, so she can check the wallet',0]],
-    wrong:'Never share the recovery phrase. It opens your wallet. Only the public address goes to someone who wants to pay you.',
-    say:'She copies your address and sends the 50 USDC. It is an account number, and it is safe to share.'}),
-  taskStep({label:'Set the network with Christol',spot:'c',npc:mkSign('Christol','Startup founder','#6a3fb5',LK.woman,'Client'),
-    intro:'Her app asks which network to send on. Your wallet is set up on Base.',q:'Which network do you tell her?',
-    opts:[['Base',1],['Ethereum',0],['Solana',0]],
-    wrong:'Your USDC is on Base. Money sent on another network does not reach your wallet, and it can be lost.',
-    say:'Christol confirms Base in her app. Good. The network must match on both sides.'}),
-  taskStep({label:'Pay your design tool on Base',spot:'k',npc:mkSign('Reina','Design tools','#2D6FB3',LK.clerk,'Subscriptions'),
-    intro:'Your design tool takes USDC. Choose where to pay from.',q:'Which network do you pay on?',
-    opts:[['Base',1],['Ethereum',0]],
-    wrong:'Your USDC balance is on Base. Paying from Ethereum would fail, because you hold nothing there.',
-    tx:{title:'Design tool',amt:1,btn:'Pay 1 USDC',done:'Payment sent',note:'A small network fee is paid to the network, separately from the price.',
-        rows:x=>[['Pay to','Tool Desk',0],['Amount','1.00 USDC'],['Network',x],['Network fee','Small, paid to the network']]},
-    say:'Your payment is on the public network. Anyone can look it up with its transaction ID.'})
- ]},
-{id:'m10',n:10,city:'ibadan',title:'Prove a bounty deliverable',goal:'Submit a verifiable work reference, match it to the bounty requirements, and confirm the payout record.',
- steps:[
-  taskStep({label:'Read the bounty requirements',spot:'e',npc:mkSign('Tolu','Bounty reviewer','#2D6FB3',LK.man,'Bounty board'),
-    intro:'A community bounty asks for a translation with a specific format and deadline.',q:'What should you do before accepting?',
-    opts:[['Read the deliverable, deadline and acceptance rules',1],['Start work from the title alone',0]],
-    wrong:'A title is not a full brief. Read what counts as acceptable work and when it is due.',say:'You know what must be delivered and how it will be reviewed.'}),
-  taskStep({label:'Submit a verifiable work reference',spot:'g',npc:mkSign('Tolu','Bounty reviewer','#2D6FB3',LK.man,'Bounty board'),
-    intro:'The work is finished. The reviewer needs to identify the exact version you submitted.',q:'What is the strongest evidence?',
-    opts:[['A stable link or content hash for the submitted version',1],['A message saying the work is finished',0]],
-    wrong:'A stable reference lets the reviewer inspect the exact deliverable.',say:'Your submission can be checked against the agreed requirements.'}),
-  taskStep({label:'Confirm the bounty payout record',spot:'h',npc:mkSign('Tolu','Bounty reviewer','#2D6FB3',LK.man,'Bounty board'),
-    intro:'The reviewer marks the bounty accepted and records a payment.',q:'What should you check before closing the task?',
-    opts:[['The recorded amount, recipient and transaction status',1],['Only the congratulatory message',0]],
-    wrong:'A message is not proof of payment. Verify the recorded amount and status.',say:'You verified the bounty payout rather than relying on a notification.'})
- ]},
-{id:'m11',n:11,city:'kaduna',title:'Get paid in a stablecoin',goal:'Choose the stable pay option, sell USDC on the right network, and keep savings safe.',
- steps:[
-  taskStep({label:'Choose your pay with Larai',spot:'c',npc:mkSign('Larai','Remote employer','#2D6FB3',LK.man,'Remote job'),
-    intro:'Larai offers pay in USDC, or in a token that jumps around in price all week.',q:'Which do you take for a monthly salary?',
-    opts:[['USDC',1],['The volatile token, it might double',0]],
-    wrong:'Your rent does not move with a token’s chart. USDC is designed to stay close to one US dollar.',
-    say:'Salary set in USDC, paid on the 1st. Your balance is stable.'}),
-  taskStep({label:'Sell 2 USDC to the exchange',spot:'g',npc:mkSign('Unique','Licensed exchange','#1f4f82',LK.clerk,'Off-ramp'),
-    intro:'The exchange gives a deposit address. The address shows which network it uses: Base.',q:'Which network do you send on?',
-    opts:[['Base',1],['Ethereum',0]],
-    wrong:'Send on the network the exchange lists. Funds on the wrong network can be lost.',
-    tx:{title:'Deposit to exchange',amt:2,btn:'Send 2 USDC',done:'Deposit sent',note:'Naira is credited after the exchange sees the deposit.',
-        rows:x=>[['To','Ola Exchange deposit',0],['Amount','2.00 USDC'],['Network',x]]},
-    say:'The exchange credits your naira once the deposit is confirmed.'}),
-  taskStep({label:'Move 1 USDC to savings',spot:'k',npc:mkSign('Cclya','Savings app','#0B7A43',LK.clerk,'Savings'),
-    intro:'Your savings wallet is your own address. Choose where the 1 USDC goes.',q:'Which address do you send to?',
-    opts:[['My own savings address',1],['An address a stranger sent you on social media',0]],
-    wrong:'Never move savings to an address that someone messaged you. Only send to a wallet you control.',
-    tx:{title:'Savings transfer',amt:1,btn:'Send 1 USDC',done:'Moved',note:'Between your own wallets, you still control the funds.',
-        rows:x=>[['To','My savings address',0],['Amount','1.00 USDC'],['Network','Base']]},
-    say:'Your savings are kept in USDC, in a wallet only you hold.'})
- ]},
-{id:'m12',n:12,city:'kaduna',title:'Check a token before buying',goal:'Verify a token’s official contract, network and market details before deciding whether to buy.',
- steps:[
-  taskStep({label:'Find the official token contract',spot:'d',npc:mkSign('Sadiq','Market analyst','#C7457E',LK.man,'Token desk'),
-    intro:'A new token is trending in the group chat. Before buying, compare the contract address with the project’s official website.',q:'Which source should you trust first?',
-    opts:[['The contract linked from the project’s verified official site',1],['A contract address sent by an unknown account',0]],
-    wrong:'A copied name or logo proves nothing. Start from the project’s official channel and verify the contract address.',
-    say:'You found the contract from the project’s own source, not a stranger’s message.'}),
-  taskStep({label:'Match the network and token address',spot:'e',npc:mkSign('Sadiq','Market analyst','#C7457E',LK.man,'Token desk'),
-    intro:'Two tokens can share a name while living at different contract addresses or networks.',q:'What must match before you trade?',
-    opts:[['The full contract address and the intended network',1],['Only the token name and logo',0]],
-    wrong:'Names and logos are easy to copy. Check the complete address and the network.',
-    say:'The token identity and network match the details published by the project.'}),
-  taskStep({label:'Check liquidity before deciding',spot:'h',npc:mkSign('Sadiq','Market analyst','#C7457E',LK.man,'Token desk'),
-    intro:'A token can show a price but have too little liquidity for you to sell later.',q:'What is the safest next step?',
-    opts:[['Check liquidity, trading activity and sell conditions before buying',1],['Buy immediately because the price is rising',0]],
-    wrong:'A displayed price does not guarantee you can sell. Review liquidity and the trading conditions first.',
-    say:'You checked whether the market can support an exit before risking funds.'})
- ]},
-{id:'m13',n:13,city:'enugu',title:'Pay the supplier on-chain',goal:'Pay a supplier on the right network, then prove the payment with its transaction ID.',
- steps:[
-  taskStep({label:'Choose the route with Joe_Sef',spot:'c',npc:mkSign('Joe_Sef','Trader sourcing abroad','#2D6FB3',LK.man,'Import'),
-    intro:'Your supplier abroad accepts USDC. A bank wire takes days. A USDC transfer settles on a public network in minutes.',q:'Which route do you use?',
-    opts:[['USDC on Base',1],['Hold the order until the bank wire clears',0]],
-    wrong:'Waiting for a bank wire ties up your cash for days. The public network settles in minutes.',
-    say:'Route set. Your supplier gets the payment on the network they listed.'}),
-  taskStep({label:'Pay the supplier 4 USDC',spot:'e',npc:mkSign('Joe_Sef','Trader sourcing abroad','#2D6FB3',LK.man,'Import'),
-    intro:'Enter the supplier’s address, and check the network before you confirm.',q:'Which network is the supplier on?',
-    opts:[['Base',1],['Ethereum',0]],
-    wrong:'The supplier listed Base. A payment on another network does not reach them.',
-    tx:{title:'Supplier payment',amt:4,btn:'Pay 4 USDC',done:'Payment sent',note:'Payments on a public network cannot be reversed.',
-        rows:x=>[['To','Supplier address',1],['Amount','4.00 USDC'],['Network',x]]},
-    say:'Your payment now has a transaction ID. That ID is your proof.'}),
-  taskStep({label:'Prove the payment to the supplier',spot:'g',npc:mkSign('Blockqueen','Bookkeeper','#0B7A43',LK.man,'Records'),
-    intro:'The supplier says the money did not arrive. You have the transaction ID.',q:'What do you do?',
-    opts:[['Paste the transaction ID into the block explorer for Base',1],['Send the payment again to be safe',0]],
-    wrong:'Sending again can pay the supplier twice. Check the transaction you already sent.',
-    say:'The explorer shows the amount, the recipient and the status. The supplier confirms it.'})
- ]},
-{id:'m14',n:14,city:'enugu',title:'Mint your access pass',goal:'Set the tip address with its network, then mint an access pass that proves a fan’s access.',
- steps:[
-  taskStep({label:'Set your tip address with Chiamaka',spot:'i',npc:mkSign('Chiamaka','Music producer','#E4572E',LK.woman,'Creator'),
-    intro:'Fans will tip you directly. The tip page must show the address and the network.',q:'What do you put on the page?',
-    opts:[['Address and network: Base',1],['Address only',0]],
-    wrong:'Without the network name, a fan can send on the wrong chain and the tip never reaches you.',
-    say:'The tip page is live, with the network shown next to the address.'}),
-  taskStep({label:'Mint the access pass',spot:'j',npc:mkSign('Duke David','Access pass','#2D6FB3',LK.clerk,'Pass'),
-    intro:'Minting writes a new token into your wallet. It becomes the pass for your sample pack.',q:'Which network do you mint on?',
-    opts:[['Base',1],['Ethereum',0]],
-    wrong:'Mint on Base, where your wallet and buyers already are.',
-    tx:{title:'Mint access pass',amt:1,btn:'Mint for 1 USDC',done:'Pass minted',note:'Minting costs a network fee on top of the price.',
-        rows:x=>[['Item','Sample pack access pass'],['Price','1.00 USDC'],['Network',x],['Network fee','Paid to the network']]},
-    say:'Your pass is minted. Anyone holding it can check their access on the public record.'}),
-  taskStep({label:'Check a fan’s pass',spot:'k',npc:mkSign('Dark','Fan','#6a3fb5',LK.man,'Fan'),
-    intro:'A fan shows a screenshot that says they own the pass.',q:'How do you check?',
-    opts:[['Look up their address on the block explorer for the pass’s contract',1],['Trust the screenshot',0]],
-    wrong:'Screenshots can be edited. The pass is only real if the public record shows it in their wallet.',
-    say:'The record shows the pass in their wallet. They get their sample pack.'})
- ]},
-{id:'m15',n:15,city:'benin',title:'Mint a provenance certificate',goal:'Check the issuer, mint the certificate, and show the buyer the contract.',
- steps:[
-  taskStep({label:'Check the issuer with LunaX',spot:'b',npc:mkSign('LunaX','Bronze craftsman','#8E2F1B',LK.man,'Craft shop'),
-    intro:'Before you mint, the certificate must come from LunaX’s registered address.',q:'What do you check?',
-    opts:[['The issuing address matches the one registered for LunaX',1],['The name on the certificate looks right',0]],
-    wrong:'A name is easy to copy. Only the registered address proves who issued the certificate.',
-    say:'The issuer matches. You can mint the certificate.'}),
-  taskStep({label:'Mint the certificate',spot:'d',npc:mkSign('LunaX','Bronze craftsman','#8E2F1B',LK.man,'Craft shop'),
-    intro:'Minting writes the certificate to the public record. It cannot be quietly edited afterwards.',q:'Which network do you mint on?',
-    opts:[['Base',1],['Ethereum',0]],
-    wrong:'Your collection and buyers are on Base. Mint there.',
-    tx:{title:'Mint certificate',amt:1,btn:'Mint for 1 USDC',done:'Certificate minted',note:'The certificate is written to the record.',
-        rows:x=>[['Item','Bronze certificate'],['Price','1.00 USDC'],['Network',x]]},
-    say:'Your certificate is on the public record, linked to the piece.'}),
-  taskStep({label:'Show Ngozi the contract',spot:'e',npc:mkSign('Web3_Esta','Overseas buyer','#6a3fb5',LK.woman,'Buyer'),
-    intro:'Ngozi wants to check the certificate herself before buying.',q:'What do you send her?',
-    opts:[['The contract address, so she can check the history on a block explorer',1],['A screenshot of the certificate',0]],
-    wrong:'Screenshots can be faked. The contract address lets her check the record herself.',
-    say:'Ngozi checks the history on the explorer and buys with confidence.'})
- ]},
-{id:'m16',n:16,city:'benin',title:'Sell a token, keep the net',goal:'Read the token terms, work out the net after the network fee, and transfer the token.',
- steps:[
-  taskStep({label:'Read the terms with the curator',spot:'g',npc:mkSign('Ekhoi Nwafor','Gallery curator','#8E2F1B',LK.man,'Gallery'),
-    intro:'Your token links to a bronze carving. The terms say what the token gives you.',q:'What do you check first?',
-    opts:[['The rights section of the terms',1],['Assume copyright comes with the token',0]],
-    wrong:'A token is a record. Copyright and rights come from the terms, not from holding the token.',
-    say:'The terms are clear. You know exactly what the token gives you.'}),
-  taskStep({label:'Set your sale with the curator',spot:'h',npc:mkSign('Ekhoi Nwafor','Gallery curator','#8E2F1B',LK.man,'Gallery'),
-    intro:'You will transfer the token to a buyer. Every transfer costs a network fee.',q:'What price do you list?',
-    opts:[['The price after the network fee, so you know what you keep',1],['The sticker price, the fee is small',0]],
-    wrong:'The fee is paid on every transfer. List at the price you actually keep.',
-    say:'You list the sale at the net price.'}),
-  taskStep({label:'Transfer the token to the buyer',spot:'k',npc:mkSign('Ekhoi Nwafor','Gallery curator','#8E2F1B',LK.man,'Gallery'),
-    intro:'Confirm the transfer. The network fee is paid to the network.',q:'Which network do you send on?',
-    opts:[['Base',1],['Ethereum',0]],
-    wrong:'The token lives on Base. Transfer it there.',
-    tx:{title:'Transfer token',amt:1,btn:'Transfer for 1 USDC',done:'Transferred',note:'Network fee applies on top of the price.',
-        rows:x=>[['Item','Bronze certificate token'],['Price','1.00 USDC'],['Network',x],['Network fee','Paid to the network']]},
-    say:'The token is now in the buyer’s wallet. The record is public.'})
- ]},
-{id:'m17',n:17,city:'calabar',title:'Confirm before you serve',goal:'Serve only after the payment shows in your wallet, and help a customer on the wrong network.',
- steps:[
-  taskStep({label:'Take a payment with Moon',spot:'a',npc:mkSign('Moon','Carnival food seller','#0B7A43',LK.mama,'Stall'),
-    intro:'A customer says they have paid in USDC. They show you a screen.',q:'When do you hand over the food?',
-    opts:[['When it shows in my own wallet',1],['As soon as they show the screen',0]],
-    wrong:'A screen is not a payment. Only your wallet, or the public record, shows what you received.',
-    say:'The payment is in your wallet. Food goes over.'}),
-  taskStep({label:'Buy stock with 1 USDC',spot:'c',npc:mkSign('Praise','Wholesaler','#2D6FB3',LK.man,'Wholesale'),
-    intro:'Restock for the afternoon crowd. Choose the network your supplier accepts.',q:'Which network?',
-    opts:[['Base',1],['Ethereum',0]],
-    wrong:'Your supplier takes USDC on Base. Pay there.',
-    tx:{title:'Stock',amt:1,btn:'Pay 1 USDC',done:'Stock bought',note:'Payments on the network cannot be reversed.',
-        rows:x=>[['To','Wholesale Ekpo',1],['Amount','1.00 USDC'],['Network',x]]},
-    say:'Your restock is paid. Keep the transaction ID with your stock notes.'}),
-  taskStep({label:'A tourist sent from the wrong network',spot:'f',npc:mkSign('Kenny','Visitor','#6a3fb5',LK.guy,'Visitor'),
-    intro:'Kofi sent USDC, but his wallet shows it on a different network from yours.',q:'What do you do?',
-    opts:[['Look up his transaction ID on the network he used',1],['Ask him to send it again on yours',0]],
-    wrong:'Sending again can double his loss. Find where the first transfer actually went.',
-    say:'The explorer shows where it went. You help him move it to the right network.'})
- ]},
-{id:'m18',n:18,city:'calabar',title:'Print your own QR',goal:'Print a QR code that points to your own address, and wait for the payment to show in your wallet.',
- steps:[
-  taskStep({label:'Set the restaurant QR with Mama Ifiok',spot:'i',npc:mkSign('Mama Ifiok','Restaurant owner','#E4572E',LK.mama,'Restaurant'),
-    intro:'A QR code holds a wallet address. Customers scan it and send to that address.',q:'Whose address goes in the code?',
-    opts:[['Our restaurant’s own address',1],['An address a friend shared with you',0]],
-    wrong:'Only print an address you control. Money sent to someone else’s address is gone.',
-    say:'The code points to your address. You check it against your wallet before printing.'}),
-  taskStep({label:'Pay for the QR setup',spot:'j',npc:mkSign('Love','QR setup','#2D6FB3',LK.clerk,'Setup'),
-    intro:'Setup takes a small payment. Choose the network.',q:'Which network?',
-    opts:[['Base',1],['Ethereum',0]],
-    wrong:'Your restaurant wallet is on Base.',
-    tx:{title:'QR setup',amt:1,btn:'Pay 1 USDC',done:'QR live',note:'Network fee applies.',
-        rows:x=>[['Item','QR setup'],['Amount','1.00 USDC'],['Network',x]]},
-    say:'The QR is ready. Print it on the menu card.'}),
-  taskStep({label:'A customer shows a payment screen',spot:'k',npc:mkSign('Essa','Restaurant customer','#6a3fb5',LK.man,'Customer'),
-    intro:'They show a screen that says they paid. Your wallet shows nothing yet.',q:'What do you do?',
-    opts:[['Wait for it in my wallet, and check the transaction ID',1],['Serve them now, they showed a screen',0]],
-    wrong:'Wait. A payment is real when it lands in your wallet.',
-    say:'The payment lands in your wallet. You serve the food.'})
- ]},
-{id:'m19',n:19,city:'jos',title:'Sign in without spending',goal:'Sign a login message safely, and share only the credential that is needed.',
- steps:[
-  taskStep({label:'Sign in to the identity app',spot:'a',npc:mkSign('Caleb','Identity guide','#2D6FB3',LK.woman,'Identity'),
-    intro:'The app asks you to sign a message to log in. Your wallet shows the request.',q:'Which request do you approve?',
-    opts:[['Sign the login message',1],['Approve unlimited spending for this app',0]],
-    wrong:'Unlimited spending lets the app take all your USDC at any time. A login needs only a signature.',
-    say:'You are logged in. The signature moved no money.'}),
-  taskStep({label:'Share your course credential',spot:'c',npc:mkSign('Caleb','Identity guide','#2D6FB3',LK.woman,'Identity'),
-    intro:'The employer wants proof that you finished the course. Nothing else.',q:'What do you share?',
-    opts:[['Only the course credential',1],['My full profile and all my records',0]],
-    wrong:'Share only what is needed. Your full profile stays with you.',
-    say:'The employer sees the course credential, and nothing else.'}),
-  taskStep({label:'Issue your credential',spot:'h',npc:mkSign('Caleb','Identity guide','#2D6FB3',LK.woman,'Identity'),
-    intro:'Issuing the credential writes it to your wallet.',q:'Which network?',
-    opts:[['Base',1],['Ethereum',0]],
-    wrong:'Your wallet is on Base.',
-    tx:{title:'Issue credential',amt:1,btn:'Pay 1 USDC',done:'Credential issued',note:'Network fee applies.',
-        rows:x=>[['Item','Course credential'],['Amount','1.00 USDC'],['Network',x]]},
-    say:'It sits in your wallet. You decide who gets to see it.'})
- ]},
-{id:'m20',n:20,city:'jos',title:'Get paid for a writing role',goal:'Send your public address and network, agree the paid trial, and confirm the first payment on the explorer.',
- steps:[
-  taskStep({label:'Send your details to Chinwe',spot:'e',npc:mkSign('Chinwe Recruit','Recruiter','#1f4f82',LK.woman,'Recruiting'),
-    intro:'They pay in USDC and ask for where to send it.',q:'What do you send?',
-    opts:[['My public address and the network: Base',1],['My recovery phrase, so you can check my wallet',0]],
-    wrong:'Never send your recovery phrase. The public address and network are all they need.',
-    say:'They save your address and network for the first payment.'}),
-  taskStep({label:'Accept the paid trial',spot:'f',npc:mkSign('Chisom Nwafor','Hiring manager','#0B7A43',LK.man,'Hiring'),
-    intro:'They offer a paid trial article before the role is confirmed.',q:'What do you accept?',
-    opts:[['A paid trial, with amount and date written down',1],['An unpaid trial that they keep',0]],
-    wrong:'Unpaid trials that they keep are work for free. Insist on paid, written terms.',
-    say:'The trial terms are written. You start on the article.'}),
-  taskStep({label:'Check your first payment',spot:'g',npc:mkSign('Chisom Nwafor','Hiring manager','#0B7A43',LK.man,'Hiring'),
-    intro:'The first payment is sent. You want to confirm it arrived.',q:'How do you check?',
-    opts:[['Paste the transaction ID into the block explorer for Base',1],['Trust the message that says it is paid',0]],
-    wrong:'Messages are not proof. The block explorer shows the payment on the public record.',
-    say:'The payment is on the record, with the amount and your address.'})
- ]},
-{id:'m21',n:21,city:'maiduguri',title:'Lock the deposit in escrow',goal:'Lock a guest deposit in escrow, approve only the exact amount, and release it at check-in.',
- steps:[
-  taskStep({label:'Set up the deposit with Craftore',spot:'a',npc:mkSign('Craftore','Guesthouse owner','#7a4a2e',LK.elder,'Guesthouse'),
-    intro:'The guest pays a deposit. It must not go straight to a personal wallet.',q:'Where does the deposit go?',
-    opts:[['Into the escrow contract, released at check-in',1],['Straight to my personal wallet',0]],
-    wrong:'Straight to a personal wallet means the guest has no protection. Use escrow.',
-    say:'The deposit is set to escrow.'}),
-  taskStep({label:'Approve the escrow amount',spot:'c',npc:mkSign('John Jonathan','Escrow service','#2D6FB3',LK.clerk,'Escrow'),
-    intro:'Your wallet asks to let the escrow contract spend USDC. Set the limit.',q:'What do you approve?',
-    opts:[['Exactly 2 USDC, the deposit',1],['Unlimited USDC',0]],
-    wrong:'Unlimited approval lets the contract take all your USDC at any time. Approve only the deposit.',
-    say:'The contract can take only the 2 USDC deposit.'}),
-  taskStep({label:'Lock the deposit',spot:'e',npc:mkSign('John Jonathan','Escrow service','#2D6FB3',LK.clerk,'Escrow'),
-    intro:'The guest’s 2 USDC goes into the contract on Base.',q:'Which network?',
-    opts:[['Base',1],['Ethereum',0]],
-    wrong:'The contract lives on Base. Lock it there.',
-    tx:{title:'Lock escrow deposit',amt:2,btn:'Lock 2 USDC',done:'Deposit locked',note:'Released only when the agreed condition is met.',
-        rows:x=>[['To','Escrow contract',1],['Amount','2.00 USDC'],['Network',x]]},
-    say:'The deposit now sits in the contract, visible on the public record.'})
- ]},
-{id:'m22',n:22,city:'maiduguri',title:'Record your milestone',goal:'Record a milestone that links to finished public work, pay for the course, and check the receipt.',
- steps:[
-  taskStep({label:'Record your milestone with Musa',spot:'g',npc:mkSign('Musa Abubakar','Skills coach','#0B7A43',LK.man,'Skills'),
-    intro:'You can record a milestone on the network, with a date.',q:'What does the record link to?',
-    opts:[['My finished, public writing sample',1],['My private notes',0]],
-    wrong:'A record that points to private notes proves nothing anyone can check.',
-    tx:{title:'Record milestone',amt:0.5,btn:'Record for 0.5 USDC',done:'Milestone recorded',note:'Network fee applies.',
-        rows:x=>[['Item','Milestone record'],['Amount','0.50 USDC'],['Links to',x]]},
-    say:'The milestone is on the public record with its date.'}),
-  taskStep({label:'Pay for the course',spot:'h',npc:mkSign('Musa Abubakar','Skills coach','#0B7A43',LK.man,'Skills'),
-    intro:'The course takes USDC. Choose the network.',q:'Which network?',
-    opts:[['Base',1],['Ethereum',0]],
-    wrong:'Your USDC is on Base.',
-    tx:{title:'Course payment',amt:1,btn:'Pay 1 USDC',done:'Enrolled',note:'Keep the receipt and the refund policy.',
-        rows:x=>[['Item','Writing course'],['Amount','1.00 USDC'],['Network',x]]},
-    say:'You are enrolled. Your payment has a transaction ID.'}),
-  taskStep({label:'Check your receipt',spot:'i',npc:mkSign('Musa Abubakar','Skills coach','#0B7A43',LK.man,'Skills'),
-    intro:'You want proof that the course payment went through.',q:'What do you keep?',
-    opts:[['The transaction ID, checked on the block explorer',1],['A screenshot of the app',0]],
-    wrong:'Screenshots can be faked. The transaction ID on the explorer is the proof.',
-    say:'Your receipt is on the public record.'})
- ]},
-
-/* ---- Onitsha ---- */
-{id:'m23',n:23,city:'anambra',title:'Price your shop in USDC',goal:'Put a USDC price on your shelf card, restock on Base, and accept a payment only once it lands in your wallet.',
- steps:[
-  taskStep({label:'Set the shelf price with Obi',spot:'a',npc:mkSign('Toza','Phone and gadget shop','#0B7A43',LK.man,'Shop prices'),
-    intro:'Overseas customers want to pay in USDC. Your shelf card only shows naira.',q:'What goes on the card?',
-    opts:[['Naira and USDC prices, with the rate and the date it was set',1],['Naira only',0]],
-    wrong:'Customers paying from abroad cannot read a naira-only card. Add the USDC price and the date.',
-    say:'The card now shows both prices. Customers can see exactly what to pay.'}),
-  taskStep({label:'Restock with Chibuike',spot:'c',npc:mkSign('Duke David','Wholesale supplier','#2D6FB3',LK.man,'Wholesale'),
-    intro:'Your supplier takes USDC. Pick the network before you pay.',q:'Which network?',
-    opts:[['Base',1],['Ethereum',0]],
-    wrong:'Your supplier’s account is on Base. Paying on Ethereum would not reach them.',
-    tx:{title:'Restock',amt:3,btn:'Pay 3 USDC',done:'Restocked',note:'Payments on the network cannot be reversed.',
-        rows:x=>[['To','Wholesale Chibuike',1],['Amount','3.00 USDC'],['Network',x]]},
-    say:'Your restock is paid. The supplier confirms the order on the network.'}),
-  taskStep({label:'Take a payment from Ifeoma',spot:'g',npc:mkSign('Kore','Regular customer','#E4572E',LK.woman,'Customer'),
-    intro:'Ifeoma shows a screen that says she has paid in USDC.',q:'When do you hand over the goods?',
-    opts:[['When the payment lands in my wallet',1],['As soon as she shows the screen',0]],
-    wrong:'A screen is not a payment. Only your wallet shows what you received.',
-    say:'The payment is in your wallet. Goods handed over.'})
- ]},
-{id:'m24',n:24,city:'anambra',title:'Pay your association dues',goal:'Check the dues address on the published notice, then pay dues on the right network.',
- steps:[
-  taskStep({label:'Check the dues address with Chief Emeka',spot:'e',npc:mkSign('Chief Emeka','Association chairman','#7a4a2e',LK.elder,'Association'),
-    intro:'Someone in the group chat posts a new dues address. The association also publishes one.',q:'Which address do you use?',
-    opts:[['The one on the association’s published notice',1],['The one posted in the group chat',0]],
-    wrong:'Addresses in chats can be swapped. Use the published notice.',
-    say:'You have the correct address. Dues go to the association.'}),
-  taskStep({label:'Pay your 1 USDC dues',spot:'h',npc:mkSign('Chief Emeka','Association chairman','#7a4a2e',LK.elder,'Association'),
-    intro:'Dues are paid in USDC. Choose the network.',q:'Which network?',
-    opts:[['Base',1],['Ethereum',0]],
-    wrong:'The association accepts USDC on Base.',
-    tx:{title:'Membership dues',amt:1,btn:'Pay 1 USDC',done:'Dues paid',note:'Your payment appears on the association’s public record.',
-        rows:x=>[['To','Association dues address',1],['Amount','1.00 USDC'],['Network',x]]},
-    say:'Your payment is on the public record, with the date and purpose.'}),
-  taskStep({label:'Find your payment on the record',spot:'k',npc:mkSign('Secretary Ada','Association secretary','#1f4f82',LK.woman,'Secretary'),
-    intro:'You want to see your payment in the association’s records.',q:'What do you do?',
-    opts:[['Search the public ledger for my address',1],['Ask the secretary to confirm by message',0]],
-    wrong:'Messages are not records. The public ledger shows your payment directly.',
-    say:'Your payment is listed with the date and amount.'})
- ]},
-{id:'m25',n:25,city:'owerri',title:'Batch the palm oil',goal:'Record each batch with its farm and producer, publish it on Base, and quote a price that the record supports.',
- steps:[
-  taskStep({label:'Label the batch with Dark',spot:'b',npc:mkSign('Dark','Palm oil producer','#F6B21A',LK.woman,'Palm oil'),
-    intro:'Buyers abroad ask where each batch came from.',q:'What do you record?',
-    opts:[['Farm, date and producer name for the batch',1],['A photo label only',0]],
-    wrong:'A photo does not say where the oil came from. Record the farm, date and producer.',
-    say:'The batch record is ready to publish.'}),
-  taskStep({label:'Publish the batch record',spot:'d',npc:mkSign('White Coach','Batch certification','#2D6FB3',LK.clerk,'Certification'),
-    intro:'Publishing writes the batch record to the public network. Choose the network.',q:'Which network?',
-    opts:[['Base',1],['Ethereum',0]],
-    wrong:'Batch records are published on Base.',
-    tx:{title:'Publish batch',amt:2,btn:'Publish for 2 USDC',done:'Batch published',note:'Network fee applies.',
-        rows:x=>[['Item','Palm oil batch record'],['Amount','2.00 USDC'],['Network',x]]},
-    say:'The record is public. Buyers can scan the link and see the batch history.'}),
-  taskStep({label:'Quote the batch to Lara',spot:'f',npc:mkSign('Debs','Buyer abroad','#6a3fb5',LK.woman,'Buyer'),
-    intro:'Lara wants 20 batches. She asks for your price.',q:'What do you quote?',
-    opts:[['A premium, with the batch record link attached',1],['The lowest price, to win the order',0]],
-    wrong:'Traceable batches are worth more. Quote the premium and send the record.',
-    say:'Lara checks the link and agrees the premium.'})
- ]},
-{id:'m26',n:26,city:'owerri',title:'Take a paid seat',goal:'Set your workshop fee with a refund rule, book the hall on Base, and confirm each student’s payment before the seat is given.',
- steps:[
-  taskStep({label:'Set the fee with Prof. Nnamdi',spot:'g',npc:mkSign('Prof. Nnamdi','Community educator','#0B7A43',LK.man,'Workshop'),
-    intro:'Your workshop is three hours for twenty people.',q:'How do you set the fee?',
-    opts:[['A fair fee in USDC and naira, refunded if cancelled',1],['A fee nobody can afford',0]],
-    wrong:'A fee nobody can afford fills no seats. Set a fair fee with a refund rule.',
-    say:'Your listing shows the fee and the refund rule.'}),
-  taskStep({label:'Book the hall',spot:'j',npc:mkSign('K','Community hall','#2D6FB3',LK.clerk,'Venue'),
-    intro:'Pay the hall in USDC. Choose the network.',q:'Which network?',
-    opts:[['Base',1],['Ethereum',0]],
-    wrong:'The venue takes USDC on Base.',
-    tx:{title:'Hall booking',amt:1,btn:'Pay 1 USDC',done:'Hall booked',note:'Keep the receipt.',
-        rows:x=>[['To','Community hall',1],['Amount','1.00 USDC'],['Network',x]]},
-    say:'The hall is booked for your workshop.'}),
-  taskStep({label:'Accept your first student',spot:'k',npc:mkSign('Oromachi','Workshop student','#E4572E',LK.woman,'Student'),
-    intro:'Ngozi wants a seat. She says she has paid and asks for her seat now.',q:'What do you do?',
-    opts:[['Check the payment in my wallet, then give the seat',1],['Give the seat now and check later',0]],
-    wrong:'Check first. A seat given before payment is a seat you may not get paid for.',
-    say:'The payment arrives. Ngozi has her seat.'})
- ]},
-{id:'m27',n:27,city:'ilorin',title:'Set a realistic savings target',goal:'Choose a measurable savings goal, set a practical timeline, and plan contributions without relying on guaranteed returns.',
- steps:[
-  taskStep({label:'Define the savings target',spot:'d',npc:mkSign('Leemah','Savings coach','#0B7A43',LK.elder,'Savings plan'),
-    intro:'You want to save for a future expense, but the target is still vague.',q:'How do you make the goal useful?',
-    opts:[['Choose a specific amount and what the money is for',1],['Save whatever is left without a target',0]],
-    wrong:'A clear amount and purpose make progress measurable.',say:'Your goal now has a defined amount and purpose.'}),
-  taskStep({label:'Set a realistic deadline',spot:'e',npc:mkSign('Leemah','Savings coach','#0B7A43',LK.elder,'Savings plan'),
-    intro:'You know the target amount and the date you need it.',q:'What should you check before committing?',
-    opts:[['Whether the amount and timeline fit your expected income and costs',1],['Assume your income will always rise',0]],
-    wrong:'A plan should fit realistic cash flow, not assumed future gains.',say:'The deadline is based on a realistic budget.'}),
-  taskStep({label:'Plan contributions without guaranteed returns',spot:'h',npc:mkSign('Leemah','Savings coach','#0B7A43',LK.elder,'Savings plan'),
-    intro:'You need to work out how much to set aside each week.',q:'Which plan is safest?',
-    opts:[['Set a contribution you can afford and do not assume investment returns are guaranteed',1],['Count on a token price doubling before the deadline',0]],
-    wrong:'Price gains are uncertain. Build the plan around contributions you can actually make.',say:'Your savings target has a contribution plan that does not depend on promised gains.'})
- ]},
-{id:'m28',n:28,city:'ilorin',title:'Fund one milestone at a time',goal:'Back a project in milestones, and check each report before the next payment.',
- steps:[
-  taskStep({label:'Agree the funding with Hajia Rahmat',spot:'f',npc:mkSign('Hajia Rahmat','Project founder','#C7457E',LK.woman,'Project'),
-    intro:'The reading room needs funds for furniture, books and the roof.',q:'How is the money released?',
-    opts:[['In milestones, each paid when its report is posted',1],['All at once, before any work starts',0]],
-    wrong:'All at once means nothing holds the project to its plan. Fund by milestone.',
-    say:'Each milestone has its own payment and its own report.'}),
-  taskStep({label:'Back milestone one',spot:'h',npc:mkSign('Hajia Rahmat','Project founder','#C7457E',LK.woman,'Project'),
-    intro:'Your 1 USDC backs the furniture milestone. Choose the network.',q:'Which network?',
-    opts:[['Base',1],['Ethereum',0]],
-    wrong:'The project’s account is on Base.',
-    tx:{title:'Back milestone one',amt:1,btn:'Back 1 USDC',done:'Backed',note:'You will see the report when it is posted.',
-        rows:x=>[['To','Reading room milestone',1],['Amount','1.00 USDC'],['Network',x]]},
-    say:'Your support is tied to milestone one.'}),
-  taskStep({label:'Check the milestone report',spot:'i',npc:mkSign('Hajia Rahmat','Project founder','#C7457E',LK.woman,'Project'),
-    intro:'The report lists the furniture bought, with receipts.',q:'What do you do?',
-    opts:[['Check the receipts match the milestone, then approve the next one',1],['Approve the next payment without looking',0]],
-    wrong:'Look at the receipts first. Milestone payments depend on the work being done.',
-    say:'The receipts match. The next milestone is released.'})
- ]},
-{id:'m29',n:29,city:'sokoto',title:'License your pattern',goal:'Write the licence terms, confirm the deposit is held, and set a royalty on each sale.',
- steps:[
-  taskStep({label:'Set the licence with Love',spot:'a',npc:mkSign('Love','Textile designer','#2D6FB3',LK.woman,'Designs'),
-    intro:'An overseas studio wants to use your dye patterns on fabric.',q:'What goes in the licence?',
-    opts:[['Usage rights, territory, fee and your credit',1],['A handshake and a thank-you',0]],
-    wrong:'A handshake protects nobody. Write the rights, the fee and your credit.',
-    say:'The licence is written. Both sides sign it.'}),
-  taskStep({label:'Receive the licence deposit',spot:'c',npc:mkSign('Essa','Design studio','#6a3fb5',LK.man,'Studio'),
-    intro:'The studio sends a 2 USDC deposit. Where does it sit until the licence is signed?',q:'Where does the deposit go?',
-    opts:[['Into an escrow contract, released when the licence is signed',1],['Straight to my personal wallet',0]],
-    wrong:'Escrow holds the deposit until both sides sign. Do not accept it straight to a personal wallet.',
-    say:'The deposit is held in escrow until the licence is signed.'}),
-  taskStep({label:'Set the royalty',spot:'e',npc:mkSign('Essa','Design studio','#6a3fb5',LK.man,'Studio'),
-    intro:'The studio can pay one fee, or a royalty on each sale.',q:'Which do you choose?',
-    opts:[['A royalty on each sale, with a public sales report',1],['A one-off fee only',0]],
-    wrong:'A one-off fee ends your income at the first sale. Choose the royalty.',
-    say:'Your pattern earns on every sale. The report shows it.'})
- ]},
-{id:'m30',n:30,city:'sokoto',title:'Verify a digital land record',goal:'Check the issuer, parcel reference and change history before relying on a digital land record.',
- steps:[
-  taskStep({label:'Check who issued the record',spot:'g',npc:mkSign('Aunty Ronke','Community records officer','#0B7A43',LK.woman,'Land registry'),
-    intro:'A buyer brings a digital record for a plot of land. A file or token alone does not prove the claim is genuine.',q:'What do you verify first?',
-    opts:[['The issuing registry and its official record',1],['The seller’s forwarded screenshot',0]],
-    wrong:'Screenshots can be edited. Verify the issuer and locate the record through its official registry.',
-    say:'You have confirmed the record comes from the registry that is meant to issue it.'}),
-  taskStep({label:'Match the parcel reference',spot:'h',npc:mkSign('Aunty Ronke','Community records officer','#0B7A43',LK.woman,'Land registry'),
-    intro:'The registry entry has a parcel reference, location and named holder. The seller’s document must match the public entry.',q:'What should you compare?',
-    opts:[['The parcel reference and holder details against the registry entry',1],['Only the seller’s name on the printed page',0]],
-    wrong:'A printed page can be altered. Compare the parcel reference and holder details against the registry source.',
-    say:'The parcel details match the source record, so you can continue your checks.'}),
-  taskStep({label:'Review the record history',spot:'i',npc:mkSign('Aunty Ronke','Community records officer','#0B7A43',LK.woman,'Land registry'),
-    intro:'A record can be updated or disputed after it was first issued.',q:'Before relying on it, what else do you inspect?',
-    opts:[['The latest status, recorded changes and any dispute notice',1],['The date on the oldest copy only',0]],
-    wrong:'An old copy can miss later changes. Check the current status and the full available history.',
-    say:'You checked the latest entry and its history instead of relying on a single document.'})
- ]},
-{id:'m31',n:31,city:'abeokuta',title:'Book tours in USDC',goal:'Set up a booking link that shows both prices and the network, and confirm a deposit in your wallet.',
- steps:[
-  taskStep({label:'Set the booking link with K',spot:'b',npc:mkSign('K','Licensed tour guide','#E4572E',LK.man,'Tours'),
-    intro:'Visitors want to book the rock before they arrive.',q:'What does the booking link show?',
-    opts:[['Both prices, and the network for the deposit',1],['Cash only, on the day',0]],
-    wrong:'Cash on the day loses bookings. Show both prices and the network.',
-    say:'Your booking link is live.'}),
-  taskStep({label:'Pay the booking tool',spot:'d',npc:mkSign('David','Booking tool','#2D6FB3',LK.clerk,'Booking'),
-    intro:'The booking tool takes USDC. Choose the network.',q:'Which network?',
-    opts:[['Base',1],['Ethereum',0]],
-    wrong:'The booking tool is on Base.',
-    tx:{title:'Booking tool',amt:1,btn:'Pay 1 USDC',done:'Booking tool active',note:'Keep the receipt.',
-        rows:x=>[['To','Booking tool',1],['Amount','1.00 USDC'],['Network',x]]},
-    say:'Your booking tool is active.'}),
-  taskStep({label:'Confirm a visitor’s deposit',spot:'f',npc:mkSign('Oromachi','Tourist','#6a3fb5',LK.woman,'Visitor'),
-    intro:'Kemi sends a deposit for Saturday’s tour.',q:'What do you check?',
-    opts:[['The deposit in my wallet, then confirm the tour',1],['Her screenshot of the transfer',0]],
-    wrong:'A screenshot is not a deposit. Check your wallet first.',
-    say:'The deposit is in your wallet. Kemi’s tour is confirmed.'})
- ]},
-{id:'m32',n:32,city:'abeokuta',title:'Set up the community fund',goal:'Create a fund that needs two of three approvals, put money in, and approve only the agreed amount.',
- steps:[
-  taskStep({label:'Set up the fund with Mama Yetunde',spot:'h',npc:mkSign('Mama Yetunde','Community organiser','#C7457E',LK.trader,'Community fund'),
-    intro:'The street wants a shared fund for lights and repairs.',q:'How is the fund controlled?',
-    opts:[['Two of three named members must approve each payment',1],['One member holds the phrase for everyone',0]],
-    wrong:'One holder controls everyone’s money. Use two approvals out of three.',
-    say:'The fund needs two approvals for every payment.'}),
-  taskStep({label:'Put 2 USDC into the fund',spot:'i',npc:mkSign('Mama Yetunde','Community organiser','#C7457E',LK.trader,'Community fund'),
-    intro:'Your share goes into the fund. Choose the network.',q:'Which network?',
-    opts:[['Base',1],['Ethereum',0]],
-    wrong:'The fund is on Base.',
-    tx:{title:'Community fund',amt:2,btn:'Pay 2 USDC',done:'Contribution recorded',note:'The fund’s record is public.',
-        rows:x=>[['To','Community fund',1],['Amount','2.00 USDC'],['Network',x]]},
-    say:'Your share is recorded in the fund.'}),
-  taskStep({label:'Approve the first project',spot:'j',npc:mkSign('Mama Yetunde','Community organiser','#C7457E',LK.trader,'Community fund'),
-    intro:'Your wallet asks to let the fund spend for the street lights.',q:'What do you approve?',
-    opts:[['Exactly the agreed project cost',1],['Unlimited spending from the fund',0]],
-    wrong:'Unlimited spending lets the fund be emptied at any time. Approve only the agreed cost.',
-    say:'The approval covers the agreed cost only.'})
- ]},
-{id:'m33',n:33,city:'asaba',title:'Get paid on each milestone',goal:'Agree USDC on Base for each milestone, confirm payment on the explorer, and log the transaction ID.',
- steps:[
-  taskStep({label:'Agree the payment with Engr. Ekpo',spot:'a',npc:mkSign('Abdul','Contractor client','#1f4f82',LK.man,'Contract'),
-    intro:'Your client pays on each milestone. Bank delays have cost you cash before.',q:'How does the payment work?',
-    opts:[['USDC on Base, sent on each milestone date',1],['Whenever it is convenient for them',0]],
-    wrong:'Undated payments cause the late payments you already know. Fix the date and the network.',
-    say:'The payment schedule is set.'}),
-  taskStep({label:'Confirm milestone one',spot:'c',npc:mkSign('Abdul','Contractor client','#1f4f82',LK.man,'Contract'),
-    intro:'Five USDC should have arrived for milestone one.',q:'How do you confirm it?',
-    opts:[['Paste the transaction ID into the explorer and check 5 USDC arrived',1],['Trust their message that it is sent',0]],
-    wrong:'A message is not proof. The explorer shows the payment on the public record.',
-    say:'The explorer confirms 5 USDC. Milestone one is paid.'}),
-  taskStep({label:'Log the payment with Chidi',spot:'e',npc:mkSign('Mcbond','Bookkeeper','#0B7A43',LK.man,'Records'),
-    intro:'Your accountant needs the record for the month.',q:'What do you save?',
-    opts:[['The transaction ID with the milestone sign-off',1],['A screenshot of the app',0]],
-    wrong:'Screenshots are easy to lose or fake. Save the transaction ID with the sign-off.',
-    say:'The payment is logged and linked to the milestone.'})
- ]},
-{id:'m34',n:34,city:'asaba',title:'Take a digital gig',goal:'Confirm the gig terms in writing, share a permitted sample, and pay for a skills course on Base.',
- steps:[
-  taskStep({label:'Confirm terms with Tamuno',spot:'g',npc:mkSign('Tamuno','Digital services recruiter','#2D6FB3',LK.man,'Gigs'),
-    intro:'An overseas team needs bookkeeping help, paid in USDC every two weeks.',q:'What do you agree first?',
-    opts:[['Rate, schedule and tasks, in writing',1],['Start the work, we talk money later',0]],
-    wrong:'Start with written terms. Money talk after the work leaves you unpaid.',
-    say:'The terms are written. You start the work.'}),
-  taskStep({label:'Share a sample',spot:'h',npc:mkSign('Tamuno','Digital services recruiter','#2D6FB3',LK.man,'Gigs'),
-    intro:'The team asks for a sample of your work.',q:'What do you send?',
-    opts:[['A public example you are allowed to share',1],['Confidential data from a past client',0]],
-    wrong:'Never share a past client’s confidential data. Send a public example.',
-    say:'They review your sample and move to the offer.'}),
-  taskStep({label:'Pay for a skills course',spot:'i',npc:mkSign('Akimitsu','Online course','#0B7A43',LK.clerk,'Course'),
-    intro:'The course takes USDC. Choose the network.',q:'Which network?',
-    opts:[['Base',1],['Ethereum',0]],
-    wrong:'The course is on Base.',
-    tx:{title:'Skills course',amt:1,btn:'Pay 1 USDC',done:'Enrolled',note:'Check the refund policy in writing.',
-        rows:x=>[['Item','Skills course'],['Amount','1.00 USDC'],['Network',x]]},
-    say:'You are enrolled. Keep the receipt.'})
- ]},
-{id:'m35',n:35,city:'uyo',title:'Open your pre-orders',goal:'Put a date, a price and a refund rule on the order page, and buy the fabric on Base.',
- steps:[
-  taskStep({label:'Set up pre-orders with Ime',spot:'b',npc:mkSign('Akimitsu','Fashion designer','#C7457E',LK.woman,'Fashion'),
-    intro:'You want to make 100 pieces. Pre-orders pay for the fabric before you cut.',q:'What goes on the order page?',
-    opts:[['A delivery date, a price and a refund if late',1],['Money now, the date later',0]],
-    wrong:'Without a date and a refund rule, buyers have no reason to trust the order.',
-    say:'Your order page shows the date, price and refund rule.'}),
-  taskStep({label:'Buy fabric for 3 USDC',spot:'c',npc:mkSign('Odion','Textile wholesaler','#2D6FB3',LK.man,'Fabric'),
-    intro:'The fabric seller takes USDC. Choose the network.',q:'Which network?',
-    opts:[['Base',1],['Ethereum',0]],
-    wrong:'The fabric seller takes USDC on Base.',
-    tx:{title:'Fabric purchase',amt:3,btn:'Pay 3 USDC',done:'Fabric bought',note:'Keep the invoice with the pre-order list.',
-        rows:x=>[['To','Fabric seller',1],['Amount','3.00 USDC'],['Network',x]]},
-    say:'The fabric is on its way.'}),
-  taskStep({label:'Announce the delay',spot:'d',npc:mkSign('Akimitsu','Fashion designer','#C7457E',LK.woman,'Fashion'),
-    intro:'Fabric is a week late. You need to tell pre-order buyers.',q:'What do you do?',
-    opts:[['Message every pre-order buyer early, with a new date and the refund option',1],['Say nothing and take more orders',0]],
-    wrong:'Silence and more orders make the delay worse. Tell buyers now.',
-    say:'Buyers hear early. Most stay with you.'})
- ]},
-{id:'m36',n:36,city:'uyo',title:'Split royalties, in writing',goal:'Write each share in a published split, confirm your royalty on the record, and answer a partner from the record.',
- steps:[
-  taskStep({label:'Write the split with Ekaette',spot:'e',npc:mkSign('Ekaette','Music producer','#0B7A43',LK.woman,'Music'),
-    intro:'Your song is used in a video, and several people share the royalties.',q:'How is the split recorded?',
-    opts:[['Each share written in the agreement and the payments published',1],['A verbal split among friends',0]],
-    wrong:'Verbal splits cause disputes. Write the shares and publish the payments.',
-    say:'The split is written and published.'}),
-  taskStep({label:'Receive your royalty',spot:'f',npc:mkSign('Princess','Royalty payments','#2D6FB3',LK.clerk,'Royalties'),
-    intro:'A royalty of 1 USDC arrives. Check it against your share.',q:'What do you do?',
-    opts:[['Check the amount matches my share on the record',1],['Accept it without checking',0]],
-    wrong:'Check the amount against your share before you accept it as complete.',
-    say:'Your share matches the record.'}),
-  taskStep({label:'Answer a partner from the record',spot:'h',npc:mkSign('Ekaette','Music producer','#0B7A43',LK.woman,'Music'),
-    intro:'A partner asks why their share is smaller this month.',q:'What do you show?',
-    opts:[['The public record of earnings and each share',1],['A change to the split without telling them',0]],
-    wrong:'Changing the split without telling partners breaks trust. Show the record.',
-    say:'The partner checks the record and the question is settled.'})
- ]},
-
-/* ---- Katsina ---- */
-{id:'m37',n:37,city:'katsina',title:'List your herd at the market board',goal:'List your herd on the market board, pay the listing fee on Base, and confirm the buyer’s deposit on the explorer.',
- steps:[
-  taskStep({label:'Post the herd at the cattle market',spot:'a',npc:mkSign('Princess','Market association','#8E2F1B',LK.man,'Market board'),
-    intro:'The market board is public. Buyers and sellers both check it before they agree a price.',q:'What do you list?',
-    opts:[['The herd count, age, and the price range I accept',1],['Only a price, nothing else',0]],
-    wrong:'A bare price tells buyers nothing about the animals. List the count, the age and your range.',
-    say:'Your herd is on the board. Buyers can see what they are bidding on.'}),
-  taskStep({label:'Pay the listing fee',spot:'b',npc:mkSign('Motunrayo','Market board','#2D6FB3',LK.clerk,'Listing'),
-    intro:'Listings are paid in USDC. Choose the network.',q:'Which network?',
-    opts:[['Base',1],['Ethereum',0]],
-    wrong:'The market board takes USDC on Base.',
-    tx:{title:'Listing fee',amt:1,btn:'Pay 1 USDC',done:'Listed',note:'Your listing shows on the public board.',
-        rows:x=>[['To','Market listing board',1],['Amount','1.00 USDC'],['Network',x]]},
-    say:'Your listing is live on the board.'}),
-  taskStep({label:'Confirm a buyer’s deposit',spot:'c',npc:mkSign('Seun','Cattle buyer','#E4572E',LK.man,'Buyer'),
-    intro:'Garba sends a deposit to hold the herd. He sends you the transaction ID.',q:'How do you confirm it?',
-    opts:[['Paste the transaction ID into the explorer and check the amount and address',1],['Trust his message that he has sent it',0]],
-    wrong:'A message is not a deposit. The explorer shows what really arrived.',
-    say:'The explorer confirms the deposit. The herd is held for Garba.'})
- ]},
-{id:'m38',n:38,city:'katsina',title:'Herd health on the record',goal:'Have your vet sign the vaccination record, sign it as the owner, and pay the vet on Base.',
- steps:[
-  taskStep({label:'Call the vet to the farm',spot:'d',npc:mkSign('Dr Sule','Veterinary officer','#0B7A43',LK.man,'Vet'),
-    intro:'Dr Sule vaccinates the herd. The record should be signed by him and by you.',q:'What do you ask for?',
-    opts:[['A signed vaccination record for each animal, with the date',1],['A verbal OK that the herd is fine',0]],
-    wrong:'A verbal OK cannot be checked later. Ask for the signed record.',
-    say:'Dr Sule writes the record for each animal.'}),
-  taskStep({label:'Sign the record as owner',spot:'e',npc:mkSign('Dr Sule','Veterinary officer','#0B7A43',LK.man,'Vet'),
-    intro:'Your wallet asks you to sign the vaccination record. A signature moves no money.',q:'What do you sign?',
-    opts:[['The vaccination record for this herd',1],['A request to spend USDC from my wallet',0]],
-    wrong:'Signing the record proves you agree to it. A spending request is not a record, so reject it.',
-    say:'Your signature is on the record. Buyers can check it.'}),
-  taskStep({label:'Pay the vet on Base',spot:'g',npc:mkSign('Dr Sule','Veterinary officer','#0B7A43',LK.man,'Vet'),
-    intro:'The vet takes USDC. Choose the network.',q:'Which network?',
-    opts:[['Base',1],['Ethereum',0]],
-    wrong:'The clinic is on Base.',
-    tx:{title:'Vet fee',amt:1,btn:'Pay 1 USDC',done:'Vet paid',note:'Keep the receipt with the record.',
-        rows:x=>[['To','Dr Sule',1],['Amount','1.00 USDC'],['Network',x]]},
-    say:'The vet is paid. The record is complete.'})
- ]},
-{id:'m39',n:39,city:'makurdi',title:'Payroll for the yam barn',goal:'Set up a payroll contract for your workers, approve only the monthly amount, and run the first payroll on Base.',
- steps:[
-  taskStep({label:'Choose how to pay the workers',spot:'h',npc:mkSign('Racheal','Yam barn owner','#E4572E',LK.man,'Yam barn'),
-    intro:'Eight workers need paying every month. You want a record for each pay day.',q:'How do you pay them?',
-    opts:[['A payroll contract that pays each worker on the same day',1],['Cash handed out by hand, no record',0]],
-    wrong:'Cash without a record is hard to prove at the end of the season. Use the payroll contract.',
-    say:'The payroll contract is set up for eight workers.'}),
-  taskStep({label:'Approve the monthly payroll amount',spot:'i',npc:mkSign('Blessing','Payroll contract','#2D6FB3',LK.clerk,'Payroll'),
-    intro:'Your wallet asks to let the payroll contract spend USDC for wages.',q:'What do you approve?',
-    opts:[['Exactly this month’s payroll total',1],['Unlimited USDC for the contract',0]],
-    wrong:'Unlimited approval lets the contract take your whole balance. Approve only the monthly total.',
-    say:'The contract can spend only this month’s payroll.'}),
-  taskStep({label:'Run the first payroll',spot:'j',npc:mkSign('Blessing','Payroll contract','#2D6FB3',LK.clerk,'Payroll'),
-    intro:'The payroll sends each worker’s wage in one transaction. Choose the network.',q:'Which network?',
-    opts:[['Base',1],['Ethereum',0]],
-    wrong:'Your payroll contract is on Base.',
-    tx:{title:'First payroll',amt:3,btn:'Run payroll, 3 USDC',done:'Payroll sent',note:'Every worker’s pay is recorded on the network.',
-        rows:x=>[['Workers','8'],['Total','3.00 USDC'],['Network',x]]},
-    say:'Every worker’s pay is on the public record for the season.'})
- ]},
-{id:'m40',n:40,city:'makurdi',title:'Shared storage for the farms',goal:'Join a storage group, sign its agreement, and pay your share of the storage on Base.',
- steps:[
-  taskStep({label:'Join the storage group on the farm',spot:'k',npc:mkSign('Mama Ngu','Farm group leader','#C7457E',LK.mama,'Farm group'),
-    intro:'Five farms share one grain store. Each farm pays a share of the running costs.',q:'What do you check before joining?',
-    opts:[['The shared rules and the cost split, written and public',1],['The group leader’s word on the costs',0]],
-    wrong:'Costs and rules should be written and public, so every farm can check them.',
-    say:'You have the group’s written rules.'}),
-  taskStep({label:'Sign the storage agreement',spot:'l',npc:mkSign('Mama Ngu','Farm group leader','#C7457E',LK.mama,'Farm group'),
-    intro:'Your wallet asks you to sign the storage agreement. A signature is a promise, not a payment.',q:'What do you sign?',
-    opts:[['The storage agreement for this season',1],['A request to send my whole balance to the group',0]],
-    wrong:'Never send your whole balance to a group wallet. Sign the agreement only.',
-    say:'The agreement is signed by your farm.'}),
-  taskStep({label:'Pay your storage share',spot:'m',npc:mkSign('Racheal','Grain store','#2D6FB3',LK.clerk,'Store'),
-    intro:'Your share of the storage is paid in USDC. Choose the network.',q:'Which network?',
-    opts:[['Base',1],['Ethereum',0]],
-    wrong:'The store group pays on Base.',
-    tx:{title:'Storage share',amt:2,btn:'Pay 2 USDC',done:'Storage paid',note:'Your share is recorded for the season.',
-        rows:x=>[['To','Grain store group',1],['Amount','2.00 USDC'],['Network',x]]},
-    say:'Your grain has a place in the store for the season.'})
- ]},
-{id:'m43',n:41,city:'asaba',title:'Document a supplier dispute',goal:'Build a clear evidence trail for a disputed delivery and record both sides’ response before the issue is closed.',
- steps:[
-  taskStep({label:'Record what was agreed',spot:'d',npc:mkSign('Joe','Trade desk','#6a3fb5',LK.clerk,'Dispute desk'),
-    intro:'A supplier says the delivery matched the order, but the buyer disagrees.',q:'What should the record start with?',
-    opts:[['The original order, quantities and agreed delivery terms',1],['A conclusion based on who complains loudest',0]],
-    wrong:'Start with the terms both sides accepted before deciding what happened.',say:'The dispute is anchored to the original agreement.'}),
-  taskStep({label:'Attach verifiable delivery evidence',spot:'e',npc:mkSign('Joe','Trade desk','#6a3fb5',LK.clerk,'Dispute desk'),
-    intro:'Both parties submit photos, counts and a delivery receipt.',q:'How should the evidence be handled?',
-    opts:[['Keep dated references and identify which party supplied each item',1],['Replace the original records with one edited summary',0]],
-    wrong:'Preserve the original evidence and its source so the trail remains auditable.',say:'Each piece of evidence has a source and can be reviewed.'}),
-  taskStep({label:'Record the agreed outcome',spot:'h',npc:mkSign('Joe','Trade desk','#6a3fb5',LK.clerk,'Dispute desk'),
-    intro:'After reviewing the evidence, both sides agree on a partial replacement.',q:'What closes the case properly?',
-    opts:[['Record the remedy, both parties’ acknowledgement and completion status',1],['Delete the disagreement without noting the remedy',0]],
-    wrong:'A clear close-out shows what was agreed and whether it was completed.',say:'The final record captures the remedy and both sides’ acknowledgement.'})
- ]},
-{id:'m44',n:42,city:'asaba',title:'Invoice an overseas client',goal:'Prepare an invoice with clear scope, currency, due date and payment instructions, then reconcile the payment record.',
- steps:[
-  taskStep({label:'Write a complete invoice',spot:'d',npc:mkSign('Mike','Overseas client','#C7457E',LK.woman,'Client desk'),
-    intro:'You completed a design job for an overseas client.',q:'What should the invoice include?',
-    opts:[['The agreed work, amount, currency, due date and payment details',1],['Only a total with no description or due date',0]],
-    wrong:'A complete invoice helps both sides understand what is owed and when.',say:'The invoice records the agreed scope and payment terms.'}),
-  taskStep({label:'Match the invoice to the agreement',spot:'e',npc:mkSign('Mike','Overseas client','#C7457E',LK.woman,'Client desk'),
-    intro:'The client asks why the invoice amount differs from the original quote.',q:'What do you compare?',
-    opts:[['The signed scope and any approved changes',1],['A new amount you cannot explain',0]],
-    wrong:'The invoice should follow the agreed scope and documented changes.',say:'The amount can be traced back to the agreement.'}),
-  taskStep({label:'Reconcile the incoming payment',spot:'h',npc:mkSign('Mike','Overseas client','#C7457E',LK.woman,'Client desk'),
-    intro:'A payment arrives with a reference number.',q:'What confirms the invoice is settled?',
-    opts:[['The amount and reference match the payment record',1],['A message that says “sent” with no record',0]],
-    wrong:'A payment message alone does not reconcile an invoice.',say:'The payment record matches the amount due.'})
- ]},
-{id:'m45',n:43,city:'akure',title:'Give to the church fund, verified',goal:'Check the church fund address on the published notice, sign a pledge, and give on Base.',
- steps:[
-  taskStep({label:'Check the building fund with Bamidele',spot:'m',npc:mkSign('Bamidele','Church treasurer','#7a4a2e',LK.elder,'Church'),
-    intro:'The church is raising funds for a new roof. The address is on the notice board.',q:'Which address do you give to?',
-    opts:[['The address on the church’s published notice',1],['The address shared in the members’ chat',0]],
-    wrong:'Chat addresses can be swapped. Use the published notice.',
-    say:'You have the correct address for the roof fund.'}),
-  taskStep({label:'Sign your pledge',spot:'n',npc:mkSign('Bamidele','Church treasurer','#7a4a2e',LK.elder,'Church'),
-    intro:'Your pledge is a signed message on the fund’s record. It moves no money.',q:'What do you sign?',
-    opts:[['My pledge to the roof fund',1],['A request to send my whole balance to the fund',0]],
-    wrong:'A pledge is a message. Never send your whole balance on a pledge.',
-    say:'Your pledge is on the public record.'}),
-  taskStep({label:'Give to the roof fund',spot:'o',npc:mkSign('Bamidele','Church treasurer','#7a4a2e',LK.elder,'Church'),
-    intro:'Your gift goes to the verified roof fund. Choose the network.',q:'Which network?',
-    opts:[['Base',1],['Ethereum',0]],
-    wrong:'The fund is on Base.',
-    tx:{title:'Roof fund gift',amt:1,btn:'Give 1 USDC',done:'Gift received',note:'The fund publishes its receipts.',
-        rows:x=>[['To','Church roof fund',1],['Amount','1.00 USDC'],['Network',x]]},
-    say:'Your gift is on the public record, and the fund will publish its receipts.'})
- ]},
-{id:'m46',n:44,city:'akure',title:'A concert ticket you own',goal:'Buy the official ticket, check it is minted from the official contract, and show proof at the gate.',
- steps:[
-  taskStep({label:'Choose the ticket with the promoter',spot:'a',npc:mkSign('Promoter Dayo','Concert promoter','#E4572E',LK.man,'Tickets'),
-    intro:'Tickets for the concert are sold as tokens, so the seat is yours on the record.',q:'Where do you buy?',
-    opts:[['The promoter’s official ticket contract, listed on their site',1],['A resale link sent in a message',0]],
-    wrong:'Resale links are how fake tickets are sold. Buy from the official contract.',
-    say:'You are on the official list for the concert.'}),
-  taskStep({label:'Mint your ticket',spot:'b',npc:mkSign('Favour','Official ticket','#2D6FB3',LK.clerk,'Ticket desk'),
-    intro:'Minting writes your ticket to your wallet. Choose the network.',q:'Which network?',
-    opts:[['Base',1],['Ethereum',0]],
-    wrong:'The official ticket contract is on Base.',
-    tx:{title:'Concert ticket',amt:2,btn:'Mint for 2 USDC',done:'Ticket minted',note:'Your seat is recorded on the network.',
-        rows:x=>[['Item','Concert ticket, 1 seat'],['Price','2.00 USDC'],['Network',x]]},
-    say:'Your ticket is in your wallet.'}),
-  taskStep({label:'Show proof at the gate',spot:'c',npc:mkSign('Joshua','Concert gate','#0B7A43',LK.man,'Gate'),
-    intro:'The gate scanner asks for proof of your ticket.',q:'What do you show?',
-    opts:[['The ticket in my wallet, from the official contract',1],['A screenshot of the ticket',0]],
-    wrong:'Screenshots can be copied. Show the ticket from your wallet.',
-    say:'You are through the gate.'})
- ]},
-{id:'m47',n:45,city:'bauchi',title:'Inspect a roof-material delivery',goal:'Check a contractor’s material list, record quantities received, and flag a short delivery before approving the invoice.',
- steps:[
-  taskStep({label:'Compare the delivery with the order',spot:'d',npc:mkSign('Isaac','Mosque building committee','#0B7A43',LK.elder,'Roof project'),
-    intro:'Roof sheets and timber arrive for a community building project.',q:'What do you compare first?',
-    opts:[['The delivered items and quantities against the approved order',1],['The driver’s verbal estimate',0]],
-    wrong:'Count the actual items against the approved list.',say:'You have a measured comparison against the order.'}),
-  taskStep({label:'Record missing or damaged items',spot:'e',npc:mkSign('Isaac','Mosque building committee','#0B7A43',LK.elder,'Roof project'),
-    intro:'Two sheets are damaged and several timber lengths are missing.',q:'How should you document it?',
-    opts:[['Record the quantities and attach dated evidence before sign-off',1],['Approve the full delivery and mention it later',0]],
-    wrong:'The record should reflect what arrived before anyone signs acceptance.',say:'The short delivery is documented before approval.'}),
-  taskStep({label:'Approve only the verified amount',spot:'h',npc:mkSign('Isaac','Mosque building committee','#0B7A43',LK.elder,'Roof project'),
-    intro:'The supplier invoice charges for the full order.',q:'What is the right next step?',
-    opts:[['Hold approval until the invoice reflects the verified delivery',1],['Approve the full invoice despite the shortage',0]],
-    wrong:'Approval should match the agreed terms and the quantity actually received.',say:'The committee has a clear record before approving payment.'})
- ]},
-{id:'m48',n:46,city:'bauchi',title:'Pay stall rent by approval',goal:'Approve the exact monthly rent, check the landlord’s address on the published lease, and pay on Base.',
- steps:[
-  taskStep({label:'Check the lease with Hajiya Zainab',spot:'g',npc:mkSign('Hajiya Zainab','Market landlord','#C7457E',LK.trader,'Stall lease'),
-    intro:'Your stall lease is signed. The landlord’s payment address is written in it.',q:'Which address do you pay to?',
-    opts:[['The address written in the signed lease',1],['A new address sent this week',0]],
-    wrong:'A changed address is the first sign of trouble. Pay the address in the signed lease.',
-    say:'The address matches the lease.'}),
-  taskStep({label:'Approve the rent amount',spot:'h',npc:mkSign('Okiks','Rent payments','#2D6FB3',LK.clerk,'Rent'),
-    intro:'The rent contract asks to spend your USDC each month. Set the limit.',q:'What do you approve?',
-    opts:[['Exactly this month’s rent',1],['Unlimited USDC',0]],
-    wrong:'Unlimited access lets the rent contract spend your savings. Approve one month’s rent.',
-    say:'The approval covers one month’s rent only.'}),
-  taskStep({label:'Pay the rent on Base',spot:'i',npc:mkSign('Okiks','Rent payments','#2D6FB3',LK.clerk,'Rent'),
-    intro:'Pay this month’s rent. Choose the network.',q:'Which network?',
-    opts:[['Base',1],['Ethereum',0]],
-    wrong:'The lease is paid on Base.',
-    tx:{title:'Stall rent',amt:2,btn:'Pay 2 USDC',done:'Rent paid',note:'Keep the receipt with the lease.',
-        rows:x=>[['To','Hajiya Zainab (lease address)',1],['Amount','2.00 USDC'],['Network',x]]},
-    say:'Rent is paid. The receipt goes with your lease.'})
- ]},
-{id:'m53',n:47,city:'adoekiti',title:'Honey contract, signed at the cooperative',goal:'Sign the honey contract at the cooperative, check the lab certificate’s address, and release payment on delivery.',
- steps:[
-  taskStep({label:'Sign the honey contract',spot:'g',npc:mkSign('Toheeb','Honey buyer','#F6B21A',LK.man,'Honey'),
-    intro:'The cooperative office holds the signing. The contract covers grade, quantity and price.',q:'What do you check before signing?',
-    opts:[['The grade, quantity, price and release terms',1],['Only the buyer’s name',0]],
-    wrong:'A name is not a contract. Check grade, quantity, price and release terms.',
-    say:'The contract is signed on the cooperative’s record.'}),
-  taskStep({label:'Check the lab certificate address',spot:'h',npc:mkSign('Joe','Grading lab','#2D6FB3',LK.clerk,'Lab'),
-    intro:'The lab certificate is linked to its published address. Check the address before you trust it.',q:'Which address do you check against?',
-    opts:[['The lab’s published address on its official page',1],['The address printed on the certificate itself',0]],
-    wrong:'A certificate can carry any address. Check the lab’s published one.',
-    say:'The certificate matches the lab’s address.'}),
-  taskStep({label:'Release the payment on delivery',spot:'i',npc:mkSign('Toheeb','Honey buyer','#F6B21A',LK.man,'Honey'),
-    intro:'The batch is delivered and graded. Release the escrowed payment on Base.',q:'Which network?',
-    opts:[['Base',1],['Ethereum',0]],
-    wrong:'The escrow is on Base.',
-    tx:{title:'Release escrow',amt:0,btn:'Release payment',done:'Payment released',note:'Released as the contract agrees.',
-        rows:x=>[['Contract','Honey escrow',1],['Release','On delivery'],['Network',x]]},
-    say:'The honey is paid for, and the record shows the grade.'})
- ]},
-{id:'m54',n:48,city:'adoekiti',title:'Guide certificate, checked on the registry',goal:'Check your guide certificate on the registry, sign the trail waiver, and pay the park entry on Base.',
- steps:[
-  taskStep({label:'Check your certificate on the registry',spot:'j',npc:mkSign('Ayo Ogunleye','Trail guide trainer','#0B7A43',LK.man,'Guides'),
-    intro:'Hikers check that your guide certificate is real before they book.',q:'Where do you check it?',
-    opts:[['The public guide registry, against my wallet address',1],['The certificate I printed myself',0]],
-    wrong:'A printed certificate proves nothing. The registry shows if it was issued to your wallet.',
-    say:'The registry shows your certificate, issued to you.'}),
-  taskStep({label:'Sign the trail waiver',spot:'k',npc:mkSign('Ayo Ogunleye','Trail guide trainer','#0B7A43',LK.man,'Guides'),
-    intro:'Hikers sign a waiver before the climb. Your wallet asks you to sign it.',q:'What do you sign?',
-    opts:[['The trail waiver for this climb',1],['A request for spending on my wallet',0]],
-    wrong:'A waiver is a signature. A spending request has no place in it.',
-    say:'The waiver is signed on the record for this climb.'}),
-  taskStep({label:'Pay the park entry',spot:'l',npc:mkSign('Tunde Akin','Park entry','#2D6FB3',LK.clerk,'Gate'),
-    intro:'Park entry is paid in USDC. Choose the network.',q:'Which network?',
-    opts:[['Base',1],['Ethereum',0]],
-    wrong:'The park gate takes USDC on Base.',
-    tx:{title:'Park entry',amt:1,btn:'Pay 1 USDC',done:'Entry paid',note:'Keep the entry record.',
-        rows:x=>[['To','Park gate',1],['Amount','1.00 USDC'],['Network',x]]},
-    say:'Your entry is on the record. The climb can start.'})
- ]},
-{id:'m55',n:49,city:'gombe',title:'Weekly order on the chef’s tab',goal:'Open the chef’s weekly order, approve only the delivery amount, and pay on delivery on Base.',
- steps:[
-  taskStep({label:'Open the weekly order with Mike',spot:'m',npc:mkSign('Mike','Restaurant chef','#6a3fb5',LK.man,'Chef'),
-    intro:'The restaurant orders tomatoes every week. The order is on a shared list.',q:'What goes on the order?',
-    opts:[['Quantity, price per crate and the delivery day',1],['Quantity only, price to be agreed later',0]],
-    wrong:'An order without a price invites disputes at delivery. Agree the price per crate.',
-    say:'The weekly order is on the shared list.'}),
-  taskStep({label:'Approve the delivery amount',spot:'n',npc:mkSign('Favour','Restaurant payments','#2D6FB3',LK.clerk,'Orders'),
-    intro:'The order payment contract asks to spend USDC for this week’s delivery.',q:'What do you approve?',
-    opts:[['This week’s delivery total',1],['Unlimited USDC for future orders',0]],
-    wrong:'Unlimited approval is far more than a week’s order. Approve this week’s total.',
-    say:'The approval covers this week only.'}),
-  taskStep({label:'Pay on delivery',spot:'o',npc:mkSign('Mike','Restaurant chef','#6a3fb5',LK.man,'Chef'),
-    intro:'The crates arrive. Pay the agreed amount on Base.',q:'Which network?',
-    opts:[['Base',1],['Ethereum',0]],
-    wrong:'The restaurant pays on Base.',
-    tx:{title:'Weekly tomatoes',amt:2,btn:'Pay 2 USDC',done:'Delivery paid',note:'Paid on delivery, against the order.',
-        rows:x=>[['To','Tomato farm',1],['Amount','2.00 USDC'],['Network',x]]},
-    say:'The delivery is paid. The order is closed on the record.'})
- ]},
-{id:'m56',n:50,city:'gombe',title:'Share your farm record with the bank',goal:'Sign to share your farm record with the bank, and check the loan amount before you accept the disbursement.',
- steps:[
-  taskStep({label:'Share your farm record at the bank',spot:'a',npc:mkSign('Lami Bako','Agricultural lender','#1f4f82',LK.woman,'Lender'),
-    intro:'The bank wants to see your farm records. You decide what to share.',q:'What do you share?',
-    opts:[['Only the seasons the bank asked for, by signed permission',1],['My whole phone and all my messages',0]],
-    wrong:'Share the records the bank needs, under a permission you sign. Nothing more.',
-    say:'The bank has access to the two seasons you agreed.'}),
-  taskStep({label:'Check the loan before you accept',spot:'b',npc:mkSign('Lami Bako','Agricultural lender','#1f4f82',LK.woman,'Lender'),
-    intro:'The loan is approved for 8 USDC. The disbursement contract shows the amount and the release.',q:'What do you check?',
-    opts:[['The amount, the repayment schedule and the bank’s published address',1],['Only that the bank seems friendly',0]],
-    wrong:'Check the amount, the schedule and the address. Friendly staff do not change the loan terms.',
-    say:'The loan terms match what you agreed.'}),
-  taskStep({label:'Accept the loan disbursement',spot:'c',npc:mkSign('Mallam Adamu','Loan disbursement','#2D6FB3',LK.clerk,'Loans'),
-    intro:'Accepting pays out the loan. The contract asks you to approve receiving the amount. Choose the network.',q:'Which network?',
-    opts:[['Base',1],['Ethereum',0]],
-    wrong:'The loan pays out on Base.',
-    tx:{title:'Loan disbursement',amt:0,btn:'Accept 8 USDC loan',done:'Loan received',note:'Repayments follow the schedule you read.',
-        rows:x=>[['From','Agricultural lender',1],['Amount','8.00 USDC'],['Network',x]]},
-    say:'The loan is in your wallet. Repayments follow the agreed schedule.'})
- ]},
-{id:'m57',n:51,city:'yola',title:'Join the groundnut co-op at the market',goal:'Check the co-op register address, sign your membership, and pay the fee on Base.',
- steps:[
-  taskStep({label:'Check the co-op register',spot:'d',npc:mkSign('Joshua','Co-op secretary','#0B7A43',LK.man,'Co-op'),
-    intro:'The co-op keeps its member register public. Check the address on the register before paying.',q:'Which address do you check?',
-    opts:[['The address on the public register',1],['The address the secretary gave you at the stall',0]],
-    wrong:'An address given verbally can be swapped. Check the public register.',
-    say:'The address is confirmed on the register.'}),
-  taskStep({label:'Sign your membership',spot:'e',npc:mkSign('Joshua','Co-op secretary','#0B7A43',LK.man,'Co-op'),
-    intro:'Your membership is a signature on the register. It is free to sign.',q:'What do you sign?',
-    opts:[['My membership on the public register',1],['A request to send my savings to the co-op',0]],
-    wrong:'Signing membership is not paying savings. Reject any request to move your savings.',
-    say:'You are on the register.'}),
-  taskStep({label:'Pay the membership fee',spot:'f',npc:mkSign('Okiks','Membership','#2D6FB3',LK.clerk,'Membership'),
-    intro:'The membership fee is paid in USDC. Choose the network.',q:'Which network?',
-    opts:[['Base',1],['Ethereum',0]],
-    wrong:'The co-op takes USDC on Base.',
-    tx:{title:'Co-op membership',amt:1,btn:'Pay 1 USDC',done:'Membership active',note:'Your receipt is on the register.',
-        rows:x=>[['To','Co-op register address',1],['Amount','1.00 USDC'],['Network',x]]},
-    say:'Your membership is active and on the public register.'})
- ]},
-{id:'m58',n:52,city:'yola',title:'Approve wedding-photo delivery',goal:'Agree the wedding photo selection, verify the delivered files, and record client approval before closing the job.',
- steps:[
-  taskStep({label:'Agree the photo selection',spot:'d',npc:mkSign('Hajiya Kande','Wedding client','#C7457E',LK.woman,'Photo delivery'),
-    intro:'The photographer and couple need to agree on the final album.',q:'What should the delivery brief specify?',
-    opts:[['The number of edited photos, format and delivery date',1],['Only that the album should look nice',0]],
-    wrong:'Clear deliverables help both sides know what counts as finished.',say:'The final album has an agreed scope and deadline.'}),
-  taskStep({label:'Check the delivered files',spot:'e',npc:mkSign('Hajiya Kande','Wedding client','#C7457E',LK.woman,'Photo delivery'),
-    intro:'The photographer sends a download link for the album.',q:'What do you verify?',
-    opts:[['The link works and the files match the agreed format and selection',1],['Only the first thumbnail',0]],
-    wrong:'Check the actual delivered files, not just a preview.',say:'The album is checked against the delivery brief.'}),
-  taskStep({label:'Record approval or specific revisions',spot:'h',npc:mkSign('Hajiya Kande','Wedding client','#C7457E',LK.woman,'Photo delivery'),
-    intro:'The client requests two small edits before accepting the album.',q:'What is the clearest response?',
-    opts:[['Record the specific edits and confirm approval after they are completed',1],['Close the job without acknowledging the requested changes',0]],
-    wrong:'Specific revisions create a clear path to acceptance.',say:'The approval record states what remains and when the job is complete.'})
- ]},
-{id:'m59',n:53,city:'abakaliki',title:'Group buy at the rice depot',goal:'Sign the group order, pay your share on Base, and check the depot’s delivery record.',
- steps:[
-  taskStep({label:'Sign the group order at the depot',spot:'j',npc:mkSign('Egbuna','Rice depot','#1f4f82',LK.man,'Depot'),
-    intro:'Five millers order rice together. The order lists each share.',q:'What do you sign?',
-    opts:[['The group order with each miller’s share written in',1],['A blank order to be filled in later',0]],
-    wrong:'A blank order can be filled in by anyone. Sign only the complete order.',
-    say:'The group order is signed.'}),
-  taskStep({label:'Pay your share on Base',spot:'k',npc:mkSign('Egbuna','Rice depot','#1f4f82',LK.man,'Depot'),
-    intro:'Your share is paid into the group order. Choose the network.',q:'Which network?',
-    opts:[['Base',1],['Ethereum',0]],
-    wrong:'The depot takes USDC on Base.',
-    tx:{title:'Group order share',amt:2,btn:'Pay 2 USDC',done:'Share paid',note:'Your share is recorded on the order.',
-        rows:x=>[['To','Rice depot group order',1],['Amount','2.00 USDC'],['Network',x]]},
-    say:'Your share is recorded on the group order.'}),
-  taskStep({label:'Check the delivery record',spot:'l',npc:mkSign('Egbuna','Rice depot','#1f4f82',LK.man,'Depot'),
-    intro:'The rice is delivered. The depot posts a delivery record for the group.',q:'What do you check?',
-    opts:[['Each miller’s share on the record matches the bags received',1],['Only the total number of bags',0]],
-    wrong:'Check each share, not just the total. That is how the group stays fair.',
-    say:'Every share matches the delivery record.'})
- ]},
-{id:'m60',n:54,city:'abakaliki',title:'Resolve a pending transfer safely',goal:'Investigate a pending transfer without exposing private keys or sending the payment a second time.',
- steps:[
-  taskStep({label:'Find the transaction status',spot:'m',npc:mkSign('Mmesoma Okafor','Network support desk','#C7457E',LK.woman,'Help desk'),
-    intro:'A customer says a transfer is still pending. The balance has not changed yet, and they are worried.',q:'What should you check first?',
-    opts:[['Search the transaction ID on the correct network explorer',1],['Send the same amount again immediately',0]],
-    wrong:'The first transfer may still confirm. Check its transaction ID and status before attempting anything else.',
-    say:'You found the original transaction and checked its status before taking another action.'}),
-  taskStep({label:'Share only safe troubleshooting details',spot:'n',npc:mkSign('Mmesoma Okafor','Network support desk','#C7457E',LK.woman,'Help desk'),
-    intro:'The support agent asks for information to investigate the delay.',q:'What can you safely share?',
-    opts:[['The public transaction ID and wallet address',1],['The recovery phrase or wallet password',0]],
-    wrong:'Support never needs your recovery phrase or password. Share only public troubleshooting details.',
-    say:'You shared the public transaction reference without exposing account secrets.'}),
-  taskStep({label:'Choose the next step from the status',spot:'o',npc:mkSign('Mmesoma Okafor','Network support desk','#C7457E',LK.woman,'Help desk'),
-    intro:'The explorer says the transaction is still pending, not failed.',q:'What do you do now?',
-    opts:[['Wait for the status to resolve and follow the network guidance',1],['Pay a stranger an extra fee to unlock it',0]],
-    wrong:'An unsolicited unlock fee can be a scam. Follow the network status and official support guidance.',
-    say:'You avoided a duplicate payment and an unofficial fee while the original transfer is pending.'})
- ]},
-{id:'m61',n:55,city:'abia',title:'Overseas repair order on the courier',goal:'Accept the repair order by signature, pay the courier on Base, and confirm the parcel was received.',
- steps:[
-  taskStep({label:'Accept the repair order',spot:'a',npc:mkSign('Amaka','Overseas client','#6a3fb5',LK.man,'Client'),
-    intro:'A client sends shoes for repair from overseas. Accepting the order is a signature.',q:'What do you sign?',
-    opts:[['The repair order with the price and the return address',1],['A spending approval for the client’s account',0]],
-    wrong:'The client does not need access to your money. Sign the order only.',
-    say:'The order is accepted on the record.'}),
-  taskStep({label:'Pay the courier',spot:'b',npc:mkSign('Mide','Courier','#2D6FB3',LK.clerk,'Courier'),
-    intro:'The courier takes USDC for the return journey. Choose the network.',q:'Which network?',
-    opts:[['Base',1],['Ethereum',0]],
-    wrong:'The courier takes USDC on Base.',
-    tx:{title:'Courier return',amt:1,btn:'Pay 1 USDC',done:'Courier booked',note:'Keep the tracking link.',
-        rows:x=>[['To','Courier',1],['Amount','1.00 USDC'],['Network',x]]},
-    say:'The courier has the parcel. The tracking link is shared.'}),
-  taskStep({label:'Confirm the parcel was received',spot:'c',npc:mkSign('Amaka','Overseas client','#6a3fb5',LK.man,'Client'),
-    intro:'The client confirms the shoes arrived in good order.',q:'How do you close the order?',
-    opts:[['Mark the order received on the record, so the job closes',1],['Leave it open and ignore the client',0]],
-    wrong:'An open order keeps disputes alive. Mark it received once it arrives.',
-    say:'The order is closed, and the record shows it.'})
- ]},
-{id:'m62',n:56,city:'abia',title:'Workshop rent, booked on a shared calendar',goal:'Sign the shared rent agreement, pay your share on Base, and swap a booking by signature.',
- steps:[
-  taskStep({label:'Sign the shared rent agreement',spot:'d',npc:mkSign('Mama Uche','Workshop owner','#7a4a2e',LK.mama,'Workshop'),
-    intro:'Three artisans share the workshop. The agreement sets each share of the rent.',q:'What do you sign?',
-    opts:[['The agreement with each share written in',1],['A blank agreement to fill in later',0]],
-    wrong:'A blank agreement lets anyone fill in the shares. Sign the complete one.',
-    say:'The agreement is signed by all three artisans.'}),
-  taskStep({label:'Pay your rent share',spot:'e',npc:mkSign('Mama Uche','Workshop owner','#7a4a2e',LK.mama,'Workshop'),
-    intro:'Your share is paid into the workshop account. Choose the network.',q:'Which network?',
-    opts:[['Base',1],['Ethereum',0]],
-    wrong:'The workshop account is on Base.',
-    tx:{title:'Workshop rent share',amt:2,btn:'Pay 2 USDC',done:'Rent paid',note:'Recorded against the agreement.',
-        rows:x=>[['To','Workshop account',1],['Amount','2.00 USDC'],['Network',x]]},
-    say:'Your share is paid and recorded.'}),
-  taskStep({label:'Swap a booking by signature',spot:'f',npc:mkSign('Artisan Ngozi','Shared tenant','#C7457E',LK.woman,'Tenant'),
-    intro:'Ngozi wants to swap Thursday for your Friday. The calendar needs both signatures.',q:'What do you sign?',
-    opts:[['The swap on the shared calendar, with both names',1],['A payment to Ngozi for the swap',0]],
-    wrong:'A swap is a signed change to the calendar, not a payment. Sign the swap only.',
-    say:'The calendar is updated with both signatures.'})
- ]},
-{id:'m63',n:57,city:'bayelsa',title:'Trace a fish catch to its landing',goal:'Record the landing location, catch time and handling checks so a buyer can trace the fish batch to its source.',
- steps:[
-  taskStep({label:'Record the landing details',spot:'d',npc:mkSign('Aunty Kemi','Fish seller','#2D6FB3',LK.man,'Landing site'),
-    intro:'A buyer asks where a batch of fish was caught and landed.',q:'What should the first record include?',
-    opts:[['The landing site, date, time and batch reference',1],['Only the seller’s nickname',0]],
-    wrong:'A traceable batch needs a source and a time reference.',say:'The batch can be linked to a specific landing event.'}),
-  taskStep({label:'Check the handling record',spot:'e',npc:mkSign('Aunty Kemi','Fish seller','#2D6FB3',LK.man,'Landing site'),
-    intro:'The fish must stay chilled between landing and market.',q:'What should you check?',
-    opts:[['The recorded handling and temperature checks for the batch',1],['A general claim that it stayed fresh',0]],
-    wrong:'A specific handling record is more useful than an unsupported assurance.',say:'The batch has a documented handling trail.'}),
-  taskStep({label:'Share the traceability reference',spot:'h',npc:mkSign('Chuka Nwosu','Fish buyer','#C7457E',LK.woman,'Fish market'),
-    intro:'The buyer wants to verify the batch without seeing unrelated business records.',q:'What do you provide?',
-    opts:[['The batch reference and its relevant source and handling record',1],['Private records for every other customer',0]],
-    wrong:'Share only the records relevant to this batch.',say:'The buyer can trace the fish to its source and handling checks.'})
- ]},
-{id:'m64',n:58,city:'bayelsa',title:'Manage the ferry boarding manifest',goal:'Match passenger bookings to the departure manifest, handle a changed booking, and reconcile the final passenger count.',
- steps:[
-  taskStep({label:'Match bookings to the manifest',spot:'d',npc:mkSign('Timi Opu','Ferry operator','#2D6FB3',LK.clerk,'Boarding desk'),
-    intro:'The ferry crew needs a reliable list of passengers for the crossing.',q:'What do you check?',
-    opts:[['Each booking reference against the departure manifest',1],['Only the total number written on a note',0]],
-    wrong:'Individual references help detect missing or duplicated bookings.',say:'The manifest can be reconciled to actual bookings.'}),
-  taskStep({label:'Handle a changed booking',spot:'e',npc:mkSign('Timi Opu','Ferry operator','#2D6FB3',LK.clerk,'Boarding desk'),
-    intro:'A passenger has moved to a later departure.',q:'What should happen to the manifest?',
-    opts:[['Update the booking status and place the passenger on the correct departure',1],['Leave both departures marked as confirmed',0]],
-    wrong:'A change must update the record so the same booking is not counted twice.',say:'The passenger appears on the correct departure only.'}),
-  taskStep({label:'Reconcile before departure',spot:'h',npc:mkSign('Timi Opu','Ferry operator','#2D6FB3',LK.clerk,'Boarding desk'),
-    intro:'Boarding is complete and the ferry is ready to leave.',q:'What do you confirm?',
-    opts:[['The boarded count matches the checked manifest and safety limit',1],['Depart with an unexplained mismatch',0]],
-    wrong:'The crew needs a reconciled count within the safe passenger limit.',say:'The final manifest matches the boarding count.'})
- ]},
-{id:'m65',n:59,city:'jigawa',title:'Book the shared pump on the log',goal:'Book your turn on the shared pump, approve the group fund for your share, and pay your running cost on Base.',
- steps:[
-  taskStep({label:'Book your turn at the pump',spot:'a',npc:mkSign('Sadiq Bello','Farm group leader','#0B7A43',LK.man,'Pump log'),
-    intro:'The pump runs on a shared booking log. Each farm books its hours before it runs.',q:'What do you book?',
-    opts:[['Two hours on Thursday, in the shared log',1],['The pump for the whole week, without a log entry',0]],
-    wrong:'A week with no entry blocks the other farms. Book your hours in the log.',
-    say:'Your hours are in the shared log.'}),
-  taskStep({label:'Approve your share from the group fund',spot:'b',npc:mkSign('Tunde Balogun','Shared fund','#2D6FB3',LK.clerk,'Fund'),
-    intro:'The fund asks to release your share of the running cost.',q:'What do you approve?',
-    opts:[['Exactly my share for these hours',1],['The whole fund, for all future runs',0]],
-    wrong:'Approve only your share. A whole-fund approval lets anyone spend the lot.',
-    say:'The release covers your share only.'}),
-  taskStep({label:'Pay your running cost on Base',spot:'c',npc:mkSign('Tunde Balogun','Shared fund','#2D6FB3',LK.clerk,'Fund'),
-    intro:'Pay your share of the running cost. Choose the network.',q:'Which network?',
-    opts:[['Base',1],['Ethereum',0]],
-    wrong:'The pump fund is on Base.',
-    tx:{title:'Pump running cost',amt:1,btn:'Pay 1 USDC',done:'Cost paid',note:'Recorded in the shared log.',
-        rows:x=>[['To','Pump fund',1],['Amount','1.00 USDC'],['Network',x]]},
-    say:'Your hours and cost are both on the shared record.'})
- ]},
-{id:'m66',n:60,city:'jigawa',title:'List your grain at the market board',goal:'Check the market price feed, list your grain with a signed listing, and confirm the buyer’s payment on the explorer.',
- steps:[
-  taskStep({label:'Check the market price feed',spot:'d',npc:mkSign('Malam Musa','Market information','#2D6FB3',LK.man,'Prices'),
-    intro:'The market publishes prices at its board and online. Check the feed before you list.',q:'Which feed do you use?',
-    opts:[['The market’s published feed, on its official page',1],['A feed link sent to my phone',0]],
-    wrong:'A link sent to a phone can show false prices. Use the published feed.',
-    say:'You see the true price for this week.'}),
-  taskStep({label:'Sign your grain listing',spot:'e',npc:mkSign('Malam Musa','Market information','#2D6FB3',LK.man,'Prices'),
-    intro:'Your listing is a signed message on the board. It moves no money.',q:'What do you sign?',
-    opts:[['The listing: 40 bags, price per bag, pickup day',1],['A request to send my stock to the board',0]],
-    wrong:'A listing is a message. Nobody needs your stock sent to them to list it.',
-    say:'Your listing is on the board.'}),
-  taskStep({label:'Confirm the buyer’s payment',spot:'f',npc:mkSign('Hadiza Bello','Grain buyer','#E4572E',LK.woman,'Buyer'),
-    intro:'Hadiza pays for the 40 bags. Check the payment before the truck leaves.',q:'How do you confirm?',
-    opts:[['Look up the payment transaction on the explorer',1],['Trust her message that it is sent',0]],
-    wrong:'Messages do not move the truck. The explorer shows the payment.',
-    say:'The payment is in your wallet. The truck can leave.'})
- ]},
-{id:'m67',n:61,city:'kebbi',title:'Consent before the field survey',goal:'Sign the consent form, submit the survey on the research registry, and check the survey fee arrives.',
- steps:[
-  taskStep({label:'Sign the consent form with Nneka Okafor',spot:'g',npc:mkSign('Nneka Okafor','Agricultural research','#0B7A43',LK.woman,'Research'),
-    intro:'The survey asks about your farm. Before the first question, you choose what you agree to share.',q:'What do you sign?',
-    opts:[['Consent for my farm data only, with the fee and how it is used',1],['Consent for my farm and my neighbours’ names',0]],
-    wrong:'Your neighbours have not agreed to be named. Consent covers your farm only.',
-    say:'Your consent is on the research registry.'}),
-  taskStep({label:'Submit the survey',spot:'h',npc:mkSign('Nneka Okafor','Agricultural research','#0B7A43',LK.woman,'Research'),
-    intro:'Submitting the survey writes the answers to the registry, with your consent attached.',q:'What do you attach?',
-    opts:[['My consent record and the survey answers',1],['Only the answers, without consent',0]],
-    wrong:'A survey without consent is not usable. Attach your consent record.',
-    say:'The survey is in the registry, with your consent attached.'}),
-  taskStep({label:'Check the survey fee',spot:'i',npc:mkSign('Hadiza Sule','Survey payments','#2D6FB3',LK.clerk,'Payments'),
-    intro:'The fee for the survey is sent when the registry accepts it.',q:'Where do you check it arrived?',
-    opts:[['The transaction on the explorer, from the research wallet',1],['A message saying it has been sent',0]],
-    wrong:'The explorer shows the fee. A message only says it was sent.',
-    say:'The fee is in your wallet.'})
- ]},
-{id:'m68',n:62,city:'kebbi',title:'Sign off the pond harvest',goal:'Vote on the harvest sign-off, pay the feed on Base, and check the harvest record for your share.',
- steps:[
-  taskStep({label:'Vote on the harvest sign-off',spot:'j',npc:mkSign('Mallam Sadiq','Pond manager','#2D6FB3',LK.man,'Pond'),
-    intro:'The harvest is weighed. Members vote to sign off the record.',q:'What do you vote?',
-    opts:[['Sign off the weighed harvest, as posted on the board',1],['Sign off a harvest number nobody weighed',0]],
-    wrong:'Sign off only the weights everyone saw. An unweighed number is not a harvest.',
-    say:'Your vote is recorded with the harvest.'}),
-  taskStep({label:'Pay for the pond feed',spot:'k',npc:mkSign('Yahaya Bako','Fish feed','#2D6FB3',LK.clerk,'Feed'),
-    intro:'The feed is paid in USDC for next season. Choose the network.',q:'Which network?',
-    opts:[['Base',1],['Ethereum',0]],
-    wrong:'The feed seller takes USDC on Base.',
-    tx:{title:'Pond feed',amt:2,btn:'Pay 2 USDC',done:'Feed paid',note:'Recorded against the pond.',
-        rows:x=>[['To','Feed seller',1],['Amount','2.00 USDC'],['Network',x]]},
-    say:'The feed is paid and recorded.'}),
-  taskStep({label:'Check your share on the harvest record',spot:'l',npc:mkSign('Mallam Sadiq','Pond manager','#2D6FB3',LK.man,'Pond'),
-    intro:'The harvest record shows each member’s share by work days.',q:'What do you check?',
-    opts:[['My work days and share match the record',1],['Only that the total harvest is large',0]],
-    wrong:'Check your own share. A large total can hide a short share.',
-    say:'Your share matches the record.'})
- ]},
-{id:'m69',n:63,city:'kogi',title:'Sign the apprenticeship offer',goal:'Check the plant’s published address, sign your apprenticeship offer, and pay your safety course on Base.',
- steps:[
-  taskStep({label:'Check the plant’s address',spot:'m',npc:mkSign('Femi Alade','Training officer','#1f4f82',LK.man,'Training'),
-    intro:'The apprenticeship is posted on the plant’s site. Check the plant’s address before you sign.',q:'Which address do you check?',
-    opts:[['The address published on the plant’s official site',1],['The address on the offer letter a recruiter gave you',0]],
-    wrong:'Offer letters can carry the wrong address. Check the plant’s published one.',
-    say:'The address matches the plant’s site.'}),
-  taskStep({label:'Sign the apprenticeship offer',spot:'n',npc:mkSign('Femi Alade','Training officer','#1f4f82',LK.man,'Training'),
-    intro:'Your offer is signed on the plant’s record. The offer shows your pay and milestones.',q:'What do you sign?',
-    opts:[['The offer, with the pay and the milestones written in',1],['A request to pay the plant a training fee',0]],
-    wrong:'A real apprenticeship does not charge you a fee to sign. Reject the payment.',
-    say:'The offer is signed with its milestones.'}),
-  taskStep({label:'Pay for your safety course',spot:'o',npc:mkSign('Efe Tamuno','Training school','#2D6FB3',LK.clerk,'Safety'),
-    intro:'The safety course is paid for in USDC. Choose the network.',q:'Which network?',
-    opts:[['Base',1],['Ethereum',0]],
-    wrong:'The safety school takes USDC on Base.',
-    tx:{title:'Safety course',amt:1,btn:'Pay 1 USDC',done:'Enrolled',note:'Ask the plant whether it reimburses training.',
-        rows:x=>[['Item','Plant safety course'],['Amount','1.00 USDC'],['Network',x]]},
-    say:'You are enrolled. Keep the receipt.'})
- ]},
-{id:'m70',n:64,city:'kogi',title:'Loan repayment, approved in advance',goal:'Sign the loan terms, approve only the next instalment, and repay on time on Base.',
- steps:[
-  taskStep({label:'Sign the loan terms with Mrs Ojo',spot:'a',npc:mkSign('Mrs Ojo','Community lender','#0B7A43',LK.woman,'Lender'),
-    intro:'The loan is 8 USDC over four months. The terms are written on a signed record.',q:'What do you check before signing?',
-    opts:[['The total repayment and the monthly amount on the record',1],['Only the amount I receive now',0]],
-    wrong:'The amount you receive is not the cost. Check the total repayment.',
-    say:'The loan terms are signed on the record.'}),
-  taskStep({label:'Approve the monthly instalment',spot:'b',npc:mkSign('Sani Abdullahi','Repayments','#2D6FB3',LK.clerk,'Repayments'),
-    intro:'Repayments are pulled from your wallet by an approval. Set the limit.',q:'What do you approve?',
-    opts:[['The next instalment only',1],['Unlimited USDC to the loan desk',0]],
-    wrong:'Unlimited approval lets the loan desk take far more than the instalment. Approve one instalment.',
-    say:'The approval covers the next instalment only.'}),
-  taskStep({label:'Make the repayment on Base',spot:'c',npc:mkSign('Mrs Ojo','Community lender','#0B7A43',LK.woman,'Lender'),
-    intro:'This month’s instalment is due. Choose the network.',q:'Which network?',
-    opts:[['Base',1],['Ethereum',0]],
-    wrong:'The loan is repaid on Base.',
-    tx:{title:'Loan instalment',amt:2,btn:'Repay 2 USDC',done:'Instalment paid',note:'Recorded on your schedule.',
-        rows:x=>[['To','Loan desk',1],['Amount','2.00 USDC'],['Network',x]]},
-    say:'Your repayment is on the record. The schedule is on track.'})
- ]},
-{id:'m71',n:65,city:'nasarawa',title:'Weekly egg round, approved for the week',goal:'Sign this week’s delivery list, approve only the weekly total, and pay for the crates on Base.',
- steps:[
-  taskStep({label:'Sign the weekly delivery list',spot:'d',npc:mkSign('Aisha Danladi','Poultry seller','#C7457E',LK.mama,'Eggs'),
-    intro:'Your round has regular customers. The weekly list is signed so customers can check it.',q:'What do you sign?',
-    opts:[['The list of households and shops, with eggs per drop',1],['A blank list to fill in on the day',0]],
-    wrong:'A blank list cannot be checked by customers. Sign the complete list.',
-    say:'The round is on the signed list.'}),
-  taskStep({label:'Approve the week’s total',spot:'e',npc:mkSign('Boma Briggs','Delivery payments','#2D6FB3',LK.clerk,'Orders'),
-    intro:'Customers pay per week through a contract. Set your limit.',q:'What do you approve?',
-    opts:[['This week’s delivery total only',1],['Unlimited payments from customers’ wallets',0]],
-    wrong:'Unlimited access lets anyone’s payments be pulled at will. Approve only the week’s total.',
-    say:'The approval covers this week’s round.'}),
-  taskStep({label:'Buy the crates on Base',spot:'f',npc:mkSign('Ifeoma Uche','Crates','#2D6FB3',LK.clerk,'Crates'),
-    intro:'Fresh crates for the round. Choose the network.',q:'Which network?',
-    opts:[['Base',1],['Ethereum',0]],
-    wrong:'The crate seller takes USDC on Base.',
-    tx:{title:'Egg crates',amt:1,btn:'Pay 1 USDC',done:'Crates bought',note:'Keep the receipt with the round.',
-        rows:x=>[['To','Crate seller',1],['Amount','1.00 USDC'],['Network',x]]},
-    say:'The crates are paid for. The round can start.'})
- ]},
-{id:'m72',n:66,city:'nasarawa',title:'Post the water tariff and test',goal:'Sign the posted tariff on the kiosk record, pay for the water test on Base, and check the test certificate.',
- steps:[
-  taskStep({label:'Sign the posted tariff',spot:'g',npc:mkSign('Engr. Dauda','Water kiosk operator','#2D6FB3',LK.man,'Water kiosk'),
-    intro:'The kiosk tariff is posted on the community record. Sign it to make it official.',q:'What do you sign?',
-    opts:[['The tariff per container, with the date of review',1],['A tariff that changes with each customer',0]],
-    wrong:'A tariff that changes per customer is not a tariff. Sign one fixed rate.',
-    say:'The tariff is signed on the community record.'}),
-  taskStep({label:'Pay for the water test',spot:'h',npc:mkSign('Nneka Umeh','Water testing','#0B7A43',LK.clerk,'Testing'),
-    intro:'The lab tests the water before the kiosk reopens. Choose the network.',q:'Which network?',
-    opts:[['Base',1],['Ethereum',0]],
-    wrong:'The lab takes USDC on Base.',
-    tx:{title:'Water test',amt:2,btn:'Pay 2 USDC',done:'Test booked',note:'The certificate is issued after the test.',
-        rows:x=>[['To','Lab Test',1],['Amount','2.00 USDC'],['Network',x]]},
-    say:'The test is booked.'}),
-  taskStep({label:'Check the test certificate',spot:'i',npc:mkSign('Village Head','Village head','#7a4a2e',LK.elder,'Village'),
-    intro:'The certificate says the water is safe. Post it at the kiosk.',q:'What do you check on the certificate?',
-    opts:[['The lab’s address and the test date match the lab’s record',1],['Only that it has a stamp on it',0]],
-    wrong:'A stamp can be copied. Check the lab’s address and the date against its record.',
-    say:'The certificate is genuine. It goes up at the kiosk.'})
- ]},
-{id:'m73',n:67,city:'osun',title:'Check a festival vendor’s food-safety record',goal:'Verify a vendor’s food-handling checklist, record a temperature check, and flag an issue before the stall opens.',
- steps:[
-  taskStep({label:'Review the vendor checklist',spot:'d',npc:mkSign('Sani Musa','Event safety team','#2D6FB3',LK.clerk,'Food safety'),
-    intro:'A food stall is preparing to open at a busy festival.',q:'What do you review first?',
-    opts:[['The required hygiene, storage and handling checklist',1],['Only the stall’s decoration and menu',0]],
-    wrong:'The checklist focuses on risks that can affect customers.',say:'The vendor has been checked against the safety requirements.'}),
-  taskStep({label:'Record a cold-storage check',spot:'e',npc:mkSign('Sani Musa','Event safety team','#2D6FB3',LK.clerk,'Food safety'),
-    intro:'Some ingredients need to remain within a safe temperature range.',q:'What is the correct record?',
-    opts:[['The measured temperature, time and equipment checked',1],['A note that the fridge feels cold',0]],
-    wrong:'A measured, timed reading is more reliable than a vague impression.',say:'The storage check can be reviewed later.'}),
-  taskStep({label:'Flag and resolve a failed check',spot:'h',npc:mkSign('Sani Musa','Event safety team','#2D6FB3',LK.clerk,'Food safety'),
-    intro:'The reading is outside the required range before the stall opens.',q:'What should you do?',
-    opts:[['Record the issue, prevent unsafe food from being served and recheck after correction',1],['Ignore it so the stall can open on time',0]],
-    wrong:'Protect customers first, then document the correction and recheck.',say:'The issue has a documented corrective action before service.'})
- ]},
-{id:'m74',n:68,city:'osun',title:'Publish a craft with the maker’s consent',goal:'Get the maker’s consent, publish the craft entry on Base, and remove a piece when a maker asks.',
- steps:[
-  taskStep({label:'Get the maker’s consent',spot:'m',npc:mkSign('Maker Funmi','Weaver','#C7457E',LK.woman,'Maker'),
-    intro:'Before a craft goes in the archive, the maker signs her consent.',q:'What does the consent say?',
-    opts:[['Her name, the technique, and that she agrees to publication',1],['Nothing, the craft is public already',0]],
-    wrong:'Public is not consent. The maker signs before her work is published.',
-    say:'Funmi’s consent is signed.'}),
-  taskStep({label:'Publish the entry on Base',spot:'n',npc:mkSign('Chief Oyebanji','Heritage custodian','#7a4a2e',LK.elder,'Heritage'),
-    intro:'The entry goes on the archive record with the maker’s name. Choose the network.',q:'Which network?',
-    opts:[['Base',1],['Ethereum',0]],
-    wrong:'The archive is on Base.',
-    tx:{title:'Publish craft entry',amt:1,btn:'Publish for 1 USDC',done:'Entry published',note:'Entries carry the maker’s name and consent.',
-        rows:x=>[['Item','Weaving entry, Funmi'],['Amount','1.00 USDC'],['Network',x]]},
-    say:'The entry is public, with the maker’s name.'}),
-  taskStep({label:'Remove a piece at the maker’s request',spot:'o',npc:mkSign('Maker Funmi','Weaver','#C7457E',LK.woman,'Maker'),
-    intro:'Funmi asks to remove a pattern her family considers sacred.',q:'What do you do on the record?',
-    opts:[['Sign the removal and keep a record that it was requested',1],['Refuse, because the archive is public',0]],
-    wrong:'The maker decides what is shared. Sign the removal.',
-    say:'The pattern is removed. The record shows the request.'})
- ]},
-{id:'m75',n:69,city:'taraba',title:'Sell cocoa on a graded board',goal:'Check the published grade, sign the sale at that grade, and confirm payment on the explorer.',
- steps:[
-  taskStep({label:'Check the published grade',spot:'a',npc:mkSign('Nura Abubakar','Cocoa cooperative','#7a4a2e',LK.man,'Cocoa'),
-    intro:'Your batch is graded by the cooperative. The grade is on its published board.',q:'What do you check?',
-    opts:[['The grade on the published board, against my batch number',1],['The grade the buyer quoted me',0]],
-    wrong:'A quoted grade can be lower than yours. Check the board against your batch.',
-    say:'Your batch grade is confirmed on the board.'}),
-  taskStep({label:'Sign the sale at the grade',spot:'b',npc:mkSign('Eno Bassey','Cocoa buyer','#6a3fb5',LK.woman,'Buyer'),
-    intro:'Lara agrees to buy at the published grade. Sign the sale.',q:'What do you sign?',
-    opts:[['The sale at the published grade, with the price',1],['A sale at a lower grade, to be agreed later',0]],
-    wrong:'Sign at the published grade only. A lower grade later is a loss you agreed to.',
-    say:'The sale is signed at the grade.'}),
-  taskStep({label:'Confirm the payment',spot:'c',npc:mkSign('Eno Bassey','Cocoa buyer','#6a3fb5',LK.woman,'Buyer'),
-    intro:'Lara pays into escrow, released after weighing. Check it on Base.',q:'How do you confirm it is there?',
-    opts:[['Look up the escrow on the explorer, for the agreed amount',1],['Trust her message that it is paid',0]],
-    wrong:'Messages are not escrow. The explorer shows the amount held.',
-    say:'The amount is held in escrow for weighing.'})
- ]},
-{id:'m76',n:70,city:'taraba',title:'Log a sighting on the park record',goal:'Sign the park data policy, log your sighting with time and place, and pay the research permit on Base.',
- steps:[
-  taskStep({label:'Sign the park data policy',spot:'d',npc:mkSign('Dr Iliya','Park researcher','#0B7A43',LK.man,'Park research'),
-    intro:'Field data is shared under a policy. You sign before your first survey.',q:'What do you sign?',
-    opts:[['The data policy, including where sightings may be shared',1],['A blank policy to fill in later',0]],
-    wrong:'A blank policy lets anyone set the rules later. Sign the complete one.',
-    say:'The policy is signed on the research record.'}),
-  taskStep({label:'Log the sighting',spot:'e',npc:mkSign('Dr Iliya','Park researcher','#0B7A43',LK.man,'Park research'),
-    intro:'You saw a bird you think is rare. Log it on the record with time and place.',q:'What do you log?',
-    opts:[['What I saw, the time, the place, and that I am not sure of the species',1],['The rare species, to make the entry exciting',0]],
-    wrong:'Overstating a sighting corrupts the research. Log what you saw and how sure you are.',
-    say:'The sighting is logged honestly.'}),
-  taskStep({label:'Pay the research permit',spot:'f',npc:mkSign('Mallam Ibrahim','Park permit','#2D6FB3',LK.clerk,'Permit'),
-    intro:'The park permit is paid in USDC. Choose the network.',q:'Which network?',
-    opts:[['Base',1],['Ethereum',0]],
-    wrong:'The park permit is on Base.',
-    tx:{title:'Research permit',amt:1,btn:'Pay 1 USDC',done:'Permit paid',note:'Keep the permit with your field notes.',
-        rows:x=>[['To','Park permit office',1],['Amount','1.00 USDC'],['Network',x]]},
-    say:'The permit is paid and recorded.'})
- ]},
-{id:'m77',n:71,city:'yobe',title:'Sell a seedling with a lot certificate',goal:'Mint a lot certificate for the seedling batch on Base, and check a buyer’s lot record before you guarantee it.',
- steps:[
-  taskStep({label:'Name the variety with Zainab Lawal',spot:'g',npc:mkSign('Zainab Lawal','Date grower','#7a4a2e',LK.elder,'Nursery'),
-    intro:'Each seedling batch has a variety and a lot number. Buyers want both.',q:'What goes on the lot label?',
-    opts:[['The variety name and the lot number',1],['Only the word “date palm”',0]],
-    wrong:'Without the variety and lot, a buyer cannot check the seedling later. Add both.',
-    say:'The label names the variety and the lot.'}),
-  taskStep({label:'Mint the lot certificate',spot:'h',npc:mkSign('Oluchi Mba','Nursery certificates','#2D6FB3',LK.clerk,'Certificates'),
-    intro:'The certificate is minted for this lot, and sits on the record. Choose the network.',q:'Which network?',
-    opts:[['Base',1],['Ethereum',0]],
-    wrong:'The nursery certificate contract is on Base.',
-    tx:{title:'Lot certificate',amt:1,btn:'Mint for 1 USDC',done:'Certificate minted',note:'The lot record is public.',
-        rows:x=>[['Item','Date palm lot certificate'],['Price','1.00 USDC'],['Network',x]]},
-    say:'The lot certificate is on the record.'}),
-  taskStep({label:'Check a buyer’s earlier lot',spot:'i',npc:mkSign('Danjuma Saleh','New farmer','#C7457E',LK.man,'Farmer'),
-    intro:'Farmer Ali bought seedlings from you before. You want to see how they grew.',q:'Where do you check?',
-    opts:[['The lot records on the explorer, for his earlier certificate',1],['His word that they grew well',0]],
-    wrong:'His word is not a record. The lot certificate shows what was sold and when.',
-    say:'His earlier lot is on record. You can guarantee the new batch with confidence.'})
- ]},
-{id:'m78',n:72,city:'yobe',title:'Document a cold-chain power outage',goal:'Record a cold-store outage, track the affected batch and temperature history, and document the corrective action before release.',
- steps:[
-  taskStep({label:'Log the outage window',spot:'d',npc:mkSign('Zainab Gambo','Produce storage','#2D6FB3',LK.clerk,'Cold chain'),
-    intro:'Power fails overnight at a cold store holding produce for several farms.',q:'What do you record first?',
-    opts:[['The outage start and end times and the affected storage unit',1],['Only that the power was off',0]],
-    wrong:'A timeline and affected unit help establish which stock may be at risk.',say:'The outage has a clear time and location record.'}),
-  taskStep({label:'Match stock to the temperature history',spot:'e',npc:mkSign('Zainab Gambo','Produce storage','#2D6FB3',LK.clerk,'Cold chain'),
-    intro:'Several batches were stored in the affected unit.',q:'How do you decide which batches need review?',
-    opts:[['Match each batch to the recorded temperature history and exposure window',1],['Release all stock because the power is back',0]],
-    wrong:'The impact depends on each batch’s exposure, not just the current power status.',say:'The affected batches are identified from the recorded conditions.'}),
-  taskStep({label:'Record the corrective action',spot:'h',npc:mkSign('Zainab Gambo','Produce storage','#2D6FB3',LK.clerk,'Cold chain'),
-    intro:'The temperature is stable again, but the batches still need review.',q:'What closes the incident?',
-    opts:[['Record the inspection result and release or hold decision for each batch',1],['Delete the outage note after power returns',0]],
-    wrong:'The record should show how each batch was assessed and what happened next.',say:'The incident trail records the checks and final disposition.'})
- ]},
-{id:'m79',n:73,city:'zamfara',title:'Prepare a livestock movement record',goal:'Document the origin, animal count, destination and required health documents before livestock are moved between markets.',
- steps:[
-  taskStep({label:'Record the origin and destination',spot:'d',npc:mkSign('Chisom Okeke','Movement desk','#2D6FB3',LK.clerk,'Animal movement'),
-    intro:'A livestock owner is preparing to move a group of animals to another market.',q:'What belongs in the movement record?',
-    opts:[['The owner, origin, destination, date and animal count',1],['Only the driver’s phone number',0]],
-    wrong:'A traceable movement record needs to identify the animals and their route.',say:'The movement has a clear origin, destination and count.'}),
-  taskStep({label:'Attach the required health documents',spot:'e',npc:mkSign('Chisom Okeke','Movement desk','#2D6FB3',LK.clerk,'Animal movement'),
-    intro:'The destination market requires current veterinary documents.',q:'What should you check?',
-    opts:[['The relevant signed health documents and their dates',1],['A verbal claim that the animals were checked',0]],
-    wrong:'Required health evidence must be verifiable and current.',say:'The movement file contains the required health evidence.'}),
-  taskStep({label:'Reconcile the count at arrival',spot:'o',npc:mkSign('Chisom Okeke','Movement desk','#2D6FB3',LK.clerk,'Animal movement'),
-    intro:'The animals arrive at the destination market.',q:'What closes the movement record?',
-    opts:[['Confirm the arrival count and record any discrepancy',1],['Reuse the departure count without checking',0]],
-    wrong:'A final count helps identify losses or mistakes during transit.',say:'The movement record reflects the actual arrival count.'})
- ]},
-{id:'m80',n:74,city:'zamfara',title:'Weigh-in, sign, and a fair payout',goal:'Sign the weigh-in for your milk deliveries, check the weekly payout against the record, and raise a gap before you accept.',
- steps:[
-  taskStep({label:'Sign your weigh-in',spot:'a',npc:mkSign('Hajiya Rakiya','Milk cooperative chair','#C7457E',LK.woman,'Milk co-op'),
-    intro:'Each morning’s milk is weighed and recorded. You sign the weigh-in for your deliveries.',q:'What do you sign?',
-    opts:[['The weigh-in for my deliveries this week',1],['A blank weigh-in to be filled in by the chair',0]],
-    wrong:'A blank weigh-in can be filled in by anyone. Sign only the weighed record.',
-    say:'Your deliveries are signed in the weigh-in record.'}),
-  taskStep({label:'Check the weekly payout',spot:'b',npc:mkSign('Hauwa Bello','Weekly payouts','#2D6FB3',LK.clerk,'Payouts'),
-    intro:'Your payout is ready. It should match your weighed deliveries.',q:'What do you check?',
-    opts:[['The payout against my signed weigh-in, litre by litre',1],['Only the total in the message',0]],
-    wrong:'Check the payout against your weighed litres, not only the total.',
-    say:'The payout matches your weigh-in.'}),
-  taskStep({label:'Raise a gap before accepting',spot:'c',npc:mkSign('Hajiya Rakiya','Milk cooperative chair','#C7457E',LK.woman,'Milk co-op'),
-    intro:'The payout is a little short for three mornings. You can raise it before you accept.',q:'What do you do?',
-    opts:[['Raise it on the record, with the three weigh-ins, before accepting',1],['Accept it and say nothing',0]],
-    wrong:'Accepting a short payout in silence lets gaps repeat. Raise it on the record first.',
-    say:'The co-op reviews the three mornings and corrects the payout.'})
- ]},
-{id:'m81',n:75,city:'kitcity',title:'The Final Gate: Enter the T3Kit Hub',goal:'Prove you can protect your wallet, verify on-chain activity, question unsafe permissions, and choose how you will contribute to Web3 before entering KitCity.',steps:[
- taskStep({label:'Protect your keys',spot:'a',npc:mkSign('Amina Okoro','T3Kit security guide','#1A7897',LK.clerk,'Wallet safety'),
-  intro:'The city gates only open for people who understand the first rule of self-custody. A visitor asks you to send your recovery phrase so they can “activate” your wallet.',
-  q:'What is the safe response?',
-  opts:[['Never share the recovery phrase; use only the official wallet flow',1],['Send it to the visitor because they sound helpful',0]],
-  wrong:'A recovery phrase can give someone control of the wallet. Legitimate support should never ask you to reveal it.',
-  say:'Your keys remain yours. You know the difference between a public address and a secret.'}),
- taskStep({label:'Verify the transaction trail',spot:'c',npc:mkSign('Tobi Adeyemi','On-chain analyst','#2266A3',LK.guy,'Transaction explorer'),
-  intro:'A contributor claims that a payment is complete and sends you a screenshot. The destination wallet and network are not shown.',
-  q:'What should you verify before accepting the claim?',
-  opts:[['Check the transaction hash, network, recipient and confirmed status in a trusted explorer',1],['Trust the screenshot and move on',0]],
-  wrong:'A screenshot is not proof of an on-chain result. Verify the transaction details on the correct network.',
-  say:'You can distinguish a claim from verifiable on-chain evidence.'}),
- taskStep({label:'Review the contract permissions',spot:'d',npc:mkSign('Nneka James','Protocol reviewer','#6A4FC8',LK.trader,'Smart contract review'),
-  intro:'A new dApp asks for broad token approval and promises a guaranteed reward if you sign immediately.',
-  q:'What is the responsible next step?',
-  opts:[['Pause, inspect the app and approval scope, and reject anything you cannot verify',1],['Approve immediately because the reward expires soon',0]],
-  wrong:'Urgency and guaranteed rewards are not proof of safety. Understand the permission and verify the application first.',
-  say:'You have learned to question signatures instead of treating every prompt as harmless.'}),
- taskStep({label:'Choose how you will contribute',spot:'g',npc:mkSign('David Eze','T3Kit community steward','#0B7A70',LK.man,'Builder pathways'),
-  intro:'KitCity is not an endpoint for speculation. It is a starting point for people who learn, build, explain, review and contribute.',
-  q:'What is a useful first step into the ecosystem?',
-  opts:[['Choose a learning path, practise the skills, and contribute work people can verify',1],['Chase rewards without understanding the tools or helping anyone',0]],
-  wrong:'The Hub is designed to turn curiosity into competence and meaningful contribution.',
-  say:'Your path is yours to choose: builder, analyst, creator, researcher or community contributor.'}),
- {label:'Cross the T3Kit threshold',spot:'h',npc:mkSign('T3Kit Hub Concierge','Final access steward','#D3A84C',LK.elder,'The Web3 World'),run(){
-  talk(this.npc,'<div class="who"><span class="av" style="background:#D3A84C">81</span><div><b>The final gate is open.</b><small>KitCity · T3Kit Hub</small></div></div><p>You have travelled through the cities, learned the street-level rules, and reached the place they were preparing you for.</p><p><b>Welcome to the T3Kit Hub.</b> This is the Web3 World: learn with direction, build with care, verify what you use, and contribute to an open ecosystem.</p><p class="note">Your next chapter begins here. The game’s wallet and rewards remain simulated practice features.</p>',[{t:'Enter the Web3 World',f:finishStep}]);
- }}
-]},
+const MISSIONS=(()=>{
+const legacySpecs=[{"title":"Wallet Recovery Drill","city":"lagos","goal":"Protect a wallet by checking permissions, networks and transaction evidence.","cat":2,"variant":0},{"title":"Pay IamAbdul for Suya","city":"lagos","goal":"Complete a simulated USDC street purchase by checking the seller, amount, network and receipt.","cat":1,"variant":0},{"title":"Trade Setup Sprint","city":"lagos","goal":"Plan a simulated trade with a defined entry, invalidation level and target.","cat":0,"variant":0},{"title":"Liquidity Pool Balancing","city":"abuja","goal":"Make a DeFi decision by weighing exposure, fees and protocol risk.","cat":3,"variant":0},{"title":"Moderation Under Fire","city":"abuja","goal":"Keep a Web3 community useful, safe and welcoming under pressure.","cat":4,"variant":0},{"title":"Campaign That Converts","city":"abuja","goal":"Build a growth campaign around real user value and measurable actions.","cat":5,"variant":0},{"title":"Write the Hook","city":"kano","goal":"Create accurate, useful Web3 content without unsupported claims.","cat":6,"variant":0},{"title":"NFT Rights Check","city":"kano","goal":"Handle NFTs with clear provenance, attribution and realistic utility.","cat":7,"variant":0},{"title":"Fix the First Bug","city":"kano","goal":"Contribute to a Web3 project with reproducible reports and careful reviews.","cat":8,"variant":0},{"title":"Build a Clean Entry","city":"ph","goal":"Plan a simulated trade with a defined entry, invalidation level and target.","cat":0,"variant":1},{"title":"Deposit Network Match","city":"ph","goal":"Operate a simulated exchange workflow without skipping security or execution checks.","cat":1,"variant":1},{"title":"Seed Phrase Impostor","city":"ph","goal":"Protect a wallet by checking permissions, networks and transaction evidence.","cat":2,"variant":1},{"title":"Impermanent Loss Test","city":"ibadan","goal":"Make a DeFi decision by weighing exposure, fees and protocol risk.","cat":3,"variant":1},{"title":"Fake Support Sweep","city":"ibadan","goal":"Keep a Web3 community useful, safe and welcoming under pressure.","cat":4,"variant":1},{"title":"Find the Real Audience","city":"ibadan","goal":"Build a growth campaign around real user value and measurable actions.","cat":5,"variant":1},{"title":"Thread Fact Check","city":"enugu","goal":"Create accurate, useful Web3 content without unsupported claims.","cat":6,"variant":1},{"title":"Metadata Detective","city":"enugu","goal":"Handle NFTs with clear provenance, attribution and realistic utility.","cat":7,"variant":1},{"title":"Write a Useful Issue","city":"enugu","goal":"Contribute to a Web3 project with reproducible reports and careful reviews.","cat":8,"variant":1},{"title":"Stop-Loss Rescue","city":"abeokuta","goal":"Plan a simulated trade with a defined entry, invalidation level and target.","cat":0,"variant":2},{"title":"The Withdrawal Checklist","city":"abeokuta","goal":"Operate a simulated exchange workflow without skipping security or execution checks.","cat":1,"variant":2},{"title":"Approve or Reject","city":"abeokuta","goal":"Protect a wallet by checking permissions, networks and transaction evidence.","cat":2,"variant":2},{"title":"Lending Health Factor","city":"jos","goal":"Make a DeFi decision by weighing exposure, fees and protocol risk.","cat":3,"variant":2},{"title":"Community Onboarding","city":"jos","goal":"Keep a Web3 community useful, safe and welcoming under pressure.","cat":4,"variant":2},{"title":"Airdrop Sybil Filter","city":"jos","goal":"Build a growth campaign around real user value and measurable actions.","cat":5,"variant":2},{"title":"Turn Jargon Into Plain English","city":"owerri","goal":"Create accurate, useful Web3 content without unsupported claims.","cat":6,"variant":2},{"title":"Mint Day Checklist","city":"owerri","goal":"Handle NFTs with clear provenance, attribution and realistic utility.","cat":7,"variant":2},{"title":"Review the Pull Request","city":"owerri","goal":"Contribute to a Web3 project with reproducible reports and careful reviews.","cat":8,"variant":2},{"title":"Target Before Entry","city":"benin","goal":"Plan a simulated trade with a defined entry, invalidation level and target.","cat":0,"variant":3},{"title":"Spot the Fake Exchange","city":"benin","goal":"Operate a simulated exchange workflow without skipping security or execution checks.","cat":1,"variant":3},{"title":"Permission Cleanup","city":"benin","goal":"Protect a wallet by checking permissions, networks and transaction evidence.","cat":2,"variant":3},{"title":"Borrow or Wait","city":"ilorin","goal":"Make a DeFi decision by weighing exposure, fees and protocol risk.","cat":3,"variant":3},{"title":"Bug Report Triage","city":"ilorin","goal":"Keep a Web3 community useful, safe and welcoming under pressure.","cat":4,"variant":3},{"title":"Measure Useful Growth","city":"ilorin","goal":"Build a growth campaign around real user value and measurable actions.","cat":5,"variant":3},{"title":"Build a Content Calendar","city":"uyo","goal":"Create accurate, useful Web3 content without unsupported claims.","cat":6,"variant":3},{"title":"Royalty Reality Check","city":"uyo","goal":"Handle NFTs with clear provenance, attribution and realistic utility.","cat":7,"variant":3},{"title":"Reproduce the Crash","city":"uyo","goal":"Contribute to a Web3 project with reproducible reports and careful reviews.","cat":8,"variant":3},{"title":"Read the Candles","city":"warri","goal":"Plan a simulated trade with a defined entry, invalidation level and target.","cat":0,"variant":4},{"title":"Order Types Under Pressure","city":"warri","goal":"Operate a simulated exchange workflow without skipping security or execution checks.","cat":1,"variant":4},{"title":"Bridge Route Check","city":"warri","goal":"Protect a wallet by checking permissions, networks and transaction evidence.","cat":2,"variant":4},{"title":"Yield Claim Investigation","city":"onitsha","goal":"Make a DeFi decision by weighing exposure, fees and protocol risk.","cat":3,"variant":4},{"title":"The Helpful Handover","city":"onitsha","goal":"Keep a Web3 community useful, safe and welcoming under pressure.","cat":4,"variant":4},{"title":"Launch Day Control Room","city":"onitsha","goal":"Build a growth campaign around real user value and measurable actions.","cat":5,"variant":4},{"title":"Creator Brief Rescue","city":"asaba","goal":"Create accurate, useful Web3 content without unsupported claims.","cat":6,"variant":4},{"title":"Utility Beyond Hype","city":"asaba","goal":"Handle NFTs with clear provenance, attribution and realistic utility.","cat":7,"variant":4},{"title":"Read the Changelog","city":"asaba","goal":"Contribute to a Web3 project with reproducible reports and careful reviews.","cat":8,"variant":4},{"title":"Breakout or Fakeout","city":"makurdi","goal":"Plan a simulated trade with a defined entry, invalidation level and target.","cat":0,"variant":5},{"title":"The Spread Detective","city":"makurdi","goal":"Operate a simulated exchange workflow without skipping security or execution checks.","cat":1,"variant":5},{"title":"The Wrong Network Trap","city":"makurdi","goal":"Protect a wallet by checking permissions, networks and transaction evidence.","cat":2,"variant":5},{"title":"DeFi Route Optimiser","city":"akure","goal":"Make a DeFi decision by weighing exposure, fees and protocol risk.","cat":3,"variant":5},{"title":"Governance Debate","city":"akure","goal":"Keep a Web3 community useful, safe and welcoming under pressure.","cat":4,"variant":5},{"title":"Partnership Fit Check","city":"akure","goal":"Build a growth campaign around real user value and measurable actions.","cat":5,"variant":5},{"title":"Research Before Posting","city":"osogbo","goal":"Create accurate, useful Web3 content without unsupported claims.","cat":6,"variant":5},{"title":"Collection Storyboard","city":"osogbo","goal":"Handle NFTs with clear provenance, attribution and realistic utility.","cat":7,"variant":5},{"title":"Open-Source First Contribution","city":"osogbo","goal":"Contribute to a Web3 project with reproducible reports and careful reviews.","cat":8,"variant":5},{"title":"The Pullback Plan","city":"minna","goal":"Plan a simulated trade with a defined entry, invalidation level and target.","cat":0,"variant":6},{"title":"Limit Order Patience","city":"minna","goal":"Operate a simulated exchange workflow without skipping security or execution checks.","cat":1,"variant":6},{"title":"Verify the Transaction","city":"minna","goal":"Protect a wallet by checking permissions, networks and transaction evidence.","cat":2,"variant":6},{"title":"Token Unlock Watch","city":"bauchi","goal":"Make a DeFi decision by weighing exposure, fees and protocol risk.","cat":3,"variant":6},{"title":"DAO Proposal Review","city":"bauchi","goal":"Keep a Web3 community useful, safe and welcoming under pressure.","cat":4,"variant":6},{"title":"Referral Loop Design","city":"bauchi","goal":"Build a growth campaign around real user value and measurable actions.","cat":5,"variant":6},{"title":"Write a Useful Recap","city":"gombe","goal":"Create accurate, useful Web3 content without unsupported claims.","cat":6,"variant":6},{"title":"Marketplace Listing Review","city":"gombe","goal":"Handle NFTs with clear provenance, attribution and realistic utility.","cat":7,"variant":6},{"title":"Testnet Launch Drill","city":"gombe","goal":"Contribute to a Web3 project with reproducible reports and careful reviews.","cat":8,"variant":6},{"title":"Size the Position","city":"lafia","goal":"Plan a simulated trade with a defined entry, invalidation level and target.","cat":0,"variant":7},{"title":"Slippage Surprise","city":"lafia","goal":"Operate a simulated exchange workflow without skipping security or execution checks.","cat":1,"variant":7},{"title":"Gas Fee Triage","city":"lafia","goal":"Protect a wallet by checking permissions, networks and transaction evidence.","cat":2,"variant":7},{"title":"Stablecoin Depeg Drill","city":"sokoto","goal":"Make a DeFi decision by weighing exposure, fees and protocol risk.","cat":3,"variant":7},{"title":"Bounty Brief Builder","city":"sokoto","goal":"Keep a Web3 community useful, safe and welcoming under pressure.","cat":4,"variant":7},{"title":"Campaign Postmortem","city":"sokoto","goal":"Build a growth campaign around real user value and measurable actions.","cat":5,"variant":7},{"title":"Explain a Protocol Clearly","city":"katsina","goal":"Create accurate, useful Web3 content without unsupported claims.","cat":6,"variant":7},{"title":"Provenance Investigation","city":"katsina","goal":"Handle NFTs with clear provenance, attribution and realistic utility.","cat":7,"variant":7},{"title":"Smart Contract Warning","city":"katsina","goal":"Contribute to a Web3 project with reproducible reports and careful reviews.","cat":8,"variant":7},{"title":"Trade Journal Challenge","city":"yola","goal":"Plan a simulated trade with a defined entry, invalidation level and target.","cat":0,"variant":8},{"title":"Fee Receipt Audit","city":"yola","goal":"Operate a simulated exchange workflow without skipping security or execution checks.","cat":1,"variant":8},{"title":"Cold Wallet Routine","city":"yola","goal":"Protect a wallet by checking permissions, networks and transaction evidence.","cat":2,"variant":8},{"title":"Protocol Risk Board","city":"yenagoa","goal":"Make a DeFi decision by weighing exposure, fees and protocol risk.","cat":3,"variant":8},{"title":"Contributor Welcome","city":"yenagoa","goal":"Keep a Web3 community useful, safe and welcoming under pressure.","cat":4,"variant":8},{"title":"Trust Over Hype","city":"yenagoa","goal":"Build a growth campaign around real user value and measurable actions.","cat":5,"variant":8},{"title":"Correct the False Claim","city":"aba","goal":"Create accurate, useful Web3 content without unsupported claims.","cat":6,"variant":8},{"title":"Digital Art Attribution","city":"aba","goal":"Handle NFTs with clear provenance, attribution and realistic utility.","cat":7,"variant":8},{"title":"Document the Setup","city":"aba","goal":"Contribute to a Web3 project with reproducible reports and careful reviews.","cat":8,"variant":8},{"title":"Risk-First Trader","city":"umuahia","goal":"Plan a simulated trade with a defined entry, invalidation level and target.","cat":0,"variant":9},{"title":"Exit Without Panic","city":"umuahia","goal":"Operate a simulated exchange workflow without skipping security or execution checks.","cat":1,"variant":9},{"title":"Wallet Safety Audit","city":"umuahia","goal":"Protect a wallet by checking permissions, networks and transaction evidence.","cat":2,"variant":9},{"title":"DeFi Due Diligence","city":"awka","goal":"Make a DeFi decision by weighing exposure, fees and protocol risk.","cat":3,"variant":9},{"title":"Community Trust Repair","city":"awka","goal":"Keep a Web3 community useful, safe and welcoming under pressure.","cat":4,"variant":9},{"title":"Community Growth Sprint","city":"awka","goal":"Build a growth campaign around real user value and measurable actions.","cat":5,"variant":9},{"title":"Creator Portfolio Pitch","city":"lokoja","goal":"Create accurate, useful Web3 content without unsupported claims.","cat":6,"variant":9},{"title":"NFT Community Launch","city":"lokoja","goal":"Handle NFTs with clear provenance, attribution and realistic utility.","cat":7,"variant":9}];
+const specs=[
+ ...T3KIT_CHRONICLES.missions.map((story,i)=>({title:story.title,city:story.cityKey,goal:story.purpose,cat:story.category,variant:i%10,story})),
+ ...legacySpecs
 ];
+const cityKeys=["lagos","abuja","kano","ph","ibadan","enugu","abeokuta","jos","owerri","benin","ilorin","uyo","warri","onitsha","asaba","makurdi","akure","osogbo","minna","bauchi","gombe","lafia","sokoto","katsina","yola","yenagoa","aba","umuahia","awka","lokoja"];
+const goals=["Plan a simulated trade with a defined entry, invalidation level and target.","Operate a simulated exchange workflow without skipping security or execution checks.","Protect a wallet by checking permissions, networks and transaction evidence.","Make a DeFi decision by weighing exposure, fees and protocol risk.","Keep a Web3 community useful, safe and welcoming under pressure.","Build a growth campaign around real user value and measurable actions.","Create accurate, useful Web3 content without unsupported claims.","Handle NFTs with clear provenance, attribution and realistic utility.","Contribute to a Web3 project with reproducible reports and careful reviews."];
+/* Distinct scenario topics: each category/variant pair has its own concrete Web3 task. */
+const scenarioTopics=[
+ ["invalidation below a support break","a confirmed resistance breakout","a pullback into a demand zone","a rejection at range resistance","a sudden volatility expansion","a poor reward-to-risk ratio","leverage near liquidation","a planned partial exit","perpetual funding costs","discipline in a trade journal"],
+ ["exchange account hardening","matching a deposit network","a withdrawal address allowlist","a thin order-book spread","an unfilled limit order","a withdrawal fee receipt","a delayed withdrawal","spot versus perpetual products","a partial order fill","an unfamiliar login alert"],
+ ["recovery-phrase impersonation","an unlimited token allowance","an opaque wallet signature","address poisoning in transfer history","a counterfeit token contract","a mismatched bridge route","an unexpected gas-fee spike","a hardware-wallet confirmation","a suspicious dApp domain","a lost-device response"],
+ ["liquidity-pool composition","a falling lending health factor","an unexplained high-yield offer","a stablecoin depeg","an upcoming token unlock","two competing swap routes","a stale price oracle","an upgradeable admin key","low liquidity at exit","a narrow liquidation buffer"],
+ ["fake support in community DMs","a wallet-connect bug report","an end-of-shift moderator handover","a heated governance disagreement","a sudden spam raid","a new contributor onboarding","a private bug-bounty report","an unverified treasury rumour","unclear referral-link rules","a scam-incident postmortem"],
+ ["researching the target audience","referral quality over raw signups","airdrop sybil resistance","campaign attribution overlap","creator-partnership fit","a leaking conversion funnel","quest participation abuse","a campaign postmortem","trust-first launch disclosure","a sustainable community referral loop"],
+ ["a plain-language content hook","a claim needing fact-checking","a technical explainer for newcomers","an unconfirmed founder quote","a non-repetitive content calendar","primary-source research","a misleading chart scale","a public correction","a sponsor brief with a profit promise","a useful Spaces recap"],
+ ["permission to mint an artwork","mismatched NFT metadata","unverified collection utility","marketplace royalty disclosure","a fake collection clone","a mint-supply discrepancy","missing licence details","an unexplained reveal process","an NFT community launch plan","digital-art attribution"],
+ ["a reproducible bug report","an oversized pull request","a regression test","a release changelog","a testnet deployment record","a private security disclosure","outdated setup documentation","issue-severity triage","evidence for code review","an open-source starter issue"]
+];
+const scenarioActions=[
+ ["define the entry trigger and invalidation before sizing","wait for confirmation and write the breakout-failure level","let support hold and calculate risk from the stop distance","trade only after the rejection is confirmed","reduce size or wait until the range normalises","skip the setup until the potential reward justifies its risk","lower exposure and preserve a liquidation buffer","follow the prewritten partial-exit plan","include funding in the holding-cost estimate","grade rule adherence as well as paper PnL"],
+ ["enable unique credentials and two-factor authentication","match the sending and receiving networks exactly","verify the full address through a trusted source","inspect spread and depth before placing the order","respect the actual order status and wait or reprice deliberately","reconcile the fee against the net amount received","check the official status before retrying","confirm product type and margin settings","review filled and remaining quantities separately","revoke unknown sessions and inspect account activity"],
+ ["refuse the request and report the impersonator","inspect the spender and limit approval to the required amount","cancel until the wallet signature is understandable","compare the entire destination address from a trusted source","verify the full contract address against official sources","correct the source and destination networks before proceeding","review the fee estimate and wait if it is unreasonable","confirm recipient and amount on the hardware device itself","disconnect and verify the exact official domain","secure linked accounts and follow documented recovery steps"],
+ ["review asset mix, fee tier and impermanent-loss exposure","reduce borrowing or add eligible collateral according to plan","trace the yield source, liquidity and contract risks","review reserves, redemption terms and exit liquidity","estimate supply changes and possible market pressure","compare net output after fees, gas and slippage","inspect feed freshness and stale-price handling","check upgrade permissions, key control and timelock","estimate exit impact before choosing exposure","stress-test collateral value and reduce borrowing if needed"],
+ ["remove and report the account and post the verified support route","collect reproducible steps and route the report to support","handover severity, actions, evidence and the next owner","apply conduct rules consistently and summarise the dispute fairly","rate-limit spam and preserve evidence for review","give the newcomer one verified guide and a clear starter task","use the private security process and limit access to details","verify authorised sources and label unknowns honestly","publish clear examples and enforce the same rule consistently","record the timeline, cause and owned prevention actions"],
+ ["identify the audience problem before choosing a channel","measure activated and retained users, not signup volume alone","publish transparent eligibility rules and an appeal path","deduplicate conversions with one attribution method","check audience relevance, content quality and disclosure","inspect each funnel step before buying more reach","reward valid contributions rather than repetitive empty posts","compare outcomes with the original objective and user feedback","publish limitations and verified support before promotion","improve the newcomer experience and measure return visits"],
+ ["open with the reader's problem and a concrete benefit","remove or qualify the claim unless a reliable benchmark supports it","explain the terms separately using plain language","verify the quote and preserve its uncertainty","give each post a distinct purpose and audience need","trace claims to dated primary sources and label unknowns","show a fair axis and disclose source and time range","correct the error visibly and notify readers who may rely on it","decline guarantees and use verifiable claims with disclosure","separate confirmed decisions from opinions and open questions"],
+ ["obtain permission and agree attribution before minting","inspect contract, token ID, metadata URI and provenance","state only deliverable benefits with clear limits","describe the marketplace's actual royalty policy","compare verified creator links and the canonical contract","verify contract supply, mint price and published allocation","confirm the creator's licence and provenance","explain the reveal method and its verifiable assumptions","prepare rules, verified links and an escalation owner","add accurate credit and confirm the licence permits the use"],
+ ["write steps, expected result, actual result and environment","request a focused diff and tests for the stated fix","add a repeatable test for the original failure and edge case","describe verified changes and migration impact accurately","record network, commit, address and test results","follow private disclosure and verify affected versions","run the guide on the current release and update stale commands","rank reports by severity, reproducibility and user impact","request targeted evidence for the changed critical path","clarify acceptance criteria and give the contributor a reproducible start"]
+];
+function missionChallenges(s){
+ const rawTopic=(scenarioTopics[s.cat]||scenarioTopics[0])[s.variant%10];
+ const rawAction=(scenarioActions[s.cat]||scenarioActions[0])[s.variant%10];
+ const topicPlain={
+ "invalidation below a support break":"the price dipping below a level traders were watching","a confirmed resistance breakout":"the price finally pushing past a level it kept hitting","a pullback into a demand zone":"the price coming back to an area where buyers appeared before","a rejection at range resistance":"the price failing again near the top of its recent range","a sudden volatility expansion":"the price suddenly jumping around much faster","a poor reward-to-risk ratio":"a trade where the possible loss is much bigger than the possible gain","leverage near liquidation":"a borrowed trade that is dangerously close to being closed","a planned partial exit":"selling part of a trade instead of risking the whole position","perpetual funding costs":"the extra fee that can build up while a futures trade stays open","discipline in a trade journal":"keeping honest notes about each trade","exchange account hardening":"making an exchange account harder to break into","matching a deposit network":"making sure the sending and receiving networks match","a withdrawal address allowlist":"a list of approved addresses money can be sent to","a thin order-book spread":"a big gap between the current buy and sell prices","an unfilled limit order":"an order still waiting for a buyer or seller","a withdrawal fee receipt":"the fee taken when money leaves an exchange","a delayed withdrawal":"money that has not arrived yet","spot versus perpetual products":"the difference between buying a coin and trading with borrowed exposure","a partial order fill":"an order where only some of the amount was traded","an unfamiliar login alert":"a warning that someone may have entered an account","recovery-phrase impersonation":"a stranger pretending to help while asking for secret wallet words","an unlimited token allowance":"an app asking for permission to spend as many tokens as it wants","an opaque wallet signature":"a wallet approval request that is impossible to understand","address poisoning in transfer history":"a fake address planted in transfer history to trick someone","a counterfeit token contract":"a fake copy of a real token","a mismatched bridge route":"a transfer route using the wrong network","an unexpected gas-fee spike":"a sudden jump in the fee to use a blockchain","a hardware-wallet confirmation":"checking the payment details on a separate wallet device","a suspicious dApp domain":"a website that may be pretending to be the real app","a lost-device response":"what to do when the phone with a wallet goes missing","liquidity-pool composition":"the two kinds of tokens people have put into a shared pool","a falling lending health factor":"a loan getting closer to being forcibly closed","an unexplained high-yield offer":"a promise of huge rewards with no clear explanation","a stablecoin depeg":"a digital dollar slipping below its intended one-dollar value","an upcoming token unlock":"more tokens becoming available to sell soon","two competing swap routes":"two different ways to exchange tokens","a stale price oracle":"a price feed that has stopped updating","an upgradeable admin key":"a key that lets someone change how a project works","low liquidity at exit":"not enough buyers when you want to sell","a narrow liquidation buffer":"too little room before a loan or trade gets closed","fake support in community DMs":"a stranger pretending to be official support in private messages","a wallet-connect bug report":"a report that connecting a wallet is not working","an end-of-shift moderator handover":"passing a community problem to the next moderator","a heated governance disagreement":"a community argument about a project decision","a sudden spam raid":"a flood of unwanted messages","a new contributor onboarding":"helping a newcomer make their first useful contribution","a private bug-bounty report":"a security flaw reported privately","an unverified treasury rumour":"a claim about project funds that has not been checked","unclear referral-link rules":"confusion about how referral rewards work","a scam-incident postmortem":"reviewing what happened after a scam","researching the target audience":"figuring out who a campaign is really for","referral quality over raw signups":"people who genuinely use a product instead of empty signups","airdrop sybil resistance":"stopping people from using lots of fake accounts to claim rewards","campaign attribution overlap":"two campaigns both claiming credit for the same signup","creator-partnership fit":"choosing a creator whose audience actually fits the project","a leaking conversion funnel":"people dropping out before they finish signing up","quest participation abuse":"people repeating tasks only to farm rewards","a campaign postmortem":"checking what worked after a campaign ends","trust-first launch disclosure":"being honest about a launch's limits and risks","a sustainable community referral loop":"helping real users invite other useful users","a plain-language content hook":"an opening line that makes a topic easy to understand","a claim needing fact-checking":"a statement that needs proof before it is posted","a technical explainer for newcomers":"explaining a difficult idea to someone brand new","an unconfirmed founder quote":"a quote that may not be real","a non-repetitive content calendar":"planning posts that each add something new","primary-source research":"checking the original source instead of repeating a rumour","a misleading chart scale":"a chart that makes a change look bigger or smaller than it is","a public correction":"fixing a mistake where everyone can see the correction","a sponsor brief with a profit promise":"an ad asking you to promise people they will make money","a useful Spaces recap":"notes that help people catch up on an audio discussion","permission to mint an artwork":"getting the artist's permission before turning their work into an NFT","mismatched NFT metadata":"an NFT whose picture or details do not match its listing","unverified collection utility":"benefits promised by an NFT project that have not been proved","marketplace royalty disclosure":"being clear about whether creators get resale royalties","a fake collection clone":"a copycat NFT collection pretending to be the original","a mint-supply discrepancy":"a mismatch between the promised number of NFTs and the actual number","missing licence details":"unclear permission to use or share an artwork","an unexplained reveal process":"not knowing how hidden NFT artwork will be revealed","an NFT community launch plan":"a plan for launching a collection with clear rules","digital-art attribution":"giving the artist proper credit","a reproducible bug report":"a bug report that explains how to make a problem happen again","an oversized pull request":"a code change so large it is hard to review","a regression test":"a test that makes sure an old bug does not return","a release changelog":"a plain record of what changed in a new version","a testnet deployment record":"proof of what was tested on a practice blockchain","a private security disclosure":"telling a project privately about a security problem","outdated setup documentation":"instructions that no longer work","issue-severity triage":"deciding which bug needs attention first","evidence for code review":"proof that a code change works as intended","an open-source starter issue":"a small first task that helps a new contributor get started"
+ };
+ const actionPlain={
+ "define the entry trigger and invalidation before sizing":"Mark the price where you would enter, then set the point where you admit the idea was wrong.",
+ "wait for confirmation and write the breakout-failure level":"Watch the price prove the move, then mark where the idea would fail.",
+ "let support hold and calculate risk from the stop distance":"Wait to see if the price holds, then choose an amount you can afford to risk.",
+ "trade only after the rejection is confirmed":"Wait for the price to clearly turn away before entering.",
+ "reduce size or wait until the range normalises":"Use a smaller amount or wait for the price to calm down.",
+ "skip the setup until the potential reward justifies its risk":"Walk away when the possible loss is too big for the possible gain.",
+ "lower exposure and preserve a liquidation buffer":"Reduce the borrowed amount so a small price move will not wipe the trade.",
+ "follow the prewritten partial-exit plan":"Sell only the part you planned to sell and keep to your rules.",
+ "include funding in the holding-cost estimate":"Check the extra fee before keeping the futures trade open.",
+ "grade rule adherence as well as paper PnL":"Write down whether you followed your plan, not just whether you won.",
+ "enable unique credentials and two-factor authentication":"Give the account a unique password and switch on the extra sign-in check.",
+ "match the sending and receiving networks exactly":"Choose the same network on both screens before sending anything.",
+ "verify the full address through a trusted source":"Compare the full address with the one from the official source.",
+ "inspect spread and depth before placing the order":"Look at the buy price and sell price before placing the order.",
+ "respect the actual order status and wait or reprice deliberately":"Check if the order filled before trying again.",
+ "reconcile the fee against the net amount received":"Check the fee and the amount that actually arrived.",
+ "check the official status before retrying":"Check the official status first so you do not send twice.",
+ "confirm product type and margin settings":"Make sure you know whether this is a normal buy or a borrowed trade.",
+ "review filled and remaining quantities separately":"Check how much was traded and how much is still waiting.",
+ "revoke unknown sessions and inspect account activity":"Sign out unknown devices and check recent account activity.",
+ "refuse the request and report the impersonator":"Keep your secret words private and report the fake helper.",
+ "inspect the spender and limit approval to the required amount":"Check which app wants access and only approve the amount it needs.",
+ "cancel until the wallet signature is understandable":"Cancel if you cannot understand what the wallet wants you to approve.",
+ "compare the entire destination address from a trusted source":"Check every part of the address before sending.",
+ "verify the full contract address against official sources":"Compare the token's full address with the project's official link.",
+ "correct the source and destination networks before proceeding":"Choose the right network on both sides before moving tokens.",
+ "review the fee estimate and wait if it is unreasonable":"Check the fee and wait if it is much higher than normal.",
+ "confirm recipient and amount on the hardware device itself":"Check the recipient and amount on the separate device before approving.",
+ "disconnect and verify the exact official domain":"Disconnect and open the website using its official link.",
+ "secure linked accounts and follow documented recovery steps":"Secure your email and other linked accounts, then follow official recovery steps.",
+ "review asset mix, fee tier and impermanent-loss exposure":"Check which tokens are in the pool and what could happen if their prices move differently.",
+ "reduce borrowing or add eligible collateral according to plan":"Borrow less or add approved backup funds before the loan gets risky.",
+ "trace the yield source, liquidity and contract risks":"Find where the promised rewards come from before putting money in.",
+ "review reserves, redemption terms and exit liquidity":"Check whether there is enough backing and whether people can cash out.",
+ "estimate supply changes and possible market pressure":"Check how many new tokens may enter the market and when.",
+ "compare net output after fees, gas and slippage":"Compare what you will really receive after all fees.",
+ "inspect feed freshness and stale-price handling":"Check when the displayed price was last updated.",
+ "check upgrade permissions, key control and timelock":"Find out who can change the rules and whether the change has a delay.",
+ "estimate exit impact before choosing exposure":"Check whether selling later could push the price down.",
+ "stress-test collateral value and reduce borrowing if needed":"See what happens if your backup value falls, then borrow less if needed.",
+ "remove and report the account and post the verified support route":"Remove the fake helper and point people to the official support page.",
+ "collect reproducible steps and route the report to support":"Write down the steps and pass the problem to the support team.",
+ "handover severity, actions, evidence and the next owner":"Leave the next moderator a clear note about what happened and what is left.",
+ "apply conduct rules consistently and summarise the dispute fairly":"Apply the same rules to everyone and explain the decision calmly.",
+ "rate-limit spam and preserve evidence for review":"Slow the spam down and keep examples for the review.",
+ "give the newcomer one verified guide and a clear starter task":"Share one trusted guide and a small first task.",
+ "use the private security process and limit access to details":"Share the security issue only with people who need to fix it.",
+ "verify authorised sources and label unknowns honestly":"Check official sources and clearly mark anything you cannot confirm.",
+ "publish clear examples and enforce the same rule consistently":"Show simple examples and apply the rule fairly.",
+ "record the timeline, cause and owned prevention actions":"Write down what happened, why, and who will prevent it next time.",
+ "identify the audience problem before choosing a channel":"Decide who needs the product and what problem it solves before promoting it.",
+ "measure activated and retained users, not signup volume alone":"Count people who actually use the product and come back.",
+ "publish transparent eligibility rules and an appeal path":"Explain who qualifies and how to ask for a review.",
+ "deduplicate conversions with one attribution method":"Count each real signup once instead of crediting it to every campaign.",
+ "check audience relevance, content quality and disclosure":"Check whether the audience fits and the promotion is honest.",
+ "inspect each funnel step before buying more reach":"Find where people get stuck before spending more on ads.",
+ "reward valid contributions rather than repetitive empty posts":"Reward useful work, not people repeating the same empty task.",
+ "compare outcomes with the original objective and user feedback":"Check what worked against the original goal and user feedback.",
+ "publish limitations and verified support before promotion":"State the limits clearly and share trusted help links.",
+ "improve the newcomer experience and measure return visits":"Make the first visit easier and check whether people return.",
+ "open with the reader's problem and a concrete benefit":"Start with the reader's problem and explain the real benefit.",
+ "remove or qualify the claim unless a reliable benchmark supports it":"Remove the claim or add reliable proof before posting.",
+ "explain the terms separately using plain language":"Explain each new term with everyday words.",
+ "verify the quote and preserve its uncertainty":"Check the original quote and do not present guesses as facts.",
+ "give each post a distinct purpose and audience need":"Make this post useful in a different way from the last one.",
+ "trace claims to dated primary sources and label unknowns":"Link to the original source and say what is still unknown.",
+ "show a fair axis and disclose source and time range":"Label the chart clearly and show where the numbers came from.",
+ "correct the error visibly and notify readers who may rely on it":"Publish the correction where readers can see it.",
+ "decline guarantees and use verifiable claims with disclosure":"Refuse to promise profit and clearly label the promotion.",
+ "separate confirmed decisions from opinions and open questions":"Make clear what is confirmed, what is opinion, and what is still open.",
+ "obtain permission and agree attribution before minting":"Get the artist's permission and agree how they will be credited.",
+ "inspect contract, token ID, metadata URI and provenance":"Check the NFT's official record and that its details match.",
+ "state only deliverable benefits with clear limits":"Promise only benefits the project can actually deliver.",
+ "describe the marketplace's actual royalty policy":"Check and explain the marketplace's real royalty rules.",
+ "compare verified creator links and the canonical contract":"Use the artist's trusted link and check the official collection address.",
+ "verify contract supply, mint price and published allocation":"Check the number available, the price, and the published plan.",
+ "confirm the creator's licence and provenance":"Check who made the art and what permission they gave.",
+ "explain the reveal method and its verifiable assumptions":"Explain how the hidden artwork will be revealed and what can be checked.",
+ "prepare rules, verified links and an escalation owner":"Publish clear rules, trusted links and a person to contact if something goes wrong.",
+ "add accurate credit and confirm the licence permits the use":"Credit the artist and make sure the licence allows this use.",
+ "write steps, expected result, actual result and environment":"Write the steps, what should happen, what happened, and what device you used.",
+ "request a focused diff and tests for the stated fix":"Ask for a smaller change and a test that proves the fix.",
+ "add a repeatable test for the original failure and edge case":"Add a test that makes sure the bug does not come back.",
+ "describe verified changes and migration impact accurately":"List what really changed and what users need to do differently.",
+ "record network, commit, address and test results":"Record where it ran, which version was used, and what the test showed.",
+ "follow private disclosure and verify affected versions":"Report the flaw privately and check which versions are affected.",
+ "run the guide on the current release and update stale commands":"Follow the guide and fix any steps that no longer work.",
+ "rank reports by severity, reproducibility and user impact":"Fix the most serious and repeatable problems first.",
+ "request targeted evidence for the changed critical path":"Ask for proof that the important part of the change works.",
+ "clarify acceptance criteria and give the contributor a reproducible start":"Make the task clear and give the new contributor steps they can follow."
+ };
+ const topic=topicPlain[rawTopic]||rawTopic.replace(/\b(wallet|liquidity|protocol|attribution|governance|oracle|perpetual|sybil|metadata|provenance|collateral|slippage|mint|dApp)\b/gi,m=>({"wallet":"wallet","liquidity":"available money","protocol":"project","attribution":"credit","governance":"community voting","oracle":"price feed","perpetual":"futures","sybil":"fake-account","metadata":"details","provenance":"origin","collateral":"backup funds","slippage":"price change","mint":"create","dApp":"app"}[m.toLowerCase()]||m));
+ const action=actionPlain[rawAction]||rawAction;
+ const cast=[
+  {name:"Tobi",art:"📉😰",open:"This chart is making me nervous. The price is dipping below the level I was watching, and I don't want to jump into a bad trade. Can you help me make a safer plan?",reply:"Let's slow down and decide where the idea would be wrong first.",reaction:"That's a much calmer plan. I can see the risk before I put anything on the line.",lesson:"A trade plan includes the point where you admit the idea failed, not just where you hope to win."},
+  {name:"Zainab",art:"🏪📱",open:"A customer is waiting, and the exchange screen is confusing them. I don't want them to send money to the wrong place. Can you help me check "+topic+"?",reply:"Of course. Let's check the details together before confirming anything.",reaction:"Phew! We checked the important details before touching the confirm button.",lesson:"Before sending, check the recipient, amount and network. A rushed transfer can be hard to reverse."},
+  {name:"Amina",art:"📱🚨",open:"Someone says they can fix my wallet, but they're asking me to do something about "+topic+". Something feels off. What should we do?",reply:"Don't rush. Let's protect the wallet and check what this request really means.",reaction:"I'm glad we paused. A friendly message doesn't prove someone is trustworthy.",lesson:"Never share your recovery words. Cancel requests you cannot understand and use official help."},
+  {name:"Amaka",art:"🪙🌊",open:"I was looking at this pool because the rewards look exciting, but I'm worried about "+topic+". I don't want to put money in without understanding the risk.",reply:"Let's look at what could go wrong as well as what we might earn.",reaction:"That makes the decision clearer. A big reward number doesn't tell the whole story.",lesson:"In DeFi, check the risks, fees and how you can get your money out—not only the reward."},
+  {name:"Ada",art:"💬⚡",open:"Our community is getting noisy because of "+topic+". New people are watching, and I want them to feel safe here. Can you help me handle this?",reply:"Let's keep everyone safe, check the facts and treat people fairly.",reaction:"Thanks. The situation is calmer, and people have a clear next step now.",lesson:"Good community work means clear rules, trusted information and fair treatment."},
+  {name:"Dami",art:"📣📊",open:"The campaign numbers look big, but I'm not sure people are actually getting value. I'm trying to solve "+topic+". Can you help me rethink it?",reply:"Let's focus on people who genuinely benefit, not just the biggest number.",reaction:"Now we can see what actually helps users instead of celebrating empty clicks.",lesson:"Useful growth measures real activity and trust, not just signups or impressions."},
+  {name:"Nneka",art:"✍️🗯️",open:"I'm writing about "+topic+", but I don't want to confuse people who are new to Web3 or accidentally mislead them. Can you help me make this clear?",reply:"Let's make it simple, check the claim and be honest about what we know.",reaction:"This sounds much clearer. People can learn something without being sold a dream.",lesson:"Explain new terms in plain language, check claims, and never promise guaranteed profit."},
+  {name:"Efe",art:"🎨🖼️",open:"I'm getting a collection ready, but there's a concern about "+topic+". I want people to know exactly what they're buying and what rights they have.",reply:"Let's check the source, permissions and details before this goes live.",reaction:"Good catch. Clear ownership and honest promises protect both the artist and the buyer.",lesson:"Check the real creator, the official collection and the rights before minting or buying."},
+  {name:"Chidi",art:"🧰🐛",open:"A builder has reported a problem around "+topic+". I want to fix it without breaking something else. Can you help me work through it?",reply:"Let's make the change clear and test that it really works.",reaction:"Nice. We can show what changed and how we checked it, instead of asking people to trust us blindly.",lesson:"Small, testable changes make open-source work easier for others to verify."}
+ ];
+ const p=cast[s.cat]||cast[0];
+ const nextName=s.nextCat==null?"the next neighbour":(["Tobi","Zainab","Amina","Amaka","Ada","Dami","Nneka","Efe","Chidi"][s.nextCat]||"the next neighbour");
+ const prevName=s.prevName||"the crew";
+ const label=s.title||"City mission";
+ const firstIntro=s.missionNo===1?p.open:(p.open+" "+prevName+" said you were the person to call.");
+ const hook=s.nextTitle?"Before I forget — "+nextName+" just messaged about “"+s.nextTitle+"”. Go see what's happening.":"The city still needs us. This story isn't over yet.";
+ const variants=[
+  {label:label+" · Meet "+p.name,spot:"a",panelTag:"PANEL 01 · THE CONVERSATION",art:p.art,intro:firstIntro,playerReply:p.reply,button:p.reply,action:"",reaction:"",lesson:"",nextReply:"Tell me what happened",busyText:"",conversationOnly:true},
+  {label:label+" · Help "+p.name,spot:"c",panelTag:"PANEL 02 · MAKE IT RIGHT",art:s.cat===0?"📊🎯":s.cat===1?"💸📲":s.cat===2?"🔐🛡️":s.cat===3?"🪙⚖️":s.cat===4?"🧹💬":s.cat===5?"📣🧩":s.cat===6?"📝🔎":s.cat===7?"🎨🔍":"🛠️🧪",intro:p.name+": “Here's the part I'm stuck on: "+topic+". Can you "+action.charAt(0).toLowerCase()+action.slice(1).replace(/[.!?]$/,'')+" with me?”",playerReply:"I'll take care of that now.",button:s.cat===0?"I'll mark the risk first":s.cat===1?"I'll check the transfer details":s.cat===2?"I'll secure the wallet":s.cat===3?"I'll check the risks and fees":s.cat===4?"I'll handle this fairly":s.cat===5?"I'll focus on real users":s.cat===6?"I'll check the facts":s.cat===7?"I'll verify the artwork": "I'll test the change",action:action,actionButton:action,reaction:p.reaction,lesson:p.lesson,nextReply:"What's next?",storyHook:hook,busyText:"You work through it together…"}
+ ];
+ return variants.map((v,si)=>({label:v.label,spot:v.spot,panelTag:v.panelTag,art:v.art,intro:v.intro,playerReply:v.playerReply,action:v.action,button:v.button,reaction:v.reaction,result:v.reaction,lesson:v.lesson,nextReply:v.nextReply,busyText:v.busyText,storyHook:v.storyHook,doneTitle:"Scene complete",transaction:false}));
+}
+const npcData=[["Tobi Adeyemi","Trading coach","#2266A3",0],["Zainab Bello","Exchange guide","#2D6FB3",1],["Amina Okoro","Wallet safety lead","#0B7A70",2],["Amaka George","DeFi analyst","#6A4FC8",2],["Ada Nwosu","Community lead","#C7457E",2],["Dami Ogun","Growth strategist","#6A4FC8",2],["Nneka James","Content editor","#C7457E",2],["Efe Osagie","Digital artist","#C7457E",2],["Chidi Okafor","Open-source maintainer","#2D6FB3",0]];
+const spots=["a","c","d"];
+const looks=[LK.guy,LK.clerk,LK.woman,LK.elder];
+const list=specs.map((s,i)=>{
+ const nd=npcData[s.cat], npc=s.title==="Pay IamAbdul for Suya"?SUYA:mkSign(nd[0],nd[1],nd[2],looks[nd[3]],["Practice terminal","Review desk","Field task"][s.variant%3]);
+ let steps;
+ if(s.story){
+  const story=s.story;
+  const npcFor=name=>mkSign(name,"Chronicles character","#2D6FB3",looks[Math.max(0,T3KIT_CHRONICLES.characterOrder.findIndex(n=>n.toLowerCase()===String(name).toLowerCase()))%looks.length],story.state);
+  const panels=story.panels||[];
+  const dialogue=Array.isArray(story.dialogue)?story.dialogue:[];
+  const castNames=[...new Set([...(story.characters||[]),...dialogue.filter(d=>d.speaker&&d.speaker.toUpperCase()!=="PLAYER").map(d=>d.speaker)])];
+  const sceneCast=castNames.map(npcFor);
+  const panelCount=Math.max(1,panels.length);
+  const baseLines=Math.floor(dialogue.length/panelCount);
+  const extraLines=dialogue.length%panelCount;
+  steps=panels.map((p,pi)=>{
+   const start=pi*baseLines+Math.min(pi,extraLines);
+   const lineCount=baseLines+(pi<extraLines?1:0);
+   const lines=dialogue.slice(start,start+lineCount);
+   return taskStep({
+    label:story.title+" · Scene "+(pi+1),
+    spot:pi===0?"a":pi===1?"c":pi===2?"d":"e",
+    npc:sceneCast[0]||npcFor("KitCity neighbour"),
+    intro:p[2]||story.purpose,
+    practice:true,
+    panelTag:p[0]||("PANEL "+String(pi+1).padStart(2,"0")),
+    art:p[1]||"💬",
+    scenePanels:panels,
+    sceneIndex:pi,
+    sceneDialogue:lines,
+    sceneDialogueTotal:dialogue.length,
+    sceneCast,
+    scriptOffset:start
+   });
+  });
+  const lead=story.characters[story.characters.length-1]||story.characters[0]||"Your neighbour";
+  const objective=story.objectives[0]?.text||"Help with the problem";
+  if(story.id==="tc-29"){
+   steps.push({label:"Choose your KitCity path",spot:"c",npc:npcFor("White Coach"),run(){
+    const options=["Developer","Smart Contract Specialist","Trader","Community Manager","Moderator","Content Creator","Growth Strategist","Researcher","Product Manager","Security Specialist","AI Specialist","Business Development Specialist"];
+    talk(this.npc,'<p><b>White Coach:</b> “You’ve seen how the roles connect. Which path do you want to prove yourself in?”</p>',options.map(path=>({t:path,f:()=>{P.specialization=path;P.storyFlags=P.storyFlags||{};P.storyFlags["specialization-"+path.toLowerCase().replace(/[^a-z0-9]+/g,"-")]=true;save();talk(npcFor("Craftore"),'<p><b>Craftore:</b> “Good. Your assessment will focus on <b>'+path+'</b>. You can change direction later through advanced missions.”</p>',[{t:"Register for assessment",f:finishStep}]);}})));
+   }});
+  } else if(story.id==="tc-31"){
+   steps.push({label:"The Reveal · Your answer",spot:"h",npc:npcFor("Softstorm"),run(){
+    talk(this.npc,'<p><b>Softstorm:</b> “When you started, what did you think Web3 was?”</p>',[
+     {t:"A way to make money",f:()=>{P.storyFlags=P.storyFlags||{};P.storyFlags["reflection-money-first"]=true;save();askEnding();}},
+     {t:"A complicated technology",f:()=>{P.storyFlags=P.storyFlags||{};P.storyFlags["reflection-complicated"]=true;save();askEnding();}},
+     {t:"An opportunity I didn't understand",f:()=>{P.storyFlags=P.storyFlags||{};P.storyFlags["reflection-newcomer"]=true;save();askEnding();}}
+    ]);
+    function askEnding(){
+     talk(npcFor("Softstorm"),'<p><b>Softstorm:</b> “And what do you think now?”</p>',[
+      {t:"A world I can build in",f:()=>end("builder")},
+      {t:"An ecosystem I can contribute to",f:()=>end("contributor")},
+      {t:"A career path I can pursue",f:()=>end("career")},
+      {t:"A space I want to keep exploring",f:()=>end("explorer")}
+     ]);
+    }
+    function end(path){
+     P.storyFlags=P.storyFlags||{};P.storyFlags["ending-"+path]=true;P.storyFlags["t3kit-mystery-resolved"]=true;P.storyFlags["main-story-complete"]=true;P.storyFlags["post-story-unlocked"]=true;save();
+     talk(npcFor("IamAbdul"),'<p><b>Softstorm:</b> “You don\'t have to know everything. Keep learning, build with care, and contribute something useful.”</p><p><b>IamAbdul:</b> “Omo, next time we build something, you’re joining us.”</p><p><b>WELCOME TO KITCITY.</b></p>',[{t:"Finish the main story",f:finishStep}]);
+    }
+   }});
+  } else {
+   const assessment={
+    "Developer":"Diagnose the app failure, apply a prepared fix and run the test.",
+    "Smart Contract Specialist":"Reproduce a test-contract vulnerability and verify the correction.",
+    "Trader":"Build a simulated trade plan with entry, invalidation and risk limits.",
+    "Community Manager":"Improve onboarding and choose a meaningful retention metric.",
+    "Moderator":"Contain a simulated scam incident and publish a verified safety update.",
+    "Content Creator":"Create an accurate beginner-friendly explainer and verify its claims.",
+    "Growth Strategist":"Design a small campaign experiment and evaluate its result.",
+    "Researcher":"Check a fictional project's claims against its source documents.",
+    "Product Manager":"Identify the main user blocker and test a focused improvement.",
+    "Security Specialist":"Rank a simulated threat and verify a mitigation.",
+    "AI Specialist":"Correct an AI report by tracing claims to source data.",
+    "Business Development Specialist":"Evaluate a partnership proposal and flag its risks."
+   };
+   const task=story.id==="tc-30"?(assessment[P.specialization]||"Complete a practical sandbox challenge and explain the evidence."):objective;
+   steps.push(taskStep({
+    label:story.title+" · Your move",
+    spot:story.id==="tc-30"?"h":"c",
+    npc:npcFor(lead),
+    intro:story.id==="tc-30"?"Craftore: “Your path is "+(P.specialization||"Web3 Practitioner")+". Show us how you work through this safely.”":lead+": "+(story.dialogue.find(d=>d.speaker===lead)?.text||"We've got one thing left to sort. Can you help?"),
+    practice:true,
+    panelTag:story.id==="tc-30"?"PRACTICAL ASSESSMENT":"YOUR MOVE",
+    art:story.id==="tc-30"?"🧰🏁":"🎮🗨️",
+    button:story.id==="tc-30"?"Start the practical task":"Let's work through it",
+    action:task,
+    actionButton:task,
+    storyId:story.id,
+    storyObjectives:story.id==="tc-30"?[{id:"tc30-assessment",text:task}]:story.objectives,
+    taskIntro:story.id==="tc-30"?"Complete this safe, simulated task for your chosen path: "+task:"Let's handle this one step at a time.",
+    reaction:story.id==="tc-30"?"Your evidence is ready for review.":(story.cliffhanger?"We have a lead. "+story.cliffhanger:"We've got what we need for the next step."),
+    result:story.id==="tc-30"?"Your evidence is ready for review.":(story.cliffhanger?"We have a lead. "+story.cliffhanger:"We've got what we need for the next step."),
+    lesson:story.learningObjectives[0]||"",
+    storyHook:story.id==="tc-30"?(story.cliffhanger||""):"",
+    busyText:story.id==="tc-30"?"You work through the assessment in the safe practice environment…":"You and "+lead+" work through it together…",
+    transaction:false
+   }));
+  }
+ } else if(s.title==="Pay IamAbdul for Suya"){
+  steps=[
+   taskStep({label:"Abdul needs a hand",spot:"a",npc,intro:"Abdul wipes his hands on his apron. “Oga, customer wants to pay with USDC. I sell suya, not confusion! Help me check this order?”",practice:true,panelTag:"PANEL 01 · ABDUL'S SUYA SPOT",art:"🔥🍢😅",playerReply:"No wahala, Abdul. Let's check the order together.",button:"No wahala, let's check",reaction:"",lesson:"",transaction:false,conversationOnly:true}),
+   taskStep({label:"Pay Abdul safely",spot:"c",npc,intro:"Abdul points at the checkout. “Check my name, the amount and the network before you confirm.”",practice:true,panelTag:"PANEL 02 · CHECK BEFORE YOU SEND",art:"📱💵👀",playerReply:"I'll check all three before sending.",action:"Send 1.00 USDC to IamAbdul on Base",button:"Review and pay Abdul",reaction:"“Payment don land! Now we can hand over the suya.”",lesson:"Check recipient, amount and network before a transfer.",transaction:true,amount:1,recipient:"IamAbdul",storyHook:"Abdul turns the receipt over. The T3Kit symbol is printed on the back."})
+  ];
+ } else {
+  steps=missionChallenges({...s,missionNo:i+1,prevName:i>0?(npcData[specs[i-1].cat]?.[0]||'the crew'):null,nextTitle:specs[i+1]?.title,nextCat:specs[i+1]?.cat}).map(c=>taskStep({...c,npc,practice:true}));
+ }
+ return {id:s.story?s.story.id:"web3-m"+(i-T3KIT_CHRONICLES.missions.length+1),n:i+1,city:s.city,title:s.title,goal:s.goal,steps,story:s.story||null};
+});
+return list;
+})();
 const MBY={}; MISSIONS.forEach(m=>{ MBY[m.id]=m; });
 const loc=(name,role,color,look,sub)=>NPC(name,role,color,look,{body:color,a:'#ffffff',b:YELLOW,sub:sub});
 const BADGES=['Wallet Starter','Swap Smart','Scam Spotter','Key Keeper','Safe Sender','Passport Holder','Community Voice','Cash-out Pro','Fare Payer','Club Skeptic','Gas Watcher','Escrow Trader','Off-ramp Pro','Depeg Calm','Mint Checker','Pump Spotter','Buffer Keeper','Pool Wise','Hardware Holder','Multisig Team','Wallet Splitter','Record Keeper','Phone Buyer','Phish Doubter','School Donor','Review Reader','Remit Careful','Lost Phone Calm','Invoice Checker','Crowdfund Skeptic','Gate Watcher','Ledger Clear','Oil Money Smart','Creek Careful','Tailor Shield','Bank Alert Calm','Loan Sense','Herd Wise','Flyer Doubter','Relief Guard','Gift Pool Wise','Clearance Check','Lucky Draw Skeptic','Cocoa Careful','Gold Audit','Tour Verifier','Lease Check','Supply Watch','Scholar Shield','Fee Guard','Rent Shield','Franchise Check','Loan Sense','Course Skeptic','Input Verified','Bureau Wise','PIN Guard','Bulk Buyer Check','Partner Guard','Recharge Safe','Abia Shoe Check','Land Title Check','Net Co-op','Produce Guard','Pump Verifier','Travel Licence','Seed Scheme Sense','Pond Skeptic','Job Fee Guard','Bond Checker','Permit Honest','Feed Invoice','Ticket Honest','Grove Trust','Cocoa Terms','Park Permit','Solar Limit','Export Office','Gold Licence','Cattle Terms','Genesis Access'];
@@ -3800,8 +2693,7 @@ const isUnlocked=m=>{ const k=MISSIONS.indexOf(m); return k===0||!!P.done[MISSIO
 
 const cityOrder=[...new Set(MISSIONS.map(m=>m.city))];
 
-/* Community-name priority: assign all 60 names before any external NPC names.
-   First-city missions are assigned first. Laloba is reserved for Kano. */
+/* Community-name priority: all 60 supplied names are assigned in the exact listed order. */
 const PRIORITY_COMMUNITY_NAMES=[
   'Softstorm','IamAbdul','Christol','Laloba','Larai','Unique','Semi','Joe_Sef','Smrt huntr','Goodness',
   'Blockqueen','BigSam','LunaX','OxNight','Moon','The cryptonian','Joseph Nnadi','The don','Praise','Kenny',
@@ -3850,13 +2742,27 @@ for(const mission of MISSIONS){
     if(!allNPCSeen.has(npc)){ allNPCSeen.add(npc); allNPCObjects.push(npc); }
   }
 }
-/* Assign the supplied community names across mission NPCs in city progression order.
-   Keep Laloba in Kano; use regional names for every NPC after the supplied list. */
-const orderedNPCObjects=allNPCObjects.slice();
+/* Assign the supplied names once each, in list order, before regional fallback names.
+   IamAbdul remains the Lagos suya seller; Laloba is reserved for the first Kano mission. */
+const firstMissionNPCs=[],firstMissionCities=new Set(),firstMissionNPCSet=new Set();
+for(const mission of MISSIONS){
+  if(firstMissionCities.has(mission.city)) continue;
+  firstMissionCities.add(mission.city);
+  const npc=missionNPCObjects(mission)[0];
+  if(npc){ firstMissionNPCs.push(npc); firstMissionNPCSet.add(npc); }
+}
+/* Apply the supplied list in strict order. Keep IamAbdul second (the suya seller)
+   and Laloba fourth (the first Kano character), then continue sequentially. */
+const firstMissionNPC=missionNPCObjects(MISSIONS[0])[0];
+const thirdMissionNPC=missionNPCObjects(MISSIONS[2])[0];
+const firstKanoMission=MISSIONS.find(m=>m.city==='kano');
+const firstKanoNPC=firstKanoMission&&missionNPCObjects(firstKanoMission)[0];
+const orderedNPCObjects=[firstMissionNPC,SUYA,thirdMissionNPC,firstKanoNPC,...allNPCObjects]
+  .filter((npc,index,arr)=>npc&&arr.indexOf(npc)===index);
 for(const npc of orderedNPCObjects) if(!npc.originalName) npc.originalName=npc.name;
-let priorityNameIndex=0;
 const usedNPCNameKeys=new Set();
 const priorityAssignedNPCs=new Set();
+let priorityNameIndex=0;
 for(const npc of orderedNPCObjects){
   if(priorityNameIndex>=PRIORITY_COMMUNITY_NAMES.length) break;
   const nextName=PRIORITY_COMMUNITY_NAMES[priorityNameIndex++];
@@ -3877,7 +2783,6 @@ for(const npc of orderedNPCObjects){
   npc.name=replacement;
   usedNPCNameKeys.add(replacement.toLowerCase());
 }
-
 function buildMissionNameAliases(mission){
   const candidates=Object.create(null),ambiguous=new Set(),currentNames=new Set();
   const npcs=missionNPCObjects(mission);
@@ -3914,7 +2819,16 @@ function bannerSprite(text,sub){
 function loadStep(){
   clearGroup(missionGroup); colliders.length=cityCols; smoke=[]; ents=[]; goal=null;
   const m=G.m,st=m.steps[G.i];
-  const e=placeNPC(st.npc,SPOTS[st.spot]); e.talk=()=>st.run(); e.active=()=>true; ents.push(e); goal=e;
+  const anchor=SPOTS[st.spot];
+  const e=placeNPC(st.npc,anchor); e.talk=()=>st.run(); e.active=()=>true; ents.push(e); goal=e;
+  if(Array.isArray(st.sceneCast)){
+    st.sceneCast.forEach((actor,index)=>{
+      if(!actor||String(actor.name||'').toLowerCase()===String(st.npc&&st.npc.name||'').toLowerCase()) return;
+      const angle=(index+1)*Math.PI*2/Math.max(2,st.sceneCast.length);
+      const radius=6.5;
+      placeNPC(actor,{x:anchor.x+Math.cos(angle)*radius,z:anchor.z+Math.sin(angle)*radius,f:Math.cos(angle)>=0?1:-1});
+    });
+  }
   for(const ex of (m.extras||[])){
     if(G.used[ex.id]) continue;
     const e2=placeNPC(ex.npc,ex.spot); e2.ex=ex; e2.talk=()=>ex.run(e2); e2.active=()=>!G.used[ex.id]; ents.push(e2);
@@ -3934,10 +2848,46 @@ function startMission(id){
     briefing();
   },60);
 }
+function applyPlayerAppearance(style){
+  const palette=style==="builder"?{top:"#0B7A43",bottom:"#1B1C20"}:style==="streetwear"?{top:"#E4572E",bottom:"#2b3350"}:{top:BRAND,bottom:"#2b3350"};
+  player.traverse(obj=>{
+    if(!obj.isMesh||!obj.material||!obj.material.color) return;
+    const color=obj.material.color.getHexString().toLowerCase();
+    if(color===BRAND.replace("#","").toLowerCase()){obj.material=obj.material.clone();obj.material.color.set(palette.top);}
+    else if(color==="2b3350"){obj.material=obj.material.clone();obj.material.color.set(palette.bottom);}
+  });
+}
+function choosePlayerIdentity(done){
+  const current=String(P.name||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;");
+  openSheet('<div style="border:3px solid #20232a;border-radius:14px;overflow:hidden;background:#fff2c9;color:#20232a;box-shadow:5px 5px 0 #20232a"><div style="padding:7px 12px;background:#20232a;color:#ffe27a;font-size:10px;font-weight:900;letter-spacing:2px">YOUR ADVENTURE STARTS HERE</div><div style="padding:16px"><h2 style="margin:0 0 7px;font-size:23px">Who are you, hero?</h2><p style="margin:0 0 12px;font-size:13px">Choose your name and look. You can learn Web3 as you go.</p><label for="chroniclePlayerName" style="display:block;font-weight:800;margin-bottom:5px">Your name</label><input id="chroniclePlayerName" maxlength="24" value="'+current+'" placeholder="Enter your name" style="width:100%;box-sizing:border-box;padding:11px;border:2px solid #20232a;border-radius:8px;font:inherit;margin-bottom:13px"><b>Choose your look</b><p style="font-size:12px;margin:4px 0 0">Your choice changes your outfit colours.</p></div></div>',[
+    {t:"Streetwear",f:()=>commit("streetwear")},
+    {t:"Builder",f:()=>commit("builder")},
+    {t:"Classic",f:()=>commit("classic")}
+  ]);
+  function commit(style){
+    const field=$("#chroniclePlayerName"),name=String(field&&field.value||"").trim().slice(0,24);
+    if(!name){toast("Enter a name to continue");return;}
+    P.name=name;P.appearance=style;applyPlayerAppearance(style);save();done();
+  }
+}
+function showStoryJournal(){
+  const entries=Array.isArray(P.storyJournal)?P.storyJournal.slice().reverse():[];
+  const esc=v=>String(v==null?"":v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  const rows=entries.length?entries.slice(0,10).map(e=>'<div style="padding:8px 0;border-bottom:1px solid #e2d4ad"><b>'+esc(e.title)+'</b><div style="font-size:11px;opacity:.8">'+esc(e.state)+' · '+esc(e.chapterId)+'</div>'+(e.artifact?'<div style="font-size:12px;margin-top:3px">Artifact: '+esc(e.artifact)+'</div>':'')+'</div>').join(''):'<p>Your journey journal is empty. Complete the first story scene to start collecting clues and artifacts.</p>';
+  const skills=(P.storySkills||[]).map(esc).join(" · ")||"No skills unlocked yet";
+  const artifacts=(P.storyArtifacts||[]).map(esc).join(" · ")||"No artifacts collected yet";
+  const flags=Object.keys(P.storyFlags||{}).length;
+  openSheet('<div style="border:3px solid #20232a;border-radius:12px;padding:14px;background:#fff7d6;color:#20232a;box-shadow:4px 4px 0 #20232a"><div style="font-size:10px;letter-spacing:2px;font-weight:900">KITCITY COMICS · JOURNEY LOG</div><h2 style="margin:6px 0">Your Journey Journal</h2><p style="font-size:12px">Story clues saved: <b>'+flags+'</b> · Story XP: <b>'+(Number(P.storyXP)||0)+'</b></p><h3 style="margin:12px 0 4px">Recent discoveries</h3>'+rows+'<h3 style="margin:12px 0 4px">Artifacts</h3><p style="font-size:12px">'+artifacts+'</p><h3 style="margin:12px 0 4px">Skills</h3><p style="font-size:12px">'+skills+'</p></div>',[{t:"Close journal",f:closeSheet},{t:"Back to hub",g:1,f:exitToHub}]);
+}
 function briefing(){
+  const m=G.m;
+  if(m.story&&m.story.id==="tc-01"&&(!P.appearance||!P.name)){choosePlayerIdentity(showChapterBriefing);return;}
+  if(P.appearance) applyPlayerAppearance(P.appearance);
+  showChapterBriefing();
+}
+function showChapterBriefing(){
   const m=G.m,C=CITIES[m.city];
-  openSheet('<div class="who"><span class="av" style="background:'+INK+'">'+m.n+'</span><div><b>'+personalize('Mission '+m.n+': '+m.title,null)+'</b><small>'+C.name+', '+C.tag+'</small></div></div><p>'+personalize(m.goal,null)+'</p><p class="web3-focus">WEB3 SKILL · '+web3Focus(m)+'</p><ul class="pts">'+m.steps.map(s=>'<li>'+personalize(tr(s.label),m,s.npc)+'</li>').join('')+'</ul>'+(m.n===1?'<p class="note">Move with the left stick or WASD. Hold Run or Shift to run. Tap Talk or press E to speak. Follow the arrow.</p>':'<p class="note">Follow the arrow to the next person. Watch for traffic.</p>'),
-    [{t:'Start mission',f:closeSheet},{t:'Back to hub',g:1,f:exitToHub}]);
+  openSheet('<div style="border:3px solid #20232a;border-radius:14px;overflow:hidden;background:#fff2c9;color:#20232a;box-shadow:5px 5px 0 #20232a"><div style="padding:7px 12px;background:#20232a;color:#ffe27a;font-size:10px;font-weight:900;letter-spacing:2px">KITCITY COMICS · NEW CHAPTER</div><div style="padding:20px 14px 18px;background:radial-gradient(circle at 10% 15%,#fff9dd 0 2px,transparent 3px),radial-gradient(circle at 80% 60%,#f7c76b 0 2px,transparent 3px),linear-gradient(135deg,#ffdf92,#fff3ce)"><div style="font-size:11px;font-weight:900;letter-spacing:1.5px;color:#875315">'+C.name.toUpperCase()+' · CHAPTER '+m.n+'</div><h2 style="font-size:26px;line-height:1.05;margin:8px 0 10px;text-transform:uppercase;font-weight:1000">'+personalize(m.title,null)+'</h2><p style="font-size:14px;line-height:1.5;font-weight:700;margin:0">Find the marked character. Hear what happened. Help move the story forward.</p><div style="margin-top:12px;display:inline-block;padding:5px 9px;background:#e65e35;color:white;font-weight:900;transform:rotate(-2deg);border:2px solid #20232a">YOUR MOVE, HERO!</div></div></div>',[{t:'Enter the story',f:closeSheet},{t:'Back to hub',g:1,f:exitToHub}]);
 }
 function finishStep(){
   closeSheet(); if(!G) return;
@@ -3949,11 +2899,24 @@ function completeMission(){
   const m=G.m,first=!P.done[m.id],wrong=G.wrong||0;
   const missionReward=first?(m.city==='kitcity'?2.5:(wrong===0?MISSION_CLEAR_REWARD:MISSION_RETRY_REWARD)):0;
   if(missionReward) P.usdc=Math.round((P.usdc+missionReward)*100)/100;
+  if(first&&m.story){
+    const story=m.story;
+    if(!P.storyFlags||typeof P.storyFlags!=='object') P.storyFlags={};
+    (story.storyFlags?.set||[]).forEach(flag=>P.storyFlags[flag]=true);
+    if(!Array.isArray(P.storyArtifacts)) P.storyArtifacts=[];
+    if(!Array.isArray(P.storySkills)) P.storySkills=[];
+    if(!Array.isArray(P.storyJournal)) P.storyJournal=[];
+    if(story.rewards?.artifact&&!P.storyArtifacts.includes(story.rewards.artifact)) P.storyArtifacts.push(story.rewards.artifact);
+    (story.rewards?.skills||[]).forEach(skill=>{if(!P.storySkills.includes(skill))P.storySkills.push(skill);});
+    P.storyXP=(Number(P.storyXP)||0)+(Number(story.rewards?.xp)||0);
+    P.storyJournal.push({id:story.id,title:story.title,chapterId:story.chapterId,state:story.state,artifact:story.rewards?.artifact||null});
+  }
   P.done[m.id]=true;save();updateHUD();Snd.sfx('done');
   const idx=MISSIONS.indexOf(m),next=MISSIONS[idx+1],cityComplete=isCityComplete(m.city);
   clearGroup(missionGroup);colliders.length=cityCols;smoke=[];ents=[];goal=null;beacon.visible=false;
   hubCity=next?next.city:m.city;
   const btns=[];
+  if(m.story)btns.push({t:'Journey journal',f:showStoryJournal});
   if(cityComplete)btns.push({t:'Collect city badge',f:()=>showCityBadge(m.city,()=>next?startMission(next.id):exitToHub())});
   if(next)btns.push({t:next.city!==m.city?'Continue to '+CITIES[next.city].name:'Next: '+next.title,f:()=>startMission(next.id)});
   btns.push({t:'Back to hub',g:1,f:exitToHub});
@@ -4089,11 +3052,10 @@ function web3Focus(m){
 }
 function missionCard(m){
   const un=isUnlocked(m),dn=!!P.done[m.id];
-  const focus=web3Focus(m);
-  return '<div class="card'+(un?'':' lock')+(m.city==='kitcity'?' final-destination':'')+'"><div class="ch">'+badgeSVG(m.n,false,46)+'<div><b>'+personalize('Mission '+m.n+': '+m.title,null)+'</b><small>'+personalize(m.goal,null)+'</small><span class="web3-focus">WEB3 FOCUS · '+focus+'</span></div></div><div class="cf"><span>'+(dn?'Completed':'Up to +0.50 USDC')+'</span>'+(un?'<button class="btn brand" data-a="play" data-v="'+m.id+'" type="button">'+(dn?'Replay':'Play')+'</button>':'<span>Finish mission '+(m.n-1)+' first</span>')+'</div></div>';
+  return '<div class="card'+(un?'':' lock')+(m.city==='kitcity'?' final-destination':'')+'"><div class="ch">'+badgeSVG(m.n,false,46)+'<div><b>'+personalize('Mission '+m.n+': '+m.title,null)+'</b><small>'+personalize(m.goal,null)+'</small></div></div><div class="cf"><span>'+(dn?'Completed':'Up to +0.50 USDC')+'</span>'+(un?'<button class="btn brand" data-a="play" data-v="'+m.id+'" type="button">'+(dn?'Replay':'Play')+'</button>':'<span>Finish mission '+(m.n-1)+' first</span>')+'</div></div>';
 }
 function renderHub(){
-  $('#hubTop').innerHTML=tx('<span class="wm"><img class="header-logo" src="https://i.postimg.cc/qqbdTXky/file-00000000958881f4a776df689a235dec.png" alt="KitCity" /></span><div class="lvl"><b>Practice wallet</b><div class="balance-line"><strong>'+P.usdc.toFixed(2)+' USDC</strong><small>'+Object.keys(P.done).filter(k=>P.done[k]).length+' missions completed</small></div></div>');
+  $('#hubTop').innerHTML=tx('<span class="wm"><img class="header-logo" src="https://i.postimg.cc/qqbdTXky/file-00000000958881f4a776df689a235dec.png" alt="KitCity" /></span><div class="lvl"><b>Practice wallet</b><div class="balance-line"><strong>'+P.usdc.toFixed(2)+' USDC</strong><small>'+MISSIONS.filter(m=>P.done[m.id]).length+' missions completed</small></div></div>');
   document.querySelectorAll('#nav [data-v="kitlab"]').forEach(b=>b.remove());
   if(hubTab==='kitlab') hubTab='cityhub';
   document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===hubTab));
