@@ -188,8 +188,9 @@ const RAW_MISSIONS = [
       }
     ],
     "successConditions": [
-      "Web3 basics opportunity literacy",
-      "The player reviews the evidence or feedback"
+      "All required mission objectives are completed",
+      "The player submits or reviews the relevant evidence",
+      "The mission's completion narrative is triggered"
     ],
     "failureAndRetry": {
       "onFailure": "If the player leaves without a clue, the mentors point back to the three nearby places. Completed discoveries stay saved.",
@@ -201,15 +202,16 @@ const RAW_MISSIONS = [
         "Discovery"
       ],
       "portfolioArtifacts": [
-        "The Player Mistakes A Buzzword For A Shortcut"
+        "Journey journal · T3Kit clue card"
       ]
     },
     "storyFlags": [
-      "web3_basics_opportunity_literacy"
+      "m01_complete",
+      "t3kit_clue_001"
     ],
     "nextMissionId": "m02",
-    "ending": "Web3 basics opportunity literacy",
-    "cliffhanger": "A new piece of evidence points toward the next chapter.",
+    "ending": "Softstorm gives the player an old contact card marked T3Kit. The name becomes the first unanswered question in the journey.",
+    "cliffhanger": "A new clue points toward the next part of the journey.",
     "safeSimulationRequired": true
   },
   {
@@ -287,8 +289,9 @@ const RAW_MISSIONS = [
       }
     ],
     "successConditions": [
-      "Internet history centralization decentralization",
-      "The player reviews the evidence or feedback"
+      "All required mission objectives are completed",
+      "The player submits or reviews the relevant evidence",
+      "The mission's completion narrative is triggered"
     ],
     "failureAndRetry": {
       "onFailure": "Incorrect classifications return the player to the exhibit with a visual hint.",
@@ -300,15 +303,15 @@ const RAW_MISSIONS = [
         "Internet History"
       ],
       "portfolioArtifacts": [
-        "Misclassifications Return To The Exhibit With A Hint "
+        "Internet evolution comparison"
       ]
     },
     "storyFlags": [
-      "internet_history_centralization_decentralization"
+      "m02_complete"
     ],
     "nextMissionId": "m03",
-    "ending": "Internet history centralization decentralization",
-    "cliffhanger": "A new piece of evidence points toward the next chapter.",
+    "ending": "Joe_Sef explains that T3Kit connects people working across Web3, but he cannot explain the whole archive. Larai points the player toward wallets.",
+    "cliffhanger": "A new clue points toward the next part of the journey.",
     "safeSimulationRequired": true
   },
   {
@@ -393,8 +396,9 @@ const RAW_MISSIONS = [
       }
     ],
     "successConditions": [
-      "Wallets keys addresses approvals scam recognition",
-      "The player reviews the evidence or feedback"
+      "All required mission objectives are completed",
+      "The player submits or reviews the relevant evidence",
+      "The mission's completion narrative is triggered"
     ],
     "failureAndRetry": {
       "onFailure": "The fake request is safely reset; the player can retry without real funds.",
@@ -406,15 +410,15 @@ const RAW_MISSIONS = [
         "Wallet Safety"
       ],
       "portfolioArtifacts": [
-        "The Scam Attempt Resets Safely"
+        "Wallet safety checklist"
       ]
     },
     "storyFlags": [
-      "wallets_keys_addresses_approvals_scam_recognition"
+      "m03_complete"
     ],
     "nextMissionId": "m04",
-    "ending": "Wallets keys addresses approvals scam recognition",
-    "cliffhanger": "A new piece of evidence points toward the next chapter.",
+    "ending": "Unique confirms the player understands the basic safety rules and sends them to learn how transactions are recorded.",
+    "cliffhanger": "A new clue points toward the next part of the journey.",
     "safeSimulationRequired": true
   },
   {
@@ -499,8 +503,9 @@ const RAW_MISSIONS = [
       }
     ],
     "successConditions": [
-      "Blocks transactions nodes consensus explorers",
-      "The player reviews the evidence or feedback"
+      "All required mission objectives are completed",
+      "The player submits or reviews the relevant evidence",
+      "The mission's completion narrative is triggered"
     ],
     "failureAndRetry": {
       "onFailure": "The explorer highlights the transaction path after an incorrect trace.",
@@ -512,15 +517,16 @@ const RAW_MISSIONS = [
         "Ledger Explorer"
       ],
       "portfolioArtifacts": [
-        "Incorrect Traces Can Be Retried With Highlighted Clues "
+        "Simulated transaction trace"
       ]
     },
     "storyFlags": [
-      "blocks_transactions_nodes_consensus_explorers"
+      "m04_complete",
+      "t3kit_ledger_record"
     ],
     "nextMissionId": "m05",
-    "ending": "Blocks transactions nodes consensus explorers",
-    "cliffhanger": "A new piece of evidence points toward the next chapter.",
+    "ending": "Semi finds an old transaction referencing T3Kit. The player saves the evidence in the journey journal.",
+    "cliffhanger": "A new clue points toward the next part of the journey.",
     "safeSimulationRequired": true
   },
   {
@@ -605,8 +611,9 @@ const RAW_MISSIONS = [
       }
     ],
     "successConditions": [
-      "Dapps frontend/backend APIs user research",
-      "The player reviews the evidence or feedback"
+      "All required mission objectives are completed",
+      "The player submits or reviews the relevant evidence",
+      "The mission's completion narrative is triggered"
     ],
     "failureAndRetry": {
       "onFailure": "The team asks for user evidence again if the recommendation is feature-first.",
@@ -618,15 +625,15 @@ const RAW_MISSIONS = [
         "Product Thinking"
       ],
       "portfolioArtifacts": [
-        "Players Can Repeat User Interviews If The Diagnosis Is Weak "
+        "User interview summary"
       ]
     },
     "storyFlags": [
-      "dapps_frontend_backend_apis_user_research"
+      "m05_complete"
     ],
     "nextMissionId": "m06",
-    "ending": "Dapps frontend/backend APIs user research",
-    "cliffhanger": "A new piece of evidence points toward the next chapter.",
+    "ending": "The team realizes its main problem is not a missing feature; it has misunderstood its users. A smart-contract review is next.",
+    "cliffhanger": "A new clue points toward the next part of the journey.",
     "safeSimulationRequired": false
   },
   {
@@ -711,8 +718,9 @@ const RAW_MISSIONS = [
       }
     ],
     "successConditions": [
-      "Smart contracts conditions state testing security",
-      "The player reviews the evidence or feedback"
+      "All required mission objectives are completed",
+      "The player submits or reviews the relevant evidence",
+      "The mission's completion narrative is triggered"
     ],
     "failureAndRetry": {
       "onFailure": "Deployment remains paused until the test passes; the player can revise the fix.",
@@ -724,15 +732,15 @@ const RAW_MISSIONS = [
         "Contract Safety"
       ],
       "portfolioArtifacts": [
-        "The Launch Remains Paused"
+        "Contract test report"
       ]
     },
     "storyFlags": [
-      "smart_contracts_conditions_state_testing_security"
+      "m06_complete"
     ],
     "nextMissionId": "m07",
-    "ending": "Smart contracts conditions state testing security",
-    "cliffhanger": "A new piece of evidence points toward the next chapter.",
+    "ending": "The launch is postponed until the contract fix is tested. The player learns that responsible builders must be willing to delay a release.",
+    "cliffhanger": "A new clue points toward the next part of the journey.",
     "safeSimulationRequired": true
   },
   {
@@ -817,8 +825,9 @@ const RAW_MISSIONS = [
       }
     ],
     "successConditions": [
-      "DEXs pools AMMs slippage gas approvals",
-      "The player reviews the evidence or feedback"
+      "All required mission objectives are completed",
+      "The player submits or reviews the relevant evidence",
+      "The mission's completion narrative is triggered"
     ],
     "failureAndRetry": {
       "onFailure": "The player retries with a smaller simulated swap and a fee breakdown.",
@@ -830,15 +839,15 @@ const RAW_MISSIONS = [
         "DEX Literacy"
       ],
       "portfolioArtifacts": [
-        "Retry With A Smaller Simulated Trade And A Fee Breakdown "
+        "Swap price-impact worksheet"
       ]
     },
     "storyFlags": [
-      "dexs_pools_amms_slippage_gas_approvals"
+      "m07_complete"
     ],
     "nextMissionId": "m08",
-    "ending": "DEXs pools AMMs slippage gas approvals",
-    "cliffhanger": "A new piece of evidence points toward the next chapter.",
+    "ending": "OxNight understands why a displayed token price can differ from the final swap result. An exchange operations team offers the next lead.",
+    "cliffhanger": "A new clue points toward the next part of the journey.",
     "safeSimulationRequired": true
   },
   {
@@ -923,8 +932,9 @@ const RAW_MISSIONS = [
       }
     ],
     "successConditions": [
-      "CEXs order books custody deposits withdrawals incident communication",
-      "The player reviews the evidence or feedback"
+      "All required mission objectives are completed",
+      "The player submits or reviews the relevant evidence",
+      "The mission's completion narrative is triggered"
     ],
     "failureAndRetry": {
       "onFailure": "Unverified claims are rejected and rewritten before the player can submit.",
@@ -936,15 +946,15 @@ const RAW_MISSIONS = [
         "Exchange Literacy"
       ],
       "portfolioArtifacts": [
-        "Unverified Claims Are Flagged And Rewritten Before Submission "
+        "Verified incident update"
       ]
     },
     "storyFlags": [
-      "cexs_order_books_custody_deposits_withdrawals_incident_communication"
+      "m08_complete"
     ],
     "nextMissionId": "m09",
-    "ending": "CEXs order books custody deposits withdrawals incident communication",
-    "cliffhanger": "A new piece of evidence points toward the next chapter.",
+    "ending": "The player drafts a calm update based on verified facts. They learn that access to an exchange is not control over the exchange.",
+    "cliffhanger": "A new clue points toward the next part of the journey.",
     "safeSimulationRequired": true
   },
   {
@@ -1029,8 +1039,9 @@ const RAW_MISSIONS = [
       }
     ],
     "successConditions": [
-      "Spot trading market structure position sizing risk journaling",
-      "The player reviews the evidence or feedback"
+      "All required mission objectives are completed",
+      "The player submits or reviews the relevant evidence",
+      "The mission's completion narrative is triggered"
     ],
     "failureAndRetry": {
       "onFailure": "A revenge-trade choice opens a review; no real funds are involved.",
@@ -1042,15 +1053,15 @@ const RAW_MISSIONS = [
         "Risk Management"
       ],
       "portfolioArtifacts": [
-        "A Revenge Trade Choice Triggers A Review And Retry Not A Real Loss "
+        "Paper-trading journal"
       ]
     },
     "storyFlags": [
-      "spot_trading_market_structure_position_sizing_risk_journaling"
+      "m09_complete"
     ],
     "nextMissionId": "m10",
-    "ending": "Spot trading market structure position sizing risk journaling",
-    "cliffhanger": "A new piece of evidence points toward the next chapter.",
+    "ending": "The trade loses, but the player reviews the plan instead of chasing the loss. The paper-trading journal records the decision.",
+    "cliffhanger": "A new clue points toward the next part of the journey.",
     "safeSimulationRequired": true
   },
   {
@@ -1137,8 +1148,9 @@ const RAW_MISSIONS = [
       }
     ],
     "successConditions": [
-      "Futures long/short leverage margin liquidation funding",
-      "The player reviews the evidence or feedback"
+      "All required mission objectives are completed",
+      "The player submits or reviews the relevant evidence",
+      "The mission's completion narrative is triggered"
     ],
     "failureAndRetry": {
       "onFailure": "The player can retry with lower exposure and a clear invalidation rule.",
@@ -1150,15 +1162,15 @@ const RAW_MISSIONS = [
         "Leverage Safety"
       ],
       "portfolioArtifacts": [
-        "Retry With Lower Exposure And Clear Invalidation Rules "
+        "Leverage risk review"
       ]
     },
     "storyFlags": [
-      "futures_long_short_leverage_margin_liquidation_funding"
+      "m10_complete"
     ],
     "nextMissionId": "m11",
-    "ending": "Futures long/short leverage margin liquidation funding",
-    "cliffhanger": "A new piece of evidence points toward the next chapter.",
+    "ending": "Toza closes the simulated position before the loss grows. The player unlocks the next set of ecosystem skills.",
+    "cliffhanger": "A new clue points toward the next part of the journey.",
     "safeSimulationRequired": true
   },
   {
@@ -1242,8 +1254,9 @@ const RAW_MISSIONS = [
       }
     ],
     "successConditions": [
-      "Community strategy onboarding engagement retention feedback",
-      "The player reviews the evidence or feedback"
+      "All required mission objectives are completed",
+      "The player submits or reviews the relevant evidence",
+      "The mission's completion narrative is triggered"
     ],
     "failureAndRetry": {
       "onFailure": "The player tests another onboarding flow if newcomers still get stuck.",
@@ -1255,15 +1268,15 @@ const RAW_MISSIONS = [
         "Community Design"
       ],
       "portfolioArtifacts": [
-        "Try Another Onboarding Flow If Newcomers Still Get Stuck "
+        "Community onboarding plan"
       ]
     },
     "storyFlags": [
-      "community_strategy_onboarding_engagement_retention_feedback"
+      "m11_complete"
     ],
     "nextMissionId": "m12",
-    "ending": "Community strategy onboarding engagement retention feedback",
-    "cliffhanger": "A new piece of evidence points toward the next chapter.",
+    "ending": "The project improves onboarding and begins measuring useful participation rather than follower counts.",
+    "cliffhanger": "A new clue points toward the next part of the journey.",
     "safeSimulationRequired": false
   },
   {
@@ -1347,8 +1360,9 @@ const RAW_MISSIONS = [
       }
     ],
     "successConditions": [
-      "Moderation security conflict resolution escalation",
-      "The player reviews the evidence or feedback"
+      "All required mission objectives are completed",
+      "The player submits or reviews the relevant evidence",
+      "The mission's completion narrative is triggered"
     ],
     "failureAndRetry": {
       "onFailure": "A safety checklist helps the player retry the response.",
@@ -1360,15 +1374,15 @@ const RAW_MISSIONS = [
         "Community Safety"
       ],
       "portfolioArtifacts": [
-        "A Safety Checklist Helps The Player Retry The Response "
+        "Moderation incident response"
       ]
     },
     "storyFlags": [
-      "moderation_security_conflict_resolution_escalation"
+      "m12_complete"
     ],
     "nextMissionId": "m13",
-    "ending": "Moderation security conflict resolution escalation",
-    "cliffhanger": "A new piece of evidence points toward the next chapter.",
+    "ending": "The impersonation attempt is contained. The moderation team thanks the player for protecting members without escalating blame.",
+    "cliffhanger": "A new clue points toward the next part of the journey.",
     "safeSimulationRequired": false
   },
   {
@@ -1458,8 +1472,9 @@ const RAW_MISSIONS = [
       }
     ],
     "successConditions": [
-      "Live hosting interviewing coordination event promotion",
-      "The player reviews the evidence or feedback"
+      "All required mission objectives are completed",
+      "The player submits or reviews the relevant evidence",
+      "The mission's completion narrative is triggered"
     ],
     "failureAndRetry": {
       "onFailure": "The player can revise weak questions and host the simulation again.",
@@ -1471,15 +1486,15 @@ const RAW_MISSIONS = [
         "Live Hosting"
       ],
       "portfolioArtifacts": [
-        "The Player Can Revise Weak Questions And Host Again "
+        "Live event recap"
       ]
     },
     "storyFlags": [
-      "live_hosting_interviewing_coordination_event_promotion"
+      "m13_complete"
     ],
     "nextMissionId": "m14",
-    "ending": "Live hosting interviewing coordination event promotion",
-    "cliffhanger": "A new piece of evidence points toward the next chapter.",
+    "ending": "The live discussion succeeds because the player creates a useful conversation. An old poster carries the T3Kit mark.",
+    "cliffhanger": "A new clue points toward the next part of the journey.",
     "safeSimulationRequired": false
   },
   {
@@ -1563,8 +1578,9 @@ const RAW_MISSIONS = [
       }
     ],
     "successConditions": [
-      "Content writing technical communication research positioning",
-      "The player reviews the evidence or feedback"
+      "All required mission objectives are completed",
+      "The player submits or reviews the relevant evidence",
+      "The mission's completion narrative is triggered"
     ],
     "failureAndRetry": {
       "onFailure": "Unverified claims must be removed or clearly qualified.",
@@ -1576,15 +1592,15 @@ const RAW_MISSIONS = [
         "Technical Communication"
       ],
       "portfolioArtifacts": [
-        "Claims That Cannot Be Verified Must Be Removed Or Qualified "
+        "Educational product post"
       ]
     },
     "storyFlags": [
-      "content_writing_technical_communication_research_positioning"
+      "m14_complete"
     ],
     "nextMissionId": "m15",
-    "ending": "Content writing technical communication research positioning",
-    "cliffhanger": "A new piece of evidence points toward the next chapter.",
+    "ending": "The product becomes easier to understand because its claims are clear, specific and verified.",
+    "cliffhanger": "A new clue points toward the next part of the journey.",
     "safeSimulationRequired": false
   },
   {
@@ -1668,8 +1684,9 @@ const RAW_MISSIONS = [
       }
     ],
     "successConditions": [
-      "Personal branding positioning portfolio networking building in public",
-      "The player reviews the evidence or feedback"
+      "All required mission objectives are completed",
+      "The player submits or reviews the relevant evidence",
+      "The mission's completion narrative is triggered"
     ],
     "failureAndRetry": {
       "onFailure": "The reviewer highlights unsupported claims for revision.",
@@ -1681,15 +1698,15 @@ const RAW_MISSIONS = [
         "Portfolio Building"
       ],
       "portfolioArtifacts": [
-        "The Reviewer Highlights Unsupported Claims For Revision "
+        "Professional portfolio"
       ]
     },
     "storyFlags": [
-      "personal_branding_positioning_portfolio_networking_building_in_public"
+      "m15_complete"
     ],
     "nextMissionId": "m16",
-    "ending": "Personal branding positioning portfolio networking building in public",
-    "cliffhanger": "A new piece of evidence points toward the next chapter.",
+    "ending": "Love reviews the portfolio and identifies a credible next step. The player can show evidence of skills without pretending to be an expert.",
+    "cliffhanger": "A new clue points toward the next part of the journey.",
     "safeSimulationRequired": false
   },
   {
@@ -1773,8 +1790,9 @@ const RAW_MISSIONS = [
       }
     ],
     "successConditions": [
-      "Applications recruitment communication interviews job-scam awareness",
-      "The player reviews the evidence or feedback"
+      "All required mission objectives are completed",
+      "The player submits or reviews the relevant evidence",
+      "The mission's completion narrative is triggered"
     ],
     "failureAndRetry": {
       "onFailure": "Feedback identifies what to improve before the application is resubmitted.",
@@ -1786,15 +1804,15 @@ const RAW_MISSIONS = [
         "First Contribution"
       ],
       "portfolioArtifacts": [
-        "Feedback Identifies What To Improve Before Resubmission "
+        "Practical work sample"
       ]
     },
     "storyFlags": [
-      "applications_recruitment_communication_interviews_job_scam_awareness"
+      "m16_complete"
     ],
     "nextMissionId": "m17",
-    "ending": "Applications recruitment communication interviews job-scam awareness",
-    "cliffhanger": "A new piece of evidence points toward the next chapter.",
+    "ending": "The player earns a chance to contribute to a real-looking simulated task. Feedback becomes a plan for further growth.",
+    "cliffhanger": "A new clue points toward the next part of the journey.",
     "safeSimulationRequired": false
   },
   {
@@ -1878,8 +1896,9 @@ const RAW_MISSIONS = [
       }
     ],
     "successConditions": [
-      "Product management UX prioritization usability product-market fit",
-      "The player reviews the evidence or feedback"
+      "All required mission objectives are completed",
+      "The player submits or reviews the relevant evidence",
+      "The mission's completion narrative is triggered"
     ],
     "failureAndRetry": {
       "onFailure": "A second user test checks whether the chosen fix worked.",
@@ -1891,15 +1910,15 @@ const RAW_MISSIONS = [
         "Product Management"
       ],
       "portfolioArtifacts": [
-        "A Second Test Round Reveals Whether The Fix Worked "
+        "User journey improvement"
       ]
     },
     "storyFlags": [
-      "product_management_ux_prioritization_usability_product_market_fit"
+      "m17_complete"
     ],
     "nextMissionId": "m18",
-    "ending": "Product management UX prioritization usability product-market fit",
-    "cliffhanger": "A new piece of evidence points toward the next chapter.",
+    "ending": "The team removes unnecessary complexity and improves the user journey.",
+    "cliffhanger": "A new clue points toward the next part of the journey.",
     "safeSimulationRequired": false
   },
   {
@@ -1989,8 +2008,9 @@ const RAW_MISSIONS = [
       }
     ],
     "successConditions": [
-      "Growth funnels partnerships acquisition retention analytics",
-      "The player reviews the evidence or feedback"
+      "All required mission objectives are completed",
+      "The player submits or reviews the relevant evidence",
+      "The mission's completion narrative is triggered"
     ],
     "failureAndRetry": {
       "onFailure": "If the metrics are vanity-only, the player revises the experiment.",
@@ -2002,15 +2022,15 @@ const RAW_MISSIONS = [
         "Growth Strategy"
       ],
       "portfolioArtifacts": [
-        "If Metrics Are Vanity Only Revise The Experiment "
+        "Growth experiment brief"
       ]
     },
     "storyFlags": [
-      "growth_funnels_partnerships_acquisition_retention_analytics"
+      "m18_complete"
     ],
     "nextMissionId": "m19",
-    "ending": "Growth funnels partnerships acquisition retention analytics",
-    "cliffhanger": "A new piece of evidence points toward the next chapter.",
+    "ending": "The startup runs a measurable growth experiment and rejects an offer that cannot prove its user claims.",
+    "cliffhanger": "A new clue points toward the next part of the journey.",
     "safeSimulationRequired": false
   },
   {
@@ -2094,8 +2114,9 @@ const RAW_MISSIONS = [
       }
     ],
     "successConditions": [
-      "Startup finance grants venture capital tokenomics fundraising",
-      "The player reviews the evidence or feedback"
+      "All required mission objectives are completed",
+      "The player submits or reviews the relevant evidence",
+      "The mission's completion narrative is triggered"
     ],
     "failureAndRetry": {
       "onFailure": "A comparison worksheet exposes missing assumptions.",
@@ -2107,15 +2128,15 @@ const RAW_MISSIONS = [
         "Funding Analysis"
       ],
       "portfolioArtifacts": [
-        "A Comparison Worksheet Exposes Missing Assumptions "
+        "Funding comparison memo"
       ]
     },
     "storyFlags": [
-      "startup_finance_grants_venture_capital_tokenomics_fundraising"
+      "m19_complete"
     ],
     "nextMissionId": "m20",
-    "ending": "Startup finance grants venture capital tokenomics fundraising",
-    "cliffhanger": "A new piece of evidence points toward the next chapter.",
+    "ending": "The founders choose a funding route that fits their runway and obligations. They learn that money alone cannot validate a product.",
+    "cliffhanger": "A new clue points toward the next part of the journey.",
     "safeSimulationRequired": true
   },
   {
@@ -2200,8 +2221,9 @@ const RAW_MISSIONS = [
       }
     ],
     "successConditions": [
-      "RWA tokenization custody verification redemption legal and operational risk",
-      "The player reviews the evidence or feedback"
+      "All required mission objectives are completed",
+      "The player submits or reviews the relevant evidence",
+      "The mission's completion narrative is triggered"
     ],
     "failureAndRetry": {
       "onFailure": "Missing evidence stays an explicit blocker; the game never invents legal proof.",
@@ -2213,15 +2235,15 @@ const RAW_MISSIONS = [
         "Due Diligence"
       ],
       "portfolioArtifacts": [
-        "Missing Evidence Remains An Explicit Blocker Never Guessed "
+        "RWA due-diligence report"
       ]
     },
     "storyFlags": [
-      "rwa_tokenization_custody_verification_redemption_legal_and_operational_risk"
+      "m20_complete"
     ],
     "nextMissionId": "m21",
-    "ending": "RWA tokenization custody verification redemption legal and operational risk",
-    "cliffhanger": "A new piece of evidence points toward the next chapter.",
+    "ending": "The team pauses the tokenization announcement until ownership, custody and redemption claims have evidence.",
+    "cliffhanger": "A new clue points toward the next part of the journey.",
     "safeSimulationRequired": true
   },
   {
@@ -2305,8 +2327,9 @@ const RAW_MISSIONS = [
       }
     ],
     "successConditions": [
-      "AI in Web3 automation on-chain analysis verification human oversight",
-      "The player reviews the evidence or feedback"
+      "All required mission objectives are completed",
+      "The player submits or reviews the relevant evidence",
+      "The mission's completion narrative is triggered"
     ],
     "failureAndRetry": {
       "onFailure": "A source-check checklist helps the player correct the AI report.",
@@ -2318,15 +2341,15 @@ const RAW_MISSIONS = [
         "AI Verification"
       ],
       "portfolioArtifacts": [
-        "The Player Retries With A Source Check Checklist "
+        "Verified AI analysis"
       ]
     },
     "storyFlags": [
-      "ai_in_web3_automation_on_chain_analysis_verification_human_oversight"
+      "m21_complete"
     ],
     "nextMissionId": "m22",
-    "ending": "AI in Web3 automation on-chain analysis verification human oversight",
-    "cliffhanger": "A new piece of evidence points toward the next chapter.",
+    "ending": "The AI tool improves, but the team keeps human verification for consequential decisions.",
+    "cliffhanger": "A new clue points toward the next part of the journey.",
     "safeSimulationRequired": false
   },
   {
@@ -2410,8 +2433,9 @@ const RAW_MISSIONS = [
       }
     ],
     "successConditions": [
-      "L1/L2 interoperability bridges cross-chain transfers fees security",
-      "The player reviews the evidence or feedback"
+      "All required mission objectives are completed",
+      "The player submits or reviews the relevant evidence",
+      "The mission's completion narrative is triggered"
     ],
     "failureAndRetry": {
       "onFailure": "A suspicious bridge interface is safely rejected.",
@@ -2423,15 +2447,15 @@ const RAW_MISSIONS = [
         "Interoperability"
       ],
       "portfolioArtifacts": [
-        "A Suspicious Interface Is Safely Rejected "
+        "Cross-chain risk checklist"
       ]
     },
     "storyFlags": [
-      "l1_l2_interoperability_bridges_cross_chain_transfers_fees_security"
+      "m22_complete"
     ],
     "nextMissionId": "m23",
-    "ending": "L1/L2 interoperability bridges cross-chain transfers fees security",
-    "cliffhanger": "A new piece of evidence points toward the next chapter.",
+    "ending": "The player discovers that cross-chain connections create both new capabilities and extra dependencies. T3Kit's archive spans multiple disciplines.",
+    "cliffhanger": "A new clue points toward the next part of the journey.",
     "safeSimulationRequired": true
   },
   {
@@ -2515,8 +2539,9 @@ const RAW_MISSIONS = [
       }
     ],
     "successConditions": [
-      "DAOs governance voting proposals treasury management",
-      "The player reviews the evidence or feedback"
+      "All required mission objectives are completed",
+      "The player submits or reviews the relevant evidence",
+      "The mission's completion narrative is triggered"
     ],
     "failureAndRetry": {
       "onFailure": "A proposal comparison guide supports a second attempt.",
@@ -2528,15 +2553,15 @@ const RAW_MISSIONS = [
         "Governance"
       ],
       "portfolioArtifacts": [
-        "A Proposal Comparison Guide Supports A Second Attempt "
+        "Governance decision record"
       ]
     },
     "storyFlags": [
-      "daos_governance_voting_proposals_treasury_management"
+      "m23_complete"
     ],
     "nextMissionId": "m24",
-    "ending": "DAOs governance voting proposals treasury management",
-    "cliffhanger": "A new piece of evidence points toward the next chapter.",
+    "ending": "DAO members confront the gap between collecting funds and remaining accountable to the people who fund them.",
+    "cliffhanger": "A new clue points toward the next part of the journey.",
     "safeSimulationRequired": true
   },
   {
@@ -2620,8 +2645,9 @@ const RAW_MISSIONS = [
       }
     ],
     "successConditions": [
-      "Threat modeling testing audits disclosure incident response",
-      "The player reviews the evidence or feedback"
+      "All required mission objectives are completed",
+      "The player submits or reviews the relevant evidence",
+      "The mission's completion narrative is triggered"
     ],
     "failureAndRetry": {
       "onFailure": "The launch remains blocked until the remediation test passes.",
@@ -2633,15 +2659,15 @@ const RAW_MISSIONS = [
         "Security Review"
       ],
       "portfolioArtifacts": [
-        "The Launch Stays Blocked Until The Test Passes "
+        "Security remediation report"
       ]
     },
     "storyFlags": [
-      "threat_modeling_testing_audits_disclosure_incident_response"
+      "m24_complete"
     ],
     "nextMissionId": "m25",
-    "ending": "Threat modeling testing audits disclosure incident response",
-    "cliffhanger": "A new piece of evidence points toward the next chapter.",
+    "ending": "The launch is delayed until the vulnerability is fixed and verified. The finding matches a pattern in the T3Kit archive.",
+    "cliffhanger": "A new clue points toward the next part of the journey.",
     "safeSimulationRequired": false
   },
   {
@@ -2726,8 +2752,9 @@ const RAW_MISSIONS = [
       }
     ],
     "successConditions": [
-      "NFTs copyright licensing creator economy gated access publishing",
-      "The player reviews the evidence or feedback"
+      "All required mission objectives are completed",
+      "The player submits or reviews the relevant evidence",
+      "The mission's completion narrative is triggered"
     ],
     "failureAndRetry": {
       "onFailure": "Ambiguous ownership language must be clarified before publishing.",
@@ -2739,15 +2766,15 @@ const RAW_MISSIONS = [
         "Creator Rights"
       ],
       "portfolioArtifacts": [
-        "Ambiguous Ownership Language Must Be Clarified "
+        "Creator licensing explainer"
       ]
     },
     "storyFlags": [
-      "nfts_copyright_licensing_creator_economy_gated_access_publishing"
+      "m25_complete"
     ],
     "nextMissionId": "m26",
-    "ending": "NFTs copyright licensing creator economy gated access publishing",
-    "cliffhanger": "A new piece of evidence points toward the next chapter.",
+    "ending": "The creators clarify what buyers receive and which rights remain with the original creators.",
+    "cliffhanger": "A new clue points toward the next part of the journey.",
     "safeSimulationRequired": false
   },
   {
@@ -2832,8 +2859,9 @@ const RAW_MISSIONS = [
       }
     ],
     "successConditions": [
-      "Git issues pull requests documentation open-source collaboration",
-      "The player reviews the evidence or feedback"
+      "All required mission objectives are completed",
+      "The player submits or reviews the relevant evidence",
+      "The mission's completion narrative is triggered"
     ],
     "failureAndRetry": {
       "onFailure": "A contribution checklist helps the player revise the proposed change.",
@@ -2845,15 +2873,16 @@ const RAW_MISSIONS = [
         "Open Source"
       ],
       "portfolioArtifacts": [
-        "A Contribution Checklist Helps The Player Revise "
+        "Open-source contribution proposal"
       ]
     },
     "storyFlags": [
-      "git_issues_pull_requests_documentation_open_source_collaboration"
+      "m26_complete",
+      "t3kit_archive_fragment"
     ],
     "nextMissionId": "m27",
-    "ending": "Git issues pull requests documentation open-source collaboration",
-    "cliffhanger": "A new piece of evidence points toward the next chapter.",
+    "ending": "Softstorm and IamAbdul reveal that T3Kit was designed as an ecosystem of people, skills and products, not a single app.",
+    "cliffhanger": "The player now has enough context to connect the archive's missing pieces.",
     "safeSimulationRequired": false
   },
   {
@@ -2937,8 +2966,9 @@ const RAW_MISSIONS = [
       }
     ],
     "successConditions": [
-      "Research synthesis evidence evaluation ecosystem coordination",
-      "The player reviews the evidence or feedback"
+      "All required mission objectives are completed",
+      "The player submits or reviews the relevant evidence",
+      "The mission's completion narrative is triggered"
     ],
     "failureAndRetry": {
       "onFailure": "Contradictions must be supported by evidence or left unresolved.",
@@ -2950,15 +2980,16 @@ const RAW_MISSIONS = [
         "Evidence Synthesis"
       ],
       "portfolioArtifacts": [
-        "Contradictions Must Be Supported By Evidence Or Left Unresolved "
+        "T3Kit archive reconstruction"
       ]
     },
     "storyFlags": [
-      "research_synthesis_evidence_evaluation_ecosystem_coordination"
+      "m27_complete",
+      "kitcity_destination_unlocked"
     ],
     "nextMissionId": "m28",
-    "ending": "Research synthesis evidence evaluation ecosystem coordination",
-    "cliffhanger": "A new piece of evidence points toward the next chapter.",
+    "ending": "The player connects evidence from earlier missions and reconstructs the archive. The final destination is unlocked: KitCity.",
+    "cliffhanger": "The archive reveals the road to KitCity.",
     "safeSimulationRequired": false
   },
   {
@@ -3042,8 +3073,9 @@ const RAW_MISSIONS = [
       }
     ],
     "successConditions": [
-      "Systems thinking teamwork practical judgment",
-      "The player reviews the evidence or feedback"
+      "All required mission objectives are completed",
+      "The player submits or reviews the relevant evidence",
+      "The mission's completion narrative is triggered"
     ],
     "failureAndRetry": {
       "onFailure": "The assessment gives targeted feedback and can be retried.",
@@ -3055,15 +3087,15 @@ const RAW_MISSIONS = [
         "Systems Thinking"
       ],
       "portfolioArtifacts": [
-        "The Assessment Points To Gaps And Can Be Retried "
+        "Integrated team solution"
       ]
     },
     "storyFlags": [
-      "systems_thinking_teamwork_practical_judgment"
+      "m28_complete"
     ],
     "nextMissionId": "m29",
-    "ending": "Systems thinking teamwork practical judgment",
-    "cliffhanger": "A new piece of evidence points toward the next chapter.",
+    "ending": "The player combines product, technology, user needs and communication into one practical solution. A map to KitCity is handed over.",
+    "cliffhanger": "A new clue points toward the next part of the journey.",
     "safeSimulationRequired": false
   },
   {
@@ -3142,8 +3174,9 @@ const RAW_MISSIONS = [
       }
     ],
     "successConditions": [
-      "Career exploration ecosystem literacy",
-      "The player reviews the evidence or feedback"
+      "All required mission objectives are completed",
+      "The player submits or reviews the relevant evidence",
+      "The mission's completion narrative is triggered"
     ],
     "failureAndRetry": {
       "onFailure": "The player can explore KitCity and return to the assessment later.",
@@ -3155,15 +3188,15 @@ const RAW_MISSIONS = [
         "KitCity Explorer"
       ],
       "portfolioArtifacts": [
-        "The Player May Explore And Return To The Assessment Later "
+        "KitCity specialization plan"
       ]
     },
     "storyFlags": [
-      "career_exploration_ecosystem_literacy"
+      "m29_complete"
     ],
     "nextMissionId": "m30",
-    "ending": "Career exploration ecosystem literacy",
-    "cliffhanger": "The gates open; the practical assessment awaits.",
+    "ending": "Softstorm welcomes the player to KitCity and challenges them to choose a professional path and demonstrate practical ability.",
+    "cliffhanger": "A new clue points toward the next part of the journey.",
     "safeSimulationRequired": false
   },
   {
@@ -3342,8 +3375,9 @@ const RAW_MISSIONS = [
       }
     ],
     "successConditions": [
-      "Practical execution problem-solving security communication collaboration",
-      "The player reviews the evidence or feedback"
+      "All required mission objectives are completed",
+      "The player submits or reviews the relevant evidence",
+      "The mission's completion narrative is triggered"
     ],
     "failureAndRetry": {
       "onFailure": "Every specialization includes feedback and a retry route.",
@@ -3355,15 +3389,15 @@ const RAW_MISSIONS = [
         "Practitioner Assessment"
       ],
       "portfolioArtifacts": [
-        "Every Path Includes Feedback And A Retry Route "
+        "Practical assessment evidence"
       ]
     },
     "storyFlags": [
-      "practical_execution_problem_solving_security_communication_collaboration"
+      "m30_complete"
     ],
     "nextMissionId": "m31",
-    "ending": "Practical execution problem-solving security communication collaboration",
-    "cliffhanger": "A new piece of evidence points toward the next chapter.",
+    "ending": "The player passes a specialization-based practical assessment, or receives actionable feedback and retries. The practitioner profile records demonstrated work, not external accreditation.",
+    "cliffhanger": "A new clue points toward the next part of the journey.",
     "safeSimulationRequired": false
   },
   {
@@ -3450,8 +3484,9 @@ const RAW_MISSIONS = [
       }
     ],
     "successConditions": [
-      "Reflection synthesis career planning",
-      "The player reviews the evidence or feedback"
+      "All required mission objectives are completed",
+      "The player submits or reviews the relevant evidence",
+      "The mission's completion narrative is triggered"
     ],
     "failureAndRetry": {
       "onFailure": "The player can revisit the reveal and journal at any time.",
@@ -3463,14 +3498,15 @@ const RAW_MISSIONS = [
         "Ecosystem Practitioner"
       ],
       "portfolioArtifacts": [
-        "The Player Can Revisit The Reveal And Journal At Any Time "
+        "Practitioner journey record"
       ]
     },
     "storyFlags": [
-      "reflection_synthesis_career_planning"
+      "m31_complete",
+      "main_story_complete"
     ],
     "nextMissionId": null,
-    "ending": "Reflection synthesis career planning",
+    "ending": "The T3Kit mystery is resolved: the journey connected people and skills across the ecosystem. The city stays open for new adventures.",
     "cliffhanger": "A new message appears: “We've got something new to build.”",
     "safeSimulationRequired": false
   }
