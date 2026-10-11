@@ -4,6 +4,7 @@ import { CHARACTER_ORDER, FIRST_ENCOUNTER_ORDER, MISSIONS, validateChronicles } 
 const engine = await readFile(new URL("../kitcity-engine.js", import.meta.url), "utf8");
 const sceneDirector = await readFile(new URL("../story-scene-director.js", import.meta.url), "utf8");
 const styles = await readFile(new URL("../../app/globals.css", import.meta.url), "utf8");
+const pageMarkup = await readFile(new URL("../../app/page.tsx", import.meta.url), "utf8");
 const errors = [...validateChronicles().errors];
 const requireText = (text, label) => {
   if (!engine.includes(text)) errors.push("Runtime integration missing: " + label);
@@ -106,14 +107,38 @@ const runtimeNames = new Set(MISSIONS.flatMap((mission) => mission.npcs));
 for (const name of CHARACTER_ORDER) {
   if (!runtimeNames.has(name)) errors.push("Supplied NPC is missing from all mission casts: " + name);
 }
-if (!engine.includes('class="card mission-card')) errors.push("Canonical responsive mission-card renderer is missing.");
-if (engine.includes("else if(hubTab==='cityhub')")) errors.push("Duplicate legacy cityhub mission-card renderer remains.");
+// Keep one canonical source for the mission cards shown beneath each selected state.
+const missionCardRenderers = [...engine.matchAll(/function missionCard\\(m\\)\\{/g)].length;
+const missionCardMounts = [...engine.matchAll(/cityMissions\\(hubCity\\)\\.map\\(m=>missionCard\\(m\\)\\)\\.join\\(''\\)/g)].length;
+const missionCardTemplates = [...engine.matchAll(/data-mission-id=/g)].length;
+if (missionCardRenderers !== 1) errors.push("Expected exactly one canonical mission-card renderer; found " + missionCardRenderers + ".");
+if (missionCardMounts !== 1) errors.push("Expected exactly one state mission-card mount point; found " + missionCardMounts + ".");
+if (missionCardTemplates !== 1) errors.push("Duplicate or legacy mission-card HTML templates remain; expected one canonical template.");
+if (!engine.includes("personalize('Mission '+m.n+': '+m.title,null)") || !engine.includes("personalize(m.goal,null)")) {
+  errors.push("Current mission cards must use canonical registry titles and goals, not stale hard-coded copy.");
+}
+if (pageMarkup.includes("data-mission-id=") || pageMarkup.includes('class="card mission-card')) {
+  errors.push("Static mission cards remain in page markup outside the canonical runtime renderer.");
+}
+if (engine.includes("else if(hubTab==='cityhub')") || engine.includes("else if(hubTab==='kitlab')")) {
+  errors.push("Duplicate legacy cityhub/kitlab mission-card renderer remains.");
+}
 if (styles.includes(".comic-scene{") || styles.includes("#sheet.chronicle-briefing{")) {
   errors.push("Retired comic/briefing UI styles remain beside the current mission implementation.");
 }
-if (!styles.includes("#hubBody .mission-card .ch small") || !styles.includes("overflow-wrap:anywhere")) {
-  errors.push("Mission card text is missing responsive wrapping rules.");
+for (const responsiveRule of [
+  "#hubBody .mission-card .ch b",
+  "#hubBody .mission-card .ch small",
+  "#hubBody .mission-card .web3-focus",
+  "#hubBody .mission-card .cf",
+  "overflow-wrap:anywhere",
+  "flex-wrap:wrap"
+]) {
+  if (!styles.includes(responsiveRule)) errors.push("Mission-card responsive rule is missing: " + responsiveRule);
 }
+const missionIds = MISSIONS.map((mission) => mission.id);
+if (new Set(missionIds).size !== missionIds.length) errors.push("Duplicate mission IDs would create repeated cards or overwrite progress.");
+if (MISSIONS.length !== 31) errors.push("Expected the complete 31-mission canonical story registry.");
 if (errors.length) {
   console.error("CHRONICLES RUNTIME VALIDATION FAILED");
   errors.forEach((error) => console.error(" - " + error));
