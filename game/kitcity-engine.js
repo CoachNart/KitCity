@@ -2029,6 +2029,25 @@ function buildStall(def,spot){
     }
   }
 }
+function placeStoryClue(def,spot){
+  const g=new THREE.Group(); g.position.set(spot.x,0,spot.z);
+  const wood=lam('#45352A'),paper=lam('#F4F5F0'),cyan=lam(BRAND),dark=lam('#17212A');
+  for(const x of [-1.35,1.35]){
+    const post=new THREE.Mesh(new THREE.BoxGeometry(.13,3.9,.13),wood); post.position.set(x,1.95,0); g.add(post);
+  }
+  const board=new THREE.Mesh(new THREE.BoxGeometry(3.15,3.55,.16),wood); board.position.set(0,3.45,0); g.add(board);
+  const sheet=new THREE.Mesh(new THREE.BoxGeometry(2.72,3.1,.08),paper); sheet.position.set(0,3.48,.13); g.add(sheet);
+  const mark=new THREE.Mesh(new THREE.BoxGeometry(.68,.68,.08),cyan); mark.position.set(-.76,4.45,.2); g.add(mark);
+  const barA=new THREE.Mesh(new THREE.BoxGeometry(1.35,.1,.06),dark); barA.position.set(.42,4.55,.2); g.add(barA);
+  const barB=new THREE.Mesh(new THREE.BoxGeometry(1.75,.08,.06),dark); barB.position.set(.18,4.25,.2); g.add(barB);
+  for(let row=0;row<4;row++){
+    const line=new THREE.Mesh(new THREE.BoxGeometry(2.1-row*.18,.055,.05),dark);
+    line.position.set(0,3.72-row*.27,.2); g.add(line);
+  }
+  missionGroup.add(g);
+  const sign=label(tr(def.sign||def.title),BRAND,'#071827',1.25); sign.position.set(spot.x,6.6,spot.z); missionGroup.add(sign);
+  return {x:spot.x,z:spot.z,r:6.5,clue:true};
+}
 function placeNPC(def,spot){
   if(def.stall) buildStall(def,spot);
   else {
@@ -2331,8 +2350,24 @@ const MISSIONS=[
     ]);
   }},
   {label:'Ask IamAbdul what he heard',spot:'story',npc:SUYA,run(){
-    talk(SUYA,'<p>That symbol? I saw it on an old meetup poster. Same mark, different place.</p><p>Softstorm thinks it’s connected to people learning, building, and finding opportunities. But neither of us knows how the pieces fit.</p>',[
-      {t:'Where was the poster?',f:()=>talk(SUYA,'<p>Near the noticeboard down the street. Check it when you get a chance. If you find another clue, bring it back here.</p><p class="note">You’ve got your first lead. The mystery is bigger than one shop.</p>',[{t:'Keep the clue',f:finishStep}])}
+    talk(SUYA,'<p>That symbol? I saw it on an old meetup poster. Same mark, different place.</p><p>Softstorm thinks it connects people learning, building, and finding opportunities. Neither of us knows how the pieces fit.</p>',[
+      {t:'Where was the poster?',f:()=>talk(SUYA,'<p>Near the noticeboard down the street. Check the poster, then look for the same mark elsewhere. Bring what you find back to Softstorm.</p><p class="note">You have a lead. Now prove the clues connect.</p>',[{t:'Start investigating',f:finishStep}])}
+    ]);
+  }},
+  {kind:'clue',label:'Inspect the old meetup poster',spot:'b',title:'Old meetup poster',sign:'OLD MEETUP POSTER',run(){
+    openSheet('<div class="who"><span class="av" style="background:'+BRAND+';color:'+INK+'">01</span><div><b>Old Meetup Poster</b><small>Evidence · Community event</small></div></div><p>The paper is sun-faded, but the cyan mark is clear. The event brought together builders, researchers, and community organisers — not just traders.</p><div class="kv"><span>Clue found</span><b>T3Kit symbol</b></div><p class="note">Someone connected to this name was bringing different Web3 roles into the same room.</p>',[{t:'Save clue · 01',f:()=>{if(G)G.evidence.poster=true;closeSheet();finishStep();}}]);
+  }},
+  {kind:'clue',label:'Check the laptop sticker',spot:'c',title:'Laptop sticker',sign:'CHECK THE STICKER',run(){
+    openSheet('<div class="who"><span class="av" style="background:'+BRAND+';color:'+INK+'">02</span><div><b>Laptop Sticker</b><small>Evidence · Builder workspace</small></div></div><p>A laptop near the repair desk carries the same cyan mark. Beside it, a handwritten note reads: <b>Learn. Build. Participate. Earn. Contribute.</b></p><div class="kv"><span>Clue found</span><b>Five-part message</b></div><p class="note">This looks less like one product and more like a connected ecosystem.</p>',[{t:'Save clue · 02',f:()=>{if(G)G.evidence.sticker=true;closeSheet();finishStep();}}]);
+  }},
+  {kind:'clue',label:'Read the community noticeboard',spot:'e',title:'Community noticeboard',sign:'READ THE NOTICEBOARD',run(){
+    openSheet('<div class="who"><span class="av" style="background:'+BRAND+';color:'+INK+'">03</span><div><b>Community Noticeboard</b><small>Evidence · Local opportunity</small></div></div><p>Three notices share the same mark: a beginner workshop, an open-source contribution call, and a product testing session. Different activities. One recurring symbol.</p><div class="kv"><span>Clue found</span><b>Three paths · One mark</b></div><p class="note">The pattern is getting harder to ignore. Take your evidence back to Softstorm.</p>',[{t:'Save clue · 03',f:()=>{if(G)G.evidence.noticeboard=true;closeSheet();finishStep();}}]);
+  }},
+  {label:'Return to Softstorm with your findings',spot:'a',npc:MAMA,run(){
+    const count=G&&G.evidence?['poster','sticker','noticeboard'].filter(k=>G.evidence[k]).length:0;
+    talk(MAMA,'<p>You found '+count+' clues. Same symbol, different places — a community event, a builder’s workspace, and opportunities for people with different skills.</p><p><b>What do you think that tells us?</b></p>',[
+      {t:'T3Kit may connect different people and paths',f:()=>talk(MAMA,'<p>That’s the strongest lead so far. Don’t assume it is only a token or one app. Follow what people are building, who it helps, and how the pieces connect.</p><p>Keep the card. You’ll need it.</p>',[{t:'Keep the T3Kit card',f:finishStep}])},
+      {t:'It is probably just a logo',f:()=>talk(MAMA,'<p>Maybe — but three unrelated places carrying the same mark is worth investigating. Keep looking at what sits behind it, not just the logo.</p>',[{t:'Keep investigating',f:finishStep}])}
     ]);
   }}
  ],
@@ -3933,7 +3968,7 @@ function bannerSprite(text,sub){
 function loadStep(){
   clearGroup(missionGroup); colliders.length=cityCols; smoke=[]; ents=[]; goal=null;
   const m=G.m,st=m.steps[G.i];
-  const e=placeNPC(st.npc,SPOTS[st.spot]); e.talk=()=>st.run(); e.active=()=>true; ents.push(e); goal=e;
+  const e=st.kind==='clue'?placeStoryClue(st,SPOTS[st.spot]):placeNPC(st.npc,SPOTS[st.spot]); e.talk=()=>st.run(); e.active=()=>true; ents.push(e); goal=e;
   for(const ex of (m.extras||[])){
     if(G.used[ex.id]) continue;
     const e2=placeNPC(ex.npc,ex.spot); e2.ex=ex; e2.talk=()=>ex.run(e2); e2.active=()=>!G.used[ex.id]; ents.push(e2);
@@ -3946,7 +3981,7 @@ function startMission(id){
   $('#loadTxt').textContent=L('Loading '+CITIES[m.city].name+'\u2026','We dey load '+CITIES[m.city].name+'\u2026'); $('#loading').classList.remove('hidden');
   setTimeout(()=>{
     if(curCity!==m.city) buildCity(m.city); else setupBarks(CITIES[curCity]);
-    G={m,i:0,correct:0,wrong:0,used:{},words:null,addr:null,slip:null,nameAliases:buildMissionNameAliases(m)};
+    G={m,i:0,correct:0,wrong:0,used:{},evidence:{},words:null,addr:null,slip:null,nameAliases:buildMissionNameAliases(m)};
     $('#hub').classList.add('hidden'); $('#hub').setAttribute('aria-hidden','true'); $('#title').classList.add('hidden'); $('#hud').classList.remove('hidden');
     S.phase='play'; closeSheet(); Snd.setMode('play'); lastLoc=''; resetPlayer(); loadStep();
     $('#loading').classList.add('hidden');
