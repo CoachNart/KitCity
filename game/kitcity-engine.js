@@ -46,13 +46,17 @@ const Store=(function(){
   };
 })();
 const KEY='kitnaija_v1';
-const DEFAULT_PLAYER={wallet:null,usdc:0,ngn:0,done:{},dodged:0,fell:0,low:false,music:true,sfx:true,lang:'en',pl:'',name:'',scores:{},web3:null};
+const DEFAULT_PLAYER={wallet:null,usdc:0,ngn:0,done:{},dodged:0,fell:0,low:false,music:true,sfx:true,lang:'en',pl:'',name:'',scores:{},web3:null,storyFlags:{},storyJournal:[],storyArtifacts:[],storySkills:[],storyXP:0,specialization:'',appearance:''};
 let activeUid=Store.get('kitcity_active_uid',null);
 let storageKey=activeUid?KEY+'_user_'+activeUid:KEY;
 const P=Object.assign({},DEFAULT_PLAYER,Store.get(storageKey,{}));
 if(!P.done||typeof P.done!=='object') P.done={};
+if(!P.storyFlags||typeof P.storyFlags!=='object') P.storyFlags={};
+if(!Array.isArray(P.storyJournal)) P.storyJournal=[];
+if(!Array.isArray(P.storyArtifacts)) P.storyArtifacts=[];
+if(!Array.isArray(P.storySkills)) P.storySkills=[];
 let cloudSyncReady=false;
-function progressSnapshot(){ return {wallet:P.wallet,usdc:P.usdc,ngn:P.ngn,done:P.done,dodged:P.dodged,fell:P.fell,low:P.low,music:P.music,sfx:P.sfx,lang:P.lang,pl:P.pl,name:P.name,scores:P.scores,web3:P.web3}; }
+function progressSnapshot(){ return {wallet:P.wallet,usdc:P.usdc,ngn:P.ngn,done:P.done,dodged:P.dodged,fell:P.fell,low:P.low,music:P.music,sfx:P.sfx,lang:P.lang,pl:P.pl,name:P.name,scores:P.scores,web3:P.web3,storyFlags:P.storyFlags,storyJournal:P.storyJournal,storyArtifacts:P.storyArtifacts,storySkills:P.storySkills,storyXP:P.storyXP,specialization:P.specialization,appearance:P.appearance}; }
 function save(){
   const snapshot=progressSnapshot();
   Store.set(storageKey,snapshot);
@@ -63,6 +67,10 @@ function replacePlayerState(data){
   Object.keys(P).forEach(k=>delete P[k]);
   Object.assign(P,DEFAULT_PLAYER,data||{});
   if(!P.done||typeof P.done!=='object') P.done={};
+  if(!P.storyFlags||typeof P.storyFlags!=='object') P.storyFlags={};
+  if(!Array.isArray(P.storyJournal)) P.storyJournal=[];
+  if(!Array.isArray(P.storyArtifacts)) P.storyArtifacts=[];
+  if(!Array.isArray(P.storySkills)) P.storySkills=[];
 }
 function activateUserProgress(uid){
   const nextKey=KEY+'_user_'+uid;
@@ -82,6 +90,13 @@ function mergeCloudProgress(remote){
   const merged=Object.assign({},remote,local);
   merged.done=Object.assign({},remote.done&&typeof remote.done==='object'?remote.done:{},local.done||{});
   merged.scores=Object.assign({},remote.scores&&typeof remote.scores==='object'?remote.scores:{},local.scores||{});
+  merged.storyFlags=Object.assign({},remote.storyFlags&&typeof remote.storyFlags==='object'?remote.storyFlags:{},local.storyFlags||{});
+  merged.storyJournal=[...(Array.isArray(remote.storyJournal)?remote.storyJournal:[]),...(Array.isArray(local.storyJournal)?local.storyJournal:[])].filter((entry,i,all)=>all.findIndex(x=>x&&entry&&x.id===entry.id)===i);
+  merged.storyArtifacts=[...new Set([...(Array.isArray(remote.storyArtifacts)?remote.storyArtifacts:[]),...(Array.isArray(local.storyArtifacts)?local.storyArtifacts:[])])];
+  merged.storySkills=[...new Set([...(Array.isArray(remote.storySkills)?remote.storySkills:[]),...(Array.isArray(local.storySkills)?local.storySkills:[])])];
+  merged.storyXP=Math.max(Number(remote.storyXP)||0,Number(local.storyXP)||0);
+  merged.specialization=local.specialization||remote.specialization||'';
+  merged.appearance=local.appearance||remote.appearance||'';
   merged.wallet=local.wallet||remote.wallet||null;
   merged.usdc=Math.max(Number(remote.usdc)||0,Number(local.usdc)||0);
   merged.ngn=Math.max(Number(remote.ngn)||0,Number(local.ngn)||0);
@@ -2723,6 +2738,18 @@ function completeMission(){
   const m=G.m,first=!P.done[m.id],wrong=G.wrong||0;
   const missionReward=first?(m.city==='kitcity'?2.5:(wrong===0?MISSION_CLEAR_REWARD:MISSION_RETRY_REWARD)):0;
   if(missionReward) P.usdc=Math.round((P.usdc+missionReward)*100)/100;
+  if(first&&m.story){
+    const story=m.story;
+    if(!P.storyFlags||typeof P.storyFlags!=='object') P.storyFlags={};
+    (story.storyFlags?.set||[]).forEach(flag=>P.storyFlags[flag]=true);
+    if(!Array.isArray(P.storyArtifacts)) P.storyArtifacts=[];
+    if(!Array.isArray(P.storySkills)) P.storySkills=[];
+    if(!Array.isArray(P.storyJournal)) P.storyJournal=[];
+    if(story.rewards?.artifact&&!P.storyArtifacts.includes(story.rewards.artifact)) P.storyArtifacts.push(story.rewards.artifact);
+    (story.rewards?.skills||[]).forEach(skill=>{if(!P.storySkills.includes(skill))P.storySkills.push(skill);});
+    P.storyXP=(Number(P.storyXP)||0)+(Number(story.rewards?.xp)||0);
+    P.storyJournal.push({id:story.id,title:story.title,chapterId:story.chapterId,state:story.state,artifact:story.rewards?.artifact||null});
+  }
   P.done[m.id]=true;save();updateHUD();Snd.sfx('done');
   const idx=MISSIONS.indexOf(m),next=MISSIONS[idx+1],cityComplete=isCityComplete(m.city);
   clearGroup(missionGroup);colliders.length=cityCols;smoke=[];ents=[];goal=null;beacon.visible=false;
