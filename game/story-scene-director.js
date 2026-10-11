@@ -76,7 +76,7 @@ export function createStorySceneDirector({ camera, player, getCharacter, animate
     void bubble.offsetWidth;
     bubble.classList.add('bubble-pop');
     lineIndex = index;
-    const readTime = Math.min(3100, Math.max(1900, line.text.length * 30));
+    const readTime = Math.min(5200, Math.max(3000, line.text.length * 48));
     nextLineAt = performance.now() + readTime;
   }
 
