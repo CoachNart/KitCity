@@ -2350,12 +2350,15 @@ const STORY_BRIDGES={
 };
 function chronicleNpcStep(m,name,index){
   const npc=STORY_NPCS[name];
+  const partnerName=(m.npcs||[]).find(candidate=>candidate!==name)||'';
   const step={kind:'character',characterIndex:index,label:'Talk to '+name,spot:index===0?'a':index===1?'story':['b','c','d','e','f','g','h'][index%7],npc};
   step.run=function(){
     const line=index===0?(STORY_BRIDGES[m.id]||chronicleNpcLine(m,name,index)):chronicleNpcLine(m,name,index);
     const opener=index===0?'Okay, tell me what is going on.':'I have spoken to the other person. What should I understand before I make a call?';
-    const response=index===0?'Good. Stay with me and we will check the facts one step at a time.':'You are asking the right questions. Let us work through the evidence instead of guessing.';
-    const html='<p><b>'+escapeStoryHtml(name.toUpperCase())+':</b> '+escapeStoryHtml(line)+'</p><p><b>YOU:</b> '+escapeStoryHtml(opener)+'</p><p><b>'+escapeStoryHtml(name.toUpperCase())+':</b> '+escapeStoryHtml(response)+'</p>';
+    const partnerLine=index===0?'I hear you, but let us not settle this with assumptions. We need to check what the evidence actually says.':'';
+    const response=index===0?'Good. Stay with us and we will check the facts one step at a time.':'You are asking the right questions. Let us work through the evidence instead of guessing.';
+    const partnerTalk=index===0&&partnerName?'<p><b>'+escapeStoryHtml(partnerName.toUpperCase())+':</b> '+escapeStoryHtml(partnerLine)+'</p>':'';
+    const html='<p><b>'+escapeStoryHtml(name.toUpperCase())+':</b> '+escapeStoryHtml(line)+'</p>'+partnerTalk+'<p><b>YOU:</b> '+escapeStoryHtml(opener)+'</p><p><b>'+escapeStoryHtml(name.toUpperCase())+':</b> '+escapeStoryHtml(response)+'</p>';
     talk(npc,html,[{t:'Alright. Show me where to start.',f:()=>{G.evidence['met_'+name]=true;finishStep();}}]);
   };
   return step;
@@ -2648,7 +2651,7 @@ const MISSIONS=CHRONICLE_MISSIONS.map((story,index)=>{
     });
     steps.push({label:'Bring the evidence together',spot:'a',npc:STORY_NPCS[story.npcs[0]],run(){
       const npc=STORY_NPCS[story.npcs[0]],partner=STORY_NPCS[story.npcs[1]]||npc;
-      const recap='We checked the evidence, tested our assumptions and got a clearer answer than we had at the start.';
+      const recap='We got through '+story.title+'. We checked the evidence instead of guessing, and that gave us something solid to work with.';
       const nextLine=story.id==='m31'?'So, after all that, what do you want to build or contribute next?':'We should keep going. There is another problem ahead, and now we know to ask better questions.';
       talk(npc,'<p><b>'+escapeStoryHtml(npc.name.toUpperCase())+':</b> '+escapeStoryHtml(recap)+'</p><p><b>'+escapeStoryHtml(partner.name.toUpperCase())+':</b> '+escapeStoryHtml(nextLine)+'</p><p><b>YOU:</b> I am taking the lesson with me. Next time, I will check the facts before I decide.</p>',[{t:'Save the chapter findings',f:()=>{P.storyFlags=Object.assign({},P.storyFlags||{},Object.fromEntries((story.storyFlags||[]).map(flag=>[flag,true])));G.evidence.chapterSummary=true;finishStep();}}]});
     }});
