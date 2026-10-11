@@ -611,7 +611,7 @@ const SPOTS={
   a:{x:10,z:-30,f:-1}, b:{x:-10,z:-105,f:1}, c:{x:80,z:-35,f:-1}, d:{x:60,z:-105,f:1},
   e:{x:-80,z:-35,f:1}, f:{x:-60,z:-105,f:-1}, g:{x:10,z:-175,f:-1}, h:{x:-10,z:-175,f:1},
   i:{x:150,z:-35,f:-1}, j:{x:130,z:-175,f:1}, k:{x:-150,z:-35,f:1}, l:{x:-130,z:-175,f:-1},
-  m:{x:80,z:35,f:-1}, n:{x:-80,z:105,f:1}, o:{x:10,z:175,f:-1}, story:{x:-95,z:-35,f:1}, x1:{x:60,z:-105,f:1}, shopdesk:{x:10,z:85,f:1}, screenshot:{x:80,z:-35,f:-1}, buyer:{x:130,z:105,f:-1}, ledger:{x:-150,z:105,f:1}
+  m:{x:80,z:35,f:-1}, n:{x:-80,z:105,f:1}, o:{x:10,z:175,f:-1}, story:{x:-95,z:-35,f:1}, x1:{x:60,z:-105,f:1}, shopdesk:{x:10,z:85,f:1}, screenshot:{x:80,z:-35,f:-1}, buyer:{x:130,z:105,f:-1}, ledger:{x:-150,z:105,f:1}, ledgerGuide:{x:-156,z:110,f:1}
 };
 const special=Object.keys(SPOTS).map(k=>SPOTS[k]).concat([SPAWN]);
 const nearSpecial=(x,z,d)=>special.some(s=>Math.hypot(s.x-x,s.z-z)<d);
@@ -2053,6 +2053,16 @@ function placeStoryClue(def,spot){
     const line=new THREE.Mesh(new THREE.BoxGeometry(2.1-row*.18,.055,.05),dark);
     line.position.set(0,3.72-row*.27,.2); g.add(line);
   }
+  if(def.id==='m01-transaction-record'){
+    /* A distinct verification kiosk makes this stop feel like a place, not another floating clue. */
+    const consoleBody=new THREE.Mesh(new THREE.BoxGeometry(2.8,1.25,1.35),lam('#26343E'));
+    consoleBody.position.set(0,.63,2.05);g.add(consoleBody);
+    const screen=new THREE.Mesh(new THREE.BoxGeometry(2.05,1.25,.1),lam('#0D202B',{emissive:0x073C4A,emissiveIntensity:.7}));
+    screen.position.set(0,2.05,1.34);screen.rotation.x=-.12;g.add(screen);
+    const screenLine=new THREE.Mesh(new THREE.BoxGeometry(1.4,.09,.05),lam(BRAND));screenLine.position.set(0,2.25,1.27);g.add(screenLine);
+    const screenDot=new THREE.Mesh(new THREE.CircleGeometry(.12,12),lam('#55E6C1'));screenDot.position.set(.7,1.85,1.27);g.add(screenDot);
+    const foot=new THREE.Mesh(new THREE.BoxGeometry(3.4,.15,1.7),lam('#17232B'));foot.position.set(0,.08,2.05);g.add(foot);
+  }
   missionGroup.add(g);
   const sign=label(tr(def.sign||def.title),BRAND,'#071827',1.25); sign.position.set(spot.x,6.6,spot.z); missionGroup.add(sign);
   return {x:spot.x,z:spot.z,r:6.5,clue:true};
@@ -2587,7 +2597,7 @@ const MISSIONS=CHRONICLE_MISSIONS.map((story,index)=>{
         }
       },
       {
-        kind:'clue',id:'m01-transaction-record',label:'Verify the transaction destination',spot:'ledger',title:'Public transaction record',sign:'VERIFY TX',
+        kind:'clue',id:'m01-transaction-record',label:'Meet Abdul at the verification centre',spot:'ledger',title:'Public transaction record',sign:'VERIFY TX',
         run(){
           talk(STORY_NPCS.IamAbdul,"<p><b>VERIFICATION CENTRE · PRACTICE RECORD</b></p><p>Abdul points out each field as you check it:<br>Status: Confirmed<br>Amount: 120 USDC<br>Network: Base test environment<br>Recipient: <b>0x73A…2B1</b><br>Shop's expected address: <b>0x91C…7F0</b></p><p>Compare the last part of the recipient address with the shop's saved address. They don't match. The transaction succeeded, but it went to a different address. This is a fictional practice record; no real funds or blockchain are involved.</p>",[
             {t:"It was sent to the wrong address. Don't release the laptop.",f:()=>{G.evidence.transaction_checked=true;G.evidence.recipient_mismatch=true;finishStep();}},
@@ -2698,7 +2708,7 @@ function loadStep(){
     entity.talk=()=>st.run(); entity.active=()=>true; ents.push(entity); goal=entity;
     if(m.id==='m01'&&st.id==='m01-transaction-record'){
       /* Abdul meets the player at the separate verification centre for the guided check. */
-      const guide=placeNPC(STORY_NPCS.IamAbdul,SPOTS[st.spot]);
+      const guide=placeNPC(STORY_NPCS.IamAbdul,SPOTS.ledgerGuide);
       guide.active=()=>false; guide.talk=()=>{}; ents.push(guide);
     }
   }
