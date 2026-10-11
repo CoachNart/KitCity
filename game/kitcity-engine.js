@@ -2159,7 +2159,7 @@ function openSheet(html,btns,typingMs,preserveIdentity){
     setTimeout(pendingReveal,typingMs);
   } else { sheetEl.classList.remove('typing'); pendingReveal=null; }
 }
-function closeSheet(){ S.modal=false; cbs=[]; sheetTok++; pendingReveal=null; chat={npc:null,log:[]}; sheetEl.classList.remove('typing','chronicle-briefing'); modalEl.classList.add('hidden'); sheetEl.innerHTML=''; Snd.duck(false); }
+function closeSheet(){ S.modal=false; cbs=[]; sheetTok++; pendingReveal=null; chat={npc:null,log:[]}; sheetEl.classList.remove('typing','chronicle-briefing','chronicle-dialogue-card'); modalEl.classList.remove('chronicle-dialogue-open'); modalEl.classList.add('hidden'); sheetEl.innerHTML=''; Snd.duck(false); }
 sheetEl.addEventListener('click',e=>{
   if(pendingReveal){ pendingReveal(); return; }
   const b=e.target.closest('[data-i]'); if(!b) return;
@@ -2173,9 +2173,10 @@ function talk(def,html,btns){
   const npcName=String(def.name||'Local resident');
   const role=String(def.role||'KITCITY RESIDENT');
   const wrapped=(btns||[]).map(b=>({t:personalize(tr(b.t)),g:b.g,m:b.m,f:b.f}));
-  const card='<div class="chronicle-talk-head"><span class="chronicle-talk-avatar" style="--npc-accent:'+escapeStoryHtml(def.color||BRAND)+'">'+escapeStoryHtml(npcName.slice(0,1).toUpperCase())+'</span><div class="chronicle-talk-identity"><small>IN THE MOMENT · '+escapeStoryHtml(G&&G.m?CITIES[G.m.city]?.name||G.m.state||'KITCITY':'KITCITY')+'</small><h3>'+escapeStoryHtml(npcName)+'</h3><span>'+escapeStoryHtml(role)+'</span></div><span class="chronicle-talk-mark">T3K</span></div><div class="chronicle-talk-body"><small class="chronicle-talk-speaker">'+escapeStoryHtml(npcName.toUpperCase())+'</small><div class="chronicle-talk-line">'+html+'</div></div>';
+  const card='<div class="chronicle-talk-head"><span class="chronicle-talk-avatar" style="--npc-accent:'+escapeStoryHtml(def.color||BRAND)+'">'+escapeStoryHtml(npcName.slice(0,1).toUpperCase())+'</span><div class="chronicle-talk-identity"><small>NEARBY · '+escapeStoryHtml(G&&G.m?CITIES[G.m.city]?.name||G.m.state||'KITCITY':'KITCITY')+'</small><h3>'+escapeStoryHtml(npcName)+'</h3><span>'+escapeStoryHtml(role)+'</span></div></div><div class="chronicle-talk-body"><small class="chronicle-talk-speaker">'+escapeStoryHtml(npcName.toUpperCase())+'</small><div class="chronicle-talk-line">'+html+'</div></div>';
   openSheet(card,wrapped,0,true);
   sheetEl.classList.add('chronicle-dialogue-card');
+  modalEl.classList.add('chronicle-dialogue-open');
 }
 function badgeSVG(n,on,size){
   const num=Number(n),idx=Number.isFinite(num)&&num>0?Math.floor(num)-1:Math.abs(String(n).split('').reduce((a,c)=>a+c.charCodeAt(0),0))%12;
@@ -2204,7 +2205,15 @@ function badgeSVG(n,on,size){
 }
 
 /* =====================  HUD  ===================== */
+function updateLivesHUD(){
+  const el=$('#lives');
+  if(!el) return;
+  const lives=G&&Number.isFinite(G.lives)?Math.max(0,Math.min(3,G.lives)):3;
+  el.innerHTML=[0,1,2].map(i=>'<span class="life-heart '+(i<lives?'alive':'lost')+'" aria-hidden="true">♥</span>').join('');
+  el.setAttribute('aria-label',lives+' of 3 lives remaining');
+}
 function updateHUD(){
+  updateLivesHUD();
   if(G){
     $('#mTitle').textContent=tr(personalize('Mission '+G.m.n+': '+G.m.title,null));
     $('#steps').innerHTML=G.m.steps.map((s,i)=>'<li class="'+(G.i>i?'done':(G.i===i?'now':''))+'">'+personalize(tr(s.label),G.m,s.npc)+'</li>').join('');
@@ -2212,7 +2221,7 @@ function updateHUD(){
   $('#wallet').innerHTML=P.wallet?('<b>'+P.usdc.toFixed(2)+' USDC</b>'+(P.ngn>0?fmtN(P.ngn)+' token':short(P.wallet))):tr('No wallet yet');
 }
 
-/* ===================== KitCity Chronicles runtime =====================
+/* ===================== KitCity story runtime =====================
    The story registry drives mission order, character encounters and evidence.
    Wallet, trading and identity scenarios are practice simulations only.
 */
@@ -2224,7 +2233,7 @@ const STORY_LOOKS=[LK.mama,LK.suya,LK.guy,LK.trader,LK.clerk,LK.elder,LK.man,LK.
 const STORY_NPCS=Object.create(null);
 CHARACTER_ORDER.forEach((name,index)=>{
   const color=STORY_COLORS[index%STORY_COLORS.length];
-  const npc=NPC(name,'Chronicles character',color,STORY_LOOKS[index%STORY_LOOKS.length],null,name);
+  const npc=NPC(name,index<2?'Neighbour':'Local resident',color,STORY_LOOKS[index%STORY_LOOKS.length],null,name);
   npc.name=name;npc.originalName=name;npc.signBg=color;npc.signFg='#ffffff';STORY_NPCS[name]=npc;
 });
 const CHRONICLE_CHALLENGES={
@@ -2460,7 +2469,7 @@ function chronicleClueStep(m,obj,index,spot){
         G.evidence[obj.id]=true;P.storyFlags=Object.assign({},P.storyFlags||{},{['evidence_'+obj.id]:true});save();finishStep();
       }}]);
     }}));
-    talk(npc,'<p>'+escapeStoryHtml(m.narrativePurpose)+'</p><p><b>'+escapeStoryHtml(activity.q)+'</b></p><small class="soft">ACTIVITY · '+escapeStoryHtml(title)+'</small>',buttons);
+    talk(npc,'<p><b>'+escapeStoryHtml(activity.q)+'</b></p><small class="soft">FIELD CHECK · '+escapeStoryHtml(title)+'</small>',buttons);
   };
   return step;
 }
@@ -2474,7 +2483,7 @@ function chronicleChallengeStep(m,obj,index,spot){
       G.correct=(G.correct||0)+1;
       talk(npc,'<h3>Good call.</h3><p>'+escapeStoryHtml(challenge.w)+'</p><p class="note">This is a practice scenario. No real funds, wallets or transactions are involved.</p>',[{t:'Record the decision',f:()=>{applyChronicleActivityEffect(challenge.effect,m,obj,choice,challenge.o);G.evidence[obj.id]=true;P.storyFlags=Object.assign({},P.storyFlags||{},{['challenge_'+m.id]:true});finishStep();}}]);
     }}));
-    talk(npc,'<p>'+escapeStoryHtml(m.narrativePurpose)+'</p><p><b>'+escapeStoryHtml(challenge.q)+'</b></p>',buttons);
+    talk(npc,'<p><b>'+escapeStoryHtml(challenge.q)+'</b></p><small class="soft">YOUR CALL · '+escapeStoryHtml(obj.label)+'</small>',buttons);
   };
   return step;
 }
@@ -2513,7 +2522,7 @@ const isUnlocked=m=>{ const k=MISSIONS.indexOf(m); return k===0||!!P.done[MISSIO
 
 const cityOrder=[...new Set(MISSIONS.map(m=>m.city))];
 
-/* Chronicles names are canonical: never rename characters by array position. */
+/* Story character names are canonical: never rename by array position. */
 function missionNPCObjects(mission){
   const found=new Set();
   const add=value=>{
@@ -2598,13 +2607,12 @@ function startMission(id,restart){
     const savedStory=P.storyProgress&&P.storyProgress[id];
     if(restart&&P.storyProgress) delete P.storyProgress[id];
     const restored=(!restart&&savedStory)||null;
-    G={m,i:Math.max(0,Math.min(restored&&Number.isInteger(restored.step)?restored.step:0,m.steps.length-1)),correct:restored&&restored.correct||0,wrong:restored&&restored.wrong||0,used:{},evidence:Object.assign({},restored&&restored.evidence||{}),words:null,addr:null,slip:null,nameAliases:buildMissionNameAliases(m)};
+    G={m,i:Math.max(0,Math.min(restored&&Number.isInteger(restored.step)?restored.step:0,m.steps.length-1)),correct:restored&&restored.correct||0,wrong:restored&&restored.wrong||0,lives:3,used:{},evidence:Object.assign({},restored&&restored.evidence||{}),words:null,addr:null,slip:null,nameAliases:buildMissionNameAliases(m)};
     $('#hub').classList.add('hidden'); $('#hub').setAttribute('aria-hidden','true'); $('#title').classList.add('hidden'); $('#hud').classList.remove('hidden');
     S.phase='play'; closeSheet(); Snd.setMode('play'); lastLoc=''; resetPlayer(); loadStep();
     $('#loading').classList.add('hidden');
-    if(m.id==='m01'&&!P.chroniclesPrologueSeen){
-      missionGroup.visible=false; storyCastGroup.visible=true; storyDirector.playOpening(()=>{ storyCastGroup.visible=false; missionGroup.visible=true; P.chroniclesPrologueSeen=true; save(); loadStep(); briefing(); });
-    }else briefing();
+    updateHUD();
+    toast('Look around. Walk up to someone and press Talk when you are ready.',{duration:3600});
   },60);
 }
 function briefing(){
@@ -2613,7 +2621,7 @@ function briefing(){
   const displayTitle=chronicle?chronicle.title:m.title;
   const displayGoal=chronicle?chronicle.narrativePurpose:m.goal;
   const checklist=m.steps.map((step,i)=>'<li class="'+(i<(G.i||0)?'done':(i===(G.i||0)?'current':''))+'"><span>'+(i<(G.i||0)?'✓':String(i+1).padStart(2,'0'))+'</span><b>'+personalize(tr(step.label),m,step.npc)+'</b></li>').join('');
-  openSheet('<div class="chronicle-briefing-head"><span class="chronicle-eyebrow">KITCITY · THE T3KIT CHRONICLES</span><small>MISSION '+String(m.n).padStart(2,'0')+' · '+C.name.toUpperCase()+'</small><h3>'+personalize(displayTitle,null)+'</h3><p>'+personalize(displayGoal,null)+'</p></div><div class="chronicle-first-objective"><small>START HERE</small><b>'+personalize(tr(firstStep.label),m,firstStep.npc)+'</b><span>One step at a time. Talk to people, inspect clues, and use what you discover.</span></div><div class="chronicle-checklist"><div class="chronicle-checklist-title"><b>YOUR MISSION</b><span>'+String(G.i||0)+' / '+m.steps.length+' complete</span></div><ul>'+checklist+'</ul></div>'+(m.n===1?'<p class="chronicle-controls">MOVE <b>left stick / WASD</b> · RUN <b>Shift</b> · TALK <b>E / Talk button</b></p>':'<p class="chronicle-controls">Follow the world marker to your next interaction. You can review the objectives any time.</p>'),
+  openSheet('<div class="chronicle-briefing-head"><span class="chronicle-eyebrow">KITCITY · STORY</span><small>MISSION '+String(m.n).padStart(2,'0')+' · '+C.name.toUpperCase()+'</small><h3>'+personalize(displayTitle,null)+'</h3><p>'+personalize(displayGoal,null)+'</p></div><div class="chronicle-first-objective"><small>START HERE</small><b>'+personalize(tr(firstStep.label),m,firstStep.npc)+'</b><span>One step at a time. Talk to people, inspect clues, and use what you discover.</span></div><div class="chronicle-checklist"><div class="chronicle-checklist-title"><b>YOUR MISSION</b><span>'+String(G.i||0)+' / '+m.steps.length+' complete</span></div><ul>'+checklist+'</ul></div>'+(m.n===1?'<p class="chronicle-controls">MOVE <b>left stick / WASD</b> · RUN <b>Shift</b> · TALK <b>E / Talk button</b></p>':'<p class="chronicle-controls">Follow the world marker to your next interaction. You can review the objectives any time.</p>'),
     [{t:'Continue journey',f:closeSheet},{t:'Back to hub',g:1,f:exitToHub}]);
   sheetEl.classList.add('chronicle-briefing');
 }
@@ -3149,7 +3157,18 @@ function carHit(dt){ if(hitCd>0)hitCd=Math.max(0,hitCd-dt);
       Snd.sfx('bump');
       resolve(p,1);resolve(p,1);
       const shout=pick(HAZARD_LINES[P.lang==='pcm'?'pcm':'en']);
-      toast(shout,{bubble:true,duration:8500});
+      if(G){
+        G.lives=Math.max(0,(Number.isFinite(G.lives)?G.lives:3)-1);
+        updateLivesHUD();
+      }
+      if(G&&G.lives===0){
+        const missionId=G.m.id;
+        hitCd=999;
+        toast('Three hits. This mission starts again — you can get it next time.',{bubble:true,duration:1800});
+        setTimeout(()=>{if(G&&G.m.id===missionId&&S.phase==='play')startMission(missionId,true);},1900);
+      }else{
+        toast(shout,{bubble:true,duration:3200});
+      }
       break;
     }
   }
