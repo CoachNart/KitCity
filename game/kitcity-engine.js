@@ -2025,7 +2025,7 @@ function buildStall(def,spot){
   const sp=label(tr(def.sign||def.name),def.signBg,def.signFg); sp.position.set(x,8.4,z); missionGroup.add(sp);
   if(o.sub){ const s2=label(tr(o.sub),'#ffffff',INK,1.25); s2.position.set(x,6.4,z); missionGroup.add(s2); }
   const att=buildPerson(def.look); att.userData.storyCharacter=def.name; att.userData.storyRole=def.role;
-  if(G&&G.m&&G.m.id==='m0'&&(def.name==='Softstorm'||def.name==='IamAbdul')){
+  if(G&&G.m&&G.m.id==='m01'&&(def.name==='Softstorm'||def.name==='IamAbdul')){
     /* Stage the opening pair together in front of their separate stalls for the comic scene. */
     const soft=def.name==='Softstorm'; att.position.set(soft?15:19,.05,-22.5); att.rotation.y=soft?Math.PI/2:-Math.PI/2;
   }else{ att.position.set(x+1.6*face,.05,z+4.9*face); att.rotation.y=face>0?Math.PI/2:-Math.PI/2; }
@@ -2209,170 +2209,6 @@ function updateHUD(){
   $('#wallet').innerHTML=P.wallet?('<b>'+P.usdc.toFixed(2)+' USDC</b>'+(P.ngn>0?fmtN(P.ngn)+' token':short(P.wallet))):tr('No wallet yet');
 }
 
-/* =====================  missions  ===================== */
-const NPC=(name,role,color,look,stall,sign)=>({name,role,color,look,stall,sign});
-const MAMA=NPC('Softstorm','KitCity wallet kiosk','#0897A8',LK.mama,{body:'#0897A8',a:'#ffffff',b:BRAND,sub:'KitCity wallet'});
-const SUYA=NPC('IamAbdul','Best suya on the street',EMBER,LK.suya,{body:'#8E2F1B',a:'#ffffff',b:EMBER,grill:true});
-const GUY=NPC('Joseph Nnadi','Says he is your friend','#6a3fb5',LK.guy,null,'Free USDC giveaway!'); GUY.signBg='#6a3fb5'; GUY.signFg='#ffffff';
-const ALHAJA=NPC('Larai','Bureau de Change','#2D6FB3',LK.trader,{body:'#2D6FB3',a:'#ffffff',b:'#2D6FB3',sub:'Bureau de Change'});
-const CLERK=NPC('Unique','Swap counter','#1f4f82',LK.clerk,{body:'#1f4f82',a:'#ffffff',b:YELLOW,sub:'Swap counter'});
-const BRIGHT=NPC('Smrt huntr','Shows you a text message','#6a3fb5',LK.guy,null,'Check this text'); BRIGHT.signBg='#6a3fb5'; BRIGHT.signFg='#ffffff';
-const HASSAN=NPC('Goodness','Messaged you online','#C7457E',LK.man,null,'New DM'); HASSAN.signBg='#C7457E'; HASSAN.signFg='#ffffff';
-const CHIOMA=NPC('Semi','Shows you a post','#E4572E',LK.woman,null,'Airdrop alert'); CHIOMA.signBg='#E4572E'; CHIOMA.signFg='#ffffff';
-const KEEPER=NPC('Blockqueen','Guardian of secrets','#5a3a22',LK.elder,{body:'#5a3a22',a:'#ffffff',b:GREEN,sub:'Recovery vault'});
-const NOTARY=NPC('Christol','Checks your memory','#2D6FB3',LK.clerk,{body:'#2D6FB3',a:'#ffffff',b:YELLOW,sub:'Notary'});
-const MUSA=NPC('Laloba','Market trader','#C7457E',LK.woman,{body:'#C7457E',a:'#ffffff',b:'#E7D27A',sub:'Fresh yam'});
-const REG=NPC('Kenny','Passport registry','#0B7A43',LK.woman,{body:'#0B7A43',a:'#ffffff',b:BRAND,sub:'KitCity Passport'});
-const MINT=NPC('Leemah','Passport mint','#0897A8',LK.clerk,{body:'#0897A8',a:'#ffffff',b:BRAND,sub:'Free mint'});
-const CHAIR=NPC('Cybersage','Community leader','#6a3fb5',LK.trader,{body:'#6a3fb5',a:'#ffffff',b:BRAND,sub:'Community'});
-const HALL=NPC('Kodavic','Counts the votes','#2D6FB3',LK.clerk,{body:'#1f4f82',a:'#ffffff',b:BRAND,sub:'Town hall'});
-const ADA=NPC('Toza','P2P trader','#E4572E',LK.woman,{body:'#E4572E',a:'#ffffff',b:YELLOW,sub:'P2P desk'});
-const TOLA=NPC('Craftore','Bank agent','#0B7A43',LK.clerk,{body:'#0B7A43',a:'#ffffff',b:'#ffffff',sub:'Bank agent'});
-
-/* ---- extra mission characters ---- */
-const mkSign=(name,role,color,look,sign)=>{ const n=NPC(name,role,color,look,null,sign); n.signBg=color; n.signFg='#ffffff'; return n; };
-const OXNIGHT=mkSign('OxNight','Knows the street rules','#1f4f82',LK.man,'Share or keep?');
-const MOON=mkSign('Moon','Rate watcher','#6a3fb5',LK.woman,'Check the quote');
-const CRYPT=mkSign('The cryptonian','Scam veteran','#0B7A43',LK.guy,'Spot the red flag');
-const NNADI=mkSign('Joe_Sef','Backup advisor','#2D6FB3',LK.clerk,'Where to keep it');
-const DON=mkSign('The don','Careful sender','#5a3a22',LK.elder,'Test first');
-const PRAISE=mkSign('Praise','Signature checker','#C7457E',LK.trader,'Read before signing');
-const BIGSAM=mkSign('BigSam','Community organiser','#E4572E',LK.man,'Read the proposal');
-const LUNAX=mkSign('LunaX','Trusted trader','#0897A8',LK.woman,'Name must match');
-
-/* One answer earns USDC; an incorrect answer deducts USDC. */
-function askStep(o){
-  return {label:o.label,spot:o.spot,npc:o.npc,run(){
-    const opts=shuffle(o.opts);
-    talk(o.npc,'<p>'+o.intro+'</p><p><b>'+o.q+'</b></p>',
-      opts.map(x=>({t:x[0],f:()=>{
-        const good=x[1]===1;
-        Snd.sfx(good?'good':'error'); settleAnswer(good);
-        talk(o.npc,'<h3>'+(good?'Correct':'Not quite')+'</h3><p>'+(good?o.good:o.bad)+'</p>',[{t:'Continue',f:finishStep}]);
-      }})));
-  }};
-}
-const STEP_OXNIGHT=askStep({label:'Ask OxNight what is safe to share',spot:'b',npc:OXNIGHT,
-  intro:'Before you pay anyone, know what you can hand out. Your wallet address works like an account number, so people use it to send you money. Your recovery phrase is the master key.',
-  q:'Someone wants to send you USDC and asks what to use. What do you give them?',
-  opts:[['My wallet address',1],['My recovery phrase',0],['My phone password',0]],
-  good:'Right. An address only lets people send to you. Keep your phrase and passwords to yourself, always.',
-  bad:'No. Your phrase or password gives full control of your money. All anyone needs to pay you is your address.'});
-const STEP_MOON=askStep({label:'Check the quote with Moon',spot:'g',npc:MOON,
-  intro:'Rates move all day, and every swap has a fee. Compare the quote with the rate before you confirm anything.',
-  q:'The swap screen shows far fewer naira than the rate you were told. What is the smart move?',
-  opts:[['Cancel and check the quote and fee',1],['Confirm anyway, it is probably fine',0],['Raise slippage so it goes through',0]],
-  good:'Right. A big gap can mean a high fee or a bad price. Raising slippage only makes a bad price easier to accept.',
-  bad:'That is how people lose money. When the quote looks wrong, stop and check it before you confirm.'});
-const STEP_CRYPT=askStep({label:'Test your instincts with The cryptonian',spot:'a',npc:CRYPT,
-  intro:'I have watched scammers for years. They change the story, but the trick is nearly always the same.',
-  q:'Which of these is a real red flag?',
-  opts:[['Anyone asking you to send first so you can receive more',1],['An app that shows your balance',0],['A block explorer link to check a payment',0]],
-  good:'Right. Real giveaways and real support never need you to pay first, and they never rush you.',
-  bad:'Those are normal. The danger sign is someone who asks you to send first, or who pushes you to hurry.'});
-const STEP_NNADI=askStep({label:'Ask Joe_Sef where to keep your phrase',spot:'e',npc:NNADI,
-  intro:'You have written your 12 words down. Now the question is where they live.',
-  q:'Where is the safest place to keep your recovery phrase?',
-  opts:[['On paper, somewhere private and safe',1],['A screenshot in my gallery',0],['In my notes app or a chat with myself',0]],
-  good:'Right. Paper cannot be hacked from far away. Keep it private, and consider a second copy in another safe place.',
-  bad:'Phones sync to the cloud and get hacked or lost. Anything digital can leak. Paper in a safe place is best.'});
-const STEP_DON=askStep({label:'Hear The don on test payments',spot:'b',npc:DON,
-  intro:'Money sent on a blockchain cannot be pulled back. That is why careful people never send blind.',
-  q:'You are about to send money to an address you have not used before. What do you do first?',
-  opts:[['Send a small test and check it arrives',1],['Send everything, blockchains are fast',0],['Trust the address because it came in a message',0]],
-  good:'Right. A small test proves the address works before you risk the full amount.',
-  bad:'Too risky. A wrong or fake address cannot be fixed afterwards. Test small first, and compare the whole address.'});
-const STEP_PRAISE=askStep({label:'Learn from Praise what to check before signing',spot:'c',npc:PRAISE,
-  intro:'Signing feels harmless because it is quick. But what you sign decides what a site can do.',
-  q:'A site asks you to sign. What should you check?',
-  opts:[['That it only proves I own the wallet and mentions no transfers or permissions',1],['Nothing, signing is always free and safe',0],['Only how nice the site looks',0]],
-  good:'Right. Read it first. Be careful with anything that mentions transfers, approvals or unlimited access.',
-  bad:'Some signatures give a site permission over your tokens. If you cannot understand it, do not sign it.'});
-const STEP_BIGSAM=askStep({label:'Talk to BigSam before you vote',spot:'e',npc:BIGSAM,
-  intro:'A vote only means something if people know what they are voting for.',
-  q:'What should you do before voting on a proposal?',
-  opts:[['Read the full proposal and see who benefits',1],['Vote the way the loudest person says',0],['Vote fast before time runs out',0]],
-  good:'Right. Read it yourself, check who benefits and ask questions. Your vote is yours.',
-  bad:'Following the crowd or rushing is how bad proposals pass. Take your time and read it properly.'});
-const STEP_LUNAX=askStep({label:'Check the buyer with LunaX',spot:'h',npc:LUNAX,
-  intro:'In a peer trade, the buyer should pay from an account in their own name. That is how you know the money is really theirs.',
-  q:'Your buyer says they will pay from their cousin\u2019s account, and the name does not match. What do you do?',
-  opts:[['Keep the USDC in escrow and ask for payment from their own account, or cancel',1],['Release as soon as the money shows',0],['Accept a screenshot of the transfer',0]],
-  good:'Right. Third-party payments are a common cover for stolen money and chargebacks. Stay in escrow until it is clean.',
-  bad:'That puts you at risk. Payments from other people can be reversed or flagged later. Keep the USDC in escrow.'});
-
-const WORDS=['river','market','lantern','cedar','harvest','mango','copper','saffron','pepper','canoe','drum','sunrise','thunder','yam','kola','baobab','cotton','amber','falcon','jungle','pottery','tide','village','whistle','zebra','anchor','bridge','coral','dune','ember','forest','garden','honey','island','jewel','kettle','ladder','meadow','nectar','orchard'];
-const RATE=1500;
-
-function createWallet(){
-  busy(MAMA,'Setting up your wallet\u2026',1100,()=>{
-    P.wallet='0x'+hex(20); save(); updateHUD();
-    talk(MAMA,'<h3>Your wallet is ready</h3><span class="addr">'+P.wallet+'</span><p>This is your address. Anyone can send money here, but only you can spend it.</p>',[{t:'Claim 5 starter USDC',f:claimStarter}]);
-  });
-}
-function claimStarter(){
-  busy(MAMA,'Sending your starter USDC\u2026',1300,()=>{
-    P.usdc=5; save(); updateHUD();
-    talk(MAMA,'<h3>5 USDC received</h3><div class="kv"><span>Amount</span><b>5.00 USDC</b></div><div class="kv"><span>Network fee</span><b>'+FEE0+'</b></div><p>USDC is a digital dollar. Each one is meant to stay worth one US dollar, so it holds steady while you learn.</p>',[{t:'Continue',f:finishStep}]);
-  });
-}
-function giveawayGuy(e){
-  if(!P.wallet||P.usdc<2){ talk(GUY,'<p>Hey boss! Got any money? Not yet? Come back when your wallet has funds. I have a big offer for you.</p>',[{t:'Okay',f:closeSheet}]); return; }
-  talk(GUY,'<p>Congratulations, you are our lucky winner! Send 2 USDC to this address and we will send you 20 USDC back in five minutes. Today only!</p><div class="kv"><span>Send to</span><b class="mono">'+short('0x'+hex(20))+'</b></div>',[
-    {t:'Send 2 USDC',f:()=>busy(GUY,'Sending 2 USDC\u2026',1200,()=>{
-      G.used[e.ex.id]=true; settleAnswer(false); P.fell++; save(); hideEnt(e); Snd.sfx('error');
-      talk(NPC('Joseph Nnadi','The giveaway guy is gone','#B3261E',LK.guy),'<p>Nobody doubles your money, and crypto payments cannot be reversed. A real giveaway never asks you to send first.</p><p class="note">This is practice, so your balance is safe. In real life that money would be gone for good.</p>',[{t:'Keep going',f:closeSheet}]);
-    })},
-    {t:'Walk away',g:1,f:()=>{
-      G.used[e.ex.id]=true; settleAnswer(true); P.dodged++; save(); hideEnt(e); Snd.sfx('good');
-      talk(NPC('Caleb','You spotted the scam',GREEN,LK.guy),'<p>Anyone who asks you to send money first, so you can receive more, is running a scam. Walking away was right. You earned 0.10 USDC.</p>',[{t:'Keep going',f:closeSheet}]);
-      toast('Street smart');
-    }}
-  ]);
-}
-function scamStep(sc){
-  return {label:sc.label,spot:sc.spot,npc:sc.npc,run(){
-    const opts=shuffle(sc.opts);
-    talk(sc.npc,'<div class="msg"><small>'+sc.from+'</small>'+sc.msg+'</div><p><b>What do you do?</b></p>',
-      opts.map(o=>({t:o[0],f:()=>{
-        const good=o[1]===1;
-        Snd.sfx(good?'good':'error'); settleAnswer(good); if(good){ P.dodged++; } else { P.fell++; }
-        save();
-        talk(sc.npc,'<h3>'+(good?'Correct':'That is a trap')+'</h3><p>'+(good?sc.good:sc.bad)+'</p>',[{t:'Continue',f:finishStep}]);
-      }})));
-  }};
-}
-function addrMutate(a,from,to){
-  const hexc='0123456789abcdef'; let s=a.split('');
-  for(let i=from;i<to;i++){ let c; do{ c=hexc[Math.floor(Math.random()*16)]; }while(c===s[i]); s[i]=c; }
-  return s.join('');
-}
-
-const payStep=o=>({label:o.label,spot:o.spot,npc:o.npc,run(){
-  needFunds(o.amt);
-  confirmTx(o.npc,{title:o.title,rows:[['To',short('0x'+hex(20)),1],['Amount',o.amt.toFixed(2)+' USDC'],['Network',o.net],['Network fee',FEE0]],note:o.note,btn:o.btn,
-    after:h=>{ P.usdc=Math.max(0,P.usdc-o.amt); save(); updateHUD();
-      talk(o.npc,'<h3>'+o.done+'</h3><div class="kv"><span>Receipt</span><b class="mono">'+short(h)+'</b></div><div class="kv"><span>Balance</span><b>'+P.usdc.toFixed(2)+' USDC</b></div><p>'+o.say+'</p>',[{t:'Continue',f:finishStep}]); }});
-}});
-
-/* task step: pick the right action (network, address, signature, token), then do it */
-function taskStep(o){ return {label:o.label,spot:o.spot,npc:o.npc,run(){ pickStep(o); }}; }
-function pickStep(o){
-  talk(o.npc,'<p>'+o.intro+'</p>'+(o.q?'<p><b>'+o.q+'</b></p>':''),
-    shuffle(o.opts).map(x=>({t:x[0],m:o.mono?1:0,f:()=>{
-      if(!x[1]){ Snd.sfx('error'); settleAnswer(false); talk(o.npc,'<h3>Not that one</h3><p>'+o.wrong+'</p>',[{t:'Try again',f:()=>pickStep(o)}]); return; }
-      Snd.sfx('good'); settleAnswer(true);
-      if(o.tx){
-        needFunds(o.tx.amt);
-        confirmTx(o.npc,{title:o.tx.title,rows:o.tx.rows(x[0]),note:o.tx.note,btn:o.tx.btn,
-          after:h=>{ P.usdc=Math.max(0,P.usdc-o.tx.amt); save(); updateHUD();
-            talk(o.npc,'<h3>'+o.tx.done+'</h3><div class="kv"><span>Receipt</span><b class="mono">'+short(h)+'</b></div><p>'+o.say+'</p>',[{t:'Continue',f:finishStep}]); }});
-      } else {
-        talk(o.npc,'<h3>Done</h3><p>'+o.say+'</p>',[{t:'Continue',f:finishStep}]);
-      }
-    }})));
-}
-
 /* ===================== KitCity Chronicles runtime =====================
    The story registry drives mission order, character encounters and evidence.
    Wallet, trading and identity scenarios are practice simulations only.
@@ -2532,10 +2368,26 @@ function bannerSprite(text,sub){
 function loadStep(){
   clearGroup(missionGroup); colliders.length=cityCols; smoke=[]; ents=[]; goal=null;
   const m=G.m,st=m.steps[G.i];
-  const e=st.kind==='clue'?placeStoryClue(st,SPOTS[st.spot]):placeNPC(st.npc,SPOTS[st.spot]); e.talk=()=>st.run(); e.active=()=>true; ents.push(e); goal=e;
+  if(st.kind==='character'&&G.i<m.characterStepCount){
+    let target=null;
+    const fallbackSpots=['b','c','d','e','f','g','h'];
+    m.npcs.forEach((name,index)=>{
+      const npc=STORY_NPCS[name];
+      const spotKey=index===0?'a':index===1?'story':fallbackSpots[(index-2)%fallbackSpots.length];
+      const entity=placeNPC(npc,SPOTS[spotKey]||SPOTS.a);
+      entity.talk=()=>{ if(st.npc&&st.npc.name===name) st.run(); };
+      entity.active=()=>!!(st.npc&&st.npc.name===name);
+      ents.push(entity);
+      if(st.npc&&st.npc.name===name) target=entity;
+    });
+    goal=target||ents[0]||null;
+  }else{
+    const entity=st.kind==='clue'?placeStoryClue(st,SPOTS[st.spot]):placeNPC(st.npc,SPOTS[st.spot]);
+    entity.talk=()=>st.run(); entity.active=()=>true; ents.push(entity); goal=entity;
+  }
   for(const ex of (m.extras||[])){
     if(G.used[ex.id]) continue;
-    const e2=placeNPC(ex.npc,ex.spot); e2.ex=ex; e2.talk=()=>ex.run(e2); e2.active=()=>!G.used[ex.id]; ents.push(e2);
+    const entity=placeNPC(ex.npc,ex.spot); entity.ex=ex; entity.talk=()=>ex.run(entity); entity.active=()=>!G.used[ex.id]; ents.push(entity);
   }
   updateHUD();
 }
@@ -2553,7 +2405,7 @@ function startMission(id,restart){
     S.phase='play'; closeSheet(); Snd.setMode('play'); lastLoc=''; resetPlayer(); loadStep();
     $('#loading').classList.add('hidden');
     if(m.id==='m01'&&!P.storyPrologueSeen){
-      storyCastGroup.visible=true; storyDirector.playOpening(()=>{ storyCastGroup.visible=false; P.storyPrologueSeen=true; save(); briefing(); });
+      missionGroup.visible=false; storyCastGroup.visible=true; storyDirector.playOpening(()=>{ storyCastGroup.visible=false; missionGroup.visible=true; P.storyPrologueSeen=true; save(); loadStep(); briefing(); });
     }else briefing();
   },60);
 }
