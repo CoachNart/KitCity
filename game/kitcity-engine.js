@@ -2723,10 +2723,37 @@ function startMission(id){
     briefing();
   },60);
 }
+function applyPlayerAppearance(style){
+  const palette=style==="builder"?{top:"#0B7A43",bottom:"#1B1C20"}:style==="streetwear"?{top:"#E4572E",bottom:"#2b3350"}:{top:BRAND,bottom:"#2b3350"};
+  player.traverse(obj=>{
+    if(!obj.isMesh||!obj.material||!obj.material.color) return;
+    const color=obj.material.color.getHexString().toLowerCase();
+    if(color===BRAND.replace("#","").toLowerCase()){obj.material=obj.material.clone();obj.material.color.set(palette.top);}
+    else if(color==="2b3350"){obj.material=obj.material.clone();obj.material.color.set(palette.bottom);}
+  });
+}
+function choosePlayerIdentity(done){
+  const current=String(P.name||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;");
+  openSheet('<div style="border:3px solid #20232a;border-radius:14px;overflow:hidden;background:#fff2c9;color:#20232a;box-shadow:5px 5px 0 #20232a"><div style="padding:7px 12px;background:#20232a;color:#ffe27a;font-size:10px;font-weight:900;letter-spacing:2px">YOUR ADVENTURE STARTS HERE</div><div style="padding:16px"><h2 style="margin:0 0 7px;font-size:23px">Who are you, hero?</h2><p style="margin:0 0 12px;font-size:13px">Choose your name and look. You can learn Web3 as you go.</p><label for="chroniclePlayerName" style="display:block;font-weight:800;margin-bottom:5px">Your name</label><input id="chroniclePlayerName" maxlength="24" value="'+current+'" placeholder="Enter your name" style="width:100%;box-sizing:border-box;padding:11px;border:2px solid #20232a;border-radius:8px;font:inherit;margin-bottom:13px"><b>Choose your look</b><p style="font-size:12px;margin:4px 0 0">Your choice changes your outfit colours.</p></div></div>',[
+    {t:"Streetwear",f:()=>commit("streetwear")},
+    {t:"Builder",f:()=>commit("builder")},
+    {t:"Classic",f:()=>commit("classic")}
+  ]);
+  function commit(style){
+    const field=$("#chroniclePlayerName"),name=String(field&&field.value||"").trim().slice(0,24);
+    if(!name){toast("Enter a name to continue");return;}
+    P.name=name;P.appearance=style;applyPlayerAppearance(style);save();done();
+  }
+}
 function briefing(){
+  const m=G.m;
+  if(m.story&&m.story.id==="tc-01"&&(!P.appearance||!P.name)){choosePlayerIdentity(showChapterBriefing);return;}
+  if(P.appearance) applyPlayerAppearance(P.appearance);
+  showChapterBriefing();
+}
+function showChapterBriefing(){
   const m=G.m,C=CITIES[m.city];
-  openSheet('<div style="border:3px solid #20232a;border-radius:14px;overflow:hidden;background:#fff2c9;color:#20232a;box-shadow:5px 5px 0 #20232a"><div style="padding:7px 12px;background:#20232a;color:#ffe27a;font-size:10px;font-weight:900;letter-spacing:2px">KITCITY COMICS · NEW CHAPTER</div><div style="padding:20px 14px 18px;background:radial-gradient(circle at 10% 15%,#fff9dd 0 2px,transparent 3px),radial-gradient(circle at 80% 60%,#f7c76b 0 2px,transparent 3px),linear-gradient(135deg,#ffdf92,#fff3ce)"><div style="font-size:11px;font-weight:900;letter-spacing:1.5px;color:#875315">'+C.name.toUpperCase()+' · CHAPTER '+m.n+'</div><h2 style="font-size:26px;line-height:1.05;margin:8px 0 10px;text-transform:uppercase;font-weight:1000">'+personalize(m.title,null)+'</h2><p style="font-size:14px;line-height:1.5;font-weight:700;margin:0">A new story is unfolding in the city. Find the character with the marker, hear what happened, and help them work through it.</p><div style="margin-top:12px;display:inline-block;padding:5px 9px;background:#e65e35;color:white;font-weight:900;transform:rotate(-2deg);border:2px solid #20232a">YOUR MOVE, HERO!</div></div></div>',
-    [{t:'Enter the story',f:closeSheet},{t:'Back to hub',g:1,f:exitToHub}]);
+  openSheet('<div style="border:3px solid #20232a;border-radius:14px;overflow:hidden;background:#fff2c9;color:#20232a;box-shadow:5px 5px 0 #20232a"><div style="padding:7px 12px;background:#20232a;color:#ffe27a;font-size:10px;font-weight:900;letter-spacing:2px">KITCITY COMICS · NEW CHAPTER</div><div style="padding:20px 14px 18px;background:radial-gradient(circle at 10% 15%,#fff9dd 0 2px,transparent 3px),radial-gradient(circle at 80% 60%,#f7c76b 0 2px,transparent 3px),linear-gradient(135deg,#ffdf92,#fff3ce)"><div style="font-size:11px;font-weight:900;letter-spacing:1.5px;color:#875315">'+C.name.toUpperCase()+' · CHAPTER '+m.n+'</div><h2 style="font-size:26px;line-height:1.05;margin:8px 0 10px;text-transform:uppercase;font-weight:1000">'+personalize(m.title,null)+'</h2><p style="font-size:14px;line-height:1.5;font-weight:700;margin:0">Find the marked character. Hear what happened. Help move the story forward.</p><div style="margin-top:12px;display:inline-block;padding:5px 9px;background:#e65e35;color:white;font-weight:900;transform:rotate(-2deg);border:2px solid #20232a">YOUR MOVE, HERO!</div></div></div>',[{t:'Enter the story',f:closeSheet},{t:'Back to hub',g:1,f:exitToHub}]);
 }
 function finishStep(){
   closeSheet(); if(!G) return;
