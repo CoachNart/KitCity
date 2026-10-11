@@ -95,14 +95,33 @@ const QUESTION_REWARD=.10,QUESTION_PENALTY=.10,MISSION_CLEAR_REWARD=.50,MISSION_
 function awardUSDC(amount,message){ P.usdc=Math.max(0,Math.round((P.usdc+amount)*100)/100); save(); updateHUD(); if(message) toast(message); }
 function settleAnswer(good){ if(!G) return; if(good){ G.correct=(G.correct||0)+1; awardUSDC(QUESTION_REWARD,'Correct answer · +0.10 USDC'); } else { G.wrong=(G.wrong||0)+1; awardUSDC(-QUESTION_PENALTY,'Wrong answer · −0.10 USDC'); } }
 function playerName(){ return (P.name||'Player').trim(); }
+function neutralizeGenderedPronouns(value){
+  let out=String(value==null?'':value);
+  const swap=(word,repl)=>{ const re=new RegExp('\\b'+word+'\\b','gi'); out=out.replace(re,m=>m[0]===m[0].toUpperCase()?repl.charAt(0).toUpperCase()+repl.slice(1):repl); };
+  swap('himself','themself'); swap('herself','themself'); swap('hers','theirs');
+  swap('he','they'); swap('she','they'); swap('him','them'); swap('his','their'); swap('her','their');
+  const fixes=[
+    [/\bthey has\b/gi,'they have'],[/\bthey is\b/gi,'they are'],[/\bthey was\b/gi,'they were'],
+    [/\bthey does\b/gi,'they do'],[/\bthey confirms\b/gi,'they confirm'],[/\bthey copies\b/gi,'they copy'],
+    [/\bthey sends\b/gi,'they send'],[/\bthey needs\b/gi,'they need'],[/\bthey wants\b/gi,'they want'],
+    [/\bthey asks\b/gi,'they ask'],[/\bthey says\b/gi,'they say'],[/\bthey shows\b/gi,'they show'],
+    [/\bthey gives\b/gi,'they give'],[/\bthey keeps\b/gi,'they keep'],[/\bthey accepts\b/gi,'they accept'],
+    [/\bthey holds\b/gi,'they hold'],[/\bthey pays\b/gi,'they pay'],[/\bthey goes\b/gi,'they go'],
+    [/\bthey tells\b/gi,'they tell'],[/\bthey makes\b/gi,'they make'],[/\bthey proves\b/gi,'they prove']
+  ];
+  for(const [re,to] of fixes) out=out.replace(re,m=>m[0]===m[0].toUpperCase()?to.charAt(0).toUpperCase()+to.slice(1):to);
+  return out;
+}
 function personalize(html,mission,preferredNPC){
   let out=String(html==null?'':html).replace(/Agent Kit/g,playerName()).replace(/agent kit/g,playerName());
-  const aliases=mission?buildMissionNameAliases(mission):(G&&G.nameAliases||{});
+  const aliases=mission?buildMissionNameAliases(mission):Object.create(null);
   if(preferredNPC){
     const original=String(preferredNPC.originalName||'').trim();
     const current=String(preferredNPC.name||'').trim();
-    if(original&&current&&original!==current){
-      const escaped=original.replace(/[.*+?^{}()|[\]\\]/g,'\\$&');
+    const missionNPCs=mission?missionNPCObjects(mission):[];
+    const originalBelongsToAnother=missionNPCs.some(npc=>npc!==preferredNPC&&String(npc.name||'').trim().toLowerCase()===original.toLowerCase());
+    if(original&&current&&original!==current&&!originalBelongsToAnother){
+      const escaped=original.replace(/ /g,'\\s+');
       out=out.replace(new RegExp('\\b'+escaped+'\\b','gi'),current);
     }
   }
@@ -110,7 +129,7 @@ function personalize(html,mission,preferredNPC){
     const pattern=original.replace(/ /g,'\\s+');
     out=out.replace(new RegExp('\\b'+pattern+'\\b','gi'),aliases[original]);
   });
-  return out;
+  return neutralizeGenderedPronouns(out);
 }
 
 /* =====================  sound (synthesised, no files)  ===================== */
@@ -2047,7 +2066,20 @@ const SUYA_ADDR='0x'+hex(20);
 /* =====================  sheet UI  ===================== */
 const modalEl=$('#modal'),sheetEl=$('#sheet'),talkBtn=$('#talkBtn');
 let cbs=[],toastT=0,chat={npc:null,log:[]},sheetTok=0,pendingReveal=null,hazardSpeechActive=false,pendingFeetLine=false;
-function toast(msg,opts){ const t=$('#toast'); clearTimeout(toastT); t.classList.remove('hazard-bubble'); hazardSpeechActive=false; t.textContent=tr(msg); if(opts&&opts.bubble){t.classList.add('hazard-bubble');hazardSpeechActive=true;} t.classList.add('show'); const duration=opts&&opts.duration?opts.duration:2400; toastT=setTimeout(()=>{t.classList.remove('show','hazard-bubble');hazardSpeechActive=false;if(pendingFeetLine){pendingFeetLine=false;toast('Back on your feet. Watch the traffic.');}},duration); }
+function toast(msg,opts){
+  const t=$('#toast'),bubble=!!(opts&&opts.bubble);
+  /* Ordinary HUD notices must not cut off the player's readable hazard speech. */
+  if(hazardSpeechActive&&!bubble) return;
+  clearTimeout(toastT); t.classList.remove('hazard-bubble'); hazardSpeechActive=false;
+  t.textContent=tr(msg);
+  if(bubble){t.classList.add('hazard-bubble');hazardSpeechActive=true;}
+  t.classList.add('show');
+  const duration=opts&&opts.duration?opts.duration:(bubble?8500:2400);
+  toastT=setTimeout(()=>{
+    t.classList.remove('show','hazard-bubble');hazardSpeechActive=false;
+    if(pendingFeetLine){pendingFeetLine=false;toast('Back on your feet. Watch the traffic.');}
+  },duration);
+}
 function openSheet(html,btns,typingMs,preserveIdentity){
   html=tx(preserveIdentity?html:personalize(html)); S.modal=true; joy.reset(); btns=btns||[]; cbs=btns.map(b=>b.f);
   const row=btns.length?'<div class="row">'+btns.map((b,i)=>'<button class="btn'+(b.g?' ghost':'')+(b.m?' mono':'')+'" data-i="'+i+'" type="button">'+tr(b.t)+'</button>').join('')+'</div>':'';
@@ -3904,7 +3936,7 @@ function startMission(id){
 }
 function briefing(){
   const m=G.m,C=CITIES[m.city];
-  openSheet('<div class="who"><span class="av" style="background:'+INK+'">'+m.n+'</span><div><b>'+personalize('Mission '+m.n+': '+m.title,m)+'</b><small>'+C.name+', '+C.tag+'</small></div></div><p>'+personalize(m.goal,m)+'</p><ul class="pts">'+m.steps.map(s=>'<li>'+personalize(tr(s.label),m,s.npc)+'</li>').join('')+'</ul>'+(m.n===1?'<p class="note">Move with the left stick or WASD. Hold Run or Shift to run. Tap Talk or press E to speak. Follow the arrow.</p>':'<p class="note">Follow the arrow to the next person. Watch for traffic.</p>'),
+  openSheet('<div class="who"><span class="av" style="background:'+INK+'">'+m.n+'</span><div><b>'+personalize('Mission '+m.n+': '+m.title,null)+'</b><small>'+C.name+', '+C.tag+'</small></div></div><p>'+personalize(m.goal,null)+'</p><p class="web3-focus">WEB3 SKILL · '+web3Focus(m)+'</p><ul class="pts">'+m.steps.map(s=>'<li>'+personalize(tr(s.label),m,s.npc)+'</li>').join('')+'</ul>'+(m.n===1?'<p class="note">Move with the left stick or WASD. Hold Run or Shift to run. Tap Talk or press E to speak. Follow the arrow.</p>':'<p class="note">Follow the arrow to the next person. Watch for traffic.</p>'),
     [{t:'Start mission',f:closeSheet},{t:'Back to hub',g:1,f:exitToHub}]);
 }
 function finishStep(){
@@ -4039,9 +4071,26 @@ function mapSVG(){
     '<div class="map-legend"><span><i class="map-dot unlocked"></i>Unlocked</span><span><i class="map-dot completed"></i>Completed</span><span><i class="map-dot locked"></i>Locked</span><span class="map-legend-note">Tap a labelled city to explore</span></div></section>';
 }
 
+function web3Focus(m){
+  const corpus=[m.title,m.goal,...(m.steps||[]).map(step=>step.label||'')].join(' ').toLowerCase();
+  const rules=[
+    [/scam|phish|fraud|fake support|red flag|airdrop|approval|permission/,'Scam detection & wallet safety'],
+    [/wallet|recovery phrase|backup|seed phrase|private key|self.custody/,'Wallet security & self-custody'],
+    [/vote|proposal|governance|community decision|dao|passport/,'Web3 identity & community governance'],
+    [/swap|slippage|exchange|rate|cash out|escrow|peer.to.peer|p2p|trade|liquidity|token/,'Crypto markets, swaps & DeFi'],
+    [/bounty|deliverable|creator|design|freelance|client|invoice|work reference|payment/,'Web3 work & verifiable payments'],
+    [/farm|herd|crop|produce|supply|lot record|certificate|traceability|livestock/,'Tokenized real-world assets & traceability'],
+    [/nft|mint|collectible|digital item|ownership|certificate/,'Digital ownership & on-chain records'],
+    [/save|savings|budget|target|interest|yield/,'Digital finance & on-chain savings'],
+    [/address|network|transaction|blockchain|explorer|receipt|usdc|payment|qr/,'Blockchain payments & verification']
+  ];
+  for(const [pattern,label] of rules) if(pattern.test(corpus)) return label;
+  return 'Web3 skills for everyday Nigerian life';
+}
 function missionCard(m){
   const un=isUnlocked(m),dn=!!P.done[m.id];
-  return '<div class="card'+(un?'':' lock')+(m.city==='kitcity'?' final-destination':'')+'"><div class="ch">'+badgeSVG(m.n,false,46)+'<div><b>'+personalize('Mission '+m.n+': '+m.title,m)+'</b><small>'+personalize(m.goal,m)+'</small></div></div><div class="cf"><span>'+(dn?'Completed':'Up to +0.50 USDC')+'</span>'+(un?'<button class="btn brand" data-a="play" data-v="'+m.id+'" type="button">'+(dn?'Replay':'Play')+'</button>':'<span>Finish mission '+(m.n-1)+' first</span>')+'</div></div>';
+  const focus=web3Focus(m);
+  return '<div class="card'+(un?'':' lock')+(m.city==='kitcity'?' final-destination':'')+'"><div class="ch">'+badgeSVG(m.n,false,46)+'<div><b>'+personalize('Mission '+m.n+': '+m.title,null)+'</b><small>'+personalize(m.goal,null)+'</small><span class="web3-focus">WEB3 FOCUS · '+focus+'</span></div></div><div class="cf"><span>'+(dn?'Completed':'Up to +0.50 USDC')+'</span>'+(un?'<button class="btn brand" data-a="play" data-v="'+m.id+'" type="button">'+(dn?'Replay':'Play')+'</button>':'<span>Finish mission '+(m.n-1)+' first</span>')+'</div></div>';
 }
 function renderHub(){
   $('#hubTop').innerHTML=tx('<span class="wm"><img class="header-logo" src="https://i.postimg.cc/qqbdTXky/file-00000000958881f4a776df689a235dec.png" alt="KitCity" /></span><div class="lvl"><b>Practice wallet</b><div class="balance-line"><strong>'+P.usdc.toFixed(2)+' USDC</strong><small>'+Object.keys(P.done).filter(k=>P.done[k]).length+' missions completed</small></div></div>');
@@ -4405,10 +4454,10 @@ function carHit(dt){ if(hitCd>0)hitCd=Math.max(0,hitCd-dt);
       const shout=pick(HAZARD_LINES[P.lang==='pcm'?'pcm':'en']);
       const hitMessage=shout+' '+(penalty>0?'(−'+penalty.toFixed(2)+' USDC)':'(no USDC left to deduct)');
       if(P.usdc<=1e-9&&missionToRestart){
-        toast(hitMessage+' No USDC left — mission restarting!',{bubble:true,duration:7000});
+        toast(hitMessage+' No USDC left — mission restarting!',{bubble:true,duration:8500});
         startMission(missionToRestart);
       } else {
-        toast(hitMessage,{bubble:true,duration:7000});
+        toast(hitMessage,{bubble:true,duration:8500});
       }
       break;
     }
