@@ -5,8 +5,8 @@ const OPENING_LINES = [
   { speaker: 'IamAbdul', text: "Then hold the laptop. Get the transaction details and check the recipient address. No guessing." },
   { speaker: 'PLAYER', text: "Abeg, wetin una dey argue about?" },
   { speaker: 'Softstorm', text: "Buyer says he paid 120 USDC. All we have is a screenshot." },
-  { speaker: 'PLAYER', text: "So the money never show, but he wants to collect the laptop?" },
-  { speaker: 'IamAbdul', text: "Exactly. Help us verify it before he gets here." },
+  { speaker: 'PLAYER', text: "Wait, so una never see the money, but he wants to collect the laptop?" },
+  { speaker: 'IamAbdul', text: "Exactly. I'll head back to my office across the block. Come find me there, and I'll show you how to check it." },
   { speaker: 'Softstorm', text: "Help us first. If you're right, breakfast is on me." },
   { speaker: 'PLAYER', text: "Now you're speaking my language." },
 ];;
