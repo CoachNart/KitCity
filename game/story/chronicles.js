@@ -246,7 +246,7 @@ const RAW_MISSIONS = [
       },
       {
         "id": "m02-obj-3",
-        "label": "Trace a transaction and compare the recipient address at the copied page",
+        "label": "Identify the source of the copied address",
         "interactionTarget": "story:m02:objective:3",
         "required": true
       },
@@ -326,7 +326,7 @@ const RAW_MISSIONS = [
       },
       {
         "id": "m03-obj-3",
-        "label": "Identify a fake interface in the recovery flow",
+        "label": "Identify the fake recovery interface",
         "interactionTarget": "story:m03:objective:3",
         "required": true
       },
@@ -558,7 +558,7 @@ const RAW_MISSIONS = [
       },
       {
         "id": "m06-obj-2",
-        "label": "Reproduce the bug with a repeatable payment test case",
+        "label": "Reproduce the payment bug with a test case",
         "interactionTarget": "story:m06:objective:2",
         "required": true
       },
@@ -643,7 +643,7 @@ const RAW_MISSIONS = [
       },
       {
         "id": "m07-obj-3",
-        "label": "Execute a swap after reviewing the quote and token details",
+        "label": "Execute a small practice swap after reviewing the quote",
         "interactionTarget": "story:m07:objective:3",
         "required": true
       },
@@ -1040,13 +1040,13 @@ const RAW_MISSIONS = [
       },
       {
         "id": "m12-obj-3",
-        "label": "Secure an account after the suspicious message",
+        "label": "Secure the affected user's account",
         "interactionTarget": "story:m12:objective:3",
         "required": true
       },
       {
         "id": "m12-obj-4",
-        "label": "Publish a clear notice about the incident",
+        "label": "Publish a clear incident notice",
         "interactionTarget": "story:m12:objective:4",
         "required": true
       }
@@ -1356,7 +1356,7 @@ const RAW_MISSIONS = [
       },
       {
         "id": "m16-obj-3",
-        "label": "Complete a work sample for the verified role",
+        "label": "Complete a relevant work sample",
         "interactionTarget": "story:m16:objective:3",
         "required": true
       },
@@ -1429,7 +1429,7 @@ const RAW_MISSIONS = [
       },
       {
         "id": "m17-obj-2",
-        "label": "Map their journey from order to collection",
+        "label": "Map the trader's journey from order to collection",
         "interactionTarget": "story:m17:objective:2",
         "required": true
       },
@@ -1593,7 +1593,7 @@ const RAW_MISSIONS = [
       },
       {
         "id": "m19-obj-3",
-        "label": "Review allocation and vesting for the proposed token share",
+        "label": "Allocate and vest the proposed token share",
         "interactionTarget": "story:m19:objective:3",
         "required": true
       },
@@ -1666,13 +1666,13 @@ const RAW_MISSIONS = [
       },
       {
         "id": "m20-obj-2",
-        "label": "Test claims against evidence from the warehouse records",
+        "label": "Test the asset claim against independent records",
         "interactionTarget": "story:m20:objective:2",
         "required": true
       },
       {
         "id": "m20-obj-3",
-        "label": "Review custody/redemption terms before launch",
+        "label": "Review custody and redemption terms",
         "interactionTarget": "story:m20:objective:3",
         "required": true
       },
@@ -1757,7 +1757,7 @@ const RAW_MISSIONS = [
       },
       {
         "id": "m21-obj-4",
-        "label": "Verify on-chain claims against the source records before sharing",
+        "label": "Verify the corrected ownership claim before sharing",
         "interactionTarget": "story:m21:objective:4",
         "required": true
       }
@@ -1830,13 +1830,13 @@ const RAW_MISSIONS = [
       },
       {
         "id": "m22-obj-3",
-        "label": "Identify a fake interface on the bridge route",
+        "label": "Identify a fake bridge interface",
         "interactionTarget": "story:m22:objective:3",
         "required": true
       },
       {
         "id": "m22-obj-4",
-        "label": "Explain risks and fees before the sender retries",
+        "label": "Explain bridge risks and fees to the sender",
         "interactionTarget": "story:m22:objective:4",
         "required": true
       }
@@ -1903,7 +1903,7 @@ const RAW_MISSIONS = [
       },
       {
         "id": "m23-obj-2",
-        "label": "Inspect a treasury plan and its delivery milestones",
+        "label": "Inspect the treasury and milestone plan",
         "interactionTarget": "story:m23:objective:2",
         "required": true
       },
@@ -1982,7 +1982,7 @@ const RAW_MISSIONS = [
       },
       {
         "id": "m24-obj-2",
-        "label": "Prepare disclosure for the privileged-permission finding",
+        "label": "Prepare a responsible vulnerability disclosure",
         "interactionTarget": "story:m24:objective:2",
         "required": true
       },
@@ -1994,7 +1994,7 @@ const RAW_MISSIONS = [
       },
       {
         "id": "m24-obj-4",
-        "label": "Verify the patch before recommending launch",
+        "label": "Recommend whether launch can proceed",
         "interactionTarget": "story:m24:objective:4",
         "required": true
       }
@@ -2059,7 +2059,7 @@ const RAW_MISSIONS = [
       },
       {
         "id": "m25-obj-2",
-        "label": "Identify buyer rights in the collectible listing",
+        "label": "Identify the buyer's rights from the listing",
         "interactionTarget": "story:m25:objective:2",
         "required": true
       },
@@ -2071,7 +2071,7 @@ const RAW_MISSIONS = [
       },
       {
         "id": "m25-obj-4",
-        "label": "Rewrite unclear terms before the collectible launch",
+        "label": "Rewrite unclear ownership terms before launch",
         "interactionTarget": "story:m25:objective:4",
         "required": true
       }
@@ -2138,7 +2138,7 @@ const RAW_MISSIONS = [
       },
       {
         "id": "m26-obj-2",
-        "label": "Read license terms for the copied component",
+        "label": "Read licence terms for the copied component",
         "interactionTarget": "story:m26:objective:2",
         "required": true
       },
@@ -2229,7 +2229,7 @@ const RAW_MISSIONS = [
       },
       {
         "id": "m27-obj-4",
-        "label": "Present evidence from the cross-case timeline to Joe_Sef and Larai",
+        "label": "Present an evidence summary to Joe_Sef and Larai",
         "interactionTarget": "story:m27:objective:4",
         "required": true
       }
@@ -2472,7 +2472,7 @@ const RAW_MISSIONS = [
       },
       {
         "id": "m30-obj-3",
-        "label": "Build a safe prototype for the broken hand-off and test it",
+        "label": "Build and test a safe prototype for the broken hand-off",
         "interactionTarget": "story:m30:objective:3",
         "required": true
       },
