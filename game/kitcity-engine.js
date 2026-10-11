@@ -2652,7 +2652,15 @@ function chronicleClueStep(m,obj,index,spot){
         G.evidence[obj.id]=true;P.storyFlags=Object.assign({},P.storyFlags||{},{['evidence_'+obj.id]:true});save();finishStep();
       }}]);
     }}));
-    const prompt='<p><b>'+escapeStoryHtml(npc.name.toUpperCase())+':</b> '+(m.id==='m02'?'I have pulled up the buyer’s transaction record. ':'Let us work through <b>'+escapeStoryHtml(title)+'</b>. ') +escapeStoryHtml(activity.q)+'</p><p><b>YOU:</b> Show me the evidence that matters.</p><p><b>'+escapeStoryHtml(npc.name.toUpperCase())+':</b> Check the details, make your call, and be ready to explain it.</p>';
+    const sceneLead=m.id==='m02'
+      ?(/transaction explorer/i.test(obj.label)
+        ?'Joe has confirmed the hash and network. The public record is open; check what it proves and what it does not.'
+        :/trace a transaction|recipient address/i.test(obj.label)
+        ?'We have the transaction details in front of us. Now compare the recipient with the address Softstorm expected.'
+        :'Softstorm needs a clear incident note. Record what the evidence proves, not what we assume about the buyer.')
+      :'Let us work through <b>'+escapeStoryHtml(title)+'</b>.';
+    const playerPrompt=m.id==='m02'?'Let us check the exact details.':'Show me the evidence that matters.';
+    const prompt='<p><b>'+escapeStoryHtml(npc.name.toUpperCase())+':</b> '+sceneLead+' '+escapeStoryHtml(activity.q)+'</p><p><b>YOU:</b> '+playerPrompt+'</p><p><b>'+escapeStoryHtml(npc.name.toUpperCase())+':</b> '+(m.id==='m02'?'Compare the record with the information Softstorm gave us.':'Look at what is here, make your call, and be ready to explain it.')+'</p>';
     talk(npc,prompt,buttons);
   };
   return step;
