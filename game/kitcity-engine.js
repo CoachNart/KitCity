@@ -2409,7 +2409,15 @@ for(const mission of MISSIONS){
 }
 /* Assign the supplied names once each, in list order, before regional fallback names.
    IamAbdul remains the Lagos suya seller; Laloba is reserved for the first Kano mission. */
-const orderedNPCObjects=allNPCObjects.slice();
+const firstMissionNPCs=[],firstMissionCities=new Set(),firstMissionNPCSet=new Set();
+for(const mission of MISSIONS){
+  if(firstMissionCities.has(mission.city)) continue;
+  firstMissionCities.add(mission.city);
+  const npc=missionNPCObjects(mission)[0];
+  if(npc){ firstMissionNPCs.push(npc); firstMissionNPCSet.add(npc); }
+}
+/* Name the first mission character in each city before filling the remaining missions. */
+const orderedNPCObjects=[...firstMissionNPCs,...allNPCObjects.filter(npc=>!firstMissionNPCSet.has(npc))];
 for(const npc of orderedNPCObjects) if(!npc.originalName) npc.originalName=npc.name;
 const usedNPCNameKeys=new Set();
 const priorityAssignedNPCs=new Set();
