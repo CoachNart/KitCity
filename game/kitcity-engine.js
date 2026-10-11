@@ -2351,10 +2351,16 @@ function runPracticeTask(o){
       const actor=speaker.toUpperCase()==='PLAYER'?playerActor:(castByName.get(speaker.toLowerCase())||sceneCast.find(n=>String(n.name||'').toLowerCase()===speaker.toLowerCase())||o.npc);
       const scriptLine=Number(o.scriptOffset||0)+lineIndex+1;
       const scriptTotal=Number(o.sceneDialogueTotal)||o.sceneDialogue.length;
-      const lineHtml='<div style="padding:12px 13px;background:#fff7d6;color:#20232a;border:3px solid #20232a;border-radius:14px;box-shadow:4px 4px 0 #20232a;font-size:16px;line-height:1.5;font-weight:750"><div style="font-size:10px;letter-spacing:1.5px;font-weight:950;color:#8b4b14;margin-bottom:5px">SCRIPT · '+scriptLine+' / '+scriptTotal+'</div>'+esc(line.text||'')+'</div>';
+      const speakerLabel=speaker.toUpperCase()==='PLAYER'?playerName():speaker;
+      const choiceHtml=Array.isArray(line.choices)&&line.choices.length?'<div style="margin-top:8px;font-weight:900;color:#8b4b14">Choose your response</div>':'';
+      const lineHtml='<div style="padding:12px 13px;background:#fff7d6;color:#20232a;border:3px solid #20232a;border-radius:14px;box-shadow:4px 4px 0 #20232a;font-size:16px;line-height:1.5;font-weight:750"><div style="font-size:12px;font-weight:950;color:#20232a;margin-bottom:5px">'+esc(speakerLabel)+'</div><div style="font-size:10px;letter-spacing:1.5px;font-weight:950;color:#8b4b14;margin-bottom:5px">SCRIPT · '+scriptLine+' / '+scriptTotal+'</div>'+esc(line.text||'')+choiceHtml+'</div>';
       const last=lineIndex===o.sceneDialogue.length-1;
       const label=last?(Number(o.sceneIndex||0)<panels.length-1?'Next scene':'Continue'):'Next line';
-      talk(actor,renderPanel(panels[Number(o.sceneIndex||0)])+lineHtml,[{t:label,f:()=>playLine(lineIndex+1)}]);
+      if(Array.isArray(line.choices)&&line.choices.length){
+        talk(actor,renderPanel(panels[Number(o.sceneIndex||0)])+lineHtml,line.choices.map(choice=>({t:choice,f:()=>{P.storyFlags=P.storyFlags||{};P.storyFlags['script-choice-'+story.id+'-'+lineIndex]=choice;P.lastStoryChoice=choice;save();playLine(lineIndex+1);}})));
+      } else {
+        talk(actor,renderPanel(panels[Number(o.sceneIndex||0)])+lineHtml,[{t:label,f:()=>playLine(lineIndex+1)}]);
+      }
     };
     talk(o.npc,renderPanel(panels[Number(o.sceneIndex||0)])+'<p style="font-weight:800">The scene is playing in script order. Every character listed for this scene is present; each line appears under its actual speaker.</p>',[{t:'Play scene',f:()=>playLine(0)}]);
     return;
