@@ -2341,6 +2341,23 @@ function runPracticeTask(o){
     }
     busy(o.npc,o.busyText||'You get to work…',360,showResult);
   };
+  const showObjectiveBoard=()=>{
+    const objectives=Array.isArray(o.storyObjectives)?o.storyObjectives:[];
+    const done=objectives.filter(obj=>P.storyFlags&&P.storyFlags["objective-"+o.storyId+"-"+obj.id]).length;
+    if(done>=objectives.length){showResult();return;}
+    const caption=done===0?(o.taskIntro||"Choose an action and work through it with your character."):"Good. "+done+" of "+objectives.length+" tasks done. Keep going.";
+    const body=panel("YOUR MOVE · "+(done+1)+"/"+objectives.length,"🎮🧭",caption);
+    const actions=objectives.filter(obj=>!(P.storyFlags&&P.storyFlags["objective-"+o.storyId+"-"+obj.id])).map(obj=>({t:obj.text,f:()=>{
+      if(!P.storyFlags||typeof P.storyFlags!=="object")P.storyFlags={};
+      P.storyFlags["objective-"+o.storyId+"-"+obj.id]=true;save();Snd.sfx("good");
+      showObjectiveBoard();
+    }}));
+    talk(o.npc,body,actions);
+  };
+  if(Array.isArray(o.storyObjectives)&&o.storyObjectives.length){
+    talk(o.npc,scene,[{t:o.button||"Let's do the work",f:showObjectiveBoard}]);
+    return;
+  }
   talk(o.npc,scene,[{t:o.button||o.playerReply||"I'll help",f:()=>{if(o.conversationOnly){finishStep();return;}doAction();}}]);
 }
 function pickStep(o){
@@ -2587,9 +2604,12 @@ const list=specs.map((s,i)=>{
     practice:true,
     panelTag:story.id==="tc-30"?"PRACTICAL ASSESSMENT":"YOUR MOVE",
     art:story.id==="tc-30"?"🧰🏁":"🎮🗨️",
-    button:task,
+    button:story.id==="tc-30"?"Start the practical task":"Let's work through it",
     action:task,
     actionButton:task,
+    storyId:story.id,
+    storyObjectives:story.id==="tc-30"?[{id:"tc30-assessment",text:task}]:story.objectives,
+    taskIntro:story.id==="tc-30"?"Complete this safe, simulated task for your chosen path: "+task:"Let's handle this one step at a time.",
     reaction:story.id==="tc-30"?"You completed the sandbox task. Your evidence is ready for review.":"You and "+lead+" worked through the problem together.",
     result:story.id==="tc-30"?"You completed the sandbox task. Your evidence is ready for review.":"You and "+lead+" worked through the problem together.",
     lesson:story.learningObjectives[0]||"",
