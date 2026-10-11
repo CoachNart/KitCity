@@ -669,7 +669,7 @@ const RAW_MISSIONS = [
       "The mission's completion narrative is triggered"
     ],
     "failureAndRetry": {
-      "onFailure": "The player retries with a smaller  swap and a fee breakdown.",
+      "onFailure": "The player retries with a smaller swap and a fee breakdown.",
       "retry": "Retry the current objective without losing completed objectives or saved story flags."
     },
     "rewards": {
@@ -847,7 +847,7 @@ const RAW_MISSIONS = [
       "m09_complete"
     ],
     "nextMissionId": "m10",
-    "ending": "The  spot trade loses, but the player records the original setup, defined risk and outcome without revenge trading. Joseph Nnadi leaves with a reviewable process instead of a recovery fantasy.",
+    "ending": "The spot trade loses, but the player records the original setup, defined risk and outcome without revenge trading. Joseph Nnadi leaves with a reviewable process instead of a recovery fantasy.",
     "cliffhanger": "Praise calls from the next block: Toza has opened a leveraged position, and the margin number is shrinking.",
   },
   {
@@ -1176,7 +1176,7 @@ const RAW_MISSIONS = [
       "m13_complete"
     ],
     "nextMissionId": "m14",
-    "ending": "The player hosts a  live session with a clear opening, thoughtful questions and a calm response to a difficult question. The recap gives people useful next steps.",
+    "ending": "The player hosts a live session with a clear opening, thoughtful questions and a calm response to a difficult question. The recap gives people useful next steps.",
     "cliffhanger": "After the session, a founder asks for help explaining a good product without drowning the audience in technical language.",
   },
   {
@@ -1823,7 +1823,7 @@ const RAW_MISSIONS = [
       "m21_complete"
     ],
     "nextMissionId": "m22",
-    "ending": "The player checks AI-generated claims against  source data, corrects a false assumption and retests the workflow. The team keeps human review for decisions that can affect people or funds.",
+    "ending": "The player checks AI-generated claims against source data, corrects a false assumption and retests the workflow. The team keeps human review for decisions that can affect people or funds.",
     "cliffhanger": "The corrected report mentions a transfer between networks. Princess wants to trace it without assuming both chains work the same way.",
   },
   {
@@ -1903,7 +1903,7 @@ const RAW_MISSIONS = [
       "m22_complete"
     ],
     "nextMissionId": "m23",
-    "ending": "The player traces a  cross-network transfer, checks the bridge's role and identifies a fake interface. The team records both what worked and the extra trust assumptions the bridge introduced.",
+    "ending": "The player traces a cross-network transfer, checks the bridge's role and identifies a fake interface. The team records both what worked and the extra trust assumptions the bridge introduced.",
     "cliffhanger": "The networks disagree on some details, but the bigger decision belongs to the people funding the next upgrade. The DAO has called a vote.",
   },
   {
@@ -1983,7 +1983,7 @@ const RAW_MISSIONS = [
       "m23_complete"
     ],
     "nextMissionId": "m24",
-    "ending": "The player reviews the treasury and proposal, casts a  vote and explains the outcome alongside participation and execution limits. The group sees that accountability does not end when voting closes.",
+    "ending": "The player reviews the treasury and proposal, casts a vote and explains the outcome alongside participation and execution limits. The group sees that accountability does not end when voting closes.",
     "cliffhanger": "Before the approved work ships, Joe and Mike find a serious vulnerability in the release candidate. The team wants to launch anyway.",
   },
   {
@@ -2063,7 +2063,7 @@ const RAW_MISSIONS = [
       "m24_complete"
     ],
     "nextMissionId": "m25",
-    "ending": "The player prioritizes a  vulnerability, prepares a responsible disclosure and verifies the patch in a review environment. The launch waits until the evidence supports a safe release.",
+    "ending": "The player prioritizes a vulnerability, prepares a responsible disclosure and verifies the patch in a review environment. The launch waits until the evidence supports a safe release.",
     "cliffhanger": "During the review, a creator asks a deceptively simple question: if someone buys a digital collectible, what rights did they actually buy?",
   },
   {
