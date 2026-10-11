@@ -2067,6 +2067,21 @@ function placeStoryClue(def,spot){
   const sign=label(tr(def.sign||def.title),BRAND,'#071827',1.25); sign.position.set(spot.x,6.6,spot.z); missionGroup.add(sign);
   return {x:spot.x,z:spot.z,r:6.5,clue:true};
 }
+function placeStoryOffice(spot){
+  /* A small open-front office gives Abdul a clear, separate destination from Softstorm. */
+  const office=new THREE.Group();
+  office.position.set(spot.x,0,spot.z-13);
+  const floor=new THREE.Mesh(new THREE.BoxGeometry(8,.22,6),lam('#39464F'));floor.position.set(0,.11,0);office.add(floor);
+  const back=new THREE.Mesh(new THREE.BoxGeometry(8,4,.25),lam('#23313A'));back.position.set(0,2,-2.9);office.add(back);
+  const left=new THREE.Mesh(new THREE.BoxGeometry(.25,4,6),lam('#2D3D46'));left.position.set(-3.9,2,0);office.add(left);
+  const right=new THREE.Mesh(new THREE.BoxGeometry(.25,4,6),lam('#2D3D46'));right.position.set(3.9,2,0);office.add(right);
+  const roof=new THREE.Mesh(new THREE.BoxGeometry(8.4,.25,6.4),lam('#17242C'));roof.position.set(0,4.1,0);office.add(roof);
+  const desk=new THREE.Mesh(new THREE.BoxGeometry(3.2,1,1.1),lam('#5A4638'));desk.position.set(0,.72,1.4);office.add(desk);
+  const terminal=new THREE.Mesh(new THREE.BoxGeometry(1.25,.85,.12),lam('#0D202B',{emissive:0x073C4A,emissiveIntensity:.6}));terminal.position.set(0,1.65,1.05);office.add(terminal);
+  const accent=new THREE.Mesh(new THREE.BoxGeometry(1.1,.07,.05),lam(BRAND));accent.position.set(0,1.78,.98);office.add(accent);
+  missionGroup.add(office);
+  const sign=label("IAMABDUL'S OFFICE",BRAND,'#071827',1.35);sign.position.set(spot.x,6.4,spot.z-13);missionGroup.add(sign);
+}
 function placeNPC(def,spot){
   if(def.stall) buildStall(def,spot);
   else {
@@ -2693,6 +2708,7 @@ function loadStep(){
   if(st.kind==='character'&&G.i<m.characterStepCount&&(m.id==='m01'||m.npcs.length===2)){
     let target=null;
     const fallbackSpots=['b','c','d','e','f','g','h'];
+    if(m.id==='m01') placeStoryOffice(SPOTS.story);
     m.npcs.forEach((name,index)=>{
       const npc=STORY_NPCS[name];
       const spotKey=index===0?'a':index===1?'story':fallbackSpots[(index-2)%fallbackSpots.length];
