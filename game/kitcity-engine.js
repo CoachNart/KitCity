@@ -3936,7 +3936,7 @@ function startMission(id){
 }
 function briefing(){
   const m=G.m,C=CITIES[m.city];
-  openSheet('<div class="who"><span class="av" style="background:'+INK+'">'+m.n+'</span><div><b>'+personalize('Mission '+m.n+': '+m.title,null)+'</b><small>'+C.name+', '+C.tag+'</small></div></div><p>'+personalize(m.goal,null)+'</p><p class="web3-focus">WEB3 SKILL · '+web3Focus(m)+'</p><ul class="pts">'+m.steps.map(s=>'<li>'+personalize(tr(s.label),m,s.npc)+'</li>').join('')+'</ul>'+(m.n===1?'<p class="note">Move with the left stick or WASD. Hold Run or Shift to run. Tap Talk or press E to speak. Follow the arrow.</p>':'<p class="note">Follow the arrow to the next person. Watch for traffic.</p>'),
+  openSheet('<div class="who"><span class="av" style="background:'+INK+'">'+m.n+'</span><div><b>'+personalize('Mission '+m.n+': '+m.title,null)+'</b><small>'+C.name+', '+C.tag+'</small></div></div><p>'+personalize(m.goal,null)+'</p><ul class="pts">'+m.steps.map(s=>'<li>'+personalize(tr(s.label),m,s.npc)+'</li>').join('')+'</ul>'+(m.n===1?'<p class="note">Move with the left stick or WASD. Hold Run or Shift to run. Tap Talk or press E to speak. Follow the arrow.</p>':'<p class="note">Follow the arrow to the next person. Watch for traffic.</p>'),
     [{t:'Start mission',f:closeSheet},{t:'Back to hub',g:1,f:exitToHub}]);
 }
 function finishStep(){
@@ -4071,26 +4071,9 @@ function mapSVG(){
     '<div class="map-legend"><span><i class="map-dot unlocked"></i>Unlocked</span><span><i class="map-dot completed"></i>Completed</span><span><i class="map-dot locked"></i>Locked</span><span class="map-legend-note">Tap a labelled city to explore</span></div></section>';
 }
 
-function web3Focus(m){
-  const corpus=[m.title,m.goal,...(m.steps||[]).map(step=>step.label||'')].join(' ').toLowerCase();
-  const rules=[
-    [/scam|phish|fraud|fake support|red flag|airdrop|approval|permission/,'Scam detection & wallet safety'],
-    [/wallet|recovery phrase|backup|seed phrase|private key|self.custody/,'Wallet security & self-custody'],
-    [/vote|proposal|governance|community decision|dao|passport/,'Web3 identity & community governance'],
-    [/swap|slippage|exchange|rate|cash out|escrow|peer.to.peer|p2p|trade|liquidity|token/,'Crypto markets, swaps & DeFi'],
-    [/bounty|deliverable|creator|design|freelance|client|invoice|work reference|payment/,'Web3 work & verifiable payments'],
-    [/farm|herd|crop|produce|supply|lot record|certificate|traceability|livestock/,'Tokenized real-world assets & traceability'],
-    [/nft|mint|collectible|digital item|ownership|certificate/,'Digital ownership & on-chain records'],
-    [/save|savings|budget|target|interest|yield/,'Digital finance & on-chain savings'],
-    [/address|network|transaction|blockchain|explorer|receipt|usdc|payment|qr/,'Blockchain payments & verification']
-  ];
-  for(const [pattern,label] of rules) if(pattern.test(corpus)) return label;
-  return 'Web3 skills for everyday Nigerian life';
-}
 function missionCard(m){
   const un=isUnlocked(m),dn=!!P.done[m.id];
-  const focus=web3Focus(m);
-  return '<div class="card'+(un?'':' lock')+(m.city==='kitcity'?' final-destination':'')+'"><div class="ch">'+badgeSVG(m.n,false,46)+'<div><b>'+personalize('Mission '+m.n+': '+m.title,null)+'</b><small>'+personalize(m.goal,null)+'</small><span class="web3-focus">WEB3 FOCUS · '+focus+'</span></div></div><div class="cf"><span>'+(dn?'Completed':'Up to +0.50 USDC')+'</span>'+(un?'<button class="btn brand" data-a="play" data-v="'+m.id+'" type="button">'+(dn?'Replay':'Play')+'</button>':'<span>Finish mission '+(m.n-1)+' first</span>')+'</div></div>';
+  return '<div class="card'+(un?'':' lock')+(m.city==='kitcity'?' final-destination':'')+'"><div class="ch">'+badgeSVG(m.n,false,46)+'<div><b>'+personalize('Mission '+m.n+': '+m.title,null)+'</b><small>'+personalize(m.goal,null)+'</small></div></div><div class="cf"><span>'+(dn?'Completed':'Up to +0.50 USDC')+'</span>'+(un?'<button class="btn brand" data-a="play" data-v="'+m.id+'" type="button">'+(dn?'Replay':'Play')+'</button>':'<span>Finish mission '+(m.n-1)+' first</span>')+'</div></div>';
 }
 function renderHub(){
   $('#hubTop').innerHTML=tx('<span class="wm"><img class="header-logo" src="https://i.postimg.cc/qqbdTXky/file-00000000958881f4a776df689a235dec.png" alt="KitCity" /></span><div class="lvl"><b>Practice wallet</b><div class="balance-line"><strong>'+P.usdc.toFixed(2)+' USDC</strong><small>'+Object.keys(P.done).filter(k=>P.done[k]).length+' missions completed</small></div></div>');
