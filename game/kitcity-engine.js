@@ -3156,7 +3156,14 @@ const HAZARD_LINES={
     'If na audition for Fast and Furious, you don fail medicals!',
     'Ah! My spirit don press emergency exit!',
     'You see road user, you think say na bonus level?',
-    'Abeg park! Even Google Maps don abandon us!'
+    'Abeg park! Even Google Maps don abandon us!',
+    'I see my whole life flash before me, including the ones I never lived!',
+    'Oga, this is Lagos road, not a racing game final boss!',
+    'My slippers don reach destination before the car!',
+    'You dey drive with your eyes closed or na confidence alone?',
+    'I just remembered I never tell my people where I dey!',
+    'This pothole and this driver dey compete for my downfall!',
+    'I came out for fresh air, not emergency landing!'
   ],
   pcm:[
     'Yeeh! I don die! Oga driver, who give you licence?',
@@ -3178,7 +3185,13 @@ const HAZARD_LINES={
     'Even Google Maps don abandon us, driver!',
     'Ah! My spirit don press emergency exit!',
     'You see human being, you think say na bonus level?',
-    'Abeg park! Your steering dey write obituary!'
+    'Abeg park! Your steering dey write obituary!',
+    'My slippers don reach house before me!',
+    'Oga, this na Lagos road, no be game final boss!',
+    'You dey drive with your eyes closed or na faith alone?',
+    'I never even send my location to my people!',
+    'This pothole and this motor dey plan my downfall together!',
+    'I come outside for fresh air, no be emergency landing!'
   ]
 };
 function carHit(dt){ if(hitCd>0)hitCd=Math.max(0,hitCd-dt);
