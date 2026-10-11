@@ -2141,7 +2141,7 @@ function openSheet(html,btns,typingMs,preserveIdentity){
     setTimeout(pendingReveal,typingMs);
   } else { sheetEl.classList.remove('typing'); pendingReveal=null; }
 }
-function closeSheet(){ S.modal=false; cbs=[]; sheetTok++; pendingReveal=null; chat={npc:null,log:[]}; sheetEl.classList.remove('typing'); modalEl.classList.add('hidden'); sheetEl.innerHTML=''; Snd.duck(false); }
+function closeSheet(){ S.modal=false; cbs=[]; sheetTok++; pendingReveal=null; chat={npc:null,log:[]}; sheetEl.classList.remove('typing','chronicle-briefing'); modalEl.classList.add('hidden'); sheetEl.innerHTML=''; Snd.duck(false); }
 sheetEl.addEventListener('click',e=>{
   if(pendingReveal){ pendingReveal(); return; }
   const b=e.target.closest('[data-i]'); if(!b) return;
@@ -4018,9 +4018,11 @@ function startMission(id){
   },60);
 }
 function briefing(){
-  const m=G.m,C=CITIES[m.city];
-  openSheet('<div class="who"><span class="av" style="background:'+INK+'">'+m.n+'</span><div><b>'+personalize('Mission '+m.n+': '+m.title,null)+'</b><small>'+C.name+', '+C.tag+'</small></div></div><p>'+personalize(m.goal,null)+'</p><p class="web3-focus">WEB3 SKILL · '+web3Focus(m)+'</p><ul class="pts">'+m.steps.map(s=>'<li>'+personalize(tr(s.label),m,s.npc)+'</li>').join('')+'</ul>'+(m.n===1?'<p class="note">Move with the left stick or WASD. Hold Run or Shift to run. Tap Talk or press E to speak. Follow the arrow.</p>':'<p class="note">Follow the arrow to the next person. Watch for traffic.</p>'),
-    [{t:'Start mission',f:closeSheet},{t:'Back to hub',g:1,f:exitToHub}]);
+  const m=G.m,C=CITIES[m.city],firstStep=m.steps[Math.min(G.i||0,m.steps.length-1)];
+  const checklist=m.steps.map((step,i)=>'<li class="'+(i<(G.i||0)?'done':(i===(G.i||0)?'current':''))+'"><span>'+(i<(G.i||0)?'✓':String(i+1).padStart(2,'0'))+'</span><b>'+personalize(tr(step.label),m,step.npc)+'</b></li>').join('');
+  openSheet('<div class="chronicle-briefing-head"><span class="chronicle-eyebrow">KITCITY · THE T3KIT CHRONICLES</span><small>MISSION '+String(m.n).padStart(2,'0')+' · '+C.name.toUpperCase()+'</small><h3>'+personalize(m.title,null)+'</h3><p>'+personalize(m.goal,null)+'</p></div><div class="chronicle-first-objective"><small>START HERE</small><b>'+personalize(tr(firstStep.label),m,firstStep.npc)+'</b><span>One step at a time. Talk to people, inspect clues, and use what you discover.</span></div><div class="chronicle-checklist"><div class="chronicle-checklist-title"><b>YOUR MISSION</b><span>'+String(G.i||0)+' / '+m.steps.length+' complete</span></div><ul>'+checklist+'</ul></div>'+(m.n===1?'<p class="chronicle-controls">MOVE <b>left stick / WASD</b> · RUN <b>Shift</b> · TALK <b>E / Talk button</b></p>':'<p class="chronicle-controls">Follow the world marker to your next interaction. You can review the objectives any time.</p>'),
+    [{t:'Continue journey',f:closeSheet},{t:'Back to hub',g:1,f:exitToHub}]);
+  sheetEl.classList.add('chronicle-briefing');
 }
 function finishStep(){
   closeSheet(); if(!G) return;
