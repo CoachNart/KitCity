@@ -2323,12 +2323,16 @@ function runPracticeTask(o){
   const esc=v=>String(v==null?'':v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
   const panel=(tag,art,caption)=>'<div style="border:3px solid #20232a;border-radius:12px;overflow:hidden;margin:0 0 10px;background:#fff7d6;color:#20232a;box-shadow:4px 4px 0 #20232a"><div style="padding:5px 10px;background:#20232a;color:#ffe27a;font-weight:900;letter-spacing:1.2px;font-size:10px">KITCITY COMICS · '+esc(tag)+'</div><div style="padding:10px 12px;background:radial-gradient(circle at 85% 15%,#fff 0 8%,transparent 9%),linear-gradient(135deg,#ffe8a3,#ffcf83);font-size:28px;line-height:1.1">'+art+'</div><div style="padding:8px 12px 10px;font-weight:800;font-size:14px;line-height:1.35">'+esc(caption)+'</div></div>';
   const scene=panel(o.panelTag||'THE SCENE',o.art||'💬',o.intro||'');
-  if(Array.isArray(o.sceneDialogue)&&o.sceneDialogue.length){
+  if(Array.isArray(o.sceneDialogue)){
     const panels=Array.isArray(o.scenePanels)&&o.scenePanels.length?o.scenePanels:[];
     const sceneCast=Array.isArray(o.sceneCast)?o.sceneCast:[];
     const castByName=new Map(sceneCast.map(n=>[String(n.name||'').toLowerCase(),n]));
     const playerActor={name:playerName(),role:'The player',color:'#E4572E',look:LK.guy,sign:'YOU'};
     const renderPanel=(p)=>panel(p&&p[0]||'THE SCENE',p&&p[1]||'💬',p&&p[2]||o.intro||'');
+    if(!o.sceneDialogue.length){
+      talk(o.npc,renderPanel(panels[Number(o.sceneIndex||0)]),[{t:'Continue scene',f:finishStep}]);
+      return;
+    }
     const playLine=(lineIndex)=>{
       if(lineIndex>=o.sceneDialogue.length){
         const nextPanel=Number(o.sceneIndex||0)+1;
