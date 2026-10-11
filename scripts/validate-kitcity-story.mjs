@@ -71,7 +71,7 @@ const opening = missions[0];
 assert.ok(opening.includes('characters:["Softstorm","IamAbdul"]'), "Opening scene must cast both Softstorm and IamAbdul");
 assert.ok(opening.includes('speaker:"Softstorm"') && opening.includes('speaker:"IamAbdul"'), "Both opening characters must actually speak in dialogue bubbles");
 for (const line of missions) {
-  const id = line.match(/\\{id:"(tc-\\d+)"\\}/)[1];
+  const id = line.match(/id:"(tc-[0-9]+)"/)[1];
   assert.ok(line.includes("dialogue:[{speaker:"), `${id} must contain actual spoken dialogue`);
   assert.ok(line.includes("panels:["), `${id} must contain comic scene panels`);
 }
