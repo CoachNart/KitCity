@@ -2476,7 +2476,7 @@ const MISSIONS=CHRONICLE_MISSIONS.map((story,index)=>{
     const objectives=story.objectives||[],spots=['b','c','e','g','h','i','j','k','l','m','n','o'];
     objectives.forEach((obj,j)=>{
       const npcIndex=j%Math.max(1,story.npcs.length),spot=spots[(j+(index%3))%spots.length];
-      steps.push(j===0?chronicleChallengeStep(story,obj,npcIndex,spot):chronicleClueStep(story,obj,npcIndex,spot));
+      steps.push(j===0?chronicleChallengeStep(story,obj,npcIndex,spot):chronicleClueStep(story,obj,j,spot));
     });
     steps.push({label:'Bring the evidence together',spot:'a',npc:STORY_NPCS[story.npcs[0]],run(){
       const npc=STORY_NPCS[story.npcs[0]];
