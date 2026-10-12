@@ -2453,13 +2453,33 @@ function addCityRoadTopology(key){
     for(let n=0;n<7;n++)dash(-255+n*25,-225-n*3,4,.2,-.55);
   }
 }
+function addLagosInterchange(cx,cz){
+  const asphalt=new THREE.MeshLambertMaterial({color:'#30383D',map:LKT.asph});
+  const curb=new THREE.MeshLambertMaterial({color:'#D9E5E6'});
+  const cyan=new THREE.MeshBasicMaterial({color:'#10C8DC'});
+  const gold=new THREE.MeshBasicMaterial({color:'#F6C85F'});
+  const deck=new THREE.Mesh(new THREE.BoxGeometry(108,.12,15),asphalt);
+  deck.position.set(cx,.13,cz);deck.rotation.y=-Math.PI/4;cityGroup.add(deck);
+  for(const side of [-1,1]){
+    const edge=new THREE.Mesh(new THREE.BoxGeometry(108,.08,.35),curb);
+    edge.position.set(cx,.21,cz+side*7.25);edge.rotation.y=-Math.PI/4;cityGroup.add(edge);
+  }
+  for(let n=-4;n<=4;n++){
+    const marker=new THREE.Mesh(new THREE.BoxGeometry(5,.035,.2),n%2?cyan:gold);
+    marker.position.set(cx+n*8,.205,cz+n*8);marker.rotation.y=-Math.PI/4;cityGroup.add(marker);
+  }
+  const circle=new THREE.Mesh(new THREE.TorusGeometry(8.5,.65,5,48),new THREE.MeshBasicMaterial({color:'#10C8DC'}));
+  circle.rotation.x=Math.PI/2;circle.position.set(cx,.24,cz);cityGroup.add(circle);
+  const plaza=new THREE.Mesh(new THREE.CylinderGeometry(6.4,6.4,.35,24),new THREE.MeshLambertMaterial({color:'#355C4A'}));
+  plaza.position.set(cx,.22,cz);cityGroup.add(plaza);
+}
 function addLagosPremiumRoads(){
   const asphalt=new THREE.MeshLambertMaterial({color:'#30383D',map:LKT.asph});
   const curbMat=new THREE.MeshLambertMaterial({color:'#D9E5E6'});
   const medianMat=new THREE.MeshLambertMaterial({color:'#263E45'});
   const stripeMat=new THREE.MeshBasicMaterial({color:'#F6C85F',depthWrite:false});
   const cyanMat=new THREE.MeshBasicMaterial({color:'#10C8DC'});
-  const road=(x,z,length,width,angle=0)=>{const m=new THREE.Mesh(new THREE.BoxGeometry(length,.09,width),asphalt);m.position.set(x,.045,z);m.rotation.y=angle;cityGroup.add(m);};
+  const road=(x,z,length,width,angle=0)=>{const m=new THREE.Mesh(new THREE.BoxGeometry(length,.09,width),asphalt);m.position.set(x,.125,z);m.rotation.y=angle;cityGroup.add(m);};
   const bar=(x,z,length,width,material,angle=0,y=.11)=>{const m=new THREE.Mesh(new THREE.BoxGeometry(length,.035,width),material);m.position.set(x,y,z);m.rotation.y=angle;cityGroup.add(m);};
   for(const axis of ['x','z']) for(const n of [-2,0,2]){
     const p=roadCoord(n,axis==='x'?'z':'x');
@@ -2503,12 +2523,14 @@ function buildCity(key){
   const blocks=[];
   for(let i=-3;i<=2;i++)for(let j=-3;j<=2;j++){
     const cx=roadMid(i,'x'),cz=roadMid(j,'z'); blocks.push({cx,cz});
-    const cellW=key==='lagos'?Math.max(56,roadCoord(i+1,'x')-roadCoord(i,'x')-14):R-14;
-    const cellD=key==='lagos'?Math.max(56,roadCoord(j+1,'z')-roadCoord(j,'z')-14):R-14;
+    const roadWidth=n=>key!=='lagos'?14:(n===0?22:(Math.abs(n)===2?18:14));
+    const cellW=key==='lagos'?Math.max(50,roadCoord(i+1,'x')-roadCoord(i,'x')-(roadWidth(i)+roadWidth(i+1))/2):R-14;
+    const cellD=key==='lagos'?Math.max(50,roadCoord(j+1,'z')-roadCoord(j,'z')-(roadWidth(j)+roadWidth(j+1))/2):R-14;
     const vg=new THREE.Mesh(key==='lagos'?uvScale(new THREE.PlaneGeometry(cellW+3,cellD+3),Math.max(6,cellW/5),Math.max(6,cellD/5)):vergeGeo,dirtMat); vg.rotation.x=-Math.PI/2; vg.position.set(cx,.03,cz); cityGroup.add(vg);
     const slab=new THREE.Mesh(key==='lagos'?uvScale(new THREE.BoxGeometry(cellW,0.1,cellD),Math.max(8,cellW/4),Math.max(8,cellD/4)):slabGeo,paveMat); slab.position.set(cx,0.05,cz); cityGroup.add(slab);
     const lmk=(C.lm||[]).find(l=>Math.hypot(l[1]-cx,l[2]-cz)<15);
-    if(lmk) landmark(lmk[0],cx,cz);
+    if(key==='lagos'&&i===1&&j===-2) addLagosInterchange(cx,cz);
+    else if(lmk) landmark(lmk[0],cx,cz);
     else if((((i+j)%C.market)+C.market)%C.market===0) addMarket(cx,cz);
     else addCityBlockBuildings(C,cx,cz,i,j);
     // Roadside/block-edge tree placement removed: keep streets and road verges clear.
