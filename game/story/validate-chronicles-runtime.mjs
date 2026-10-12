@@ -315,6 +315,27 @@ for (const marker of [
   "community_problem_selected:true"
 ]) requireText(marker, "Mission 17 evidence and completion marker " + marker);
 
+
+const activationMission = MISSIONS.find((mission) => mission.id === "m18");
+if (!activationMission || activationMission.title !== "Clicks Don't Pay the Bills") errors.push("Mission 18 must cover prototype activation and honest growth.");
+if (activationMission && (activationMission.npcs[0] !== "David" || activationMission.npcs[1] !== "Kanyin")) errors.push("Mission 18 must use David then Kanyin.");
+if (activationMission && (!activationMission.prerequisites.includes("m17") || activationMission.nextMissionId !== "m19")) errors.push("Mission 18 must connect Mission 17's prototype to Mission 19's funding offer.");
+if (activationMission && (!activationMission.narrativePurpose.includes("Mission 17") || !activationMission.narrativePurpose.includes("thousands of clicks"))) errors.push("Mission 18 must continue from the prototype and investigate low activation.");
+if (activationMission && (!activationMission.sceneLines.some((line) => line.startsWith("David:")) || !activationMission.sceneLines.some((line) => line.startsWith("Kanyin:")))) errors.push("Mission 18 is missing its authored David/Kanyin opening scene.");
+requireText("else if(story.id==='m18')", "Mission 18 bespoke activation-experiment runtime");
+for (const marker of [
+  "m18_user_expectations_checked",
+  "m18_hypothesis_formed",
+  "m18_campaign_brief_ready",
+  "m18_claims_accurate",
+  "m18_activation_metric_selected",
+  "m18_results_interpreted",
+  "m18_suspicious_growth_rejected",
+  "m18_sample_limit_reported",
+  "m18_complete:true",
+  "prototype_expectations_checked:true"
+]) requireText(marker, "Mission 18 evidence and completion marker " + marker);
+
 for (const marker of ["m15_role_matched","m15_two_samples_documented","m15_contribution_separated","m15_bio_evidence_linked","m15_skill_gap_named","m15_complete:true","portfolio_evidence_compiled:true"]) requireText(marker, "Mission 15 evidence and completion marker " + marker);
 
 for (const marker of [
