@@ -139,6 +139,23 @@ for (const marker of [
 if (engine.includes("m12_victim_privacy_protected=true;finishStep();}}])")) {
   // The privacy flag is only set on the corrected, safe notice path; the unsafe option must redirect first.
 }
+
+const liveSessionMission = MISSIONS.find((mission) => mission.id === "m13");
+if (!liveSessionMission || liveSessionMission.title !== "The Mic Is Live") errors.push("Mission 13 must be the live community safety session.");
+if (liveSessionMission && (liveSessionMission.npcs[0] !== "Leemah" || liveSessionMission.npcs[1] !== "Kenny")) errors.push("Mission 13 must introduce Leemah and Kenny in the supplied order.");
+if (liveSessionMission && liveSessionMission.nextMissionId !== "m14") errors.push("Mission 13 must hand off to Mission 14.");
+if (liveSessionMission && !liveSessionMission.sceneLines.some((line) => line.startsWith("Leemah:"))) errors.push("Mission 13 is missing authored Leemah dialogue.");
+if (liveSessionMission && !liveSessionMission.sceneLines.some((line) => line.startsWith("Kenny:"))) errors.push("Mission 13 is missing authored Kenny dialogue.");
+requireText("else if(story.id==='m13')", "Mission 13 bespoke live-session runtime");
+for (const marker of [
+  "m13_facts_verified",
+  "m13_opening_prepared",
+  "m13_session_moderated",
+  "m13_hard_question_answered",
+  "m13_recap_published",
+  "m13_complete:true",
+  "community_safety_session_delivered:true"
+]) requireText(marker, "Mission 13 evidence and completion marker " + marker);
 const oyoScreenshotFollowUp = MISSIONS.find((mission) => mission.id === "m04");
 if (!oyoScreenshotFollowUp || !/Timi|screenshot|wallet activity/i.test(oyoScreenshotFollowUp.narrativePurpose)) errors.push("Mission 4 must continue directly from the screenshot claim about Timi.");
 if (oyoScreenshotFollowUp && !/stop the group from naming timi/i.test(oyoScreenshotFollowUp.objectives.map((objective) => objective.label).join(" "))) errors.push("Mission 4 must begin by stopping the accusation before verifying the screenshot.");
