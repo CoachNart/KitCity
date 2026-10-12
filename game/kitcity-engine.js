@@ -1767,9 +1767,9 @@ function makeVehicle(kind,C){
   return {m:buildSedan(pk(pl.sedan),pl.stripe,false),hl:4.5,hw:1.8,sp:[9,14]};
 }
 function placeCar(c){
-  // Vehicle models face local +Z; rotate to align their long axis with their travel direction.
-  if(c.axis==='x'){ c.m.position.set(c.pos,0,c.lane); c.m.rotation.y=c.dir>0?Math.PI/2:-Math.PI/2; }
-  else { c.m.position.set(c.lane,0,c.pos); c.m.rotation.y=c.dir>0?0:Math.PI; }
+  // Vehicle bodies are modelled lengthwise on local X: keep them parallel to X roads and rotate onto Z roads.
+  if(c.axis==='x'){ c.m.position.set(c.pos,0,c.lane); c.m.rotation.y=c.dir>0?0:Math.PI; }
+  else { c.m.position.set(c.lane,0,c.pos); c.m.rotation.y=c.dir>0?-Math.PI/2:Math.PI/2; }
 }
 function vehicleBox(c,pos){ const along=pos==null?c.pos:pos,x=c.axis==='x'?along:c.lane,z=c.axis==='x'?c.lane:along,hx=c.axis==='x'?c.hl:c.hw,hz=c.axis==='x'?c.hw:c.hl; return {x0:x-hx,x1:x+hx,z0:z-hz,z1:z+hz}; }
 function boxesOverlap(a,b,pad=.35){ return a.x0<b.x1+pad&&a.x1>b.x0-pad&&a.z0<b.z1+pad&&a.z1>b.z0-pad; }
@@ -2470,7 +2470,7 @@ function addLagosInterchange(cx,cz){
   deck.position.set(cx,.13,cz);deck.rotation.y=-Math.PI/4;cityGroup.add(deck);
   for(const side of [-1,1]){
     const edge=new THREE.Mesh(new THREE.BoxGeometry(108,.08,.35),curb);
-    edge.position.set(cx,.21,cz+side*7.25);edge.rotation.y=-Math.PI/4;cityGroup.add(edge);
+    edge.position.set(cx-side*5.125,.21,cz+side*5.125);edge.rotation.y=-Math.PI/4;cityGroup.add(edge);
   }
   for(let n=-4;n<=4;n++){
     const marker=new THREE.Mesh(new THREE.BoxGeometry(5,.035,.2),n%2?cyan:gold);
