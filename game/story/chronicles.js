@@ -642,19 +642,19 @@ const RAW_MISSIONS = [
       },
       {
         "id": "m07-obj-2",
-        "label": "Compare the route, pool liquidity, fees and price impact",
+        "label": "Compare route liquidity, fees and price impact for the same trade size",
         "interactionTarget": "story:m07:objective:2",
         "required": true
       },
       {
         "id": "m07-obj-3",
-        "label": "Match the quote and minimum received to the execution record",
+        "label": "Check minimum received and the difference between quote and execution",
         "interactionTarget": "story:m07:objective:3",
         "required": true
       },
       {
         "id": "m07-obj-4",
-        "label": "Inspect the spender and approval before retrying",
+        "label": "Review the token approval before the trader retries",
         "interactionTarget": "story:m07:objective:4",
         "required": true
       }
