@@ -144,7 +144,7 @@ function personalize(html,mission,preferredNPC){
 
 /* ===================== YouTube soundtrack ===================== */
 const MUSIC_QUEUES={
-  afrobeat:{label:'Naija Afrobeats Mix 2026',videos:['bGgjIvWj2I0']},
+  /* Lagos is the sole retained legacy soundtrack. Every other city has its own replacement source. */
   'lagos':{label:"Lagos · Soundtrack",videos:["rhrCG0Vtx3g"]},
   'abuja':{label:"Abuja · Contemporary Afrobeats",videos:["XCjU9qbfv1U"]},
   'ph':{label:"Port Harcourt · Niger Delta / Ijaw",videos:["xodanM9AfrI"]},
@@ -285,7 +285,6 @@ const CITY_MUSIC={
     if(city!=='lagos'&&!MUSIC_QUEUES[CITY_MUSIC[city]]) throw new Error('Missing city music queue: '+city);
   });
 })();
-const DEFAULT_PLAYLIST='PLtZ6yiYzu2i3UoRZM3wmw2xpBRM9zYrwP';
 const YT=(function(){
   /* During Next.js hot reload, an old hidden YouTube iframe can survive after
      this module is evaluated again. Tear it down before creating a new player,
@@ -296,7 +295,7 @@ const YT=(function(){
   }catch(e){}
   try{ const staleHost=document.getElementById('ytHost'); if(staleHost) staleHost.remove(); }catch(e){}
   try{ const staleFrame=document.getElementById('ytPlayer'); if(staleFrame) staleFrame.remove(); }catch(e){}
-  let player=null,ready=false,failed=false,started=false,wantOn=true,duck=false,loading=false,errCount=0,currentKey='afrobeat';
+  let player=null,ready=false,failed=false,started=false,wantOn=true,duck=false,loading=false,errCount=0,currentKey='lagos';
 
   function parseId(v){
     v=String(v||'').trim(); if(!v) return '';
@@ -304,12 +303,8 @@ const YT=(function(){
     return /^[A-Za-z0-9_-]{10,}$/.test(v)?v:'';
   }
   function queue(){
-    /* A saved custom playlist must not silently override every city's soundtrack.
-       It is used only while the player explicitly selects Custom in Music settings. */
-    if(currentKey==='custom'){
-      const custom=parseId(P.pl);
-      if(custom) return {label:'Custom YouTube playlist',list:custom,videos:null};
-    }
+    /* Do not allow the old generic/custom YouTube playlist to leak into city audio.
+       City music must come only from the selected city's explicit replacement source. */
     return MUSIC_QUEUES[currentKey]||MUSIC_QUEUES.lagos;
   }
   function vol(){ if(ready) try{ player.setVolume(duck?22:55); }catch(e){} }
@@ -439,7 +434,7 @@ const YT=(function(){
       /* The global KitCity hub is not a real city soundtrack; keep the last
          selected city instead of switching back to the old generic mix. */
       if(normalized!=='kitcity'){
-        const key=CITY_MUSIC[normalized]||'afrobeat';
+        const key=CITY_MUSIC[normalized]||'lagos';
         currentKey=key;
       }else{
         /* The shared hub has no separate legacy soundtrack. Use the selected
@@ -451,11 +446,11 @@ const YT=(function(){
         try{ loadQueue(); if(wantOn) play(); }catch(e){}
       }
     },
-    currentLabel(){ return currentKey==='custom'&&parseId(P.pl)?'Custom YouTube playlist':(MUSIC_QUEUES[currentKey]||MUSIC_QUEUES.afrobeat).label; },
+    currentLabel(){ return (MUSIC_QUEUES[currentKey]||MUSIC_QUEUES.lagos).label; },
     setList(v){
-      const id=parseId(v);
-      P.pl=id===DEFAULT_PLAYLIST?'':(id?String(v).trim():'');
-      currentKey=id?'custom':(CITY_MUSIC[curCity]||'afrobeat');
+      /* Retire persisted legacy playlist overrides; the city soundtrack is authoritative. */
+      P.pl='';
+      currentKey=CITY_MUSIC[curCity]||'lagos';
       save();
       if(ready){ try{ loadQueue(); if(wantOn) play(); else player.pauseVideo(); }catch(e){} }
     }
