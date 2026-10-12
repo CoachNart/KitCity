@@ -2400,6 +2400,14 @@ function roadCoord(n,axis='x'){
   return n*R+shift;
 }
 function roadMid(n,axis='x'){return (roadCoord(n,axis)+roadCoord(n+1,axis))/2;}
+function roadWidthFor(key,n){return key==='lagos'?(n===0?22:(Math.abs(n)===2?18:14)):14;}
+function blockMid(n,axis='x'){
+  const key=curCity;
+  if(key!=='lagos') return roadMid(n,axis);
+  const start=roadCoord(n,axis)+roadWidthFor(key,n)/2;
+  const end=roadCoord(n+1,axis)-roadWidthFor(key,n+1)/2;
+  return (start+end)/2;
+}
 function addCityBlockBuildings(C,cx,cz,ix,iz){
   const L=cityLayout(curCity),A=cityKit(curCity),p=L.pattern;
   const lots=[
@@ -2522,10 +2530,10 @@ function buildCity(key){
   }
   const blocks=[];
   for(let i=-3;i<=2;i++)for(let j=-3;j<=2;j++){
-    const cx=roadMid(i,'x'),cz=roadMid(j,'z'); blocks.push({cx,cz});
+    const cx=blockMid(i,'x'),cz=blockMid(j,'z'); blocks.push({cx,cz});
     const roadWidth=n=>key!=='lagos'?14:(n===0?22:(Math.abs(n)===2?18:14));
-    const cellW=key==='lagos'?Math.max(50,roadCoord(i+1,'x')-roadCoord(i,'x')-(roadWidth(i)+roadWidth(i+1))/2):R-14;
-    const cellD=key==='lagos'?Math.max(50,roadCoord(j+1,'z')-roadCoord(j,'z')-(roadWidth(j)+roadWidth(j+1))/2):R-14;
+    const cellW=key==='lagos'?Math.max(50,roadCoord(i+1,'x')-roadCoord(i,'x')-(roadWidthFor(key,i)+roadWidthFor(key,i+1))/2):R-14;
+    const cellD=key==='lagos'?Math.max(50,roadCoord(j+1,'z')-roadCoord(j,'z')-(roadWidthFor(key,j)+roadWidthFor(key,j+1))/2):R-14;
     const vg=new THREE.Mesh(key==='lagos'?uvScale(new THREE.PlaneGeometry(cellW+3,cellD+3),Math.max(6,cellW/5),Math.max(6,cellD/5)):vergeGeo,dirtMat); vg.rotation.x=-Math.PI/2; vg.position.set(cx,.03,cz); cityGroup.add(vg);
     const slab=new THREE.Mesh(key==='lagos'?uvScale(new THREE.BoxGeometry(cellW,0.1,cellD),Math.max(8,cellW/4),Math.max(8,cellD/4)):slabGeo,paveMat); slab.position.set(cx,0.05,cz); cityGroup.add(slab);
     const lmk=(C.lm||[]).find(l=>Math.hypot(l[1]-cx,l[2]-cz)<15);
