@@ -18,6 +18,8 @@ requireText("storyDirector.playOpening(()=>{", "intro cinematic completion callb
 requireText("storyDirector.update(dt,time);", "speech bubbles update during free movement");
 if (!sceneDirector.includes("const OPENING_LINES = [")) errors.push("Automatic Lagos opening dialogue is missing");
 if (!sceneDirector.includes("kitcity-speech-bubble")) errors.push("World-anchored speech bubbles are missing");
+if (!styles.includes("kitcity-mission-bubble")) errors.push("Mission dialogue bubble styles are missing");
+if (!styles.includes("#sheet.kitcity-decision-card")) errors.push("Decision-only card styles are missing");
 requireText("Your turn. Walk up to someone and press Talk when you are ready.", "player-led interaction after intro");
 requireText("const STORY_BRIDGES={", "connected story transitions");
 requireText("function chronicleNpcStep(m,name,index)", "contextual character conversations");
@@ -42,6 +44,10 @@ for (const staleDialogue of [
   if (engine.includes(staleDialogue)) errors.push("Retired generic dialogue remains: " + staleDialogue);
 }
 requireText("const STORY_NPC_FOLLOWUPS={", "mission-specific NPC reactions to player choices");
+requireText("function parseMissionDialogue(html,npcName)", "mission dialogue split into in-world speech bubbles");
+requireText("function updateMissionBubblePosition()", "speech bubbles anchored to visible character models");
+requireText("kitcity-decision-card", "decision-only dialogue choice card");
+requireText("const castNames=[...new Set(m.npcs||[])]", "all mission cast members staged without duplicate spawns");
 
 requireText("The consequences belong to this case.", "player-owned mission decision dialogue");
 if (engine.includes("escapeStoryHtml(story.ending)") || engine.includes("escapeStoryHtml(story.cliffhanger)")) errors.push("Narrator-style mission wrap-up is still rendered on a conversation card.");
