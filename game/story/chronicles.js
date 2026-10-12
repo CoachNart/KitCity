@@ -414,78 +414,39 @@ const RAW_MISSIONS = [
     "chapterId": "ch03",
     "title": "The Queue That Never Ends",
     "state": "Osun",
-    "location": "Osun market entrance, trader stalls and a small product studio",
-    "npcIds": [
-      "blockqueen",
-      "christol"
-    ],
-    "npcs": [
-      "Blockqueen",
-      "Christol"
-    ],
-    "narrativePurpose": "A market-trader payment app looks polished but customers keep abandoning checkout. Walk the market queue, watch two traders attempt the flow, then carry their feedback to the studio. The team suspects users do not understand crypto; the evidence points to a confusing network-selection screen.",
+    "location": "Osun market entrance, trader stalls, roadside payment point and a small product studio",
+    "npcIds": ["blockqueen", "christol"],
+    "npcs": ["Blockqueen", "Christol"],
+    "narrativePurpose": "The correction about Timi reaches a small team building a payment app for market traders. The demo looks polished, but buyers keep abandoning checkout. Blockqueen wants to watch real customers; Christol is tempted to blame users. Follow two live attempts from the market queue to the product studio, reproduce the network-selection confusion, and test a focused fix before the next buyer arrives.",
     "learningObjectives": [
-      "How to interview users without leading them",
-      "How to observe a real product failure",
-      "How to choose a small fix and test it"
+      "Notice a repeated product problem by watching real use",
+      "Separate what a user does from assumptions about why",
+      "Test one focused change before celebrating a release"
     ],
-    "prerequisites": [
-      "m04"
-    ],
+    "prerequisites": ["m04"],
     "objectives": [
-      {
-        "id": "m05-obj-1",
-        "label": "Interview two users at the market queue",
-        "interactionTarget": "story:m05:objective:1",
-        "required": true
-      },
-      {
-        "id": "m05-obj-2",
-        "label": "Test the core flow on a trader's phone",
-        "interactionTarget": "story:m05:objective:2",
-        "required": true
-      },
-      {
-        "id": "m05-obj-3",
-        "label": "Isolate the biggest failure in the checkout",
-        "interactionTarget": "story:m05:objective:3",
-        "required": true
-      },
-      {
-        "id": "m05-obj-4",
-        "label": "Prioritize one fix and test the revised flow",
-        "interactionTarget": "story:m05:objective:4",
-        "required": true
-      }
+      {"id":"m05-obj-1","label":"Reach the queue and watch a buyer try to pay","interactionTarget":"story:m05:objective:1","required":true},
+      {"id":"m05-obj-2","label":"Follow the second buyer's attempt without coaching them","interactionTarget":"story:m05:objective:2","required":true},
+      {"id":"m05-obj-3","label":"Reproduce the network-selection dead end with Blockqueen and Christol","interactionTarget":"story:m05:objective:3","required":true},
+      {"id":"m05-obj-4","label":"Test a clearer checkout with the next buyer","interactionTarget":"story:m05:objective:4","required":true}
     ],
     "successConditions": [
-      "Two user observations identify the same checkout confusion",
-      "The team reproduces the failure before changing the interface",
-      "A focused fix is tested with traders before release"
+      "Two observed attempts show the same hesitation at network selection",
+      "The team reproduces the problem before changing the interface",
+      "A clearer label and safe default are retested with a buyer before release"
     ],
     "failureAndRetry": {
-      "onFailure": "If the player proposes features without evidence, Blockqueen sends them back to observe one more checkout attempt.",
-      "retry": "Repeat the affected user test while retaining previous interview notes."
+      "onFailure":"If the player proposes a dashboard or blames the customers, Blockqueen asks them to watch one more real checkout attempt before choosing a fix.",
+      "retry":"Return to the queue, observe the next attempt, and keep the notes already collected."
     },
-    "rewards": {
-      "xp": 145,
-      "skillBadges": [
-        "Product Discovery"
-      ],
-      "portfolioArtifacts": [
-        "Market checkout test report"
-      ]
-    },
-    "storyFlags": [
-      "m05_complete",
-      "checkout_friction_confirmed"
-    ],
-    "nextMissionId": "m06",
-    "ending": "The clearer network labels reduce confusion in the retest. Christol postpones the dashboard and asks the team to measure completed payments instead of celebrating a prettier demo.",
-    "cliffhanger": "During the retest, a payment succeeds twice when a customer taps the button again. Laloba and BigSam are preparing the contract release and need someone to stop a costly mistake.",
-    "sceneLines": [
-      "Blockqueen: \"Three customers walked away at this screen. One asked me if 'network' meant their bank network. Please don't tell me they just need more education—watch what the app is asking them to do.\"",
-      "Christol: \"I watched the last trader tap the wrong chain twice, then abandon the order. The fix is not another pop-up. Put the network choice in plain language and let us test it with the next customer.\""
+    "rewards":{"xp":145,"skillBadges":["Product Discovery"],"portfolioArtifacts":["Market checkout test report"]},
+    "storyFlags":["m05_complete","checkout_friction_confirmed"],
+    "nextMissionId":"m06",
+    "ending":"The clearer network labels help the next buyer finish checkout. Christol shelves the dashboard and starts tracking completed payments and failed attempts instead of celebrating a polished demo.",
+    "cliffhanger":"During the retest, one payment succeeds twice after a customer taps the button again. Laloba and BigSam are preparing the contract release, and the team needs to find out whether the checkout can charge someone twice.",
+    "sceneLines":[
+      "Blockqueen: \"That customer nearly left without paying. She opened the network list, backed out, then tried again. Please don't tell me people just need more education. Come watch the next buyer and tell me what the screen is asking them to do. \"",
+      "Christol: \"The demo works when I'm driving it. In the market, people keep getting stuck on that network screen. I wanted to add a dashboard, but if we can't get one payment through cleanly, the dashboard is just decoration. Let's reproduce the problem first. \""
     ]
   },
   {
