@@ -919,8 +919,9 @@ const RAW_MISSIONS = [
     "ending": "Toza closes the position according to the plan. It is not the outcome he wanted, but the loss is bounded and the team has a record of what happened.",
     "cliffhanger": "Craftore shares the case with a project that has thousands of online followers but few people doing useful work. In Anambra, Kodavic and Cybersage want to know where newcomers disappear.",
     "sceneLines": [
-      "Joseph Nnadi: \"Toza's position is still open, but the margin buffer is getting thin. He's watching every candle and keeps saying it will turn. We need the actual exposure before that call becomes expensive.\"",
-      "The Don: \"The liquidation estimate moved because price and position size changed. Here's the current margin and the level that breaks the plan. Decide the risk limit before the next update, not after it.\""
+      "Praise: \"You're staring at the liquidation line like it owes you money. Before you add anything, tell me how much of the account is already exposed.\"",
+      "Toza: \"I kept moving my stop because every dip looked temporary. Now the position is bigger than the plan I started with. Help me work out the damage without guessing the next candle.\"",
+      "Craftore: \"Here are the margin, position size and liquidation estimate. Pick the maximum loss first; if the numbers don't fit it, reduce the position instead of feeding it more collateral.\""
     ]
   },
   {
@@ -2420,8 +2421,9 @@ const RAW_MISSIONS = [
     "ending": "The gate opens after the evidence is checked, not because you guessed the right answer. Craftore says the next test will ask you to do the work, not just explain it.",
     "cliffhanger": "Inside the gate, three teams are waiting with a live problem. Softstorm says you can choose where to start, but every team must be able to review what you deliver.",
     "sceneLines": [
-      "White Coach: \"Welcome to KitCity. The gatekeeper won't accept a folder full of rumours. Put the copied address, the wallet warning and the cyan mark in order, and mark what we still can't prove.\"",
-      "Kenny: \"I checked the timeline. Some records connect cleanly; others only look similar. If we want the next team to trust this case, we need to leave the gaps visible.\""
+      "Softstorm: \"You made it to the gate. I'm not explaining the cyan mark until the case file shows what happened, when it happened and which source backs each claim.\"",
+      "White Coach: \"Put the copied address, wallet warning and mark on one timeline. If two details only look alike, label them as a lead—not a conclusion.\"",
+      "Craftore: \"I've opened the records wall. Show me which evidence changes the decision at this gate, and leave any gap visible instead of filling it with a guess.\""
     ]
   },
   {
@@ -2509,8 +2511,13 @@ const RAW_MISSIONS = [
     "ending": "The three teams sign off on the evidence, the safety response and the repeatable test. The review chamber marks the work complete but leaves one question unanswered: who commissioned the connected tools?",
     "cliffhanger": "The deployment trail is unlocked. Softstorm takes you to the central records room, where the cyan mark finally appears beside a name: T3Kit.",
     "sceneLines": [
-      "Unique: \"The test is live. One person has to verify a payment, another protect a newcomer, and someone else repair the hand-off. Don't tell me the system works—show me the records from all three.\"",
-      "Cybersage: \"The payment checks out, the newcomer never shared the phrase, and the repaired hand-off kept its reference. I'm signing only those results. Anything beyond them needs another test.\""
+      "Softstorm: \"Three teams, one afternoon, and no room for hand-waving. Tell me what you are taking responsibility for, then bring back something the others can check.\"",
+      "IamAbdul: \"The newcomer has a recovery page open that asks for their phrase. I'm keeping them away from it; check the domain and explain the safe next step in plain language.\"",
+      "Joe_Sef: \"The buyer's screenshot says paid, but the shop still has no matching receipt. I'm pulling the transaction record—compare the recipient and network before anyone hands over the device.\"",
+      "Larai: \"I found the reference ID at the first tool, but the second one drops it. Follow the same case through both systems and note exactly where the hand-off breaks.\"",
+      "Unique: \"I'll run the end-to-end test after you patch it. A green screen on its own isn't a pass; the payment, safety warning and reference all have to survive the journey.\"",
+      "Christol: \"The hand-off now keeps the reference, but I want the failed case rerun too. If the old failure still happens, we haven't fixed the route.\"",
+      "Craftore: \"Bring me the records, the test result and the limit of what you proved. I'll sign the verified parts—not a promise that every possible case is safe.\""
     ]
   },
   {
@@ -2599,8 +2606,13 @@ const RAW_MISSIONS = [
     "ending": "The signal was never a promise of easy money. T3Kit's trail connects the people, tools and lessons you encountered; the city opens because you can verify, build, communicate and contribute. You leave with a portfolio of work and a direction you chose yourself.",
     "cliffhanger": "The city square fills with new teams looking for people who can do the work. Your next chapter begins outside the mission list—with the skill and evidence you carry forward.",
     "sceneLines": [
-      "The Don: \"The signed deployment record names T3Kit, but that doesn't make every claim about it true. Read what was deployed, who approved it and what the record actually commits us to.\"",
-      "Softstorm: \"We've followed this from one wrong address to a whole chain of decisions. The point isn't a magic answer at the end; it's work people can verify, skills they can use and a system they can improve.\""
+      "Softstorm: \"The signal brought you here, but the mark was never proof by itself. Start with the signed deployment record and show me the exact link it establishes.\"",
+      "IamAbdul: \"The record names T3Kit as the commissioning project. That tells us who is behind this connected pathway; it doesn't guarantee anyone a job, profit or shortcut.\"",
+      "Joe_Sef: \"I've matched the deployment reference to the earlier case notes. The chain is consistent where the records overlap, and I've marked the pieces we still can't independently confirm.\"",
+      "Larai: \"The tools connect learning, building, verification and participation. Map the actual work each one enables, not just the labels printed on the city wall.\"",
+      "Unique: \"Choose one skill you want to practise next. Make it concrete enough that another person can review the result, not just hear you say you're interested.\"",
+      "Christol: \"I'll record your next step with a deliverable and a check-in point. If the plan depends on an assumption, write that down so you can test it.\"",
+      "Craftore: \"The file is complete: source records, work you demonstrated and the direction you chose. The city opens because you can show your work—not because you guessed the mystery.\""
     ]
   }
 ];
