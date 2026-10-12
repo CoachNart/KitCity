@@ -3290,7 +3290,7 @@ const MISSIONS=CHRONICLE_MISSIONS.map((story,index)=>{
         ]);
       }}
     ];
-  }}else if(story.id==='m12'){
+  }else if(story.id==='m12'){
     const reina=STORY_NPCS.Reina;
     const cclya=STORY_NPCS.Cclya;
     steps=[
