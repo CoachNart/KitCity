@@ -1949,7 +1949,6 @@ function addRegionalIdentity(C,key){
       box(w,h,w*.72,['#9BB5BE','#D2D5D1','#7F9CA8','#B8C8CB'][i%4],x,h/2-0.2,-190+(i%2)*13);
       for(let y=6;y<h-3;y+=5)box(w*.76,.28,w*.74,'#D9E8E9',x,y,-190+(i%2)*13);
     });
-    const tower=label('LAGOS ISLAND • ATLANTIC METROPOLIS', '#10C8DC', '#10202B',2.05);tower.position.set(-125,92,-190);cityGroup.add(tower);
   }else if(key==='ibadan'){
     // Cocoa House and the brown-roofed, hill-spread city.
     hills('#81715F',[[-205,-215,30,38],[-165,-230,38,48],[-105,-222,28,32]]);
@@ -2551,8 +2550,6 @@ function buildCity(key){
   colliders.length=0; buildings.length=0; cars=[]; walkers=[]; hawkers=[]; ringTaken=[];
   RN=mulberry(C.seed); dxReset(); LOOKSC=CITY_LOOKS[key]||LOOKS;
   applyLook(key,C);
-  const cityNameplate=$('#cityNameplate');
-  if(cityNameplate){ if(key==='lagos'){ cityNameplate.classList.remove('hidden'); $('#cityNameplateTitle').textContent='LAGOS'; $('#cityNameplateSub').textContent='ATLANTIC METROPOLIS'; } else cityNameplate.classList.add('hidden'); }
   if(key==='kitcity'){ buildKitCity(C); return; }
   const outer=new THREE.Mesh(uvScale(new THREE.PlaneGeometry(1400,1400),100,100),lam(C.dirt,{map:LKT.dirt})); outer.rotation.x=-Math.PI/2; outer.position.y=-.04; cityGroup.add(outer);
   const ground=new THREE.Mesh(uvScale(new THREE.PlaneGeometry(520,520),20,20),lam(C.ground,{map:LKT.asph})); ground.rotation.x=-Math.PI/2; cityGroup.add(ground);
@@ -2780,9 +2777,9 @@ function placeNPC(def,spot){
     const sp=label(tr(def.sign||def.name),def.signBg,def.signFg); sp.position.set(p.position.x,7.2,p.position.z); sp.material.depthTest=false; sp.renderOrder=50; sp.scale.set(14,3.5,1); p.userData.storyNameLabel=sp; missionGroup.add(sp);
     colliders.push({x0:p.position.x-1,x1:p.position.x+1,z0:p.position.z-1,z1:p.position.z+1});
     storyNPCActors.push(p);
-    return {x:p.position.x,z:p.position.z,r:6.5,object:p};
+    return {x:p.position.x,z:p.position.z,r:10,object:p};
   }
-  return {x:spot.x,z:spot.z,r:7.5};
+  return {x:spot.x,z:spot.z,r:10};
 }
 
 /* ---- player + beacon ---- */
@@ -4478,7 +4475,12 @@ function loadStep(){
     // The current interaction target remains the only active character; other cast
     // members stay visible for continuity without hijacking the objective.
     const castNames=[];
-    if(m.id!=='m01')[(m.npcs||[]),(m.sceneCast||[])].flat().forEach(name=>{if(name&&!castNames.includes(name))castNames.push(name);});
+    const addCastName=value=>{const name=typeof value==='string'?value:(value&&value.name);if(name&&!castNames.includes(name))castNames.push(name);};
+    (m.npcs||[]).forEach(addCastName);
+    (m.sceneCast||[]).forEach(addCastName);
+    /* Some missions keep supporting characters only on individual steps. Include those
+       step-level cast members too, otherwise they never spawn at their mission centre. */
+    (m.steps||[]).forEach(step=>{addCastName(step.npc);(step.npcs||[]).forEach(addCastName);});
     const activeName=st.npc&&(st.npc.name||st.npc);
     if(activeName&&!castNames.includes(activeName)&&!(m.id==='m01'&&(st.kind==='clue'||st.kind==='challenge')))castNames.push(activeName);
     const anchor=SPOTS[st.spot]||SPOTS.a;
@@ -5018,8 +5020,12 @@ window.addEventListener('keydown',e=>{
 window.addEventListener('keyup',e=>{ keys[e.code]=false; });
 window.addEventListener('blur',()=>{ for(const k in keys) keys[k]=false; });
 document.addEventListener('contextmenu',e=>e.preventDefault());
+talkBtn.setAttribute('aria-label','Talk to nearby character');
 talkBtn.addEventListener('click',()=>interact());
-function interact(){ if(S.phase!=='play'||S.modal||!nearEnt) return; nearEnt.talk(); }
+function interact(){
+  if(S.phase!=='play'||S.modal||!nearEnt) return;
+  if(typeof nearEnt.talk==='function') nearEnt.talk();
+}
 
 /* ===================== collisions ===================== */
 function resolve(p,r){
