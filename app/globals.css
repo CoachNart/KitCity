@@ -19,11 +19,12 @@ html,body{height:100%;overflow:hidden;background:var(--ink);color:var(--ink);fon
 #steps li.now{opacity:1;font-weight:800}
 #steps li.done{opacity:.75;text-decoration:line-through}
 #steps li.done::before{background:var(--ink)}
-#side{top:calc(10px + env(safe-area-inset-top));right:calc(10px + env(safe-area-inset-right));display:flex;flex-direction:column;align-items:flex-end;gap:10px;z-index:5}
+#side{top:calc(10px + env(safe-area-inset-top));right:calc(10px + env(safe-area-inset-right));display:flex;flex-direction:column;align-items:flex-end;gap:10px;z-index:95;pointer-events:none}
+#side button,#side a{pointer-events:auto}
 #wallet{padding:7px 10px;text-align:right;font-size:12px;font-weight:600;line-height:1.25}
 #wallet b{display:block;font:900 16px/1.1 var(--display)}
 #compass{width:62px;height:62px;border-radius:50%;background:var(--ink);border:3px solid var(--brand);display:grid;place-items:center;position:relative;margin-top:2px}
-#compass.force-visible{display:grid!important;visibility:visible!important;opacity:1!important;z-index:80!important}
+#compass.force-visible{display:grid!important;visibility:visible!important;opacity:1!important;z-index:120!important;position:relative;pointer-events:none;box-shadow:0 0 0 4px rgba(16,200,220,.18),0 8px 26px rgba(0,0,0,.35)}
 #compass.force-visible #arrow{display:block!important;visibility:visible!important;opacity:1!important}
 #arrow{width:30px;height:30px}
 .city-nameplate{position:fixed;top:calc(12px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:7;display:flex;flex-direction:column;align-items:center;gap:1px;min-width:154px;padding:7px 15px 8px;border:1px solid rgba(140,230,244,.65);border-radius:13px;background:linear-gradient(135deg,rgba(10,24,34,.94),rgba(24,53,65,.86));box-shadow:0 8px 28px rgba(0,0,0,.28),0 0 20px rgba(16,200,220,.12);backdrop-filter:blur(14px) saturate(140%);-webkit-backdrop-filter:blur(14px);pointer-events:none;color:#eafaff;text-align:center;white-space:nowrap}
