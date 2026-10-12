@@ -3713,6 +3713,26 @@ function loadStep(){
       if(st.npc&&st.npc.name===name) target=entity;
     });
     goal=target||ents[0]||null;
+  }else if(m.id==='m03'){
+    // Keep the complete Oyo scene physically present: Unique, Smrt huntr and Timi.
+    const sceneCast=[
+      {name:'Unique',spot:'a'},
+      {name:'Smrt huntr',spot:'story'},
+      {name:'Timi',spot:'buyer'}
+    ];
+    sceneCast.forEach(({name,spot})=>{
+      const npc=STORY_NPCS[name];
+      if(!npc) return;
+      const entity=placeNPC(npc,SPOTS[spot]||SPOTS.a);
+      entity.talk=()=>{ if(st.npc&&st.npc.name===name) st.run(); };
+      entity.active=()=>!!(st.npc&&st.npc.name===name);
+      ents.push(entity);
+      if(st.npc&&st.npc.name===name) goal=entity;
+    });
+    if(st.kind==='clue'||st.kind==='challenge'){
+      const clue=placeMissionEvidence(st,m,SPOTS[st.spot]||SPOTS.execution);
+      clue.talk=()=>st.run();clue.active=()=>true;ents.push(clue);goal=clue;
+    }
   }else{
     if(st.kind==='character'){
       const entity=placeNPC(st.npc,SPOTS[st.spot]||SPOTS.a);
