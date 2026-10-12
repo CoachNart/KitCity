@@ -26,6 +26,15 @@ html,body{height:100%;overflow:hidden;background:var(--ink);color:var(--ink);fon
 #compass.force-visible{display:grid!important;visibility:visible!important;opacity:1!important;z-index:80!important}
 #compass.force-visible #arrow{display:block!important;visibility:visible!important;opacity:1!important}
 #arrow{width:30px;height:30px}
+.city-nameplate{position:fixed;top:calc(12px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:7;display:flex;flex-direction:column;align-items:center;gap:1px;min-width:154px;padding:7px 15px 8px;border:1px solid rgba(140,230,244,.65);border-radius:13px;background:linear-gradient(135deg,rgba(10,24,34,.94),rgba(24,53,65,.86));box-shadow:0 8px 28px rgba(0,0,0,.28),0 0 20px rgba(16,200,220,.12);backdrop-filter:blur(14px) saturate(140%);-webkit-backdrop-filter:blur(14px);pointer-events:none;color:#eafaff;text-align:center;white-space:nowrap}
+.city-nameplate-kicker{font:800 8px/1.2 system-ui,sans-serif;letter-spacing:.22em;color:#8fe7f2}
+.city-nameplate strong{font:950 24px/.98 system-ui,sans-serif;letter-spacing:.13em;color:#F6C85F;text-shadow:0 2px 12px rgba(246,200,95,.22)}
+.city-nameplate-sub{font:800 8px/1.2 system-ui,sans-serif;letter-spacing:.16em;color:#c8e4e9}
+.city-nameplate.hidden{display:none!important}
+#compass.force-visible{position:fixed!important;top:calc(80px + env(safe-area-inset-top))!important;right:calc(12px + env(safe-area-inset-right))!important;width:68px!important;height:68px!important;display:grid!important;place-items:center!important;visibility:visible!important;opacity:1!important;z-index:999!important;border:3px solid #10C8DC!important;box-shadow:0 5px 18px rgba(0,0,0,.4),0 0 18px rgba(16,200,220,.2)!important}
+#compass.force-visible #arrow{display:block!important;visibility:visible!important;opacity:1!important;width:34px!important;height:34px!important;filter:drop-shadow(0 2px 3px rgba(0,0,0,.5))}
+#compass.force-visible #dist{z-index:2}
+
 #dist{position:absolute;bottom:-12px;left:50%;transform:translateX(-50%);background:var(--brand);border:2px solid var(--ink);border-radius:4px;font:800 11px/1 system-ui;padding:3px 5px;white-space:nowrap}
 #toast{top:calc(170px + env(safe-area-inset-top));left:50%;transform:translateX(-50%) translateY(-8px);background:var(--ink);color:var(--brand);border-radius:6px;padding:8px 14px;font-weight:800;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;max-width:86vw;text-align:center;z-index:45}
 #toast.show{opacity:1;transform:translateX(-50%)}
