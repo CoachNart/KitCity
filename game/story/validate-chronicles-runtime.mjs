@@ -82,13 +82,24 @@ requireText("Timi's thumb is hovering over 'Restore now'. What do you do?", "Mis
 requireText("if(story.id==='m03')", "Mission 3 has its own authored runtime sequence");
 requireText("if(story.id==='m04')", "Mission 4 has its own authored runtime sequence");
 requireText("if(story.id==='m05')", "Mission 5 has its own authored runtime sequence");
+requireText("if(story.id==='m06')", "Mission 6 has its own authored runtime sequence");
 const osunCheckoutMission = MISSIONS.find((mission) => mission.id === "m05");
-if (!osunCheckoutMission || !/market|checkout|buyer/i.test(osunCheckoutMission.narrativePurpose)) errors.push("Mission 5 must continue into the Osun market checkout problem.");
-if (osunCheckoutMission && !/watch a buyer try to pay/i.test(osunCheckoutMission.objectives.map((objective) => objective.label).join(" "))) errors.push("Mission 5 must begin by observing a live checkout attempt.");
-if (osunCheckoutMission && /explain consensus|identify its block|proposed record change/i.test(JSON.stringify(osunCheckoutMission))) errors.push("Mission 5 still contains detached generic blockchain objectives.");
-requireText("m05-obj-1", "Mission 5's bespoke market runtime steps");
-requireText("m05_repeat_pattern", "Mission 5 records repeated observed checkout friction");
-requireText("m05_retest_completed", "Mission 5 retests the focused change with a buyer");
+const payoutControlMission = MISSIONS.find((mission) => mission.id === "m06");
+if (!osunCheckoutMission || osunCheckoutMission.title !== "The Broken Application") errors.push("Mission 5 must use the rewritten Broken Application story.");
+if (osunCheckoutMission && !/market|checkout|payment/i.test(osunCheckoutMission.narrativePurpose)) errors.push("Mission 5 must remain grounded in the Osun market payment problem.");
+if (osunCheckoutMission && !/why the merchant no longer trusts the payment screen/i.test(osunCheckoutMission.objectives.map((objective) => objective.label).join(" "))) errors.push("Mission 5 must begin with the merchant's trust problem.");
+if (osunCheckoutMission && /network-selection|repeat pattern|second buyer/i.test(JSON.stringify(osunCheckoutMission))) errors.push("Mission 5 still contains retired repetitive checkout story elements.");
+if (!payoutControlMission || payoutControlMission.title !== "Code That Controls Money") errors.push("Mission 6 must use the rewritten smart-contract payout-control story.");
+if (payoutControlMission && !/payout destination|contract/i.test(payoutControlMission.narrativePurpose)) errors.push("Mission 6 must investigate the payout-control mismatch from Mission 5.");
+if (osunCheckoutMission && payoutControlMission && osunCheckoutMission.npcs.some((name) => payoutControlMission.npcs.includes(name))) errors.push("Mission 5 and Mission 6 must have distinct character casts.");
+if (osunCheckoutMission && (osunCheckoutMission.npcs.join("|") !== "Blockqueen|Christol")) errors.push("Mission 5 cast order must be Blockqueen then Christol.");
+if (payoutControlMission && (payoutControlMission.npcs.join("|") !== "Laloba|BigSam")) errors.push("Mission 6 cast order must be Laloba then BigSam.");
+requireText("m05_status_bug_reproduced", "Mission 5 preserves evidence of the premature PAID state");
+requireText("m05_status_logic_corrected", "Mission 5 fixes the status transition");
+requireText("m05_payout_address_mismatch", "Mission 5 records the payout-address mismatch");
+requireText("m06_privileged_setter_found", "Mission 6 traces the privileged destination setter");
+requireText("m06_test_redirect_reproduced", "Mission 6 reproduces the redirect in a test deployment");
+requireText("m06_release_gate_verified", "Mission 6 establishes a release gate");
 if (engine.includes("spot:'buyer2'")) errors.push("Mission 5 uses an unsupported interaction anchor.");
 const sixMissionArc = [
   ["m06", "m05", "m07", ["Laloba", "BigSam"]],
