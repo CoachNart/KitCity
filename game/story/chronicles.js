@@ -296,11 +296,13 @@ const RAW_MISSIONS = [
     "location": "Oyo bus park, phone-repair kiosk and student courtyard",
     "npcIds": [
       "unique",
-      "smrt-huntr"
+      "smrt-huntr",
+      "timi"
     ],
     "npcs": [
       "Unique",
-      "Smrt huntr"
+      "Smrt huntr",
+      "Timi"
     ],
     "narrativePurpose": "The voice note from Lagos leads you to Timi at an Oyo bus park. A stranger's wallet-recovery page is counting down and demanding twelve secret words. Timi has not submitted them. Stop the rushed decision, find out what the page is really asking for, and help Timi get out safely before the message spreads.",
     "learningObjectives": [
@@ -366,7 +368,8 @@ const RAW_MISSIONS = [
     "cliffhanger": "Before you leave, a message hits the student group: a screenshot claims Timi's wallet has already been drained. Timi swears the words were never entered. Goodness and Semi are on their way—and the group chat is already picking a culprit.",
     "sceneLines": [
       "Unique: \"You must be Timi. Oya, show me the screen—wait, don't tap that button. This thing says your wallet will disappear in sixty seconds? Since when does a wallet need a countdown to be recovered?\"",
-      "Smrt huntr: \"I checked the address they sent. It's not the support page. Timi, you haven't typed the words, right? Good. Keep it that way. We'll find the real support route ourselves.\""
+      "Smrt huntr: \"I checked the address they sent. It's not the support page. Timi, you haven't typed the words, right? Good. Keep it that way. We'll find the real support route ourselves.\"",
+      "Timi: \"I haven't entered the words. I just need somebody to show me the real way back in without putting my wallet at risk.\""
     ]
   },
   {
