@@ -1504,6 +1504,21 @@ function addArchitectureDetail(key,x,z,w,h,d,color,xb){
  case 'northern-trade': xb(w+1,.8,d+1,trim,x,h+.4,z); break;
  case 'rail-junction': xb(w+1,.5,d+1,edge,x,h+.25,z); for(let i=-1;i<=1;i++)xb(.3,h*.7,.3,trim,x+i*w*.25,h*.35,z+d/2); break;
  case 'kanuri-compound': xb(w+1,1,d+1,trim,x,h+.5,z); break;
+ case 'plateau-rock': for(let side of [-1,1]){const rock=new THREE.Mesh(new THREE.DodecahedronGeometry(Math.max(1,Math.min(w,d)*.15),0),lam(edge));rock.position.set(x+side*w*.32,h+.7,z+d/2);rock.scale.y=1.7;cityGroup.add(rock);} break;
+ case 'sahel-gate': xb(w+1,1.2,d+1,trim,x,h+.6,z); xb(w*.45,h*.25,d*.45,edge,x,h+h*.12,z); break;
+ case 'market-arcade': for(let i=-1;i<=1;i++){const arch=new THREE.Mesh(new THREE.TorusGeometry(Math.max(1,w*.12),.28,5,12,Math.PI),lam(edge));arch.position.set(x+i*w*.28,h*.42,z+d/2);cityGroup.add(arch);} break;
+ case 'ekiti-spring': xb(w+1,.45,d+1,trim,x,h+.22,z); for(let i=-1;i<=1;i++)xb(.35,h*.55,.35,edge,x+i*w*.27,h*.28,z+d/2); break;
+ case 'rice-granary': for(let side of [-1,1]){const g=new THREE.Mesh(new THREE.CylinderGeometry(Math.min(w,d)*.13,Math.min(w,d)*.16,h*.75,8),lam(edge));g.position.set(x+side*w*.28,h*.38,z+d/2);cityGroup.add(g);} break;
+ case 'industrial-market': xb(w+1,.55,d+1,trim,x,h+.27,z); for(let i=-1;i<=1;i++)xb(.25,h*.8,.25,edge,x+i*w*.25,h*.4,z+d/2); break;
+ case 'delta-stilt': for(let side of [-1,1])for(let front of [-1,1])xb(.3,h*.55,.3,edge,x+side*w*.32,h*.27,z+front*d*.32); xb(w+1,.4,d+1,trim,x,h*.55,z); break;
+ case 'sahel-courtyard': xb(w+1,1.2,d+1,trim,x,h+.6,z); xb(w*.6,.5,d*.6,edge,x,h+1.45,z); break;
+ case 'fishing-granary': for(let i=-1;i<=1;i++)xb(.3,h*.7,.3,edge,x+i*w*.25,h*.35,z+d/2); xb(w+1,.4,d+1,trim,x,h+.2,z); break;
+ case 'confluence-terrace': xb(w+1,.5,d+1,trim,x,h+.25,z); xb(w*.8,.45,d*.8,edge,x,h+.75,z); break;
+ case 'middlebelt-court': xb(w+1,.8,d+1,trim,x,h+.4,z); for(let side of [-1,1])xb(.45,h*.65,.45,edge,x+side*w*.35,h*.32,z); break;
+ case 'grove-sculpture': for(let side of [-1,1]){const s=new THREE.Mesh(new THREE.TorusKnotGeometry(.8,.22,32,5),lam(edge));s.position.set(x+side*w*.28,h*.72,z+d/2);s.scale.set(1,1.2,1);cityGroup.add(s);} break;
+ case 'mambilla-stilt': for(let side of [-1,1])for(let front of [-1,1])xb(.3,h*.5,.3,edge,x+side*w*.3,h*.25,z+front*d*.3); xb(w+1,.5,d+1,trim,x,h+.25,z); break;
+ case 'kanuri-sahel': xb(w+1,1.3,d+1,trim,x,h+.65,z); for(let side of [-1,1])xb(.7,h*.8,.7,edge,x+side*w*.38,h*.4,z+d/2); break;
+ case 'northern-craft': xb(w+1,.6,d+1,trim,x,h+.3,z); for(let i=-2;i<=2;i++)xb(.35,h*.6,.35,edge,x+i*w*.17,h*.3,z+d/2); break;
  default: xb(w+1,.5,d+1,trim,x,h+.25,z); xb(w*.6,.4,d*.6,edge,x,h+.75,z);
  }
 }
