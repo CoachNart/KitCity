@@ -843,3 +843,7 @@ html,body{height:100%;overflow:hidden;background:var(--ink);color:var(--ink);fon
   .kitcity-mission-dialogue-nav{bottom:calc(78px + env(safe-area-inset-bottom));gap:4px;padding:4px}
   .kitcity-mission-dialogue-nav button{min-width:44px;min-height:30px;padding:6px}
 }
+
+
+/* Allow long lines to scroll inside a bubble on small screens. */
+.kitcity-speech-bubble,.kitcity-mission-dialogue-bubble{pointer-events:auto;touch-action:pan-y;overscroll-behavior:contain}
