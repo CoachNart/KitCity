@@ -272,7 +272,20 @@ requireText("else if(story.id==='m13')", "Mission 13 bespoke live-session runtim
 requireText("You made it from Anambra with Reina’s incident report?", "Mission 13 opens from the Mission 12 handoff");
 requireText("we do not have verified evidence that funds were taken", "Mission 13 preserves the verified incident facts");
 requireText("removed identifying details", "Mission 13 protects the affected member in the recap");
+const productMessageMission = MISSIONS.find((mission) => mission.id === "m14");
+if (!productMessageMission || productMessageMission.title !== "What Does This Product Do?") errors.push("Mission 14 must be the product-communication mission.");
+if (productMessageMission && (productMessageMission.npcs[0] !== "Kore" || productMessageMission.npcs[1] !== "Veedima")) errors.push("Mission 14 must introduce Kore and Veedima in the supplied order.");
+if (productMessageMission && (!productMessageMission.prerequisites.includes("m13") || productMessageMission.nextMissionId !== "m15")) errors.push("Mission 14 must continue from Mission 13 and hand off to Mission 15.");
+if (productMessageMission && !productMessageMission.narrativePurpose.includes("safety session in Mission 13")) errors.push("Mission 14 must connect to the previous mission.");
+if (productMessageMission && (!productMessageMission.sceneLines.some((line) => line.startsWith("Kore:")) || !productMessageMission.sceneLines.some((line) => line.startsWith("Veedima:")))) errors.push("Mission 14 must use its assigned NPCs in authored dialogue.");
+requireText("else if(story.id==='m14')", "Mission 14 bespoke product-message runtime");
 for (const marker of [
+  "m14_audience_defined",
+  "m14_product_inspected",
+  "m14_plain_language_copy",
+  "m14_educational_post_published",
+  "m14_complete:true",
+  "product_message_verified:true",
   "m13_facts_verified",
   "m13_opening_prepared",
   "m13_session_moderated",
