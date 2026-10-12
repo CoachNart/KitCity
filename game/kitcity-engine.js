@@ -1459,8 +1459,7 @@ const CITY_ARCH_ROAD={
  dutse:{arch:'rock-city',road:'rock-pass',roof:'#A79A7D',kerb:'#C7BDA3',mark:'#E5D9B4',edge:'rock',feature:'hill'},
  gusau:{arch:'northern-trade',road:'trade-gate',roof:'#B69A70',kerb:'#D2C19D',mark:'#E7D7B0',edge:'earth-shoulder',feature:'canopy'},
  kafanchan:{arch:'rail-junction',road:'rail-yard',roof:'#9D8C70',kerb:'#C3B99E',mark:'#E0D4AC',edge:'rail',feature:'rail'},
- damboa:{arch:'kanuri-compound',road:'dry-season',roof:'#C4A274',kerb:'#D7C49F',mark:'#E8D7B2',edge:'sand-shoulder',feature:'compound'}
-
+ damboa:{arch:'kanuri-compound',road:'dry-season',roof:'#C4A274',kerb:'#D7C49F',mark:'#E8D7B2',edge:'sand-shoulder',feature:'compound'},
  jos:{arch:'plateau-rock',road:'jos-switchback',roof:'#7D887A',kerb:'#C2C8BC',mark:'#E2D8B5',edge:'rock',feature:'plateau'},
  maiduguri:{arch:'sahel-gate',road:'maiduguri-dust',roof:'#B88F5C',kerb:'#D5BD96',mark:'#E8D7B0',edge:'sand-shoulder',feature:'sahel'},
  anambra:{arch:'market-arcade',road:'anambra-market',roof:'#9A765A',kerb:'#C8B79B',mark:'#F0C75B',edge:'loading-bay',feature:'market-arcade'},
