@@ -15,9 +15,9 @@ const GAME_MARKUP = `
   </div>
   <div id="side">
     <div id="wallet" class="panel">No wallet yet</div>
-    <div id="compass"><svg id="arrow" viewBox="0 0 24 24"><path d="M12 2 L20 21 L12 16 L4 21 Z" fill="#10C8DC" stroke="#FFFFFF" stroke-width=".8"/></svg><span id="dist"></span></div>
+    <div id="compass"><svg id="arrow" viewBox="0 0 24 24"><path d="M12 2 L20 21 L12 16 L4 21 Z" fill="#F3263E" stroke="#FFFFFF" stroke-width=".8"/></svg><span id="dist"></span></div>
   </div>
-  <div id="cityNameplate" class="city-nameplate hidden" aria-live="polite"><span class="city-nameplate-kicker">NIGERIA · OPEN WORLD</span><strong id="cityNameplateTitle">LAGOS</strong><span id="cityNameplateSub">ATLANTIC METROPOLIS</span></div>
+  <div id="cityNameplate" class="city-nameplate hidden" aria-live="polite"><strong id="cityNameplateTitle">LAGOS</strong><span id="cityNameplateSub">ATLANTIC METROPOLIS</span></div>
   <div id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
   <div id="joy"><div id="knob"></div></div>
   <button id="runBtn" class="round" type="button">Run</button>
