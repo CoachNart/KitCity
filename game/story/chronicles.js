@@ -920,7 +920,8 @@ const RAW_MISSIONS = [
     "cliffhanger": "Craftore shares the case with a project that has thousands of online followers but few people doing useful work. In Anambra, Kodavic and Cybersage want to know where newcomers disappear.",
     "sceneLines": [
       "Toza keeps watching the price instead of the margin buffer. We need to show him what the position can lose.",
-      "Adding leverage won't repair a broken idea. Let's follow the limit he set before entering."
+      "Adding leverage won't repair a broken idea. Let's follow the limit he set before entering.",
+      "The calculation is ready. I'll check the liquidation threshold against the plan before we choose an action."
     ]
   },
   {
@@ -2421,7 +2422,8 @@ const RAW_MISSIONS = [
     "cliffhanger": "Inside the gate, three teams are waiting with a live problem. Softstorm says you can choose where to start, but every team must be able to review what you deliver.",
     "sceneLines": [
       "The mark on the gate matches the earlier cases, but that alone cannot open it. Show me how you traced it.",
-      "I will review your reasoning, including the contradictions. A case file that admits uncertainty is stronger than a confident guess."
+      "I will review your reasoning, including the contradictions. A case file that admits uncertainty is stronger than a confident guess.",
+      "I'll review the route against your source records; the mark alone is not enough."
     ]
   },
   {
@@ -2510,7 +2512,12 @@ const RAW_MISSIONS = [
     "cliffhanger": "The deployment trail is unlocked. Softstorm takes you to the central records room, where the cyan mark finally appears beside a name: T3Kit.",
     "sceneLines": [
       "We have one afternoon. Split the checks, keep the evidence linked and make sure somebody else can repeat the test.",
-      "I will not sign off on a screenshot. Show the test steps, the result and the limits we still know about."
+      "I will not sign off on a screenshot. Show the test steps, the result and the limits we still know about.",
+      "I have the payment record. I'll verify the exact recipient before anyone calls the case closed.",
+      "I'll check the page and wallet flow for anything that asks a newcomer to expose a secret.",
+      "I can rerun the integration test from the source record through to the destination screen.",
+      "I'll keep the test result, limitations and next owner together so another person can review it.",
+      "I'll challenge the hand-off once more and confirm the evidence survives the full route."
     ]
   },
   {
@@ -2600,7 +2607,13 @@ const RAW_MISSIONS = [
     "cliffhanger": "The city square fills with new teams looking for people who can do the work. Your next chapter begins outside the mission list—with the skill and evidence you carry forward.",
     "sceneLines": [
       "The deployment record names T3Kit. The cyan mark was the breadcrumb; the signed record is the proof.",
-      "The point was never to promise easy money. It was to connect people to useful work they can learn, test and contribute."
+      "The point was never to promise easy money. It was to connect people to useful work they can learn, test and contribute.",
+      "The signed deployment record connects the work to T3Kit. Let's read the scope before we infer its purpose.",
+      "I'll compare the stated purpose with what the tools actually support today.",
+      "I want the final roadmap to point to a skill and a real piece of work, not a guaranteed outcome.",
+      "I'll check that the final summary distinguishes evidence from interpretation.",
+      "I'll review the practical commitment and make sure it is specific enough to begin.",
+      "The route is complete when the evidence and next step are both clear."
     ]
   }
 ];
