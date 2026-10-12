@@ -1141,6 +1141,16 @@ function addRoadIdentity(key,blocks){
    }
    if(idx%3===0){for(let side of [-1,1])for(let seg=0;seg<6;seg++)stripe(2.8,1.1,A.mark,i*R+8+seg*4,k*R+side*5.8,0);}
  }
+ // Mirror the same city-specific treatment onto the north/south streets.
+ for(let k=-3;k<=3;k++)for(let i=-3;i<=2;i++){
+   for(let lane=0;lane<laneCount;lane++){
+     const offset=(lane-(laneCount-1)/2)*gap;
+     if(idx%4===0){for(let seg=-2;seg<=2;seg++)stripe(5.5,.22,A.mark,k*R+offset,i*R+35+seg*11,Math.PI/2);}
+     else if(idx%4===1){stripe(56,.16,A.mark,k*R+offset,i*R+35,Math.PI/2);}
+     else if(idx%4===2){for(let seg=-3;seg<=3;seg++)stripe(2.6,.3,A.mark,k*R+offset,i*R+35+seg*8,Math.PI/2);}
+     else {stripe(56,.22,A.mark,k*R+offset,i*R+35,Math.PI/2);stripe(56,.12,A.kerb,k*R+offset+.65,i*R+35,Math.PI/2);}
+   }
+ }
  blocks.forEach(b=>{
    const x=b.cx,z=b.cz;
    if(A.edge==='rail'){
