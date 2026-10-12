@@ -1451,7 +1451,7 @@ const RAW_MISSIONS = [
     "chapterId": "ch09",
     "title": "Clicks Don't Pay the Bills",
     "state": "Kano",
-    "location": "Kano campaign board, market entrance and analytics desk",
+    "location": "Kano community build camp, market entrance and campaign board",
     "npcIds": [
       "david",
       "kanyin"
@@ -1460,11 +1460,11 @@ const RAW_MISSIONS = [
       "David",
       "Kanyin"
     ],
-    "narrativePurpose": "A campaign brought traffic but barely any traders finished onboarding. Follow the numbers from the campaign board to the market entrance, where you can speak with people who clicked but left. Design a small experiment that tests one explanation rather than buying more reach.",
+    "narrativePurpose": "Mission 17 ends with a usable first version of a local creative directory and people asking how to find it. David wants to push a big launch campaign; Kanyin's previous campaign dashboard shows thousands of clicks but very few completed actions. Find out what people think the prototype offers, identify where their expectations break from reality, and run a small honest experiment before anyone spends more money.",
     "learningObjectives": [
-      "How to form a testable growth hypothesis",
-      "How to choose meaningful activation metrics",
-      "How to interpret results without inflating them"
+      "Form a testable growth hypothesis from observed user behaviour",
+      "Write a focused campaign brief with a truthful promise and one clear action",
+      "Measure meaningful activation rather than clicks alone"
     ],
     "prerequisites": [
       "m17"
@@ -1496,33 +1496,35 @@ const RAW_MISSIONS = [
       }
     ],
     "successConditions": [
-      "The hypothesis predicts a measurable behaviour",
-      "The campaign has a defined audience and success metric",
-      "The team evaluates completed tasks rather than vanity numbers"
+      "The hypothesis is based on observed user confusion, not guesses alone",
+      "The campaign accurately describes the prototype and has one clear action",
+      "The team measures completed useful actions, records the limits of a small test and rejects fake engagement"
     ],
     "failureAndRetry": {
-      "onFailure": "If the player selects impressions as the only success metric, Kanyin asks what behaviour would show that the product helped a trader.",
-      "retry": "Revise the hypothesis or metric and rerun the experiment plan."
+      "onFailure": "If the player prioritizes reach, promises features the prototype does not have, or treats clicks as proof of success, Kanyin asks them to return to the observed user journey and define what a real first win looks like.",
+      "retry": "Keep the user interview notes. Revise the promise or metric and run the small experiment plan again."
     },
     "rewards": {
       "xp": 275,
       "skillBadges": [
-        "Growth Experiments"
+        "Growth Experiments",
+        "User Research"
       ],
       "portfolioArtifacts": [
-        "Product activation experiment brief"
+        "Kano prototype activation experiment brief and result note"
       ]
     },
     "storyFlags": [
       "m18_complete",
-      "growth_experiment_defined"
+      "growth_experiment_defined",
+      "prototype_expectations_checked"
     ],
     "nextMissionId": "m19",
-    "ending": "The team pauses the paid-user offer and runs a smaller experiment with real traders. The results show where onboarding needs work instead of hiding the drop-off behind traffic numbers.",
-    "cliffhanger": "A founder offers to fund the next stage, but the proposed terms promise fixed returns and skip milestone reporting. In Edo, Mcbond and Alpha.RWA need you to inspect the deal.",
+    "ending": "The team pauses the paid-user offer and runs a small, clearly described test with local traders and creatives. A few people complete the intended first action; others still hesitate. The result is not a viral launch, but the team can now name the next problem to fix without pretending clicks equal adoption.",
+    "cliffhanger": "A founder offers to fund the next stage, but the proposed terms promise fixed returns and skip milestone reporting. In Edo, Mcbond and Alpha.RWA need you to inspect the deal before the team signs anything.",
     "sceneLines": [
-      "Essa: \"The campaign got plenty of clicks, but almost nobody finished the task. The agency wants a bigger budget. I'm not paying for more of the same until we know where people leave.\"",
-      "White Coach: \"Four users stopped at the wallet connection because they thought it would move their funds. Change that explanation and test it with the next few people before calling the campaign a success.\""
+      "David: \"The prototype is finally real. People are asking for the link, so I want to push it everywhere tonight. If we wait, someone else will own the conversation.\"",
+      "Kanyin: \"Last time we paid for attention. Thousands clicked; hardly anyone finished the task. And this prototype is a directory, not a fully vetted booking platform. If our campaign implies more than it does, we buy disappointment.\""
     ]
   },
   {
