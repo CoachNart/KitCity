@@ -936,12 +936,12 @@ const RAW_MISSIONS = [
       "Craftore: \"I've got the original order, current size, posted margin and the venue's liquidation estimate. The estimate can change with price, fees and exchange rules; it isn't a guaranteed exit. We'll compare the position with the loss limit Toza wrote down before entering.\""
     ]
   },
-  {
+{
     "id": "m11",
     "chapterId": "ch06",
-    "title": "The Empty Community Hall",
+    "title": "The Room Full of Ghosts",
     "state": "Anambra",
-    "location": "Anambra community hall, welcome desk and street food stall",
+    "location": "Anambra community hall, registration table and demo corner",
     "npcIds": [
       "kodavic",
       "cybersage"
@@ -950,11 +950,11 @@ const RAW_MISSIONS = [
       "Kodavic",
       "Cybersage"
     ],
-    "narrativePurpose": "The project celebrates its follower count, but the weekly community hall is nearly empty and new sign-ups rarely return. Kodavic wants to open more channels and run another giveaway; Cybersage has watched a newcomer get lost between six channels without completing a single task. Follow the newcomer's first few minutes, find the actual point of friction, and test a simpler first step before buying more attention.",
+    "narrativePurpose": "The team posts a triumphant '1,000 members' banner, but the hall booked for its first builder meetup is almost empty. Kodavic wants to announce a prize to pull people in. Cybersage shows you the signup path: six channels, a wall of rules, and a request for newcomers to explain their whole Web3 identity before doing anything. A newcomer called Dera has arrived in person and is ready to leave. Find the exact moment the welcome flow loses her, replace it with one useful first action, and test whether a second newcomer can finish it without needing a wallet connection or a giveaway.",
     "learningObjectives": [
-      "Map a real newcomer journey rather than infer intent from follower counts",
-      "Identify one barrier using observed behaviour",
-      "Test a focused onboarding change and measure completion"
+      "Observe what a newcomer actually does before changing the funnel",
+      "Remove friction by giving people one clear first action",
+      "Measure a completed first contribution instead of sign-ups or attendance"
     ],
     "prerequisites": [
       "m10"
@@ -962,37 +962,37 @@ const RAW_MISSIONS = [
     "objectives": [
       {
         "id": "m11-obj-1",
-        "label": "Follow a newcomer from sign-up to their first attempted action",
+        "label": "Catch Dera before she walks out and follow her first attempt",
         "interactionTarget": "story:m11:objective:1",
         "required": true
       },
       {
         "id": "m11-obj-2",
-        "label": "Find the exact step where the newcomer gets stuck",
+        "label": "Find the exact point where the welcome flow loses Dera",
         "interactionTarget": "story:m11:objective:2",
         "required": true
       },
       {
         "id": "m11-obj-3",
-        "label": "Replace the channel maze with one clear first task",
+        "label": "Replace the six-channel maze with one useful first action",
         "interactionTarget": "story:m11:objective:3",
         "required": true
       },
       {
         "id": "m11-obj-4",
-        "label": "Test the revised welcome flow with another newcomer",
+        "label": "Test the new welcome path with a second newcomer and record completion",
         "interactionTarget": "story:m11:objective:4",
         "required": true
       }
     ],
     "successConditions": [
-      "The friction point is based on the newcomer's observed journey",
-      "The team changes one barrier instead of adding channels or incentives first",
-      "The revised flow is tested and completion is recorded without pressuring the newcomer"
+      "The player observes the actual newcomer journey instead of guessing from follower counts",
+      "The welcome flow gives one safe, useful action without requiring a wallet connection or personal details",
+      "A second newcomer completes the task and the team records completion rather than sign-ups"
     ],
     "failureAndRetry": {
-      "onFailure": "If the player proposes another giveaway before checking the journey, Cybersage asks them to follow one newcomer and show where the current flow fails.",
-      "retry": "Return to the welcome desk, keep the first observation and test one focused change."
+      "onFailure": "If the player proposes a giveaway or more channels before observing Dera, Cybersage asks them to show where Dera got stuck using the actual signup path.",
+      "retry": "Return to the registration table, preserve the observed friction point and test one clear first action."
     },
     "rewards": {
       "xp": 205,
@@ -1000,20 +1000,21 @@ const RAW_MISSIONS = [
         "Community Onboarding"
       ],
       "portfolioArtifacts": [
-        "Newcomer journey and onboarding test report"
+        "Newcomer friction audit and first-task test"
       ]
     },
     "storyFlags": [
       "m11_complete",
       "newcomer_friction_confirmed",
-      "first_task_flow_tested"
+      "first_task_flow_tested",
+      "first_contribution_measured"
     ],
     "nextMissionId": "m12",
-    "ending": "The newcomer was not asking for more channels or a prize; they needed one clear next step and someone to show them where to begin. The revised welcome flow gets another person to complete the first task, giving the team a real signal to improve rather than another follower-count celebration.",
-    "cliffhanger": "As the second newcomer finishes, a message arrives from an account using a moderator's name. It says new members must verify their wallets through a private link. Kodavic has already seen three people click it. Reina and Cclya are tracing the impersonator before anyone shares a secret.",
+    "ending": "Dera does not need another giveaway. She needs to know what the community is for and what she can do in the next three minutes. The revised welcome card gives her one choice, one task and a person to ask. A second newcomer completes it too; for the first time, the team has evidence that the welcome path works beyond the signup screen.",
+    "cliffhanger": "As Kodavic pins the new welcome card, a newcomer shows Cybersage a private message from an account using a moderator's name. It threatens to restrict their wallet unless they verify through a link. Three people have received the same DM. The meetup's onboarding problem has just become a safety incident.",
     "sceneLines": [
-      "Kodavic: \"We have thousands of followers and still nobody shows up when we ask for help. I was about to buy another campaign, but Cybersage says a new member couldn't even work out where to start. Show me what they actually see.\"",
-      "Cybersage: \"She joined, opened six channels, asked where to begin and then went quiet. We don't know why everyone leaves, but we can follow one person through the first task and find the point where this flow loses them.\""
+      "Kodavic: \"The dashboard says one thousand members. I booked this hall for a proper builder meetup and look at the empty chairs. I'm about to announce a prize. Give me one good reason not to.\"",
+      "Cybersage: \"Because Dera came through the door ready to try, and the signup page asked her to read six channels and introduce her entire Web3 life before she could do one useful thing. She's at the exit now. Watch what she does; don't guess for her.\""
     ]
   },
   {
