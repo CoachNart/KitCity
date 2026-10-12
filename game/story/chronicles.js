@@ -222,7 +222,7 @@ const RAW_MISSIONS = [
       "Joe_Sef",
       "Larai"
     ],
-    "narrativePurpose": "The laptop dispute is settled, but the buyer's copied address came from a page he trusted. Follow the route from the shop counter to the cybercafé where he copied it, then to Larai's records desk. The page was real; the address had been swapped. Find out how without accusing the wrong person.",
+    "narrativePurpose": "The laptop dispute is settled, but the transaction hash confirms the funds went to a recipient address the shop does not control. The buyer copied that address from a page he trusted. Follow the route from the shop counter to the cybercafé where he copied it, then to Larai's records desk. The page was real; the address had been swapped. Find out how without accusing the wrong person.",
     "learningObjectives": [
       "How transaction hashes, networks and recipient addresses fit together",
       "How to preserve evidence before confronting someone",
