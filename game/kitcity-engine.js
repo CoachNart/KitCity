@@ -604,7 +604,7 @@ function label(text,bg,fg,H0){
 }
 
 /* ===================== world ===================== */
-const R=70;
+let R=70, GRID_OFFSET=35, CITY_LAYOUT_INDEX=0;
 const colliders=[],buildings=[];
 const SPAWN={x:9.5,z:-9.5};
 const SPOTS={
@@ -1122,11 +1122,11 @@ function addRoadIdentity(key,blocks){
  // preserving the existing road footprint/collision-safe street grid.
  const roadKeys=Object.keys(CITY_ARCH_ROAD),idx=Math.max(0,roadKeys.indexOf(key));
  const patterns=[
-   ()=>{for(let k=-3;k<=3;k++)for(let i=-3;i<=2;i++){for(const side of [-1,1])stripe(8,.28,A.mark,i*R+35+side*5,k*R,0);}},
-   ()=>{for(let k=-3;k<=3;k++)for(let i=-3;i<=2;i++){for(const side of [-1,1]){box(56,.18,.65,A.kerb,i*R+35,.1,k*R+side*6.6);stripe(56,.18,A.mark,i*R+35,k*R+side*2.5,0);}}},
-   ()=>{for(let k=-3;k<=3;k++)for(let i=-3;i<=2;i++){for(const side of [-1,1]){for(let n=0;n<6;n++)stripe(3,.25,A.mark,i*R+35-25+n*10,k*R+side*3,0);}}},
-   ()=>{for(let k=-3;k<=3;k++)for(let i=-3;i<=2;i++){for(const side of [-1,1]){box(56,.16,.5,A.kerb,i*R+35,.09,k*R+side*6.7);for(let n=-2;n<=2;n++)stripe(1.5,1.5,A.mark,i*R+35+n*10,k*R+side*4.7,0);}}},
-   ()=>{for(let k=-3;k<=3;k++)for(let i=-3;i<=2;i++){for(const side of [-1,1])stripe(56,.45,A.mark,i*R+35,k*R+side*5.4,0);}}
+   ()=>{for(let k=-3;k<=3;k++)for(let i=-3;i<=2;i++){for(const side of [-1,1])stripe(8,.28,A.mark,i*R+GRID_OFFSET+side*5,k*R,0);}},
+   ()=>{for(let k=-3;k<=3;k++)for(let i=-3;i<=2;i++){for(const side of [-1,1]){box(56,.18,.65,A.kerb,i*R+GRID_OFFSET,.1,k*R+side*6.6);stripe(56,.18,A.mark,i*R+GRID_OFFSET,k*R+side*2.5,0);}}},
+   ()=>{for(let k=-3;k<=3;k++)for(let i=-3;i<=2;i++){for(const side of [-1,1]){for(let n=0;n<6;n++)stripe(3,.25,A.mark,i*R+GRID_OFFSET-25+n*10,k*R+side*3,0);}}},
+   ()=>{for(let k=-3;k<=3;k++)for(let i=-3;i<=2;i++){for(const side of [-1,1]){box(56,.16,.5,A.kerb,i*R+GRID_OFFSET,.09,k*R+side*6.7);for(let n=-2;n<=2;n++)stripe(1.5,1.5,A.mark,i*R+GRID_OFFSET+n*10,k*R+side*4.7,0);}}},
+   ()=>{for(let k=-3;k<=3;k++)for(let i=-3;i<=2;i++){for(const side of [-1,1])stripe(56,.45,A.mark,i*R+GRID_OFFSET,k*R+side*5.4,0);}}
  ];
  patterns[idx%patterns.length]();
  // Add a stable per-city road signature: line rhythm, lane count and junction paint differ by city.
@@ -1134,10 +1134,10 @@ function addRoadIdentity(key,blocks){
  for(let k=-3;k<=3;k++)for(let i=-3;i<=2;i++){
    for(let lane=0;lane<laneCount;lane++){
      const offset=(lane-(laneCount-1)/2)*gap;
-     if(idx%4===0){for(let seg=-2;seg<=2;seg++)stripe(5.5,idx%2?.18:.28,A.mark,i*R+35+seg*11,k*R+offset,0);}
-     else if(idx%4===1){stripe(56,.16,A.mark,i*R+35,k*R+offset,0);}
-     else if(idx%4===2){for(let seg=-3;seg<=3;seg++)stripe(2.6,.3,A.mark,i*R+35+seg*8,k*R+offset,0);}
-     else {stripe(56,.22,A.mark,i*R+35,k*R+offset,0);stripe(56,.12,A.kerb,i*R+35,k*R+offset+.65,0);}
+     if(idx%4===0){for(let seg=-2;seg<=2;seg++)stripe(5.5,idx%2?.18:.28,A.mark,i*R+GRID_OFFSET+seg*11,k*R+offset,0);}
+     else if(idx%4===1){stripe(56,.16,A.mark,i*R+GRID_OFFSET,k*R+offset,0);}
+     else if(idx%4===2){for(let seg=-3;seg<=3;seg++)stripe(2.6,.3,A.mark,i*R+GRID_OFFSET+seg*8,k*R+offset,0);}
+     else {stripe(56,.22,A.mark,i*R+GRID_OFFSET,k*R+offset,0);stripe(56,.12,A.kerb,i*R+GRID_OFFSET,k*R+offset+.65,0);}
    }
    if(idx%3===0){for(let side of [-1,1])for(let seg=0;seg<6;seg++)stripe(2.8,1.1,A.mark,i*R+8+seg*4,k*R+side*5.8,0);}
  }
@@ -1145,10 +1145,10 @@ function addRoadIdentity(key,blocks){
  for(let k=-3;k<=3;k++)for(let i=-3;i<=2;i++){
    for(let lane=0;lane<laneCount;lane++){
      const offset=(lane-(laneCount-1)/2)*gap;
-     if(idx%4===0){for(let seg=-2;seg<=2;seg++)stripe(5.5,.22,A.mark,k*R+offset,i*R+35+seg*11,Math.PI/2);}
-     else if(idx%4===1){stripe(56,.16,A.mark,k*R+offset,i*R+35,Math.PI/2);}
-     else if(idx%4===2){for(let seg=-3;seg<=3;seg++)stripe(2.6,.3,A.mark,k*R+offset,i*R+35+seg*8,Math.PI/2);}
-     else {stripe(56,.22,A.mark,k*R+offset,i*R+35,Math.PI/2);stripe(56,.12,A.kerb,k*R+offset+.65,i*R+35,Math.PI/2);}
+     if(idx%4===0){for(let seg=-2;seg<=2;seg++)stripe(5.5,.22,A.mark,k*R+offset,i*R+GRID_OFFSET+seg*11,Math.PI/2);}
+     else if(idx%4===1){stripe(56,.16,A.mark,k*R+offset,i*R+GRID_OFFSET,Math.PI/2);}
+     else if(idx%4===2){for(let seg=-3;seg<=3;seg++)stripe(2.6,.3,A.mark,k*R+offset,i*R+GRID_OFFSET+seg*8,Math.PI/2);}
+     else {stripe(56,.22,A.mark,k*R+offset,i*R+GRID_OFFSET,Math.PI/2);stripe(56,.12,A.kerb,k*R+offset+.65,i*R+GRID_OFFSET,Math.PI/2);}
    }
  }
  blocks.forEach(b=>{
@@ -1171,7 +1171,7 @@ function addRoadIdentity(key,blocks){
  });
  // State-specific road furniture: every road kit gets a distinct marker/sign shape.
  for(let n=-2;n<=2;n++){
-   const x=n*R+35,z=-3*R+35;
+   const x=n*R+GRID_OFFSET,z=-3*R+GRID_OFFSET;
    if(A.edge==='rail'){
      box(.25,5,.25,A.roof,x,2.5,z-8);box(3,.3,.3,A.mark,x,4.8,z-8);
    }else if(A.edge==='water-channel'||A.edge==='canal'){
@@ -2103,8 +2103,12 @@ function streetDetails0(C,blocks){
     }
     drains.push({x:cx,y:.08,z:cz-28.6,sx:56,sy:.16,sz:1.1},{x:cx,y:.08,z:cz+28.6,sx:56,sy:.16,sz:1.1},{x:cx-28.6,y:.08,z:cz,sx:1.1,sy:.16,sz:56},{x:cx+28.6,y:.08,z:cz,sx:1.1,sy:.16,sz:56});
   }
+  const crossingMode=CITY_LAYOUT_INDEX%4;
   for(let i=-3;i<=3;i++)for(let j=-3;j<=3;j++){
-    zebra.push({x:i*R+10.5,y:.06,z:j*R},{x:i*R-10.5,y:.06,z:j*R},{x:i*R,y:.06,z:j*R+10.5,ry:Math.PI/2},{x:i*R,y:.06,z:j*R-10.5,ry:Math.PI/2});
+    if(crossingMode===1&&Math.abs(i+j)%2===1) continue;
+    if(crossingMode===2&&Math.abs(i-j)%3===1) continue;
+    const offset=crossingMode===3?14.5:10.5;
+    zebra.push({x:i*R+offset,y:.06,z:j*R},{x:i*R-offset,y:.06,z:j*R},{x:i*R,y:.06,z:j*R+offset,ry:Math.PI/2},{x:i*R,y:.06,z:j*R-offset,ry:Math.PI/2});
   }
   for(let q=0;q<70;q++){
     const k=Math.floor(rr(-3,4)),alongX=RN()<.5,t=rr(-200,200),off=rr(-5,5),mo=((t%R)+R)%R;
@@ -2362,8 +2366,61 @@ function buildKitCity(C){
   mergeStatic(cityGroup); flagShadows(cityGroup); flagShadows(trafficGroup); freeze(cityGroup);
   setupBarks(C); Snd.setCity('kitcity');
 }
+function cityLayout(key){
+  const keys=Object.keys(CITY_ARCH_ROAD),idx=Math.max(0,keys.indexOf(key));
+  const spacing=[70,76,82,72,78,84,74,80,86,72,78,84,74][idx%13];
+  return {idx,spacing,pattern:idx%8,arterial:idx%5,sidewalk:idx%4};
+}
+function addCityBlockBuildings(C,cx,cz,ix,iz){
+  const L=cityLayout(curCity),A=cityKit(curCity),p=L.pattern;
+  const lots=[
+    [[-13,-13,13,10],[-13,1,10,12],[2,-13,11,13],[13,3,9,15]],
+    [[-12,-12,17,13],[12,12,17,13]],
+    [[-15,-13,9,8],[-5,-14,9,8],[6,-13,9,8],[15,-3,8,10],[-14,2,9,10],[-3,12,10,8],[8,12,10,8]],
+    [[-12,-11,22,11],[12,10,21,12]],
+    [[-13,-12,12,11],[3,-14,14,10],[-8,4,13,12],[12,11,11,9]],
+    [[-12,-12,16,12],[12,-9,12,14],[-7,12,13,10]],
+    [[-12,-12,15,15],[12,12,16,15]],
+    [[-14,-12,10,13],[-2,-14,12,9],[12,-7,10,12],[-10,8,13,10],[5,13,10,8]]
+  ];
+  let placements=lots[p].map(v=>v.slice());
+  if(A.arch==='industrial'||A.arch==='workshop') placements=lots[3].map(v=>v.slice());
+  else if(A.arch==='adobe'||A.arch==='kanuri-sahel'||A.arch==='northern-craft'||A.arch==='compound') placements=lots[2].map(v=>v.slice());
+  else if(A.arch==='verandah'||A.arch==='raffia'||A.arch==='stilt') placements=lots[5].map(v=>v.slice());
+  else if(A.arch==='civic-tower'||A.arch==='monument'||A.arch==='modern-lowrise') placements=lots[6].map(v=>v.slice());
+  else if(A.arch==='terrace'||A.arch==='coal'||A.arch==='plateau-rock') placements=lots[4].map(v=>v.slice());
+  for(const [ox,oz,w,d] of placements){
+    const x=cx+ox+rr(-1.1,1.1),z=cz+oz+rr(-1.1,1.1);
+    if(nearSpecial(x,z,12)) continue;
+    addBuilding(x,z,w*rr(.9,1.08),d*rr(.9,1.08),pickStyle(C),pk(C.paint),cx,cz,ox,oz);
+  }
+}
+function addCityRoadTopology(key){
+  const L=cityLayout(key),A=cityKit(key);
+  const mat=new THREE.MeshLambertMaterial({color:A.road==='lagoon-expressway'?'#343B3E':A.road==='planned-boulevard'?'#42474B':A.road.includes('dry')?'#5A5145':'#3A3D3F'});
+  const strip=(x,z,w,d,rot=0)=>{const m=new THREE.Mesh(new THREE.PlaneGeometry(w,d),mat);m.rotation.x=-Math.PI/2;m.rotation.z=rot;m.position.set(x,.035,z);cityGroup.add(m);};
+  const dash=(x,z,w,d,rot=0,color=A.mark)=>{const m=new THREE.Mesh(new THREE.PlaneGeometry(w,d),new THREE.MeshBasicMaterial({color,depthWrite:false}));m.rotation.x=-Math.PI/2;m.rotation.z=rot;m.position.set(x,.07,z);cityGroup.add(m);};
+  if(L.arterial===0){
+    strip(0,215,470,15);strip(0,215,470,2,0,A.kerb);strip(0,215,8,470);
+    for(let x=-220;x<=220;x+=18)dash(x,215,8,.22);
+  }else if(L.arterial===1){
+    strip(-175,165,150,10,-.42);for(let n=-5;n<=5;n++)dash(-175+n*12,165-n*5,5,.2,-.42);
+    strip(170,-165,130,8,.38);
+  }else if(L.arterial===2){
+    const ring=new THREE.Mesh(new THREE.TorusGeometry(31,5,5,64),mat);ring.rotation.x=Math.PI/2;ring.position.set(188,.045,188);cityGroup.add(ring);
+    strip(188,150,10,76);strip(150,188,76,10);
+    const island=new THREE.Mesh(new THREE.CircleGeometry(20,32),new THREE.MeshLambertMaterial({color:A.edge==='green-strip'?'#4F7D4B':'#9B9B87'}));island.rotation.x=-Math.PI/2;island.position.set(188,.06,188);cityGroup.add(island);
+  }else if(L.arterial===3){
+    strip(-205,0,11,420);for(let z=-190;z<=190;z+=16)dash(-205,z,5,.22,0,A.kerb);
+    strip(0,-205,420,12);for(let x=-190;x<=190;x+=16)dash(x,-205,.22,5,0,A.kerb);
+  }else{
+    strip(-190,-160,105,9,-.55);strip(-120,-190,90,9,-.12);strip(-45,-205,80,9,.22);strip(35,-195,85,9,.46);
+    for(let n=0;n<7;n++)dash(-225+n*25,-166-n*5,4,.2,-.55);
+  }
+}
 function buildCity(key){
   const C=CITIES[key]; curCity=key;
+  const layout=cityLayout(key); CITY_LAYOUT_INDEX=layout.idx; R=layout.spacing; GRID_OFFSET=R/2;
   clearGroup(cityGroup); clearGroup(trafficGroup); texs.forEach(t=>t.dispose()); texs=[];
   colliders.length=0; buildings.length=0; cars=[]; walkers=[]; hawkers=[]; ringTaken=[];
   RN=mulberry(C.seed); dxReset(); LOOKSC=CITY_LOOKS[key]||LOOKS;
@@ -2371,24 +2428,24 @@ function buildCity(key){
   if(key==='kitcity'){ buildKitCity(C); return; }
   const outer=new THREE.Mesh(uvScale(new THREE.PlaneGeometry(1400,1400),100,100),lam(C.dirt,{map:LKT.dirt})); outer.rotation.x=-Math.PI/2; outer.position.y=-.04; cityGroup.add(outer);
   const ground=new THREE.Mesh(uvScale(new THREE.PlaneGeometry(520,520),20,20),lam(C.ground,{map:LKT.asph})); ground.rotation.x=-Math.PI/2; cityGroup.add(ground);
-  const dirtMat=lam(C.dirt,{map:LKT.dirt}),paveMat=lam(C.slab,{map:LKT.pave}),slabGeo=uvScale(new THREE.BoxGeometry(56,0.1,56),14,14),vergeGeo=uvScale(new THREE.PlaneGeometry(59,59),10,10);
+  const dirtMat=lam(C.dirt,{map:LKT.dirt}),paveMat=lam(C.slab,{map:LKT.pave}),slabGeo=uvScale(new THREE.BoxGeometry(R-14,0.1,R-14),Math.max(8,(R-14)/4),Math.max(8,(R-14)/4)),vergeGeo=uvScale(new THREE.PlaneGeometry(R-11,R-11),Math.max(6,(R-11)/5),Math.max(6,(R-11)/5));
   for(let k=-3;k<=3;k++)for(let i=-3;i<=2;i++){
-    const h=new THREE.Mesh(dashGeo,dashMat); h.rotation.x=-Math.PI/2; h.position.set(i*R+35,0.04,k*R); cityGroup.add(h);
-    const v=new THREE.Mesh(dashGeo,dashMat); v.rotation.set(-Math.PI/2,0,Math.PI/2); v.position.set(k*R,0.04,i*R+35); cityGroup.add(v);
+    const h=new THREE.Mesh(dashGeo,dashMat); h.rotation.x=-Math.PI/2; h.position.set(i*R+GRID_OFFSET,0.04,k*R); cityGroup.add(h);
+    const v=new THREE.Mesh(dashGeo,dashMat); v.rotation.set(-Math.PI/2,0,Math.PI/2); v.position.set(k*R,0.04,i*R+GRID_OFFSET); cityGroup.add(v);
   }
   const blocks=[];
   for(let i=-3;i<=2;i++)for(let j=-3;j<=2;j++){
-    const cx=i*R+35,cz=j*R+35; blocks.push({cx,cz});
+    const cx=i*R+GRID_OFFSET,cz=j*R+GRID_OFFSET; blocks.push({cx,cz});
     const vg=new THREE.Mesh(vergeGeo,dirtMat); vg.rotation.x=-Math.PI/2; vg.position.set(cx,.03,cz); cityGroup.add(vg);
     const slab=new THREE.Mesh(slabGeo,paveMat); slab.position.set(cx,0.05,cz); cityGroup.add(slab);
     const lmk=(C.lm||[]).find(l=>l[1]===cx&&l[2]===cz);
     if(lmk) landmark(lmk[0],cx,cz);
     else if((((i+j)%C.market)+C.market)%C.market===0) addMarket(cx,cz);
-    else for(const ox of [-11,11])for(const oz of [-11,11]) addBuilding(cx+ox+rr(-1,1),cz+oz+rr(-1,1),rr(14,20),rr(14,20),pickStyle(C),pk(C.paint),cx,cz,ox,oz);
+    else addCityBlockBuildings(C,cx,cz,i,j);
     // Roadside/block-edge tree placement removed: keep streets and road verges clear.
   }
   streetDetails(C,blocks); roadDecals(C,blocks);
-  addRoadIdentity(key,blocks);
+  addRoadIdentity(key,blocks); addCityRoadTopology(key);
   addRegionalIdentity(C,key);
   dxFlush(C);
   cityCols=colliders.length;
@@ -5097,13 +5154,13 @@ function update(dt,time){
   talkBtn.classList.toggle('hidden',!(nearEnt&&!S.modal));
   const compass=$('#compass');
   if(goal){
-    compass.classList.remove('hidden');
+    compass.classList.remove('hidden'); compass.classList.add('force-visible'); compass.style.display='grid'; compass.style.visibility='visible'; compass.style.opacity='1';
     beacon.visible=true; beacon.position.set(goal.x,0,goal.z);
     beacon.getObjectByName('ring').scale.setScalar(1+.18*Math.sin(time*4));
     const dx=goal.x-player.position.x,dz=goal.z-player.position.z,d=Math.round(Math.hypot(dx,dz));
     $('#arrow').style.transform='rotate('+Math.atan2(dx,-dz)+'rad)';
     if(d!==lastDist){ lastDist=d; $('#dist').textContent=d<9?tr('Here'):Math.round(d/2)+' m'; }
-  } else { beacon.visible=false; compass.classList.add('hidden'); }
+  } else { beacon.visible=false; compass.classList.add('hidden'); compass.classList.remove('force-visible'); compass.style.removeProperty('display'); compass.style.removeProperty('visibility'); compass.style.removeProperty('opacity'); }
   { updateBarks(dt);
     locT-=dt; if(locT<=0){ locT=.3; const n=locName(player.position.x,player.position.z); if(n!==lastLoc){ lastLoc=n; $('#loc').textContent=n; } } }
   camTarget.set(player.position.x,0,player.position.z);
