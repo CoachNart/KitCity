@@ -1530,9 +1530,9 @@ const RAW_MISSIONS = [
   {
     "id": "m19",
     "chapterId": "ch10",
-    "title": "The Money With Conditions",
+    "title": "The Offer on the Table",
     "state": "Edo",
-    "location": "Edo co-working lobby, proposal room and project budget desk",
+    "location": "Edo co-working lobby, negotiation room and project planning wall",
     "npcIds": [
       "mcbond",
       "alpha-rwa"
@@ -1541,11 +1541,11 @@ const RAW_MISSIONS = [
       "Mcbond",
       "Alpha.RWA"
     ],
-    "narrativePurpose": "A founder is ready to accept funding that promises fixed returns but gives the investor no clear reporting obligations. Walk from the lobby to the proposal room, compare the terms and build a budget before recommending whether the team should proceed.",
+    "narrativePurpose": "After Mission 18's growth test, a founder offers to fund the directory's next stage—but promises fixed returns while leaving reporting, release conditions and responsibility for missed milestones vague. Mcbond is ready to sign because the team is nearly out of runway; Alpha.RWA refuses to let the headline number decide. Help them negotiate the actual obligations, stage the money against verifiable delivery, and leave the room with terms the team can review rather than a rushed signature.",
     "learningObjectives": [
-      "How to read funding terms and milestones",
-      "How to identify conflicts of interest",
-      "How to connect budgets with accountable delivery"
+      "Separate a funding headline from the obligations and risks in its terms",
+      "Tie staged funding to observable milestones, budgets and reporting",
+      "Recognise pressure tactics and seek independent review before signing"
     ],
     "prerequisites": [
       "m18"
@@ -1553,57 +1553,58 @@ const RAW_MISSIONS = [
     "objectives": [
       {
         "id": "m19-obj-1",
-        "label": "Compare funding proposals by their milestones",
+        "label": "Challenge the fixed-return promise and uncover the missing obligations",
         "interactionTarget": "story:m19:objective:1",
         "required": true
       },
       {
         "id": "m19-obj-2",
-        "label": "Review the project budget against the delivery plan",
+        "label": "Build a milestone release plan with proof the team can deliver",
         "interactionTarget": "story:m19:objective:2",
         "required": true
       },
       {
         "id": "m19-obj-3",
-        "label": "Allocate and vest the proposed token share",
+        "label": "Negotiate reporting rights, risk disclosures and a pause condition",
         "interactionTarget": "story:m19:objective:3",
         "required": true
       },
       {
         "id": "m19-obj-4",
-        "label": "Flag conflicts and recommend a responsible option",
+        "label": "Choose whether to sign, renegotiate or walk away under pressure",
         "interactionTarget": "story:m19:objective:4",
         "required": true
       }
     ],
     "successConditions": [
-      "The player identifies unsupported return promises",
-      "The budget ties costs to milestones",
-      "Conflicts are disclosed and the recommendation explains trade-offs"
+      "The player identifies that fixed-return language does not remove uncertainty or explain who bears losses",
+      "Any proposed release schedule is tied to observable milestones, a budget and named reporting duties",
+      "The team refuses to sign under deadline pressure and records the open questions for independent review"
     ],
     "failureAndRetry": {
-      "onFailure": "If the player recommends a deal based only on the headline amount, Mcbond asks them to compare the obligations and risks.",
-      "retry": "Revisit the proposal and resubmit a reasoned recommendation."
+      "onFailure": "If the player chooses the offer because its headline amount is largest, Alpha.RWA asks who controls release of funds, what happens if a milestone fails and which claims are actually enforceable.",
+      "retry": "Return to the negotiation board and revise the proposed terms before making a final recommendation."
     },
     "rewards": {
-      "xp": 285,
+      "xp": 300,
       "skillBadges": [
-        "Funding Literacy"
+        "Funding Due Diligence"
       ],
       "portfolioArtifacts": [
-        "Funding-term comparison and budget"
+        "Milestone-based funding term review"
       ]
     },
     "storyFlags": [
       "m19_complete",
-      "funding_terms_reviewed"
+      "funding_terms_reviewed",
+      "milestone_reporting_required"
     ],
     "nextMissionId": "m20",
-    "ending": "The team asks for written milestones, reporting duties and clear risk disclosures before considering the offer. The founder is disappointed by the delay but no longer has to guess what the deal requires.",
-    "cliffhanger": "Alpha.RWA takes you to a project claiming its token represents a warehouse full of goods. BigWealth and Blessing say the photos look convincing, but the ownership file is missing.",
+    "ending": "The team does not sign in the room. They request a written version with staged releases, measurable deliverables, reporting dates, clear risk allocation and time for independent review. The offer may still be useful, but the headline return is no longer being mistaken for a guarantee.",
+    "cliffhanger": "While the revised terms are being prepared, Alpha.RWA shows you another pitch from the same network: a token supposedly represents goods in an Edo warehouse. BigWealth and Blessing have photos, but the ownership file is missing.",
     "sceneLines": [
-      "Abdul: \"They've promised fixed returns and put a glossy deck in front of the team. The reporting obligations are buried at the end. Before I put my name on this, I want to know who carries the risk.\"",
-      "David: \"The payout depends on milestones, not a guarantee. These terms leave the operator room to delay reporting. Compare the promised return with the obligations and conflicts before you recommend it.\""
+      "Mcbond: \"David sent the growth numbers. We finally have something people can use, and now there's money on the table. The founder says the return is fixed. If we delay, we might lose the offer—and I can't keep the team running on promises.\"",
+      "Alpha.RWA: \"Then don't let the word 'fixed' do the work of a contract. Who reports progress? Who controls each release? What happens if the build misses a milestone? The deck answers none of that. We can negotiate, but nobody signs today just because the room is tense.\""
     ]
   },
   {
