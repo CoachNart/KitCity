@@ -1191,11 +1191,11 @@ const RAW_MISSIONS = [
       "Kore",
       "Veedima"
     ],
-    "narrativePurpose": "A founder's announcement is full of big technical claims but never explains the problem the product solves. Walk the street corner to ask intended users what they need, return to the workspace to check the product, and take a plain-language version to the print kiosk for a final claim check.",
+    "narrativePurpose": "The safety session in Mission 13 ends, but the lesson follows you into the street: people trust clear, useful information more than dramatic claims. Kore and Veedima bring you an announcement for a real product, packed with words like AI-powered, seamless and secure, yet nobody can tell what it actually does. Speak to the intended users, inspect the working flow, remove claims the team cannot prove, and publish a plain-language message with one useful next step. The challenge is to earn attention without borrowing trust the product has not earned.",
     "learningObjectives": [
-      "How to match a message to an audience",
-      "How to explain a technical product in plain language",
-      "How to remove claims the team cannot substantiate"
+      "How to find the real audience problem before writing a product announcement",
+      "How to explain a live product feature without jargon or inflated promises",
+      "How to replace unsupported marketing claims with evidence and a useful next step"
     ],
     "prerequisites": [
       "m13"
@@ -1203,36 +1203,36 @@ const RAW_MISSIONS = [
     "objectives": [
       {
         "id": "m14-obj-1",
-        "label": "Identify the audience for the product message",
+        "label": "Ask street users what problem they need solved",
         "interactionTarget": "story:m14:objective:1",
         "required": true
       },
       {
         "id": "m14-obj-2",
-        "label": "Research the product and verify each claim",
+        "label": "Inspect the working product and sort claims into proven, unclear and unsupported",
         "interactionTarget": "story:m14:objective:2",
         "required": true
       },
       {
         "id": "m14-obj-3",
-        "label": "Rewrite an announcement in plain language",
+        "label": "Rewrite the announcement so a first-time user understands it",
         "interactionTarget": "story:m14:objective:3",
         "required": true
       },
       {
         "id": "m14-obj-4",
-        "label": "Create an educational post with a useful next step",
+        "label": "Publish a useful post with a clear next step and no false guarantees",
         "interactionTarget": "story:m14:objective:4",
         "required": true
       }
     ],
     "successConditions": [
-      "The audience is defined",
-      "Every product claim is checked against current evidence",
-      "The revised message is understandable and includes a useful next step"
+      "The message speaks to a real audience need discovered on the street",
+      "Claims are supported by the product flow or removed if they cannot be verified",
+      "The final post explains what the product does now, what it does not do, and how an interested user can try or learn more"
     ],
     "failureAndRetry": {
-      "onFailure": "If the player leaves an unsupported claim in the draft, Veedima asks for the proof or removes the claim.",
+      "onFailure": "If the player keeps a claim like ‘guaranteed profits’ or ‘100% secure’ without evidence, Veedima stops publication and asks for proof or removes it.",
       "retry": "Edit the draft and run the claim check again."
     },
     "rewards": {
@@ -1249,11 +1249,11 @@ const RAW_MISSIONS = [
       "product_message_verified"
     ],
     "nextMissionId": "m15",
-    "ending": "The founder approves a shorter announcement that explains what the product does now and what it does not do yet. It is less dramatic and far more useful.",
-    "cliffhanger": "Someone who read the post offers you a chance to apply for a Web3 role. Web3_Esta and Love say the next step is not another impressive bio; it is evidence of work.",
+    "ending": "Kore and Veedima publish a shorter announcement based on what the product demonstrably does today. It names the intended user, explains the current feature in ordinary language, admits what it does not do, and offers a clear next step. The post earns attention by being useful, not by pretending the product is more mature than it is.",
+    "cliffhanger": "A reader replies that the post finally made sense and asks whether you can help with a Web3 role opening. Web3_Esta and Love are waiting with the application brief. They want proof of what you can do—not another impressive bio.",
     "sceneLines": [
-      "Cclya: \"This announcement says 'AI-powered, seamless, secure' three times and never tells me what the product does. My cousin is about to sign up. Can we explain the actual feature before she trusts the headline?\"",
-      "Leemah: \"I tried the flow. It gives a market alert, not a trade instruction, and the user still has to decide. Say that plainly; don't promise what the product can't deliver.\""
+      "Kore: \"The safety recap reached people because it answered a real question. Our announcement has been sitting here all morning. It says ‘AI-powered, seamless and secure’—but a new user still asked me, ‘Abeg, what does this thing do?’ Help me fix that without making promises we cannot prove.\"",
+      "Veedima: \"I tested the product myself. It surfaces market alerts; it does not place trades or guarantee outcomes. Let’s check every line against the real flow. If we cannot demonstrate a claim, it does not go in the post.\""
     ]
   },
   {
