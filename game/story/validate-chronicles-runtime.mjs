@@ -31,6 +31,14 @@ requireText("const STORY_PLAYER_CHOICES={", "player-owned, mission-specific dial
 requireText("function chronicleClueStep(m,obj,index,spot)", "conversation-led mission clue interactions");
 requireText("const STORY_PLAYER_REACTIONS={", "player dialogue reacts to each mission situation");
 requireText("function chronicleChallengeStep(m,obj,index,spot)", "conversation-led mission decisions");
+requireText("function renderMissionDialogueLine(index)", "in-world dialogue bubbles with manual reading controls");
+requireText("function revealMissionDialogueChoices()", "decision cards appear only after dialogue is read");
+requireText("sceneCast||[]", "supporting cast stays physically present through a scene");
+if (!styles.includes(".kitcity-mission-dialogue-bubble") || !styles.includes(".kitcity-mission-dialogue-nav")) errors.push("Responsive mission speech-bubble styles or navigation controls are missing.");
+const oyoScamCast = MISSIONS.find((mission) => mission.id === "m03");
+const oyoRumourCast = MISSIONS.find((mission) => mission.id === "m04");
+if (!oyoScamCast || !oyoScamCast.sceneCast.includes("Timi")) errors.push("Oyo Mission 3 must physically stage Timi as a supporting character.");
+if (!oyoRumourCast || !oyoRumourCast.sceneCast.includes("Timi")) errors.push("Oyo Mission 4 must keep Timi present during the screenshot investigation.");
 for (const staleDialogue of [
   "What should we check first, and who else has seen this?",
   "Show me the evidence that matters.",
