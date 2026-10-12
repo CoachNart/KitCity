@@ -1793,9 +1793,82 @@ function addRegionalIdentity(C,key){
     hills('#78866C',[[-215,-218,26,28],[-180,-229,34,37],[-142,-218,24,25]]);
     hills('#A5A58B',[[-212,-216,16,20],[-178,-226,21,25]]);
     const t=label(C.name.toUpperCase()+' • MIDDLE BELT','#687C62','#FFFFFF',1.35);t.position.set(-180,40,-228);cityGroup.add(t);
+  }else if(key==='awka'||key==='onitsha'||key==='aba'){
+    // Anambra / Aba commercial energy: dense market frontage and a cave-like stone arch.
+    const wall=key==='aba'?'#B86C49':'#9B8C75';
+    box(48,11,20,wall,-190,5.5,-208);
+    for(let x=-211;x<=-169;x+=7){box(5,15,17,['#C84D35','#E4B84D','#287B65','#3E79A6'][Math.floor((x+211)/7)%4],x,7.5,-197);}
+    box(26,2,4,'#D5B98C',-190,17,-207);
+    const t=label(key==='aba'?'ABA • ARIARIA TRADE':key==='onitsha'?'ONITSHA • RIVER MARKET':'AWKA • IGBO HEARTLAND','#E9E3D5','#27332F',1.35);t.position.set(-190,22,-208);cityGroup.add(t);
+  }else if(key==='asaba'){
+    // Asaba's river crossing and Niger Bridge silhouette.
+    box(160,1.4,5,'#667F89',-165,8,-207);
+    for(const x of [-220,-190,-160,-130,-100]){box(1.4,15,1.4,'#D2D9D6',x,15,-207);box(18,.65,1.1,'#AEBEC0',x+9,22,-207);}
+    const t=label('ASABA • NIGER BRIDGE','#527E91','#FFFFFF',1.4);t.position.set(-160,27,-207);cityGroup.add(t);
+  }else if(key==='abakaliki'){
+    // Ebonyi rice plains and salt-pan geometry.
+    for(let i=0;i<5;i++){box(54,.28,7,i%2?'#9DAF7B':'#C5B58C',-190,0.18,-225+i*8);box(54,.12,1,'#6D9A9A',-190,.32,-221+i*8);}
+    box(26,8,18,'#C7B99A',-190,4,-187);for(let x=-199;x<=-181;x+=6)box(4,8,4,'#D5C6A5',x,4,-187);
+    const t=label('ABAKALIKI • RICE & SALT','#7D8B60','#FFFFFF',1.35);t.position.set(-190,15,-187);cityGroup.add(t);
+  }else if(key==='owerri'||key==='umuahia'){
+    // Southeast cultural pavilion with painted posts and palm canopy.
+    box(38,2,26,'#8A5B3C',-190,12,-207);box(34,8,22,'#D6C3A0',-190,6,-207);
+    for(const x of [-205,-193,-181,-169]){box(1.3,12,1.3,'#B65B3A',x,6,-194);box(2,1.4,1.6,'#E1B95D',x,9,-194);}
+    cone(23,9,'#6B8A4A',-190,19,-207,8);
+    const t=label(key==='owerri'?'OWERRI • CULTURE & CREATIVITY':'UMUAHIA • IGBO HERITAGE','#8A5B3C','#FFFFFF',1.35);t.position.set(-190,27,-207);cityGroup.add(t);
+  }else if(key==='yola'){
+    // Adamawa highlands: distant ridges and terraced mountain silhouettes.
+    hills('#637E69',[[-220,-220,25,33],[-190,-230,36,49],[-150,-221,30,39],[-112,-232,22,30]]);
+    hills('#9AA78C',[[-216,-216,15,22],[-188,-226,22,31],[-150,-217,18,25]]);
+    const t=label('YOLA • ADAMAWA HIGHLANDS','#637E69','#FFFFFF',1.35);t.position.set(-180,53,-230);cityGroup.add(t);
+  }else if(key==='jalingo'){
+    hills('#607F62',[[-220,-218,28,37],[-186,-230,42,58],[-143,-220,29,40],[-105,-231,34,46]]);
+    hills('#A6B69B',[[-216,-214,16,23],[-184,-225,26,36],[-140,-215,18,26]]);
+    const t=label('JALINGO • MAMBILLA GATEWAY','#52794E','#FFFFFF',1.35);t.position.set(-180,62,-230);cityGroup.add(t);
+  }else if(key==='akure'){
+    hills('#7C8A70',[[-220,-218,26,35],[-185,-229,42,55],[-142,-219,29,39]]);
+    hills('#B0A98C',[[-216,-214,16,23],[-183,-225,25,34]]);
+    const t=label('AKURE • IDANRE HILLS COUNTRY','#687D5F','#FFFFFF',1.35);t.position.set(-183,59,-229);cityGroup.add(t);
+  }else if(key==='ado-ekiti'){
+    hills('#66815E',[[-218,-220,24,33],[-185,-231,38,49],[-146,-219,26,34]]);
+    const pool=new THREE.Mesh(new THREE.CircleGeometry(9,20),lam('#6AA7A4'));pool.rotation.x=-Math.PI/2;pool.position.set(-145,.2,-195);cityGroup.add(pool);
+    const t=label('ADO-EKITI • HILLS & SPRINGS','#557C50','#FFFFFF',1.35);t.position.set(-183,53,-231);cityGroup.add(t);
+  }else if(key==='katsina'){
+    box(24,15,20,'#D9C29B',-190,7.5,-208);
+    box(7,24,7,'#C6A579',-190,19,-208);
+    for(let y=8;y<28;y+=5)box(8,.8,8,'#E8D6B3',-190,y,-208);
+    cone(5,5,'#A57D4F',-190,33,-208,8);
+    const t=label('KATSINA • GOBARAU MINARET','#A57D4F','#FFFFFF',1.35);t.position.set(-190,38,-208);cityGroup.add(t);
+  }else if(key==='sokoto'){
+    box(44,13,26,'#D8C39B',-190,6.5,-208);box(48,1.2,30,'#B79A6C',-190,13.5,-208);
+    for(const x of [-207,-190,-173]){cyl(2,2.5,22,'#D8C39B',x,11,-205,8);cone(3.2,4,'#B99A6D',x,24,-205,8);}
+    const t=label('SOKOTO • SULTANATE HERITAGE','#A88A5F','#FFFFFF',1.35);t.position.set(-190,31,-208);cityGroup.add(t);
+  }else if(key==='ilorin'){
+    box(42,12,24,'#D5C29F',-190,6,-208);box(44,1,27,'#BBA274',-190,12.5,-208);
+    for(const x of [-205,-190,-175]){cyl(2,2.2,18,'#E3D5B9',x,9,-205,8);const dome=new THREE.Mesh(new THREE.SphereGeometry(3,10,8,0,Math.PI*2,0,Math.PI/2),lam('#B79A6A'));dome.position.set(x,18,-205);cityGroup.add(dome);}
+    const t=label('ILORIN • EMIRATE CITY','#8C795C','#FFFFFF',1.35);t.position.set(-190,25,-208);cityGroup.add(t);
+  }else if(key==='bauchi'){
+    hills('#A28B68',[[-218,-220,25,31],[-185,-230,37,45],[-145,-220,27,32]]);
+    box(34,5,20,'#8A9A66',-190,2.5,-192);for(const x of [-202,-188,-174])cone(3,6,'#A6B87A',x,7,-192,7);
+    const t=label('BAUCHI • YANKARI COUNTRY','#758957','#FFFFFF',1.35);t.position.set(-185,50,-230);cityGroup.add(t);
+  }else if(key==='gombe'){
+    hills('#9B9676',[[-218,-220,24,30],[-185,-230,36,45],[-145,-220,25,32]]);
+    hills('#C2B596',[[-215,-216,14,19],[-183,-226,22,28]]);
+    const t=label('GOMBE • SAVANNAH HILLS','#8B835F','#FFFFFF',1.35);t.position.set(-185,48,-230);cityGroup.add(t);
+  }else if(key==='dutse'){
+    hills('#9A8A6C',[[-218,-220,24,30],[-185,-230,34,42],[-146,-220,24,30]]);
+    const t=label('DUTSE • GRANITE COUNTRY','#887858','#FFFFFF',1.35);t.position.set(-185,47,-230);cityGroup.add(t);
+  }else if(key==='gusau'){
+    box(46,10,22,'#C9AD7D',-190,5,-208);box(50,1.2,26,'#9A835F',-190,10.5,-208);
+    for(const x of [-207,-190,-173]){box(6,4,6,'#7D6A4E',x,2,-193);cone(3,5,'#B6A06F',x,6.5,-193,7);}
+    const t=label('GUSAU • NORTHERN TRADE','#8D7754','#FFFFFF',1.35);t.position.set(-190,19,-208);cityGroup.add(t);
+  }else if(key==='birnin-kebbi'){
+    const river=new THREE.Mesh(new THREE.PlaneGeometry(130,22),lam('#5B8FA0'));river.rotation.x=-Math.PI/2;river.rotation.z=.18;river.position.set(-175,.15,-207);cityGroup.add(river);
+    box(44,7,22,'#D3BD96',-190,3.5,-190);
+    const t=label('BIRNIN KEBBI • RIVER & FISHING','#4F8190','#FFFFFF',1.3);t.position.set(-175,13,-207);cityGroup.add(t);
   }else{
-    // Every remaining capital gets a named civic silhouette rather than a blank,
-    // interchangeable horizon. Geometry is kept outside the busiest street blocks.
+    // Remaining capitals retain a named civic silhouette; never leave an empty,
+    // interchangeable horizon when the player enters a new state.
     const family=CITY_REGION[key]||'southwest';
     const tone=family==='north'?'#B99A70':family==='coastal'?'#73968B':family==='highland'?'#8D9B8C':family==='southeast'?'#7D9C87':'#B3A58D';
     box(34,10,18,tone,-190,5,-210);
