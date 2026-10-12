@@ -3458,6 +3458,39 @@ const MISSIONS=CHRONICLE_MISSIONS.map((story,index)=>{
         ]);
       }}
     ];
+  }else if(story.id==='m17'){
+    const coach=STORY_NPCS['White Coach'], abdul=STORY_NPCS.Abdul;
+    steps=[
+      {kind:'character',id:'m17-obj-1',label:story.objectives[0].label,spot:'buyer',npc:coach,run(){
+        talk(coach,"<p><b>WHITE COACH:</b> The trader says a customer paid. The receipt says successful, but the order is still pending. Now there's another receipt with the same reference, and the cashier is being blamed. Before we touch the records, ask the trader to walk us through what happened.</p>",[
+          {t:'Ask for the order time, amount, reference and what the trader personally saw; keep customer details private.',f:()=>talk(abdul,"<p><b>ABDUL:</b> Good. We need the exact sale and each hand-off—not the customer's seed phrase, private key or a screenshot forwarded around the market.</p>",[{t:'Record the trader’s account and identify the one disputed sale.',f:()=>{G.evidence.m17_trader_interview=true;G.evidence.m17_sale_defined=true;finishStep();}}])},
+          {t:'Accuse the cashier of keeping the payment.',f:()=>talk(coach,"<p><b>WHITE COACH:</b> That's a guess, not a finding. The records disagree; we haven't established why. Start with the sale details and keep blame out of the report.</p>",[{t:'Ask the trader for the sale details and record only what they can verify.',f:()=>{G.evidence.m17_trader_interview=true;G.evidence.m17_sale_defined=true;finishStep();}}])}
+        ]);
+      }},
+      {kind:'clue',id:'m17-obj-2',label:story.objectives[1].label,spot:'ledger',title:'One sale, three records',sign:'FOLLOW THE HAND-OFF',npc:abdul,run(){
+        talk(abdul,"<p><b>ABDUL:</b> Follow the same reference from the order to the receipt, then compare it with the payment provider's status. Check timestamps and whether the repeated reference belongs to the same attempt. A screenshot marked successful is not the provider record, and a duplicate reference does not prove a second payment.</p>",[
+          {t:'Compare order status, provider confirmation, reference and timestamps; label anything not confirmed as unresolved.',f:()=>talk(coach,"<p><b>WHITE COACH:</b> That's the gap. The order timed out before the provider update arrived. The second receipt repeats the reference; it isn't evidence of a second completed payment.</p>",[{t:'Save the status mismatch and the duplicate-reference observation without inventing a cause beyond the records.',f:()=>{G.evidence.m17_order_payment_compared=true;G.evidence.m17_duplicate_reference_checked=true;G.evidence.m17_status_gap_found=true;finishStep();}}])},
+          {t:'Mark the order paid because the screenshot is green.',f:()=>talk(abdul,"<p><b>ABDUL:</b> No. That could credit an unpaid order or count the same payment twice. Verify the provider status and reference first; if confirmation is missing, leave it unresolved.</p>",[{t:'Compare the provider record with the order and preserve the unresolved status.',f:()=>{G.evidence.m17_order_payment_compared=true;G.evidence.m17_duplicate_reference_checked=true;G.evidence.m17_status_gap_found=true;finishStep();}}])}
+        ]);
+      }},
+      {kind:'clue',id:'m17-obj-3',label:story.objectives[2].label,spot:'screenshot',title:'The smallest useful fix',sign:'DON’T HIDE THE STATUS',npc:coach,run(){
+        talk(coach,"<p><b>WHITE COACH:</b> The team has a list of feature ideas: charts, alerts, loyalty points, another dashboard. The trader just needs to know whether the order is paid, pending or needs follow-up—and what evidence supports that status. Which fix addresses the failure we actually found?</p>",[
+          {t:'Keep the order pending until a verified provider update arrives; match updates by reference and show a clear follow-up state.',f:()=>talk(abdul,"<p><b>ABDUL:</b> Small enough to test. We should also make repeated updates idempotent, so the same reference cannot credit the order twice.</p>",[{t:'Write the fix and its expected result: one verified payment can update one order once.',f:()=>{G.evidence.m17_smallest_fix_chosen=true;G.evidence.m17_duplicate_credit_prevented=true;finishStep();}}])},
+          {t:'Add more features and change the order to paid so the customer stops complaining.',f:()=>talk(coach,"<p><b>WHITE COACH:</b> That hides the mismatch and risks double credit. Fix the status hand-off first; keep the order unresolved until confirmation arrives.</p>",[{t:'Choose verified status updates and duplicate-safe processing as the first fix.',f:()=>{G.evidence.m17_smallest_fix_chosen=true;G.evidence.m17_duplicate_credit_prevented=true;finishStep();}}])}
+        ]);
+      }},
+      {kind:'character',id:'m17-obj-4',label:story.objectives[3].label,spot:'shopdesk',npc:abdul,run(){
+        talk(abdul,"<p><b>ABDUL:</b> Let's replay the same sample sale through the revised flow. First the order is pending. A verified provider confirmation updates it once. Replaying that same reference must not create a second credit. If confirmation never arrives, the screen should say unresolved and show the next check—not pretend success.</p>",[
+          {t:'Run pending, confirmed and repeated-reference cases; ask the trader whether each status and next step is clear.',f:()=>talk(coach,"<p><b>WHITE COACH:</b> The trader can now tell what needs checking without accusing the cashier or refunding twice. Record their feedback and leave the original disputed sale unresolved until its provider record is verified.</p>",[{t:'Save the test results and trader feedback honestly.',f:()=>{G.evidence.m17_sample_flow_tested=true;G.evidence.m17_trader_feedback_recorded=true;G.evidence.m17_unverified_sale_not_forced_paid=true;finishStep();}}])},
+          {t:'Force the sample sale to paid so the test looks successful.',f:()=>talk(abdul,"<p><b>ABDUL:</b> A test that hides the failure proves nothing. The expected result is accurate status, one credit at most, and a visible next step when evidence is missing.</p>",[{t:'Repeat the test with honest statuses and record the trader’s feedback.',f:()=>{G.evidence.m17_sample_flow_tested=true;G.evidence.m17_trader_feedback_recorded=true;G.evidence.m17_unverified_sale_not_forced_paid=true;finishStep();}}])}
+        ]);
+      }},
+      {kind:'character',id:'m17-close-message',label:'Save the trader-tested product brief',spot:'buyer',npc:coach,run(){
+        talk(coach,"<p><b>WHITE COACH:</b> We fixed the hand-off we observed instead of decorating around it.</p><p><b>ABDUL:</b> The sample flow keeps pending and confirmed separate, avoids duplicate credit, and leaves missing evidence unresolved.</p><p><b>YOU:</b> A useful product should make the next correct action obvious—not manufacture certainty.</p><p><b>WHITE COACH:</b> David wants to grow this now. Kanyin says our last campaign brought thousands of clicks and barely any completed tasks. We need to find out where real traders stop before spending again.</p>",[
+          {t:'Save the reconciliation test report and meet David and Kanyin about the drop-off.',f:()=>{P.storyFlags=Object.assign({},P.storyFlags||{},{m17_complete:true,trader_problem_validated:true,payment_mismatch_investigated:true});G.evidence.chapterSummary=true;finishStep();}}
+        ]);
+      }}
+    ];
   }else{
     steps=[];
     const objectives=story.objectives||[];
