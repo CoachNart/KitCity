@@ -3866,7 +3866,7 @@ function loadStep(){
     const castNames=[];
     if(m.id!=='m01')[(m.npcs||[]),(m.sceneCast||[])].flat().forEach(name=>{if(name&&!castNames.includes(name))castNames.push(name);});
     const activeName=st.npc&&(st.npc.name||st.npc);
-    if(activeName&&!castNames.includes(activeName))castNames.push(activeName);
+    if(activeName&&!castNames.includes(activeName)&&!(m.id==='m01'&&(st.kind==='clue'||st.kind==='challenge')))castNames.push(activeName);
     const anchor=SPOTS[st.spot]||SPOTS.a;
     const castOffsets=[[0,0],[4,-2],[-4,-2],[0,4],[6,3],[-6,3],[0,-6],[8,-1],[-8,-1]];
     castNames.forEach((name,index)=>{
