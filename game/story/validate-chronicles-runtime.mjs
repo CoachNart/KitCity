@@ -295,24 +295,24 @@ if (screeningMission && (!screeningMission.sceneLines.some((line) => line.starts
 requireText("else if(story.id==='m16')", "Mission 16 bespoke recruiter-screening runtime");
 for (const marker of ["m16_message_preserved","m16_official_channel_checked","m16_relevant_sample_prepared","m16_safe_response","m16_no_payment_or_secrets","m16_complete:true","job_offer_screened:true"]) requireText(marker, "Mission 16 safety and completion marker " + marker);
 
-const productMission = MISSIONS.find((mission) => mission.id === "m17");
-if (!productMission || productMission.title !== "The Product People Need") errors.push("Mission 17 must be the Kano product-reconciliation mission.");
-if (productMission && (productMission.npcs[0] !== "White Coach" || productMission.npcs[1] !== "Abdul")) errors.push("Mission 17 must use White Coach then Abdul.");
-if (productMission && (!productMission.prerequisites.includes("m16") || productMission.nextMissionId !== "m18")) errors.push("Mission 17 must continue from Mission 16 and hand off to Mission 18.");
-if (productMission && (!productMission.narrativePurpose.includes("payment-reconciliation service") || !productMission.narrativePurpose.includes("same reference"))) errors.push("Mission 17 must continue the Kano payment mismatch and duplicate-reference problem.");
-if (productMission && (!productMission.sceneLines.some((line) => line.startsWith("White Coach:")) || !productMission.sceneLines.some((line) => line.startsWith("Abdul:")))) errors.push("Mission 17 is missing authored dialogue from its assigned NPCs.");
-requireText("else if(story.id==='m17')", "Mission 17 bespoke Kano product-reconciliation runtime");
+const buildMission = MISSIONS.find((mission) => mission.id === "m17");
+if (!buildMission || buildMission.title !== "One Night to Build") errors.push("Mission 17 must be the Kano community build challenge.");
+if (buildMission && (buildMission.npcs[0] !== "White Coach" || buildMission.npcs[1] !== "Abdul")) errors.push("Mission 17 must use White Coach then Abdul.");
+if (buildMission && (!buildMission.prerequisites.includes("m16") || buildMission.nextMissionId !== "m18")) errors.push("Mission 17 must continue from Mission 16 and hand off to Mission 18.");
+if (buildMission && (!buildMission.narrativePurpose.includes("Mission 16") || !buildMission.narrativePurpose.includes("work sample") || !buildMission.narrativePurpose.includes("community build challenge"))) errors.push("Mission 17 must connect Mission 16's work sample to the Kano build challenge.");
+if (buildMission && (!buildMission.sceneLines.some((line) => line.startsWith("White Coach:")) || !buildMission.sceneLines.some((line) => line.startsWith("Abdul:")))) errors.push("Mission 17 is missing authored dialogue from its assigned NPCs.");
+requireText("else if(story.id==='m17')", "Mission 17 bespoke Kano community-build runtime");
 for (const marker of [
-  "m17_trader_interview",
-  "m17_order_payment_compared",
-  "m17_duplicate_reference_checked",
-  "m17_smallest_fix_chosen",
-  "m17_duplicate_credit_prevented",
-  "m17_sample_flow_tested",
-  "m17_trader_feedback_recorded",
-  "m17_unverified_sale_not_forced_paid",
+  "m17_team_conflict_understood",
+  "m17_user_needs_heard",
+  "m17_problem_selected",
+  "m17_scope_cut",
+  "m17_roles_assigned",
+  "m17_prototype_demo_delivered",
+  "m17_real_user_reached_goal",
+  "m17_limitations_recorded",
   "m17_complete:true",
-  "payment_mismatch_investigated:true"
+  "community_problem_selected:true"
 ]) requireText(marker, "Mission 17 evidence and completion marker " + marker);
 
 for (const marker of ["m15_role_matched","m15_two_samples_documented","m15_contribution_separated","m15_bio_evidence_linked","m15_skill_gap_named","m15_complete:true","portfolio_evidence_compiled:true"]) requireText(marker, "Mission 15 evidence and completion marker " + marker);
