@@ -303,8 +303,12 @@ const YT=(function(){
     return /^[A-Za-z0-9_-]{10,}$/.test(v)?v:'';
   }
   function queue(){
-    /* Do not allow the old generic/custom YouTube playlist to leak into city audio.
-       City music must come only from the selected city's explicit replacement source. */
+    /* A custom playlist is used only after the player explicitly selects it.
+       Saved old playlist data never overrides a city soundtrack on its own. */
+    if(currentKey==='custom'){
+      const custom=parseId(P.pl);
+      if(custom) return {label:'Custom YouTube playlist',list:custom,videos:null};
+    }
     return MUSIC_QUEUES[currentKey]||MUSIC_QUEUES.lagos;
   }
   function vol(){ if(ready) try{ player.setVolume(duck?22:55); }catch(e){} }
@@ -446,11 +450,12 @@ const YT=(function(){
         try{ loadQueue(); if(wantOn) play(); }catch(e){}
       }
     },
-    currentLabel(){ return (MUSIC_QUEUES[currentKey]||MUSIC_QUEUES.lagos).label; },
+    currentLabel(){ return currentKey==='custom'&&parseId(P.pl)?'Custom YouTube playlist':(MUSIC_QUEUES[currentKey]||MUSIC_QUEUES.lagos).label; },
     setList(v){
-      /* Retire persisted legacy playlist overrides; the city soundtrack is authoritative. */
-      P.pl='';
-      currentKey=CITY_MUSIC[curCity]||'lagos';
+      /* Only a deliberate selection can switch away from the city soundtrack. */
+      const id=parseId(v);
+      P.pl=id?String(v).trim():'';
+      currentKey=id?'custom':(CITY_MUSIC[curCity]||'lagos');
       save();
       if(ready){ try{ loadQueue(); if(wantOn) play(); else player.pauseVideo(); }catch(e){} }
     }
