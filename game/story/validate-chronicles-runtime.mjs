@@ -345,6 +345,15 @@ if (fundingMission && /Abdul:|David:|Kanyin:/i.test(fundingMission.sceneLines.jo
 requireText("else if(story.id==='m19')", "Mission 19 bespoke funding negotiation runtime");
 for (const marker of ["m19_fixed_return_challenged","m19_obligations_identified","m19_milestones_defined","m19_budget_linked","m19_reporting_rights_requested","m19_risk_disclosures_requested","m19_pressure_rejected","m19_independent_review_required","m19_complete:true","milestone_reporting_required:true"]) requireText(marker, "Mission 19 evidence and completion marker " + marker);
 
+const assetMission = MISSIONS.find((mission) => mission.id === "m20");
+if (!assetMission || assetMission.title !== "The Warehouse Behind the Token") errors.push("Mission 20 must be the Edo warehouse asset-claim investigation.");
+if (assetMission && (assetMission.npcs[0] !== "BigWealth" || assetMission.npcs[1] !== "Blessing")) errors.push("Mission 20 must use BigWealth then Blessing.");
+if (assetMission && (!assetMission.prerequisites.includes("m19") || assetMission.nextMissionId !== "m21")) errors.push("Mission 20 must continue from Mission 19 and hand off to Mission 21.");
+if (assetMission && (!assetMission.sceneLines.some((line) => line.startsWith("BigWealth:")) || !assetMission.sceneLines.some((line) => line.startsWith("Blessing:")))) errors.push("Mission 20 opening scene dialogue does not match its assigned NPCs.");
+if (assetMission && /Kanyin:|Mcbond:/i.test(assetMission.sceneLines.join(" "))) errors.push("Mission 20 still contains dialogue attributed to NPCs from earlier missions.");
+requireText("else if(story.id==='m20')", "Mission 20 bespoke warehouse due-diligence runtime");
+for (const marker of ["m20_physical_stock_observed","m20_ownership_record_missing","m20_duplicate_seal_found","m20_records_preserved","m20_custody_terms_missing","m20_redemption_terms_missing","m20_launch_paused","m20_unresolved_items_reported","m20_complete:true","asset_claim_verification_required:true"]) requireText(marker, "Mission 20 evidence and completion marker " + marker);
+
 
 for (const marker of ["m15_role_matched","m15_two_samples_documented","m15_contribution_separated","m15_bio_evidence_linked","m15_skill_gap_named","m15_complete:true","portfolio_evidence_compiled:true"]) requireText(marker, "Mission 15 evidence and completion marker " + marker);
 
