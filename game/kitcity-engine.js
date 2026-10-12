@@ -3016,7 +3016,7 @@ const MISSIONS=CHRONICLE_MISSIONS.map((story,index)=>{
           {t:'Tell her which network to select so the demo can continue.',f:()=>talk(blockqueen,"<p><b>BLOCKQUEEN:</b> That gets one payment through, but it hides the problem. Let her make the choice herself—we need to see what the screen makes unclear.</p>",[{t:'Observe without coaching and note where she hesitates.',f:()=>{G.evidence.m05_first_attempt_observed=true;G.evidence.m05_network_hesitation=true;finishStep();}}])}
         ]);
       }},
-      {kind:'character',id:'m05-obj-2',label:story.objectives[1].label,spot:'buyer2',npc:christol,run(){
+      {kind:'character',id:'m05-obj-2',label:story.objectives[1].label,spot:'ledger',npc:christol,run(){
         talk(christol,"<p><b>CHRISTOL:</b> Okay, next buyer. I'll stay quiet this time. Watch the screen, not my explanation.</p><p><b>BUYER 2:</b> I tapped this, it opened more choices, and now I don't know which one matches the shop. Let me try again… no, I'm leaving it.</p><p><b>YOU:</b> Same point, same hesitation. We have a pattern, not a guess about the customers.</p>",[
           {t:'Record the second attempt and compare it with the first.',f:()=>{G.evidence.m05_second_attempt_observed=true;G.evidence.m05_repeat_pattern=true;finishStep();}},
           {t:'Explain the technical meaning of each network to the buyer.',f:()=>talk(christol,"<p><b>CHRISTOL:</b> If we have to stand beside every buyer and explain the jargon, the checkout hasn't done its job. Let's record where they get stuck and reproduce it.</p>",[{t:'Record the hesitation without coaching.',f:()=>{G.evidence.m05_second_attempt_observed=true;G.evidence.m05_repeat_pattern=true;finishStep();}}])}
@@ -3028,7 +3028,7 @@ const MISSIONS=CHRONICLE_MISSIONS.map((story,index)=>{
           {t:'Add a dashboard before fixing checkout.',f:()=>talk(blockqueen,"<p><b>BLOCKQUEEN:</b> A dashboard won't help someone who can't finish the payment. Keep the scope small: make this choice clear, then test it.</p>",[{t:'Reproduce the issue and choose a focused label change.',f:()=>{G.evidence.m05_checkout_reproduced=true;G.evidence.m05_focused_fix_selected=true;finishStep();}}])}
         ]);
       }},
-      {kind:'clue',id:'m05-obj-4',label:story.objectives[3].label,spot:'buyer2',title:'Retest with the next buyer',sign:'WATCH THE RESULT',npc:christol,run(){
+      {kind:'clue',id:'m05-obj-4',label:story.objectives[3].label,spot:'ledger',title:'Retest with the next buyer',sign:'WATCH THE RESULT',npc:christol,run(){
         talk(christol,"<p><b>CHRISTOL:</b> We've changed the network labels into plain language and made the supported choice clear. No tutorial, no extra pop-up. Let's see if the next buyer can finish without us helping.</p><p><b>BUYER 3:</b> Okay, this one says which option the shop accepts. Done. Payment sent.</p><p><b>YOU:</b> Good sign. We record the completed flow and keep watching failed attempts before calling it solved.</p>",[
           {t:'Observe the uncoached retest and record the completed checkout.',f:()=>{G.evidence.m05_retest_completed=true;G.evidence.m05_checkout_friction_reduced=true;finishStep();}},
           {t:'Call the redesign a success because it looks cleaner.',f:()=>talk(christol,"<p><b>CHRISTOL:</b> Looks aren't the measure. This buyer completed checkout without help. We'll record that result and keep tracking completion and failures.</p>",[{t:'Record the uncoached completed checkout.',f:()=>{G.evidence.m05_retest_completed=true;G.evidence.m05_checkout_friction_reduced=true;finishStep();}}])}
