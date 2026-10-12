@@ -2334,7 +2334,7 @@ const STORY_ROLES={
   David:'Growth lead',Kanyin:'Growth analyst',Mcbond:'Investor','Alpha.RWA':'Investment analyst',
   BigWealth:'Asset issuer',Blessing:'AI engineer',Odion:'Quality analyst',Princess:'Interoperability engineer',
   Racheal:'Protocol developer',Seun:'Governance delegate',Dorcas:'Independent auditor',Joe:'Audit investigator',
-  Mike:'Smart-contract reviewer',Gbemi:'Digital creator',FemiY:'Creator-economy builder'
+  Mike:'Smart-contract reviewer',Gbemi:'Digital creator',FemiY:'Creator-economy builder',Timi:'Student · wallet owner caught in a recovery scam'
 };
 const STORY_NPCS=Object.create(null);
 CHARACTER_ORDER.forEach((name,index)=>{
