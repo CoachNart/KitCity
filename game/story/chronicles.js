@@ -1612,7 +1612,7 @@ const RAW_MISSIONS = [
     "chapterId": "ch10",
     "title": "The Warehouse Behind the Token",
     "state": "Edo",
-    "location": "Edo warehouse gate, records office and inspection bay",
+    "location": "Edo warehouse gate, loading bay, records desk and dispatch office",
     "npcIds": [
       "bigwealth",
       "blessing"
@@ -1621,11 +1621,11 @@ const RAW_MISSIONS = [
       "BigWealth",
       "Blessing"
     ],
-    "narrativePurpose": "A token is being marketed as a claim on a warehouse inventory, but the supporting ownership file is incomplete. Visit the warehouse gate, compare the records office documents and inspect the goods before deciding what the token actually entitles its holder to.",
+    "narrativePurpose": "A token promotion claims each token represents stock held in an Edo warehouse. BigWealth brings glossy photos and a sales deck; Blessing, who tracks incoming and outgoing goods, spots a pallet seal number that appears twice. The player must compare the physical stock with the inventory record, trace the paperwork to its issuer, and test what holders can actually claim or redeem. The warehouse is real; that alone does not establish ownership, control of the goods, or enforceable rights for token holders.",
     "learningObjectives": [
-      "Why a token does not automatically prove legal ownership",
-      "How to inspect custody and redemption terms",
-      "How to distinguish an asset's existence from rights to that asset"
+      "Distinguish evidence that goods exist from evidence of title or control",
+      "Cross-check inventory, seals, dates and source records rather than trusting promotional material",
+      "Identify custody, holder rights and redemption terms that must be independently verified"
     ],
     "prerequisites": [
       "m19"
@@ -1657,13 +1657,13 @@ const RAW_MISSIONS = [
       }
     ],
     "successConditions": [
-      "The player distinguishes a real warehouse from proof of title",
-      "Missing inventory and legal documents are recorded",
-      "Launch is held until the rights and redemption terms are verified"
+      "The player separates proof that goods exist from proof of who owns or controls them",
+      "The duplicate seal and missing signed ownership record are preserved as unresolved discrepancies",
+      "The promotion is paused until rights, custody and redemption claims are independently verified"
     ],
     "failureAndRetry": {
-      "onFailure": "If the player treats the token or photos as proof, Blessing asks for the underlying record and the rights it establishes.",
-      "retry": "Repeat the ownership check using the documents already collected."
+      "onFailure": "If the player treats a photo, token contract or unsigned inventory list as proof of ownership, Blessing asks them to identify who created the record, who signed it and which specific right it establishes.",
+      "retry": "Return to the dispatch desk, compare the records and revise the due-diligence report without filling evidence gaps with assumptions."
     },
     "rewards": {
       "xp": 295,
@@ -1679,11 +1679,11 @@ const RAW_MISSIONS = [
       "asset_claim_verification_required"
     ],
     "nextMissionId": "m21",
-    "ending": "The warehouse exists, but the evidence does not yet support the advertised ownership claim. BigWealth pauses the promotion until the issuer can prove the rights and explain redemption.",
-    "cliffhanger": "The missing file includes a machine-generated summary that confidently names a different owner. In Cross River, Odion and Princess are testing an AI tool that helped create it.",
+    "ending": "The warehouse and some of the goods are real, but the duplicate seal reference and missing signed ownership record leave the advertised claim unverified. BigWealth pauses the promotion and asks the issuer for traceable records, a clear custody arrangement and written holder-redemption rights.",
+    "cliffhanger": "The missing file includes an AI-generated summary that confidently names a different owner. In Cross River, Odion and Princess are testing the tool that produced it.",
     "sceneLines": [
-      "Kanyin: \"They say each token represents warehouse stock, but nobody can show me the signed ownership record. If the warehouse says the goods belong to someone else, what exactly did buyers purchase?\"",
-      "Mcbond: \"The token exists; the legal claim is the missing part. Here's the inventory list and here's the ownership file they haven't signed. Don't approve launch until the claim matches a document someone can enforce.\""
+      "BigWealth: \"The pitch says one token equals a share of this stock. I have photos from the tour and buyers waiting. But the issuer sent an inventory sheet without the signed ownership file. Can we launch if the goods are right here?\"",
+      "Blessing: \"Look at pallet E-17. The seal number on the sheet appears on another dispatch record from last month. I can confirm what is physically here today; I cannot tell you who holds title or what a token holder can legally claim. We need the source records before anyone advertises ownership.\""
     ]
   },
   {
