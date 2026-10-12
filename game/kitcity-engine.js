@@ -635,7 +635,7 @@ EXTRA_CITIES.forEach(([key,name,lon,lat,seed,sky,ground,language])=>{
  CITIES[key]={...base,name,tag:name+' · '+language+' region',lon,lat,seed,sky,ground,slab:northern?'#C8B89B':'#B8B9AA',paint:paints,h:northern?[5,22]:[7,28],market:northern?2:3,palm:northern?.12:(language==='ijaw'||language==='ibibio'?.72:.35),fog:northern?[85,220]:[95,250],localLanguage:language,fleet:northern?[['police',.3],['keke',5],['okada',3],['sedan',2],['truck',2]]:base.fleet};
 });
 const CITY_X={
-  lagos:{styles:[['zinc',.3],['flat',.5],['glass',.1],['admin',.1]],bridges:[[0,-52],[70,-60]],lm:[['theatre',-35,35],['church',35,105]],
+  lagos:{styles:[['glass',.62],['admin',.27],['flat',.11]],bridges:[[0,-52],[70,-60]],lm:[['theatre',-35,35],['church',35,105]],
     signs:[['PURE WATER','#0B7A43','#ffffff'],['POS & RECHARGE','#E4572E','#ffffff'],['PROVISIONS','#2D6FB3','#ffffff'],['PHARMACY','#0B7A43','#ffffff'],['BARBING SALON','#1B1C20','#F6B21A'],['FRESH BREAD','#F6B21A','#1B1C20'],['TAILOR','#C7457E','#ffffff'],['PHONE REPAIR','#10C8DC','#1B1C20'],['BUKA','#E4572E','#ffffff']],
     barks:['Oga, wetin dey?','How far?','No shaking!','Customer, come!','Make we dey go!'],barksEn:['Hey boss, what\u2019s up?','How are you?','Easy now!','Customer, come!','Let\u2019s go!'],hawk:['Pure water! Cold!','Gala! Gala!','Zobo, cold zobo!'],conductor:['Oshodi! Oshodi! Enter!','Ojota, Ojota!','Change ready!'],conductorEn:['Oshodi! Oshodi! Get in!','Ojota, Ojota!','Have your change ready!'],
     nsRoads:['Western Avenue','Ikorodu Road','Awolowo Road','Broad Street','Allen Avenue','Herbert Macaulay Way','Lekki Road'],
@@ -1302,7 +1302,10 @@ const dashMat=new THREE.MeshBasicMaterial({map:dashTex,transparent:true,depthWri
 const dashGeo=new THREE.PlaneGeometry(56,0.5);
 
 const ZINC=['#8a4b2a','#7a5a45','#6f7f8a','#3c6e8f','#8c3b2e','#a2552e'];
-function pickStyle(C){ let t=0; C.styles.forEach(x=>{ t+=x[1]; }); let r=RN()*t; for(const x of C.styles){ r-=x[1]; if(r<=0) return x[0]; } return C.styles[0][0]; }
+function pickStyle(C){
+  if(curCity==='lagos') return RN()<.7?'glass':(RN()<.68?'admin':'flat');
+  let t=0; C.styles.forEach(x=>{ t+=x[1]; }); let r=RN()*t; for(const x of C.styles){ r-=x[1]; if(r<=0) return x[0]; } return C.styles[0][0];
+}
 const signTexCache={};
 function signMat(sg){
   const key=sg.join('|'); let tex=signTexCache[key];
@@ -1434,7 +1437,7 @@ function mergeStatic(group){
    swaps: archetypes change roof silhouettes, frontage, supports, road markings,
    kerbs and roadside infrastructure. */
 const CITY_ARCH_ROAD={
- lagos:{arch:'balcony',road:'lane',roof:'#59636A',kerb:'#D4C8B2',mark:'#F4C342',edge:'drain',feature:'balcony'},
+ lagos:{arch:'glass-tower',road:'coastal-boulevard',roof:'#6A9EAD',kerb:'#D7E8E8',mark:'#F6C85F',edge:'median',feature:'curtain-wall'},
  abuja:{arch:'monument',road:'boulevard',roof:'#AEBCC8',kerb:'#F1F1E8',mark:'#E8E4D6',edge:'median',feature:'portico'},
  kano:{arch:'adobe',road:'market-lanes',roof:'#B18A5B',kerb:'#C5A577',mark:'#DCC79C',edge:'gutter',feature:'parapet'},
  ph:{arch:'industrial',road:'harbour',roof:'#687E78',kerb:'#A6B8B1',mark:'#E2D4A7',edge:'drain',feature:'steel'},
@@ -1496,6 +1499,10 @@ function addArchitectureDetail(key,x,z,w,h,d,color,xb){
  // A different structural silhouette per location, not a tint-only variation.
  switch(A.arch){
  case 'balcony': for(let y=5;y<h-3;y+=5)for(const side of [-1,1])xb(w+.8,.35,.65,trim,x,y,z+side*(d/2+.15)); break;
+ case 'glass-tower':
+   for(let y=5;y<h-3;y+=6) xb(w+.35,.22,d+.35,trim,x,y,z);
+   for(const side of [-1,1]){xb(.28,h,.28,edge,x+side*(w/2-.45),h/2,z+d/2);xb(.28,h,.28,edge,x+side*(w/2-.45),h/2,z-d/2);}
+   xb(w*.72,.55,d*.72,'#D7F4F8',x,h+.28,z); xb(w*.48,1.2,d*.48,'#10C8DC',x,h+1.1,z); break;
  case 'monument': xb(w+2,.8,d+2,trim,x,h+.4,z); xb(w*.72,.7,d*.72,edge,x,h+1.1,z); break;
  case 'adobe': for(let side of [-1,1])xb(.8,h*.72,d+.8,trim,x+side*(w/2-.8),h*.48,z); xb(w+1,1.1,d+1,edge,x,h+.55,z); break;
  case 'industrial': for(let side of [-1,1]){xb(.45,h,.45,edge,x+side*(w/2-.5),h/2,z-d/2);xb(.45,h,.45,edge,x+side*(w/2-.5),h/2,z+d/2);} xb(w+1,.4,.5,trim,x,h*.72,z); break;
@@ -1554,11 +1561,15 @@ function addArchitectureDetail(key,x,z,w,h,d,color,xb){
  }
 }
 function addBuilding(x,z,w,d,style,color,cx,cz,ox,oz){
-  let h; if(style==='zinc') h=rr(6,9); else if(style==='banco') h=rr(7,13); else if(style==='glass') h=rr(30,46); else if(style==='admin') h=rr(12,18); else h=rr(14,30);
+  let h;
+  if(curCity==='lagos'&&style==='glass') h=rr(48,88);
+  else if(curCity==='lagos'&&style==='admin') h=rr(22,38);
+  else if(curCity==='lagos'&&style==='flat') h=rr(18,34);
+  else if(style==='zinc') h=rr(6,9); else if(style==='banco') h=rr(7,13); else if(style==='glass') h=rr(30,46); else if(style==='admin') h=rr(12,18); else h=rr(14,30);
   const mats=[],vv=Math.floor(RN()*3),tex=FACT[style][vv],th=FAC_TH[style];
   const geo=new THREE.BoxGeometry(w,h,d),uv=geo.attributes.uv,rxd=Math.max(1,Math.round(d/10)),rxw=Math.max(1,Math.round(w/10)),ry=Math.max(1,Math.round(h/th));
   for(let i=0;i<uv.count;i++){ const f=Math.floor(i/4),rx=(f===0||f===1)?rxd:rxw; if(f===2||f===3) uv.setXY(i,uv.getX(i)*rxw,uv.getY(i)*rxd); else uv.setXY(i,uv.getX(i)*rx,uv.getY(i)*ry); }
-  const side=lam(style==='glass'?'#86aac6':color,{map:tex,transparent:true});
+  const side=lam(style==='glass'?(curCity==='lagos'?pk(['#7CC9DF','#A5DDE9','#5AAFCB','#D6EDF2','#8ABCCF']):'#86aac6'):color,{map:tex,transparent:true});
   const roof=lam(new THREE.Color(color).lerp(new THREE.Color(LKC.roof),.55).multiplyScalar(.85),{map:LKT.roofC,transparent:true}); mats.push(side,roof);
   const m=new THREE.Mesh(geo,[side,side,roof,roof,side,side]); m.position.set(x,h/2,z); m.userData.nomerge=true; cityGroup.add(m);
   const xb=(bw,bh,bd,c,px,py,pz)=>{ const mt=lam(c,{transparent:true}); mats.push(mt); const b=new THREE.Mesh(new THREE.BoxGeometry(bw,bh,bd),mt); b.position.set(px,py,pz); b.userData.nomerge=true; cityGroup.add(b); return b; };
@@ -1756,8 +1767,9 @@ function makeVehicle(kind,C){
   return {m:buildSedan(pk(pl.sedan),pl.stripe,false),hl:4.5,hw:1.8,sp:[9,14]};
 }
 function placeCar(c){
-  if(c.axis==='x'){ c.m.position.set(c.pos,0,c.lane); c.m.rotation.y=c.dir>0?0:Math.PI; }
-  else { c.m.position.set(c.lane,0,c.pos); c.m.rotation.y=c.dir>0?-Math.PI/2:Math.PI/2; }
+  // Vehicle models face local +Z; rotate to align their long axis with their travel direction.
+  if(c.axis==='x'){ c.m.position.set(c.pos,0,c.lane); c.m.rotation.y=c.dir>0?Math.PI/2:-Math.PI/2; }
+  else { c.m.position.set(c.lane,0,c.pos); c.m.rotation.y=c.dir>0?0:Math.PI; }
 }
 function vehicleBox(c,pos){ const along=pos==null?c.pos:pos,x=c.axis==='x'?along:c.lane,z=c.axis==='x'?c.lane:along,hx=c.axis==='x'?c.hl:c.hw,hz=c.axis==='x'?c.hw:c.hl; return {x0:x-hx,x1:x+hx,z0:z-hz,z1:z+hz}; }
 function boxesOverlap(a,b,pad=.35){ return a.x0<b.x1+pad&&a.x1>b.x0-pad&&a.z0<b.z1+pad&&a.z1>b.z0-pad; }
@@ -1914,7 +1926,7 @@ function addRegionalIdentity(C,key){
       box(w,h,w*.72,['#9BB5BE','#D2D5D1','#7F9CA8','#B8C8CB'][i%4],x,h/2-0.2,-190+(i%2)*13);
       for(let y=6;y<h-3;y+=5)box(w*.76,.28,w*.74,'#D9E8E9',x,y,-190+(i%2)*13);
     });
-    const tower=label('LAGOS ISLAND • LAGOON', '#F6B21A', '#1B1C20',1.6);tower.position.set(-125,82,-190);cityGroup.add(tower);
+    const tower=label('LAGOS ISLAND • ATLANTIC METROPOLIS', '#10C8DC', '#10202B',2.05);tower.position.set(-125,92,-190);cityGroup.add(tower);
   }else if(key==='ibadan'){
     // Cocoa House and the brown-roofed, hill-spread city.
     hills('#81715F',[[-205,-215,30,38],[-165,-230,38,48],[-105,-222,28,32]]);
@@ -2372,6 +2384,8 @@ function cityLayout(key){
   return {idx,spacing,pattern:idx%8,arterial:idx%5,sidewalk:idx%4};
 }
 function roadCoord(n,axis='x'){
+  // Lagos uses offset avenue spacing instead of a perfectly repeated square grid.
+  if(CITY_LAYOUT_INDEX===0){ const offsets={[-3]:-12,[-2]:-5,[-1]:-1,[1]:5,[2]:11,[3]:16}; return n===0?0:n*R+(offsets[n]||0); }
   if(n===0) return 0;
   const mode=CITY_LAYOUT_INDEX%8,sign=n<0?-1:1,abs=Math.abs(n);
   let shift=0;
@@ -2399,6 +2413,11 @@ function addCityBlockBuildings(C,cx,cz,ix,iz){
     [[-14,-12,10,13],[-2,-14,12,9],[12,-7,10,12],[-10,8,13,10],[5,13,10,8]]
   ];
   let placements=lots[p].map(v=>v.slice());
+  if(curCity==='lagos'){
+    placements=(Math.abs(ix)<=1&&Math.abs(iz)<=1)
+      ?[[-14,-12,15,17],[12,-12,15,17],[-14,12,15,17],[12,12,15,17]]
+      :[[-13,-12,19,17],[12,11,18,16],[-12,12,14,13]];
+  }
   if(A.arch==='industrial'||A.arch==='workshop') placements=lots[3].map(v=>v.slice());
   else if(A.arch==='adobe'||A.arch==='kanuri-sahel'||A.arch==='northern-craft'||A.arch==='compound') placements=lots[2].map(v=>v.slice());
   else if(A.arch==='verandah'||A.arch==='raffia'||A.arch==='stilt') placements=lots[5].map(v=>v.slice());
@@ -2407,7 +2426,8 @@ function addCityBlockBuildings(C,cx,cz,ix,iz){
   for(const [ox,oz,w,d] of placements){
     const x=cx+ox+rr(-1.1,1.1),z=cz+oz+rr(-1.1,1.1);
     if(nearSpecial(x,z,18)) continue;
-    addBuilding(x,z,w*rr(.9,1.08),d*rr(.9,1.08),pickStyle(C),pk(C.paint),cx,cz,ox,oz);
+    const style=curCity==='lagos'?(RN()<.72?'glass':(RN()<.72?'admin':'flat')):pickStyle(C);
+    addBuilding(x,z,w*rr(.9,1.08),d*rr(.9,1.08),style,curCity==='lagos'?pk(['#A8DCE8','#BFDDE5','#8FC5D7','#D7E8EA','#78B5CD','#C3D3D9']):pk(C.paint),cx,cz,ox,oz);
   }
 }
 function addCityRoadTopology(key){
@@ -2433,6 +2453,36 @@ function addCityRoadTopology(key){
     for(let n=0;n<7;n++)dash(-255+n*25,-225-n*3,4,.2,-.55);
   }
 }
+function addLagosPremiumRoads(){
+  const asphalt=new THREE.MeshLambertMaterial({color:'#30383D',map:LKT.asph});
+  const curbMat=new THREE.MeshLambertMaterial({color:'#D9E5E6'});
+  const medianMat=new THREE.MeshLambertMaterial({color:'#263E45'});
+  const stripeMat=new THREE.MeshBasicMaterial({color:'#F6C85F',depthWrite:false});
+  const cyanMat=new THREE.MeshBasicMaterial({color:'#10C8DC'});
+  const road=(x,z,length,width,angle=0)=>{const m=new THREE.Mesh(new THREE.BoxGeometry(length,.09,width),asphalt);m.position.set(x,.045,z);m.rotation.y=angle;cityGroup.add(m);};
+  const bar=(x,z,length,width,material,angle=0,y=.11)=>{const m=new THREE.Mesh(new THREE.BoxGeometry(length,.035,width),material);m.position.set(x,y,z);m.rotation.y=angle;cityGroup.add(m);};
+  for(const axis of ['x','z']) for(const n of [-2,0,2]){
+    const p=roadCoord(n,axis==='x'?'z':'x');
+    if(axis==='x') road(0,p,520,n===0?22:18);
+    else road(p,0,520,n===0?22:18,Math.PI/2);
+  }
+  for(const axis of ['x','z']){
+    if(axis==='x'){
+      bar(0,0,520,1.5,medianMat);
+      for(let x=-240;x<=240;x+=24){bar(x,0,1.4,.18,stripeMat);bar(x,1.1,.8,.12,cyanMat,0,.13);}
+      for(const side of [-1,1])bar(0,side*10.8,520,.34,curbMat);
+    }else{
+      bar(0,0,1.5,520,medianMat,Math.PI/2);
+      for(let z=-240;z<=240;z+=24)bar(1.1,z,.8,.12,cyanMat,Math.PI/2,.13);
+      for(const side of [-1,1])bar(side*10.8,0,.34,520,curbMat,Math.PI/2);
+    }
+  }
+  const cx=roadCoord(2,'x'),cz=roadCoord(-2,'z');
+  const ring=new THREE.Mesh(new THREE.TorusGeometry(13,1.3,6,64),new THREE.MeshBasicMaterial({color:'#10C8DC'}));ring.rotation.x=Math.PI/2;ring.position.set(cx,.18,cz);cityGroup.add(ring);
+  const island=new THREE.Mesh(new THREE.CylinderGeometry(10.5,10.5,.5,32),new THREE.MeshLambertMaterial({color:'#355C4A'}));island.position.set(cx,.23,cz);cityGroup.add(island);
+  const core=new THREE.Mesh(new THREE.CylinderGeometry(3.2,4,7,12),new THREE.MeshLambertMaterial({color:'#D7E5E8'}));core.position.set(cx,3.7,cz);cityGroup.add(core);
+  const crown=new THREE.Mesh(new THREE.SphereGeometry(2.6,16,10),new THREE.MeshBasicMaterial({color:'#F6C85F'}));crown.position.set(cx,7.8,cz);cityGroup.add(crown);
+}
 function buildCity(key){
   const C=CITIES[key]; curCity=key;
   const layout=cityLayout(key); CITY_LAYOUT_INDEX=layout.idx; R=layout.spacing; GRID_OFFSET=R/2;
@@ -2440,6 +2490,8 @@ function buildCity(key){
   colliders.length=0; buildings.length=0; cars=[]; walkers=[]; hawkers=[]; ringTaken=[];
   RN=mulberry(C.seed); dxReset(); LOOKSC=CITY_LOOKS[key]||LOOKS;
   applyLook(key,C);
+  const cityNameplate=$('#cityNameplate');
+  if(cityNameplate){ if(key==='lagos'){ cityNameplate.classList.remove('hidden'); $('#cityNameplateTitle').textContent='LAGOS'; $('#cityNameplateSub').textContent='ATLANTIC METROPOLIS'; } else cityNameplate.classList.add('hidden'); }
   if(key==='kitcity'){ buildKitCity(C); return; }
   const outer=new THREE.Mesh(uvScale(new THREE.PlaneGeometry(1400,1400),100,100),lam(C.dirt,{map:LKT.dirt})); outer.rotation.x=-Math.PI/2; outer.position.y=-.04; cityGroup.add(outer);
   const ground=new THREE.Mesh(uvScale(new THREE.PlaneGeometry(520,520),20,20),lam(C.ground,{map:LKT.asph})); ground.rotation.x=-Math.PI/2; cityGroup.add(ground);
@@ -2451,8 +2503,10 @@ function buildCity(key){
   const blocks=[];
   for(let i=-3;i<=2;i++)for(let j=-3;j<=2;j++){
     const cx=roadMid(i,'x'),cz=roadMid(j,'z'); blocks.push({cx,cz});
-    const vg=new THREE.Mesh(vergeGeo,dirtMat); vg.rotation.x=-Math.PI/2; vg.position.set(cx,.03,cz); cityGroup.add(vg);
-    const slab=new THREE.Mesh(slabGeo,paveMat); slab.position.set(cx,0.05,cz); cityGroup.add(slab);
+    const cellW=key==='lagos'?Math.max(56,roadCoord(i+1,'x')-roadCoord(i,'x')-14):R-14;
+    const cellD=key==='lagos'?Math.max(56,roadCoord(j+1,'z')-roadCoord(j,'z')-14):R-14;
+    const vg=new THREE.Mesh(key==='lagos'?uvScale(new THREE.PlaneGeometry(cellW+3,cellD+3),Math.max(6,cellW/5),Math.max(6,cellD/5)):vergeGeo,dirtMat); vg.rotation.x=-Math.PI/2; vg.position.set(cx,.03,cz); cityGroup.add(vg);
+    const slab=new THREE.Mesh(key==='lagos'?uvScale(new THREE.BoxGeometry(cellW,0.1,cellD),Math.max(8,cellW/4),Math.max(8,cellD/4)):slabGeo,paveMat); slab.position.set(cx,0.05,cz); cityGroup.add(slab);
     const lmk=(C.lm||[]).find(l=>Math.hypot(l[1]-cx,l[2]-cz)<15);
     if(lmk) landmark(lmk[0],cx,cz);
     else if((((i+j)%C.market)+C.market)%C.market===0) addMarket(cx,cz);
@@ -2461,6 +2515,7 @@ function buildCity(key){
   }
   streetDetails(C,blocks); roadDecals(C,blocks);
   addRoadIdentity(key,blocks); addCityRoadTopology(key);
+  if(key==='lagos') addLagosPremiumRoads();
   addRegionalIdentity(C,key);
   dxFlush(C);
   cityCols=colliders.length;
@@ -5168,13 +5223,19 @@ function update(dt,time){
   }
   talkBtn.classList.toggle('hidden',!(nearEnt&&!S.modal));
   const compass=$('#compass');
-  if(goal){
-    compass.classList.remove('hidden'); compass.classList.add('force-visible'); compass.style.display='grid'; compass.style.visibility='visible'; compass.style.opacity='1';
-    beacon.visible=true; beacon.position.set(goal.x,0,goal.z);
-    beacon.getObjectByName('ring').scale.setScalar(1+.18*Math.sin(time*4));
-    const dx=goal.x-player.position.x,dz=goal.z-player.position.z,d=Math.round(Math.hypot(dx,dz));
-    $('#arrow').style.transform='rotate('+Math.atan2(dx,-dz)+'rad)';
-    if(d!==lastDist){ lastDist=d; $('#dist').textContent=d<9?tr('Here'):Math.round(d/2)+' m'; }
+  const stepNow=G&&G.m&&G.m.steps?G.m.steps[G.i]:null;
+  const navGoal=goal||(G&&G.m&&G.m.city==='lagos'?(ents.find(e=>{try{return e.active&&e.active();}catch(_){return false;}})||SPOTS[(stepNow&&stepNow.spot)||'a']||SPOTS.a):null);
+  if(navGoal){
+    const gx=navGoal.object&&navGoal.object.position?navGoal.object.position.x:navGoal.x;
+    const gz=navGoal.object&&navGoal.object.position?navGoal.object.position.z:navGoal.z;
+    if(Number.isFinite(gx)&&Number.isFinite(gz)){
+      compass.classList.remove('hidden'); compass.classList.add('force-visible'); compass.style.display='grid'; compass.style.visibility='visible'; compass.style.opacity='1';
+      beacon.visible=true; beacon.position.set(gx,0,gz);
+      beacon.getObjectByName('ring').scale.setScalar(1+.18*Math.sin(time*4));
+      const dx=gx-player.position.x,dz=gz-player.position.z,d=Math.round(Math.hypot(dx,dz));
+      $('#arrow').style.transform='rotate('+Math.atan2(dx,-dz)+'rad)';
+      if(d!==lastDist){ lastDist=d; $('#dist').textContent=d<9?tr('Here'):Math.round(d/2)+' m'; }
+    }
   } else { beacon.visible=false; compass.classList.add('hidden'); compass.classList.remove('force-visible'); compass.style.removeProperty('display'); compass.style.removeProperty('visibility'); compass.style.removeProperty('opacity'); }
   { updateBarks(dt);
     locT-=dt; if(locT<=0){ locT=.3; const n=locName(player.position.x,player.position.z); if(n!==lastLoc){ lastLoc=n; $('#loc').textContent=n; } } }
