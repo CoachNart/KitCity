@@ -2854,6 +2854,7 @@ function buildStall(def,spot){
   }
 }
 function placeStoryClue(def,spot){
+  spot=safeMissionSpot(spot,10,10);
   const g=new THREE.Group(); g.position.set(spot.x,0,spot.z);
   const wood=lam('#45352A'),paper=lam('#F4F5F0'),cyan=lam(BRAND),dark=lam('#17212A');
   for(const x of [-1.35,1.35]){
@@ -2883,6 +2884,7 @@ function placeStoryClue(def,spot){
   return {x:spot.x,z:spot.z,r:6.5,clue:true};
 }
 function placeMissionEvidence(def,mission,spot){
+  spot=safeMissionSpot(spot,10,10);
   const g=new THREE.Group();g.position.set(spot.x,0,spot.z);
   const title=String(def.title||def.label||'Evidence').replace(/[.!?]+$/,'');
   const labelText=tr(def.sign||title.toUpperCase().slice(0,28));
@@ -2926,12 +2928,14 @@ function placeMissionEvidence(def,mission,spot){
   return {x:spot.x,z:spot.z,r:6.7,clue:true};
 }
 function storyExecutionStation(m,stepIndex){
-  const base=SPOTS.execution;
+  const base=safeMissionSpot(SPOTS.execution);
   const objectiveIndex=Math.max(0,stepIndex-(m.characterStepCount||0));
   const angle=objectiveIndex*2.399963229728653;
-  return {x:base.x+Math.cos(angle)*4.15,z:base.z+Math.sin(angle)*3.05,f:-1};
+  return safeMissionSpot({x:base.x+Math.cos(angle)*10,z:base.z+Math.sin(angle)*10,f:-1});
 }
 function placeExecutionCenter(def,base,station){
+  base=safeMissionSpot(base);
+  station=safeMissionSpot(station,10,10);
   const hall=new THREE.Group();hall.position.set(base.x,0,base.z);
   const floor=new THREE.Mesh(new THREE.BoxGeometry(15,.24,12),lam('#34434B'));floor.position.y=.12;hall.add(floor);
   const roof=new THREE.Mesh(new THREE.BoxGeometry(15.5,.28,12.5),lam('#17262F'));roof.position.set(0,4.25,0);hall.add(roof);
@@ -2950,7 +2954,27 @@ function placeExecutionCenter(def,base,station){
   const stationSign=label(tr(def.sign||def.title||def.label||'WORKSTATION'),BRAND,'#071827',1.1);stationSign.position.set(station.x,4.1,station.z);missionGroup.add(stationSign);
   return {x:station.x,z:station.z,r:7.2,clue:true};
 }
+function safeMissionSpot(spot,offsetX=0,offsetZ=0){
+  if(!spot||!Number.isFinite(Number(spot.x))||!Number.isFinite(Number(spot.z))) return spot;
+  const safeAxis=(value,axis,offset)=>{
+    const v=Number(value)+offset;
+    let bestN=-3,bestMid=roadMid(-3,axis),bestDist=Infinity;
+    for(let n=-3;n<=2;n++){
+      const mid=roadMid(n,axis),dist=Math.abs(v-mid);
+      if(dist<bestDist){bestDist=dist;bestN=n;bestMid=mid;}
+    }
+    const left=roadCoord(bestN,axis)+roadWidthFor(curCity,bestN)/2+18;
+    const right=roadCoord(bestN+1,axis)-roadWidthFor(curCity,bestN+1)/2-18;
+    if(left>right) return bestMid;
+    return Math.max(left,Math.min(right,v));
+  };
+  return Object.assign({},spot,{
+    x:safeAxis(spot.x,'x',offsetX),
+    z:safeAxis(spot.z,'z',offsetZ)
+  });
+}
 function placeStoryOffice(spot){
+  spot=safeMissionSpot(spot);
   /* A small open-front office gives Abdul a clear, separate destination from Softstorm. */
   const office=new THREE.Group();
   office.position.set(spot.x,0,spot.z-13);
@@ -2966,6 +2990,7 @@ function placeStoryOffice(spot){
   const sign=label("IAMABDUL'S OFFICE",BRAND,'#071827',1.35);sign.position.set(spot.x,6.4,spot.z-13);missionGroup.add(sign);
 }
 function placeNPC(def,spot){
+  spot=safeMissionSpot(spot);
   if(def.stall) buildStall(def,spot);
   else {
     const p=buildPerson(def.look);
@@ -3020,13 +3045,13 @@ scene.add(storyCastGroup);
 const storySoftstorm=buildPerson(LK.mama);
 storySoftstorm.userData.storyCharacter='Softstorm';
 storySoftstorm.userData.storyRole='The one with the card';
-storySoftstorm.position.set(9.1,.05,-30);
+storySoftstorm.position.set(25,.05,-30);
 storySoftstorm.rotation.y=Math.PI/2;
 storyCastGroup.add(storySoftstorm);
 const storyAbdul=buildPerson(LK.suya);
 storyAbdul.userData.storyCharacter='IamAbdul';
 storyAbdul.userData.storyRole='The one who heard it first';
-storyAbdul.position.set(12.9,.05,-30);
+storyAbdul.position.set(33,.05,-30);
 storyAbdul.rotation.y=-Math.PI/2;
 storyCastGroup.add(storyAbdul);
 storyCastGroup.visible=false;
@@ -4655,7 +4680,7 @@ function loadStep(){
     goal=target||ents[0]||null;
   }else if(m.id==='m03'){
     // Keep the complete Oyo scene physically present: Unique, Smrt huntr and Timi.
-    const sceneAnchor=SPOTS[st.spot]||SPOTS.a;
+    const sceneAnchor=safeMissionSpot(SPOTS[st.spot]||SPOTS.a);
     const sceneCast=[
       {name:'Unique',offset:[0,0]},
       {name:'Smrt huntr',offset:[4,-2]},
@@ -4688,7 +4713,7 @@ function loadStep(){
     const activeName=st.npc&&(st.npc.name||st.npc);
     const activeOriginalName=st.npc&&typeof st.npc==='object'&&(st.npc.originalName||st.npc.name);
     if(activeName&&!castNames.includes(activeName)&&!(m.id==='m01'&&(st.kind==='clue'||st.kind==='challenge')))castNames.push(activeName);
-    const anchor=SPOTS[st.spot]||SPOTS.a;
+    const anchor=safeMissionSpot(SPOTS[st.spot]||SPOTS.a);
     const castOffsets=[[0,0],[4,-2],[-4,-2],[0,4],[6,3],[-6,3],[0,-6],[8,-1],[-8,-1]];
     castNames.forEach((name,index)=>{
       const npc=STORY_NPCS[name];
