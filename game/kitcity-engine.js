@@ -3727,8 +3727,8 @@ function loadStep(){
     else{const entity=placeNPC(st.npc,SPOTS[st.spot]||SPOTS.a);entity.talk=()=>st.run();entity.active=()=>true;ents.push(entity);goal=entity;}
   }else{
     placeStoryOffice(SPOTS.story);
-    const castNames=[...new Set(m.npcs||[])];let activeCharacter=null;
-    castNames.forEach(name=>{
+    const openingCastNames=[...new Set(m.npcs||[])];let activeCharacter=null;
+    openingCastNames.forEach(name=>{
       const npc=STORY_NPCS[name];if(!npc)return;
       const spot=name==='Softstorm'?SPOTS.a:(st.id==='m01-transaction-record'?SPOTS.ledgerGuide:SPOTS.story);
       const entity=placeNPC(npc,spot||SPOTS.a);
