@@ -3425,6 +3425,39 @@ const MISSIONS=CHRONICLE_MISSIONS.map((story,index)=>{
         ]);
       }}
     ];
+  }else if(story.id==='m16'){
+    const jonathan=STORY_NPCS['J.Jonathan'], essa=STORY_NPCS.Essa;
+    steps=[
+      {kind:'character',id:'m16-obj-1',label:story.objectives[0].label,spot:'buyer',npc:jonathan,run(){
+        talk(jonathan,"<p><b>J.JONATHAN:</b> The recruiter says the screening task will only be revealed after an activation fee. They want private wallet details too, and keep pushing the deadline. Preserve the original message. Do not use its links to verify the sender.</p>",[
+          {t:'Record the sender, domain, fee demand and requested information; preserve the message privately.',f:()=>talk(essa,"<p><b>ESSA:</b> Good. Now we have details to compare. Urgency and polished branding do not prove the offer is real.</p>",[{t:'Find the company site independently in a separate tab.',f:()=>{G.evidence.m16_message_preserved=true;G.evidence.m16_sender_inspected=true;finishStep();}}])},
+          {t:'Click the recruiter link and send the requested wallet details to save time.',f:()=>talk(essa,"<p><b>ESSA:</b> Stop. We have not verified who controls that link. Never share a seed phrase, private key or recovery information. Back out and verify independently.</p>",[{t:'Preserve the message and inspect the sender without opening its links.',f:()=>{G.evidence.m16_message_preserved=true;G.evidence.m16_sender_inspected=true;finishStep();}}])}
+        ]);
+      }},
+      {kind:'clue',id:'m16-obj-2',label:story.objectives[1].label,spot:'ledger',title:'The official careers channel',sign:'CHECK OUTSIDE THE MESSAGE',npc:essa,run(){
+        talk(essa,"<p><b>ESSA:</b> Find the company website yourself, navigate to careers, and compare the exact role title, hiring contact and application route. If the vacancy is absent or the sender does not match, treat this contact as unverified—not as proof every job at the company is fake.</p>",[
+          {t:'Compare the vacancy and sender against the independently reached official channel; record what matches and what does not.',f:()=>talk(jonathan,"<p><b>J.JONATHAN:</b> The fee demand and private-wallet request are not justified by a job application. Do not rely on screenshots the sender supplied as proof.</p>",[{t:'Mark this contact unverified and use only a matching official vacancy if one exists.',f:()=>{G.evidence.m16_official_channel_checked=true;G.evidence.m16_offer_unverified=true;G.evidence.m16_fee_red_flag=true;finishStep();}}])},
+          {t:'Trust the logo and the recruiter’s claim that the vacancy is confidential.',f:()=>talk(essa,"<p><b>ESSA:</b> A logo can be copied. Confidentiality does not remove the need to verify the employer and application route independently.</p>",[{t:'Check the official careers channel and record the mismatch or missing vacancy.',f:()=>{G.evidence.m16_official_channel_checked=true;G.evidence.m16_offer_unverified=true;G.evidence.m16_fee_red_flag=true;finishStep();}}])}
+        ]);
+      }},
+      {kind:'clue',id:'m16-obj-3',label:story.objectives[2].label,spot:'screenshot',title:'The application terminal',sign:'LET THE WORK SPEAK',npc:jonathan,run(){
+        talk(jonathan,"<p><b>J.JONATHAN:</b> Your portfolio has two real samples: the safety recap and the plain-language product announcement. Choose the one that best fits a real, independently verified role. Keep the problem, your contribution and evidence link attached. If this vacancy cannot be verified, do not submit your information through this contact.</p>",[
+          {t:'Prepare the relevant sample with context, personal contribution and an inspectable artifact for an official route.',f:()=>{G.evidence.m16_relevant_sample_prepared=true;G.evidence.m16_portfolio_matched=true;finishStep();}},
+          {t:'Invent a new credential and attach it to look more qualified.',f:()=>talk(jonathan,"<p><b>J.JONATHAN:</b> A made-up credential undermines the real work you already have. Use evidence you can explain and demonstrate.</p>",[{t:'Use an honest sample and note any requirement you still need to practise.',f:()=>{G.evidence.m16_relevant_sample_prepared=true;G.evidence.m16_portfolio_matched=true;finishStep();}}])}
+        ]);
+      }},
+      {kind:'character',id:'m16-obj-4',label:story.objectives[3].label,spot:'shopdesk',npc:essa,run(){
+        talk(essa,"<p><b>ESSA:</b> No activation fee, no private wallet details, and no identity documents sent to an unverified contact. Preserve the message and report it through an appropriate platform or company channel. If a verified vacancy exists, apply there; otherwise, walk away.</p>",[
+          {t:'Decline the fee, share no secrets or ID, preserve the evidence and report the contact privately.',f:()=>talk(jonathan,"<p><b>J.JONATHAN:</b> Good. Keep your claims factual. You can report a suspicious demand without publicly declaring facts you have not established.</p>",[{t:'Save the safe response and application pack.',f:()=>{G.evidence.m16_safe_response=true;G.evidence.m16_no_payment_or_secrets=true;G.evidence.m16_report_prepared=true;finishStep();}}])},
+          {t:'Pay a small fee and send ID because the deadline is tonight.',f:()=>talk(essa,"<p><b>ESSA:</b> No. The fee and private-information demand remain red flags, regardless of the deadline. We will not send money or sensitive information to an unverified contact.</p>",[{t:'Cancel the payment, keep the evidence and prepare a factual report.',f:()=>{G.evidence.m16_safe_response=true;G.evidence.m16_no_payment_or_secrets=true;G.evidence.m16_report_prepared=true;finishStep();}}])}
+        ]);
+      }},
+      {kind:'character',id:'m16-close-message',label:'Close the recruiter investigation',spot:'buyer',npc:jonathan,run(){
+        talk(jonathan,"<p><b>J.JONATHAN:</b> We preserved the message and checked the opportunity outside the sender's links.</p><p><b>ESSA:</b> No payment, no wallet secrets, no ID sent to an unverified contact. The work sample stays ready for a genuine official application.</p><p><b>YOU:</b> I can miss one deadline. I won't pay to discover whether a job exists.</p><p><b>J.JONATHAN:</b> Separate matter from Kano: White Coach and Abdul need help checking a payment-reconciliation service with local traders. Their first test has a mismatch.</p>",[
+          {t:'Save the screened job pack and head to Kano to inspect the payment mismatch.',f:()=>{P.storyFlags=Object.assign({},P.storyFlags||{},{m16_complete:true,job_offer_screened:true});G.evidence.chapterSummary=true;finishStep();}}
+        ]);
+      }}
+    ];
   }else{
     steps=[];
     const objectives=story.objectives||[];
