@@ -2439,6 +2439,38 @@ const STORY_PLAYER_CHOICES={
   m30:["Run the payment, safety and hand-off checks","Review each result before signing off"],
   m31:["Inspect the signed deployment record","Choose a practical contribution backed by the evidence"]
 };
+const STORY_NPC_FOLLOWUPS={
+  m02:"I saved the page before it refreshed. Look at the address in the capture—the shop name stayed the same, but the destination did not.",
+  m03:"He said the words were needed to unlock the wallet. That's exactly why we're stopping here before Timi loses control of it.",
+  m04:"I'll post the correction with the original record attached. I won't name an editor until we have evidence of who changed it.",
+  m05:"Watch her thumb: she keeps opening the network list and backing out. That's a design problem we can reproduce.",
+  m06:"The second request got through while the first was pending. I'll keep the test steps so we can prove the patch closes that gap.",
+  m07:"The token address is the mismatch. The ticker alone fooled the screen, and the approval may have exposed more than this one swap.",
+  m08:"I'll publish the status now and update it when the incident log changes. No promises about a time we can't support.",
+  m09:"The first trade followed the plan; the second was an attempt to erase the loss. I can see the difference now that they're side by side.",
+  m10:"That liquidation estimate assumes the current position and margin. If either changes, the buffer changes too.",
+  m11:"She finished the one-step task when someone welcomed her. Six channels were not the problem she needed solved.",
+  m12:"The member has stopped replying in the public chat. I'll message them directly and never ask for their phrase or password.",
+  m13:"I'll tell the room what the tool can do today and where it falls short. I'd rather lose a signup than mislead someone.",
+  m14:"That wording is defensible: the alert is a prompt for the user, not an automatic trading decision.",
+  m15:"The reviewer can run the demo and inspect the source now. I'll include the trade-offs instead of pretending it's finished.",
+  m16:"The company confirmed there is no role under that reference. Keep the messages in case the real company wants to investigate.",
+  m17:"The delayed callback changed the payment status after the order had already timed out. The logs show where the hand-off broke.",
+  m18:"The next test will change only the wallet explanation. If completion improves, we'll know that wording was part of the drop-off.",
+  m19:"The return is a projection, not a guarantee. These reporting clauses are what I'd want clarified before anyone signs.",
+  m20:"They sent another token screenshot, but still no signed inventory document. I'm not going to call that backing.",
+  m21:"The source is about a different entity with a similar name. I'll mark the AI output as unsupported until the owner record is checked.",
+  m22:"The bridge message is still pending on the destination. Sending again would create a separate transfer and another risk.",
+  m23:"The proposal can wait. We still don't know who owns maintenance after delivery, and that cost belongs in the vote.",
+  m24:"The old contract fails the test and the patch passes it. I'll attach both results to the disclosure so the fix can be reviewed.",
+  m25:"The token proves which collectible was transferred. It does not settle copyright or grant a commercial licence by itself.",
+  m26:"The commit and licence are clear enough to raise a specific request. We'll send the maintainer evidence, not an insult.",
+  m27:"Two records share the mark, but the dates and ownership differ. I'll keep the timeline open until another link is verified.",
+  m28:"The reference leaves the first tool but disappears in the second. I'll log the payload at both ends and retest the whole route.",
+  m29:"The timeline supports a few links and leaves others open. That's the case file I'm willing to hand over.",
+  m30:"All three checks produced records we can inspect. If a team cannot reproduce one, I won't mark that part complete.",
+  m31:"The signature verifies this deployment record and its stated scope. Anything beyond that needs a separate source."
+};
 function chronicleNpcLine(m,name,index=0){
   const authoredLine=Array.isArray(m.sceneLines)?m.sceneLines[index]:null;
   if(authoredLine) return authoredLine;
@@ -2502,7 +2534,7 @@ function chronicleNpcStep(m,name,index){
       ]
       :[
         {t:choices[0],f:()=>{G.evidence['met_'+name]=true;G.evidence['approach_'+m.id]='evidence-first';finishStep();}},
-        {t:choices[1],f:()=>talk(npc,'<p><b>'+escapeStoryHtml(name.toUpperCase())+':</b> All right. I’ll show you the part I saw myself. If the record contradicts me, say so.</p>',[{t:'Compare the account with the record',f:()=>{G.evidence['met_'+name]=true;G.evidence['approach_'+m.id]='compare-accounts';finishStep();}}])}
+        {t:choices[1],f:()=>talk(npc,'<p><b>'+escapeStoryHtml(name.toUpperCase())+':</b> '+escapeStoryHtml(STORY_NPC_FOLLOWUPS[m.id]||'Let me show you the record I am relying on.')+'</p>',[{t:'Compare the account with the record',f:()=>{G.evidence['met_'+name]=true;G.evidence['approach_'+m.id]='compare-accounts';finishStep();}}])}
       ];
     talk(npc,html,buttons);
   };
