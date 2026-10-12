@@ -2250,7 +2250,7 @@ function openSheet(html,btns,typingMs,preserveIdentity){
     setTimeout(pendingReveal,typingMs);
   } else { sheetEl.classList.remove('typing'); pendingReveal=null; }
 }
-function closeSheet(){ S.modal=false; cbs=[]; sheetTok++; pendingReveal=null; chat={npc:null,log:[]}; sheetEl.classList.remove('typing','chronicle-dialogue-card'); modalEl.classList.remove('chronicle-dialogue-open'); modalEl.classList.add('hidden'); sheetEl.innerHTML=''; Snd.duck(false); }
+function closeSheet(){ clearMissionDialogueUI(); S.modal=false; cbs=[]; sheetTok++; pendingReveal=null; chat={npc:null,log:[]}; sheetEl.classList.remove('typing','chronicle-dialogue-card'); modalEl.classList.remove('chronicle-dialogue-open'); modalEl.classList.add('hidden'); sheetEl.innerHTML=''; Snd.duck(false); }
 sheetEl.addEventListener('click',e=>{
   if(pendingReveal){ pendingReveal(); return; }
   const b=e.target.closest('[data-i]'); if(!b) return;
@@ -2259,15 +2259,134 @@ sheetEl.addEventListener('click',e=>{
 const who=(i,n,r,bg)=>'<div class="who"><span class="av" style="background:'+bg+'">'+i+'</span><div><b>'+n+'</b><small>'+r+'</small></div></div>';
 const whoOf=d=>who(d.name.charAt(0),d.name,d.role,d.color);
 const plain=h=>h.replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim();
+let activeMissionDialogue=null;
+let missionDialogueBubble=null;
+let missionDialogueNav=null;
+let missionDialogueFrame=0;
+function ensureMissionDialogueUI(){
+  if(missionDialogueBubble&&missionDialogueNav)return;
+  missionDialogueBubble=document.createElement('div');
+  missionDialogueBubble.className='kitcity-mission-dialogue-bubble hidden';
+  missionDialogueBubble.setAttribute('role','status');
+  missionDialogueBubble.setAttribute('aria-live','polite');
+  document.body.appendChild(missionDialogueBubble);
+  missionDialogueNav=document.createElement('div');
+  missionDialogueNav.className='kitcity-mission-dialogue-nav hidden';
+  missionDialogueNav.setAttribute('aria-label','Conversation navigation');
+  missionDialogueNav.innerHTML='<button type="button" data-dialogue-step="-1" aria-label="Previous line">‹ Prev</button><span aria-live="polite"></span><button type="button" data-dialogue-step="1" aria-label="Next line">Next ›</button>';
+  document.body.appendChild(missionDialogueNav);
+  missionDialogueNav.addEventListener('click',event=>{
+    const button=event.target.closest('button[data-dialogue-step]');
+    if(!button||!activeMissionDialogue)return;
+    event.preventDefault();
+    const step=Number(button.dataset.dialogueStep);
+    if(step<0){
+      renderMissionDialogueLine(Math.max(0,activeMissionDialogue.index-1));
+    }else if(activeMissionDialogue.index<activeMissionDialogue.lines.length-1){
+      renderMissionDialogueLine(activeMissionDialogue.index+1);
+    }else{
+      revealMissionDialogueChoices();
+    }
+  });
+}
+function clearMissionDialogueUI(){
+  activeMissionDialogue=null;
+  if(missionDialogueFrame){cancelAnimationFrame(missionDialogueFrame);missionDialogueFrame=0;}
+  if(missionDialogueBubble)missionDialogueBubble.classList.add('hidden');
+  if(missionDialogueNav)missionDialogueNav.classList.add('hidden');
+}
+function missionDialogueActor(speaker,fallback){
+  const name=String(speaker||'').trim().replace(/:$/,'').toLowerCase();
+  if(['you','player','yourself'].includes(name))return player;
+  const found=storyNPCActors.find(actor=>String(actor.userData&&actor.userData.storyCharacter||'').trim().toLowerCase()===name);
+  if(found)return found;
+  if(fallback&&fallback.object)return fallback.object;
+  return storyNPCActors.find(actor=>String(actor.userData&&actor.userData.storyCharacter||'').trim().toLowerCase()===String(fallback&&fallback.name||'').trim().toLowerCase())||player;
+}
+function positionMissionDialogueBubble(){
+  if(!activeMissionDialogue||!missionDialogueBubble)return;
+  const line=activeMissionDialogue.lines[activeMissionDialogue.index];
+  const actor=missionDialogueActor(line&&line.speaker,activeMissionDialogue.def);
+  if(!actor||!actor.visible){missionDialogueBubble.classList.add('hidden');return;}
+  const point=new THREE.Vector3();
+  actor.getWorldPosition(point);
+  point.y+=actor===player?4.1:4.5;
+  point.project(camera);
+  if(point.z<=-1||point.z>=1){missionDialogueBubble.classList.add('hidden');return;}
+  missionDialogueBubble.classList.remove('hidden');
+  const rect=document.querySelector('#gl')?.getBoundingClientRect()||{left:0,top:0,width:innerWidth,height:innerHeight};
+  const x=rect.left+(point.x*.5+.5)*rect.width;
+  const y=rect.top+(-point.y*.5+.5)*rect.height;
+  const margin=10;
+  const width=Math.min(missionDialogueBubble.offsetWidth||300,window.innerWidth-margin*2);
+  const height=missionDialogueBubble.offsetHeight||84;
+  const left=Math.max(margin+width/2,Math.min(window.innerWidth-margin-width/2,x));
+  const top=Math.max(margin+height,Math.min(window.innerHeight-margin,y));
+  missionDialogueBubble.style.left=left+'px';
+  missionDialogueBubble.style.top=top+'px';
+}
+function missionDialogueFrameLoop(){
+  if(!activeMissionDialogue){missionDialogueFrame=0;return;}
+  camera.updateMatrixWorld();
+  positionMissionDialogueBubble();
+  missionDialogueFrame=requestAnimationFrame(missionDialogueFrameLoop);
+}
+function renderMissionDialogueLine(index){
+  if(!activeMissionDialogue)return;
+  activeMissionDialogue.index=index;
+  const line=activeMissionDialogue.lines[index];
+  missionDialogueBubble.innerHTML='<small>'+escapeStoryHtml(String(line.speaker||'').toUpperCase())+'</small><div>'+line.html+'</div>';
+  missionDialogueBubble.classList.remove('hidden','bubble-pop');
+  void missionDialogueBubble.offsetWidth;
+  missionDialogueBubble.classList.add('bubble-pop');
+  missionDialogueNav.classList.remove('hidden');
+  missionDialogueNav.querySelector('span').textContent=(index+1)+' / '+activeMissionDialogue.lines.length;
+  missionDialogueNav.querySelector('[data-dialogue-step="-1"]').disabled=index<=0;
+  missionDialogueNav.querySelector('[data-dialogue-step="1"]').textContent=index>=activeMissionDialogue.lines.length-1?'Choices ›':'Next ›';
+  positionMissionDialogueBubble();
+}
+function revealMissionDialogueChoices(){
+  if(!activeMissionDialogue)return;
+  const dialogue=activeMissionDialogue;
+  clearMissionDialogueUI();
+  if(!dialogue.buttons.length){closeSheet();return;}
+  const def=dialogue.def;
+  const card='<div class="chronicle-talk-head"><span class="chronicle-talk-avatar" style="--npc-accent:'+escapeStoryHtml(def.color||BRAND)+'">'+escapeStoryHtml(String(def.name||'').slice(0,1).toUpperCase())+'</span><div class="chronicle-talk-identity"><small>YOUR MOVE</small><h3>'+escapeStoryHtml(String(def.name||'Local resident'))+'</h3><span>Choose what happens next.</span></div></div>';
+  openSheet(card,dialogue.buttons,0,true);
+  sheetEl.classList.add('chronicle-dialogue-card');
+  modalEl.classList.add('chronicle-dialogue-open');
+}
 function talk(def,html,btns){
   html=tx(personalize(html,G&&G.m,def));
   const npcName=String(def.name||'Local resident');
-  const role=String(def.role||'KITCITY RESIDENT');
   const wrapped=(btns||[]).map(b=>({t:personalize(tr(b.t)),g:b.g,m:b.m,f:b.f}));
-  const card='<div class="chronicle-talk-head"><span class="chronicle-talk-avatar" style="--npc-accent:'+escapeStoryHtml(def.color||BRAND)+'">'+escapeStoryHtml(npcName.slice(0,1).toUpperCase())+'</span><div class="chronicle-talk-identity"><small>NEARBY · '+escapeStoryHtml(G&&G.m?CITIES[G.m.city]?.name||G.m.state||'KITCITY':'KITCITY')+'</small><h3>'+escapeStoryHtml(npcName)+'</h3><span>'+escapeStoryHtml(role)+'</span></div></div><div class="chronicle-talk-body"><small class="chronicle-talk-speaker">'+escapeStoryHtml(npcName.toUpperCase())+'</small><div class="chronicle-talk-line">'+html+'</div></div>';
-  openSheet(card,wrapped,0,true);
-  sheetEl.classList.add('chronicle-dialogue-card');
-  modalEl.classList.add('chronicle-dialogue-open');
+  const holder=document.createElement('div');
+  holder.innerHTML=html;
+  let nodes=Array.from(holder.querySelectorAll('p'));
+  if(!nodes.length){
+    nodes=holder.innerHTML.split(/<br\s*\/?\s*>/i).filter(part=>part.replace(/<[^>]+>/g,'').trim()).map(part=>{
+      const p=document.createElement('p');p.innerHTML=part;return p;
+    });
+  }
+  const lines=nodes.map(node=>{
+    const first=node.querySelector('b,strong');
+    let speaker=npcName;
+    if(first){
+      const label=first.textContent.trim();
+      if(/:$/.test(label)){speaker=label.replace(/:$/,'').trim();first.remove();}
+    }
+    const lineHtml=node.innerHTML.trim()||escapeStoryHtml(node.textContent.trim());
+    return {speaker,html:lineHtml};
+  }).filter(line=>line.html.replace(/<[^>]+>/g,'').trim());
+  if(!lines.length)lines.push({speaker:npcName,html:escapeStoryHtml(plain(html))});
+  closeSheet();
+  ensureMissionDialogueUI();
+  activeMissionDialogue={def,buttons:wrapped,lines,index:0};
+  S.modal=true;
+  talkBtn.classList.add('hidden');
+  Snd.duck(true);
+  renderMissionDialogueLine(0);
+  if(!missionDialogueFrame)missionDialogueFrame=requestAnimationFrame(missionDialogueFrameLoop);
 }
 function badgeSVG(n,on,size){
   const num=Number(n),idx=Number.isFinite(num)&&num>0?Math.floor(num)-1:Math.abs(String(n).split('').reduce((a,c)=>a+c.charCodeAt(0),0))%12;
