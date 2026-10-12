@@ -21,6 +21,10 @@ if (!sceneDirector.includes("kitcity-speech-bubble")) errors.push("World-anchore
 requireText("Your turn. Walk up to someone and press Talk when you are ready.", "player-led interaction after intro");
 requireText("const STORY_BRIDGES={", "connected story transitions");
 requireText("function chronicleNpcStep(m,name,index)", "contextual character conversations");
+const missionRegistryText = await readFile(new URL("./chronicles.js", import.meta.url), "utf8");
+const authoredSceneCount = [...missionRegistryText.matchAll(/"sceneLines": \[/g)].length;
+if (authoredSceneCount !== 30) errors.push("Every mission after Lagos Mission 1 must provide authored scene dialogue.");
+if (!engine.includes("const authoredLine=Array.isArray(m.sceneLines)?m.sceneLines[index]:null;")) errors.push("Authored mission scene dialogue is not connected to the runtime.");
 requireText("Confirm the hash and network first", "branching Lagos investigation dialogue");
 requireText("The successful screenshot should be enough", "Lagos dialogue responds to a mistaken assumption");
 requireText("Hear the other person’s side first", "player-led dialogue choices across missions");
