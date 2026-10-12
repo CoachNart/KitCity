@@ -297,7 +297,7 @@ const CITY_MUSIC_ALIASES={
   'ado-ekiti-city':'ado-ekiti'
 };
 function resolveCityMusicKey(value){
-  const normalized=String(value||'').trim().toLowerCase().replace(/\\s+/g,'-');
+  const normalized=String(value||'').trim().toLowerCase().replace(/\s+/g,'-');
   const key=CITY_MUSIC_ALIASES[normalized]||normalized;
   if(MUSIC_QUEUES[key]) return key;
   const mapped=CITY_MUSIC[key];
@@ -452,7 +452,7 @@ const YT=(function(){
     setDuck(b){ duck=b; vol(); },
     next(){ if(ready) try{ player.nextVideo(); }catch(e){} },
     setCity(city){
-      const normalized=String(city||'').trim().toLowerCase().replace(/\\s+/g,'-');
+      const normalized=String(city||'').trim().toLowerCase().replace(/\s+/g,'-');
       /* The shared hub keeps the last selected playable city's soundtrack. */
       const requested=normalized==='kitcity'?(resolveCityMusicKey(curCity)||'lagos'):resolveCityMusicKey(normalized);
       if(!requested){
