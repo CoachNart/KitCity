@@ -302,11 +302,11 @@ const RAW_MISSIONS = [
       "Unique",
       "Smrt huntr"
     ],
-    "narrativePurpose": "In Oyo, a student named Timi is locked out of a wallet after a stranger promises to recover it. Follow the student from the bus park to a repair kiosk and then to Unique's courtyard. The recovery page asks for secret words; the student has not submitted them yet.",
+    "narrativePurpose": "The voice note from Lagos leads you to Timi at an Oyo bus park. A stranger's wallet-recovery page is counting down and demanding twelve secret words. Timi has not submitted them. Stop the rushed decision, find out what the page is really asking for, and help Timi get out safely before the message spreads.",
     "learningObjectives": [
-      "What a wallet address does and what a recovery phrase controls",
-      "How to recognise a fake recovery flow",
-      "How to protect someone without shaming them"
+      "Recognise when a recovery offer is trying to take control of a wallet",
+      "Verify support through a route you find independently",
+      "Help someone respond safely without shaming them or exposing private details"
     ],
     "prerequisites": [
       "m02"
@@ -314,37 +314,37 @@ const RAW_MISSIONS = [
     "objectives": [
       {
         "id": "m03-obj-1",
-        "label": "Interview two users about the recovery message",
+        "label": "Stop Timi before the recovery countdown ends",
         "interactionTarget": "story:m03:objective:1",
         "required": true
       },
       {
         "id": "m03-obj-2",
-        "label": "Create a wallet at the practice kiosk",
+        "label": "Inspect the recovery page and spot the trap",
         "interactionTarget": "story:m03:objective:2",
         "required": true
       },
       {
         "id": "m03-obj-3",
-        "label": "Identify the fake recovery interface",
+        "label": "Verify the support route without sharing wallet secrets",
         "interactionTarget": "story:m03:objective:3",
         "required": true
       },
       {
         "id": "m03-obj-4",
-        "label": "Reject a malicious request and help secure the account",
+        "label": "Report the fake page and get Timi out safely",
         "interactionTarget": "story:m03:objective:4",
         "required": true
       }
     ],
     "successConditions": [
-      "The player identifies the secret-phrase request as unsafe",
-      "The player creates a practice wallet without exposing recovery details",
-      "The student leaves the fake recovery page and receives a calm safety checklist"
+      "Timi closes the recovery page without entering or sending secret words",
+      "The player identifies the recovery phrase request and checks support independently",
+      "The suspicious page is reported without exposing Timi's private messages or claiming the wallet was drained"
     ],
     "failureAndRetry": {
-      "onFailure": "If the player enters or shares the phrase in the decision, Unique stops the exercise and explains the consequence before allowing a safe retry.",
-      "retry": "Restart the unsafe choice, not the whole mission; keep the user's safety checklist."
+      "onFailure": "If the player urges Timi to submit the words or trusts the contact embedded in the page, Unique interrupts before the secret is sent and challenges that choice.",
+      "retry": "Retry from the current decision. Timi's recovery phrase is never entered or displayed."
     },
     "rewards": {
       "xp": 125,
@@ -352,19 +352,21 @@ const RAW_MISSIONS = [
         "Wallet Safety"
       ],
       "portfolioArtifacts": [
-        "Newcomer wallet-safety checklist"
+        "Oyo recovery-scam response record"
       ]
     },
     "storyFlags": [
       "m03_complete",
-      "recovery_scam_identified"
+      "recovery_scam_identified",
+      "timi_phrase_not_shared",
+      "fake_recovery_page_reported"
     ],
     "nextMissionId": "m04",
-    "ending": "Timi closes the page before entering the words. Smrt huntr helps the student verify the official support route, and Unique turns the incident into a warning that does not expose the victim.",
-    "cliffhanger": "A forwarded screenshot now claims the wallet was drained anyway. Goodness and Semi want you to prove what happened before the group chat blames the wrong person.",
+    "ending": "Timi closes the page without entering the twelve words. Smrt huntr finds the support route independently, and the fake page is reported. No evidence yet shows that Timi's wallet was accessed.",
+    "cliffhanger": "Before you leave, a message hits the student group: a screenshot claims Timi's wallet has already been drained. Timi swears the words were never entered. Goodness and Semi are on their way—and the group chat is already picking a culprit.",
     "sceneLines": [
-      "Unique: \"Timi, give me the phone. No—don't type those twelve words anywhere. The man said he'd restore your wallet, but why does he need the key to the whole thing?\"",
-      "Smrt huntr: \"The message came from an account pretending to be support. I've checked the real help page. Timi, close that tab; we'll secure the account without handing anybody the phrase.\""
+      "Unique: \"You must be Timi. Oya, show me the screen—wait, don't tap that button. This thing says your wallet will disappear in sixty seconds? Since when does a wallet need a countdown to be recovered?\"",
+      "Smrt huntr: \"I checked the address they sent. It's not the support page. Timi, you haven't typed the words, right? Good. Keep it that way. We'll find the real support route ourselves.\""
     ]
   },
   {
