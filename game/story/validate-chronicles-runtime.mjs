@@ -48,7 +48,7 @@ requireText("function parseMissionDialogue(html,npcName)", "mission dialogue spl
 requireText("function updateMissionBubblePosition()", "speech bubbles anchored to visible character models");
 requireText("kitcity-decision-card", "decision-only dialogue choice card");
 requireText("const castNames=[...new Set(m.npcs||[])]", "all mission cast members staged without duplicate spawns");
-requireText("const sceneOffsets=[[-3,0],[3,0],[0,-3],[0,3],[-3,-3],[3,-3],[0,5]]", "mission cast staged together around each active scene");
+requireText("sceneOffsets=[[-3,0],[3,0],[0,-3],[0,3],[-3,-3],[3,-3],[0,5]]", "mission cast staged together around each active scene");
 requireText("const openingCastNames=[...new Set(m.npcs||[])]", "opening mission NPC staging check");
 
 requireText("The consequences belong to this case.", "player-owned mission decision dialogue");
