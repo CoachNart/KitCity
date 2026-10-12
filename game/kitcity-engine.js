@@ -1139,32 +1139,32 @@ function addRoadIdentity(key,blocks){
      else if(idx%4===2){for(let seg=-3;seg<=3;seg++)stripe(2.6,.3,A.mark,roadMid(i,'x')+seg*8,roadCoord(k,'z')+offset,0);}
      else {stripe(R-14,.22,A.mark,roadMid(i,'x'),roadCoord(k,'z')+offset,0);stripe(R-14,.12,A.kerb,roadMid(i,'x'),roadCoord(k,'z')+offset+.65,0);}
    }
-   if(idx%3===0){for(let side of [-1,1])for(let seg=0;seg<6;seg++)stripe(2.8,1.1,A.mark,i*R+8+seg*4,roadCoord(k,'z')+side*5.8,0);}
+   if(idx%3===0){for(let side of [-1,1])for(let seg=0;seg<6;seg++)stripe(2.8,1.1,A.mark,roadMid(i,'x')-27+seg*4,roadCoord(k,'z')+side*5.8,0);}
  }
  // Mirror the same city-specific treatment onto the north/south streets.
  for(let k=-3;k<=3;k++)for(let i=-3;i<=2;i++){
    for(let lane=0;lane<laneCount;lane++){
      const offset=(lane-(laneCount-1)/2)*gap;
-     if(idx%4===0){for(let seg=-2;seg<=2;seg++)stripe(5.5,.22,A.mark,roadCoord(k,'z')+offset,roadMid(i,'x')+seg*11,Math.PI/2);}
-     else if(idx%4===1){stripe(R-14,.16,A.mark,roadCoord(k,'z')+offset,roadMid(i,'x'),Math.PI/2);}
-     else if(idx%4===2){for(let seg=-3;seg<=3;seg++)stripe(2.6,.3,A.mark,roadCoord(k,'z')+offset,roadMid(i,'x')+seg*8,Math.PI/2);}
-     else {stripe(R-14,.22,A.mark,roadCoord(k,'z')+offset,roadMid(i,'x'),Math.PI/2);stripe(R-14,.12,A.kerb,roadCoord(k,'z')+offset+.65,roadMid(i,'x'),Math.PI/2);}
+     if(idx%4===0){for(let seg=-2;seg<=2;seg++)stripe(5.5,.22,A.mark,roadCoord(k,'x')+offset,roadMid(i,'z')+seg*11,Math.PI/2);}
+     else if(idx%4===1){stripe(R-14,.16,A.mark,roadCoord(k,'x')+offset,roadMid(i,'z'),Math.PI/2);}
+     else if(idx%4===2){for(let seg=-3;seg<=3;seg++)stripe(2.6,.3,A.mark,roadCoord(k,'x')+offset,roadMid(i,'z')+seg*8,Math.PI/2);}
+     else {stripe(R-14,.22,A.mark,roadCoord(k,'x')+offset,roadMid(i,'z'),Math.PI/2);stripe(R-14,.12,A.kerb,roadCoord(k,'x')+offset+.65,roadMid(i,'z'),Math.PI/2);}
    }
  }
  blocks.forEach(b=>{
    const x=b.cx,z=b.cz;
    if(A.edge==='rail'){
-     for(const side of [-1,1]){box(R-14,.08,.18,A.roof,x,.12,z+side*7.1);for(let n=-3;n<=3;n++)box(1.1,.08,1.2,A.kerb,x+n*8,.1,z+side*7.1);}
+     for(const side of [-1,1]){box(R-14,.08,.18,A.roof,x,.12,z+side*(R/2+7.1));for(let n=-3;n<=3;n++)box(1.1,.08,1.2,A.kerb,x+n*8,.1,z+side*(R/2+7.1));}
    }else if(A.edge==='water-channel'||A.edge==='canal'){
-     for(const side of [-1,1]){box(R-14,.1,.8,'#5D8E9B',x,.05,z+side*7.2);for(let n=-2;n<=2;n++)box(2,.14,.6,A.kerb,x+n*10,.12,z+side*7.2);}
+     for(const side of [-1,1]){box(R-14,.1,.8,'#5D8E9B',x,.05,z+side*(R/2+7.2));for(let n=-2;n<=2;n++)box(2,.14,.6,A.kerb,x+n*10,.12,z+side*(R/2+7.2));}
    }else if(A.edge==='rock'||A.edge==='stone'){
-     for(const side of [-1,1])for(let n=-2;n<=2;n++)box(5,.22,.7,A.kerb,x+n*10,.11,z+side*7.1);
+     for(const side of [-1,1])for(let n=-2;n<=2;n++)box(5,.22,.7,A.kerb,x+n*10,.11,z+side*(R/2+7.1));
    }else if(A.edge==='green-strip'||A.edge==='rooted'){
-     for(const side of [-1,1]){box(R-14,.12,1.2,'#527B48',x,.08,z+side*7.25);for(let n=-2;n<=2;n++){const t=new THREE.Mesh(new THREE.ConeGeometry(.6,1.5,5),mat('#2F7441'));t.position.set(x+n*10,.8,z+side*7.25);cityGroup.add(t);}}
+     for(const side of [-1,1]){box(R-14,.12,1.2,'#527B48',x,.08,z+side*(R/2+7.25));for(let n=-2;n<=2;n++){const t=new THREE.Mesh(new THREE.ConeGeometry(.6,1.5,5),mat('#2F7441'));t.position.set(x+n*10,.8,z+side*(R/2+7.25));cityGroup.add(t);}}
    }else if(A.edge==='loading-bay'||A.edge==='service-ditch'){
-     for(const side of [-1,1])for(let n=-2;n<=2;n++)stripe(4,1.1,A.mark,x+n*10,z+side*5.8,0);
+     for(const side of [-1,1])for(let n=-2;n<=2;n++)stripe(4,1.1,A.mark,x+n*10,z+side*(R/2+5.8),0);
    }else if(A.edge==='sand-shoulder'||A.edge==='earth-shoulder'){
-     for(const side of [-1,1])box(R-14,.08,1.4,A.kerb,x,.03,z+side*7.2);
+     for(const side of [-1,1])box(R-14,.08,1.4,A.kerb,x,.03,z+side*(R/2+7.2));
    }else{
      for(const side of [-1,1])box(R-14,.12,.32,A.kerb,x,.07,z+side*7.05);
    }
@@ -2114,7 +2114,7 @@ function streetDetails0(C,blocks){
     const k=Math.floor(rr(-3,4)),alongX=RN()<.5,t=rr(-200,200),off=rr(-5,5),mo=((t%R)+R)%R;
     if(mo<10||mo>R-10) continue;
     const sx=rr(.8,1.8),sz=rr(.6,1.3);
-    holes.push(alongX?{x:t,y:.055,z:roadCoord(k,'z')+off,sx,sz}:{x:roadCoord(k,'z')+off,y:.055,z:t,sx,sz});
+    holes.push(alongX?{x:t,y:.055,z:roadCoord(k,'z')+off,sx,sz}:{x:roadCoord(k,'x')+off,y:.055,z:t,sx,sz});
   }
   const unit=new THREE.BoxGeometry(1,1,1);
   const add=(geo,mat,items)=>{ if(items.length) instanced(geo,mat,items,cityGroup); };
@@ -2453,7 +2453,7 @@ function buildCity(key){
     const cx=roadMid(i,'x'),cz=roadMid(j,'z'); blocks.push({cx,cz});
     const vg=new THREE.Mesh(vergeGeo,dirtMat); vg.rotation.x=-Math.PI/2; vg.position.set(cx,.03,cz); cityGroup.add(vg);
     const slab=new THREE.Mesh(slabGeo,paveMat); slab.position.set(cx,0.05,cz); cityGroup.add(slab);
-    const lmk=(C.lm||[]).find(l=>l[1]===cx&&l[2]===cz);
+    const lmk=(C.lm||[]).find(l=>Math.hypot(l[1]-cx,l[2]-cz)<15);
     if(lmk) landmark(lmk[0],cx,cz);
     else if((((i+j)%C.market)+C.market)%C.market===0) addMarket(cx,cz);
     else addCityBlockBuildings(C,cx,cz,i,j);
