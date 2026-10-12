@@ -335,6 +335,16 @@ for (const marker of [
   "m18_complete:true",
   "prototype_expectations_checked:true"
 ]) requireText(marker, "Mission 18 evidence and completion marker " + marker);
+const fundingMission = MISSIONS.find((mission) => mission.id === "m19");
+if (!fundingMission || fundingMission.title !== "The Offer on the Table") errors.push("Mission 19 must be the distinct funding-term negotiation in Edo.");
+if (fundingMission && (fundingMission.npcs[0] !== "Mcbond" || fundingMission.npcs[1] !== "Alpha.RWA")) errors.push("Mission 19 must use Mcbond then Alpha.RWA.");
+if (fundingMission && (!fundingMission.prerequisites.includes("m18") || fundingMission.nextMissionId !== "m20")) errors.push("Mission 19 must continue from the growth experiment and hand off to the warehouse-claim mission.");
+if (fundingMission && (!fundingMission.narrativePurpose.includes("Mission 18") || !fundingMission.narrativePurpose.includes("fixed returns") || !fundingMission.narrativePurpose.includes("reporting"))) errors.push("Mission 19 must directly continue the funding offer raised in Mission 18.");
+if (fundingMission && (!fundingMission.sceneLines.some((line) => line.startsWith("Mcbond:")) || !fundingMission.sceneLines.some((line) => line.startsWith("Alpha.RWA:")))) errors.push("Mission 19 is missing its authored dialogue from the assigned NPCs.");
+if (fundingMission && /Abdul:|David:|Kanyin:/i.test(fundingMission.sceneLines.join(" "))) errors.push("Mission 19 dialogue still uses NPCs from earlier missions instead of its assigned cast.");
+requireText("else if(story.id==='m19')", "Mission 19 bespoke funding negotiation runtime");
+for (const marker of ["m19_fixed_return_challenged","m19_obligations_identified","m19_milestones_defined","m19_budget_linked","m19_reporting_rights_requested","m19_risk_disclosures_requested","m19_pressure_rejected","m19_independent_review_required","m19_complete:true","milestone_reporting_required:true"]) requireText(marker, "Mission 19 evidence and completion marker " + marker);
+
 
 for (const marker of ["m15_role_matched","m15_two_samples_documented","m15_contribution_separated","m15_bio_evidence_linked","m15_skill_gap_named","m15_complete:true","portfolio_evidence_compiled:true"]) requireText(marker, "Mission 15 evidence and completion marker " + marker);
 
