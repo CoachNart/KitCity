@@ -150,6 +150,29 @@ for (const marker of [
   "withdrawal_scope_verified:true"
 ]) requireText(marker, "Mission 8 evidence and completion marker " + marker);
 
+const tradeForensicsMission = MISSIONS.find((mission) => mission.id === "m09");
+if (!tradeForensicsMission || tradeForensicsMission.title !== "The Trade He Rewrote") errors.push("Mission 9 must use the rewritten trading-forensics story.");
+if (tradeForensicsMission && (tradeForensicsMission.npcs[0] !== "Joseph Nnadi" || tradeForensicsMission.npcs[1] !== "The Don")) errors.push("Mission 9 must introduce Joseph Nnadi and The Don in the supplied order.");
+if (tradeForensicsMission && (!tradeForensicsMission.prerequisites.includes("m08") || tradeForensicsMission.nextMissionId !== "m10")) errors.push("Mission 9 must connect Mission 8 to Mission 10.");
+if (tradeForensicsMission && !tradeForensicsMission.sceneLines.some((line) => line.startsWith("Joseph Nnadi:"))) errors.push("Mission 9 is missing authored Joseph Nnadi dialogue.");
+if (tradeForensicsMission && !tradeForensicsMission.sceneLines.some((line) => line.startsWith("The Don:"))) errors.push("Mission 9 is missing authored The Don dialogue.");
+if (tradeForensicsMission && /Moon:|The Cryptonian:|Praise:|Toza:|Craftore:/i.test(tradeForensicsMission.sceneLines.join(" "))) errors.push("Mission 9 dialogue duplicates characters from adjacent mission casts.");
+requireText("else if(story.id==='m09')", "Mission 9 bespoke trading-forensics runtime");
+for (const marker of [
+  "m09_original_plan_recovered",
+  "m09_first_stop_matches_plan",
+  "m09_order_timeline_rebuilt",
+  "m09_second_risk_calculated",
+  "m09_three_x_exposure_verified",
+  "m09_no_valid_setup",
+  "m09_recovery_entry_declined",
+  "m09_journal_preserved",
+  "m09_claim_corrected",
+  "m09_unknowns_recorded",
+  "m09_complete:true",
+  "revenge_entry_declined:true"
+]) requireText(marker, "Mission 9 evidence and completion marker " + marker);
+
 const swapMission = MISSIONS.find((mission) => mission.id === "m07");
 if (!swapMission || swapMission.title !== "The Swap That Changed Its Face") errors.push("Mission 7 must use the rewritten swap-investigation story.");
 if (swapMission && (swapMission.npcs[0] !== "LunaX" || swapMission.npcs[1] !== "OxNight")) errors.push("Mission 7 must introduce LunaX and OxNight in the supplied order.");
