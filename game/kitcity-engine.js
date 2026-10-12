@@ -1566,6 +1566,7 @@ function addBuilding(x,z,w,d,style,color,cx,cz,ox,oz){
   else if(curCity==='lagos'&&style==='admin') h=rr(30,54);
   else if(curCity==='lagos'&&style==='flat') h=rr(22,38);
   else if(style==='zinc') h=rr(6,9); else if(style==='banco') h=rr(7,13); else if(style==='glass') h=rr(30,46); else if(style==='admin') h=rr(12,18); else h=rr(14,30);
+  if(curCity==='lagos'&&special.some(sp=>Math.abs(sp.x-x)<w/2+5&&Math.abs(sp.z-z)<d/2+5)) return;
   const mats=[],vv=Math.floor(RN()*3),tex=FACT[style][vv],th=FAC_TH[style];
   const geo=new THREE.BoxGeometry(w,h,d),uv=geo.attributes.uv,rxd=Math.max(1,Math.round(d/10)),rxw=Math.max(1,Math.round(w/10)),ry=Math.max(1,Math.round(h/th));
   for(let i=0;i<uv.count;i++){ const f=Math.floor(i/4),rx=(f===0||f===1)?rxd:rxw; if(f===2||f===3) uv.setXY(i,uv.getX(i)*rxw,uv.getY(i)*rxd); else uv.setXY(i,uv.getX(i)*rx,uv.getY(i)*ry); }
@@ -1795,7 +1796,7 @@ function placeCar(c){
 }
 function vehicleBox(c,pos){ const along=pos==null?c.pos:pos,x=c.axis==='x'?along:c.lane,z=c.axis==='x'?c.lane:along,hx=c.axis==='x'?c.hl:c.hw,hz=c.axis==='x'?c.hw:c.hl; return {x0:x-hx,x1:x+hx,z0:z-hz,z1:z+hz}; }
 function boxesOverlap(a,b,pad=.35){ return a.x0<b.x1+pad&&a.x1>b.x0-pad&&a.z0<b.z1+pad&&a.z1>b.z0-pad; }
-function addCar(axis,k,dir,C){ const road=roadCoord(k,axis==='x'?'z':'x'),kind=pickKind(C),v=makeVehicle(kind,C),lane=axis==='x'?road+(dir>0?3.1:-3.1):road+(dir>0?-3.1:3.1),c={m:v.m,axis,dir,lane,pos:0,speed:rr(v.sp[0],v.sp[1]),hl:v.hl,hw:v.hw,kind};
+function addCar(axis,k,dir,C){ const road=roadCoord(k,axis==='x'?'z':'x'),kind=pickKind(C),v=makeVehicle(kind,C),lane=axis==='x'?road+(dir>0?2.2:-2.2):road+(dir>0?-2.2:2.2),c={m:v.m,axis,dir,lane,pos:0,speed:rr(v.sp[0],v.sp[1]),hl:v.hl,hw:v.hw,kind};
   for(let tries=0;tries<36;tries++){const candidate=rr(-225,225),box=vehicleBox(c,candidate);if(cars.every(o=>!boxesOverlap(box,vehicleBox(o)))){c.pos=candidate;break;}if(tries===35)c.pos=rr(-225,225);}
   trafficGroup.add(v.m);placeCar(c);cars.push(c);
 }
@@ -2776,7 +2777,7 @@ function placeNPC(def,spot){
     p.position.set(p.userData.storyAnchorX,.05,p.userData.storyAnchorZ);
     p.rotation.y=Math.atan2(spot.x-p.position.x,spot.z-p.position.z);
     missionGroup.add(p);
-    const sp=label(tr(def.sign||def.name),def.signBg,def.signFg); sp.position.set(p.position.x,6,p.position.z); p.userData.storyNameLabel=sp; missionGroup.add(sp);
+    const sp=label(tr(def.sign||def.name),def.signBg,def.signFg); sp.position.set(p.position.x,7.2,p.position.z); sp.material.depthTest=false; sp.renderOrder=50; sp.scale.set(14,3.5,1); p.userData.storyNameLabel=sp; missionGroup.add(sp);
     colliders.push({x0:p.position.x-1,x1:p.position.x+1,z0:p.position.z-1,z1:p.position.z+1});
     storyNPCActors.push(p);
     return {x:p.position.x,z:p.position.z,r:6.5,object:p};
@@ -4521,6 +4522,9 @@ function loadStep(){
     const entity=placeNPC(ex.npc,ex.spot); entity.ex=ex; entity.talk=()=>ex.run(entity); entity.active=()=>!G.used[ex.id]; ents.push(entity);
   }
   updateHUD();
+  if(goal){ beacon.visible=true; beacon.position.set(goal.object?.position?.x??goal.x,0,goal.object?.position?.z??goal.z); }
+  const compass=$('#compass');
+  if(goal&&compass){compass.classList.remove('hidden');compass.classList.add('force-visible');compass.style.display='grid';compass.style.visibility='visible';compass.style.opacity='1';}
 }
 function startMission(id,restart){
   const m=MBY[id];
@@ -5178,7 +5182,7 @@ function updateStoryNPCActors(dt,time){
     const az=u.storyAnchorZ==null?actor.position.z:u.storyAnchorZ;
     actor.position.x=ax+Math.sin(phase)*.22;
     actor.position.z=az+Math.sin(phase*.63+(u.storyPhase||0))*.16;
-    if(u.storyNameLabel) u.storyNameLabel.position.set(actor.position.x,6,actor.position.z);
+    if(u.storyNameLabel) u.storyNameLabel.position.set(actor.position.x,7.2,actor.position.z);
     const close=G&&Math.hypot(player.position.x-actor.position.x,player.position.z-actor.position.z)<9;
     if(close){
       actor.rotation.y=Math.atan2(player.position.x-actor.position.x,player.position.z-actor.position.z);
