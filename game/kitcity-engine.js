@@ -3715,15 +3715,16 @@ function loadStep(){
     goal=target||ents[0]||null;
   }else if(m.id==='m03'){
     // Keep the complete Oyo scene physically present: Unique, Smrt huntr and Timi.
+    const sceneAnchor=SPOTS[st.spot]||SPOTS.a;
     const sceneCast=[
-      {name:'Unique',spot:'a'},
-      {name:'Smrt huntr',spot:'story'},
-      {name:'Timi',spot:'buyer'}
+      {name:'Unique',offset:[0,0]},
+      {name:'Smrt huntr',offset:[4,-2]},
+      {name:'Timi',offset:[-4,-2]}
     ];
-    sceneCast.forEach(({name,spot})=>{
+    sceneCast.forEach(({name,offset},index)=>{
       const npc=STORY_NPCS[name];
       if(!npc) return;
-      const entity=placeNPC(npc,SPOTS[spot]||SPOTS.a);
+      const entity=placeNPC(npc,{x:sceneAnchor.x+offset[0],z:sceneAnchor.z+offset[1],f:index===0?sceneAnchor.f:-sceneAnchor.f});
       entity.talk=()=>{ if(st.npc&&st.npc.name===name) st.run(); };
       entity.active=()=>!!(st.npc&&st.npc.name===name);
       ents.push(entity);
