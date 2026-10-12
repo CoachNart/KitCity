@@ -2836,7 +2836,7 @@ function placeNPC(def,spot){
     p.position.set(p.userData.storyAnchorX,.05,p.userData.storyAnchorZ);
     p.rotation.y=Math.atan2(spot.x-p.position.x,spot.z-p.position.z);
     missionGroup.add(p);
-    const sp=label(tr(def.sign||def.name),def.signBg,def.signFg); sp.position.set(p.position.x,7.2,p.position.z); sp.material.depthTest=false; sp.renderOrder=50; sp.scale.set(14,3.5,1); p.userData.storyNameLabel=sp; missionGroup.add(sp);
+    const sp=label(tr(def.sign||def.name),def.signBg,def.signFg); sp.position.set(p.position.x,4.15,p.position.z); sp.material.depthTest=false; sp.renderOrder=50; sp.scale.set(6.2,1.55,1); p.userData.storyNameLabel=sp; missionGroup.add(sp);
     colliders.push({x0:p.position.x-1,x1:p.position.x+1,z0:p.position.z-1,z1:p.position.z+1});
     storyNPCActors.push(p);
     return {x:p.position.x,z:p.position.z,r:10,object:p};
@@ -4544,6 +4544,7 @@ function loadStep(){
        step-level cast members too, otherwise they never spawn at their mission centre. */
     (m.steps||[]).forEach(step=>{addCastName(step.npc);(step.npcs||[]).forEach(addCastName);});
     const activeName=st.npc&&(st.npc.name||st.npc);
+    const activeOriginalName=st.npc&&typeof st.npc==='object'&&(st.npc.originalName||st.npc.name);
     if(activeName&&!castNames.includes(activeName)&&!(m.id==='m01'&&(st.kind==='clue'||st.kind==='challenge')))castNames.push(activeName);
     const anchor=SPOTS[st.spot]||SPOTS.a;
     const castOffsets=[[0,0],[4,-2],[-4,-2],[0,4],[6,3],[-6,3],[0,-6],[8,-1],[-8,-1]];
@@ -4553,7 +4554,14 @@ function loadStep(){
       const offset=castOffsets[index%castOffsets.length];
       const castSpot={x:anchor.x+offset[0],z:anchor.z+offset[1],f:index===0?anchor.f:-anchor.f};
       const entity=placeNPC(npc,castSpot);
-      const isTarget=st.kind==='character'&&activeName===name;
+      /* Dialogue aliases can change npc.name at runtime. Match the active target
+         by object identity and canonical/original name as well as display name. */
+      const isTarget=st.kind==='character'&&!!st.npc&&(
+        st.npc===npc ||
+        String(activeOriginalName||'').toLowerCase()===String(name).toLowerCase() ||
+        String(activeName||'').toLowerCase()===String(name).toLowerCase() ||
+        String(npc.originalName||'').toLowerCase()===String(activeName||'').toLowerCase()
+      );
       if(st.kind==='character'){
         entity.talk=()=>{if(isTarget)st.run();};
         entity.active=()=>isTarget;
@@ -5250,7 +5258,7 @@ function updateStoryNPCActors(dt,time){
     const az=u.storyAnchorZ==null?actor.position.z:u.storyAnchorZ;
     actor.position.x=ax+Math.sin(phase)*.22;
     actor.position.z=az+Math.sin(phase*.63+(u.storyPhase||0))*.16;
-    if(u.storyNameLabel) u.storyNameLabel.position.set(actor.position.x,7.2,actor.position.z);
+    if(u.storyNameLabel) u.storyNameLabel.position.set(actor.position.x,4.15,actor.position.z);
     const close=G&&Math.hypot(player.position.x-actor.position.x,player.position.z-actor.position.z)<9;
     if(close){
       actor.rotation.y=Math.atan2(player.position.x-actor.position.x,player.position.z-actor.position.z);
