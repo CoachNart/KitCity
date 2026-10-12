@@ -2401,21 +2401,21 @@ function addCityRoadTopology(key){
   const strip=(x,z,w,d,rot=0)=>{const m=new THREE.Mesh(new THREE.PlaneGeometry(w,d),mat);m.rotation.x=-Math.PI/2;m.rotation.z=rot;m.position.set(x,.035,z);cityGroup.add(m);};
   const dash=(x,z,w,d,rot=0,color=A.mark)=>{const m=new THREE.Mesh(new THREE.PlaneGeometry(w,d),new THREE.MeshBasicMaterial({color,depthWrite:false}));m.rotation.x=-Math.PI/2;m.rotation.z=rot;m.position.set(x,.07,z);cityGroup.add(m);};
   if(L.arterial===0){
-    strip(0,215,470,15);strip(0,215,470,2,0,A.kerb);strip(0,215,8,470);
-    for(let x=-220;x<=220;x+=18)dash(x,215,8,.22);
+    strip(0,245,470,15);dash(0,245,470,1,0,A.kerb);strip(0,245,8,470);
+    for(let x=-220;x<=220;x+=18)dash(x,245,8,.22);
   }else if(L.arterial===1){
-    strip(-175,165,150,10,-.42);for(let n=-5;n<=5;n++)dash(-175+n*12,165-n*5,5,.2,-.42);
-    strip(170,-165,130,8,.38);
+    strip(-240,230,150,10,-.42);for(let n=-5;n<=5;n++)dash(-240+n*12,230-n*5,5,.2,-.42);
+    strip(240,-230,130,8,.38);
   }else if(L.arterial===2){
-    const ring=new THREE.Mesh(new THREE.TorusGeometry(31,5,5,64),mat);ring.rotation.x=Math.PI/2;ring.position.set(188,.045,188);cityGroup.add(ring);
-    strip(188,150,10,76);strip(150,188,76,10);
-    const island=new THREE.Mesh(new THREE.CircleGeometry(20,32),new THREE.MeshLambertMaterial({color:A.edge==='green-strip'?'#4F7D4B':'#9B9B87'}));island.rotation.x=-Math.PI/2;island.position.set(188,.06,188);cityGroup.add(island);
+    const ring=new THREE.Mesh(new THREE.TorusGeometry(31,5,5,64),mat);ring.rotation.x=Math.PI/2;ring.position.set(245,.045,245);cityGroup.add(ring);
+    strip(245,207,10,76);strip(207,245,76,10);
+    const island=new THREE.Mesh(new THREE.CircleGeometry(20,32),new THREE.MeshLambertMaterial({color:A.edge==='green-strip'?'#4F7D4B':'#9B9B87'}));island.rotation.x=-Math.PI/2;island.position.set(245,.06,245);cityGroup.add(island);
   }else if(L.arterial===3){
-    strip(-205,0,11,420);for(let z=-190;z<=190;z+=16)dash(-205,z,5,.22,0,A.kerb);
-    strip(0,-205,420,12);for(let x=-190;x<=190;x+=16)dash(x,-205,.22,5,0,A.kerb);
+    strip(-245,0,11,420);for(let z=-190;z<=190;z+=16)dash(-245,z,5,.22,0,A.kerb);
+    strip(0,-245,420,12);for(let x=-190;x<=190;x+=16)dash(x,-245,.22,5,0,A.kerb);
   }else{
-    strip(-190,-160,105,9,-.55);strip(-120,-190,90,9,-.12);strip(-45,-205,80,9,.22);strip(35,-195,85,9,.46);
-    for(let n=0;n<7;n++)dash(-225+n*25,-166-n*5,4,.2,-.55);
+    strip(-245,-225,75,9,-.55);strip(-190,-245,70,9,-.12);strip(-115,-250,70,9,.22);strip(-35,-240,70,9,.46);
+    for(let n=0;n<7;n++)dash(-255+n*25,-225-n*3,4,.2,-.55);
   }
 }
 function buildCity(key){
