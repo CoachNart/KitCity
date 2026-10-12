@@ -2346,7 +2346,7 @@ const CHRONICLE_CHALLENGES={
 m02:{q:"The cybercafé session is about to clear, and the copied payment page may disappear. What do you save first?",o:["Capture the full page, URL and timestamp as it is","Refresh the page and hope the address corrects itself","Post the account name publicly before the evidence is gone"],a:0,w:"Preserve the page as it appeared first. A changing page and a familiar display name are not proof of who made it."},
 m03:{q:"Timi's recovery page starts a countdown and asks for twelve secret words. What do you do?",o:["Stop the page and find support independently","Enter the words before the countdown ends","Send them to the account offering help"],a:0,w:"A countdown is pressure, not proof. Never give a recovery phrase to a website or support contact."},
 m04:{q:"The student group is about to publish a screenshot claiming Timi drained the wallet. What do you do first?",o:["Pause the accusation and compare the original message with the relevant wallet record","Forward the screenshot so more people can decide","Name the person who shared it and call them a scammer"],a:0,w:"Stop the pile-on, preserve the source and check the relevant record before repeating the claim."},
-m05:{q:"The team wants to add a dashboard, but traders abandon checkout. What should happen first?",o:["Fix and retest the observed network-selection confusion","Build the dashboard because it looks more advanced","Assume the traders need to learn more jargon"],a:0,w:"Product changes should address a repeated user problem supported by observation."},
+m05:{q:"Two buyers back out at the same network screen. What should the team do before adding features?",o:["Watch and reproduce the problem, then test one focused change","Build a dashboard because it looks more advanced","Assume the buyers need to learn more jargon"],a:0,w:"A repeated observed problem is a stronger starting point than an untested assumption about customers."},
 m06:{q:"The same payment can be processed twice. What should block release?",o:["A fix plus regression tests for repeated calls and sensitive state changes","One successful demo with a single tap","A note promising to monitor complaints after launch"],a:0,w:"A financial workflow needs tests for the failure condition, not only the happy path."},
 m07:{q:"The quoted swap output is lower than expected. What should you check?",o:["Token identity, liquidity, fees, price impact and approval","Only the token symbol","Whether the promoter says the pool is safe"],a:0,w:"A quote is an estimate; review the route and permissions before confirming."},
 m08:{q:"Withdrawals are paused but the cause is unknown. What should the notice say?",o:["What is confirmed, where to check official updates and when another update is due","That the exchange has definitely lost all funds","A guaranteed restoration time guessed from chat"],a:0,w:"An incident update should be useful without turning uncertainty into a claim."},
@@ -2379,7 +2379,7 @@ const STORY_PLAYER_REACTIONS={
   m02:["So the transfer is real, but the shop never got it. Show me the page he used before it changes again.","The address is the clue. Save the page and timestamp first; we can work out intent after."],
   m03:["Timi, don't enter those words. Close the page and tell us exactly what the stranger asked you to do.","Let's secure the wallet without giving the stranger control of it."],
   m04:["Nobody has checked this screenshot against the source yet. Stop the accusation before it spreads further.","Keep the original message and compare the wallet activity. We can correct the claim without guessing who edited it."],
-  m05:["Don't add another tutorial yet. Let me watch the next customer try it without help.","Show me the exact screen where they hesitate; that's where we start."],
+  m05:["Watch another buyer try it without coaching; keep notes on where they hesitate.","Show the exact screen where they hesitate so the team can reproduce it."],
   m06:["Reproduce the double charge before launch. One successful demo proves nothing.","Run the same tap sequence after the patch. If it happens again, we're not shipping."],
   m07:["Pause the next swap. I want the token address and approval in front of us.","The quote and the received amount disagree. Let's find where the difference entered."],
   m08:["Tell customers what's confirmed and what's still unknown. No fake deadline.","Give them a safe next step and one official place to get updates."],
@@ -2411,7 +2411,7 @@ const STORY_PLAYER_CHOICES={
   m02:["Open the saved page and compare its address","Ask the buyer to retrace where he copied it"],
   m03:["Close the recovery page now","Check the message against the official support route"],
   m04:["Preserve the original message and check the claim","Compare the wallet activity before correcting the group"],
-  m05:["Watch another customer attempt checkout","Test a clearer network-selection screen"],
+  m05:["Observe the buyer without coaching them","Test a clearer network-selection screen with the next buyer"],
   m06:["Replay the double-payment sequence","Hold launch until the regression test passes"],
   m07:["Inspect the token contract and approval","Compare the quote with the actual swap output"],
   m08:["Publish the confirmed status and safe steps","Check the incident log before giving a cause"],
@@ -2443,7 +2443,7 @@ const STORY_NPC_FOLLOWUPS={
   m02:"I saved the page before it refreshed. Look at the address in the capture—the shop name stayed the same, but the destination did not.",
   m03:"He said the words were needed to unlock the wallet. That's exactly why we're stopping here before Timi loses control of it.",
   m04:"The original message is saved, and the relevant wallet record does not support the screenshot’s claim. I’ll correct the group without exposing Timi or pretending we know who edited the image.",
-  m05:"Watch her thumb: she keeps opening the network list and backing out. That's a design problem we can reproduce.",
+  m05:"Two buyers opened the network list and backed out at the same point. We can reproduce that. Change the labels, then watch another buyer try it.",
   m06:"The second request got through while the first was pending. I'll keep the test steps so we can prove the patch closes that gap.",
   m07:"The token address is the mismatch. The ticker alone fooled the screen, and the approval may have exposed more than this one swap.",
   m08:"I'll publish the status now and update it when the incident log changes. No promises about a time we can't support.",
@@ -2482,7 +2482,7 @@ const STORY_BRIDGES={
   m02:'The laptop dispute is still fresh; the transaction reached a different address',
   m03:'Timi is frightened and the recovery page is still open',
   m04:'The student group is about to brand Timi a thief over a screenshot nobody has verified',
-  m05:'Customers are abandoning checkout in front of the team',
+  m05:'The payment demo looks fine in the studio, but buyers keep abandoning checkout in the market queue',
   m06:'The same payment can be processed twice',
   m07:'The received swap amount does not match the quote',
   m08:'Withdrawals are paused and customers want an answer',
@@ -2537,6 +2537,10 @@ function chronicleNpcStep(m,name,index){
   return step;
 }
 const CHRONICLE_ACTIVITY_RULES=[
+{r:/reach the queue and watch a buyer try to pay/i,q:"A buyer opens checkout, pauses at the network list, then backs out. What should you do?",o:["Observe and record the exact step without jumping in to coach them","Tell them which option to tap so the demo succeeds","Decide they don't understand crypto"],a:0,w:"Observe the behaviour first. Coaching the buyer hides the point where the product itself may be confusing."},
+{r:/follow the second buyer's attempt without coaching them/i,q:"The next buyer also opens the network list twice and abandons checkout. What does that tell you?",o:["Two attempts show a repeatable hesitation worth reproducing, not a proven reason yet","All market traders are unable to use payment apps","The team should add a dashboard immediately"],a:0,w:"A repeated pattern is evidence of friction. Reproduce it before deciding on the smallest useful change."},
+{r:/reproduce the network-selection dead end with blockqueen and christol/i,q:"In the studio, the team reproduces the same dead end. What should they change first?",o:["Make the network options understandable in plain language and test the flow","Add more screens and technical explanations","Release the change without another user test"],a:0,w:"Fix the observed obstacle with one focused change, then retest it with a real buyer."},
+{r:/test a clearer checkout with the next buyer/i,q:"The labels are clearer. How do you know whether the change helped?",o:["Let the next buyer try without coaching and record whether they complete checkout","Ask the team if the new screen looks premium","Assume success because the button was tapped once"],a:0,w:"Test with a buyer and observe completion. A prettier screen is not proof of a better checkout."},
 {r:/compare the viral screenshot with the original message/i,q:"The forwarded image says Timi's wallet was emptied, but the original message is still available. What do you compare first?",o:["Preserve both versions and compare their timestamps, crop and missing transaction details","Trust the forwarded version because it has more reactions","Delete the original message so the group stops arguing"],a:0,w:"Keep both versions. A crop can remove context, but the missing context alone does not identify who changed the image."},
 {r:/check the wallet activity against the screenshot's claim/i,q:"The screenshot claims an outgoing transfer on a named network at 14:07. What is the strongest check?",o:["With Timi's consent, compare the public wallet activity on that network and time with the claimed transfer","Ask Timi to reveal the recovery phrase so you can log in","Assume a zero-balance image proves every asset is gone"],a:0,w:"Check the relevant public record using the known address and network. Never ask for recovery words, and do not claim more than the record shows."},
 {r:/correct the group without exposing timi or guessing who edited it/i,q:"The relevant record does not support the screenshot's claim, but the editor is unknown. What should the correction say?",o:["The screenshot is unverified and the checked record does not show the claimed transfer; the editor is not identified","Timi definitely has no risk on any network and the sender is guilty","Post Timi's private chat and accuse the first account that forwarded it"],a:0,w:"Correct only the claim the evidence can address. Protect Timi's privacy and leave the editor's identity unresolved."},
@@ -2999,6 +3003,40 @@ const MISSIONS=CHRONICLE_MISSIONS.map((story,index)=>{
       {kind:'character',id:'m04-close-case',label:'Check in with Timi before leaving',spot:'buyer',npc:semi,run(){
         talk(semi,"<p><b>SEMI:</b> The corrected message is up. It says the checked record doesn't support the screenshot's claim, and that we don't know who edited it.</p><p><b>TIMI:</b> At least they stopped calling me a thief. I still want to secure the wallet through the real support route.</p><p><b>GOODNESS:</b> We'll help you do that privately. The warning can travel without your name and messages attached.</p><p><b>YOU:</b> Save the source, share the correction, and leave the accusation out.</p>",[
           {t:'Save the evidence note and follow the Osun product-team lead.',f:()=>{P.storyFlags=Object.assign({},P.storyFlags||{},{m04_complete:true,screenshot_claim_checked:true,original_message_preserved:true});G.evidence.chapterSummary=true;finishStep();}}
+        ]);
+      }}
+    ];
+  }else if(story.id==='m05'){
+    const blockqueen=STORY_NPCS.Blockqueen;
+    const christol=STORY_NPCS.Christol;
+    steps=[
+      {kind:'character',id:'m05-obj-1',label:story.objectives[0].label,spot:'buyer',npc:blockqueen,run(){
+        talk(blockqueen,"<p><b>BLOCKQUEEN:</b> You came from the Oyo correction? Good. Look at this queue. The app works when Christol drives the demo, but three buyers have walked away.</p><p><b>BUYER:</b> Which one is my bank network? I don't want to send money to the wrong place.</p><p><b>CHRISTOL:</b> It's just a network choice. Maybe we need a tutorial.</p><p><b>YOU:</b> Hold on. Let's watch what the screen asks her to do before we decide what she needs.</p>",[
+          {t:'Watch the buyer attempt checkout without coaching her.',f:()=>{G.evidence.m05_first_attempt_observed=true;G.evidence.m05_network_hesitation=true;finishStep();}},
+          {t:'Tell her which network to select so the demo can continue.',f:()=>talk(blockqueen,"<p><b>BLOCKQUEEN:</b> That gets one payment through, but it hides the problem. Let her make the choice herself—we need to see what the screen makes unclear.</p>",[{t:'Observe without coaching and note where she hesitates.',f:()=>{G.evidence.m05_first_attempt_observed=true;G.evidence.m05_network_hesitation=true;finishStep();}}])}
+        ]);
+      }},
+      {kind:'character',id:'m05-obj-2',label:story.objectives[1].label,spot:'buyer2',npc:christol,run(){
+        talk(christol,"<p><b>CHRISTOL:</b> Okay, next buyer. I'll stay quiet this time. Watch the screen, not my explanation.</p><p><b>BUYER 2:</b> I tapped this, it opened more choices, and now I don't know which one matches the shop. Let me try again… no, I'm leaving it.</p><p><b>YOU:</b> Same point, same hesitation. We have a pattern, not a guess about the customers.</p>",[
+          {t:'Record the second attempt and compare it with the first.',f:()=>{G.evidence.m05_second_attempt_observed=true;G.evidence.m05_repeat_pattern=true;finishStep();}},
+          {t:'Explain the technical meaning of each network to the buyer.',f:()=>talk(christol,"<p><b>CHRISTOL:</b> If we have to stand beside every buyer and explain the jargon, the checkout hasn't done its job. Let's record where they get stuck and reproduce it.</p>",[{t:'Record the hesitation without coaching.',f:()=>{G.evidence.m05_second_attempt_observed=true;G.evidence.m05_repeat_pattern=true;finishStep();}}])}
+        ]);
+      }},
+      {kind:'clue',id:'m05-obj-3',label:story.objectives[2].label,spot:'shopdesk',title:'Checkout test bench',sign:'REPRODUCE THE PROBLEM',npc:blockqueen,run(){
+        talk(blockqueen,"<p><b>BLOCKQUEEN:</b> We saw two buyers back out at the network list. Let's reproduce the same flow here before touching the design.</p><p><b>CHRISTOL:</b> Here. The labels are chain names with no hint which one the shop accepts. When I follow the buyer's path, I hesitate too.</p><p><b>YOU:</b> Then the first fix is plain-language network labels and a clear supported option—not another dashboard.</p>",[
+          {t:'Reproduce the dead end and choose one focused label change.',f:()=>{G.evidence.m05_checkout_reproduced=true;G.evidence.m05_focused_fix_selected=true;finishStep();}},
+          {t:'Add a dashboard before fixing checkout.',f:()=>talk(blockqueen,"<p><b>BLOCKQUEEN:</b> A dashboard won't help someone who can't finish the payment. Keep the scope small: make this choice clear, then test it.</p>",[{t:'Reproduce the issue and choose a focused label change.',f:()=>{G.evidence.m05_checkout_reproduced=true;G.evidence.m05_focused_fix_selected=true;finishStep();}}])}
+        ]);
+      }},
+      {kind:'clue',id:'m05-obj-4',label:story.objectives[3].label,spot:'buyer2',title:'Retest with the next buyer',sign:'WATCH THE RESULT',npc:christol,run(){
+        talk(christol,"<p><b>CHRISTOL:</b> We've changed the network labels into plain language and made the supported choice clear. No tutorial, no extra pop-up. Let's see if the next buyer can finish without us helping.</p><p><b>BUYER 3:</b> Okay, this one says which option the shop accepts. Done. Payment sent.</p><p><b>YOU:</b> Good sign. We record the completed flow and keep watching failed attempts before calling it solved.</p>",[
+          {t:'Observe the uncoached retest and record the completed checkout.',f:()=>{G.evidence.m05_retest_completed=true;G.evidence.m05_checkout_friction_reduced=true;finishStep();}},
+          {t:'Call the redesign a success because it looks cleaner.',f:()=>talk(christol,"<p><b>CHRISTOL:</b> Looks aren't the measure. This buyer completed checkout without help. We'll record that result and keep tracking completion and failures.</p>",[{t:'Record the uncoached completed checkout.',f:()=>{G.evidence.m05_retest_completed=true;G.evidence.m05_checkout_friction_reduced=true;finishStep();}}])}
+        ]);
+      }},
+      {kind:'character',id:'m05-close-case',label:'Wrap up the market test',spot:'shopdesk',npc:blockqueen,run(){
+        talk(blockqueen,"<p><b>BLOCKQUEEN:</b> The clearer labels helped the next buyer finish. Christol has shelved the dashboard and is tracking completed payments and drop-offs instead.</p><p><b>CHRISTOL:</b> Wait—during the retest, one buyer tapped pay twice because the first tap looked stuck. Both payments went through.</p><p><b>BLOCKQUEEN:</b> Laloba and BigSam are preparing the contract release. If a retry can charge someone twice, we need to stop and check before this ships.</p><p><b>YOU:</b> Save the checkout notes. The duplicate-payment report goes to the team handling the release.</p>",[
+          {t:'Save the market test report and follow the duplicate-payment lead.',f:()=>{P.storyFlags=Object.assign({},P.storyFlags||{},{m05_complete:true,checkout_friction_confirmed:true});G.evidence.chapterSummary=true;finishStep();}}
         ]);
       }}
     ];
