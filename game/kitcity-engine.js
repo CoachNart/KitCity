@@ -1075,7 +1075,13 @@ function lkRoofZ(L){ const c=cv(64,64),g=c.getContext('2d'),R=mulberry(57); g.fi
   for(let i=0;i<10;i++){ g.fillStyle='rgba(110,50,20,'+(.1+R()*.2*L.rust*2)+')'; g.fillRect(R()*64,R()*64,3+R()*12,3+R()*10); }
   g.fillStyle='rgba(0,0,0,.35)'; for(let x=4;x<64;x+=10) g.fillRect(x,6,2,2);
   if(L.dust>0){ g.fillStyle='rgba(222,196,152,'+(L.dust*.45)+')'; g.fillRect(0,0,64,64); } return c; }
-function lkAsph(L){ const c=cv(256,256),g=c.getContext('2d'),R=mulberry(311); g.fillStyle='#e2e2e2'; g.fillRect(0,0,256,256); speckle(g,256,256,2800,.5,['#b0b0b0','#fafafa','#8d8d8d','#d0d0d0']);
+function lkAsph(L){ const c=cv(256,256),g=c.getContext('2d'),style=L.roadStyle||0,R=mulberry(311+style*37); g.fillStyle='#e2e2e2'; g.fillRect(0,0,256,256); speckle(g,256,256,2200,.5,['#b0b0b0','#fafafa','#8d8d8d','#d0d0d0']);
+  if(style%6===0){g.strokeStyle='rgba(20,20,20,.32)';g.lineWidth=2;for(let y=12;y<256;y+=24){g.beginPath();g.moveTo(0,y);g.lineTo(256,y);g.stroke();}}
+  else if(style%6===1){g.strokeStyle='rgba(30,30,30,.35)';g.lineWidth=1.4;for(let y=0;y<256;y+=18)for(let x=(y%36===0?0:9);x<256;x+=18)g.strokeRect(x,y,18,18);}
+  else if(style%6===2){g.strokeStyle='rgba(35,35,35,.5)';g.lineWidth=2;for(let i=0;i<10;i++){g.beginPath();g.moveTo(R()*256,R()*256);g.lineTo(R()*256,R()*256);g.stroke();}}
+  else if(style%6===3){g.fillStyle='rgba(30,30,30,.2)';for(let i=0;i<26;i++)g.fillRect(R()*256,R()*256,10+R()*24,3+R()*8);}
+  else if(style%6===4){g.strokeStyle='rgba(30,30,30,.3)';g.lineWidth=1;for(let x=0;x<256;x+=32){g.beginPath();g.moveTo(x,0);g.lineTo(x,256);g.stroke();}for(let y=0;y<256;y+=32){g.beginPath();g.moveTo(0,y);g.lineTo(256,y);g.stroke();}}
+  else {g.strokeStyle='rgba(30,30,30,.38)';g.lineWidth=2;for(let y=0;y<256;y+=32){g.beginPath();g.moveTo(0,y);g.lineTo(256,y+8);g.stroke();}}
   for(let i=0;i<7;i++){ g.fillStyle='rgba(50,50,50,'+(.1+R()*.14)+')'; g.fillRect(R()*200,R()*200,30+R()*60,20+R()*44); }
   g.strokeStyle='rgba(25,25,25,.5)'; for(let i=0;i<8;i++){ let x=R()*256,y=R()*256; g.beginPath(); g.moveTo(x,y); for(let k=0;k<6;k++){ x+=(R()-.5)*40; y+=(R()-.5)*40; g.lineTo(x,y); } g.stroke(); }
   for(let i=0;i<5;i++){ g.fillStyle='rgba(15,15,15,.28)'; g.beginPath(); g.ellipse(R()*256,R()*256,6+R()*10,4+R()*7,R()*3,0,7); g.fill(); }
@@ -1090,8 +1096,7 @@ function lkEdge(){ const c=cv(8,64),g=c.getContext('2d'),lg=g.createLinearGradie
 function applyLook(key,C){
   CITY_LOOKS[key]=CITY_LOOKS[key]||CITY_LOOKS.lagos;
   const ARCH=cityKit(key);
-  LOOK_BASE.roadMark=ARCH.mark; LOOK_BASE.roadKerb=ARCH.kerb; LOOK_BASE.roadEdge=ARCH.edge;
-  const L=Object.assign({},LOOK_BASE,LOOK[key]||{}); LKC=L;
+  const L=Object.assign({},LOOK_BASE,LOOK[key]||{}); L.cityKey=key; L.roadType=ARCH.road; L.roadStyle=Math.max(0,Object.keys(CITY_ARCH_ROAD).indexOf(key)); L.roadMark=ARCH.mark; L.roadKerb=ARCH.kerb; L.roadEdge=ARCH.edge; LKC=L;
   Object.assign(C,{paint:L.paint||C.paint,ground:L.ground,slab:L.slab,dirt:L.dirt,leaf:L.leaf,zinc:L.zinc,fog:L.fog});
   if(L.paint===undefined) L.paint=C.paint;
   const hc=lkc(L.h); scene.background=hc; scene.fog=new THREE.Fog(hc,L.fog[0],L.fog[1]);
@@ -1123,6 +1128,18 @@ function addRoadIdentity(key,blocks){
    ()=>{for(let k=-3;k<=3;k++)for(let i=-3;i<=2;i++){for(const side of [-1,1])stripe(56,.45,A.mark,i*R+35,k*R+side*5.4,0);}}
  ];
  patterns[idx%patterns.length]();
+ // Add a stable per-city road signature: line rhythm, lane count and junction paint differ by city.
+ const laneCount=1+(idx%4),gap=5.2+(idx%3)*.55,roadSpan=R*6;
+ for(let k=-3;k<=3;k++)for(let i=-3;i<=2;i++){
+   for(let lane=0;lane<laneCount;lane++){
+     const offset=(lane-(laneCount-1)/2)*gap;
+     if(idx%4===0){for(let seg=-2;seg<=2;seg++)stripe(5.5,idx%2?.18:.28,A.mark,i*R+35+seg*11,k*R+offset,0);}
+     else if(idx%4===1){stripe(56,.16,A.mark,i*R+35,k*R+offset,0);}
+     else if(idx%4===2){for(let seg=-3;seg<=3;seg++)stripe(2.6,.3,A.mark,i*R+35+seg*8,k*R+offset,0);}
+     else {stripe(56,.22,A.mark,i*R+35,k*R+offset,0);stripe(56,.12,A.kerb,i*R+35,k*R+offset+.65,0);}
+   }
+   if(idx%3===0){for(let side of [-1,1])for(let seg=0;seg<6;seg++)stripe(2.8,1.1,A.mark,i*R+8+seg*4,k*R+side*5.8,0);}
+ }
  blocks.forEach(b=>{
    const x=b.cx,z=b.cz;
    if(A.edge==='rail'){
