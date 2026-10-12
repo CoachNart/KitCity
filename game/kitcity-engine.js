@@ -3726,11 +3726,19 @@ function loadStep(){
     else if(st.kind==='clue'||st.kind==='challenge'){const entity=placeMissionEvidence(st,m,SPOTS[st.spot]||SPOTS.execution);entity.talk=()=>st.run();entity.active=()=>true;ents.push(entity);goal=entity;}
     else{const entity=placeNPC(st.npc,SPOTS[st.spot]||SPOTS.a);entity.talk=()=>st.run();entity.active=()=>true;ents.push(entity);goal=entity;}
   }else{
-    if(st.kind==='character'){const entity=placeNPC(st.npc,SPOTS[st.spot]||SPOTS.a);entity.talk=()=>st.run();entity.active=()=>true;ents.push(entity);goal=entity;}
+    placeStoryOffice(SPOTS.story);
+    const castNames=[...new Set(m.npcs||[])];let activeCharacter=null;
+    castNames.forEach(name=>{
+      const npc=STORY_NPCS[name];if(!npc)return;
+      const spot=name==='Softstorm'?SPOTS.a:(st.id==='m01-transaction-record'?SPOTS.ledgerGuide:SPOTS.story);
+      const entity=placeNPC(npc,spot||SPOTS.a);
+      entity.talk=()=>{if(st.kind==='character'&&st.npc&&st.npc.name===name)st.run();};
+      entity.active=()=>!!(st.kind==='character'&&st.npc&&st.npc.name===name);
+      ents.push(entity);if(st.npc&&st.npc.name===name)activeCharacter=entity;
+    });
+    if(st.kind==='character'){goal=activeCharacter||ents[0]||null;}
     else if(st.kind==='clue'||st.kind==='challenge'){const entity=placeStoryClue(st,SPOTS[st.spot]||SPOTS.execution);entity.talk=()=>st.run();entity.active=()=>true;ents.push(entity);goal=entity;}
-    else{const entity=placeNPC(st.npc,SPOTS[st.spot]||SPOTS.a);entity.talk=()=>st.run();entity.active=()=>true;ents.push(entity);goal=entity;}
-    if(st.id==='m01-transaction-record'){const guide=placeNPC(STORY_NPCS.IamAbdul,SPOTS.ledgerGuide);guide.active=()=>false;guide.talk=()=>{};ents.push(guide);}
-    if(st.id==='m01-screenshot'||st.id==='m01-shop-records'){const shopkeeper=placeNPC(STORY_NPCS.Softstorm,SPOTS.a);shopkeeper.active=()=>false;shopkeeper.talk=()=>{};ents.push(shopkeeper);}
+    else if(st.npc){const entity=placeNPC(st.npc,SPOTS[st.spot]||SPOTS.a);entity.talk=()=>st.run();entity.active=()=>true;ents.push(entity);goal=entity;}
   }
   for(const ex of(m.extras||[])){if(G.used[ex.id])continue;const entity=placeNPC(ex.npc,ex.spot);entity.ex=ex;entity.talk=()=>ex.run(entity);entity.active=()=>!G.used[ex.id];ents.push(entity);}
   updateHUD();
