@@ -1112,11 +1112,11 @@ const RAW_MISSIONS = [
       "Leemah",
       "Kenny"
     ],
-    "narrativePurpose": "The safety session is about to start without its host. Move from the foyer to the sound desk to prepare, then take the stage and handle a difficult question about whether a wallet can ever be completely safe. The audience needs useful steps, not a promise of perfect security.",
+    "narrativePurpose": "You arrive in Enugu carrying Reina and Cclya’s verified report about the fake moderator DM from the last mission. The host cancels minutes before the session, but the room is already full—and one attendee says their friend connected a wallet after receiving a similar message. Leemah needs you to separate confirmed facts from rumours, then Kenny puts you on the live mic. Keep the affected member anonymous, answer hard questions without pretending the incident proves funds were stolen, and leave the audience with a practical response plan.",
     "learningObjectives": [
-      "How to structure a useful live session",
-      "How to ask and moderate questions",
-      "How to answer honestly when evidence is incomplete"
+      "How to turn a live incident report into a clear public safety session",
+      "How to moderate a tense room without blaming victims or silencing questions",
+      "How to communicate known facts, unknowns and useful next steps"
     ],
     "prerequisites": [
       "m12"
@@ -1124,33 +1124,33 @@ const RAW_MISSIONS = [
     "objectives": [
       {
         "id": "m13-obj-1",
-        "label": "Research the topic and verify the core facts",
+        "label": "Review Reina’s incident brief and separate verified facts from unknowns",
         "interactionTarget": "story:m13:objective:1",
         "required": true
       },
       {
         "id": "m13-obj-2",
-        "label": "Prepare an opening and arrange audience questions",
+        "label": "Prepare a short opening and privacy-safe Q&A rules",
         "interactionTarget": "story:m13:objective:2",
         "required": true
       },
       {
         "id": "m13-obj-3",
-        "label": "Host a live session with clear moderation",
+        "label": "Handle the audience dispute and keep the session useful",
         "interactionTarget": "story:m13:objective:3",
         "required": true
       },
       {
         "id": "m13-obj-4",
-        "label": "Handle a difficult question and write a recap",
+        "label": "Answer the wallet-safety question and publish the incident recap",
         "interactionTarget": "story:m13:objective:4",
         "required": true
       }
     ],
     "successConditions": [
-      "The session opens with clear expectations",
-      "The player handles disagreement without suppressing questions",
-      "The recap includes verified facts and actionable safety steps"
+      "The opening accurately states the impersonation facts and what remains unknown",
+      "The player moderates disagreement respectfully and protects the affected member’s identity",
+      "The recap links to the official reporting route, gives practical checks, and does not claim funds were stolen without evidence"
     ],
     "failureAndRetry": {
       "onFailure": "If the player guesses or blames the victim, Leemah asks them to restate the answer using only the evidence.",
@@ -1170,11 +1170,11 @@ const RAW_MISSIONS = [
       "community_safety_session_delivered"
     ],
     "nextMissionId": "m14",
-    "ending": "The audience leaves with a checklist and a reporting route. Kenny clips the practical section, not the argument, and sends the recap to the people who missed the session.",
-    "cliffhanger": "A founder asks why the recap reached people but their product announcement never does. Kore and Veedima are waiting at the next street corner with a message nobody understands.",
+    "ending": "The room leaves with a clear response plan: verify moderator identities through the published roster, do not open links from threatening DMs, preserve evidence privately, and report suspicious accounts. The recap states that one attendee opened a link, but the team has no verified evidence that funds were taken. Kenny shares the practical steps—not the victim’s story—and Reina’s report remains the source of truth.",
+    "cliffhanger": "After the session, a founder says the safety recap reached people but their own product announcement gets ignored. Kore and Veedima are waiting down the street; they want you to fix the message without adding claims the product cannot prove.",
     "sceneLines": [
-      "Leemah: \"The host just cancelled and the room is filling up. People didn't come here for a polished speech. Take the question from the front row and answer what we can prove.\"",
-      "Kenny: \"Someone asked if a wallet can ever be completely safe. Don't promise perfection. Explain what people can check, what risks remain, and where to report suspicious activity.\""
+      "Leemah: \"You made it from Anambra with Reina’s report? Good. The host just cancelled, but the room is full. Three people are already arguing about whether the fake moderator stole someone’s funds. We cannot repeat that as fact. Help me put the evidence first, then we go live.\"",
+      "Kenny: \"The room needs more than a warning. One person opened the link; we do not have proof that funds were taken. Keep the member anonymous, explain the difference between connecting, signing and approving, and give people a safe reporting route. Then answer the question everyone is avoiding: can a wallet ever be completely safe?\""
     ]
   },
   {
