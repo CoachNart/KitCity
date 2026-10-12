@@ -3734,15 +3734,29 @@ function loadStep(){
       clue.talk=()=>st.run();clue.active=()=>true;ents.push(clue);goal=clue;
     }
   }else{
-    if(st.kind==='character'){
-      const entity=placeNPC(st.npc,SPOTS[st.spot]||SPOTS.a);
-      entity.talk=()=>st.run();entity.active=()=>true;ents.push(entity);goal=entity;
-    }else if(st.kind==='clue'||st.kind==='challenge'){
-      const entity=m.id==='m01'?placeStoryClue(st,SPOTS[st.spot]||SPOTS.execution):placeMissionEvidence(st,m,SPOTS[st.spot]||SPOTS.execution);
-      entity.talk=()=>st.run();entity.active=()=>true;ents.push(entity);goal=entity;
-    }else{
-      const entity=placeNPC(st.npc,SPOTS[st.spot]||SPOTS.a);
-      entity.talk=()=>st.run();entity.active=()=>true;ents.push(entity);goal=entity;
+    // Stage the full mission cast together in every scene, not only the speaking NPC.
+    // The current interaction target remains the only active character; other cast
+    // members stay visible for continuity without hijacking the objective.
+    const castNames=[];
+    (m.npcs||[]).forEach(name=>{if(name&&!castNames.includes(name))castNames.push(name);});
+    const activeName=st.npc&&(st.npc.name||st.npc);
+    if(activeName&&!castNames.includes(activeName))castNames.push(activeName);
+    const castSpots=['a','story','buyer','c','d','e','f','g','h','i','j','k','l'];
+    castNames.forEach((name,index)=>{
+      const npc=STORY_NPCS[name];
+      if(!npc)return;
+      const entity=placeNPC(npc,SPOTS[castSpots[index%castSpots.length]]||SPOTS.a);
+      const isTarget=st.kind==='character'&&activeName===name;
+      entity.talk=()=>{if(isTarget)st.run();};
+      entity.active=()=>isTarget;
+      ents.push(entity);
+      if(isTarget)goal=entity;
+    });
+    if(st.kind==='clue'||st.kind==='challenge'){
+      const clue=m.id==='m01'?placeStoryClue(st,SPOTS[st.spot]||SPOTS.execution):placeMissionEvidence(st,m,SPOTS[st.spot]||SPOTS.execution);
+      clue.talk=()=>st.run();clue.active=()=>true;ents.push(clue);goal=clue;
+    }else if(!goal){
+      goal=ents[0]||null;
     }
     if(m.id==='m01'&&st.id==='m01-transaction-record'){
       /* Abdul meets the player at the separate verification centre for the guided check. */
