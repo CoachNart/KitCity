@@ -311,10 +311,12 @@ const CITY_MUSIC_ALIASES={
 function resolveCityMusicKey(value){
   const raw=String(value||'').trim().toLowerCase();
   const normalized=raw.replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
-  const compact=normalized.replace(/-/g,'');
-  const key=CITY_MUSIC_ALIASES[normalized]||CITY_MUSIC_ALIASES[compact]||normalized;
+  /* World labels may use either the state name or the formal "X State" form. */
+  const base=normalized.replace(/-state$/,'');
+  const compact=base.replace(/-/g,'');
+  const key=CITY_MUSIC_ALIASES[base]||CITY_MUSIC_ALIASES[compact]||base;
   if(MUSIC_QUEUES[key]) return key;
-  const mapped=CITY_MUSIC[key]||CITY_MUSIC[normalized]||CITY_MUSIC[compact];
+  const mapped=CITY_MUSIC[key]||CITY_MUSIC[base]||CITY_MUSIC[compact];
   return mapped&&MUSIC_QUEUES[mapped]?mapped:null;
 }
 const YT=(function(){
