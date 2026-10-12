@@ -2461,6 +2461,11 @@ CHARACTER_ORDER.forEach((name,index)=>{
   const npc=NPC(name,STORY_ROLES[name]||'Local resident',color,STORY_LOOKS[index%STORY_LOOKS.length],null,name);
   npc.name=name;npc.originalName=name;npc.signBg=color;npc.signFg='#ffffff';STORY_NPCS[name]=npc;
 });
+// Timi is an additional story character, not part of the required 50-character encounter order.
+{
+  const npc=NPC('Timi',STORY_ROLES.Timi||'Student · wallet owner caught in a recovery scam',STORY_COLORS[0],STORY_LOOKS[0],null,'Timi');
+  npc.name='Timi';npc.originalName='Timi';npc.signBg=STORY_COLORS[0];npc.signFg='#ffffff';STORY_NPCS.Timi=npc;
+}
 const CHRONICLE_CHALLENGES={
 m02:{q:"The cybercafé session is about to clear, and the copied payment page may disappear. What do you save first?",o:["Capture the full page, URL and timestamp as it is","Refresh the page and hope the address corrects itself","Post the account name publicly before the evidence is gone"],a:0,w:"Preserve the page as it appeared first. A changing page and a familiar display name are not proof of who made it."},
 m03:{q:"Timi's recovery page starts a countdown and asks for twelve secret words. What do you do?",o:["Stop the page and find support independently","Enter the words before the countdown ends","Send them to the account offering help"],a:0,w:"A countdown is pressure, not proof. Never give a recovery phrase to a website or support contact."},
