@@ -689,7 +689,6 @@ const RAW_MISSIONS = [
       "LunaX: \"I needed that swap to settle a parts order before the supplier closed. The quote looked fine, then the wallet showed less than I expected—and this token's name looks right. Someone in the chat says I should just approve it again. I'm not touching anything until we know what I actually received.\"",
       "OxNight: \"Good. A ticker and logo can be copied. We'll compare the contract address first, then check the route and execution record separately. If the asset is wrong, slippage isn't an explanation. And no second approval until we know exactly which spender is asking.\""
     ]
-  }
   },
   {
     "id": "m08",
