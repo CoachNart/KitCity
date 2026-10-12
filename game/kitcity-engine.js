@@ -326,9 +326,25 @@ const YT=(function(){
   function loadQueue(){
     const q=queue();
     try{
-      if(q.videos&&q.videos.length) player.loadPlaylist({playlist:q.videos,index:0});
-      else player.loadPlaylist({list:q.list,listType:'playlist',index:0});
-      player.setLoop(true); player.setShuffle(true);
+      /* YouTube IFrame API accepts an array of video IDs as the first argument.
+         {playlist:[...]} is not a valid options object, so the call can fail
+         silently and leave the previous/default playlist playing. */
+      player.stopVideo();
+      if(q.videos&&q.videos.length){
+        player.loadPlaylist(q.videos,0);
+      }else if(q.list){
+        player.loadPlaylist({list:q.list,listType:'playlist',index:0});
+      }else{
+        player.loadPlaylist(MUSIC_QUEUES.lagos.videos,0);
+      }
+      /* Apply repeat/shuffle after the new queue has had time to load. */
+      setTimeout(()=>{
+        if(!ready||!player) return;
+        try{
+          player.setLoop(true);
+          player.setShuffle(!!(q.videos&&q.videos.length>1));
+        }catch(e){}
+      },350);
     }catch(e){}
   }
   function create(){
@@ -389,8 +405,15 @@ const YT=(function(){
     setDuck(b){ duck=b; vol(); },
     next(){ if(ready) try{ player.nextVideo(); }catch(e){} },
     setCity(city){
-      const key=CITY_MUSIC[city]||'afrobeat';
-      currentKey=key; // city soundtrack always wins when entering/changing a city
+      const normalized=String(city||'').trim().toLowerCase().replace(/\\s+/g,'-');
+      /* The global KitCity hub is not a real city soundtrack; keep the last
+         selected city instead of switching back to the old generic mix. */
+      if(normalized!=='kitcity'){
+        const key=CITY_MUSIC[normalized]||'afrobeat';
+        currentKey=key;
+      }else if(!currentKey||currentKey==='custom'){
+        currentKey=CITY_MUSIC[curCity]||'lagos';
+      }
       if(ready){
         try{ loadQueue(); if(wantOn) play(); }catch(e){}
       }
