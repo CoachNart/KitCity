@@ -2375,77 +2375,135 @@ m30:{q:"What should the practical test prove?",o:["The payment is verified, the 
 m31:{q:"What finally proves the cyan mark's connection to T3Kit?",o:["The signed deployment record and matching project documentation","The symbol by itself","A rumour repeated by several characters"],a:0,w:"The mark led to the records; the records support the conclusion."}
 };
 function escapeStoryHtml(value){return String(value==null?'':value).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+const STORY_PLAYER_REACTIONS={
+  m02:["So the transfer is real, but the shop never got it. Show me the page he used before it changes again.","The address is the clue. Save the page and timestamp first; we can work out intent after."],
+  m03:["Timi, don't enter those words. Close the page and tell us exactly what the stranger asked you to do.","Let's secure the wallet without giving the stranger control of it."],
+  m04:["Hold on—if the original record doesn't show a drain, we can't repeat that accusation.","Keep the original. We'll correct the claim with what the record actually says."],
+  m05:["Don't add another tutorial yet. Let me watch the next customer try it without help.","Show me the exact screen where they hesitate; that's where we start."],
+  m06:["Reproduce the double charge before launch. One successful demo proves nothing.","Run the same tap sequence after the patch. If it happens again, we're not shipping."],
+  m07:["Pause the next swap. I want the token address and approval in front of us.","The quote and the received amount disagree. Let's find where the difference entered."],
+  m08:["Tell customers what's confirmed and what's still unknown. No fake deadline.","Give them a safe next step and one official place to get updates."],
+  m09:["Let's compare the first trade plan with the revenge trade, not just the losses.","No new position until the risk is written down again."],
+  m10:["Show me the current exposure and liquidation level before price moves again.","Set the risk limit now. Don't wait for another candle to make the decision for you."],
+  m11:["Forget the sign-up count for a minute. Let me follow a newcomer through the first task.","Give her one clear next step and see whether she can finish it without help."],
+  m12:["Take down the fake link and contact the member privately. Don't expose their chat.","Pin the real support route and make it clear nobody needs their recovery phrase."],
+  m13:["I'll take the question, but we won't promise profit we can't guarantee.","Let's show the product doing one real thing and be honest about its limits."],
+  m14:["Cut the slogans. What does the user get after pressing this button?","Let's rewrite the claim around what we just tested, not what sounds impressive."],
+  m15:["Choose one piece of work a reviewer can open and test. Start there.","Add the source, the decisions you made and what still needs work."],
+  m16:["Don't pay or send ID yet. Let's verify the vacancy outside this recruiter's message.","I'll check the official company site and save the suspicious request."],
+  m17:["Trace the order from payment to collection. The break has to be somewhere between those hand-offs.","Let's replay the exact order and see which status arrived late."],
+  m18:["Before spending more, find the screen where people stop and ask why.","Change one thing, test it with real users, then compare completions."],
+  m19:["Put the promised return beside the obligations and the people carrying the risk.","I won't recommend this until the reporting terms and conflicts are clear."],
+  m20:["No ownership document, no claim that the token represents the stock. Show me the signed record.","Pause the launch language until the legal claim matches the evidence."],
+  m21:["Open the original source. The AI summary is not stronger than the record it copied.","Mark the owner as unverified until a human checks the underlying document."],
+  m22:["Don't send it twice. Let's follow the message ID to see where the transfer is waiting.","Check the destination status before making another transaction."],
+  m23:["I want the recipients, costs and failure conditions on the table before this vote.","We can delay or add conditions, but the trade-off needs to be written down."],
+  m24:["Show me exactly what that admin permission can do, not what the developer says they'd do.","Run the exploit against the old version and the patched version before sign-off."],
+  m25:["A token doesn't automatically give someone copyright. Let's read the licence and attribution trail.","Pause the exclusivity claim until the creator and rights are clear."],
+  m26:["Find the original repository and read the licence before contacting the maintainer.","Save the matching commit and propose a correction we can prove."],
+  m27:["A repeated mark is a lead, not proof. Put the appearances in date order.","Let's test each connection against the original records and leave gaps marked."],
+  m28:["Replay the hand-off and compare what the first tool sends with what the second saves.","Fix the missing reference, then run the entire journey again."],
+  m29:["I'll separate what the records prove from what only looks connected.","Let's put the evidence in order and leave the unanswered parts visible."],
+  m30:["Run all three cases and keep the records from each. No pass based on a promise.","I'll sign only what we tested; anything else stays open."],
+  m31:["Let's read the signed deployment record itself before attaching a bigger story to it.","I'll choose the next contribution based on work we can verify, not a promise of easy money."]
+};
+const STORY_PLAYER_CHOICES={
+  m02:["Open the saved page and compare its address","Ask the buyer to retrace where he copied it"],
+  m03:["Close the recovery page now","Check the message against the official support route"],
+  m04:["Compare the original screenshot with the chain record","Ask the group to remove the accusation until verified"],
+  m05:["Watch another customer attempt checkout","Test a clearer network-selection screen"],
+  m06:["Replay the double-payment sequence","Hold launch until the regression test passes"],
+  m07:["Inspect the token contract and approval","Compare the quote with the actual swap output"],
+  m08:["Publish the confirmed status and safe steps","Check the incident log before giving a cause"],
+  m09:["Compare both trades against the written plan","Set a risk limit before considering another trade"],
+  m10:["Review current exposure and margin","Reduce the position to fit the risk limit"],
+  m11:["Follow a newcomer through onboarding","Replace the channel maze with one first task"],
+  m12:["Remove the impersonation link","Contact the affected member privately"],
+  m13:["Answer the live question honestly","Demonstrate one feature and its limits"],
+  m14:["Rewrite the announcement around the tested feature","Remove claims the product cannot support"],
+  m15:["Build a reviewable work sample","Document the decisions and unfinished parts"],
+  m16:["Verify the vacancy on the company site","Save and report the suspicious recruiter message"],
+  m17:["Trace the payment-to-collection hand-off","Reproduce the order-status mismatch"],
+  m18:["Interview users who abandoned the task","Test one change before buying more traffic"],
+  m19:["Compare return terms with reporting duties","List the risks and conflicts before recommending"],
+  m20:["Request the signed ownership record","Pause the token claim until rights are verified"],
+  m21:["Open and verify the original source","Mark the AI claim unverified and route it for review"],
+  m22:["Trace the bridge message ID","Check the destination status before retrying"],
+  m23:["List recipients, costs and milestones","Delay the vote until the missing terms are supplied"],
+  m24:["Test the privileged role on the old contract","Verify the patch blocks the same exploit"],
+  m25:["Check the licence and creator attribution","Pause the exclusivity claim pending verification"],
+  m26:["Compare the source commit and licence","Prepare a documented correction for the maintainer"],
+  m27:["Build a dated evidence timeline","Test each suspected link against its source"],
+  m28:["Replay the complete cross-tool hand-off","Compare the outgoing and saved reference IDs"],
+  m29:["Sort confirmed facts from open questions","Assemble the records into one reviewable case file"],
+  m30:["Run the payment, safety and hand-off checks","Review each result before signing off"],
+  m31:["Inspect the signed deployment record","Choose a practical contribution backed by the evidence"]
+};
 function chronicleNpcLine(m,name,index=0){
   const authoredLine=Array.isArray(m.sceneLines)?m.sceneLines[index]:null;
   if(authoredLine) return authoredLine;
   const found=(m.dialogue||[]).find(d=>String(d.speaker||'').toLowerCase()===String(name||'').toLowerCase());
   if(found&&found.text) return found.text;
-  const objectives=m.objectives||[];
-  const objective=objectives[Math.min(index,Math.max(0,objectives.length-1))];
-  const subject=objective&&objective.label?objective.label.replace(/[.!?]+$/,'').toLowerCase():'this problem';
-  if(index%2===0) return 'I have been trying to get to the bottom of '+subject+'. Can you take a look with me before we jump to conclusions?';
-  return 'I checked '+subject+', but something still feels off. Let us compare what we know and work it out together.';
+  return (STORY_BRIDGES[m.id]||m.title)+'. '+((STORY_PLAYER_REACTIONS[m.id]||[])[index]||'I need to see the part of this situation you were dealing with.');
 }
 const STORY_BRIDGES={
-  m02:'The laptop was never the end of the story. The transaction reached a different address, and now we need to find how that address entered the buyer’s path without accusing someone on a guess.',
-  m03:'A student has been promised wallet recovery in exchange for twelve secret words. They have not entered them yet. Help us keep it that way and find a safe route forward.',
-  m04:'Two screenshots are being used to accuse a student of a wallet theft. We need the original record, the edited copies and a correction that says only what the evidence supports.',
-  m05:'The payment app is losing real traders at checkout. Come watch them use it before anyone adds another feature.',
-  m06:'The checkout bug can process the same payment twice. The launch team wants to ship; we need a repeatable test and a fix that actually holds.',
-  m07:'A trader received less than the swap quote. We are checking the pool, token and approval before deciding what went wrong.',
-  m08:'Withdrawals have paused and rumours are spreading. Help us give customers a useful update without inventing a cause.',
-  m09:'A trader wants to win back a loss immediately. Help reconstruct the plan before emotion turns one loss into several.',
-  m10:'Toza’s margin buffer is shrinking. The team needs a clear view of exposure and the risk plan before the next price update.',
-  m11:'The project has followers but an empty community hall. Find the point where newcomers give up and make the first task worth completing.',
-  m12:'Someone is impersonating a moderator and asking members to verify their wallets. Contain the message and protect the person who received it.',
-  m13:'The scheduled host has cancelled and the audience is waiting. Take the mic, answer honestly and give people steps they can use.',
-  m14:'A product announcement makes big claims but explains nothing. Check the product and rewrite the message for people who might use it.',
-  m15:'A hiring lead wants proof of what you can do. Turn your work from the journey into a portfolio that another person can verify.',
-  m16:'A recruiter wants an activation fee before revealing the role. Check the offer, protect your information and submit work through a verified route.',
-  m17:'A trader’s order and payment records no longer line up. Understand the daily workflow before proposing a product fix.',
-  m18:'A campaign brought clicks but few completed tasks. Test one explanation with real users instead of buying bigger numbers.',
-  m19:'A funding offer promises fixed returns but hides the reporting obligations. Compare the terms, milestones and conflicts before recommending it.',
-  m20:'A token is marketed as a claim on warehouse inventory, but the ownership file is missing. Check the rights behind the token before launch.',
-  m21:'An AI summary names the wrong owner with complete confidence. Trace its source and build a workflow that can admit when evidence is missing.',
-  m22:'A cross-network transfer is confirmed on one side but pending on the other. Trace the route before anyone sends it twice.',
-  m23:'A treasury proposal is being rushed to a vote before its costs and beneficiaries are clear. Read the terms and document the trade-offs.',
-  m24:'A privileged contract role could redirect funds. Reproduce the risk, disclose it responsibly and verify the patch before launch.',
-  m25:'A digital collectible is being sold as exclusive, but the licence and authorship are disputed. Check what rights the seller can actually grant.',
-  m26:'A project copied open-source code and removed its attribution. Trace the source, read the licence and make a reviewable correction.',
-  m27:'The same cyan mark appears across several incidents. It is a lead, not a verdict; build a timeline and test what the records can prove.',
-  m28:'A user loses evidence when moving between two tools. Test the whole hand-off, not just each screen in isolation.',
-  m29:'You have reached KitCity. The gate asks for the case file behind the recurring mark, including what remains uncertain.',
-  m30:'KitCity’s teams have one practical test: verify a payment, protect a newcomer and repair a broken hand-off with evidence another person can review.',
-  m31:'The central records finally connect the mark to T3Kit. Verify the record, understand the wider purpose and choose what kind of work you will contribute next.'
+  m02:'The laptop dispute is still fresh; the transaction reached a different address',
+  m03:'Timi is frightened and the recovery page is still open',
+  m04:'The group is ready to accuse someone based on a cropped screenshot',
+  m05:'Customers are abandoning checkout in front of the team',
+  m06:'The same payment can be processed twice',
+  m07:'The received swap amount does not match the quote',
+  m08:'Withdrawals are paused and customers want an answer',
+  m09:'A loss has pushed the trader into an unplanned second position',
+  m10:'The margin buffer is shrinking while the position stays open',
+  m11:'New members sign up but disappear before taking part',
+  m12:'A fake moderator is sending wallet-verification links',
+  m13:'The host has cancelled and the audience is waiting',
+  m14:'The product announcement makes claims the demo does not explain',
+  m15:'The hiring lead wants work they can inspect',
+  m16:'A recruiter demands an activation fee and identity documents',
+  m17:'The order says complete but the item is still in the warehouse',
+  m18:'Campaign clicks are not turning into completed tasks',
+  m19:'The funding offer promises returns but hides obligations',
+  m20:'The token claim has no signed ownership record',
+  m21:'An AI summary names an owner the source does not support',
+  m22:'The transfer is confirmed on one network and pending on the other',
+  m23:'The treasury vote is being rushed without clear costs',
+  m24:'A privileged contract role can redirect funds',
+  m25:'The collectible rights and authorship are disputed',
+  m26:'A copied codebase has lost its attribution',
+  m27:'The cyan mark appears across several unrelated-looking records',
+  m28:'Evidence disappears between two tools',
+  m29:'The KitCity gate requires a case file, not a rumour',
+  m30:'Three teams must verify the payment, protect a newcomer and repair a hand-off',
+  m31:'A signed deployment record connects the evidence to T3Kit'
 };
 function chronicleNpcStep(m,name,index){
   const npc=STORY_NPCS[name];
   const step={kind:'character',characterIndex:index,label:'Talk to '+name,spot:index===0?'a':index===1?'story':['b','c','d','e','f','g','h'][index%7],npc};
   step.run=function(){
     const line=m.id==='m02'&&index===0
-      ?'Softstorm sent you over, abi? The buyer says he copied the shop address from an online account page. He has sent a transaction hash, but we need to confirm the network before trusting the result.'
+      ?'Joe, the buyer says he copied the shop address from this account page. The hash is real, but the receiver is wrong. Help me save the page before it changes.'
       :m.id==='m02'&&index===1
-      ?'Joe has confirmed the hash and network. I can open the public record now, but we still need to compare the exact recipient with the address Softstorm gave the buyer.'
+      ?'The transaction record is clear now. I saved the page, but this address differs from the one Softstorm gave the buyer. Can you check the record of the page change?'
       :index===0?(STORY_BRIDGES[m.id]||chronicleNpcLine(m,name,index))
       :chronicleNpcLine(m,name,index);
-    const html=m.id==='m02'&&index===0
-      ?'<p><b>'+escapeStoryHtml(name.toUpperCase())+':</b> '+escapeStoryHtml(line)+'</p><p><b>YOU:</b> So the screenshot alone no settle anything. Wetin you need from me?</p>'
-      :m.id==='m02'&&index===1
-      ?'<p><b>'+escapeStoryHtml(name.toUpperCase())+':</b> '+escapeStoryHtml(line)+'</p><p><b>YOU:</b> Let us check the public record before we accuse anybody.</p>'
-      :'<p><b>'+escapeStoryHtml(name.toUpperCase())+':</b> '+escapeStoryHtml(line)+'</p><p><b>YOU:</b> What should we check first, and who else has seen this?</p>';
+    const playerLine=(STORY_PLAYER_REACTIONS[m.id]||[])[index]||'I want to understand what happened here before we decide what to do.';
+    const html='<p><b>'+escapeStoryHtml(name.toUpperCase())+':</b> '+escapeStoryHtml(line)+'</p><p><b>YOU:</b> '+escapeStoryHtml(playerLine)+'</p>';
+    const choices=STORY_PLAYER_CHOICES[m.id]||['Inspect the specific record in front of us','Ask what changed in this situation'];
     const buttons=m.id==='m02'&&index===0
       ?[
-        {t:'Confirm the hash and network first',f:()=>{G.evidence.hash_and_network_confirmed=true;talk(npc,'<p><b>'+escapeStoryHtml(name.toUpperCase())+':</b> Good. The hash points to one transaction, and the network tells us which ledger to search. Let us inspect the record before deciding what happened.</p>',[{t:'Head to the transaction record',f:()=>{G.evidence['met_'+name]=true;finishStep();}}]);}},
-        {t:'The successful screenshot should be enough',f:()=>talk(npc,'<p><b>'+escapeStoryHtml(name.toUpperCase())+':</b> Not yet. A screenshot can show a claim, but it cannot prove the shop received the funds. We can check the public record ourselves.</p>',[{t:'Alright, let us verify it',f:()=>{G.evidence.hash_and_network_confirmed=true;G.evidence['met_'+name]=true;finishStep();}}])}
+        {t:'Confirm the hash and network',f:()=>{G.evidence.hash_and_network_confirmed=true;talk(npc,'<p><b>'+escapeStoryHtml(name.toUpperCase())+':</b> The hash identifies the transfer; the network tells us which ledger to search. I have the explorer open. Check the recipient field against Softstorm’s address.</p>',[{t:'Compare the recipient addresses',f:()=>{G.evidence['met_'+name]=true;finishStep();}}]);}},
+        {t:'Trust the screenshot and release the laptop',f:()=>talk(npc,'<p><b>'+escapeStoryHtml(name.toUpperCase())+':</b> No. It proves what the picture says, not where the funds landed. The shop still has no matching payment. Check the public record before releasing anything.</p>',[{t:'Open the transaction record',f:()=>{G.evidence.hash_and_network_confirmed=true;G.evidence['met_'+name]=true;finishStep();}}])}
       ]
       :m.id==='m02'&&index===1
       ?[
         {t:'Compare the recipient with the shop address',f:()=>{G.evidence.larai_opened_explorer=true;finishStep();}},
-        {t:'If it says Confirmed, the shop got paid',f:()=>talk(npc,'<p><b>'+escapeStoryHtml(name.toUpperCase())+':</b> Confirmed means the transaction was recorded on that network. It does not tell us whether the recipient was the shop. We need the exact address.</p>',[{t:'Show me the recipient field',f:()=>{G.evidence.larai_opened_explorer=true;finishStep();}}])}
+        {t:'Treat the confirmed status as proof the shop was paid',f:()=>talk(npc,'<p><b>'+escapeStoryHtml(name.toUpperCase())+':</b> Confirmed tells us the transfer was recorded. It does not identify the shop as the recipient. Read the full address before drawing that conclusion.</p>',[{t:'Inspect the recipient field',f:()=>{G.evidence.larai_opened_explorer=true;finishStep();}}])}
       ]
       :[
-        {t:'Start with the evidence we can verify',f:()=>{G.evidence['met_'+name]=true;G.evidence['approach_'+m.id]='verify';finishStep();}},
-        {t:'Hear the other person’s side first',f:()=>talk(npc,'<p><b>'+escapeStoryHtml(name.toUpperCase())+':</b> Fair. We should hear them out, but keep their claims separate from what the evidence proves.</p>',[{t:'Then let us compare both accounts',f:()=>{G.evidence['met_'+name]=true;G.evidence['approach_'+m.id]='hear-both-sides';finishStep();}}])}
+        {t:choices[0],f:()=>{G.evidence['met_'+name]=true;G.evidence['approach_'+m.id]='evidence-first';finishStep();}},
+        {t:choices[1],f:()=>talk(npc,'<p><b>'+escapeStoryHtml(name.toUpperCase())+':</b> All right. I’ll show you the part I saw myself. If the record contradicts me, say so.</p>',[{t:'Compare the account with the record',f:()=>{G.evidence['met_'+name]=true;G.evidence['approach_'+m.id]='compare-accounts';finishStep();}}])}
       ];
     talk(npc,html,buttons);
   };
@@ -2668,24 +2726,24 @@ function chronicleClueStep(m,obj,index,spot){
       const correct=Array.isArray(activity.a)?activity.a.includes(choice):choice===activity.a;
       if(!correct){
         G.wrong=(G.wrong||0)+1;
-        talk(npc,'<p><b>'+escapeStoryHtml(npc.name.toUpperCase())+':</b> Not quite. '+escapeStoryHtml(activity.w)+'</p><p><b>YOU:</b> Fair. Let me look again.</p>',[{t:'Try it again',f:()=>step.run()}]);
+        talk(npc,'<p><b>'+escapeStoryHtml(npc.name.toUpperCase())+':</b> That answer leaves this part unexplained: '+escapeStoryHtml(activity.w)+'</p><p><b>YOU:</b> I missed that detail. Let me compare the options with the record again.</p>',[{t:'Try it again',f:()=>step.run()}]);
         return;
       }
       G.correct=(G.correct||0)+1;
-      talk(npc,'<p><b>'+escapeStoryHtml(npc.name.toUpperCase())+':</b> Exactly. '+escapeStoryHtml(activity.w)+'</p><p><b>YOU:</b> That makes sense. I can explain why I chose it now.</p>',[{t:'Save what we found',f:()=>{
+      talk(npc,'<p><b>'+escapeStoryHtml(npc.name.toUpperCase())+':</b> That fits what we found. '+escapeStoryHtml(activity.w)+'</p><p><b>YOU:</b> Good. Save that finding with the case so the next person can check it.</p>',[{t:'Save what we found',f:()=>{
         applyChronicleActivityEffect(activity.effect,m,obj,choice,activity.o);
         G.evidence[obj.id]=true;P.storyFlags=Object.assign({},P.storyFlags||{},{['evidence_'+obj.id]:true});save();finishStep();
       }}]);
     }}));
     const sceneLead=m.id==='m02'
       ?(/transaction explorer/i.test(obj.label)
-        ?'Joe has confirmed the hash and network. The public record is open; check what it proves and what it does not.'
+        ?'Joe has the transaction open. The amount and status match the buyer’s claim; the recipient is the part still in dispute.'
         :/trace a transaction|recipient address/i.test(obj.label)
-        ?'We have the transaction details in front of us. Now compare the recipient with the address Softstorm expected.'
-        :'Softstorm needs a clear incident note. Record what the evidence proves, not what we assume about the buyer.')
-      :'Let us work through <b>'+escapeStoryHtml(title)+'</b>.';
-    const playerPrompt=m.id==='m02'?'Let us check the exact details.':'Show me the evidence that matters.';
-    const prompt='<p><b>'+escapeStoryHtml(npc.name.toUpperCase())+':</b> '+sceneLead+' '+escapeStoryHtml(activity.q)+'</p><p><b>YOU:</b> '+playerPrompt+'</p><p><b>'+escapeStoryHtml(npc.name.toUpperCase())+':</b> '+(m.id==='m02'?'Compare the record with the information Softstorm gave us.':'Look at what is here, make your call, and be ready to explain it.')+'</p>';
+        ?'The destination field is visible beside the address Softstorm supplied. Read both before deciding what this means.'
+        :'The page may change again. Save the exact URL, timestamp and address shown in this capture.')
+      :(STORY_BRIDGES[m.id]||m.title)+'. '+title+' is where the case turns.';
+    const playerPrompt=((STORY_PLAYER_REACTIONS[m.id]||[])[Math.min(index,1)])||'I want to see what this record can prove.';
+    const prompt='<p><b>'+escapeStoryHtml(npc.name.toUpperCase())+':</b> '+sceneLead+' '+escapeStoryHtml(activity.q)+'</p><p><b>YOU:</b> '+escapeStoryHtml(playerPrompt)+'</p><p><b>'+escapeStoryHtml(npc.name.toUpperCase())+':</b> '+(m.id==='m02'?'The buyer’s account and the public record are not the same thing. Read the field that separates them.':'That is the disputed point. Pick the option that fits the evidence in front of us.')+'</p>';
     talk(npc,prompt,buttons);
   };
   return step;
@@ -2698,13 +2756,13 @@ function chronicleChallengeStep(m,obj,index,spot){
     const buttons=challenge.o.map((option,choice)=>({t:option,g:choice!==challenge.a,f:()=>{
       if(choice!==challenge.a){
         G.wrong=(G.wrong||0)+1;
-        talk(npc,'<p><b>'+escapeStoryHtml(npc.name.toUpperCase())+':</b> Not quite. '+escapeStoryHtml(challenge.w)+'</p><p><b>YOU:</b> Fair. Let me think again.</p>',[{t:'Try the decision again',f:()=>step.run()}]);
+        talk(npc,'<p><b>'+escapeStoryHtml(npc.name.toUpperCase())+':</b> That move leaves us exposed: '+escapeStoryHtml(challenge.w)+'</p><p><b>YOU:</b> You're right about the risk. I'll choose again with that consequence in mind.</p>',[{t:'Try the decision again',f:()=>step.run()}]);
         return;
       }
       G.correct=(G.correct||0)+1;
-      talk(npc,'<p><b>'+escapeStoryHtml(npc.name.toUpperCase())+':</b> Good call. '+escapeStoryHtml(challenge.w)+'</p><p><b>YOU:</b> I can explain that choice now.</p>',[{t:'Record the decision',f:()=>{applyChronicleActivityEffect(challenge.effect,m,obj,choice,challenge.o);G.evidence[obj.id]=true;P.storyFlags=Object.assign({},P.storyFlags||{},{['challenge_'+m.id]:true});finishStep();}}]);
+      talk(npc,'<p><b>'+escapeStoryHtml(npc.name.toUpperCase())+':</b> That gives us a defensible next move. '+escapeStoryHtml(challenge.w)+'</p><p><b>YOU:</b> Record the reason as well as the decision.</p>',[{t:'Record the decision',f:()=>{applyChronicleActivityEffect(challenge.effect,m,obj,choice,challenge.o);G.evidence[obj.id]=true;P.storyFlags=Object.assign({},P.storyFlags||{},{['challenge_'+m.id]:true});finishStep();}}]);
     }}));
-    talk(npc,'<p><b>'+escapeStoryHtml(npc.name.toUpperCase())+':</b> '+(m.id==='m02'?'We have the buyer’s transaction details in front of us. ':'This is the decision in <b>'+escapeStoryHtml(m.title)+'</b> that could change what happens next. ')+escapeStoryHtml(challenge.q)+'</p><p><b>YOU:</b> Let me check before I decide.</p><p><b>'+escapeStoryHtml(npc.name.toUpperCase())+':</b> Use the evidence, choose your next move, and tell me why.</p>',buttons);
+    talk(npc,'<p><b>'+escapeStoryHtml(npc.name.toUpperCase())+':</b> '+(m.id==='m02'?'We have the buyer’s transaction details in front of us. ':'This is happening right now: '+escapeStoryHtml((STORY_BRIDGES[m.id]||m.title))+'. ')+escapeStoryHtml(challenge.q)+'</p><p><b>YOU:</b> '+escapeStoryHtml(((STORY_PLAYER_REACTIONS[m.id]||[])[1])||'I will make the call based on what we can verify.')+'</p><p><b>'+escapeStoryHtml(npc.name.toUpperCase())+':</b> Choose what you would do next. The consequences belong to this case.</p>',buttons);
   };
   return step;
 }
