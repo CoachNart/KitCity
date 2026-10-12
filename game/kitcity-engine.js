@@ -5287,7 +5287,13 @@ function update(dt,time){
   const compass=$('#compass');
   const stepNow=G&&G.m&&G.m.steps?G.m.steps[G.i]:null;
   const activeNav=ents.find(e=>{try{return e.active&&e.active();}catch(_){return false;}})||null;
-  const navGoal=goal||activeNav||(stepNow&&SPOTS[stepNow.spot])||((G&&G.m&&(G.m.city==='lagos'||curCity==='lagos'))?SPOTS.a:null);
+  const navCandidates=[goal,activeNav,stepNow&&SPOTS[stepNow.spot],(G&&G.m&&(G.m.city==='lagos'||curCity==='lagos'))?SPOTS.a:null];
+  const navGoal=navCandidates.find(t=>{
+    if(!t)return false;
+    const x=t.object&&t.object.position?t.object.position.x:t.x;
+    const z=t.object&&t.object.position?t.object.position.z:t.z;
+    return Number.isFinite(x)&&Number.isFinite(z);
+  })||null;
   if(navGoal){
     const gx=navGoal.object&&navGoal.object.position?navGoal.object.position.x:navGoal.x;
     const gz=navGoal.object&&navGoal.object.position?navGoal.object.position.z:navGoal.z;
