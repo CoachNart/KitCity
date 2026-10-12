@@ -495,18 +495,69 @@ const YT=(function(){
   };
 })();
 const Snd=(function(){
-  /* KitCity uses YouTube music only. Disable locally synthesized tones/noise,
-     including synthetic footsteps, chimes, bumps and menu blips. */
+  /* Sound effects only. Music is the YouTube playlist (see YT above). */
+  const AC=window.AudioContext||window.webkitAudioContext;
   const noop=()=>{};
-  const on={music:P.music!==false,sfx:false};
+  const on={music:P.music!==false,sfx:P.sfx!==false};
+  if(!AC) return {unlock:()=>YT.start(),setCity:city=>YT.setCity(city),setMode:noop,duck:b=>YT.setDuck(b),sfx:noop,set:(k,v)=>{ on[k]=v; if(k==='music') YT.setOn(v); },blip:noop};
+  let ctx=null,master,gSfx,noiseBuf;
+  function applyVol(now){
+    if(!ctx) return; const t=ctx.currentTime;
+    gSfx.gain.setTargetAtTime(on.sfx?.85:0,t,now?.01:.05);
+  }
+  function build(){
+    master=ctx.createGain(); master.gain.value=.9; master.connect(ctx.destination);
+    gSfx=ctx.createGain(); gSfx.connect(master);
+    const len=Math.floor(ctx.sampleRate*2); noiseBuf=ctx.createBuffer(1,len,ctx.sampleRate);
+    const d=noiseBuf.getChannelData(0); for(let i=0;i<len;i++) d[i]=Math.random()*2-1;
+    applyVol(true);
+  }
+  function ensure(){
+    if(!ctx){ try{ ctx=new AC(); }catch(e){ ctx=null; return false; } build(); }
+    if(ctx.state==='suspended') ctx.resume();
+    return true;
+  }
+  function tone(freq,t,dur,type,vol,dest,opt){
+    const o=ctx.createOscillator(),g=ctx.createGain(); o.type=type||'sine';
+    o.frequency.setValueAtTime(freq,t); if(opt&&opt.to) o.frequency.exponentialRampToValueAtTime(opt.to,t+dur);
+    g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(Math.max(.0002,vol),t+.006); g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+    let n=o; if(opt&&opt.lp){ const f=ctx.createBiquadFilter(); f.type='lowpass'; f.frequency.value=opt.lp; o.connect(f); n=f; }
+    n.connect(g); g.connect(dest||gSfx); o.start(t); o.stop(t+dur+.05);
+  }
+  function burst(t,dur,type,freq,vol,dest,q){
+    const s=ctx.createBufferSource(); s.buffer=noiseBuf; const f=ctx.createBiquadFilter(); f.type=type; f.frequency.value=freq; if(q) f.Q.value=q;
+    const g=ctx.createGain(); g.gain.setValueAtTime(Math.max(.0002,vol),t); g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+    s.connect(f); f.connect(g); g.connect(dest||gSfx); s.start(t,Math.random()); s.stop(t+dur+.05);
+  }
+  const SFX={
+    click(t){ tone(560,t,.06,'triangle',.12,gSfx,{to:420}); },
+    /* footstep: heel thud + shoe scuff + crisp tap. side alternates left/right, run is heavier and snappier */
+    foot(t,a){
+      const run=!!(a&&a.run),side=(a&&a.side)?1:-1,v=Math.min(1.15,((a&&a.vol)||1)*(run?.48:.38));
+      const p=.9+Math.random()*.2+side*.03;
+      tone(150*p,t,.1,'sine',.55*v,gSfx,{to:55*p});
+      burst(t,run?.09:.12,'bandpass',(run?1700:1250)*p,.12*v,gSfx,.8);
+      burst(t,.03,'highpass',3200,.05*v,gSfx);
+      if(run) burst(t+.045,.05,'bandpass',900*p,.06*v,gSfx,.9);
+    },
+    chime(t){ tone(784,t,.18,'sine',.16,gSfx); tone(1175,t+.12,.3,'sine',.14,gSfx); },
+    done(t){ [523,659,784,1047].forEach((f,i)=>tone(f,t+i*.11,.3,'triangle',.16,gSfx)); tone(1568,t+.5,.6,'sine',.12,gSfx); },
+    coin(t){ tone(1318,t,.09,'square',.07,gSfx,{lp:3000}); tone(1760,t+.08,.2,'square',.07,gSfx,{lp:3000}); },
+    error(t){ tone(170,t,.4,'sawtooth',.14,gSfx,{to:90,lp:700}); },
+    good(t){ tone(660,t,.12,'triangle',.14,gSfx); tone(880,t+.1,.2,'triangle',.14,gSfx); },
+    bump(t){ burst(t,.25,'lowpass',260,.5,gSfx); tone(90,t,.2,'sine',.3,gSfx,{to:50}); }
+  };
   return {
-    unlock(){ YT.start(); },
+    unlock(){ YT.start(); ensure(); },
     setCity:city=>YT.setCity(city),
     setMode:noop,
-    duck:b=>YT.setDuck(b),
-    sfx:noop,
-    set(k,v){ on[k]=!!v; if(k==='music') YT.setOn(!!v); },
-    blip:noop
+    duck(b){ YT.setDuck(b); },
+    sfx(n,a){ if(!on.sfx||!ensure()) return; const f=SFX[n]; if(f) f(ctx.currentTime,a); },
+    set(k,v){ on[k]=v; if(k==='music') YT.setOn(v); applyVol(); },
+    blip(name,n){
+      if(!ctx||!on.sfx) return; let h=0; const str=String(name||''); for(let i=0;i<str.length;i++) h=(h*31+str.charCodeAt(i))|0;
+      const base=150+(Math.abs(h)%8)*28,t=ctx.currentTime; for(let i=0;i<n;i++) tone(base*(.9+Math.random()*.3),t+i*.07,.055,'triangle',.07,gSfx,{lp:1700});
+    }
   };
 })();
 window.addEventListener('pointerdown',()=>Snd.unlock());
