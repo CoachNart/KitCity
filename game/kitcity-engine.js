@@ -3392,6 +3392,39 @@ const MISSIONS=CHRONICLE_MISSIONS.map((story,index)=>{
         ]);
       }}
     ];
+  }else if(story.id==='m15'){
+    const esta=STORY_NPCS['Web3_Esta'], love=STORY_NPCS.Love;
+    steps=[
+      {kind:'character',id:'m15-obj-1',label:story.objectives[0].label,spot:'buyer',npc:esta,run(){
+        talk(esta,"<p><b>WEB3_ESTA:</b> The person who replied to your product announcement sent a role brief. They need clear communication, verification and proof of real work. Which samples match the requirements?</p><p><b>YOU:</b> I should map the role to evidence instead of sending every screenshot I own.</p>",[
+          {t:'Match the safety recap to communication and fact-checking, and the product announcement to user-focused writing.',f:()=>talk(love,"<p><b>LOVE:</b> Good. Keep the context: the problem, what you did and what changed.</p>",[{t:'Select both samples and note the role requirement each supports.',f:()=>{G.evidence.m15_role_matched=true;G.evidence.m15_samples_selected=true;finishStep();}}])},
+          {t:'Claim expert smart-contract auditing because it sounds impressive.',f:()=>talk(esta,"<p><b>WEB3_ESTA:</b> We have not seen you audit a contract. The brief asks for evidence, not the biggest label.</p>",[{t:'Use the verified safety recap and product-message work.',f:()=>{G.evidence.m15_role_matched=true;G.evidence.m15_samples_selected=true;finishStep();}}])}
+        ]);
+      }},
+      {kind:'clue',id:'m15-obj-2',label:story.objectives[1].label,spot:'ledger',title:'The portfolio wall',sign:'SHOW THE RECEIPTS',npc:love,run(){
+        talk(love,"<p><b>LOVE:</b> A screenshot without context is just a screenshot. For each sample, show the problem, your contribution, a verifiable result and an artifact someone can inspect.</p>",[
+          {t:'Attach both samples with context, your contribution and the real evidence link.',f:()=>{G.evidence.m15_two_samples_documented=true;G.evidence.m15_evidence_linked=true;G.evidence.portfolio_evidence_compiled=true;finishStep();}},
+          {t:'Claim you led everything and built the whole product.',f:()=>talk(love,"<p><b>LOVE:</b> That claim is bigger than the evidence. Be precise about your own part and credit collaborators.</p>",[{t:'Document only your own work and label shared outcomes honestly.',f:()=>{G.evidence.m15_two_samples_documented=true;G.evidence.m15_evidence_linked=true;G.evidence.portfolio_evidence_compiled=true;finishStep();}}])}
+        ]);
+      }},
+      {kind:'character',id:'m15-obj-3',label:story.objectives[2].label,spot:'screenshot',npc:esta,run(){
+        talk(esta,"<p><b>WEB3_ESTA:</b> The hiring lead asks, ‘What did you personally contribute?’ The recap involved other people; the product belongs to its team. Separate your actions from the group's result.</p>",[
+          {t:'State your actions, credit collaborators and link each claim to evidence.',f:()=>talk(love,"<p><b>LOVE:</b> Credible. You can describe a result without pretending you did every part.</p>",[{t:'Save contribution notes beside both samples.',f:()=>{G.evidence.m15_contribution_separated=true;G.evidence.m15_claims_evidence_matched=true;finishStep();}}])},
+          {t:'Say you personally built every part.',f:()=>talk(love,"<p><b>LOVE:</b> That is easy to challenge and unfair to the people who contributed.</p>",[{t:'Correct the claims and document your actual contribution.',f:()=>{G.evidence.m15_contribution_separated=true;G.evidence.m15_claims_evidence_matched=true;finishStep();}}])}
+        ]);
+      }},
+      {kind:'clue',id:'m15-obj-4',label:story.objectives[3].label,spot:'shopdesk',title:'The skills desk',sign:'BIO, NOT BRAGGING',npc:love,run(){
+        talk(love,"<p><b>LOVE:</b> Write a short bio that points to the work. Name one requirement you cannot yet prove and how you'll practise it. A real gap is a plan, not a reason to invent experience.</p>",[
+          {t:'Link the two samples in a focused bio and name one skill gap plus a small practice project.',f:()=>{G.evidence.m15_bio_evidence_linked=true;G.evidence.m15_skill_gap_named=true;G.evidence.m15_honest_profile=true;finishStep();}},
+          {t:'Call yourself a senior expert in everything and omit evidence links.',f:()=>talk(esta,"<p><b>WEB3_ESTA:</b> That gives the hiring lead nothing to evaluate. Show the work and be honest about your current level.</p>",[{t:'Replace it with an evidence-linked bio and one learning goal.',f:()=>{G.evidence.m15_bio_evidence_linked=true;G.evidence.m15_skill_gap_named=true;G.evidence.m15_honest_profile=true;finishStep();}}])}
+        ]);
+      }},
+      {kind:'character',id:'m15-close-message',label:'Save the evidence-backed portfolio',spot:'buyer',npc:esta,run(){
+        talk(esta,"<p><b>WEB3_ESTA:</b> The hiring lead can inspect two samples and see what you contributed.</p><p><b>LOVE:</b> You named the gap you still need to close. That is more useful than pretending you know everything.</p><p><b>YOU:</b> Let the work speak. If I cannot prove a claim, I won't put it in the application.</p><p><b>WEB3_ESTA:</b> J.Jonathan and Essa say the recruiter wants an activation fee before revealing the task—and is asking for private wallet details. We need to verify this before you respond.</p>",[
+          {t:'Save the portfolio and take the recruiter message to J.Jonathan and Essa.',f:()=>{P.storyFlags=Object.assign({},P.storyFlags||{},{m15_complete:true,portfolio_evidence_compiled:true});G.evidence.chapterSummary=true;finishStep();}}
+        ]);
+      }}
+    ];
   }else{
     steps=[];
     const objectives=story.objectives||[];
