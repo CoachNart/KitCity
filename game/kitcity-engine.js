@@ -2783,7 +2783,7 @@ function chronicleChallengeStep(m,obj,index,spot){
     const buttons=challenge.o.map((option,choice)=>({t:option,g:choice!==challenge.a,f:()=>{
       if(choice!==challenge.a){
         G.wrong=(G.wrong||0)+1;
-        talk(npc,'<p><b>'+escapeStoryHtml(npc.name.toUpperCase())+':</b> That move leaves us exposed: '+escapeStoryHtml(challenge.w)+'</p><p><b>YOU:</b> You're right about the risk. I'll choose again with that consequence in mind.</p>',[{t:'Try the decision again',f:()=>step.run()}]);
+        talk(npc,'<p><b>'+escapeStoryHtml(npc.name.toUpperCase())+':</b> That move leaves us exposed: '+escapeStoryHtml(challenge.w)+'</p><p><b>YOU:</b> You’re right about the risk. I’ll choose again with that consequence in mind.</p>',[{t:'Try the decision again',f:()=>step.run()}]);
         return;
       }
       G.correct=(G.correct||0)+1;
