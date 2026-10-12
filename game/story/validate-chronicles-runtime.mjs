@@ -215,10 +215,13 @@ for (const marker of [
 const impersonatorMission = MISSIONS.find((mission) => mission.id === "m12");
 if (!impersonatorMission || impersonatorMission.title !== "The Moderator Who Wasn't") errors.push("Mission 12 must be the fake moderator impersonation mission.");
 if (impersonatorMission && (impersonatorMission.npcs[0] !== "Reina" || impersonatorMission.npcs[1] !== "Cclya")) errors.push("Mission 12 must introduce Reina and Cclya in the supplied order.");
-if (impersonatorMission && impersonatorMission.nextMissionId !== "m13") errors.push("Mission 12 must hand off directly to the live-session mission.");
+if (impersonatorMission && (!impersonatorMission.prerequisites.includes("m11") || impersonatorMission.nextMissionId !== "m13")) errors.push("Mission 12 must continue Mission 11's safety incident and hand off directly to the live-session mission.");
+if (impersonatorMission && (!impersonatorMission.narrativePurpose.includes("previous mission ended") || !impersonatorMission.cliffhanger.includes("Enugu"))) errors.push("Mission 12 must continue the Mission 11 cliffhanger and establish the Enugu handoff.");
 if (impersonatorMission && !impersonatorMission.sceneLines.some((line) => line.startsWith("Reina:")) ) errors.push("Mission 12 is missing authored Reina dialogue.");
 if (impersonatorMission && !impersonatorMission.sceneLines.some((line) => line.startsWith("Cclya:")) ) errors.push("Mission 12 is missing authored Cclya dialogue.");
 requireText("else if(story.id==='m12')", "Mission 12 bespoke impersonator investigation runtime");
+requireText("The newcomer who stayed to test the welcome card just showed Cybersage this DM.", "Mission 12 continuation from Mission 11");
+requireText("m12_enugu_handoff_ready:true", "Mission 12 handoff to the Enugu safety session");
 for (const marker of [
   "m12_identity_verified",
   "m12_evidence_preserved",
