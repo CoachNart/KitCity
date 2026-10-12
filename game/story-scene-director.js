@@ -151,12 +151,12 @@ export function createStorySceneDirector({ camera, player, getCharacter, animate
     point.project(camera);
     const canvas = document.querySelector('#gl');
     const rect = canvas ? canvas.getBoundingClientRect() : { left: 0, top: 0, width: innerWidth, height: innerHeight };
-    const x = rect.left + (point.x * .5 + .5) * rect.width;
-    const y = rect.top + (-point.y * .5 + .5) * rect.height;
-    const visible = point.z > -1 && point.z < 1 && x > rect.left - 80 && x < rect.right + 80 && y > rect.top - 30 && y < rect.bottom + 30;
+    let x = rect.left + (point.x * .5 + .5) * rect.width;
+    let y = rect.top + (-point.y * .5 + .5) * rect.height;
     if (point.z <= -1 || point.z >= 1) {
-      el.classList.add('hidden');
-      return;
+      // Keep the line readable even when the speaker is temporarily behind the camera.
+      x = window.innerWidth / 2;
+      y = window.innerHeight * .68;
     }
     el.classList.remove('hidden', 'offscreen');
     // Keep the full bubble inside the viewport on narrow phones and edge actors.
