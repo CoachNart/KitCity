@@ -2250,7 +2250,7 @@ function openSheet(html,btns,typingMs,preserveIdentity){
     setTimeout(pendingReveal,typingMs);
   } else { sheetEl.classList.remove('typing'); pendingReveal=null; }
 }
-function closeSheet(){ S.modal=false; cbs=[]; sheetTok++; pendingReveal=null; chat={npc:null,log:[]}; sheetEl.classList.remove('typing','chronicle-dialogue-card'); modalEl.classList.remove('chronicle-dialogue-open'); modalEl.classList.add('hidden'); sheetEl.innerHTML=''; Snd.duck(false); }
+function closeSheet(){ removeMissionBubble(); S.modal=false; cbs=[]; sheetTok++; pendingReveal=null; chat={npc:null,log:[]}; sheetEl.classList.remove('typing','chronicle-dialogue-card','kitcity-decision-card'); modalEl.classList.remove('chronicle-dialogue-open','kitcity-decision-open'); modalEl.classList.add('hidden'); sheetEl.innerHTML=''; Snd.duck(false); }
 sheetEl.addEventListener('click',e=>{
   if(pendingReveal){ pendingReveal(); return; }
   const b=e.target.closest('[data-i]'); if(!b) return;
@@ -2259,17 +2259,37 @@ sheetEl.addEventListener('click',e=>{
 const who=(i,n,r,bg)=>'<div class="who"><span class="av" style="background:'+bg+'">'+i+'</span><div><b>'+n+'</b><small>'+r+'</small></div></div>';
 const whoOf=d=>who(d.name.charAt(0),d.name,d.role,d.color);
 const plain=h=>h.replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim();
-function talk(def,html,btns){
-  html=tx(personalize(html,G&&G.m,def));
-  const npcName=String(def.name||'Local resident');
-  const role=String(def.role||'KITCITY RESIDENT');
-  const wrapped=(btns||[]).map(b=>({t:personalize(tr(b.t)),g:b.g,m:b.m,f:b.f}));
-  const card='<div class="chronicle-talk-head"><span class="chronicle-talk-avatar" style="--npc-accent:'+escapeStoryHtml(def.color||BRAND)+'">'+escapeStoryHtml(npcName.slice(0,1).toUpperCase())+'</span><div class="chronicle-talk-identity"><small>NEARBY · '+escapeStoryHtml(G&&G.m?CITIES[G.m.city]?.name||G.m.state||'KITCITY':'KITCITY')+'</small><h3>'+escapeStoryHtml(npcName)+'</h3><span>'+escapeStoryHtml(role)+'</span></div></div><div class="chronicle-talk-body"><small class="chronicle-talk-speaker">'+escapeStoryHtml(npcName.toUpperCase())+'</small><div class="chronicle-talk-line">'+html+'</div></div>';
-  openSheet(card,wrapped,0,true);
-  sheetEl.classList.add('chronicle-dialogue-card');
-  modalEl.classList.add('chronicle-dialogue-open');
+function findMissionActor(name){
+  const target=String(name||'').trim().toLowerCase();
+  if(!target)return null;
+  if(target==='you'||target==='player'||target==='me')return player;
+  let found=null;
+  missionGroup.traverse(o=>{if(!found&&o.userData&&String(o.userData.storyCharacter||'').trim().toLowerCase()===target)found=o;});
+  if(!found){const actor=storyNPCActors.find(o=>String(o.userData&&o.userData.storyCharacter||'').trim().toLowerCase()===target);if(actor)found=actor;}
+  return found;
 }
-function badgeSVG(n,on,size){
+let missionBubbleState={token:0,timer:0,lines:[],index:0,bubble:null,active:false};
+function removeMissionBubble(){clearTimeout(missionBubbleState.timer);if(missionBubbleState.bubble&&missionBubbleState.bubble.parentNode)missionBubbleState.bubble.parentNode.removeChild(missionBubbleState.bubble);missionBubbleState.bubble=null;missionBubbleState.active=false;}
+function parseMissionDialogue(html,npcName){
+  const holder=document.createElement('div');const paragraphs=String(html||'').match(/<p\b[^>]*>[\s\S]*?<\/p>/gi)||[];const chunks=paragraphs.length?paragraphs:[String(html||'')];const lines=[];
+  chunks.forEach(chunk=>{holder.innerHTML=chunk.replace(/<br\s*\/?>/gi,' ');const text=String(holder.textContent||'').replace(/\s+/g,' ').trim();if(!text)return;const match=text.match(/^([^:]{1,48}):\s*(.*)$/);const speaker=match?match[1].trim():String(npcName||'Local resident');const line=match?match[2].trim():text;if(line)lines.push({speaker,text:line});});
+  return lines.length?lines:[{speaker:String(npcName||'Local resident'),text:holder.textContent||'Let us look at this together.'}];
+}
+function showMissionBubbleLine(token){
+  if(token!==missionBubbleState.token||!missionBubbleState.active)return;const line=missionBubbleState.lines[missionBubbleState.index];if(!line){finishMissionBubbleDialogue(token);return;}
+  if(missionBubbleState.bubble&&missionBubbleState.bubble.parentNode)missionBubbleState.bubble.parentNode.removeChild(missionBubbleState.bubble);
+  const bubble=document.createElement('div');bubble.className='kitcity-mission-bubble';bubble.setAttribute('role','status');bubble.setAttribute('aria-live','polite');const speaker=String(line.speaker||'').trim();const actor=findMissionActor(speaker)||findMissionActor(missionBubbleState.npcName)||player;
+  bubble.innerHTML='<small></small><p></p>';bubble.querySelector('small').textContent=/^(you|player|me)$/i.test(speaker)?'YOU':speaker.toUpperCase();bubble.querySelector('p').textContent=line.text;bubble.addEventListener('click',()=>advanceMissionBubbleDialogue(token));document.body.appendChild(bubble);missionBubbleState.bubble=bubble;missionBubbleState.actor=actor;
+  const delay=Math.min(5600,Math.max(2200,line.text.length*36));missionBubbleState.timer=setTimeout(()=>advanceMissionBubbleDialogue(token),delay);bubble.classList.add('bubble-pop');
+}
+function advanceMissionBubbleDialogue(token){if(token!==missionBubbleState.token||!missionBubbleState.active)return;clearTimeout(missionBubbleState.timer);missionBubbleState.index++;showMissionBubbleLine(token);}
+function finishMissionBubbleDialogue(token){if(token!==missionBubbleState.token)return;const buttons=missionBubbleState.buttons||[];removeMissionBubble();if(buttons.length){const wrapped=buttons.map(b=>({t:personalize(tr(b.t)),g:b.g,m:b.m,f:b.f}));openSheet('<div class="kitcity-decision-heading"><small>YOUR TURN</small><strong>Choose what happens next</strong></div>',wrapped,0,true);sheetEl.classList.add('kitcity-decision-card');modalEl.classList.add('kitcity-decision-open');}else{S.modal=false;talkBtn.classList.add('hidden');Snd.duck(false);}}
+function updateMissionBubblePosition(){const state=missionBubbleState;if(!state.active||!state.bubble||!state.actor||!state.actor.visible)return;camera.updateMatrixWorld();const point=new THREE.Vector3();state.actor.getWorldPosition(point);point.y+=state.actor===player?4.25:4.55;point.project(camera);const canvas=document.querySelector('#gl');const rect=canvas?canvas.getBoundingClientRect():{left:0,top:0,width:innerWidth,height:innerHeight,right:innerWidth,bottom:innerHeight};const x=rect.left+(point.x*.5+.5)*rect.width;const y=rect.top+(-point.y*.5+.5)*rect.height;const visible=point.z>-1&&point.z<1&&x>rect.left+12&&x<rect.right-12&&y>rect.top+18&&y<rect.bottom-28;if(!visible){state.bubble.classList.add('offscreen');return;}state.bubble.classList.remove('offscreen');state.bubble.style.left=Math.max(8,Math.min(innerWidth-8,x))+'px';state.bubble.style.top=Math.max(16,Math.min(innerHeight-12,y))+'px';}
+function talk(def,html,btns){
+  html=tx(personalize(html,G&&G.m,def));const npcName=String(def&&def.name||'Local resident');const wrapped=(btns||[]).map(b=>({t:personalize(tr(b.t)),g:b.g,m:b.m,f:b.f}));
+  if(G&&G.m&&/^m\d{2}$/.test(String(G.m.id||''))){removeMissionBubble();const token=++missionBubbleState.token;missionBubbleState.lines=parseMissionDialogue(html,npcName);missionBubbleState.index=0;missionBubbleState.npcName=npcName;missionBubbleState.buttons=wrapped;missionBubbleState.active=true;S.modal=true;joy.reset();cbs=[];sheetTok++;pendingReveal=null;sheetEl.innerHTML='';sheetEl.classList.remove('typing','chronicle-dialogue-card','kitcity-decision-card');modalEl.classList.remove('chronicle-dialogue-open','kitcity-decision-open');modalEl.classList.add('hidden');talkBtn.classList.add('hidden');Snd.duck(true);showMissionBubbleLine(token);return;}
+  const role=String(def.role||'KITCITY RESIDENT');const card='<div class="chronicle-talk-head"><span class="chronicle-talk-avatar" style="--npc-accent:'+escapeStoryHtml(def.color||BRAND)+'">'+escapeStoryHtml(npcName.slice(0,1).toUpperCase())+'</span><div class="chronicle-talk-identity"><small>NEARBY · '+escapeStoryHtml(G&&G.m?CITIES[G.m.city]?.name||G.m.state||'KITCITY':'KITCITY')+'</small><h3>'+escapeStoryHtml(npcName)+'</h3><span>'+escapeStoryHtml(role)+'</span></div></div><div class="chronicle-talk-body"><small class="chronicle-talk-speaker">'+escapeStoryHtml(npcName.toUpperCase())+'</small><div class="chronicle-talk-line">'+html+'</div></div>';openSheet(card,wrapped,0,true);sheetEl.classList.add('chronicle-dialogue-card');modalEl.classList.add('chronicle-dialogue-open');
+}function badgeSVG(n,on,size){
   const num=Number(n),idx=Number.isFinite(num)&&num>0?Math.floor(num)-1:Math.abs(String(n).split('').reduce((a,c)=>a+c.charCodeAt(0),0))%12;
   const colors=['#F4B942','#28C7A5','#5CA8FF','#C084FC','#FF8066','#F472B6','#A3D95B','#4DD0E1','#FFA64D','#818CF8','#E879F9','#7DD3A7'];
   const hue=(idx*137.508+38)%360;
@@ -3697,48 +3717,22 @@ function bannerSprite(text,sub){
  const t=new THREE.CanvasTexture(c);t.needsUpdate=true;const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:t,transparent:true,depthTest:true}));sp.scale.set(12,3,1);return sp;
 }
 function loadStep(){
-  clearGroup(missionGroup); storyNPCActors.length=0; colliders.length=cityCols; smoke=[]; ents=[]; goal=null;
-  const m=G.m,st=m.steps[G.i];
-  if(m.id==='m01'&&st.kind==='character'&&G.i<m.characterStepCount){
-    let target=null;
-    const fallbackSpots=['b','c','d','e','f','g','h'];
-    if(m.id==='m01') placeStoryOffice(SPOTS.story);
-    m.npcs.forEach((name,index)=>{
-      const npc=STORY_NPCS[name];
-      const spotKey=index===0?'a':index===1?'story':fallbackSpots[(index-2)%fallbackSpots.length];
-      const entity=placeNPC(npc,SPOTS[spotKey]||SPOTS.a);
-      entity.talk=()=>{ if(st.npc&&st.npc.name===name) st.run(); };
-      entity.active=()=>!!(st.npc&&st.npc.name===name);
-      ents.push(entity);
-      if(st.npc&&st.npc.name===name) target=entity;
-    });
-    goal=target||ents[0]||null;
+  clearGroup(missionGroup);storyNPCActors.length=0;colliders.length=cityCols;smoke=[];ents=[];goal=null;const m=G.m,st=m.steps[G.i];
+  if(m.id==='m01'&&st.kind==='character'&&G.i<m.characterStepCount){let target=null;const fallbackSpots=['b','c','d','e','f','g','h'];placeStoryOffice(SPOTS.story);m.npcs.forEach((name,index)=>{const npc=STORY_NPCS[name];const spotKey=index===0?'a':index===1?'story':fallbackSpots[(index-2)%fallbackSpots.length];const entity=placeNPC(npc,SPOTS[spotKey]||SPOTS.a);entity.talk=()=>{if(st.npc&&st.npc.name===name)st.run();};entity.active=()=>!!(st.npc&&st.npc.name===name);ents.push(entity);if(st.npc&&st.npc.name===name)target=entity;});goal=target||ents[0]||null;
+  }else if(m.id!=='m01'){
+    const castNames=[...new Set(m.npcs||[])],spotKeys=['a','story','b','c','d','e','f','g','h'];let activeCharacter=null;
+    castNames.forEach((name,index)=>{const npc=STORY_NPCS[name];if(!npc)return;const entity=placeNPC(npc,SPOTS[spotKeys[index%spotKeys.length]]||SPOTS.a);entity.talk=()=>{if(st.kind==='character'&&st.npc&&st.npc.name===name)st.run();};entity.active=()=>!!(st.kind==='character'&&st.npc&&st.npc.name===name);ents.push(entity);if(st.npc&&st.npc.name===name)activeCharacter=entity;});
+    if(st.kind==='character'){if(!activeCharacter&&st.npc){activeCharacter=placeNPC(st.npc,SPOTS[st.spot]||SPOTS.a);activeCharacter.talk=()=>st.run();activeCharacter.active=()=>true;ents.push(activeCharacter);}goal=activeCharacter||ents[0]||null;}
+    else if(st.kind==='clue'||st.kind==='challenge'){const entity=placeMissionEvidence(st,m,SPOTS[st.spot]||SPOTS.execution);entity.talk=()=>st.run();entity.active=()=>true;ents.push(entity);goal=entity;}
+    else{const entity=placeNPC(st.npc,SPOTS[st.spot]||SPOTS.a);entity.talk=()=>st.run();entity.active=()=>true;ents.push(entity);goal=entity;}
   }else{
-    if(st.kind==='character'){
-      const entity=placeNPC(st.npc,SPOTS[st.spot]||SPOTS.a);
-      entity.talk=()=>st.run();entity.active=()=>true;ents.push(entity);goal=entity;
-    }else if(st.kind==='clue'||st.kind==='challenge'){
-      const entity=m.id==='m01'?placeStoryClue(st,SPOTS[st.spot]||SPOTS.execution):placeMissionEvidence(st,m,SPOTS[st.spot]||SPOTS.execution);
-      entity.talk=()=>st.run();entity.active=()=>true;ents.push(entity);goal=entity;
-    }else{
-      const entity=placeNPC(st.npc,SPOTS[st.spot]||SPOTS.a);
-      entity.talk=()=>st.run();entity.active=()=>true;ents.push(entity);goal=entity;
-    }
-    if(m.id==='m01'&&st.id==='m01-transaction-record'){
-      /* Abdul meets the player at the separate verification centre for the guided check. */
-      const guide=placeNPC(STORY_NPCS.IamAbdul,SPOTS.ledgerGuide);
-      guide.active=()=>false; guide.talk=()=>{}; ents.push(guide);
-    }
-    if(m.id==='m01'&&(st.id==='m01-screenshot'||st.id==='m01-shop-records')){
-      /* Keep Softstorm physically at the shop while the player inspects the evidence there. */
-      const shopkeeper=placeNPC(STORY_NPCS.Softstorm,SPOTS.a);
-      shopkeeper.active=()=>false; shopkeeper.talk=()=>{}; ents.push(shopkeeper);
-    }
+    if(st.kind==='character'){const entity=placeNPC(st.npc,SPOTS[st.spot]||SPOTS.a);entity.talk=()=>st.run();entity.active=()=>true;ents.push(entity);goal=entity;}
+    else if(st.kind==='clue'||st.kind==='challenge'){const entity=placeStoryClue(st,SPOTS[st.spot]||SPOTS.execution);entity.talk=()=>st.run();entity.active=()=>true;ents.push(entity);goal=entity;}
+    else{const entity=placeNPC(st.npc,SPOTS[st.spot]||SPOTS.a);entity.talk=()=>st.run();entity.active=()=>true;ents.push(entity);goal=entity;}
+    if(st.id==='m01-transaction-record'){const guide=placeNPC(STORY_NPCS.IamAbdul,SPOTS.ledgerGuide);guide.active=()=>false;guide.talk=()=>{};ents.push(guide);}
+    if(st.id==='m01-screenshot'||st.id==='m01-shop-records'){const shopkeeper=placeNPC(STORY_NPCS.Softstorm,SPOTS.a);shopkeeper.active=()=>false;shopkeeper.talk=()=>{};ents.push(shopkeeper);}
   }
-  for(const ex of (m.extras||[])){
-    if(G.used[ex.id]) continue;
-    const entity=placeNPC(ex.npc,ex.spot); entity.ex=ex; entity.talk=()=>ex.run(entity); entity.active=()=>!G.used[ex.id]; ents.push(entity);
-  }
+  for(const ex of(m.extras||[])){if(G.used[ex.id])continue;const entity=placeNPC(ex.npc,ex.spot);entity.ex=ex;entity.talk=()=>ex.run(entity);entity.active=()=>!G.used[ex.id];ents.push(entity);}
   updateHUD();
 }
 function startMission(id,restart){
@@ -4496,6 +4490,7 @@ function update(dt,time){
   }
   nearEnt=null; let best=1e9;
   updateStoryNPCActors(dt,time);
+  updateMissionBubblePosition();
   for(const e of ents){
     if(e.object){e.x=e.object.position.x;e.z=e.object.position.z;}
     if(e.hidden||!e.active()) continue;
