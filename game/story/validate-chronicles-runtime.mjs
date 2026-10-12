@@ -31,6 +31,18 @@ requireText("const STORY_PLAYER_CHOICES={", "player-owned, mission-specific dial
 requireText("function chronicleClueStep(m,obj,index,spot)", "conversation-led mission clue interactions");
 requireText("const STORY_PLAYER_REACTIONS={", "player dialogue reacts to each mission situation");
 requireText("function chronicleChallengeStep(m,obj,index,spot)", "conversation-led mission decisions");
+for (const staleDialogue of [
+  "What should we check first, and who else has seen this?",
+  "Show me the evidence that matters.",
+  "Hear the other person’s side first",
+  "Let me check before I decide.",
+  "Fair. Let me look again.",
+  "Good call."
+]) {
+  if (engine.includes(staleDialogue)) errors.push("Retired generic dialogue remains: " + staleDialogue);
+}
+requireText("const STORY_NPC_FOLLOWUPS={", "mission-specific NPC reactions to player choices");
+
 requireText("The consequences belong to this case.", "player-owned mission decision dialogue");
 if (engine.includes("escapeStoryHtml(story.ending)") || engine.includes("escapeStoryHtml(story.cliffhanger)")) errors.push("Narrator-style mission wrap-up is still rendered on a conversation card.");
 requireText("function updateLivesHUD()", "three-heart life display");
