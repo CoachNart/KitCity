@@ -119,6 +119,9 @@ if (activityStart < 0 || activityEnd < 0) {
   }
 }
 
+for (const mission of MISSIONS.filter((item) => item.id !== "m01")) {
+  if (!Array.isArray(mission.sceneLines) || mission.sceneLines.length < mission.npcs.length) errors.push(mission.id + " is missing authored dialogue for one or more cast members.");
+}
 if (CHARACTER_ORDER.length !== 50) errors.push("Expected all 50 supplied character names");
 const firstEncounterSet = new Set();
 const runtimeFirstEncounters = [];
