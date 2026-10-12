@@ -326,26 +326,29 @@ const YT=(function(){
   function loadQueue(){
     const q=queue();
     try{
-      /* YouTube IFrame API accepts an array of video IDs as the first argument.
-         {playlist:[...]} is not a valid options object, so the call can fail
-         silently and leave the previous/default playlist playing. */
+      /* Most city queues currently contain one video. Load it directly rather
+         than asking YouTube to treat a single ID as a playlist; this forces a
+         real source switch instead of risking the previous queue continuing. */
       player.stopVideo();
-      if(q.videos&&q.videos.length){
+      if(q.videos&&q.videos.length===1){
+        player.loadVideoById({videoId:q.videos[0],startSeconds:0});
+      }else if(q.videos&&q.videos.length>1){
         player.loadPlaylist(q.videos,0);
       }else if(q.list){
         player.loadPlaylist({list:q.list,listType:'playlist',index:0});
       }else{
-        player.loadPlaylist(MUSIC_QUEUES.lagos.videos,0);
+        player.loadVideoById({videoId:MUSIC_QUEUES.lagos.videos[0],startSeconds:0});
       }
-      /* Apply repeat/shuffle after the new queue has had time to load. */
       setTimeout(()=>{
         if(!ready||!player) return;
         try{
-          player.setLoop(true);
+          player.setLoop(!!(q.videos&&q.videos.length>1));
           player.setShuffle(!!(q.videos&&q.videos.length>1));
         }catch(e){}
       },350);
-    }catch(e){}
+    }catch(e){
+      console.warn('[KitCity music] Could not load soundtrack for',currentKey,e);
+    }
   }
   function create(){
     mount();
@@ -363,12 +366,29 @@ const YT=(function(){
         onStateChange:ev=>{
           suppressSystemMediaControls();
           if(ev.data===1) errCount=0;
-          if(ev.data===0&&wantOn){ try{ player.nextVideo(); }catch(e){} }
+          if(ev.data===0&&wantOn){
+            const q=queue();
+            try{
+              if(q.videos&&q.videos.length===1){
+                player.seekTo(0,true);
+                player.playVideo();
+              }else{
+                player.nextVideo();
+              }
+            }catch(e){ loadQueue(); }
+          }
         },
-        onError:()=>{
+        onError:ev=>{
           errCount++;
+          console.warn('[KitCity music] YouTube source error',ev&&ev.data,'for city',currentKey);
           if(errCount>8){ failed=true; return; }
-          try{ player.nextVideo(); }catch(e){}
+          const q=queue();
+          if(q.videos&&q.videos.length===1){
+            /* Don't let a failed city source silently keep the previous song. */
+            try{ player.stopVideo(); }catch(e){}
+          }else{
+            try{ player.nextVideo(); }catch(e){}
+          }
         }
       }
     });
