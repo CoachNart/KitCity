@@ -211,9 +211,9 @@ const RAW_MISSIONS = [
   {
     "id": "m02",
     "chapterId": "ch01",
-    "title": "The Address Nobody Checked",
+    "title": "The Link Behind the Payment",
     "state": "Lagos",
-    "location": "Lagos Island market, cybercafé and electronics shop",
+    "location": "Lagos Island cybercafé and market records desk",
     "npcIds": [
       "joe-sef",
       "larai"
@@ -222,11 +222,11 @@ const RAW_MISSIONS = [
       "Joe_Sef",
       "Larai"
     ],
-    "narrativePurpose": "The laptop dispute is settled, but the transaction hash confirms the funds went to a recipient address the shop does not control. The buyer copied that address from a page he trusted. Follow the route from the shop counter to the cybercafé where he copied it, then to Larai's records desk. The page was real; the address had been swapped. Find out how without accusing the wrong person.",
+    "narrativePurpose": "The wrong-address payment is already confirmed from the previous mission. Now follow the buyer's trail: he copied the payment link from a lookalike page shared in a market chat. Work with Joe_Sef to preserve the page before it disappears, then join Larai to trace how the link spread and document what is known without blaming someone the evidence cannot identify.",
     "learningObjectives": [
-      "How transaction hashes, networks and recipient addresses fit together",
-      "How to preserve evidence before confronting someone",
-      "Why an account display name cannot prove who controls an address"
+      "Preserve a suspicious page, its URL and timestamp before it changes",
+      "Spot the difference between a genuine payment link and a lookalike",
+      "Trace how a message spread without treating a display name as proof of identity"
     ],
     "prerequisites": [
       "m01"
@@ -234,45 +234,45 @@ const RAW_MISSIONS = [
     "objectives": [
       {
         "id": "m02-obj-1",
-        "label": "Confirm the transaction explorer record with Joe_Sef",
+        "label": "Save the copied payment page before it disappears",
         "interactionTarget": "story:m02:objective:1",
         "required": true
       },
       {
         "id": "m02-obj-2",
-        "label": "Trace a transaction and compare the recipient address",
+        "label": "Compare the copied link with Softstorm's real shop page",
         "interactionTarget": "story:m02:objective:2",
         "required": true
       },
       {
         "id": "m02-obj-3",
-        "label": "Identify the source of the copied address",
+        "label": "Trace how the altered link reached the buyer",
         "interactionTarget": "story:m02:objective:3",
         "required": true
       },
       {
         "id": "m02-obj-4",
-        "label": "Record the address mismatch in an incident report",
+        "label": "Write an incident report that separates facts from guesses",
         "interactionTarget": "story:m02:objective:4",
         "required": true
       }
     ],
     "successConditions": [
-      "The player locates the public record using its hash and network",
-      "The player verifies the recipient mismatch and preserves the copied-page evidence",
-      "The player writes a factual report without claiming to know intent"
+      "The player preserves the copied page and its source details before the session clears",
+      "The player identifies the lookalike link without relying on the copied logo",
+      "The player records the message trail and distinguishes evidence from assumptions"
     ],
     "failureAndRetry": {
-      "onFailure": "If the player accuses the buyer or treats the display name as proof, Larai asks them to separate observation from assumption and revisit the page history.",
-      "retry": "Retry the current evidence interaction; preserve completed checks and the report draft."
+      "onFailure": "If the player refreshes the page before preserving it or publicly accuses the sender, Joe_Sef and Larai redirect them to the evidence that is still available.",
+      "retry": "Retry the current interaction; keep any page capture and timestamps already saved."
     },
     "rewards": {
       "xp": 115,
       "skillBadges": [
-        "Transaction Forensics"
+        "Digital Forensics"
       ],
       "portfolioArtifacts": [
-        "Lagos address-mismatch case file"
+        "Lagos lookalike-link incident report"
       ]
     },
     "storyFlags": [
@@ -281,11 +281,11 @@ const RAW_MISSIONS = [
       "copied_address_source_preserved"
     ],
     "nextMissionId": "m03",
-    "ending": "The record proves where the funds went, not why. The buyer recognises the page but cannot explain the altered address. Joe_Sef saves the URL and timestamp before the page disappears.",
-    "cliffhanger": "A nearby student says the same page offered to 'restore' a wallet if users entered twelve secret words. You leave Lagos with a second case: someone is targeting newcomers.",
+    "ending": "The copied page used Softstorm's name and logo, but its link was different from the real shop page. The market chat shows when the altered link spread; it does not prove who created it or who controlled the account that forwarded it.",
+    "cliffhanger": "As Joe saves the final capture, Larai receives a voice note from Timi, a student in Oyo. The same link is now offering to recover wallets—if people type in twelve secret words. Timi has not submitted them yet.",
     "sceneLines": [
-      "Joe_Sef: \"Guy, I pulled the hash up. The transfer is real; the receiver is not the shop. Don't tell me the buyer is a thief yet—I want to see the page he copied that address from.\"",
-      "Larai: \"This saved page has the shop name and logo, but the wallet address changes halfway down. Look at the timestamp beside the edit. Whoever did it left us a trail, not a confession.\""
+      "Joe_Sef: \"You came from Softstorm? Good. The buyer says he copied the payment link from a market chat, and I found the page still open on this machine. The café clears sessions when people log out. If we want to know what he saw, we save it before it vanishes.\"",
+      "Larai: \"I sent the real shop link to the market group this morning. A different one appeared later under a familiar display name. That gives us a trail to follow, not permission to accuse the account owner. Keep the times and the original message intact.\""
     ]
   },
   {
