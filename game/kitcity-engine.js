@@ -1562,7 +1562,7 @@ function addArchitectureDetail(key,x,z,w,h,d,color,xb){
 }
 function addBuilding(x,z,w,d,style,color,cx,cz,ox,oz){
   let h;
-  if(curCity==='lagos'&&style==='glass') h=(Math.abs(cx)<145&&Math.abs(cz)<145)?rr(96,142):rr(54,88);
+  if(curCity==='lagos'&&style==='glass') h=(Math.abs(cx)<145&&Math.abs(cz)<145)?rr(118,168):rr(58,96);
   else if(curCity==='lagos'&&style==='admin') h=rr(30,54);
   else if(curCity==='lagos'&&style==='flat') h=rr(22,38);
   else if(style==='zinc') h=rr(6,9); else if(style==='banco') h=rr(7,13); else if(style==='glass') h=rr(30,46); else if(style==='admin') h=rr(12,18); else h=rr(14,30);
@@ -1795,7 +1795,7 @@ function placeCar(c){
 }
 function vehicleBox(c,pos){ const along=pos==null?c.pos:pos,x=c.axis==='x'?along:c.lane,z=c.axis==='x'?c.lane:along,hx=c.axis==='x'?c.hl:c.hw,hz=c.axis==='x'?c.hw:c.hl; return {x0:x-hx,x1:x+hx,z0:z-hz,z1:z+hz}; }
 function boxesOverlap(a,b,pad=.35){ return a.x0<b.x1+pad&&a.x1>b.x0-pad&&a.z0<b.z1+pad&&a.z1>b.z0-pad; }
-function addCar(axis,k,dir,C){ const road=roadCoord(k,axis==='x'?'z':'x'),kind=pickKind(C),v=makeVehicle(kind,C),lane=axis==='x'?road+(dir>0?3.6:-3.6):road+(dir>0?-3.6:3.6),c={m:v.m,axis,dir,lane,pos:0,speed:rr(v.sp[0],v.sp[1]),hl:v.hl,hw:v.hw,kind};
+function addCar(axis,k,dir,C){ const road=roadCoord(k,axis==='x'?'z':'x'),kind=pickKind(C),v=makeVehicle(kind,C),lane=axis==='x'?road+(dir>0?3.1:-3.1):road+(dir>0?-3.1:3.1),c={m:v.m,axis,dir,lane,pos:0,speed:rr(v.sp[0],v.sp[1]),hl:v.hl,hw:v.hw,kind};
   for(let tries=0;tries<36;tries++){const candidate=rr(-225,225),box=vehicleBox(c,candidate);if(cars.every(o=>!boxesOverlap(box,vehicleBox(o)))){c.pos=candidate;break;}if(tries===35)c.pos=rr(-225,225);}
   trafficGroup.add(v.m);placeCar(c);cars.push(c);
 }
@@ -2456,7 +2456,7 @@ function addCityBlockBuildings(C,cx,cz,ix,iz){
     if(nearSpecial(x,z,core?11:18)) continue;
     let style=pickStyle(C);
     if(curCity==='lagos') style=core?(RN()<.86?'glass':'admin'):(RN()<.62?'glass':(RN()<.8?'admin':'flat'));
-    const palette=['#A8DCE8','#BFDDE5','#8FC5D7','#D7E8EA','#78B5CD','#C3D3D9','#8DAFC0'];
+    const palette=['#6DC6E6','#91D8F0','#C7EAF3','#F0F7FA','#4F9FC5','#B7DCE8','#D8E8ED','#7EB3CB'];
     addBuilding(x,z,w*rr(.96,1.08),d*rr(.96,1.08),style,curCity==='lagos'?pk(palette):pk(C.paint),cx,cz,ox,oz);
   }
 }
@@ -5287,7 +5287,7 @@ function update(dt,time){
   const compass=$('#compass');
   const stepNow=G&&G.m&&G.m.steps?G.m.steps[G.i]:null;
   const activeNav=ents.find(e=>{try{return e.active&&e.active();}catch(_){return false;}})||null;
-  const navCandidates=[goal,activeNav,stepNow&&SPOTS[stepNow.spot],(G&&G.m&&(G.m.city==='lagos'||curCity==='lagos'))?SPOTS.a:null];
+  const navCandidates=[goal,activeNav,stepNow&&SPOTS[stepNow.spot],(G&&G.m&&(G.m.city==='lagos'||curCity==='lagos'))?(SPOTS.a||{x:0,z:0}):null];
   const navGoal=navCandidates.find(t=>{
     if(!t)return false;
     const x=t.object&&t.object.position?t.object.position.x:t.x;
