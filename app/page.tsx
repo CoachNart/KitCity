@@ -50,7 +50,7 @@ const GAME_MARKUP = `
     </div>
     <div class="cta">
       <button id="signInPageBtn" class="btn" type="button">Sign in</button>
-      <div class="langs"><button type="button" data-lang="en">English</button><button type="button" data-lang="pcm">Naija Pidgin</button></div>
+      <div class="langs" role="group" aria-label="Choose language"><button type="button" data-lang="en" aria-label="English">EN</button><button type="button" data-lang="pcm" aria-label="Naija Pidgin">PID</button><button type="button" data-lang="ig" aria-label="Igbo">IG</button><button type="button" data-lang="ha" aria-label="Hausa">HA</button></div>
     </div>
     <p class="line" data-t data-pcm="Every city dey teach you something new.">Every city teaches you something new.</p>
     <p class="credit"><a href="https://t3kit.xyz" target="_blank" rel="noopener" data-t data-pcm="Na T3Kit game.">A T3Kit game.</a> <span data-t data-pcm="Easy way enter everything for web3.">Easy access to everything in web3.</span></p>
