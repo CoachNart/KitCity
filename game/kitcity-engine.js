@@ -2483,11 +2483,10 @@ function chronicleNpcStep(m,name,index){
   const step={kind:'character',characterIndex:index,label:'Talk to '+name,spot:index===0?'a':index===1?'story':['b','c','d','e','f','g','h'][index%7],npc};
   step.run=function(){
     const line=m.id==='m02'&&index===0
-      ?'Joe, the buyer says he copied the shop address from this account page. The hash is real, but the receiver is wrong. Help me save the page before it changes.'
+      ?'The buyer says he copied the shop address from this account page. The hash is real, but the receiver is wrong. Help me save the page before it changes.'
       :m.id==='m02'&&index===1
       ?'The transaction record is clear now. I saved the page, but this address differs from the one Softstorm gave the buyer. Can you check the record of the page change?'
-      :index===0?(STORY_BRIDGES[m.id]||chronicleNpcLine(m,name,index))
-      :chronicleNpcLine(m,name,index);
+:chronicleNpcLine(m,name,index);
     const playerLine=(STORY_PLAYER_REACTIONS[m.id]||[])[index]||'I want to understand what happened here before we decide what to do.';
     const html='<p><b>'+escapeStoryHtml(name.toUpperCase())+':</b> '+escapeStoryHtml(line)+'</p><p><b>YOU:</b> '+escapeStoryHtml(playerLine)+'</p>';
     const choices=STORY_PLAYER_CHOICES[m.id]||['Inspect the specific record in front of us','Ask what changed in this situation'];
