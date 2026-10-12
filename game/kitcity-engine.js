@@ -3095,6 +3095,40 @@ const MISSIONS=CHRONICLE_MISSIONS.map((story,index)=>{
         ]);
       }}
     ];
+  }else if(story.id==='m13'){
+    const leemah=STORY_NPCS.Leemah;
+    const kenny=STORY_NPCS.Kenny;
+    steps=[
+      {kind:'character',id:'m13-obj-1',label:story.objectives[0].label,spot:'ledger',npc:leemah,run(){
+        talk(leemah,"<p><b>LEEMAH:</b> You're really taking this? The host cancelled ten minutes ago. People are already seated, and the first question on the screen says: 'If I connect my wallet, can I ever be completely safe?'</p><p><b>YOU:</b> I need to check the facts before I answer that in front of everyone.</p>",[
+          {t:'Review the safety notes: wallet connection is not the same as giving away recovery words, but malicious approvals and phishing can still create risk.',f:()=>talk(kenny,"<p><b>KENNY:</b> That's the distinction. A connection can expose an address and let a site request actions. An approval can grant token permissions. A signature or transaction can do something different again. We shouldn't call every prompt harmless—or every connection a theft.</p>",[{t:'Use the verified notes and separate connection, signature, transaction and approval.',f:()=>{G.evidence.m13_facts_verified=true;G.evidence.m13_risk_distinctions=true;finishStep();}}])},
+          {t:'Tell the audience that connecting a wallet is always safe if the website looks professional.',f:()=>talk(leemah,"<p><b>LEEMAH:</b> A polished website proves nothing about its intentions. Let's verify what each action permits and explain the limits honestly.</p>",[{t:'Review the notes and distinguish connection, signature, transaction and approval.',f:()=>{G.evidence.m13_facts_verified=true;G.evidence.m13_risk_distinctions=true;finishStep();}}])}
+        ]);
+      }},
+      {kind:'clue',id:'m13-obj-2',label:story.objectives[1].label,spot:'screenshot',title:'Session run sheet',sign:'SET THE ROOM UP',npc:kenny,run(){
+        talk(kenny,"<p><b>KENNY:</b> We have a mic, a screen and a room full of questions. Give them a useful opening, set one rule for the Q&A, and leave time for a recap. No fake promises and no shaming people who got caught out.</p>",[
+          {t:'Open with the goal, explain that questions are welcome, and ask people not to post seed phrases, private chats or identifying details.',f:()=>{G.evidence.m13_opening_prepared=true;G.evidence.m13_qna_rules_set=true;finishStep();}},
+          {t:'Tell everyone to drop wallet screenshots and private messages in the public chat.',f:()=>talk(kenny,"<p><b>KENNY:</b> That could expose addresses, balances and private details. Ask people to describe the problem without posting secrets or personal information. We can take sensitive reports through the official private route.</p>",[{t:'Set the privacy rule and organise the audience questions.',f:()=>{G.evidence.m13_opening_prepared=true;G.evidence.m13_qna_rules_set=true;finishStep();}}])}
+        ]);
+      }},
+      {kind:'character',id:'m13-obj-3',label:story.objectives[2].label,spot:'buyer',npc:leemah,run(){
+        talk(leemah,"<p><b>LEEMAH:</b> You're live. Someone at the front says, 'All this wallet safety talk is just fear. My friend connects to sites every day and nothing happens.' Another person says they now fear every wallet prompt. How do you handle the room?</p>",[
+          {t:'Acknowledge both experiences, explain that risk depends on the site and requested action, and invite a specific question without exposing personal details.',f:()=>talk(kenny,"<p><b>KENNY:</b> The room's listening now. One person asks if a wallet can ever be completely safe. Give them an honest answer with practical steps, not a guarantee.</p>",[{t:'Host the discussion calmly and invite the difficult question.',f:()=>{G.evidence.m13_session_moderated=true;G.evidence.m13_disagreement_handled=true;finishStep();}}])},
+          {t:'Tell the sceptic they are foolish and shut down their question.',f:()=>talk(leemah,"<p><b>LEEMAH:</b> We can't build trust by humiliating someone for asking. Keep the question open, correct the claim and guide the room back to evidence.</p>",[{t:'Acknowledge the disagreement and moderate the question respectfully.',f:()=>{G.evidence.m13_session_moderated=true;G.evidence.m13_disagreement_handled=true;finishStep();}}])}
+        ]);
+      }},
+      {kind:'clue',id:'m13-obj-4',label:story.objectives[3].label,spot:'shopdesk',title:'The hard question',sign:'ANSWER & RECAP',npc:kenny,run(){
+        talk(kenny,"<p><b>KENNY:</b> The question is direct: 'Can a wallet ever be completely safe?' The room has gone quiet. What do you say?</p>",[
+          {t:'No setup is risk-free. Verify the domain and action, read signatures and approvals, use trusted support routes, protect recovery words offline and check permissions when needed.',f:()=>talk(leemah,"<p><b>LEEMAH:</b> That's honest. Don't promise perfect safety. Now write a short recap with the key distinctions, practical checks and official reporting route. Keep the member from the impersonation case anonymous.</p>",[{t:'Publish the recap with verified advice, clear limits and the official reporting route.',f:()=>{G.evidence.m13_hard_question_answered=true;G.evidence.m13_recap_published=true;G.evidence.m13_privacy_preserved=true;finishStep();}}])},
+          {t:'Promise that following our checklist makes a wallet 100% safe.',f:()=>talk(kenny,"<p><b>KENNY:</b> No checklist can guarantee that. A good session makes risks easier to recognise and manage; it doesn't make them disappear. Say that clearly, then give practical steps.</p>",[{t:'Explain the limits honestly and publish the useful safety recap.',f:()=>{G.evidence.m13_hard_question_answered=true;G.evidence.m13_recap_published=true;G.evidence.m13_privacy_preserved=true;finishStep();}}])}
+        ]);
+      }},
+      {kind:'character',id:'m13-close-session',label:'Wrap the session and save the recap',spot:'buyer',npc:leemah,run(){
+        talk(leemah,"<p><b>LEEMAH:</b> The room's asking better questions now. We didn't promise perfect safety; we gave people ways to make better decisions and a route to report suspicious activity.</p><p><b>KENNY:</b> I've clipped the practical section and sent the recap to people who couldn't attend. No private messages or victim details in the clip.</p><p><b>YOU:</b> Good. A useful session gives people something they can use after they leave.</p><p><b>LEEMAH:</b> One founder has another question. Their product announcement barely reached anyone, even though the recap did.</p><p><b>KENNY:</b> Kore and Veedima are waiting down the street. They say the message itself might be the problem.</p>",[
+          {t:'Save the safety-session recap and follow the next lead.',f:()=>{P.storyFlags=Object.assign({},P.storyFlags||{},{m13_complete:true,community_safety_session_delivered:true});G.evidence.chapterSummary=true;finishStep();}}
+        ]);
+      }}
+    ];
   }else{
     steps=[];
     const objectives=story.objectives||[];
