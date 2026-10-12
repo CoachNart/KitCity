@@ -147,91 +147,91 @@ const MUSIC_QUEUES={
   /* Lagos is the sole retained legacy soundtrack. Every other city has its own replacement source. */
   'lagos':{label:"Lagos · Soundtrack",videos:["rhrCG0Vtx3g"]},
   'abuja':{label:"Abuja · Contemporary Afrobeats",videos:["CWu5SbIrBTc"]},
-  'ph':{label:"Port Harcourt · Niger Delta / Ijaw",videos:["N6NDKC5xZrs"]},
-  'benin':{label:"Benin City · Edo / Delta grooves",videos:["qcBFntpoW4M"]},
+  'ph':{label:"Port Harcourt · Contemporary Afrobeats",videos:["k6eE3c70hgg"]},
+  'benin':{label:"Benin City · Edo Afrobeatss",videos:["qARrn7G067w"]},
   'calabar':{label:"Calabar · Efik / Ibibio",videos:["a-OUsEJyj8k"]},
-  'jos':{label:"Jos · Plateau / regional Naija",videos:["xHO9iE9BEnQ"]},
-  'ibadan':{label:"Ibadan · Yoruba / Fuji",videos:["Lu__S3sCoBc"]},
-  'enugu':{label:"Enugu · Igbo highlife / Afrobeat",videos:["q49JaeHIuF4"]},
-  'kano':{label:"Kano · Hausa / Arewa",videos:["DYWBoXz3-qw"]},
-  'kaduna':{label:"Kaduna · Hausa / Arewa",videos:["w69hlGyNEYI"]},
+  'jos':{label:"Jos · Contemporary Afrobeats",videos:["X3Ai6osw3Mk"]},
+  'ibadan':{label:"Ibadan · Yoruba Afrobeats",videos:["MCMyKcUNR8w"]},
+  'enugu':{label:"Enugu · Igbo Afrobeats",videos:["q49JaeHIuF4"]},
+  'kano':{label:"Kano · Hausa Afrobeats",videos:["DYWBoXz3-qw"]},
+  'kaduna':{label:"Kaduna · Hausa Afrobeats",videos:["w69hlGyNEYI"]},
   'maiduguri':{label:"Maiduguri · Kanuri / Hausa",videos:["N3xkWjh7UNM"]},
-  'owerri':{label:"Owerri · Igbo highlife / Afrobeat",videos:["dGCbqU1sM3M"]},
-  'aba':{label:"Aba · Igbo highlife / Afrobeat",videos:["4XY5106FZzE"]},
-  'umuahia':{label:"Umuahia · Igbo highlife / Afrobeat",videos:["71hoOjpy9tY"]},
-  'awka':{label:"Awka · Igbo highlife / Afrobeat",videos:["9aEEIyw34Xw"]},
-  'onitsha':{label:"Onitsha · Igbo highlife / Afrobeat",videos:["UVnMZUWZt-U"]},
+  'owerri':{label:"Owerri · Igbo Afrobeats",videos:["dGCbqU1sM3M"]},
+  'aba':{label:"Aba · Igbo Afrobeats",videos:["4XY5106FZzE"]},
+  'umuahia':{label:"Umuahia · Igbo Afrobeats",videos:["71hoOjpy9tY"]},
+  'awka':{label:"Awka · Igbo Afrobeats",videos:["9aEEIyw34Xw"]},
+  'onitsha':{label:"Onitsha · Igbo Afrobeats",videos:["UVnMZUWZt-U"]},
   'asaba':{label:"Asaba · Anioma / Delta",videos:["lw38RXlOyeY"]},
   'uyo':{label:"Uyo · Efik / Ibibio",videos:["xBxwayuEgJA"]},
   'ikot-ekpene':{label:"Ikot Ekpene · Efik / Ibibio",videos:["L8lwGVbple4"]},
-  'yenagoa':{label:"Yenagoa · Niger Delta / Ijaw",videos:["yQIeKWFmBwE"]},
+  'yenagoa':{label:"Yenagoa · Niger Delta Afrobeats",videos:["yQIeKWFmBwE"]},
   'warri':{label:"Warri · Urhobo / Itsekiri",videos:["zrgJAxScaAs"]},
   'makurdi':{label:"Makurdi · Tiv / Middle Belt",videos:["VmakV_meVY0"]},
-  'ilorin':{label:"Ilorin · Yoruba / Fuji",videos:["cy-DCLQxKuY"]},
-  'akure':{label:"Akure · Yoruba / Fuji",videos:["JnKlgIQ4yfA"]},
-  'ado-ekiti':{label:"Ado-Ekiti · Yoruba / Fuji",videos:["cSCmhUaiqQw"]},
-  'osogbo':{label:"Osogbo · Yoruba / Apala & Fuji",videos:["vpzrekcA53U"]},
-  'abeokuta':{label:"Abeokuta · Yoruba / Fuji",videos:["_hKuvfH1j_w"]},
+  'ilorin':{label:"Ilorin · Yoruba Afrobeats",videos:["GVE9G5CiLbs"]},
+  'akure':{label:"Akure · Yoruba Afrobeats",videos:["H8XzauZLbfc"]},
+  'ado-ekiti':{label:"Ado-Ekiti · Yoruba Afrobeats",videos:["rRjtTx49hkc"]},
+  'osogbo':{label:"Osogbo · Yoruba Afrobeats",videos:["VcyAd4zE1bs"]},
+  'abeokuta':{label:"Abeokuta · Yoruba Afrobeats",videos:["j2u5Gbadn7o"]},
   'lokoja':{label:"Lokoja · Igala / Confluence",videos:["77iJTnmILrw"]},
-  'lafia':{label:"Lafia · Hausa / Arewa",videos:["mxULSjNvC7Y"]},
-  'bauchi':{label:"Bauchi · Hausa / Arewa",videos:["jwxbXMCHj5c"]},
-  'gombe':{label:"Gombe · Hausa / Arewa",videos:["KIkN66oFBns"]},
+  'lafia':{label:"Lafia · Hausa Afrobeats",videos:["mxULSjNvC7Y"]},
+  'bauchi':{label:"Bauchi · Hausa Afrobeats",videos:["jwxbXMCHj5c"]},
+  'gombe':{label:"Gombe · Hausa Afrobeats",videos:["KIkN66oFBns"]},
   'damaturu':{label:"Damaturu · Kanuri / Hausa",videos:["TxRI1o4UCzM"]},
   'jalingo':{label:"Jalingo · Fulfulde / North-East",videos:["cfadXIZA48U"]},
   'yola':{label:"Yola · Fulfulde / North-East",videos:["cv5chGtfVTg"]},
-  'sokoto':{label:"Sokoto · Hausa / Arewa",videos:["1tn8vcSPe70"]},
-  'katsina':{label:"Katsina · Hausa / Arewa",videos:["Vl4A_zA_kpk"]},
-  'birnin-kebbi':{label:"Birnin Kebbi · Hausa / Arewa",videos:["CUnp5hD2tZQ"]},
+  'sokoto':{label:"Sokoto · Hausa Afrobeats",videos:["1tn8vcSPe70"]},
+  'katsina':{label:"Katsina · Hausa Afrobeats",videos:["Vl4A_zA_kpk"]},
+  'birnin-kebbi':{label:"Birnin Kebbi · Hausa Afrobeats",videos:["CUnp5hD2tZQ"]},
   'minna':{label:"Minna · Nupe / Arewa",videos:["WQFDWM-6ytA"]},
-  'dutse':{label:"Dutse · Hausa / Arewa",videos:["-InI_om5zpQ"]},
-  'gusau':{label:"Gusau · Hausa / Arewa",videos:["hCR54DuQoBM"]},
+  'dutse':{label:"Dutse · Hausa Afrobeats",videos:["-InI_om5zpQ"]},
+  'gusau':{label:"Gusau · Hausa Afrobeats",videos:["hCR54DuQoBM"]},
   'kafanchan':{label:"Kafanchan · Southern Kaduna",videos:["dkPClcO4Whw"]},
   'damboa':{label:"Damboa · Kanuri / Hausa",videos:["sO3H9n7J8E4"]}
 };
 /* Cultural music routing. Each city keeps its own dedicated queue/video ID;
    Lagos is intentionally excluded so its existing soundtrack remains untouched. */
 const CITY_MUSIC_PROFILE={
-  abuja:{genre:'Contemporary Nigerian Afrobeats',label:'Abuja · Contemporary Afrobeats'},
-  ph:{genre:'Niger Delta / Ijaw Afrobeat',label:'Port Harcourt · Niger Delta / Ijaw'},
-  benin:{genre:'Edo Afrobeat',label:'Benin City · Edo Afrobeat'},
-  calabar:{genre:'Efik / Ibibio Afrobeat',label:'Calabar · Efik / Ibibio Afrobeat'},
-  jos:{genre:'Plateau regional Afrobeat',label:'Jos · Plateau regional Afrobeat'},
-  ibadan:{genre:'Yoruba Afrobeat / Fuji',label:'Ibadan · Yoruba Afrobeat / Fuji'},
-  enugu:{genre:'Igbo Afrobeat / Highlife',label:'Enugu · Igbo Afrobeat / Highlife'},
-  kano:{genre:'Hausa Afrobeat / Arewa',label:'Kano · Hausa Afrobeat / Arewa'},
-  kaduna:{genre:'Hausa Afrobeat / Arewa',label:'Kaduna · Hausa Afrobeat / Arewa'},
-  maiduguri:{genre:'Kanuri / Hausa Afrobeat',label:'Maiduguri · Kanuri / Hausa Afrobeat'},
-  owerri:{genre:'Igbo Afrobeat / Highlife',label:'Owerri · Igbo Afrobeat / Highlife'},
-  aba:{genre:'Igbo Afrobeat / Highlife',label:'Aba · Igbo Afrobeat / Highlife'},
-  umuahia:{genre:'Igbo Afrobeat / Highlife',label:'Umuahia · Igbo Afrobeat / Highlife'},
-  awka:{genre:'Igbo Afrobeat / Highlife',label:'Awka · Igbo Afrobeat / Highlife'},
-  onitsha:{genre:'Igbo Afrobeat / Highlife',label:'Onitsha · Igbo Afrobeat / Highlife'},
-  asaba:{genre:'Anioma / Igbo Afrobeat',label:'Asaba · Anioma / Igbo Afrobeat'},
-  uyo:{genre:'Ibibio Afrobeat',label:'Uyo · Ibibio Afrobeat'},
-  'ikot-ekpene':{genre:'Ibibio Afrobeat',label:'Ikot Ekpene · Ibibio Afrobeat'},
-  yenagoa:{genre:'Ijaw Afrobeat',label:'Yenagoa · Ijaw Afrobeat'},
-  warri:{genre:'Urhobo / Itsekiri Afrobeat',label:'Warri · Urhobo / Itsekiri Afrobeat'},
-  makurdi:{genre:'Tiv / Middle Belt Afrobeat',label:'Makurdi · Tiv / Middle Belt Afrobeat'},
-  ilorin:{genre:'Yoruba Afrobeat / Fuji',label:'Ilorin · Yoruba Afrobeat / Fuji'},
-  akure:{genre:'Yoruba Afrobeat / Fuji',label:'Akure · Yoruba Afrobeat / Fuji'},
-  'ado-ekiti':{genre:'Yoruba Afrobeat / Fuji',label:'Ado-Ekiti · Yoruba Afrobeat / Fuji'},
-  osogbo:{genre:'Yoruba Afrobeat / Fuji',label:'Osogbo · Yoruba Afrobeat / Fuji'},
-  abeokuta:{genre:'Yoruba Afrobeat / Fuji',label:'Abeokuta · Yoruba Afrobeat / Fuji'},
-  lokoja:{genre:'Igala / Confluence Afrobeat',label:'Lokoja · Igala / Confluence Afrobeat'},
-  lafia:{genre:'Hausa Afrobeat / Arewa',label:'Lafia · Hausa Afrobeat / Arewa'},
-  bauchi:{genre:'Hausa Afrobeat / Arewa',label:'Bauchi · Hausa Afrobeat / Arewa'},
-  gombe:{genre:'Hausa Afrobeat / Arewa',label:'Gombe · Hausa Afrobeat / Arewa'},
-  damaturu:{genre:'Kanuri Afrobeat',label:'Damaturu · Kanuri Afrobeat'},
-  jalingo:{genre:'Fulfulde / Jukun regional Afrobeat',label:'Jalingo · Fulfulde / Jukun regional Afrobeat'},
-  yola:{genre:'Fulfulde regional Afrobeat',label:'Yola · Fulfulde regional Afrobeat'},
-  sokoto:{genre:'Hausa Afrobeat / Arewa',label:'Sokoto · Hausa Afrobeat / Arewa'},
-  katsina:{genre:'Hausa Afrobeat / Arewa',label:'Katsina · Hausa Afrobeat / Arewa'},
-  'birnin-kebbi':{genre:'Hausa Afrobeat / Arewa',label:'Birnin Kebbi · Hausa Afrobeat / Arewa'},
-  minna:{genre:'Nupe / Niger regional Afrobeat',label:'Minna · Nupe / Niger regional Afrobeat'},
-  dutse:{genre:'Hausa Afrobeat / Arewa',label:'Dutse · Hausa Afrobeat / Arewa'},
-  gusau:{genre:'Hausa Afrobeat / Arewa',label:'Gusau · Hausa Afrobeat / Arewa'},
-  kafanchan:{genre:'Southern Kaduna regional Afrobeat',label:'Kafanchan · Southern Kaduna regional Afrobeat'},
-  damboa:{genre:'Kanuri Afrobeat',label:'Damboa · Kanuri Afrobeat'}
+  abuja:{genre:'Contemporary Afrobeats',label:'Abuja · Contemporary Afrobeats'},
+  ph:{genre:'Niger Delta Afrobeats',label:'Port Harcourt · Niger Delta Afrobeats'},
+  benin:{genre:'Edo Afrobeats',label:'Benin City · Edo Afrobeats'},
+  calabar:{genre:'Efik / Ibibio Afrobeatss',label:'Calabar · Efik / Ibibio Afrobeatss'},
+  jos:{genre:'Plateau Afrobeats',label:'Jos · Plateau Afrobeats'},
+  ibadan:{genre:'Yoruba Afrobeats',label:'Ibadan · Yoruba Afrobeats'},
+  enugu:{genre:'Igbo Afrobeats',label:'Enugu · Igbo Afrobeats'},
+  kano:{genre:'Hausa Afrobeats',label:'Kano · Hausa Afrobeats'},
+  kaduna:{genre:'Hausa Afrobeats',label:'Kaduna · Hausa Afrobeats'},
+  maiduguri:{genre:'Kanuri / Hausa Afrobeats',label:'Maiduguri · Kanuri / Hausa Afrobeats'},
+  owerri:{genre:'Igbo Afrobeats',label:'Owerri · Igbo Afrobeats'},
+  aba:{genre:'Igbo Afrobeats',label:'Aba · Igbo Afrobeats'},
+  umuahia:{genre:'Igbo Afrobeats',label:'Umuahia · Igbo Afrobeats'},
+  awka:{genre:'Igbo Afrobeats',label:'Awka · Igbo Afrobeats'},
+  onitsha:{genre:'Igbo Afrobeats',label:'Onitsha · Igbo Afrobeats'},
+  asaba:{genre:'Anioma / Igbo Afrobeats',label:'Asaba · Anioma / Igbo Afrobeats'},
+  uyo:{genre:'Ibibio Afrobeats',label:'Uyo · Ibibio Afrobeats'},
+  'ikot-ekpene':{genre:'Ibibio Afrobeats',label:'Ikot Ekpene · Ibibio Afrobeats'},
+  yenagoa:{genre:'Ijaw Afrobeats',label:'Yenagoa · Ijaw Afrobeats'},
+  warri:{genre:'Urhobo / Itsekiri Afrobeats',label:'Warri · Urhobo / Itsekiri Afrobeats'},
+  makurdi:{genre:'Tiv / Middle Belt Afrobeats',label:'Makurdi · Tiv / Middle Belt Afrobeats'},
+  ilorin:{genre:'Yoruba Afrobeats',label:'Ilorin · Yoruba Afrobeats'},
+  akure:{genre:'Yoruba Afrobeats',label:'Akure · Yoruba Afrobeats'},
+  'ado-ekiti':{genre:'Yoruba Afrobeats',label:'Ado-Ekiti · Yoruba Afrobeats'},
+  osogbo:{genre:'Yoruba Afrobeats',label:'Osogbo · Yoruba Afrobeats'},
+  abeokuta:{genre:'Yoruba Afrobeats',label:'Abeokuta · Yoruba Afrobeats'},
+  lokoja:{genre:'Igala / Confluence Afrobeats',label:'Lokoja · Igala / Confluence Afrobeats'},
+  lafia:{genre:'Hausa Afrobeats',label:'Lafia · Hausa Afrobeats'},
+  bauchi:{genre:'Hausa Afrobeats',label:'Bauchi · Hausa Afrobeats'},
+  gombe:{genre:'Hausa Afrobeats',label:'Gombe · Hausa Afrobeats'},
+  damaturu:{genre:'Kanuri Afrobeats',label:'Damaturu · Kanuri Afrobeats'},
+  jalingo:{genre:'Fulfulde / Jukun Afrobeats',label:'Jalingo · Fulfulde / Jukun Afrobeats'},
+  yola:{genre:'Fulfulde Afrobeats',label:'Yola · Fulfulde Afrobeats'},
+  sokoto:{genre:'Hausa Afrobeats',label:'Sokoto · Hausa Afrobeats'},
+  katsina:{genre:'Hausa Afrobeats',label:'Katsina · Hausa Afrobeats'},
+  'birnin-kebbi':{genre:'Hausa Afrobeats',label:'Birnin Kebbi · Hausa Afrobeats'},
+  minna:{genre:'Nupe / Niger Afrobeats',label:'Minna · Nupe / Niger Afrobeats'},
+  dutse:{genre:'Hausa Afrobeats',label:'Dutse · Hausa Afrobeats'},
+  gusau:{genre:'Hausa Afrobeats',label:'Gusau · Hausa Afrobeats'},
+  kafanchan:{genre:'Southern Kaduna Afrobeats',label:'Kafanchan · Southern Kaduna Afrobeats'},
+  damboa:{genre:'Kanuri Afrobeats',label:'Damboa · Kanuri Afrobeats'}
 };
 Object.entries(CITY_MUSIC_PROFILE).forEach(([key,profile])=>{
   if(MUSIC_QUEUES[key]) MUSIC_QUEUES[key].label=profile.label;
@@ -343,7 +343,7 @@ const YT=(function(){
       const custom=parseId(P.pl);
       if(custom) return {label:'Custom YouTube playlist',list:custom,videos:null};
     }
-    return MUSIC_QUEUES[currentKey]||MUSIC_QUEUES.lagos;
+    return MUSIC_QUEUES[currentKey]||null;
   }
   function vol(){ if(ready) try{ player.setVolume(duck?22:55); }catch(e){} }
   function suppressSystemMediaControls(){
@@ -367,6 +367,7 @@ const YT=(function(){
   }
   function loadQueue(){
     const q=queue();
+    if(!q){ console.error('[KitCity music] No queue for current city:',currentKey); try{player.stopVideo();}catch(e){} return; }
     try{
       /* Most city queues currently contain one video. Load it directly rather
          than asking YouTube to treat a single ID as a playlist; this forces a
@@ -379,7 +380,9 @@ const YT=(function(){
       }else if(q.list){
         player.loadPlaylist({list:q.list,listType:'playlist',index:0});
       }else{
-        player.loadVideoById({videoId:MUSIC_QUEUES.lagos.videos[0],startSeconds:0});
+        console.error('[KitCity music] Empty soundtrack queue for city:',currentKey);
+        try{player.stopVideo();}catch(e){}
+        return;
       }
       setTimeout(()=>{
         if(!ready||!player) return;
@@ -472,7 +475,9 @@ const YT=(function(){
       /* The shared hub keeps the last selected playable city's soundtrack. */
       const requested=normalized==='kitcity'?(resolveCityMusicKey(curCity)||'lagos'):resolveCityMusicKey(normalized);
       if(!requested){
-        /* Never hide a routing bug by playing Lagos in an unrelated city. */
+        /* Clear the old key as well as stopping playback: otherwise a later unlock
+           could restart the previous city's soundtrack under an unmapped state. */
+        currentKey=null;
         console.error('[KitCity music] No city soundtrack mapping for:',city,'normalized as',normalized);
         if(ready){ try{ player.stopVideo(); }catch(e){} }
         return;
@@ -483,12 +488,12 @@ const YT=(function(){
         try{ loadQueue(); if(wantOn) play(); }catch(e){}
       }
     },
-    currentLabel(){ return currentKey==='custom'&&parseId(P.pl)?'Custom YouTube playlist':(MUSIC_QUEUES[currentKey]||MUSIC_QUEUES.lagos).label; },
+    currentLabel(){ return currentKey==='custom'&&parseId(P.pl)?'Custom YouTube playlist':(MUSIC_QUEUES[currentKey]||{label:'No soundtrack mapped'}).label; },
     setList(v){
       /* Only a deliberate selection can switch away from the city soundtrack. */
       const id=parseId(v);
       P.pl=id?String(v).trim():'';
-      currentKey=id?'custom':(resolveCityMusicKey(curCity)||'lagos');
+      currentKey=id?'custom':resolveCityMusicKey(curCity);
       save();
       if(ready){ try{ loadQueue(); if(wantOn) play(); else player.pauseVideo(); }catch(e){} }
     }
