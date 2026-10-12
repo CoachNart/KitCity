@@ -3503,6 +3503,39 @@ const MISSIONS=CHRONICLE_MISSIONS.map((story,index)=>{
         ]);
       }}
     ];
+  }else if(story.id==='m18'){
+    const david=STORY_NPCS['David'], kanyin=STORY_NPCS['Kanyin'];
+    steps=[
+      {kind:'character',id:'m18-obj-1',label:story.objectives[0].label,spot:'buyer',npc:david,run(){
+        talk(david,"<p><b>DAVID:</b> The prototype is finally real. People are asking for the link, so I want to push it everywhere tonight. If we wait, someone else will own the conversation.</p><p><b>KANYIN:</b> Last time we paid for attention. Thousands clicked; hardly anyone finished the task. We need to find out what happens after the click.</p>",[
+          {t:'Walk the market entrance and ask three people what they expected the directory to let them do.',f:()=>talk(kanyin,"<p><b>KANYIN:</b> Two people assumed every listing was verified and booking was handled inside the site. Another couldn't tell what to do after opening it. Our message made the prototype sound more complete than it is.</p>",[{t:'Record the observed expectation gap: users need a clear first action and an honest explanation of what is and is not verified.',f:()=>{G.evidence.m18_user_expectations_checked=true;G.evidence.m18_hypothesis_formed=true;G.evidence.m18_dropoff_reason_observed=true;finishStep();}}])},
+          {t:'Assume people left because the campaign did not reach enough users.',f:()=>talk(kanyin,"<p><b>KANYIN:</b> That's possible, but we haven't earned that conclusion. We just heard people misunderstand the product. Fix and test that before buying more reach.</p>",[{t:'Interview three people and record what they expected from the page.',f:()=>{G.evidence.m18_user_expectations_checked=true;G.evidence.m18_hypothesis_formed=true;G.evidence.m18_dropoff_reason_observed=true;finishStep();}}])}
+        ]);
+      }},
+      {kind:'clue',id:'m18-obj-2',label:story.objectives[1].label,spot:'ledger',title:'Promise only what exists',sign:'CAMPAIGN BRIEF',npc:kanyin,run(){
+        talk(kanyin,"<p><b>KANYIN:</b> Write one message for local creatives and the people who need them. The directory shows sample work and a way to contact listed creatives. It does not guarantee vetting, booking or payment protection.</p>",[
+          {t:'Draft a short message: find local creatives, view sample work, then contact them directly; remind users to verify details before hiring.',f:()=>talk(david,"<p><b>DAVID:</b> It's less flashy than saying we handle everything, but people will know what they're opening. Give the campaign one action instead of five competing buttons.</p>",[{t:'Save the audience, truthful promise, channel and single call to action in the brief.',f:()=>{G.evidence.m18_campaign_brief_ready=true;G.evidence.m18_claims_accurate=true;G.evidence.m18_single_cta_defined=true;finishStep();}}])},
+          {t:'Advertise it as a fully verified booking platform to get more clicks.',f:()=>talk(kanyin,"<p><b>KANYIN:</b> We don't have that service. If we promise verification or in-platform booking, we'll pay to disappoint people and lose trust.</p>",[{t:'Rewrite the message around the actual directory and its direct-contact flow.',f:()=>{G.evidence.m18_campaign_brief_ready=true;G.evidence.m18_claims_accurate=true;G.evidence.m18_single_cta_defined=true;finishStep();}}])}
+        ]);
+      }},
+      {kind:'clue',id:'m18-obj-3',label:story.objectives[2].label,spot:'screenshot',title:'Count the first useful action',sign:'EXPERIMENT METRICS',npc:david,run(){
+        talk(david,"<p><b>DAVID:</b> What number tells us this worked? Impressions? Clicks? Shares?</p>",[
+          {t:'Track landing visits, listing views and completed contact actions; compare the same small audience before and after the copy change.',f:()=>talk(kanyin,"<p><b>KANYIN:</b> Good. Clicks tell us someone arrived. A listing view shows interest; a completed contact action is closer to the value we promised. Keep the sample size beside the result.</p>",[{t:'Save the primary activation metric and record clicks as a supporting, not final, measure.',f:()=>{G.evidence.m18_activation_metric_selected=true;G.evidence.m18_vanity_metric_not_primary=true;G.evidence.m18_baseline_defined=true;finishStep();}}])},
+          {t:'Use impressions as the only success metric because they are larger.',f:()=>talk(kanyin,"<p><b>KANYIN:</b> A million impressions can still leave every user stuck. Measure whether people complete the action the campaign promised.</p>",[{t:'Choose completed contact actions as the primary measure and retain impressions only for context.',f:()=>{G.evidence.m18_activation_metric_selected=true;G.evidence.m18_vanity_metric_not_primary=true;G.evidence.m18_baseline_defined=true;finishStep();}}])}
+        ]);
+      }},
+      {kind:'character',id:'m18-obj-4',label:story.objectives[3].label,spot:'shopdesk',npc:kanyin,run(){
+        talk(kanyin,"<p><b>KANYIN:</b> The first small test brought a few people to the directory. Some viewed listings; a smaller number contacted a creative. That's useful, but the sample is tiny. Now an agency says it can deliver five thousand real users overnight if we pay upfront. They won't explain where the users come from.</p>",[
+          {t:'Reject the unexplained growth offer, record the small test honestly and list the next onboarding question to investigate.',f:()=>talk(david,"<p><b>DAVID:</b> So we don't call this a viral launch. We know which action happened, how many people did it, and what still needs work. That's enough to choose the next test.</p>",[{t:'Save the experiment result with its sample-size limit and recommend improving the next step before scaling spend.',f:()=>{G.evidence.m18_results_interpreted=true;G.evidence.m18_suspicious_growth_rejected=true;G.evidence.m18_sample_limit_reported=true;finishStep();}}])},
+          {t:'Pay the agency because five thousand users would look good in the report.',f:()=>talk(kanyin,"<p><b>KANYIN:</b> They cannot show where the users come from or whether anyone will use the product. Fake or uninterested traffic would poison the experiment. We need evidence, not a number to screenshot.</p>",[{t:'Decline the offer and document the real test result, including its limitations.',f:()=>{G.evidence.m18_results_interpreted=true;G.evidence.m18_suspicious_growth_rejected=true;G.evidence.m18_sample_limit_reported=true;finishStep();}}])}
+        ]);
+      }},
+      {kind:'character',id:'m18-close-message',label:'Save the activation experiment brief',spot:'buyer',npc:david,run(){
+        talk(david,"<p><b>DAVID:</b> The test didn't make us famous, but now we know what people misunderstood and what action to count.</p><p><b>KANYIN:</b> We'll fix the next step before scaling the campaign. No inflated numbers, no pretending a small sample proves everything.</p><p><b>DAVID:</b> One more thing: a founder wants to fund the next stage. The offer promises fixed returns but skips milestone reporting. Mcbond and Alpha.RWA in Edo want another pair of eyes before anyone signs.</p>",[
+          {t:'Save the experiment brief and travel to Edo to review the proposed funding terms.',f:()=>{P.storyFlags=Object.assign({},P.storyFlags||{},{m18_complete:true,growth_experiment_defined:true,prototype_expectations_checked:true});G.evidence.chapterSummary=true;finishStep();}}
+        ]);
+      }}
+    ];
   }else{
     steps=[];
     const objectives=story.objectives||[];
