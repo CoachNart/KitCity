@@ -860,3 +860,23 @@ html,body{height:100%;overflow:hidden;background:var(--ink);color:var(--ink);fon
 
 /* Allow long lines to scroll inside a bubble on small screens. */
 .kitcity-speech-bubble,.kitcity-mission-dialogue-bubble{pointer-events:auto;touch-action:pan-y;overscroll-behavior:contain}
+
+
+/* Compact, touch-friendly language selector shared by title and settings. */
+.langs{display:flex;flex-wrap:wrap;justify-content:center;gap:5px}
+.langs button,.language-switch .lang-option{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-width:38px;min-height:30px;padding:5px 9px;
+  border:1px solid rgba(255,255,255,.24);border-radius:999px;
+  background:rgba(255,255,255,.055);color:#eaf8fc;
+  font:800 10px/1 system-ui,-apple-system,sans-serif;letter-spacing:.06em;
+  cursor:pointer;transition:background .15s,border-color .15s,color .15s;
+  touch-action:manipulation
+}
+.langs button.on,.language-switch .lang-option.on{
+  background:#00E5FF;color:#06151b;border-color:#00E5FF;
+  box-shadow:0 0 0 2px rgba(0,229,255,.1)
+}
+.language-switch{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:12px}
+.language-switch .lang-option{min-width:42px;min-height:32px;padding:6px 10px}
+.langs button:focus-visible,.language-switch .lang-option:focus-visible{outline:2px solid #fff;outline-offset:2px}
