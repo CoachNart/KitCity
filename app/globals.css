@@ -32,7 +32,7 @@ html,body{height:100%;overflow:hidden;background:var(--ink);color:var(--ink);fon
 .city-nameplate-sub{font:800 8px/1.2 system-ui,sans-serif;letter-spacing:.16em;color:#c8e4e9}
 .city-nameplate.hidden{display:none!important}
 #compass.force-visible{position:fixed!important;top:calc(80px + env(safe-area-inset-top))!important;right:calc(12px + env(safe-area-inset-right))!important;width:68px!important;height:68px!important;display:grid!important;place-items:center!important;visibility:visible!important;opacity:1!important;z-index:999!important;border:3px solid #10C8DC!important;box-shadow:0 5px 18px rgba(0,0,0,.4),0 0 18px rgba(16,200,220,.2)!important}
-#compass.force-visible #arrow{display:block!important;visibility:visible!important;opacity:1!important;width:34px!important;height:34px!important;filter:drop-shadow(0 2px 3px rgba(0,0,0,.5))}
+#compass.force-visible #arrow{display:block!important;visibility:visible!important;opacity:1!important;width:34px!important;height:34px!important;transform-box:fill-box;transform-origin:center center;filter:drop-shadow(0 2px 3px rgba(0,0,0,.5))}
 #compass.force-visible #dist{z-index:2}
 
 #dist{position:absolute;bottom:-12px;left:50%;transform:translateX(-50%);background:var(--brand);border:2px solid var(--ink);border-radius:4px;font:800 11px/1 system-ui;padding:3px 5px;white-space:nowrap}
