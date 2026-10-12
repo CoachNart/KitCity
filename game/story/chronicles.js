@@ -452,9 +452,9 @@ const RAW_MISSIONS = [
   {
     "id": "m05",
     "chapterId": "ch03",
-    "title": "The Queue That Never Ends",
+    "title": "The Broken Application",
     "state": "Osun",
-    "location": "Osun market entrance, trader stalls, roadside payment point and a small product studio",
+    "location": "Osun market payment stall, product workshop and merchant test counter",
     "npcIds": [
       "blockqueen",
       "christol"
@@ -463,11 +463,11 @@ const RAW_MISSIONS = [
       "Blockqueen",
       "Christol"
     ],
-    "narrativePurpose": "The correction about Timi reaches a small team building a payment app for market traders. The demo looks polished, but buyers keep abandoning checkout. Blockqueen wants to watch real customers; Christol is tempted to blame users. Follow two live attempts from the market queue to the product studio, reproduce the network-selection confusion, and test a focused fix before the next buyer arrives.",
+    "narrativePurpose": "At a busy market demo, a merchant's app flashes PAID before the payment is confirmed. Christol wants to ship a flashy loyalty dashboard to rescue the launch; Blockqueen says sellers have stopped trusting the receipt. Follow the actual checkout, compare the app's status with the transaction record, then help the team fix and retest the status flow. The retest exposes a payout destination that does not match the merchant's agreed address.",
     "learningObjectives": [
-      "Notice a repeated product problem by watching real use",
-      "Separate what a user does from assumptions about why",
-      "Test one focused change before celebrating a release"
+      "Observe a real user problem before proposing features",
+      "Distinguish a submitted request from a confirmed payment",
+      "Test a focused product fix against the underlying record"
     ],
     "prerequisites": [
       "m04"
@@ -475,65 +475,66 @@ const RAW_MISSIONS = [
     "objectives": [
       {
         "id": "m05-obj-1",
-        "label": "Reach the queue and watch a buyer try to pay",
+        "label": "Find out why the merchant no longer trusts the payment screen",
         "interactionTarget": "story:m05:objective:1",
         "required": true
       },
       {
         "id": "m05-obj-2",
-        "label": "Follow the second buyer's attempt without coaching them",
+        "label": "Compare the green PAID badge with the transaction status",
         "interactionTarget": "story:m05:objective:2",
         "required": true
       },
       {
         "id": "m05-obj-3",
-        "label": "Reproduce the network-selection dead end with Blockqueen and Christol",
+        "label": "Replace the premature success state with a verified payment state",
         "interactionTarget": "story:m05:objective:3",
         "required": true
       },
       {
         "id": "m05-obj-4",
-        "label": "Test a clearer checkout with the next buyer",
+        "label": "Retest the checkout and inspect the merchant payout destination",
         "interactionTarget": "story:m05:objective:4",
         "required": true
       }
     ],
     "successConditions": [
-      "Two observed attempts show the same hesitation at network selection",
-      "The team reproduces the problem before changing the interface",
-      "A clearer label and safe default are retested with a buyer before release"
+      "The player identifies that the app shows success before confirmation",
+      "The team changes the status flow instead of distracting from it with an unrelated feature",
+      "The retest confirms the status behaviour and flags the payout-address mismatch for investigation"
     ],
     "failureAndRetry": {
-      "onFailure": "If the player proposes a dashboard or blames the customers, Blockqueen asks them to watch one more real checkout attempt before choosing a fix.",
-      "retry": "Return to the queue, observe the next attempt, and keep the notes already collected."
+      "onFailure": "If the player approves the dashboard or trusts the green badge, Blockqueen asks them to compare the screen with the underlying transaction record.",
+      "retry": "Return to the checkout record, compare the actual status and continue from the evidence already collected."
     },
     "rewards": {
-      "xp": 145,
+      "xp": 150,
       "skillBadges": [
         "Product Discovery"
       ],
       "portfolioArtifacts": [
-        "Market checkout test report"
+        "Payment-status bug report and verified retest"
       ]
     },
     "storyFlags": [
       "m05_complete",
-      "checkout_friction_confirmed"
+      "payment_status_flow_verified",
+      "payout_destination_mismatch_found"
     ],
     "nextMissionId": "m06",
-    "ending": "The clearer network labels help the next buyer finish checkout. Christol shelves the dashboard and starts tracking completed payments and failed attempts instead of celebrating a polished demo.",
-    "cliffhanger": "During the retest, one payment succeeds twice after a customer taps the button again. Laloba and BigSam are preparing the contract release, and the team needs to find out whether the checkout can charge someone twice.",
+    "ending": "The app now says pending until the payment is confirmed, and the merchant can see the real outcome instead of a false green badge. But the payout address in the release configuration does not match the address the merchant approved.",
+    "cliffhanger": "Blockqueen freezes the rollout. Laloba and BigSam are already at the workshop, checking the contract that decides where the money goes.",
     "sceneLines": [
-      "Blockqueen: \"That customer nearly left without paying. She opened the network list, backed out, then tried again. Please don't tell me people just need more education. Come watch the next buyer and tell me what the screen is asking them to do. \"",
-      "Christol: \"The demo works when I'm driving it. In the market, people keep getting stuck on that network screen. I wanted to add a dashboard, but if we can't get one payment through cleanly, the dashboard is just decoration. Let's reproduce the problem first. \""
+      "Blockqueen: \"The seller nearly handed over the goods because this screen said PAID. The explorer still said pending. Christol wants to launch a loyalty dashboard, but nobody will care about points if the receipt lies. Help me prove exactly where the status goes wrong.\"",
+      "Christol: \"I thought the dashboard would save the launch. I pulled the event log instead: the app marks success as soon as the wallet request returns. We can change that—but look at this payout setting. It isn't the address the merchant signed off on.\""
     ]
   },
   {
     "id": "m06",
     "chapterId": "ch03",
-    "title": "The Second Tap",
+    "title": "Code That Controls Money",
     "state": "Osun",
-    "location": "Osun payment-app studio, market test kiosk and launch courtyard",
+    "location": "Osun product workshop, contract review terminal and merchant payout test bench",
     "npcIds": [
       "laloba",
       "bigsam"
@@ -542,11 +543,11 @@ const RAW_MISSIONS = [
       "Laloba",
       "BigSam"
     ],
-    "narrativePurpose": "The checkout now makes sense to buyers, but one customer tapped Pay again while the first request was still loading—and two payments completed. Laloba wants the launch kept on schedule; BigSam refuses to ship until the team can reproduce the duplicate and prove a retry cannot process the same order twice.",
+    "narrativePurpose": "The checkout status is fixed, but its payout destination differs from the merchant-approved address. Laloba suspects the release contract gives one administrator quiet control over where every payout lands; BigSam says the team cannot accuse the contract without reproducing the path. Inspect the access role and destination-change function, reproduce the change in a test deployment, then agree on controls that prevent a silent unilateral redirect before release.",
     "learningObjectives": [
-      "Trace a payment through pending and confirmed states",
-      "Understand why an order needs a stable unique reference",
-      "Test retries, delays and repeated taps before release"
+      "Trace a privileged contract action to its actual permissions",
+      "Reproduce a payout-destination change in a test deployment",
+      "Use access controls, transparent events and review gates to reduce payout risk"
     ],
     "prerequisites": [
       "m05"
@@ -554,60 +555,60 @@ const RAW_MISSIONS = [
     "objectives": [
       {
         "id": "m06-obj-1",
-        "label": "Reconstruct the customer's two payment attempts",
+        "label": "Compare the merchant-approved payout address with the release configuration",
         "interactionTarget": "story:m06:objective:1",
         "required": true
       },
       {
         "id": "m06-obj-2",
-        "label": "Trace the order reference through pending and confirmed states",
+        "label": "Inspect who can change the payout destination and how the change is recorded",
         "interactionTarget": "story:m06:objective:2",
         "required": true
       },
       {
         "id": "m06-obj-3",
-        "label": "Reproduce a retry while the first request is still pending",
+        "label": "Reproduce an administrator redirect in the test deployment",
         "interactionTarget": "story:m06:objective:3",
         "required": true
       },
       {
         "id": "m06-obj-4",
-        "label": "Run repeat-tap, timeout and retry checks before approving release",
+        "label": "Choose and verify controls that block a silent payout redirect",
         "interactionTarget": "story:m06:objective:4",
         "required": true
       }
     ],
     "successConditions": [
-      "The two charges are tied to one customer action and the same order",
-      "The team identifies where the second request bypassed the pending state",
-      "Release remains paused until duplicate and retry regression tests pass"
+      "The mismatch is documented without claiming theft before evidence supports it",
+      "The test demonstrates the privileged destination-change path and its consequences",
+      "The team blocks release until destination changes have appropriate authorization, delay or review, and visible records"
     ],
     "failureAndRetry": {
-      "onFailure": "If the player approves release after one successful payment, BigSam replays the second tap and asks which test proves the duplicate path is closed.",
-      "retry": "Repeat the failed trace or regression check while keeping the original order timeline."
+      "onFailure": "If the player treats an administrator label as proof of safety or approves release after reading only the function name, Laloba asks them to reproduce the permission path and inspect the resulting payout.",
+      "retry": "Repeat the address comparison or test-deployment trace; keep the evidence and do not touch a live contract."
     },
     "rewards": {
-      "xp": 155,
+      "xp": 165,
       "skillBadges": [
-        "Payment Reliability"
+        "Smart-Contract Review"
       ],
       "portfolioArtifacts": [
-        "Duplicate-payment reproduction and regression report"
+        "Payout-control finding and release-gate checklist"
       ]
     },
     "storyFlags": [
       "m06_complete",
-      "duplicate_payment_bug_blocked",
-      "release_paused_for_regression"
+      "payout_redirect_path_reproduced",
+      "contract_release_held"
     ],
     "nextMissionId": "m07",
-    "ending": "The team traces both completed payments to one order and finds that a retry can pass through while the first request is pending. They add a stable order reference and a state check, then hold release until repeat-tap, timeout and retry tests all pass.",
-    "cliffhanger": "A trader waiting beside the test kiosk shows Laloba a different problem: the swap screen promised one amount, but the completed trade returned less. In Ekiti, LunaX and OxNight are checking the quote against the actual route.",
+    "ending": "The test proves an administrator can change the payout destination without a delay or a clear public change record. The team documents the finding, adds an independently reviewed authorization path and visible change events, and keeps the release blocked until the fix passes regression tests.",
+    "cliffhanger": "A trader waiting outside the workshop shows a different kind of mismatch: the swap quote promised one amount, but the completed trade returned less. LunaX and OxNight are checking the route in Ekiti.",
     "sceneLines": [
-      "Laloba: \"The buyer paid once. The screen froze, so she tapped again—and now she's been charged twice. Please don't tell her to wait while we post a launch announcement. Show me exactly where the second payment got through.\"",
-      "BigSam: \"A successful demo proves one path worked once. It doesn't prove a retry is safe. Give every order one stable reference, reproduce the pending-state race, and keep the release paused until the same failure no longer passes.\""
+      "Laloba: \"The merchant-approved address and the release configuration disagree. That is a finding, not yet proof anyone stole anything. Show me which role can change the destination and whether the change leaves a record we can verify.\"",
+      "BigSam: \"Don't test this against a live deployment. I've opened the test build. If one admin can redirect a merchant payout with one call and no delay, we'll reproduce it, document the impact and block release until the control is fixed.\""
     ]
-  },
+  }
   {
     "id": "m07",
     "chapterId": "ch04",
