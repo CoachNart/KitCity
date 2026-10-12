@@ -750,3 +750,34 @@ html,body{height:100%;overflow:hidden;background:var(--ink);color:var(--ink);fon
  #hubBody .mission-card .mission-medal{width:38px;height:38px}
  #hubBody .mission-card .cf{align-items:flex-start}
 }
+
+
+/* Compact, optional dialogue navigation; speech bubbles remain readable on mobile. */
+.kitcity-dialogue-nav{
+  position:fixed;z-index:176;left:50%;bottom:calc(16px + env(safe-area-inset-bottom));
+  transform:translateX(-50%);display:flex;align-items:center;justify-content:center;gap:8px;
+  max-width:calc(100vw - 20px);padding:5px 7px;border:1px solid rgba(255,255,255,.18);
+  border-radius:999px;background:rgba(8,14,20,.82);color:#eafaff;
+  box-shadow:0 4px 16px rgba(0,0,0,.22);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+}
+.kitcity-dialogue-nav.hidden{display:none!important}
+.kitcity-dialogue-nav button{
+  min-width:48px;min-height:28px;padding:5px 8px;border:1px solid rgba(255,255,255,.15);
+  border-radius:999px;background:rgba(255,255,255,.08);color:#fff;
+  font:750 10px/1 system-ui,-apple-system,sans-serif;cursor:pointer;touch-action:manipulation;
+}
+.kitcity-dialogue-nav button:disabled{opacity:.35;cursor:default}
+.kitcity-dialogue-nav span{min-width:28px;text-align:center;color:#b8cbd3;font:700 9px/1 ui-monospace,monospace}
+.kitcity-speech-bubble{
+  width:auto;min-width:0;max-width:min(78vw,330px);max-height:34vh;overflow-y:auto;
+  overflow-wrap:anywhere;word-break:normal;overscroll-behavior:contain;
+}
+.kitcity-speech-bubble p{white-space:normal;line-height:1.45}
+.kitcity-speech-bubble.offscreen{visibility:visible;opacity:.98}
+@media(max-width:480px){
+  .kitcity-speech-bubble{max-width:min(84vw,310px);padding:8px 10px}
+  .kitcity-bubble-speaker{font-size:8px}
+  .kitcity-speech-bubble p{font-size:clamp(12px,3.5vw,14px)}
+  .kitcity-dialogue-nav{bottom:calc(10px + env(safe-area-inset-bottom));gap:5px;padding:4px 6px}
+  .kitcity-dialogue-nav button{min-height:30px;min-width:44px}
+}
