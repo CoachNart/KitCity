@@ -781,3 +781,21 @@ html,body{height:100%;overflow:hidden;background:var(--ink);color:var(--ink);fon
   .kitcity-dialogue-nav{bottom:calc(10px + env(safe-area-inset-bottom));gap:5px;padding:4px 6px}
   .kitcity-dialogue-nav button{min-height:30px;min-width:44px}
 }
+
+
+/* Keep decision choices compact so the scene remains visible behind them. */
+#modal:has(#sheet.chronicle-dialogue-card){padding:10px}
+#sheet.chronicle-dialogue-card{width:min(430px,calc(100vw - 20px));max-height:min(54vh,430px);overflow:auto}
+#sheet.chronicle-dialogue-card .chronicle-talk-head{gap:8px;padding:8px 10px}
+#sheet.chronicle-dialogue-card .chronicle-talk-avatar{width:32px;height:32px;border-radius:9px;font-size:15px}
+#sheet.chronicle-dialogue-card .chronicle-talk-body{padding:8px 11px 1px}
+#sheet.chronicle-dialogue-card .chronicle-talk-speaker{margin-bottom:4px}
+#sheet.chronicle-dialogue-card .chronicle-talk-line{font-size:clamp(13px,3.4vw,15px);line-height:1.38}
+#sheet.chronicle-dialogue-card .row{gap:6px;margin:8px 10px 10px}
+#sheet.chronicle-dialogue-card .row .btn{min-height:34px;padding:8px 10px;font-size:clamp(11px,2.9vw,13px);line-height:1.25;border-radius:9px}
+#sheet.chronicle-dialogue-card .row .btn:after{margin-left:5px}
+@media(max-width:480px){
+  #modal:has(#sheet.chronicle-dialogue-card){align-items:flex-end;padding:8px 8px calc(8px + env(safe-area-inset-bottom))}
+  #sheet.chronicle-dialogue-card{max-height:48vh;width:100%}
+  #sheet.chronicle-dialogue-card .row .btn{min-height:32px;padding:7px 8px}
+}
