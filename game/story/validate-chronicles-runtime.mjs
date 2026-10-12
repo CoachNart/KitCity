@@ -90,6 +90,34 @@ requireText("m05-obj-1", "Mission 5's bespoke market runtime steps");
 requireText("m05_repeat_pattern", "Mission 5 records repeated observed checkout friction");
 requireText("m05_retest_completed", "Mission 5 retests the focused change with a buyer");
 if (engine.includes("spot:'buyer2'")) errors.push("Mission 5 uses an unsupported interaction anchor.");
+const sixMissionArc = [
+  ["m06", "m05", "m07", ["Laloba", "BigSam"]],
+  ["m07", "m06", "m08", ["LunaX", "OxNight"]],
+  ["m08", "m07", "m09", ["Moon", "The Cryptonian"]],
+  ["m09", "m08", "m10", ["Joseph Nnadi", "The Don"]],
+  ["m10", "m09", "m11", ["Praise", "Toza", "Craftore"]],
+  ["m11", "m10", "m12", ["Kodavic", "Cybersage"]]
+];
+for (const [id, prerequisite, nextId, cast] of sixMissionArc) {
+  const mission = MISSIONS.find((item) => item.id === id);
+  if (!mission) {
+    errors.push(id + " is missing from the canonical story registry.");
+    continue;
+  }
+  if (!mission.prerequisites.includes(prerequisite) || mission.nextMissionId !== nextId) {
+    errors.push(id + " has a broken prerequisite or next-mission handoff.");
+  }
+  if (cast.some((name) => !mission.npcs.includes(name))) errors.push(id + " is missing its intended cast.");
+  if (!Array.isArray(mission.sceneLines) || mission.sceneLines.length < mission.npcs.length) {
+    errors.push(id + " is missing authored dialogue for its full cast.");
+  } else {
+    for (const name of mission.npcs) {
+      if (!mission.sceneLines.some((line) => line.startsWith(name + ":"))) {
+        errors.push(id + " is missing a dialogue line for " + name + ".");
+      }
+    }
+  }
+}
 const oyoScreenshotFollowUp = MISSIONS.find((mission) => mission.id === "m04");
 if (!oyoScreenshotFollowUp || !/Timi|screenshot|wallet activity/i.test(oyoScreenshotFollowUp.narrativePurpose)) errors.push("Mission 4 must continue directly from the screenshot claim about Timi.");
 if (oyoScreenshotFollowUp && !/stop the group from naming timi/i.test(oyoScreenshotFollowUp.objectives.map((objective) => objective.label).join(" "))) errors.push("Mission 4 must begin by stopping the accusation before verifying the screenshot.");
