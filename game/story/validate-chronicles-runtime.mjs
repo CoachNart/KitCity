@@ -279,6 +279,15 @@ if (productMessageMission && (!productMessageMission.prerequisites.includes("m13
 if (productMessageMission && !productMessageMission.narrativePurpose.includes("safety session in Mission 13")) errors.push("Mission 14 must connect to the previous mission.");
 if (productMessageMission && (!productMessageMission.sceneLines.some((line) => line.startsWith("Kore:")) || !productMessageMission.sceneLines.some((line) => line.startsWith("Veedima:")))) errors.push("Mission 14 must use its assigned NPCs in authored dialogue.");
 requireText("else if(story.id==='m14')", "Mission 14 bespoke product-message runtime");
+const portfolioMission = MISSIONS.find((mission) => mission.id === "m15");
+if (!portfolioMission || portfolioMission.title !== "Show the Work") errors.push("Mission 15 must be the evidence-backed portfolio mission.");
+if (portfolioMission && (portfolioMission.npcs[0] !== "Web3_Esta" || portfolioMission.npcs[1] !== "Love")) errors.push("Mission 15 must introduce Web3_Esta then Love.");
+if (portfolioMission && (!portfolioMission.prerequisites.includes("m14") || portfolioMission.nextMissionId !== "m16")) errors.push("Mission 15 must continue from Mission 14 and hand off to Mission 16.");
+if (portfolioMission && (!portfolioMission.narrativePurpose.includes("verified product announcement") || !portfolioMission.narrativePurpose.includes("evidence a hiring lead can inspect"))) errors.push("Mission 15 must connect the product announcement to portfolio evidence.");
+if (portfolioMission && (!portfolioMission.sceneLines.some((line) => line.startsWith("Web3_Esta:")) || !portfolioMission.sceneLines.some((line) => line.startsWith("Love:")))) errors.push("Mission 15 is missing authored dialogue from its assigned NPCs.");
+requireText("else if(story.id==='m15')", "Mission 15 bespoke portfolio runtime");
+for (const marker of ["m15_role_matched","m15_two_samples_documented","m15_contribution_separated","m15_bio_evidence_linked","m15_skill_gap_named","m15_complete:true","portfolio_evidence_compiled:true"]) requireText(marker, "Mission 15 evidence and completion marker " + marker);
+
 for (const marker of [
   "m14_audience_defined",
   "m14_product_inspected",
