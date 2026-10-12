@@ -130,6 +130,26 @@ for (const [id, prerequisite, nextId, cast] of sixMissionArc) {
   }
 }
 
+const onboardingMission = MISSIONS.find((mission) => mission.id === "m11");
+if (!onboardingMission || onboardingMission.title !== "The Room Full of Ghosts") errors.push("Mission 11 must use the rewritten empty-hall onboarding story.");
+if (onboardingMission && (onboardingMission.npcs[0] !== "Kodavic" || onboardingMission.npcs[1] !== "Cybersage")) errors.push("Mission 11 must introduce Kodavic and Cybersage in the supplied order.");
+if (onboardingMission && (!onboardingMission.prerequisites.includes("m10") || onboardingMission.nextMissionId !== "m12")) errors.push("Mission 11 must connect Mission 10 to Mission 12.");
+if (onboardingMission && !onboardingMission.sceneLines.some((line) => line.startsWith("Kodavic:"))) errors.push("Mission 11 is missing authored Kodavic dialogue.");
+if (onboardingMission && !onboardingMission.sceneLines.some((line) => line.startsWith("Cybersage:"))) errors.push("Mission 11 is missing authored Cybersage dialogue.");
+if (onboardingMission && /Praise:|Toza:|Craftore:|Reina:|Cclya:/i.test(onboardingMission.sceneLines.join(" "))) errors.push("Mission 11 dialogue duplicates characters from adjacent mission casts.");
+requireText("else if(story.id==='m11')", "Mission 11 bespoke onboarding runtime");
+for (const marker of [
+  "m11_deras_journey_observed",
+  "m11_friction_point_identified",
+  "m11_one_clear_first_task_created",
+  "m11_second_newcomer_tested",
+  "m11_first_task_completed",
+  "m11_completion_measured",
+  "m11_claims_limited_to_sample",
+  "m11_complete:true",
+  "first_contribution_measured:true"
+]) requireText(marker, "Mission 11 evidence and completion marker " + marker);
+
 const withdrawalMission = MISSIONS.find((mission) => mission.id === "m08");
 if (!withdrawalMission || withdrawalMission.title !== "The Withdrawal That Never Left") errors.push("Mission 8 must use the rewritten withdrawal incident story.");
 if (withdrawalMission && (withdrawalMission.npcs[0] !== "Moon" || withdrawalMission.npcs[1] !== "The Cryptonian")) errors.push("Mission 8 must introduce Moon and The Cryptonian in the supplied order.");
