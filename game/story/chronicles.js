@@ -1262,77 +1262,27 @@ const RAW_MISSIONS = [
     "title": "Show the Work",
     "state": "Plateau",
     "location": "Plateau co-working entrance, portfolio wall and skills desk",
-    "npcIds": [
-      "web3-esta",
-      "love"
-    ],
-    "npcs": [
-      "Web3_Esta",
-      "Love"
-    ],
-    "narrativePurpose": "A hiring lead asks what you have actually contributed. Move from the co-working entrance to the portfolio wall and then to the skills desk. Turn your work from the payment investigation, product test and safety session into evidence someone else can verify.",
-    "learningObjectives": [
-      "How to present work samples with context",
-      "How to distinguish contribution from association",
-      "How to identify the next skill gap"
-    ],
-    "prerequisites": [
-      "m14"
-    ],
+    "npcIds": ["web3-esta", "love"],
+    "npcs": ["Web3_Esta", "Love"],
+    "narrativePurpose": "The reader who replied to your verified product announcement has sent a real Web3 role brief. In Plateau, Web3_Esta and Love help you turn the work you just did—and earlier investigations, safety communication and product tests—into evidence a hiring lead can inspect. The brief asks for proof, not a grand bio. Choose work you can stand behind, explain exactly what you contributed, and name the gap you still need to close before the screening task.",
+    "learningObjectives": ["How to match a role to evidence from real work","How to present contribution and context without claiming other people's work","How to identify a specific skill gap and make a credible next-step plan"],
+    "prerequisites": ["m14"],
     "objectives": [
-      {
-        "id": "m15-obj-1",
-        "label": "Choose a specialization that matches your work",
-        "interactionTarget": "story:m15:objective:1",
-        "required": true
-      },
-      {
-        "id": "m15-obj-2",
-        "label": "Organize work samples into a portfolio",
-        "interactionTarget": "story:m15:objective:2",
-        "required": true
-      },
-      {
-        "id": "m15-obj-3",
-        "label": "Identify missing evidence in your portfolio",
-        "interactionTarget": "story:m15:objective:3",
-        "required": true
-      },
-      {
-        "id": "m15-obj-4",
-        "label": "Write a bio that points to real work",
-        "interactionTarget": "story:m15:objective:4",
-        "required": true
-      }
+      {"id":"m15-obj-1","label":"Read the role brief and choose the strongest matching work","interactionTarget":"story:m15:objective:1","required":true},
+      {"id":"m15-obj-2","label":"Build two evidence-backed portfolio samples","interactionTarget":"story:m15:objective:2","required":true},
+      {"id":"m15-obj-3","label":"Separate your contribution from the team's work","interactionTarget":"story:m15:objective:3","required":true},
+      {"id":"m15-obj-4","label":"Write a focused bio and name one skill gap to work on","interactionTarget":"story:m15:objective:4","required":true}
     ],
-    "successConditions": [
-      "The player chooses a coherent professional direction",
-      "At least two real work samples include contribution and evidence",
-      "The bio does not claim work the player did not do"
-    ],
-    "failureAndRetry": {
-      "onFailure": "If the player claims credit for the whole team, Love asks them to separate their own work from the shared outcome.",
-      "retry": "Revise the portfolio sample while preserving the evidence already collected."
-    },
-    "rewards": {
-      "xp": 245,
-      "skillBadges": [
-        "Portfolio Building"
-      ],
-      "portfolioArtifacts": [
-        "Evidence-backed Web3 portfolio"
-      ]
-    },
-    "storyFlags": [
-      "m15_complete",
-      "portfolio_evidence_compiled"
-    ],
+    "successConditions": ["The chosen samples directly support the role requirements","At least two samples state the player's contribution and point to inspectable evidence","The bio avoids invented experience and includes a concrete next skill to develop"],
+    "failureAndRetry": {"onFailure":"If the player claims ownership of the whole team's result, Love asks them to name their own actions and link each claim to evidence.","retry":"Edit the sample descriptions and bio without losing the evidence already gathered."},
+    "rewards": {"xp":245,"skillBadges":["Portfolio Building"],"portfolioArtifacts":["Evidence-backed Web3 portfolio"]},
+    "storyFlags": ["m15_complete","portfolio_evidence_compiled"],
     "nextMissionId": "m16",
-    "ending": "The hiring lead can now inspect the case files and understand your contribution without taking your word for it. You are invited to complete a small paid-work screening task.",
-    "cliffhanger": "The screening task comes with an unusual condition: pay an upfront 'activation fee' before the recruiter reveals the work. J.Jonathan and Essa ask you to investigate the offer.",
+    "ending": "The hiring lead can now inspect two clear samples, understand what you personally did, and see where you are still learning. The application moves forward—but the screening task arrives with an upfront activation-fee demand.",
+    "cliffhanger": "J.Jonathan and Essa want you to verify the recruiter before you respond. The deadline is tonight, and the message is already asking for money and private wallet details.",
     "sceneLines": [
-      "Kenny: \"The hiring lead asked what I've built, not how many spaces I joined. I've got work scattered across chats and screenshots. Help me make one thing a stranger can actually inspect.\"",
-      "Kore: \"This demo shows the feature working and links to the source. Add what you changed, why you made that choice and what still breaks. That's a stronger sample than a page of claims.\""
+      "Web3_Esta: \"The person who replied to your product post sent this role brief. They don't need another bio full of titles. They need to see what you can do. Read the requirements first; don't force every piece of work to fit.\"",
+      "Love: \"This safety recap shows how you handled verified facts. That product announcement shows how you turned a real user need into clear copy. Tell me what you personally did, show the evidence, and be honest about what still needs work.\""
     ]
   },
   {
