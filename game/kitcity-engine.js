@@ -3779,6 +3779,7 @@ function missionNPCObjects(mission){
     if(npc) found.add(npc);
   };
   (mission&&mission.npcs||[]).forEach(add);
+  (mission&&mission.sceneCast||[]).forEach(add);
   (mission&&mission.steps||[]).forEach(step=>{
     add(step.npc);
     (step.npcs||[]).forEach(add);
@@ -3863,7 +3864,7 @@ function loadStep(){
     // The current interaction target remains the only active character; other cast
     // members stay visible for continuity without hijacking the objective.
     const castNames=[];
-    if(m.id!=='m01')(m.npcs||[]).forEach(name=>{if(name&&!castNames.includes(name))castNames.push(name);});
+    if(m.id!=='m01')[(m.npcs||[]),(m.sceneCast||[])].flat().forEach(name=>{if(name&&!castNames.includes(name))castNames.push(name);});
     const activeName=st.npc&&(st.npc.name||st.npc);
     if(activeName&&!castNames.includes(activeName))castNames.push(activeName);
     const anchor=SPOTS[st.spot]||SPOTS.a;
