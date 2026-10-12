@@ -378,11 +378,13 @@ const RAW_MISSIONS = [
     "location": "Oyo student courtyard, roadside print kiosk and community hall",
     "npcIds": [
       "goodness",
-      "semi"
+      "semi",
+      "timi"
     ],
     "npcs": [
       "Goodness",
-      "Semi"
+      "Semi",
+      "Timi"
     ],
     "narrativePurpose": "The student group is turning Timi's screenshot into a public accusation. Goodness wants the rumour stopped; Semi has found the uncropped message and the wallet's public transaction history. Follow the mismatch, find what the screenshot leaves out, and help Timi face the group without exposing private details or accusing an unproven editor.",
     "learningObjectives": [
