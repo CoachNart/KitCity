@@ -2957,7 +2957,7 @@ function placeExecutionCenter(def,base,station){
 function safeMissionSpot(spot,offsetX=0,offsetZ=0){
   if(!spot||!Number.isFinite(Number(spot.x))||!Number.isFinite(Number(spot.z))) return spot;
   const safeAxis=(value,axis,offset)=>{
-    const v=Number(value)+offset;
+    const v=Number(value);
     let bestN=-3,bestMid=roadMid(-3,axis),bestDist=Infinity;
     for(let n=-3;n<=2;n++){
       const mid=roadMid(n,axis),dist=Math.abs(v-mid);
@@ -2966,7 +2966,10 @@ function safeMissionSpot(spot,offsetX=0,offsetZ=0){
     const left=roadCoord(bestN,axis)+roadWidthFor(curCity,bestN)/2+18;
     const right=roadCoord(bestN+1,axis)-roadWidthFor(curCity,bestN+1)/2-18;
     if(left>right) return bestMid;
-    return Math.max(left,Math.min(right,v));
+    /* If the authored spot is on/too near a road, move it to the block interior,
+       not merely to the edge of the safe zone. Offsets then keep a scene cast spread out. */
+    const base=(v<left||v>right)?bestMid:v;
+    return Math.max(left,Math.min(right,base+offset));
   };
   return Object.assign({},spot,{
     x:safeAxis(spot.x,'x',offsetX),
