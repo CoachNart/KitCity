@@ -2487,7 +2487,7 @@ function addLagosPremiumRoads(){
   const medianMat=new THREE.MeshLambertMaterial({color:'#263E45'});
   const stripeMat=new THREE.MeshBasicMaterial({color:'#F6C85F',depthWrite:false});
   const cyanMat=new THREE.MeshBasicMaterial({color:'#10C8DC'});
-  const road=(x,z,length,width,angle=0)=>{const m=new THREE.Mesh(new THREE.BoxGeometry(length,.09,width),asphalt);m.position.set(x,.125,z);m.rotation.y=angle;cityGroup.add(m);};
+  const road=(x,z,length,width,angle=0)=>{const m=new THREE.Mesh(new THREE.BoxGeometry(length,.09,width),asphalt);m.position.set(x,.02,z);m.rotation.y=angle;cityGroup.add(m);};
   const bar=(x,z,length,width,material,angle=0,y=.11)=>{const m=new THREE.Mesh(new THREE.BoxGeometry(length,.035,width),material);m.position.set(x,y,z);m.rotation.y=angle;cityGroup.add(m);};
   for(const axis of ['x','z']) for(const n of [-2,0,2]){
     const p=roadCoord(n,axis==='x'?'z':'x');
