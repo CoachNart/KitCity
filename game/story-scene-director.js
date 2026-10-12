@@ -29,6 +29,7 @@ export function createStorySceneDirector({ camera, player, getCharacter, animate
   let closingTimer = 0;
   let navControls = null;
   let manualAdvance = false;
+  let activeSpeaker = null;
 
   function ensureScene() {
     if (titleCard) return;
@@ -84,6 +85,7 @@ export function createStorySceneDirector({ camera, player, getCharacter, animate
     const line = OPENING_LINES[index];
     if (!line) return;
     hideBubbles();
+    activeSpeaker = line.speaker;
     const bubble = bubbleBySpeaker[line.speaker];
     if (!bubble) return;
     bubble.querySelector('.kitcity-bubble-speaker').textContent =
@@ -106,6 +108,7 @@ export function createStorySceneDirector({ camera, player, getCharacter, animate
   function finish() {
     if (!active) return;
     active = false;
+    activeSpeaker = null;
     clearTimeout(titleTimer);
     clearTimeout(closingTimer);
     hideBubbles();
@@ -140,6 +143,12 @@ export function createStorySceneDirector({ camera, player, getCharacter, animate
   }
 
   function positionBubble(el, speaker) {
+    // Only the current speaker owns a visible bubble. The animation loop runs for
+    // every bubble, so never let positioning re-show inactive speakers.
+    if (!active || speaker !== activeSpeaker) {
+      el.classList.add('hidden');
+      return;
+    }
     const actor = actorFor(speaker);
     if (!actor || !actor.visible) {
       el.classList.add('hidden');
