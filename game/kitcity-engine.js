@@ -452,6 +452,8 @@ const YT=(function(){
     setTimeout(()=>{ if(!ready) failed=true; },15000);
   }
   function play(){
+    /* Never restart a previous city's video if the current state has no mapping. */
+    if(!queue()){ if(ready){ try{player.stopVideo();}catch(e){} } return; }
     if(ready){
       try{ if(player.getPlayerState&&player.getPlayerState()===-1) loadQueue(); player.playVideo(); }catch(e){}
     }
