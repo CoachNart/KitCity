@@ -72,6 +72,15 @@ const lagosFollowUp = MISSIONS.find((mission) => mission.id === "m02");
 if (!lagosFollowUp || !/wrong-address payment|transaction hash|recipient address/i.test(lagosFollowUp.narrativePurpose)) errors.push("Lagos Mission 2 must directly continue the wrong-address payment investigation.");
 if (lagosFollowUp && /internet-history exhibit|classify Web1|Web1, Web2 and Web3/i.test(JSON.stringify(lagosFollowUp))) errors.push("Disconnected generic internet-history objectives remain in Lagos Mission 2.");
 if (lagosFollowUp && !lagosFollowUp.objectives.some((objective) => /save the copied payment page/i.test(objective.label))) errors.push("Lagos Mission 2 must preserve the copied page before investigating how the link spread.");
+
+const oyoFollowUp = MISSIONS.find((mission) => mission.id === "m03");
+if (!oyoFollowUp || !/Timi|twelve secret words|recovery/i.test(oyoFollowUp.narrativePurpose)) errors.push("Oyo Mission 3 must continue directly from the recovery-scam voice note.");
+if (oyoFollowUp && !/stop timi before the recovery countdown ends/i.test(oyoFollowUp.objectives.map((objective) => objective.label).join(" "))) errors.push("Mission 3 must open with a player action that interrupts the recovery scam.");
+if (oyoFollowUp && /create a wallet at the practice kiosk|interview two users/i.test(JSON.stringify(oyoFollowUp))) errors.push("Mission 3 still contains detached classroom-style activities.");
+requireText("m03-obj-1", "Mission 3's bespoke runtime steps");
+requireText("Timi's thumb is hovering over 'Restore now'. What do you do?", "Mission 3's situation-specific activity rule");
+requireText("if(story.id==='m03')", "Mission 3 has its own authored runtime sequence");
+
 const lagosOpening = MISSIONS.find((mission) => mission.id === "m01");
 if (!lagosOpening || !/payment|transaction/i.test(lagosOpening.narrativePurpose)) errors.push("Lagos opening is not driven by a player-relevant payment dispute");
 if (lagosOpening && /T3Kit|t3kit/i.test(JSON.stringify(lagosOpening))) errors.push("Lagos opening still uses T3Kit as a plot device");
