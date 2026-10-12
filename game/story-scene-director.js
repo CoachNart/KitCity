@@ -52,8 +52,10 @@ export function createStorySceneDirector({ camera, player, getCharacter, animate
       const button = event.target.closest('button[data-step]');
       if (!button || !active) return;
       event.preventDefault();
+      const step = Number(button.dataset.step);
+      if (step > 0 && lineIndex >= OPENING_LINES.length - 1) { finish(); return; }
       manualAdvance = true;
-      const target = Math.max(0, Math.min(OPENING_LINES.length - 1, lineIndex + Number(button.dataset.step)));
+      const target = Math.max(0, Math.min(OPENING_LINES.length - 1, lineIndex + step));
       showLine(target);
     });
     ['Softstorm', 'IamAbdul', 'PLAYER'].forEach(speaker => {
@@ -151,14 +153,20 @@ export function createStorySceneDirector({ camera, player, getCharacter, animate
     const rect = canvas ? canvas.getBoundingClientRect() : { left: 0, top: 0, width: innerWidth, height: innerHeight };
     const x = rect.left + (point.x * .5 + .5) * rect.width;
     const y = rect.top + (-point.y * .5 + .5) * rect.height;
-    const visible = point.z > -1 && point.z < 1 && x > rect.left + 20 && x < rect.right - 20 && y > rect.top + 30 && y < rect.bottom - 70;
+    const visible = point.z > -1 && point.z < 1 && x > rect.left - 80 && x < rect.right + 80 && y > rect.top - 30 && y < rect.bottom + 30;
     if (!visible) {
       el.classList.add('offscreen');
       return;
     }
     el.classList.remove('offscreen');
-    el.style.left = x + 'px';
-    el.style.top = y + 'px';
+    // Keep the full bubble inside the viewport on narrow phones and edge actors.
+    const margin = 10;
+    const width = Math.min(el.offsetWidth || 300, window.innerWidth - margin * 2);
+    const height = el.offsetHeight || 80;
+    const left = Math.max(margin + width / 2, Math.min(window.innerWidth - margin - width / 2, x));
+    const top = Math.max(margin + height, Math.min(window.innerHeight - margin, y));
+    el.style.left = left + 'px';
+    el.style.top = top + 'px';
   }
 
   function update(dt, time) {
