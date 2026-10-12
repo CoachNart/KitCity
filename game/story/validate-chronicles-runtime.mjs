@@ -69,7 +69,7 @@ if (/sandbox|simulated|simulation|simulator|fictional/i.test(JSON.stringify(MISS
 requireText("P.storyFlags.future_direction=options[choice]", "player-owned ending choice");
 if (!engine.includes("if(m.id==='m01'&&P.chroniclesPrologueVersion!==2)")) errors.push("First-time intro cinematic gate is missing");
 const lagosFollowUp = MISSIONS.find((mission) => mission.id === "m02");
-if (!lagosFollowUp || !/transaction hash|recipient address/i.test(lagosFollowUp.narrativePurpose)) errors.push("Lagos Mission 2 must directly continue the wrong-address payment investigation.");
+if (!lagosFollowUp || !/wrong-address payment|transaction hash|recipient address/i.test(lagosFollowUp.narrativePurpose)) errors.push("Lagos Mission 2 must directly continue the wrong-address payment investigation.");
 if (lagosFollowUp && /internet-history exhibit|classify Web1|Web1, Web2 and Web3/i.test(JSON.stringify(lagosFollowUp))) errors.push("Disconnected generic internet-history objectives remain in Lagos Mission 2.");
 if (lagosFollowUp && !lagosFollowUp.objectives.some((objective) => /save the copied payment page/i.test(objective.label))) errors.push("Lagos Mission 2 must preserve the copied page before investigating how the link spread.");
 const lagosOpening = MISSIONS.find((mission) => mission.id === "m01");
