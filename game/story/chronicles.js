@@ -1031,11 +1031,12 @@ const RAW_MISSIONS = [
       "Reina",
       "Cclya"
     ],
-    "narrativePurpose": "A fake moderator sends direct messages asking members to verify wallets. Move from the hall to the message kiosk to preserve the evidence, then to the support desk to help the affected newcomer secure their account. The response must stop the scam without spreading the link or exposing the victim.",
+    "narrativePurpose": "The incident starts exactly where the previous mission ended: the newcomer who stayed to test the new welcome card shows Cybersage a DM from an account using Reina's name and photo. Three attendees received the same threat that their wallets will be restricted unless they verify immediately; one opened the link. Reina and Cclya lead the player from the hall to the message kiosk to compare the sender against the real moderator roster, preserve and report the evidence without spreading the link, then help the affected member check their wallet safely. The team must protect the member, avoid guessing who runs the fake account, and publish a useful warning before the scheduled safety session in Enugu.",
     "learningObjectives": [
-      "How to verify moderator identity",
-      "How to contain a malicious message",
-      "How to communicate a safety incident without shaming users"
+      "Verify a moderator by exact handle and an independently published roster, not by name or profile photo",
+      "Contain and report a phishing attempt while preserving private evidence",
+      "Give the affected member safe account-check steps without asking for recovery phrases",
+      "Publish a factual warning that protects the community without exposing the victim"
     ],
     "prerequisites": [
       "m11"
@@ -1043,33 +1044,34 @@ const RAW_MISSIONS = [
     "objectives": [
       {
         "id": "m12-obj-1",
-        "label": "Identify impersonation by checking the account",
+        "label": "Compare the sender's exact handle with the official moderator roster",
         "interactionTarget": "story:m12:objective:1",
         "required": true
       },
       {
         "id": "m12-obj-2",
-        "label": "Contain a dangerous message and preserve evidence",
+        "label": "Preserve the original DM privately, report the fake account and contain the link",
         "interactionTarget": "story:m12:objective:2",
         "required": true
       },
       {
         "id": "m12-obj-3",
-        "label": "Secure the affected user's account",
+        "label": "Help the affected newcomer check wallet connections and approvals safely",
         "interactionTarget": "story:m12:objective:3",
         "required": true
       },
       {
         "id": "m12-obj-4",
-        "label": "Publish a clear incident notice",
+        "label": "Publish a factual warning without the victim's identity or malicious URL",
         "interactionTarget": "story:m12:objective:4",
         "required": true
       }
     ],
     "successConditions": [
-      "The account is verified as an impersonator",
-      "Evidence is preserved and the message is contained",
-      "The affected member receives safe next steps and the community receives a factual notice"
+      "The exact sender handle is confirmed as absent from the independently published moderator roster; the person behind the account is not guessed at",
+      "The original message, timestamp and destination are preserved privately, the account is reported, and the malicious URL is not amplified",
+      "The affected newcomer receives safe account-check steps without sharing recovery words or private details",
+      "The public notice names the fake handle and official verification route without identifying the victim, and the handoff to the Enugu safety session is ready"
     ],
     "failureAndRetry": {
       "onFailure": "If the player reposts the scam link or exposes the victim, Cclya pauses the notice and asks them to remove harmful details.",
@@ -1089,11 +1091,11 @@ const RAW_MISSIONS = [
       "impersonator_contained"
     ],
     "nextMissionId": "m13",
-    "ending": "The fake account is reported and the community gets a clear warning without the victim becoming the story. The group asks for a live session to explain what happened.",
-    "cliffhanger": "The scheduled host cancels minutes before the session. Leemah and Kenny hand you the mic, a stack of questions and a room full of people who want honest answers.",
+    "ending": "The fake account is reported, the original DM is preserved privately, and the pinned warning gives members a safe way to verify moderators. The newcomer who helped test the welcome card is no longer being treated as the problem; the team has a documented response and a clear account-safety checklist.",
+    "cliffhanger": "The team is due to explain the incident at a safety session in Enugu. Minutes before it starts, the host cancels. Reina forwards the incident summary to Leemah and Kenny, who are at the venue with a room full of questions. The player must carry the verified facts into the next mission—not rumours or promises that wallets are perfectly safe.",
     "sceneLines": [
-      "Reina: \"Oi, you came at the right time. Someone with my photo is DMing people as a moderator and telling them their wallets will be restricted unless they verify now. One new member clicked the link. They’re scared, and the chat is already asking who got fooled. Don't repost their message.\"",
-      "Cclya: \"I checked the moderator roster. Our real account has a different handle, and this one isn't on the roster. The link leads to a wallet-connection prompt. Let's preserve the message privately, report the account, and help the member secure things without asking for their phrase or blaming them.\""
+      "Reina: \"The newcomer who stayed to test the welcome card just showed Cybersage this DM. Same fake moderator name, same threat, and three people received it. One person opened the link. The chat is already asking who got fooled. We need to protect them, not turn them into the story.\"",
+      "Cclya: \"The sender's handle is not on our published moderator roster, and the link opens a wallet-connection prompt. That is enough to report the account as an impersonator; it is not proof of who runs it or that funds were taken. Preserve the message privately, help the member check safely, and warn everyone without reposting the link.\""
     ]
   },
   {
