@@ -213,6 +213,31 @@ if (engine.includes("m12_victim_privacy_protected=true;finishStep();}}])")) {
   // The privacy flag is only set on the corrected, safe notice path; the unsafe option must redirect first.
 }
 
+const leverageMission = MISSIONS.find((mission) => mission.id === "m10");
+if (!leverageMission || leverageMission.title !== "The Money That Wasn't His") errors.push("Mission 10 must use the rewritten leverage and protected event-funds story.");
+if (leverageMission && (leverageMission.npcs[0] !== "Praise" || leverageMission.npcs[1] !== "Toza" || leverageMission.npcs[2] !== "Craftore")) errors.push("Mission 10 must introduce Praise, Toza and Craftore in the supplied order.");
+if (leverageMission && (!leverageMission.prerequisites.includes("m09") || leverageMission.nextMissionId !== "m11")) errors.push("Mission 10 must connect Mission 9 to Mission 11.");
+if (leverageMission && !leverageMission.sceneLines.some((line) => line.startsWith("Praise:"))) errors.push("Mission 10 is missing authored Praise dialogue.");
+if (leverageMission && !leverageMission.sceneLines.some((line) => line.startsWith("Toza:"))) errors.push("Mission 10 is missing authored Toza dialogue.");
+if (leverageMission && !leverageMission.sceneLines.some((line) => line.startsWith("Craftore:"))) errors.push("Mission 10 is missing authored Craftore dialogue.");
+if (leverageMission && /Joseph Nnadi:|The Don:|Kodavic:|Cybersage:/i.test(leverageMission.sceneLines.join(" "))) errors.push("Mission 10 dialogue duplicates characters from adjacent mission casts.");
+requireText("else if(story.id==='m10')", "Mission 10 bespoke leveraged-position runtime");
+for (const marker of [
+  "m10_position_ticket_rebuilt",
+  "m10_exposure_separated_from_margin",
+  "m10_original_risk_limit_found",
+  "m10_liquidation_estimate_reviewed",
+  "m10_risk_limit_compared",
+  "m10_estimate_not_guaranteed",
+  "m10_venue_deposit_protected",
+  "m10_add_margin_rejected",
+  "m10_reduce_or_close_selected",
+  "m10_decision_record_saved",
+  "m10_event_funds_protected",
+  "m10_complete:true",
+  "event_funds_protected:true"
+]) requireText(marker, "Mission 10 evidence and completion marker " + marker);
+
 const liveSessionMission = MISSIONS.find((mission) => mission.id === "m13");
 if (!liveSessionMission || liveSessionMission.title !== "The Mic Is Live") errors.push("Mission 13 must be the live community safety session.");
 if (liveSessionMission && (liveSessionMission.npcs[0] !== "Leemah" || liveSessionMission.npcs[1] !== "Kenny")) errors.push("Mission 13 must introduce Leemah and Kenny in the supplied order.");
