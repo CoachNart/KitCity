@@ -1680,6 +1680,130 @@ function landmark(type,cx,cz){
   colliders.push({x0:cx-24,x1:cx+24,z0:cz-24,z1:cz+24});
   const sp=label(name); sp.position.set(cx,top+6,cz); cityGroup.add(sp);
 }
+function addRegionalIdentity(C,key){
+  // Distinct, low-collision skyline/terrain silhouettes placed on the far edge
+  // of the playable grid so each capital reads differently from street level.
+  const box=(w,h,d,color,x,y,z,rot=0)=>{
+    const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),lam(color));
+    m.position.set(x,y,z);m.rotation.y=rot;cityGroup.add(m);return m;
+  };
+  const cyl=(r1,r2,h,color,x,y,z,segments=10)=>{
+    const m=new THREE.Mesh(new THREE.CylinderGeometry(r1,r2,h,segments),lam(color));
+    m.position.set(x,y,z);cityGroup.add(m);return m;
+  };
+  const cone=(r,h,color,x,y,z,segments=7)=>{
+    const m=new THREE.Mesh(new THREE.ConeGeometry(r,h,segments),lam(color));
+    m.position.set(x,y,z);cityGroup.add(m);return m;
+  };
+  const hills=(color,points)=>points.forEach(([x,z,r,h])=>cone(r,h,color,x,h*.38,z,8));
+  if(key==='lagos'){
+    // Lagos Island / Victoria Island skyline with the unmistakable long lagoon bridge.
+    box(220,1.1,5.5,'#667B83',0,8,-218);
+    for(const x of [-150,-75,0,75,150]){
+      box(1.1,3,5.9,'#D2D8D6',x,10,-218);
+      box(1.2,17,1.2,'#778991',x,18,-218);
+    }
+    [[-205,42,18],[-180,58,23],[-151,34,16],[-120,72,29],[-88,44,20],[-58,31,14]].forEach(([x,h,w],i)=>{
+      box(w,h,w*.72,['#9BB5BE','#D2D5D1','#7F9CA8','#B8C8CB'][i%4],x,h/2-0.2,-190+(i%2)*13);
+      for(let y=6;y<h-3;y+=5)box(w*.76,.28,w*.74,'#D9E8E9',x,y,-190+(i%2)*13);
+    });
+    const tower=label('LAGOS ISLAND • LAGOON', '#F6B21A', '#1B1C20',1.6);tower.position.set(-125,82,-190);cityGroup.add(tower);
+  }else if(key==='ibadan'){
+    // Cocoa House and the brown-roofed, hill-spread city.
+    hills('#81715F',[[-205,-215,30,38],[-165,-230,38,48],[-105,-222,28,32]]);
+    box(17,74,15,'#B96F45',-195,37,-195);
+    for(let y=8;y<68;y+=7)box(17.5,.8,15.5,'#E1C49A',-195,y,-195);
+    const t=label('COCOA HOUSE', '#8A4B31','#FFFFFF',1.5);t.position.set(-195,81,-195);cityGroup.add(t);
+  }else if(key==='kano'){
+    // Earthen city-wall profile with rounded watch towers and a historic gate.
+    box(210,12,5,'#B88C5D',0,6,-220);
+    for(const x of [-100,-50,0,50,100]){
+      cyl(6,7,18,'#CBA777',x,9,-220,8);
+      cyl(7,7,2,'#9B7047',x,18,-220,8);
+    }
+    box(24,18,8,'#DCC39A',0,9,-220);
+    box(7,9,9,'#5B4634',0,4.5,-215);
+    const t=label('KANO • ANCIENT CITY', '#B88C5D','#241B13',1.5);t.position.set(0,27,-220);cityGroup.add(t);
+  }else if(key==='jos'){
+    hills('#777F78',[[-210,-215,28,34],[-175,-226,40,49],[-132,-218,25,30],[-90,-230,34,39]]);
+    hills('#A7ADA0',[[-206,-212,18,24],[-174,-223,27,35],[-130,-215,17,22]]);
+    const t=label('JOS PLATEAU', '#E8ECE4','#35443C',1.5);t.position.set(-170,55,-225);cityGroup.add(t);
+  }else if(key==='enugu'){
+    hills('#607766',[[-205,-218,32,34],[-164,-230,40,42],[-120,-218,28,30]]);
+    // Coal-mining headframe silhouette.
+    box(2,29,2,'#303B39',-190,14.5,-194);box(2,29,2,'#303B39',-169,14.5,-194);
+    box(27,2,2,'#303B39',-179.5,29,-194);box(22,1.5,2,'#303B39',-179.5,20,-194);
+    for(const x of [-187,-172])box(1,14,1,'#A7B5A8',x,7,-194);
+    const t=label('COAL CITY', '#425E4B','#FFFFFF',1.5);t.position.set(-180,36,-194);cityGroup.add(t);
+  }else if(key==='benin'){
+    // Red-earth palace gate and bronze-toned sculptural pillars.
+    box(44,3,5,'#8E4A36',-190,20,-205);box(6,20,6,'#A65B3D',-210,10,-205);box(6,20,6,'#A65B3D',-170,10,-205);
+    for(const x of [-202,-190,-178]){cyl(1.2,1.5,13,'#B9783D',x,7,-201,8);cyl(1.8,1.8,1.2,'#D7A65B',x,14,-201,8);}
+    const t=label('BENIN CITY • BRONZE HERITAGE','#B9783D','#24180F',1.45);t.position.set(-190,29,-205);cityGroup.add(t);
+  }else if(key==='calabar'){
+    // Historic waterfront station: deep verandah, columns and tropical palms.
+    box(42,13,20,'#D8C2A3',-190,6.5,-205);box(46,1.4,24,'#6B8D83',-190,14,-205);
+    box(48,1,5,'#B5A38B',-190,10,-194);
+    for(const x of [-208,-196,-184,-172])box(.9,8,.9,'#F1E6D2',x,4,-194);
+    for(const x of [-220,-160]){
+      cyl(1,1.4,10,'#795A3C',x,5,-190,7);
+      for(let a=0;a<6;a++){const fr=cone(3,8,'#287448',x+Math.cos(a*Math.PI/3)*3,12,-190+Math.sin(a*Math.PI/3)*3,5);fr.rotation.z=Math.PI/2;}
+    }
+    const t=label('CALABAR WATERFRONT','#3D756D','#FFFFFF',1.5);t.position.set(-190,22,-205);cityGroup.add(t);
+  }else if(key==='lokoja'){
+    // Two differently coloured river ribbons meet at a confluence marker.
+    const river1=new THREE.Mesh(new THREE.PlaneGeometry(150,24),lam('#477F9D'));river1.rotation.x=-Math.PI/2;river1.rotation.z=-.32;river1.position.set(-172,0.12,-185);cityGroup.add(river1);
+    const river2=new THREE.Mesh(new THREE.PlaneGeometry(120,19),lam('#6B9FAF'));river2.rotation.x=-Math.PI/2;river2.rotation.z=.42;river2.position.set(-170,0.15,-185);cityGroup.add(river2);
+    hills('#9A9278',[[-225,-210,23,27],[-208,-232,18,23]]);
+    const t=label('NIGER + BENUE CONFLUENCE','#477F9D','#FFFFFF',1.4);t.position.set(-170,18,-185);cityGroup.add(t);
+  }else if(key==='abuja'){
+    // Aso Rock profile and clean, monumental civic skyline.
+    hills('#777F80',[[-210,-215,36,52],[-174,-225,46,66],[-128,-215,30,44]]);
+    box(20,42,20,-1===0?'#FFFFFF':'#DCE3E5',-75,21,-195);
+    box(26,2,26,'#FFFFFF',-75,43,-195);
+    const t=label('ASO ROCK • CAPITAL CITY','#FFFFFF','#33434F',1.5);t.position.set(-170,69,-225);cityGroup.add(t);
+  }else if(key==='osogbo'){
+    // Sacred-grove inspired sculptural gateway and green canopy.
+    box(3,22,3,'#8A6D48',-190,11,-205);box(3,22,3,'#8A6D48',-164,11,-205);box(29,3,4,'#B7C79B',-177,22,-205);
+    for(const x of [-205,-190,-174,-158]){cyl(1.1,1.3,7,'#6D563A',x,3.5,-192,7);cone(5,10,'#2D7842',x,11,-192,7);}
+    const t=label('OSOGBO • SACRED GROVE','#2D7842','#FFFFFF',1.4);t.position.set(-177,31,-205);cityGroup.add(t);
+  }else if(key==='abeokuta'){
+    hills('#8B7964',[[-210,-218,32,40],[-176,-226,45,56],[-128,-216,28,34]]);
+    hills('#B8A58A',[[-209,-215,20,28],[-175,-222,27,36]]);
+    const t=label('OLumo ROCK COUNTRY','#6D5A47','#FFFFFF',1.4);t.position.set(-176,61,-226);cityGroup.add(t);
+  }else if(key==='maiduguri'){
+    // Sahel edge: low sand-coloured compounds and a dry-season horizon.
+    box(46,9,24,'#D8B784',-190,4.5,-208);box(50,1.2,28,'#B58C5D',-190,9.6,-208);
+    for(const x of [-207,-190,-173]){cyl(2.4,2.8,10,'#C49B68',x,5,-205,8);cone(3,4,'#E1C59A',x,12,-205,8);}
+    const t=label('MAIDUGURI • SAHEL GATE','#B58C5D','#241B13',1.4);t.position.set(-190,19,-208);cityGroup.add(t);
+  }else if(key==='port-harcourt'||key==='ph'){
+    // Port city silhouette: harbour cranes and a steel-framed industrial skyline.
+    for(const x of [-205,-175,-145]){
+      box(2,32,2,'#596F70',x,16,-205);box(26,2,2,'#7D9997',x+12,31,-205);
+      box(2,12,2,'#596F70',x+23,24,-205);box(2,8,2,'#596F70',x+20,19,-205);
+    }
+    const t=label('PORT HARCOURT • HARBOUR CITY','#477C78','#FFFFFF',1.45);t.position.set(-175,39,-205);cityGroup.add(t);
+  }else if(key==='yenagoa'||key==='warri'||key==='uyo'||key==='ikot-ekpene'){
+    // Niger Delta / coastal cities: raised boardwalk and dense tropical canopy.
+    box(90,.7,8,'#80694D',-175,1.3,-208);
+    for(let x=-215;x<=-135;x+=16){box(.7,2,.7,'#725C42',x,1,-208);cyl(1,1.3,9,'#775B3C',x,4,-198,7);for(let a=0;a<5;a++)cone(3.5,7,'#287447',x+Math.cos(a*1.25)*2.5,9,-198+Math.sin(a*1.25)*2.5,5);}
+    const t=label(C.name.toUpperCase()+' • COASTAL LOWLAND','#36775A','#FFFFFF',1.35);t.position.set(-175,18,-208);cityGroup.add(t);
+  }else if(key==='makurdi'||key==='lafia'||key==='minna'||key==='kafanchan'){
+    // Middle Belt terrain: low layered ridges and a broad open horizon.
+    hills('#78866C',[[-215,-218,26,28],[-180,-229,34,37],[-142,-218,24,25]]);
+    hills('#A5A58B',[[-212,-216,16,20],[-178,-226,21,25]]);
+    const t=label(C.name.toUpperCase()+' • MIDDLE BELT','#687C62','#FFFFFF',1.35);t.position.set(-180,40,-228);cityGroup.add(t);
+  }else{
+    // Every remaining capital gets a named civic silhouette rather than a blank,
+    // interchangeable horizon. Geometry is kept outside the busiest street blocks.
+    const family=CITY_REGION[key]||'southwest';
+    const tone=family==='north'?'#B99A70':family==='coastal'?'#73968B':family==='highland'?'#8D9B8C':family==='southeast'?'#7D9C87':'#B3A58D';
+    box(34,10,18,tone,-190,5,-210);
+    for(const x of [-202,-190,-178])box(1.2,15,1.2,'#E3D7BE',x,7.5,-200);
+    box(38,1.1,22,family==='north'?'#D5BD96':'#D1D7C8',-190,12,-210);
+    const t=label(C.name.toUpperCase()+' • '+(C.tag||'LOCAL DISTRICT').toUpperCase(),'#F0EEE4','#27332F',1.25);t.position.set(-190,19,-210);cityGroup.add(t);
+  }
+}
 function streetDetails0(C,blocks){
   ringTaken=[]; hawkers=[];
   (C.bridges||[]).forEach(b=>footbridge(b[0],b[1]));
@@ -1984,6 +2108,7 @@ function buildCity(key){
     // Roadside/block-edge tree placement removed: keep streets and road verges clear.
   }
   streetDetails(C,blocks); roadDecals(C,blocks);
+  addRegionalIdentity(C,key);
   dxFlush(C);
   cityCols=colliders.length;
   for(let k=-3;k<=3;k++)for(const axis of ['x','z'])for(const dir of [1,-1]){
