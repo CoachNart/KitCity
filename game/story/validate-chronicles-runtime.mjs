@@ -80,6 +80,14 @@ if (oyoFollowUp && /create a wallet at the practice kiosk|interview two users/i.
 requireText("m03-obj-1", "Mission 3's bespoke runtime steps");
 requireText("Timi's thumb is hovering over 'Restore now'. What do you do?", "Mission 3's situation-specific activity rule");
 requireText("if(story.id==='m03')", "Mission 3 has its own authored runtime sequence");
+requireText("if(story.id==='m04')", "Mission 4 has its own authored runtime sequence");
+const oyoScreenshotFollowUp = MISSIONS.find((mission) => mission.id === "m04");
+if (!oyoScreenshotFollowUp || !/Timi|screenshot|wallet activity/i.test(oyoScreenshotFollowUp.narrativePurpose)) errors.push("Mission 4 must continue directly from the screenshot claim about Timi.");
+if (oyoScreenshotFollowUp && !/stop the group from naming timi/i.test(oyoScreenshotFollowUp.objectives.map((objective) => objective.label).join(" "))) errors.push("Mission 4 must begin by stopping the accusation before verifying the screenshot.");
+if (oyoScreenshotFollowUp && /explain consensus|identify its block|proposed record change/i.test(JSON.stringify(oyoScreenshotFollowUp))) errors.push("Mission 4 still contains detached generic blockchain objectives.");
+requireText("m04-obj-1", "Mission 4's bespoke runtime steps");
+requireText("m04_claimed_transfer_not_found", "Mission 4 checks the claimed transfer against the relevant wallet activity");
+requireText("m04_timi_privacy_protected", "Mission 4 corrects the claim without exposing Timi's private details");
 
 const lagosOpening = MISSIONS.find((mission) => mission.id === "m01");
 if (!lagosOpening || !/payment|transaction/i.test(lagosOpening.narrativePurpose)) errors.push("Lagos opening is not driven by a player-relevant payment dispute");
