@@ -93,7 +93,7 @@ export function createStorySceneDirector({ camera, player, getCharacter, animate
     void bubble.offsetWidth;
     bubble.classList.add('bubble-pop');
     lineIndex = index;
-    const readTime = Math.min(9000, Math.max(5200, line.text.length * 82));
+    const readTime = Math.min(14000, Math.max(6500, line.text.length * 105));
     nextLineAt = manualAdvance ? Number.POSITIVE_INFINITY : performance.now() + readTime;
     if (navControls) {
       navControls.classList.remove('hidden');
@@ -154,11 +154,11 @@ export function createStorySceneDirector({ camera, player, getCharacter, animate
     const x = rect.left + (point.x * .5 + .5) * rect.width;
     const y = rect.top + (-point.y * .5 + .5) * rect.height;
     const visible = point.z > -1 && point.z < 1 && x > rect.left - 80 && x < rect.right + 80 && y > rect.top - 30 && y < rect.bottom + 30;
-    if (!visible) {
-      el.classList.add('offscreen');
+    if (point.z <= -1 || point.z >= 1) {
+      el.classList.add('hidden');
       return;
     }
-    el.classList.remove('offscreen');
+    el.classList.remove('hidden', 'offscreen');
     // Keep the full bubble inside the viewport on narrow phones and edge actors.
     const margin = 10;
     const width = Math.min(el.offsetWidth || 300, window.innerWidth - margin * 2);
