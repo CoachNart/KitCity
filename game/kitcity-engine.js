@@ -3738,14 +3738,17 @@ function loadStep(){
     // The current interaction target remains the only active character; other cast
     // members stay visible for continuity without hijacking the objective.
     const castNames=[];
-    (m.npcs||[]).forEach(name=>{if(name&&!castNames.includes(name))castNames.push(name);});
+    if(m.id!=='m01')(m.npcs||[]).forEach(name=>{if(name&&!castNames.includes(name))castNames.push(name);});
     const activeName=st.npc&&(st.npc.name||st.npc);
     if(activeName&&!castNames.includes(activeName))castNames.push(activeName);
-    const castSpots=['a','story','buyer','c','d','e','f','g','h','i','j','k','l'];
+    const anchor=SPOTS[st.spot]||SPOTS.a;
+    const castOffsets=[[0,0],[4,-2],[-4,-2],[0,4],[6,3],[-6,3],[0,-6],[8,-1],[-8,-1]];
     castNames.forEach((name,index)=>{
       const npc=STORY_NPCS[name];
       if(!npc)return;
-      const entity=placeNPC(npc,SPOTS[castSpots[index%castSpots.length]]||SPOTS.a);
+      const offset=castOffsets[index%castOffsets.length];
+      const castSpot={x:anchor.x+offset[0],z:anchor.z+offset[1],f:index===0?anchor.f:-anchor.f};
+      const entity=placeNPC(npc,castSpot);
       const isTarget=st.kind==='character'&&activeName===name;
       entity.talk=()=>{if(isTarget)st.run();};
       entity.active=()=>isTarget;
