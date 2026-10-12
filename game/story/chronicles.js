@@ -54,8 +54,7 @@ export const CHARACTER_ORDER = [
   "Joe",
   "Mike",
   "Gbemi",
-  "FemiY",
-  "Timi"
+  "FemiY"
 ];
 
 export const NIGERIAN_STATES = [
