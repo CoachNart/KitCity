@@ -23,6 +23,8 @@ html,body{height:100%;overflow:hidden;background:var(--ink);color:var(--ink);fon
 #wallet{padding:7px 10px;text-align:right;font-size:12px;font-weight:600;line-height:1.25}
 #wallet b{display:block;font:900 16px/1.1 var(--display)}
 #compass{width:62px;height:62px;border-radius:50%;background:var(--ink);border:3px solid var(--brand);display:grid;place-items:center;position:relative;margin-top:2px}
+#compass.force-visible{display:grid!important;visibility:visible!important;opacity:1!important;z-index:80!important}
+#compass.force-visible #arrow{display:block!important;visibility:visible!important;opacity:1!important}
 #arrow{width:30px;height:30px}
 #dist{position:absolute;bottom:-12px;left:50%;transform:translateX(-50%);background:var(--brand);border:2px solid var(--ink);border-radius:4px;font:800 11px/1 system-ui;padding:3px 5px;white-space:nowrap}
 #toast{top:calc(170px + env(safe-area-inset-top));left:50%;transform:translateX(-50%) translateY(-8px);background:var(--ink);color:var(--brand);border-radius:6px;padding:8px 14px;font-weight:800;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;max-width:86vw;text-align:center;z-index:45}
