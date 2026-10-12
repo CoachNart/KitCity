@@ -130,6 +130,25 @@ for (const [id, prerequisite, nextId, cast] of sixMissionArc) {
   }
 }
 
+const swapMission = MISSIONS.find((mission) => mission.id === "m07");
+if (!swapMission || swapMission.title !== "The Swap That Changed Its Face") errors.push("Mission 7 must use the rewritten swap-investigation story.");
+if (swapMission && (swapMission.npcs[0] !== "LunaX" || swapMission.npcs[1] !== "OxNight")) errors.push("Mission 7 must introduce LunaX and OxNight in the supplied order.");
+if (swapMission && (!swapMission.prerequisites.includes("m06") || swapMission.nextMissionId !== "m08")) errors.push("Mission 7 must connect Mission 6 to Mission 8.");
+if (swapMission && swapMission.sceneLines.some((line) => /Laloba:|BigSam:|Moon:/i.test(line))) errors.push("Mission 7 dialogue must not duplicate characters from adjacent mission casts.");
+if (swapMission && !swapMission.sceneLines.some((line) => line.startsWith("LunaX:"))) errors.push("Mission 7 is missing authored LunaX dialogue.");
+if (swapMission && !swapMission.sceneLines.some((line) => line.startsWith("OxNight:"))) errors.push("Mission 7 is missing authored OxNight dialogue.");
+requireText("else if(story.id==='m07')", "Mission 7 bespoke swap-investigation runtime");
+for (const marker of [
+  "m07_token_contract_compared",
+  "m07_lookalike_asset_detected",
+  "m07_like_for_like_routes_compared",
+  "m07_execution_record_checked",
+  "m07_spender_checked",
+  "m07_unsafe_approval_rejected",
+  "m07_retry_blocked",
+  "m07_complete:true"
+]) requireText(marker, "Mission 7 evidence and completion marker " + marker);
+
 const impersonatorMission = MISSIONS.find((mission) => mission.id === "m12");
 if (!impersonatorMission || impersonatorMission.title !== "The Moderator Who Wasn't") errors.push("Mission 12 must be the fake moderator impersonation mission.");
 if (impersonatorMission && (impersonatorMission.npcs[0] !== "Reina" || impersonatorMission.npcs[1] !== "Cclya")) errors.push("Mission 12 must introduce Reina and Cclya in the supplied order.");
