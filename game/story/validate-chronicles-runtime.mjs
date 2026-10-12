@@ -118,6 +118,27 @@ for (const [id, prerequisite, nextId, cast] of sixMissionArc) {
     }
   }
 }
+
+const impersonatorMission = MISSIONS.find((mission) => mission.id === "m12");
+if (!impersonatorMission || impersonatorMission.title !== "The Moderator Who Wasn't") errors.push("Mission 12 must be the fake moderator impersonation mission.");
+if (impersonatorMission && (impersonatorMission.npcs[0] !== "Reina" || impersonatorMission.npcs[1] !== "Cclya")) errors.push("Mission 12 must introduce Reina and Cclya in the supplied order.");
+if (impersonatorMission && impersonatorMission.nextMissionId !== "m13") errors.push("Mission 12 must hand off directly to the live-session mission.");
+if (impersonatorMission && !impersonatorMission.sceneLines.some((line) => line.startsWith("Reina:")) ) errors.push("Mission 12 is missing authored Reina dialogue.");
+if (impersonatorMission && !impersonatorMission.sceneLines.some((line) => line.startsWith("Cclya:")) ) errors.push("Mission 12 is missing authored Cclya dialogue.");
+requireText("else if(story.id==='m12')", "Mission 12 bespoke impersonator investigation runtime");
+for (const marker of [
+  "m12_identity_verified",
+  "m12_evidence_preserved",
+  "m12_safe_account_steps_given",
+  "m12_no_secrets_requested",
+  "m12_victim_privacy_protected",
+  "m12_notice_published",
+  "m12_complete:true",
+  "impersonator_contained:true"
+]) requireText(marker, "Mission 12 evidence and completion marker " + marker);
+if (engine.includes("m12_victim_privacy_protected=true;finishStep();}}])")) {
+  // The privacy flag is only set on the corrected, safe notice path; the unsafe option must redirect first.
+}
 const oyoScreenshotFollowUp = MISSIONS.find((mission) => mission.id === "m04");
 if (!oyoScreenshotFollowUp || !/Timi|screenshot|wallet activity/i.test(oyoScreenshotFollowUp.narrativePurpose)) errors.push("Mission 4 must continue directly from the screenshot claim about Timi.");
 if (oyoScreenshotFollowUp && !/stop the group from naming timi/i.test(oyoScreenshotFollowUp.objectives.map((objective) => objective.label).join(" "))) errors.push("Mission 4 must begin by stopping the accusation before verifying the screenshot.");
