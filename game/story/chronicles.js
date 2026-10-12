@@ -1358,18 +1358,15 @@ const RAW_MISSIONS = [
   ],
   "nextMissionId": "m17",
   "ending": "The fee demand fails the verification check. You keep the suspicious message as evidence, submit your work sample only through the verified company channel if a matching vacancy exists, and report the contact without making public accusations you cannot prove.",
-  "cliffhanger": "A separate message arrives from Kano: White Coach and Abdul are testing a service that could help small traders reconcile payments, but their first user says the numbers still do not add up.",
+  "cliffhanger": "J.Jonathan forwards the honest work sample you prepared—not your private details—to White Coach and Abdul in Kano. They are running a community build challenge, but the team has splintered the night before its public demo. They ask if you can help turn scattered effort into one useful thing by morning.",
   "sceneLines": [
     "J.Jonathan: You just built a portfolio you can stand behind. Now someone wants money before they'll even name the job. Don't let a deadline make the decision for you. Check the source without using the links they sent.",
-    "Essa: Open the company's careers page independently, compare the exact role and sender, and keep the message. No activation fee, no seed phrase, no private key—and don't send ID to an unverified contact. If there's a genuine vacancy, use its official application route."
-  ]
-},
-  {
+    "Essa: Open the company's careers page independently, compare the exact role and sender, and keep the message. No activation fee, no seed phrase, no private key—and d  {
     "id": "m17",
     "chapterId": "ch09",
-    "title": "The Product People Need",
+    "title": "One Night to Build",
     "state": "Kano",
-    "location": "Kano market stall, loading bay and product workshop",
+    "location": "Kano neighbourhood build camp, open courtyard and community workspace",
     "npcIds": [
       "white-coach",
       "abdul"
@@ -1378,11 +1375,11 @@ const RAW_MISSIONS = [
       "White Coach",
       "Abdul"
     ],
-    "narrativePurpose": "Directly after the recruiter investigation, White Coach and Abdul show you a payment-reconciliation service they are testing with Kano traders. A trader says a customer paid, the receipt says successful, but the order is still pending—and another receipt carries the same reference. Before anyone credits the sale twice or blames the customer, trace the trader's real workflow, identify what the records do and do not prove, and test a clearer reconciliation flow with the people who will use it.",
+    "narrativePurpose": "Mission 16 ends with J.Jonathan forwarding the player's honest work sample to White Coach and Abdul in Kano. They are leading a community build challenge, but by the night before the public demo, teams are duplicating ideas, waiting on one another and abandoning unfinished projects. Help the group stop chasing impressive ideas, identify a real local need, choose a finishable solution and deliver a working first version before morning.",
     "learningObjectives": [
-      "Interview users before deciding what a product should do",
-      "Map an order and payment from customer to trader without skipping hand-offs",
-      "Design and test a focused fix using evidence rather than assumptions"
+      "Ask intended users about a real problem before choosing what to build",
+      "Turn an oversized idea into a small, testable first version",
+      "Coordinate a team around clear roles, scope and a deadline"
     ],
     "prerequisites": [
       "m16"
@@ -1390,59 +1387,63 @@ const RAW_MISSIONS = [
     "objectives": [
       {
         "id": "m17-obj-1",
-        "label": "Hear the trader's account and pin down the disputed sale",
+        "label": "Find out why the community build challenge is falling apart",
         "interactionTarget": "story:m17:objective:1",
         "required": true
       },
       {
         "id": "m17-obj-2",
-        "label": "Trace the order, receipts and payment status across the workflow",
+        "label": "Ask local people which problem they need solved before choosing the project",
         "interactionTarget": "story:m17:objective:2",
         "required": true
       },
       {
         "id": "m17-obj-3",
-        "label": "Choose the smallest fix that prevents a false success or duplicate credit",
+        "label": "Cut the scope and assign roles for one finishable prototype",
         "interactionTarget": "story:m17:objective:3",
         "required": true
       },
       {
         "id": "m17-obj-4",
-        "label": "Run the sample sale through the revised flow and record the trader's feedback",
+        "label": "Resolve the team's disagreement and deliver a usable first version",
         "interactionTarget": "story:m17:objective:4",
         "required": true
       }
     ],
     "successConditions": [
-      "The player captures the trader's actual workflow and the specific point where statuses diverge",
-      "The player does not treat a screenshot or duplicate reference as proof of a completed payment",
-      "The revised flow shows pending, confirmed and unresolved states honestly and is tested with a sample sale"
+      "The player hears the competing team concerns before making a decision",
+      "The project is chosen from a real local need rather than trend appeal alone",
+      "The team agrees on a limited first version, clear roles and a working demonstration"
     ],
     "failureAndRetry": {
-      "onFailure": "If the player jumps straight to blaming the cashier, marking the sale paid, or adding features, White Coach sends them back to the original records and the trader's workflow.",
-      "retry": "Retry the current check using the same sample sale; keep prior observations and do not create a second credit or refund while status is unresolved."
+      "onFailure": "If the player chooses the flashiest idea without checking the need, lets everyone work separately, or adds features near the deadline, White Coach and Abdul show how the same coordination failure is repeating and let the player reset the scope.",
+      "retry": "Keep the user interviews and completed work. Retry the project-scope or team decision without restarting the whole challenge."
     },
     "rewards": {
-      "xp": 265,
+      "xp": 280,
       "skillBadges": [
-        "User-Centred Product Design",
-        "Payment Reconciliation"
+        "Product Thinking",
+        "Team Coordination"
       ],
       "portfolioArtifacts": [
-        "Kano trader reconciliation-flow test report"
+        "Kano community build-challenge prototype and project brief"
       ]
     },
     "storyFlags": [
       "m17_complete",
-      "trader_problem_validated",
-      "payment_mismatch_investigated"
+      "community_problem_selected",
+      "prototype_delivered",
+      "team_roles_defined"
     ],
     "nextMissionId": "m18",
-    "ending": "The revised flow no longer turns a screenshot into a paid order. The trader can see which record is confirmed, which is still pending, and what needs follow-up. The team leaves the disputed sale unresolved where evidence is missing instead of inventing a clean result.",
-    "cliffhanger": "David sees the test and offers to help the team grow it. Kanyin warns that the last campaign brought thousands of clicks and almost no completed tasks. Before they spend again, they want to know why real traders stop.",
+    "ending": "The team delivers a rough but usable prototype before the public demo. It is smaller than the ideas people argued for, but a local participant can use it without a long explanation. The group now has something real to improve instead of six unfinished promises.",
+    "cliffhanger": "People ask how they can discover the prototype, so David proposes a campaign. Kanyin points out that the last campaign attracted thousands of clicks but few people finished onboarding. Before buying more attention, they want to understand where new users get stuck.",
     "sceneLines": [
-      "White Coach: \"We have a mismatch and everyone has a theory. The trader says the customer paid, the screen says pending, and this second receipt has the same reference. Don't pick a culprit yet. Go hear how the sale actually happened.\"",
-      "Abdul: \"I can build another dashboard in an afternoon. But if the cashier, payment provider and order screen use different meanings for 'successful', a prettier dashboard just hides the same problem. Let's trace one sale end to end, then test one fix with the trader.\""
+      "White Coach: \"You made it from Plateau? J.Jonathan sent the work sample you prepared. I wanted to see how you work, but forget the interview talk for now—this team is about to miss its own demo. Everybody has an idea; nobody has a finished thing.\"",
+      "Abdul: \"Three groups are building versions of the same idea, two people have walked out, and the rest are waiting for somebody to decide. We have until morning. Help us pick a real problem and finish something useful—not another presentation full of promises.\""
+    ]
+  },
+d just hides the same problem. Let's trace one sale end to end, then test one fix with the trader.\""
     ]
   },
   {
