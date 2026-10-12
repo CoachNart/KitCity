@@ -2965,6 +2965,40 @@ const MISSIONS=CHRONICLE_MISSIONS.map((story,index)=>{
         }
       }
     ];
+  }else if(story.id==='m04'){
+    const goodness=STORY_NPCS.Goodness;
+    const semi=STORY_NPCS.Semi;
+    steps=[
+      {kind:'character',id:'m04-obj-1',label:story.objectives[0].label,spot:'buyer',npc:goodness,run(){
+        talk(goodness,"<p><b>GOODNESS:</b> Look at this group chat. Somebody posted Timi's face beside 'wallet thief' and now the whole courtyard is arguing like they watched it happen.</p><p><b>TIMI:</b> I never entered those twelve words. I didn't even finish the page.</p><p><b>YOU:</b> Nobody is posting another accusation until we check the source and the record.</p>",[
+          {t:'Pause the accusation and preserve the post before it disappears.',f:()=>{G.evidence.m04_accusation_paused=true;G.evidence.m04_original_preserved=true;finishStep();}},
+          {t:'Forward the screenshot so everyone can judge.',f:()=>talk(goodness,"<p><b>GOODNESS:</b> That only spreads the claim to more people. We already have enough noise. Save the original first, then let's check what it actually shows.</p>",[{t:'Save the post and stop the accusation for now.',f:()=>{G.evidence.m04_accusation_paused=true;G.evidence.m04_original_preserved=true;finishStep();}}])}
+        ]);
+      }},
+      {kind:'clue',id:'m04-obj-2',label:story.objectives[1].label,spot:'screenshot',title:'Original group message',sign:'COMPARE VERSIONS',npc:semi,run(){
+        talk(semi,"<p><b>SEMI:</b> Here's the forwarded image, and here's the message it came from before somebody cropped it. The viral version cuts off the network, transaction reference and the sender's question mark.</p><p><b>GOODNESS:</b> So the picture makes a question look like a confirmed report?</p><p><b>YOU:</b> It changes how the message reads. That still doesn't tell us who made the crop.</p>",[
+          {t:'Keep both versions and note the missing context and timestamps.',f:()=>{G.evidence.m04_versions_compared=true;G.evidence.m04_source_saved=true;finishStep();}},
+          {t:'The crop proves the first sender edited it.',f:()=>talk(semi,"<p><b>SEMI:</b> No. We know the versions differ; we don't know who made the crop or who forwarded it. Keep the original and follow the transaction claim itself.</p>",[{t:'Record the differences without naming an editor.',f:()=>{G.evidence.m04_versions_compared=true;G.evidence.m04_source_saved=true;finishStep();}}])}
+        ]);
+      }},
+      {kind:'clue',id:'m04-obj-3',label:story.objectives[2].label,spot:'ledger',title:'Wallet activity check',sign:'CHECK THE RECORD',npc:semi,run(){
+        talk(semi,"<p><b>SEMI:</b> The image claims an outgoing transfer at 14:07 on this network. Timi has agreed to let us compare the public activity for the address they already use. We do not need to open the wallet or ask for secret words.</p><p><b>TIMI:</b> Please don't put my address in the group chat.</p><p><b>YOU:</b> We can check it privately, then report only what the record tells us.</p>",[
+          {t:'Compare the known address, network and time with the public transaction record.',f:()=>{G.evidence.m04_wallet_activity_checked=true;G.evidence.m04_claimed_transfer_not_found=true;finishStep();}},
+          {t:'Ask Timi for the recovery phrase to log in.',f:()=>talk(semi,"<p><b>SEMI:</b> Absolutely not. A recovery phrase gives control of the wallet; it isn't needed to inspect public transaction history. We'll use the address Timi already knows and keep it out of the group.</p>",[{t:'Check the public record without asking for secrets.',f:()=>{G.evidence.m04_wallet_activity_checked=true;G.evidence.m04_claimed_transfer_not_found=true;finishStep();}}])}
+        ]);
+      }},
+      {kind:'clue',id:'m04-obj-4',label:story.objectives[3].label,spot:'shopdesk',title:'Correction for the group',sign:'CORRECT THE CLAIM',npc:goodness,run(){
+        talk(goodness,"<p><b>GOODNESS:</b> We checked the network and time shown in the image. There's no matching outgoing transaction in that record. I want to correct the group now—but we still don't know who changed the screenshot.</p><p><b>YOU:</b> Then we say exactly that, and keep Timi's private details out of the post.</p>",[
+          {t:'Post a careful correction, attach the source context and leave the editor unidentified.',f:()=>{G.evidence.m04_correction_posted=true;G.evidence.m04_timi_privacy_protected=true;finishStep();}},
+          {t:'Name the first account that forwarded it.',f:()=>talk(goodness,"<p><b>GOODNESS:</b> Forwarding isn't proof of editing. If we accuse someone without evidence, we're repeating the same mistake. Correct the claim, not invent a culprit.</p>",[{t:'Post the correction and leave the identity unresolved.',f:()=>{G.evidence.m04_correction_posted=true;G.evidence.m04_timi_privacy_protected=true;finishStep();}}])}
+        ]);
+      }},
+      {kind:'character',id:'m04-close-case',label:'Check in with Timi before leaving',spot:'buyer',npc:semi,run(){
+        talk(semi,"<p><b>SEMI:</b> The corrected message is up. It says the checked record doesn't support the screenshot's claim, and that we don't know who edited it.</p><p><b>TIMI:</b> At least they stopped calling me a thief. I still want to secure the wallet through the real support route.</p><p><b>GOODNESS:</b> We'll help you do that privately. The warning can travel without your name and messages attached.</p><p><b>YOU:</b> Save the source, share the correction, and leave the accusation out.</p>",[
+          {t:'Save the evidence note and follow the Osun product-team lead.',f:()=>{P.storyFlags=Object.assign({},P.storyFlags||{},{m04_complete:true,screenshot_claim_checked:true,original_message_preserved:true});G.evidence.chapterSummary=true;finishStep();}}
+        ]);
+      }}
+    ];
   }else{
     steps=[];
     const objectives=story.objectives||[];
