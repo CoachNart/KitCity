@@ -130,6 +130,26 @@ for (const [id, prerequisite, nextId, cast] of sixMissionArc) {
   }
 }
 
+const withdrawalMission = MISSIONS.find((mission) => mission.id === "m08");
+if (!withdrawalMission || withdrawalMission.title !== "The Withdrawal That Never Left") errors.push("Mission 8 must use the rewritten withdrawal incident story.");
+if (withdrawalMission && (withdrawalMission.npcs[0] !== "Moon" || withdrawalMission.npcs[1] !== "The Cryptonian")) errors.push("Mission 8 must introduce Moon and The Cryptonian in the supplied order.");
+if (withdrawalMission && (!withdrawalMission.prerequisites.includes("m07") || withdrawalMission.nextMissionId !== "m09")) errors.push("Mission 8 must connect Mission 7 to Mission 9.");
+if (withdrawalMission && !withdrawalMission.sceneLines.some((line) => line.startsWith("Moon:"))) errors.push("Mission 8 is missing authored Moon dialogue.");
+if (withdrawalMission && !withdrawalMission.sceneLines.some((line) => line.startsWith("The Cryptonian:"))) errors.push("Mission 8 is missing authored The Cryptonian dialogue.");
+if (withdrawalMission && /LunaX:|OxNight:|Joseph Nnadi:|The Don:/i.test(withdrawalMission.sceneLines.join(" "))) errors.push("Mission 8 dialogue duplicates characters from adjacent mission casts.");
+requireText("else if(story.id==='m08')", "Mission 8 bespoke withdrawal incident runtime");
+for (const marker of [
+  "m08_request_traced",
+  "m08_no_tx_hash_verified",
+  "m08_affected_route_verified",
+  "m08_unverified_routes_labelled",
+  "m08_custody_limits_explained",
+  "m08_status_update_published",
+  "m08_next_update_time_set",
+  "m08_complete:true",
+  "withdrawal_scope_verified:true"
+]) requireText(marker, "Mission 8 evidence and completion marker " + marker);
+
 const swapMission = MISSIONS.find((mission) => mission.id === "m07");
 if (!swapMission || swapMission.title !== "The Swap That Changed Its Face") errors.push("Mission 7 must use the rewritten swap-investigation story.");
 if (swapMission && (swapMission.npcs[0] !== "LunaX" || swapMission.npcs[1] !== "OxNight")) errors.push("Mission 7 must introduce LunaX and OxNight in the supplied order.");
