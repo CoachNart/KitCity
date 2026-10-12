@@ -612,9 +612,9 @@ const RAW_MISSIONS = [
   {
     "id": "m07",
     "chapterId": "ch04",
-    "title": "The Price on the Screen",
+    "title": "The Swap That Changed Its Face",
     "state": "Ekiti",
-    "location": "Ekiti market stall, swap kiosk and liquidity comparison desk",
+    "location": "Ekiti night market, swap kiosk and trader's workbench",
     "npcIds": [
       "lunax",
       "oxnight"
@@ -623,11 +623,12 @@ const RAW_MISSIONS = [
       "LunaX",
       "OxNight"
     ],
-    "narrativePurpose": "A trader's swap returned less than the amount shown before confirmation. LunaX suspects the route changed; OxNight spots two assets with the same ticker but different contract addresses. Follow the quote from the market stall to the kiosk, compare the exact assets and route, and explain the difference without pretending an estimate was a promise.",
+    "narrativePurpose": "A trader named LunaX swaps tokens to settle a time-sensitive parts order, but the wallet shows a smaller amount of an asset than she expected. The seller is packing up, the quote screenshot is spreading through the market chat, and someone urges her to approve the swap again. OxNight helps trace the exact token contract and execution record, separating a lookalike asset from ordinary quote movement, pool liquidity, fees and price impact. The player must preserve evidence, explain what the transaction actually did and stop a risky retry.",
     "learningObjectives": [
-      "Verify a token by its contract address rather than ticker alone",
-      "Compare liquidity, fees and price impact across routes",
-      "Understand minimum received, slippage and approval scope"
+      "Verify a token by its contract address, not its ticker or logo",
+      "Compare like-for-like swap routes, liquidity, fees and price impact",
+      "Compare the quote, minimum received and final execution record",
+      "Inspect the token approval and spender before any retry"
     ],
     "prerequisites": [
       "m06"
@@ -635,59 +636,60 @@ const RAW_MISSIONS = [
     "objectives": [
       {
         "id": "m07-obj-1",
-        "label": "Compare the token addresses in the quote and completed trade",
+        "label": "Identify the exact asset LunaX received",
         "interactionTarget": "story:m07:objective:1",
         "required": true
       },
       {
         "id": "m07-obj-2",
-        "label": "Compare route liquidity, fees and price impact for the same trade size",
+        "label": "Compare the route, pool liquidity, fees and price impact",
         "interactionTarget": "story:m07:objective:2",
         "required": true
       },
       {
         "id": "m07-obj-3",
-        "label": "Check minimum received and the difference between quote and execution",
+        "label": "Match the quote and minimum received to the execution record",
         "interactionTarget": "story:m07:objective:3",
         "required": true
       },
       {
         "id": "m07-obj-4",
-        "label": "Review the token approval before the trader retries",
+        "label": "Inspect the spender and approval before retrying",
         "interactionTarget": "story:m07:objective:4",
         "required": true
       }
     ],
     "successConditions": [
-      "The ticker mismatch is resolved by checking the exact token addresses",
-      "The player can explain the difference between quote, fees, price impact and final output",
-      "The trader does not repeat the swap until route and approval details are reviewed"
+      "The received asset is identified by its exact contract address",
+      "Route costs and execution differences are distinguished from a wrong-asset problem",
+      "The trader does not retry until the asset and approval are independently verified"
     ],
     "failureAndRetry": {
-      "onFailure": "If the player trusts the ticker or blames slippage without checking the route, OxNight opens the token details and asks them to compare the addresses first.",
-      "retry": "Recheck the quote and approval fields without losing the route comparison."
+      "onFailure": "If the player trusts a ticker, treats a quote as a guarantee or approves an unknown spender, OxNight pauses the retry and asks them to compare the original transaction record and approval details.",
+      "retry": "Return to the receipt, route panel or approval screen and finish the investigation without submitting another swap."
     },
     "rewards": {
-      "xp": 165,
+      "xp": 220,
       "skillBadges": [
-        "Swap Safety"
+        "Onchain Trade Verification"
       ],
       "portfolioArtifacts": [
-        "Swap quote and token-identity review"
+        "Swap incident review"
       ]
     },
     "storyFlags": [
       "m07_complete",
-      "swap_route_reviewed",
-      "token_identity_checked"
+      "swap_asset_verified",
+      "unsafe_retry_prevented"
     ],
     "nextMissionId": "m08",
-    "ending": "The ticker was not enough to identify the asset. Comparing contract addresses reveals a lookalike token, while the route and fee breakdown explain the rest of the output difference. LunaX tells the trader to pause and verify the asset and approval before trying again.",
-    "cliffhanger": "At the next desk, a different queue is growing: customers cannot withdraw from the exchange, and a fake support account is already promising instant fixes. Moon and The Cryptonian need a public update that says only what the records support.",
+    "ending": "The transaction record shows LunaX received a different contract from the asset she intended to buy. The shallow route and fees also affected the estimate, but they do not explain away the contract mismatch. She cancels the retry, saves the transaction details and checks the spender before making any new approval.",
+    "cliffhanger": "At the exchange counter, withdrawals have suddenly been paused. People are shouting that the exchange has lost everyone's money, and a fake support account is promising instant withdrawals. Moon needs help separating confirmed facts from rumours.",
     "sceneLines": [
-      "LunaX: \"The screen showed the amount I expected, but the trade came back short. Don't throw the word 'slippage' at me and call it solved. Show me the asset I received and the route the swap actually used.\"",
-      "OxNight: \"These two tokens share a ticker, not a contract address. Let's compare the exact asset, pool depth, fees and minimum received before anyone approves another transaction.\""
+      "LunaX: \"I needed that swap to settle a parts order before the supplier closed. The quote looked fine, then the wallet showed less than I expected—and this token's name looks right. Someone in the chat says I should just approve it again. I'm not touching anything until we know what I actually received.\"",
+      "OxNight: \"Good. A ticker and logo can be copied. We'll compare the contract address first, then check the route and execution record separately. If the asset is wrong, slippage isn't an explanation. And no second approval until we know exactly which spender is asking.\""
     ]
+  }
   },
   {
     "id": "m08",
