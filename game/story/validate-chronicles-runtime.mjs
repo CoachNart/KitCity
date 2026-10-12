@@ -264,10 +264,14 @@ for (const marker of [
 const liveSessionMission = MISSIONS.find((mission) => mission.id === "m13");
 if (!liveSessionMission || liveSessionMission.title !== "The Mic Is Live") errors.push("Mission 13 must be the live community safety session.");
 if (liveSessionMission && (liveSessionMission.npcs[0] !== "Leemah" || liveSessionMission.npcs[1] !== "Kenny")) errors.push("Mission 13 must introduce Leemah and Kenny in the supplied order.");
-if (liveSessionMission && liveSessionMission.nextMissionId !== "m14") errors.push("Mission 13 must hand off to Mission 14.");
+if (liveSessionMission && (!liveSessionMission.prerequisites.includes("m12") || liveSessionMission.nextMissionId !== "m14")) errors.push("Mission 13 must continue the Mission 12 impersonation incident and hand off to Mission 14.");
+if (liveSessionMission && (!liveSessionMission.narrativePurpose.includes("Reina and Cclya") || !liveSessionMission.narrativePurpose.includes("funds were stolen"))) errors.push("Mission 13 must carry the verified incident facts forward without claiming an unverified loss.");
 if (liveSessionMission && !liveSessionMission.sceneLines.some((line) => line.startsWith("Leemah:"))) errors.push("Mission 13 is missing authored Leemah dialogue.");
 if (liveSessionMission && !liveSessionMission.sceneLines.some((line) => line.startsWith("Kenny:"))) errors.push("Mission 13 is missing authored Kenny dialogue.");
 requireText("else if(story.id==='m13')", "Mission 13 bespoke live-session runtime");
+requireText("You made it from Anambra with Reina’s incident report?", "Mission 13 opens from the Mission 12 handoff");
+requireText("we do not have verified evidence that funds were taken", "Mission 13 preserves the verified incident facts");
+requireText("removed identifying details", "Mission 13 protects the affected member in the recap");
 for (const marker of [
   "m13_facts_verified",
   "m13_opening_prepared",
