@@ -1286,8 +1286,7 @@ const RAW_MISSIONS = [
     ]
   },
   {
-    {
-  "id": "m16",
+    "id": "m16",
   "chapterId": "ch08",
   "title": "The Job That Costs Money",
   "state": "Plateau",
@@ -1365,11 +1364,12 @@ const RAW_MISSIONS = [
     "Essa: Open the company's careers page independently, compare the exact role and sender, and keep the message. No activation fee, no seed phrase, no private key—and don't send ID to an unverified contact. If there's a genuine vacancy, use its official application route."
   ]
 },
-  "id": "m17",
+  {
+    "id": "m17",
     "chapterId": "ch09",
-    "title": "The Trader's Missing Record",
+    "title": "The Product People Need",
     "state": "Kano",
-    "location": "Kano market stall, transport depot and product workshop",
+    "location": "Kano market stall, loading bay and product workshop",
     "npcIds": [
       "white-coach",
       "abdul"
@@ -1378,11 +1378,11 @@ const RAW_MISSIONS = [
       "White Coach",
       "Abdul"
     ],
-    "narrativePurpose": "A small trader's sales records do not match the payments shown on a phone. Walk between the stall, transport depot and workshop to understand the daily workflow before choosing what the product should solve. The trader does not need another dashboard; they need a dependable way to reconcile orders and payments.",
+    "narrativePurpose": "Directly after the recruiter investigation, White Coach and Abdul show you a payment-reconciliation service they are testing with Kano traders. A trader says a customer paid, the receipt says successful, but the order is still pending—and another receipt carries the same reference. Before anyone credits the sale twice or blames the customer, trace the trader's real workflow, identify what the records do and do not prove, and test a clearer reconciliation flow with the people who will use it.",
     "learningObjectives": [
-      "How to define a product problem from a real workflow",
-      "How to map user journeys and friction",
-      "How to prioritize a testable fix"
+      "Interview users before deciding what a product should do",
+      "Map an order and payment from customer to trader without skipping hand-offs",
+      "Design and test a focused fix using evidence rather than assumptions"
     ],
     "prerequisites": [
       "m16"
@@ -1390,60 +1390,61 @@ const RAW_MISSIONS = [
     "objectives": [
       {
         "id": "m17-obj-1",
-        "label": "Define target users through a market interview",
+        "label": "Hear the trader's account and pin down the disputed sale",
         "interactionTarget": "story:m17:objective:1",
         "required": true
       },
       {
         "id": "m17-obj-2",
-        "label": "Map the trader's journey from order to collection",
+        "label": "Trace the order, receipts and payment status across the workflow",
         "interactionTarget": "story:m17:objective:2",
         "required": true
       },
       {
         "id": "m17-obj-3",
-        "label": "Find the main friction and prioritize one fix",
+        "label": "Choose the smallest fix that prevents a false success or duplicate credit",
         "interactionTarget": "story:m17:objective:3",
         "required": true
       },
       {
         "id": "m17-obj-4",
-        "label": "Test the revised flow with the trader",
+        "label": "Run the sample sale through the revised flow and record the trader's feedback",
         "interactionTarget": "story:m17:objective:4",
         "required": true
       }
     ],
     "successConditions": [
-      "The player's map captures the trader's actual workflow",
-      "The proposed prototype addresses the identified hand-off",
-      "A trader completes the revised flow and gives feedback"
+      "The player captures the trader's actual workflow and the specific point where statuses diverge",
+      "The player does not treat a screenshot or duplicate reference as proof of a completed payment",
+      "The revised flow shows pending, confirmed and unresolved states honestly and is tested with a sample sale"
     ],
     "failureAndRetry": {
-      "onFailure": "If the player jumps straight to a feature list, White Coach sends them back to the stall to observe the workflow.",
-      "retry": "Repeat the user test with the same sample transaction."
+      "onFailure": "If the player jumps straight to blaming the cashier, marking the sale paid, or adding features, White Coach sends them back to the original records and the trader's workflow.",
+      "retry": "Retry the current check using the same sample sale; keep prior observations and do not create a second credit or refund while status is unresolved."
     },
     "rewards": {
       "xp": 265,
       "skillBadges": [
-        "User-Centred Product Design"
+        "User-Centred Product Design",
+        "Payment Reconciliation"
       ],
       "portfolioArtifacts": [
-        "Trader payment-reconciliation prototype brief"
+        "Kano trader reconciliation-flow test report"
       ]
     },
     "storyFlags": [
       "m17_complete",
-      "trader_problem_validated"
+      "trader_problem_validated",
+      "payment_mismatch_investigated"
     ],
     "nextMissionId": "m18",
-    "ending": "The trader can reconcile the sample sale without switching between three screens. Abdul records the remaining edge cases instead of claiming the product is finished.",
-    "cliffhanger": "David sees the test and offers to help the team grow it. Kanyin warns that the last campaign brought thousands of clicks and almost no completed tasks.",
+    "ending": "The revised flow no longer turns a screenshot into a paid order. The trader can see which record is confirmed, which is still pending, and what needs follow-up. The team leaves the disputed sale unresolved where evidence is missing instead of inventing a clean result.",
+    "cliffhanger": "David sees the test and offers to help the team grow it. Kanyin warns that the last campaign brought thousands of clicks and almost no completed tasks. Before they spend again, they want to know why real traders stop.",
     "sceneLines": [
-      "Love: \"The customer paid, the order says complete, but the warehouse still has the item. The trader is blaming the cashier and the cashier says the app cleared it. Come trace the hand-off with me.\"",
-      "J.Jonathan: \"The payment callback arrived after the order timed out, so the order and payment ended up with different statuses. If we patch only the screen, tomorrow's staff will hit the same problem.\""
+      "White Coach: \"We have a mismatch and everyone has a theory. The trader says the customer paid, the screen says pending, and this second receipt has the same reference. Don't pick a culprit yet. Go hear how the sale actually happened.\"",
+      "Abdul: \"I can build another dashboard in an afternoon. But if the cashier, payment provider and order screen use different meanings for 'successful', a prettier dashboard just hides the same problem. Let's trace one sale end to end, then test one fix with the trader.\""
     ]
   },
-  {
     "id": "m18",
     "chapterId": "ch09",
     "title": "Clicks Don't Pay the Bills",
