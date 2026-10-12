@@ -1088,6 +1088,9 @@ function lkPave(L){ const c=cv(128,128),g=c.getContext('2d'),R=mulberry(5); g.fi
   if(L.dust>0){ g.fillStyle='rgba(222,196,152,'+(L.dust*.4)+')'; g.fillRect(0,0,128,128); } return c; }
 function lkEdge(){ const c=cv(8,64),g=c.getContext('2d'),lg=g.createLinearGradient(0,0,0,64); lg.addColorStop(0,'rgba(255,255,255,0)'); lg.addColorStop(1,'rgba(255,255,255,.75)'); g.fillStyle=lg; g.fillRect(0,0,8,64); return c; }
 function applyLook(key,C){
+  CITY_LOOKS[key]=CITY_LOOKS[key]||CITY_LOOKS.lagos;
+  const ARCH=cityKit(key);
+  LOOK_BASE.roadMark=ARCH.mark; LOOK_BASE.roadKerb=ARCH.kerb; LOOK_BASE.roadEdge=ARCH.edge;
   const L=Object.assign({},LOOK_BASE,LOOK[key]||{}); LKC=L;
   Object.assign(C,{paint:L.paint||C.paint,ground:L.ground,slab:L.slab,dirt:L.dirt,leaf:L.leaf,zinc:L.zinc,fog:L.fog});
   if(L.paint===undefined) L.paint=C.paint;
@@ -1103,6 +1106,55 @@ function applyLook(key,C){
   atmoSet(L.fx);
   try{ let b=document.getElementById('lkBadge'); if(!b){ b=document.createElement('div'); b.id='lkBadge'; b.style.cssText='position:fixed;left:8px;bottom:8px;z-index:99999;font:700 11px monospace;background:#000c;color:#fff;padding:5px 8px;border-radius:6px;pointer-events:none;transition:opacity 1s'; document.body.appendChild(b); }
     b.textContent='LOOK v2 \u2022 '+key+' \u2022 grade '+(GR?'ON':'OFF (fallback)'); b.style.opacity=1; clearTimeout(b._t); b._t=setTimeout(()=>{b.style.opacity=0;},6000); }catch(e){}
+}
+function addRoadIdentity(key,blocks){
+ const A=cityKit(key),L=LKC;
+ const mat=(color,opts)=>new THREE.MeshLambertMaterial(Object.assign({color},opts||{}));
+ const box=(w,h,d,c,x,y,z)=>{const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat(c));m.position.set(x,y,z);cityGroup.add(m);return m;};
+ const stripe=(w,d,c,x,z,rot=0)=>{const m=new THREE.Mesh(new THREE.PlaneGeometry(w,d),new THREE.MeshBasicMaterial({color:c,depthWrite:false}));m.rotation.x=-Math.PI/2;m.rotation.z=rot;m.position.set(x,.065,z);cityGroup.add(m);};
+ // Road signatures: each location has its own markings and edge treatment while
+ // preserving the existing road footprint/collision-safe street grid.
+ const roadKeys=Object.keys(CITY_ARCH_ROAD),idx=Math.max(0,roadKeys.indexOf(key));
+ const patterns=[
+   ()=>{for(let k=-3;k<=3;k++)for(let i=-3;i<=2;i++){for(const side of [-1,1])stripe(8,.28,A.mark,i*R+35+side*5,k*R,0);}},
+   ()=>{for(let k=-3;k<=3;k++)for(let i=-3;i<=2;i++){for(const side of [-1,1]){box(56,.18,.65,A.kerb,i*R+35,.1,k*R+side*6.6);stripe(56,.18,A.mark,i*R+35,k*R+side*2.5,0);}}},
+   ()=>{for(let k=-3;k<=3;k++)for(let i=-3;i<=2;i++){for(const side of [-1,1]){for(let n=0;n<6;n++)stripe(3,.25,A.mark,i*R+35-25+n*10,k*R+side*3,0);}}},
+   ()=>{for(let k=-3;k<=3;k++)for(let i=-3;i<=2;i++){for(const side of [-1,1]){box(56,.16,.5,A.kerb,i*R+35,.09,k*R+side*6.7);for(let n=-2;n<=2;n++)stripe(1.5,1.5,A.mark,i*R+35+n*10,k*R+side*4.7,0);}}},
+   ()=>{for(let k=-3;k<=3;k++)for(let i=-3;i<=2;i++){for(const side of [-1,1])stripe(56,.45,A.mark,i*R+35,k*R+side*5.4,0);}}
+ ];
+ patterns[idx%patterns.length]();
+ blocks.forEach(b=>{
+   const x=b.cx,z=b.cz;
+   if(A.edge==='rail'){
+     for(const side of [-1,1]){box(56,.08,.18,A.roof,x,.12,z+side*7.1);for(let n=-3;n<=3;n++)box(1.1,.08,1.2,A.kerb,x+n*8,.1,z+side*7.1);}
+   }else if(A.edge==='water-channel'||A.edge==='canal'){
+     for(const side of [-1,1]){box(56,.1,.8,'#5D8E9B',x,.05,z+side*7.2);for(let n=-2;n<=2;n++)box(2,.14,.6,A.kerb,x+n*10,.12,z+side*7.2);}
+   }else if(A.edge==='rock'||A.edge==='stone'){
+     for(const side of [-1,1])for(let n=-2;n<=2;n++)box(5,.22,.7,A.kerb,x+n*10,.11,z+side*7.1);
+   }else if(A.edge==='green-strip'||A.edge==='rooted'){
+     for(const side of [-1,1]){box(56,.12,1.2,'#527B48',x,.08,z+side*7.25);for(let n=-2;n<=2;n++){const t=new THREE.Mesh(new THREE.ConeGeometry(.6,1.5,5),mat('#2F7441'));t.position.set(x+n*10,.8,z+side*7.25);cityGroup.add(t);}}
+   }else if(A.edge==='loading-bay'||A.edge==='service-ditch'){
+     for(const side of [-1,1])for(let n=-2;n<=2;n++)stripe(4,1.1,A.mark,x+n*10,z+side*5.8,0);
+   }else if(A.edge==='sand-shoulder'||A.edge==='earth-shoulder'){
+     for(const side of [-1,1])box(56,.08,1.4,A.kerb,x,.03,z+side*7.2);
+   }else{
+     for(const side of [-1,1])box(56,.12,.32,A.kerb,x,.07,z+side*7.05);
+   }
+ });
+ // State-specific road furniture: every road kit gets a distinct marker/sign shape.
+ for(let n=-2;n<=2;n++){
+   const x=n*R+35,z=-3*R+35;
+   if(A.edge==='rail'){
+     box(.25,5,.25,A.roof,x,2.5,z-8);box(3,.3,.3,A.mark,x,4.8,z-8);
+   }else if(A.edge==='water-channel'||A.edge==='canal'){
+     box(2,1.2,.25,A.roof,x,1,z-8);box(1.2,.2,.3,A.mark,x,1.6,z-8);
+   }else if(A.edge==='green-strip'||A.edge==='rooted'){
+     const tree=new THREE.Mesh(new THREE.CylinderGeometry(.25,.45,3,6),mat('#76583B'));tree.position.set(x,1.5,z-8);cityGroup.add(tree);
+     const crown=new THREE.Mesh(new THREE.SphereGeometry(1.6,7,6),mat('#367744'));crown.position.set(x,3.8,z-8);cityGroup.add(crown);
+   }else{
+     box(.3,2.4,.3,A.roof,x,1.2,z-8);box(1.4,.45,.18,A.mark,x,2.2,z-8);
+   }
+ }
 }
 function roadDecals(C,blocks){
   const L=LKC,dc=L.lat>.3?'#9a5a38':(L.dust>.2?'#cdb48a':'#8a7e6a'),its=[]; const geo=new THREE.PlaneGeometry(56,2.8); geo.rotateX(-Math.PI/2);
@@ -1468,6 +1520,7 @@ function addBuilding(x,z,w,d,style,color,cx,cz,ox,oz){
     for(let t=-d/2+2.8;t<d/2-2;t+=2.4) for(const sx of [-1,1]) DX.merlon.push({x:x+sx*(w/2-.4),y:h+.5,z:z+t,sx:.8,sy:1,sz:1});
   }
   else if(style==='admin'){ xb(w+2,.6,d+2,'#e9e6df',x,h+.3,z); const fx=x+w/2-1,fz=z+d/2-1; DX.pole.push({x:fx,y:h+5.6,z:fz,sx:.2,sy:10,sz:.2}); DX.flag.push({x:fx+.1,y:h+9.6,z:fz,ry:rr(0,6)}); }
+  addArchitectureDetail(curCity,x,z,w,h,d,color,xb);
   const box={x0:x-w/2,x1:x+w/2,z0:z-d/2,z1:z+d/2,y1:h+4};
   colliders.push({x0:box.x0,x1:box.x1,z0:box.z0,z1:box.z1});
   if(style!=='glass'&&RN()<.8){
@@ -2274,6 +2327,7 @@ function buildCity(key){
     // Roadside/block-edge tree placement removed: keep streets and road verges clear.
   }
   streetDetails(C,blocks); roadDecals(C,blocks);
+  addRoadIdentity(key,blocks);
   addRegionalIdentity(C,key);
   dxFlush(C);
   cityCols=colliders.length;
