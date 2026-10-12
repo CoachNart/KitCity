@@ -1287,81 +1287,84 @@ const RAW_MISSIONS = [
   },
   {
     "id": "m16",
-  "chapterId": "ch08",
-  "title": "The Job That Costs Money",
-  "state": "Plateau",
-  "location": "Plateau hiring foyer, interview bench and application terminal",
-  "npcIds": [
-    "j-jonathan",
-    "essa"
-  ],
-  "npcs": [
-    "J.Jonathan",
-    "Essa"
-  ],
-  "narrativePurpose": "Mission 15 ends with a recruiter demanding an activation fee and private wallet details before revealing the screening task. J.Jonathan and Essa help you check the sender independently, compare the offer with the company's real careers channel, preserve evidence and keep the application moving without paying or handing over sensitive information. The deadline pressure is part of the test.",
-  "learningObjectives": [
-    "How to verify a job opportunity independently",
-    "How to match a real role to existing work samples",
-    "How to report suspicious recruitment without making unsupported public accusations"
-  ],
-  "prerequisites": [
-    "m15"
-  ],
-  "objectives": [
-    {
-      "id": "m16-obj-1",
-      "label": "Inspect the recruiter message and verify the source independently",
-      "interactionTarget": "story:m16:objective:1",
-      "required": true
-    },
-    {
-      "id": "m16-obj-2",
-      "label": "Compare the role against the official careers channel",
-      "interactionTarget": "story:m16:objective:2",
-      "required": true
-    },
-    {
-      "id": "m16-obj-3",
-      "label": "Prepare a relevant work sample for a verified role",
-      "interactionTarget": "story:m16:objective:3",
-      "required": true
-    },
-    {
-      "id": "m16-obj-4",
-      "label": "Respond safely and report the suspicious contact",
-      "interactionTarget": "story:m16:objective:4",
-      "required": true
-    }
-  ],
-  "successConditions": [
-    "The recruiter and role are checked through an independently reached official channel",
-    "The application uses a relevant, evidence-backed work sample",
-    "No money, identity documents or wallet secrets are sent to the unverified contact"
-  ],
-  "failureAndRetry": {
-    "onFailure": "If the player is tempted by the deadline or fee, Essa pauses the response and asks for independent verification before any message is sent.",
-    "retry": "Keep the role research and portfolio sample; retry the final response without paying or disclosing sensitive information."
-  },
-  "rewards": {
-    "xp": 255,
-    "skillBadges": [
-      "Opportunity Screening"
+    "chapterId": "ch08",
+    "title": "The Job That Costs Money",
+    "state": "Plateau",
+    "location": "Plateau hiring foyer, interview bench and application terminal",
+    "npcIds": [
+      "j-jonathan",
+      "essa"
     ],
-    "portfolioArtifacts": [
-      "Verified job-application pack"
+    "npcs": [
+      "J.Jonathan",
+      "Essa"
+    ],
+    "narrativePurpose": "Mission 15 ends with a recruiter demanding an activation fee and private wallet details before revealing the screening task. J.Jonathan and Essa help you check the sender independently, compare the offer with the company's real careers channel, preserve evidence and keep the application moving without paying or handing over sensitive information. The deadline pressure is part of the test.",
+    "learningObjectives": [
+      "How to verify a job opportunity independently",
+      "How to match a real role to existing work samples",
+      "How to report suspicious recruitment without making unsupported public accusations"
+    ],
+    "prerequisites": [
+      "m15"
+    ],
+    "objectives": [
+      {
+        "id": "m16-obj-1",
+        "label": "Inspect the recruiter message and verify the source independently",
+        "interactionTarget": "story:m16:objective:1",
+        "required": true
+      },
+      {
+        "id": "m16-obj-2",
+        "label": "Compare the role against the official careers channel",
+        "interactionTarget": "story:m16:objective:2",
+        "required": true
+      },
+      {
+        "id": "m16-obj-3",
+        "label": "Prepare a relevant work sample for a verified role",
+        "interactionTarget": "story:m16:objective:3",
+        "required": true
+      },
+      {
+        "id": "m16-obj-4",
+        "label": "Respond safely and report the suspicious contact",
+        "interactionTarget": "story:m16:objective:4",
+        "required": true
+      }
+    ],
+    "successConditions": [
+      "The recruiter and role are checked through an independently reached official channel",
+      "The application uses a relevant, evidence-backed work sample",
+      "No money, identity documents or wallet secrets are sent to the unverified contact"
+    ],
+    "failureAndRetry": {
+      "onFailure": "If the player is tempted by the deadline or fee, Essa pauses the response and asks for independent verification before any message is sent.",
+      "retry": "Keep the role research and portfolio sample; retry the final response without paying or disclosing sensitive information."
+    },
+    "rewards": {
+      "xp": 255,
+      "skillBadges": [
+        "Opportunity Screening"
+      ],
+      "portfolioArtifacts": [
+        "Verified job-application pack"
+      ]
+    },
+    "storyFlags": [
+      "m16_complete",
+      "job_offer_screened"
+    ],
+    "nextMissionId": "m17",
+    "ending": "The fee demand fails the verification check. You keep the suspicious message as evidence, submit your work sample only through the verified company channel if a matching vacancy exists, and report the contact without making public accusations you cannot prove.",
+    "cliffhanger": "J.Jonathan forwards the honest work sample you prepared—not your private details—to White Coach and Abdul in Kano. They are running a community build challenge, but the team has splintered the night before its public demo. They ask if you can help turn scattered effort into one useful thing by morning.",
+    "sceneLines": [
+      "J.Jonathan: You just built a portfolio you can stand behind. Now someone wants money before they'll even name the job. Don't let a deadline make the decision for you. Check the source without using the links they sent.",
+      "Essa: Open the company's careers page independently, compare the exact role and sender, and keep the message. No activation fee, no seed phrase, no private key—and don't send ID to an unverified contact. If there's a genuine vacancy, use its official application route."
     ]
   },
-  "storyFlags": [
-    "m16_complete",
-    "job_offer_screened"
-  ],
-  "nextMissionId": "m17",
-  "ending": "The fee demand fails the verification check. You keep the suspicious message as evidence, submit your work sample only through the verified company channel if a matching vacancy exists, and report the contact without making public accusations you cannot prove.",
-  "cliffhanger": "J.Jonathan forwards the honest work sample you prepared—not your private details—to White Coach and Abdul in Kano. They are running a community build challenge, but the team has splintered the night before its public demo. They ask if you can help turn scattered effort into one useful thing by morning.",
-  "sceneLines": [
-    "J.Jonathan: You just built a portfolio you can stand behind. Now someone wants money before they'll even name the job. Don't let a deadline make the decision for you. Check the source without using the links they sent.",
-    "Essa: Open the company's careers page independently, compare the exact role and sender, and keep the message. No activation fee, no seed phrase, no private key—and d  {
+  {
     "id": "m17",
     "chapterId": "ch09",
     "title": "One Night to Build",
@@ -1441,9 +1444,6 @@ const RAW_MISSIONS = [
     "sceneLines": [
       "White Coach: \"You made it from Plateau? J.Jonathan sent the work sample you prepared. I wanted to see how you work, but forget the interview talk for now—this team is about to miss its own demo. Everybody has an idea; nobody has a finished thing.\"",
       "Abdul: \"Three groups are building versions of the same idea, two people have walked out, and the rest are waiting for somebody to decide. We have until morning. Help us pick a real problem and finish something useful—not another presentation full of promises.\""
-    ]
-  },
-d just hides the same problem. Let's trace one sale end to end, then test one fix with the trader.\""
     ]
   },
   {
