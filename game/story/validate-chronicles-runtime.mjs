@@ -112,7 +112,8 @@ if (activityStart < 0 || activityEnd < 0) {
         }
       }
     }
-    if (checked < 100) errors.push("Expected a broad objective activity coverage check");
+    const minimumCoverageChecks = MISSIONS.filter((mission) => mission.id !== "m01").length * 3;
+    if (checked < minimumCoverageChecks) errors.push("Expected at least three contextual objective activity coverage checks per follow-up mission.");
     if (!errors.length) console.log("Runtime objective activities: " + checked + " covered by " + rules.length + " activity rules");
   } catch (error) {
     errors.push("Could not evaluate activity rules: " + error.message);
