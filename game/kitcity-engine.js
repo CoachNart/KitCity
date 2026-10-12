@@ -1444,6 +1444,21 @@ const CITY_ARCH_ROAD={
  kafanchan:{arch:'rail-junction',road:'rail-yard',roof:'#9D8C70',kerb:'#C3B99E',mark:'#E0D4AC',edge:'rail',feature:'rail'},
  damboa:{arch:'kanuri-compound',road:'dry-season',roof:'#C4A274',kerb:'#D7C49F',mark:'#E8D7B2',edge:'sand-shoulder',feature:'compound'}
 };
+ jos:{arch:'plateau-rock',road:'jos-switchback',roof:'#7D887A',kerb:'#C2C8BC',mark:'#E2D8B5',edge:'rock',feature:'plateau'},
+ maiduguri:{arch:'sahel-gate',road:'maiduguri-dust',roof:'#B88F5C',kerb:'#D5BD96',mark:'#E8D7B0',edge:'sand-shoulder',feature:'sahel'},
+ anambra:{arch:'market-arcade',road:'anambra-market',roof:'#9A765A',kerb:'#C8B79B',mark:'#F0C75B',edge:'loading-bay',feature:'market-arcade'},
+ adoekiti:{arch:'ekiti-spring',road:'ekiti-hills',roof:'#6F8665',kerb:'#C1CEB7',mark:'#E1D7AA',edge:'green-strip',feature:'spring'},
+ abakaliki:{arch:'rice-granary',road:'rice-fields',roof:'#A6A27B',kerb:'#C8C6A6',mark:'#E1D9AF',edge:'earth-shoulder',feature:'granary'},
+ abia:{arch:'industrial-market',road:'aba-factory',roof:'#8A6A58',kerb:'#C2A58A',mark:'#F1C75D',edge:'loading-bay',feature:'factory'},
+ bayelsa:{arch:'delta-stilt',road:'mangrove-boardwalk',roof:'#5E7E77',kerb:'#A9C4BA',mark:'#DCE7D6',edge:'water-channel',feature:'stilt'},
+ jigawa:{arch:'sahel-courtyard',road:'jigawa-courtyard',roof:'#C0A071',kerb:'#D8C49D',mark:'#E7D8B3',edge:'sand-shoulder',feature:'courtyard'},
+ kebbi:{arch:'fishing-granary',road:'kebbi-river',roof:'#A89A72',kerb:'#C9C6A7',mark:'#D9E1C7',edge:'water-channel',feature:'fishing'},
+ kogi:{arch:'confluence-terrace',road:'kogi-riverbend',roof:'#8D927D',kerb:'#C1C5B4',mark:'#D8E0C9',edge:'water-channel',feature:'confluence'},
+ nasarawa:{arch:'middlebelt-court',road:'nasarawa-link',roof:'#9C9A7C',kerb:'#C7C2A6',mark:'#E1D6AE',edge:'earth-shoulder',feature:'court'},
+ osun:{arch:'grove-sculpture',road:'osun-grove',roof:'#70865A',kerb:'#C0C8A7',mark:'#E2D6A3',edge:'rooted',feature:'grove'},
+ taraba:{arch:'mambilla-stilt',road:'taraba-highland',roof:'#71886C',kerb:'#B9C8B3',mark:'#DFDDB8',edge:'stone-drain',feature:'highland'},
+ yobe:{arch:'kanuri-sahel',road:'yobe-dryland',roof:'#C3A071',kerb:'#D8C49E',mark:'#E8D9B5',edge:'sand-shoulder',feature:'sahel'},
+ zamfara:{arch:'northern-craft',road:'zamfara-trade',roof:'#B89A6D',kerb:'#D1BE98',mark:'#E5D4AE',edge:'earth-shoulder',feature:'craft'},
 function cityKit(key){return CITY_ARCH_ROAD[key]||{arch:'local-'+key,road:'local-'+key,roof:'#8A8172',kerb:'#B9B2A4',mark:'#E2D1A0',edge:'local',feature:'local'};}
 function addArchitectureDetail(key,x,z,w,h,d,color,xb){
  const A=cityKit(key),edge=A.roof,trim=A.kerb;
