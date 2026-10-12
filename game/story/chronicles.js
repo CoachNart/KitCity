@@ -1445,6 +1445,7 @@ const RAW_MISSIONS = [
       "Abdul: \"I can build another dashboard in an afternoon. But if the cashier, payment provider and order screen use different meanings for 'successful', a prettier dashboard just hides the same problem. Let's trace one sale end to end, then test one fix with the trader.\""
     ]
   },
+  {
     "id": "m18",
     "chapterId": "ch09",
     "title": "Clicks Don't Pay the Bills",
