@@ -295,8 +295,12 @@ const YT=(function(){
     return /^[A-Za-z0-9_-]{10,}$/.test(v)?v:'';
   }
   function queue(){
-    const custom=parseId(P.pl);
-    if(custom) return {label:'Custom YouTube playlist',list:custom,videos:null};
+    /* A saved custom playlist must not silently override every city's soundtrack.
+       It is used only while the player explicitly selects Custom in Music settings. */
+    if(currentKey==='custom'){
+      const custom=parseId(P.pl);
+      if(custom) return {label:'Custom YouTube playlist',list:custom,videos:null};
+    }
     return MUSIC_QUEUES[currentKey]||MUSIC_QUEUES.lagos;
   }
   function vol(){ if(ready) try{ player.setVolume(duck?22:55); }catch(e){} }
@@ -386,15 +390,17 @@ const YT=(function(){
     next(){ if(ready) try{ player.nextVideo(); }catch(e){} },
     setCity(city){
       const key=CITY_MUSIC[city]||'afrobeat';
-      currentKey=key;
+      currentKey=key; // city soundtrack always wins when entering/changing a city
       if(ready){
         try{ loadQueue(); if(wantOn) play(); }catch(e){}
       }
     },
-    currentLabel(){ return (parseId(P.pl)?'Custom YouTube playlist':(MUSIC_QUEUES[currentKey]||MUSIC_QUEUES.afrobeat).label); },
+    currentLabel(){ return currentKey==='custom'&&parseId(P.pl)?'Custom YouTube playlist':(MUSIC_QUEUES[currentKey]||MUSIC_QUEUES.afrobeat).label; },
     setList(v){
       const id=parseId(v);
-      P.pl=id===DEFAULT_PLAYLIST?'':(id?String(v).trim():''); save();
+      P.pl=id===DEFAULT_PLAYLIST?'':(id?String(v).trim():'');
+      currentKey=id?'custom':(CITY_MUSIC[curCity]||'afrobeat');
+      save();
       if(ready){ try{ loadQueue(); if(wantOn) play(); else player.pauseVideo(); }catch(e){} }
     }
   };
@@ -4565,7 +4571,7 @@ function loadStep(){
       if(st.kind==='character'){
         entity.talk=()=>{if(isTarget)st.run();};
         entity.active=()=>isTarget;
-        if(isTarget)goal=entity;
+        if(isTarget){entity._missionTarget=true;goal=entity;}
       }else if(st.kind==='clue'||st.kind==='challenge'){
         entity.talk=()=>{};
         entity.active=()=>false;
@@ -4587,6 +4593,22 @@ function loadStep(){
       /* Keep Softstorm physically at the shop while the player inspects the evidence there. */
       const shopkeeper=placeNPC(STORY_NPCS.Softstorm,SPOTS.a);
       shopkeeper.active=()=>false; shopkeeper.talk=()=>{}; ents.push(shopkeeper);
+    }
+  }
+  /* Hard fallback: some Lagos mission steps use one-off NPC objects that are not
+     registered in STORY_NPCS. If the cast lookup cannot create an active target,
+     place the exact step NPC at the blue objective marker and make it interactable. */
+  if(st.kind==='character'&&st.npc&&!ents.some(e=>e._missionTarget)){
+    const targetNpc=typeof st.npc==='object'?st.npc:STORY_NPCS[st.npc];
+    if(targetNpc){
+      const targetSpot=SPOTS[st.spot]||SPOTS.a;
+      const target=placeNPC(targetNpc,targetSpot);
+      target.r=14;
+      target.talk=()=>st.run();
+      target.active=()=>true;
+      target._missionTarget=true;
+      ents.unshift(target);
+      goal=target;
     }
   }
   for(const ex of (m.extras||[])){
