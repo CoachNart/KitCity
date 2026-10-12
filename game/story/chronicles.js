@@ -296,12 +296,13 @@ const RAW_MISSIONS = [
     "location": "Oyo bus park, phone-repair kiosk and student courtyard",
     "npcIds": [
       "unique",
-      "smrt-huntr",
-      "timi"
+      "smrt-huntr"
     ],
     "npcs": [
       "Unique",
-      "Smrt huntr",
+      "Smrt huntr"
+    ],
+    "sceneCast": [
       "Timi"
     ],
     "narrativePurpose": "The voice note from Lagos leads you to Timi at an Oyo bus park. A stranger's wallet-recovery page is counting down and demanding twelve secret words. Timi has not submitted them. Stop the rushed decision, find out what the page is really asking for, and help Timi get out safely before the message spreads.",
@@ -380,12 +381,13 @@ const RAW_MISSIONS = [
     "location": "Oyo student courtyard, roadside print kiosk and community hall",
     "npcIds": [
       "goodness",
-      "semi",
-      "timi"
+      "semi"
     ],
     "npcs": [
       "Goodness",
-      "Semi",
+      "Semi"
+    ],
+    "sceneCast": [
       "Timi"
     ],
     "narrativePurpose": "The student group is turning Timi's screenshot into a public accusation. Goodness wants the rumour stopped; Semi has found the uncropped message and the wallet's public transaction history. Follow the mismatch, find what the screenshot leaves out, and help Timi face the group without exposing private details or accusing an unproven editor.",
