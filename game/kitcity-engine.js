@@ -2391,7 +2391,7 @@ function addCityBlockBuildings(C,cx,cz,ix,iz){
   else if(A.arch==='terrace'||A.arch==='coal'||A.arch==='plateau-rock') placements=lots[4].map(v=>v.slice());
   for(const [ox,oz,w,d] of placements){
     const x=cx+ox+rr(-1.1,1.1),z=cz+oz+rr(-1.1,1.1);
-    if(nearSpecial(x,z,12)) continue;
+    if(nearSpecial(x,z,18)) continue;
     addBuilding(x,z,w*rr(.9,1.08),d*rr(.9,1.08),pickStyle(C),pk(C.paint),cx,cz,ox,oz);
   }
 }
