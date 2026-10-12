@@ -150,7 +150,7 @@ const MUSIC_QUEUES={
   'ph':{label:"Port Harcourt · Niger Delta Afrobeats",videos:["X3Ai6osw3Mk"]},
   'benin':{label:"Benin City · Edo / Contemporary Afrobeats",videos:["eYsldLTYyrM"]},
   'calabar':{label:"Calabar · Contemporary Afrobeats",videos:["OFtYscjjdCk"]},
-  'jos':{label:"Jos · Contemporary Afrobeats",videos:["xHO9iE9BEnQ"]},
+  'jos':{label:"Jos · Afrobeats",videos:["k6eE3c70hgg"]},
   'ibadan':{label:"Ibadan · Yoruba-infused Afrobeats",videos:["fXl5dPuiJa0"]},
   'enugu':{label:"Enugu · Igbo Pop / Afrobeats",videos:["yMSTYtMSbL0"]},
   'kano':{label:"Kano · Contemporary Hausa Music",videos:["1tn8vcSPe70"]},
@@ -169,8 +169,8 @@ const MUSIC_QUEUES={
   'makurdi':{label:"Makurdi · Contemporary Afrobeats",videos:["VmakV_meVY0"]},
   'ilorin':{label:"Ilorin · Yoruba-infused Afrobeats",videos:["ynCkE3kYI10"]},
   'akure':{label:"Akure · Yoruba-infused Afrobeats",videos:["SFmZKO35SfQ"]},
-  'ado-ekiti':{label:"Ado-Ekiti · Yoruba-infused Afrobeats",videos:["cSCmhUaiqQw"]},
-  'osogbo':{label:"Osogbo · Yoruba-infused Afrobeats",videos:["vpzrekcA53Y"]},
+  'ado-ekiti':{label:"Ado-Ekiti · Yoruba-infused Afrobeats",videos:["z22zRnTlgMg"]},
+  'osogbo':{label:"Osogbo · Yoruba-infused Afrobeats",videos:["KvByp6WpF2E"]},
   'abeokuta':{label:"Abeokuta · Yoruba-infused Afrobeats",videos:["_hKuvfH1j_w"]},
   'lokoja':{label:"Lokoja · Contemporary Afrobeats",videos:["77iJTnmILrw"]},
   'lafia':{label:"Lafia · Contemporary Hausa Music",videos:["mxULSjNvC7Y"]},
@@ -359,7 +359,7 @@ const YT=(function(){
     let d=document.getElementById('ytHost');
     if(!d){
       d=document.createElement('div'); d.id='ytHost';
-      d.style.cssText='position:fixed;left:-9999px;bottom:0;width:320px;height:180px;opacity:.001;pointer-events:none;z-index:-1';
+      d.style.cssText='position:fixed;left:-9999px;bottom:0;width:320px;height:240px;opacity:.001;pointer-events:none;z-index:-1';
       d.innerHTML='<div id="ytPlayer"></div>'; document.body.appendChild(d);
     }
   }
@@ -396,7 +396,7 @@ const YT=(function(){
   function create(){
     mount();
     player=new window.YT.Player('ytPlayer',{
-      width:320,height:180,
+      width:320,height:240,
       playerVars:{
         autoplay:0,controls:0,disablekb:1,playsinline:1,rel:0,modestbranding:1,
         origin:location.origin&&location.origin.indexOf('http')===0?location.origin:undefined
@@ -423,7 +423,7 @@ const YT=(function(){
         },
         onError:ev=>{
           errCount++;
-          console.warn('[KitCity music] YouTube source error',ev&&ev.data,'for city',currentKey);
+          console.warn('[KitCity music] YouTube source error',ev&&ev.data,'for city',currentKey,'video',((queue()||{}).videos||[])[0]||'custom playlist');
           if(errCount>8){ failed=true; return; }
           const q=queue();
           if(q.videos&&q.videos.length===1){
