@@ -1116,7 +1116,8 @@ function addRoadIdentity(key,blocks){
  const A=cityKit(key),L=LKC;
  const mat=(color,opts)=>new THREE.MeshLambertMaterial(Object.assign({color},opts||{}));
  const box=(w,h,d,c,x,y,z)=>{const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat(c));m.position.set(x,y,z);cityGroup.add(m);return m;};
- const stripe=(w,d,c,x,z,rot=0)=>{const m=new THREE.Mesh(new THREE.PlaneGeometry(w,d),new THREE.MeshBasicMaterial({color:c,depthWrite:false}));m.rotation.x=-Math.PI/2;m.rotation.z=rot;m.position.set(x,.065,z);cityGroup.add(m);};
+ const stripeItems=[];
+ const stripe=(w,d,c,x,z,rot=0)=>{stripeItems.push({color:c,x,y:.065,z,rx:-Math.PI/2,rz:rot,sx:w,sy:d,sz:1});};
  // Road signatures: each location has its own markings and edge treatment while
  // preserving the existing road footprint/collision-safe street grid.
  const roadKeys=Object.keys(CITY_ARCH_ROAD),idx=Math.max(0,roadKeys.indexOf(key));
@@ -1172,6 +1173,9 @@ function addRoadIdentity(key,blocks){
      box(.3,2.4,.3,A.roof,x,1.2,z-8);box(1.4,.45,.18,A.mark,x,2.2,z-8);
    }
  }
+ const byColor=new Map();
+ stripeItems.forEach(item=>{if(!byColor.has(item.color))byColor.set(item.color,[]);byColor.get(item.color).push(item);});
+ byColor.forEach((items,color)=>instanced(new THREE.PlaneGeometry(1,1),new THREE.MeshBasicMaterial({color,depthWrite:false}),items,cityGroup));
 }
 function roadDecals(C,blocks){
   const L=LKC,dc=L.lat>.3?'#9a5a38':(L.dust>.2?'#cdb48a':'#8a7e6a'),its=[]; const geo=new THREE.PlaneGeometry(56,2.8); geo.rotateX(-Math.PI/2);
