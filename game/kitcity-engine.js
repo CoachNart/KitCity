@@ -3253,7 +3253,41 @@ const MISSIONS=CHRONICLE_MISSIONS.map((story,index)=>{
         ]);
       }}
     ];
-  }else if(story.id==='m12'){
+  }else if(story.id==='m11'){
+    const kodavic=STORY_NPCS.Kodavic;
+    const cybersage=STORY_NPCS.Cybersage;
+    steps=[
+      {kind:'character',id:'m11-obj-1',label:story.objectives[0].label,spot:'buyer',npc:kodavic,run(){
+        talk(kodavic,"<p><b>KODAVIC:</b> One thousand members on the dashboard. Four people in the hall. I paid for the room, printed the banners and now Dera is halfway out the door. I'm ready to announce a prize and bring people back.</p><p><b>YOU:</b> Give us three minutes before we buy another signup.</p><p><b>CYBERSAGE:</b> Don't corner her or demand feedback. Ask if she'll show us where she got stuck, and let her say no.</p>",[
+          {t:'Ask Dera if she is comfortable showing the signup path; observe without taking her phone or asking for private details.',f:()=>talk(cybersage,"<p><b>CYBERSAGE:</b> She agrees to show the public welcome flow. She isn't confused about Web3; she just can't tell what this group wants her to do first. Follow the screen in order and write down what she actually encounters.</p>",[{t:'Follow the first-session path with Dera’s consent and record the steps, not assumptions.',f:()=>{G.evidence.m11_deras_journey_observed=true;G.evidence.m11_newcomer_consent_obtained=true;finishStep();}}])},
+          {t:'Stop her at the door and tell her a giveaway is coming if she stays.',f:()=>talk(kodavic,"<p><b>KODAVIC:</b> That's another promise before we know why she left. If the first step is confusing, a prize might buy a signup and still leave her stuck. Let's ask permission and watch the actual path.</p>",[{t:'Ask Dera politely if she will show the signup path; let her decline.',f:()=>talk(cybersage,"<p><b>CYBERSAGE:</b> She agrees to show the public welcome flow. Follow it in order. We need the point where she gets stuck, not a guess based on the empty chairs.</p>",[{t:'Observe the flow with her consent.',f:()=>{G.evidence.m11_deras_journey_observed=true;G.evidence.m11_newcomer_consent_obtained=true;finishStep();}}])}])}
+        ]);
+      }},
+      {kind:'clue',id:'m11-obj-2',label:story.objectives[1].label,spot:'screenshot',title:'Dera’s first-session path',sign:'FIND THE DROP-OFF',npc:cybersage,run(){
+        talk(cybersage,"<p><b>CYBERSAGE:</b> Here is the path she just showed us: signup, six channel choices, a long rules post, then an introduction form asking what she builds and which wallet she uses. She stopped at the channel list because she couldn't tell which room was meant for a beginner. That's what we observed; we shouldn't claim every absent member left for the same reason.</p><p><b>YOU:</b> The first decision arrives before she has seen any value.</p>",[
+          {t:'Record the channel-selection screen as the observed friction point; keep wallet details out of the welcome flow.',f:()=>{G.evidence.m11_friction_point_identified=true;G.evidence.m11_channel_maze_confirmed=true;G.evidence.m11_no_wallet_required=true;finishStep();}},
+          {t:'Assume people left because they did not receive a prize.',f:()=>talk(kodavic,"<p><b>KODAVIC:</b> We have no evidence for that. Dera showed us the exact step where she got stuck. Let's fix that one step and test it before spending money on another campaign.</p>",[{t:'Use the observed channel-selection friction, not a guess about motivation.',f:()=>{G.evidence.m11_friction_point_identified=true;G.evidence.m11_channel_maze_confirmed=true;G.evidence.m11_no_wallet_required=true;finishStep();}}])}
+        ]);
+      }},
+      {kind:'clue',id:'m11-obj-3',label:story.objectives[2].label,spot:'shopdesk',title:'The three-minute welcome card',sign:'ONE CLEAR FIRST ACTION',npc:kodavic,run(){
+        talk(kodavic,"<p><b>KODAVIC:</b> So what replaces the maze? I can still put a banner on the table, but I don't want another giant welcome post nobody reads.</p><p><b>CYBERSAGE:</b> One choice, one small task, one human contact. Let people choose what they want to try today, then give them a task they can complete without connecting a wallet or writing a biography.</p>",[
+          {t:'Create a welcome card: choose Build, Play or Trading Safety; then post one question or idea on the demo board and get a named helper.',f:()=>talk(cybersage,"<p><b>CYBERSAGE:</b> That gives a new member a route without pretending they already know the vocabulary. The task is public and low-risk, and they can leave wallet details blank. Now test it with someone who has not seen the redesign.</p>",[{t:'Publish the single-step card and invite a second newcomer to try it.',f:()=>{G.evidence.m11_one_clear_first_task_created=true;G.evidence.m11_wallet_connection_not_required=true;G.evidence.m11_human_helper_named=true;finishStep();}}])},
+          {t:'Keep all six channels but add a longer explanation above them.',f:()=>talk(kodavic,"<p><b>KODAVIC:</b> That makes the same decision heavier. We watched Dera stop at the list. Give her one useful first action, then let her explore more channels when she has a reason.</p>",[{t:'Replace the channel maze with one choice, one task and one helper.',f:()=>{G.evidence.m11_one_clear_first_task_created=true;G.evidence.m11_wallet_connection_not_required=true;G.evidence.m11_human_helper_named=true;finishStep();}}])}
+        ]);
+      }},
+      {kind:'clue',id:'m11-obj-4',label:story.objectives[3].label,spot:'ledger',title:'First-task test record',sign:'MEASURE COMPLETION',npc:cybersage,run(){
+        talk(cybersage,"<p><b>CYBERSAGE:</b> A second newcomer has tried the card without a walkthrough. They chose <b>Play</b>, posted one question on the demo board and found their helper from the card. That's one completed first task out of one test—not proof that every newcomer will succeed, but a useful result.</p><p><b>KODAVIC:</b> The signup counter didn't tell us that. The test did.</p>",[
+          {t:'Record the observed result as 1 of 1 test users completing the first task, and plan more tests before claiming the flow is fixed for everyone.',f:()=>{G.evidence.m11_second_newcomer_tested=true;G.evidence.m11_first_task_completed=true;G.evidence.m11_completion_measured=true;G.evidence.m11_claims_limited_to_sample=true;finishStep();}},
+          {t:'Announce that the redesign has solved onboarding for all one thousand members.',f:()=>talk(cybersage,"<p><b>CYBERSAGE:</b> One successful test is encouraging, not a thousand-user result. Report exactly what happened and test with more people before making a bigger claim.</p>",[{t:'Record 1 of 1 completion and mark the result as an early test.',f:()=>{G.evidence.m11_second_newcomer_tested=true;G.evidence.m11_first_task_completed=true;G.evidence.m11_completion_measured=true;G.evidence.m11_claims_limited_to_sample=true;finishStep();}}])}
+        ]);
+      }},
+      {kind:'character',id:'m11-close-case',label:'Confirm the welcome card is live',spot:'buyer',npc:kodavic,run(){
+        talk(kodavic,"<p><b>KODAVIC:</b> The new card is pinned. No giveaway, no six-channel maze, no wallet request before a person even knows us. We have one completed test and a clear next step: test it with more newcomers.</p><p><b>CYBERSAGE:</b> Dera stayed long enough to try something useful. That's a better signal than a signup number, even if it's only the first one.</p><p><b>YOU:</b> Then we improve from what people do—not what the dashboard makes us feel.</p><p><b>CYBERSAGE:</b> Wait. Someone just showed me a private DM from an account using a moderator's name. It says their wallet will be restricted unless they verify through a link.</p><p><b>KODAVIC:</b> Three people received it. Reina and Cclya need to see this before anyone clicks again.</p>",[
+          {t:'Save the onboarding test and move to the safety incident.',f:()=>{P.storyFlags=Object.assign({},P.storyFlags||{},{m11_complete:true,newcomer_friction_confirmed:true,first_task_flow_tested:true,first_contribution_measured:true});G.evidence.chapterSummary=true;finishStep();}}
+        ]);
+      }}
+    ];
+  }}else if(story.id==='m12'){
     const reina=STORY_NPCS.Reina;
     const cclya=STORY_NPCS.Cclya;
     steps=[
