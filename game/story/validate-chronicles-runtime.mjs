@@ -286,6 +286,15 @@ if (portfolioMission && (!portfolioMission.prerequisites.includes("m14") || port
 if (portfolioMission && (!portfolioMission.narrativePurpose.includes("verified product announcement") || !portfolioMission.narrativePurpose.includes("evidence a hiring lead can inspect"))) errors.push("Mission 15 must connect the product announcement to portfolio evidence.");
 if (portfolioMission && (!portfolioMission.sceneLines.some((line) => line.startsWith("Web3_Esta:")) || !portfolioMission.sceneLines.some((line) => line.startsWith("Love:")))) errors.push("Mission 15 is missing authored dialogue from its assigned NPCs.");
 requireText("else if(story.id==='m15')", "Mission 15 bespoke portfolio runtime");
+const screeningMission = MISSIONS.find((mission) => mission.id === "m16");
+if (!screeningMission || screeningMission.title !== "The Job That Costs Money") errors.push("Mission 16 must screen the suspicious recruitment offer.");
+if (screeningMission && (screeningMission.npcs[0] !== "J.Jonathan" || screeningMission.npcs[1] !== "Essa")) errors.push("Mission 16 must use J.Jonathan then Essa.");
+if (screeningMission && (!screeningMission.prerequisites.includes("m15") || screeningMission.nextMissionId !== "m17")) errors.push("Mission 16 must continue from Mission 15 and hand off to Mission 17.");
+if (screeningMission && (!screeningMission.narrativePurpose.includes("Mission 15") || !screeningMission.narrativePurpose.includes("activation fee"))) errors.push("Mission 16 must pick up the recruiter warning from Mission 15.");
+if (screeningMission && (!screeningMission.sceneLines.some((line) => line.startsWith("J.Jonathan:")) || !screeningMission.sceneLines.some((line) => line.startsWith("Essa:")))) errors.push("Mission 16 is missing dialogue from its assigned NPCs.");
+requireText("else if(story.id==='m16')", "Mission 16 bespoke recruiter-screening runtime");
+for (const marker of ["m16_message_preserved","m16_official_channel_checked","m16_relevant_sample_prepared","m16_safe_response","m16_no_payment_or_secrets","m16_complete:true","job_offer_screened:true"]) requireText(marker, "Mission 16 safety and completion marker " + marker);
+
 for (const marker of ["m15_role_matched","m15_two_samples_documented","m15_contribution_separated","m15_bio_evidence_linked","m15_skill_gap_named","m15_complete:true","portfolio_evidence_compiled:true"]) requireText(marker, "Mission 15 evidence and completion marker " + marker);
 
 for (const marker of [
