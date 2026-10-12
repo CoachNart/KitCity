@@ -2463,8 +2463,8 @@ CHARACTER_ORDER.forEach((name,index)=>{
 });
 // Timi is an additional story character, not part of the required 50-character encounter order.
 {
-  const npc=NPC('Timi',STORY_ROLES.Timi||'Student · wallet owner caught in a recovery scam',STORY_COLORS[0],STORY_LOOKS[0],null,'Timi');
-  npc.name='Timi';npc.originalName='Timi';npc.signBg=STORY_COLORS[0];npc.signFg='#ffffff';STORY_NPCS.Timi=npc;
+  const npc=NPC('Timi',STORY_ROLES.Timi||'Student · wallet owner caught in a recovery scam',STORY_COLORS[7],STORY_LOOKS[7],null,'Timi');
+  npc.name='Timi';npc.originalName='Timi';npc.signBg=STORY_COLORS[7];npc.signFg='#ffffff';STORY_NPCS.Timi=npc;
 }
 const CHRONICLE_CHALLENGES={
 m02:{q:"The cybercafé session is about to clear, and the copied payment page may disappear. What do you save first?",o:["Capture the full page, URL and timestamp as it is","Refresh the page and hope the address corrects itself","Post the account name publicly before the evidence is gone"],a:0,w:"Preserve the page as it appeared first. A changing page and a familiar display name are not proof of who made it."},
