@@ -53,7 +53,7 @@ requireText("const CHRONICLE_ACTIVITY_RULES=[", "objective activity bank");
 requireText("function applyChronicleActivityEffect", "safe simulated activity effects");
 requireText("effect==='payment-dispute-trace'", "persisted transaction evidence from the Lagos follow-up");
 requireText("effect==='payment-dispute-report'", "saved recipient-mismatch incident report");
-requireText("The copied page and transaction record disagree. What is the strongest next step?", "new mission-specific Lagos follow-up decision");
+requireText("The cybercafé session is about to clear, and the copied payment page may disappear. What do you save first?", "new mission-specific Lagos follow-up decision");
 requireText("The record is confirmed on Base for 120 USDC in block 1842031.", "Lagos transaction evidence has a concrete amount, network and block");
 requireText("function placeExecutionCenter", "physical execution centre and task workbench");
 requireText("const objectiveSpots=['ledger','screenshot','shopdesk','buyer','b','c','d','e','f','g','h','i','j','k','l','m','n','o'];", "mission objectives use a route of distinct world locations");
@@ -71,7 +71,7 @@ if (!engine.includes("if(m.id==='m01'&&P.chroniclesPrologueVersion!==2)")) error
 const lagosFollowUp = MISSIONS.find((mission) => mission.id === "m02");
 if (!lagosFollowUp || !/transaction hash|recipient address/i.test(lagosFollowUp.narrativePurpose)) errors.push("Lagos Mission 2 must directly continue the wrong-address payment investigation.");
 if (lagosFollowUp && /internet-history exhibit|classify Web1|Web1, Web2 and Web3/i.test(JSON.stringify(lagosFollowUp))) errors.push("Disconnected generic internet-history objectives remain in Lagos Mission 2.");
-if (lagosFollowUp && !lagosFollowUp.objectives.some((objective) => /transaction explorer/i.test(objective.label))) errors.push("Lagos Mission 2 must include a transaction-explorer evidence task.");
+if (lagosFollowUp && !lagosFollowUp.objectives.some((objective) => /save the copied payment page/i.test(objective.label))) errors.push("Lagos Mission 2 must preserve the copied page before investigating how the link spread.");
 const lagosOpening = MISSIONS.find((mission) => mission.id === "m01");
 if (!lagosOpening || !/payment|transaction/i.test(lagosOpening.narrativePurpose)) errors.push("Lagos opening is not driven by a player-relevant payment dispute");
 if (lagosOpening && /T3Kit|t3kit/i.test(JSON.stringify(lagosOpening))) errors.push("Lagos opening still uses T3Kit as a plot device");
