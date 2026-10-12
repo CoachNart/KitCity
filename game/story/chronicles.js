@@ -375,20 +375,48 @@ const RAW_MISSIONS = [
     "title": "The Screenshot That Lied",
     "state": "Oyo",
     "location": "Oyo student courtyard, roadside print kiosk and community hall",
-    "npcIds": ["goodness", "semi"],
-    "npcs": ["Goodness", "Semi"],
+    "npcIds": [
+      "goodness",
+      "semi"
+    ],
+    "npcs": [
+      "Goodness",
+      "Semi"
+    ],
     "narrativePurpose": "The student group is turning Timi's screenshot into a public accusation. Goodness wants the rumour stopped; Semi has found the uncropped message and the wallet's public transaction history. Follow the mismatch, find what the screenshot leaves out, and help Timi face the group without exposing private details or accusing an unproven editor.",
     "learningObjectives": [
       "Compare a claim with the original record it refers to",
       "Check transaction details without asking for wallet secrets",
       "Correct a rumour while being honest about what remains unknown"
     ],
-    "prerequisites": ["m03"],
+    "prerequisites": [
+      "m03"
+    ],
     "objectives": [
-      {"id":"m04-obj-1","label":"Stop the group from naming Timi before the claim is checked","interactionTarget":"story:m04:objective:1","required":true},
-      {"id":"m04-obj-2","label":"Compare the viral screenshot with the original message","interactionTarget":"story:m04:objective:2","required":true},
-      {"id":"m04-obj-3","label":"Check the wallet activity against the screenshot's claim","interactionTarget":"story:m04:objective:3","required":true},
-      {"id":"m04-obj-4","label":"Correct the group without exposing Timi or guessing who edited it","interactionTarget":"story:m04:objective:4","required":true}
+      {
+        "id": "m04-obj-1",
+        "label": "Stop the group from naming Timi before the claim is checked",
+        "interactionTarget": "story:m04:objective:1",
+        "required": true
+      },
+      {
+        "id": "m04-obj-2",
+        "label": "Compare the viral screenshot with the original message",
+        "interactionTarget": "story:m04:objective:2",
+        "required": true
+      },
+      {
+        "id": "m04-obj-3",
+        "label": "Check the wallet activity against the screenshot's claim",
+        "interactionTarget": "story:m04:objective:3",
+        "required": true
+      },
+      {
+        "id": "m04-obj-4",
+        "label": "Correct the group without exposing Timi or guessing who edited it",
+        "interactionTarget": "story:m04:objective:4",
+        "required": true
+      }
     ],
     "successConditions": [
       "The original message and screenshot are preserved before anyone alters or deletes them",
@@ -396,15 +424,27 @@ const RAW_MISSIONS = [
       "The correction states what the records show and leaves the editor's identity unresolved"
     ],
     "failureAndRetry": {
-      "onFailure":"If the player repeats the accusation or posts Timi's private details, Goodness stops the post and Semi brings the original evidence back into view.",
-      "retry":"Retry the current decision with the source message and wallet activity preserved."
+      "onFailure": "If the player repeats the accusation or posts Timi's private details, Goodness stops the post and Semi brings the original evidence back into view.",
+      "retry": "Retry the current decision with the source message and wallet activity preserved."
     },
-    "rewards":{"xp":135,"skillBadges":["Evidence Handling"],"portfolioArtifacts":["Oyo screenshot-claim verification note"]},
-    "storyFlags":["m04_complete","screenshot_claim_checked","original_message_preserved"],
-    "nextMissionId":"m05",
-    "ending":"The screenshot does not prove that Timi's wallet was drained. The source message and relevant wallet activity contradict the viral claim, but the available evidence still does not identify who altered or circulated the image. Goodness posts a correction and removes Timi's private details.",
-    "cliffhanger":"The correction reaches a small team building a payment app for market traders in Osun. Blockqueen is calling the checkout a success; Christol points at the queue of customers who gave up halfway through.",
-    "sceneLines":[
+    "rewards": {
+      "xp": 135,
+      "skillBadges": [
+        "Evidence Handling"
+      ],
+      "portfolioArtifacts": [
+        "Oyo screenshot-claim verification note"
+      ]
+    },
+    "storyFlags": [
+      "m04_complete",
+      "screenshot_claim_checked",
+      "original_message_preserved"
+    ],
+    "nextMissionId": "m05",
+    "ending": "The screenshot does not prove that Timi's wallet was drained. The source message and relevant wallet activity contradict the viral claim, but the available evidence still does not identify who altered or circulated the image. Goodness posts a correction and removes Timi's private details.",
+    "cliffhanger": "The correction reaches a small team building a payment app for market traders in Osun. Blockqueen is calling the checkout a success; Christol points at the queue of customers who gave up halfway through.",
+    "sceneLines": [
       "Goodness: \"Abeg, look at what they've done. They put Timi's name beside 'thief' and now people are forwarding it like they watched the wallet get emptied. Nobody has checked the record. Help me stop this before the whole campus joins in. \"",
       "Semi: \"Wait first. I found the message before it was cropped. The screenshot leaves out the transaction details, and the time on it doesn't line up with the story in the chat. That is a reason to check—not proof of who edited it. Let's open the source and compare properly. \""
     ]
@@ -415,20 +455,48 @@ const RAW_MISSIONS = [
     "title": "The Queue That Never Ends",
     "state": "Osun",
     "location": "Osun market entrance, trader stalls, roadside payment point and a small product studio",
-    "npcIds": ["blockqueen", "christol"],
-    "npcs": ["Blockqueen", "Christol"],
+    "npcIds": [
+      "blockqueen",
+      "christol"
+    ],
+    "npcs": [
+      "Blockqueen",
+      "Christol"
+    ],
     "narrativePurpose": "The correction about Timi reaches a small team building a payment app for market traders. The demo looks polished, but buyers keep abandoning checkout. Blockqueen wants to watch real customers; Christol is tempted to blame users. Follow two live attempts from the market queue to the product studio, reproduce the network-selection confusion, and test a focused fix before the next buyer arrives.",
     "learningObjectives": [
       "Notice a repeated product problem by watching real use",
       "Separate what a user does from assumptions about why",
       "Test one focused change before celebrating a release"
     ],
-    "prerequisites": ["m04"],
+    "prerequisites": [
+      "m04"
+    ],
     "objectives": [
-      {"id":"m05-obj-1","label":"Reach the queue and watch a buyer try to pay","interactionTarget":"story:m05:objective:1","required":true},
-      {"id":"m05-obj-2","label":"Follow the second buyer's attempt without coaching them","interactionTarget":"story:m05:objective:2","required":true},
-      {"id":"m05-obj-3","label":"Reproduce the network-selection dead end with Blockqueen and Christol","interactionTarget":"story:m05:objective:3","required":true},
-      {"id":"m05-obj-4","label":"Test a clearer checkout with the next buyer","interactionTarget":"story:m05:objective:4","required":true}
+      {
+        "id": "m05-obj-1",
+        "label": "Reach the queue and watch a buyer try to pay",
+        "interactionTarget": "story:m05:objective:1",
+        "required": true
+      },
+      {
+        "id": "m05-obj-2",
+        "label": "Follow the second buyer's attempt without coaching them",
+        "interactionTarget": "story:m05:objective:2",
+        "required": true
+      },
+      {
+        "id": "m05-obj-3",
+        "label": "Reproduce the network-selection dead end with Blockqueen and Christol",
+        "interactionTarget": "story:m05:objective:3",
+        "required": true
+      },
+      {
+        "id": "m05-obj-4",
+        "label": "Test a clearer checkout with the next buyer",
+        "interactionTarget": "story:m05:objective:4",
+        "required": true
+      }
     ],
     "successConditions": [
       "Two observed attempts show the same hesitation at network selection",
@@ -436,15 +504,26 @@ const RAW_MISSIONS = [
       "A clearer label and safe default are retested with a buyer before release"
     ],
     "failureAndRetry": {
-      "onFailure":"If the player proposes a dashboard or blames the customers, Blockqueen asks them to watch one more real checkout attempt before choosing a fix.",
-      "retry":"Return to the queue, observe the next attempt, and keep the notes already collected."
+      "onFailure": "If the player proposes a dashboard or blames the customers, Blockqueen asks them to watch one more real checkout attempt before choosing a fix.",
+      "retry": "Return to the queue, observe the next attempt, and keep the notes already collected."
     },
-    "rewards":{"xp":145,"skillBadges":["Product Discovery"],"portfolioArtifacts":["Market checkout test report"]},
-    "storyFlags":["m05_complete","checkout_friction_confirmed"],
-    "nextMissionId":"m06",
-    "ending":"The clearer network labels help the next buyer finish checkout. Christol shelves the dashboard and starts tracking completed payments and failed attempts instead of celebrating a polished demo.",
-    "cliffhanger":"During the retest, one payment succeeds twice after a customer taps the button again. Laloba and BigSam are preparing the contract release, and the team needs to find out whether the checkout can charge someone twice.",
-    "sceneLines":[
+    "rewards": {
+      "xp": 145,
+      "skillBadges": [
+        "Product Discovery"
+      ],
+      "portfolioArtifacts": [
+        "Market checkout test report"
+      ]
+    },
+    "storyFlags": [
+      "m05_complete",
+      "checkout_friction_confirmed"
+    ],
+    "nextMissionId": "m06",
+    "ending": "The clearer network labels help the next buyer finish checkout. Christol shelves the dashboard and starts tracking completed payments and failed attempts instead of celebrating a polished demo.",
+    "cliffhanger": "During the retest, one payment succeeds twice after a customer taps the button again. Laloba and BigSam are preparing the contract release, and the team needs to find out whether the checkout can charge someone twice.",
+    "sceneLines": [
       "Blockqueen: \"That customer nearly left without paying. She opened the network list, backed out, then tried again. Please don't tell me people just need more education. Come watch the next buyer and tell me what the screen is asking them to do. \"",
       "Christol: \"The demo works when I'm driving it. In the market, people keep getting stuck on that network screen. I wanted to add a dashboard, but if we can't get one payment through cleanly, the dashboard is just decoration. Let's reproduce the problem first. \""
     ]
@@ -454,7 +533,7 @@ const RAW_MISSIONS = [
     "chapterId": "ch03",
     "title": "The Second Tap",
     "state": "Osun",
-    "location": "Product studio, test kiosk and launch courtyard",
+    "location": "Osun payment-app studio, market test kiosk and launch courtyard",
     "npcIds": [
       "laloba",
       "bigsam"
@@ -463,11 +542,11 @@ const RAW_MISSIONS = [
       "Laloba",
       "BigSam"
     ],
-    "narrativePurpose": "The checkout fix exposes a deeper bug: two rapid taps create duplicate payment instructions. Move from the studio to a test kiosk, reproduce the fault, and take the evidence to the launch courtyard before the team ships code that could charge customers twice.",
+    "narrativePurpose": "The checkout now makes sense to buyers, but one customer tapped Pay again while the first request was still loading—and two payments completed. Laloba wants the launch kept on schedule; BigSam refuses to ship until the team can reproduce the duplicate and prove a retry cannot process the same order twice.",
     "learningObjectives": [
-      "Why smart contracts need explicit rules and permissions",
-      "How to reproduce an edge case",
-      "Why a demo passing once is not a security review"
+      "Trace a payment through pending and confirmed states",
+      "Understand why an order needs a stable unique reference",
+      "Test retries, delays and repeated taps before release"
     ],
     "prerequisites": [
       "m05"
@@ -475,57 +554,58 @@ const RAW_MISSIONS = [
     "objectives": [
       {
         "id": "m06-obj-1",
-        "label": "Inspect the contract workspace and permissions",
+        "label": "Reconstruct the customer's two payment attempts",
         "interactionTarget": "story:m06:objective:1",
         "required": true
       },
       {
         "id": "m06-obj-2",
-        "label": "Reproduce the payment bug with a test case",
+        "label": "Trace the order reference through pending and confirmed states",
         "interactionTarget": "story:m06:objective:2",
         "required": true
       },
       {
         "id": "m06-obj-3",
-        "label": "Propose a fix for the duplicate-payment path",
+        "label": "Reproduce a retry while the first request is still pending",
         "interactionTarget": "story:m06:objective:3",
         "required": true
       },
       {
         "id": "m06-obj-4",
-        "label": "Run tests needed before deployment",
+        "label": "Run repeat-tap, timeout and retry checks before approving release",
         "interactionTarget": "story:m06:objective:4",
         "required": true
       }
     ],
     "successConditions": [
-      "The player reproduces the double-processing bug",
-      "The proposed fix addresses state and duplicate execution",
-      "Release stays paused until regression checks pass"
+      "The two charges are tied to one customer action and the same order",
+      "The team identifies where the second request bypassed the pending state",
+      "Release remains paused until duplicate and retry regression tests pass"
     ],
     "failureAndRetry": {
-      "onFailure": "If the player approves launch after only a happy-path demo, Laloba replays the duplicate charge and requests the missing test.",
-      "retry": "Retry the failed test or release decision without losing the reproduction notes."
+      "onFailure": "If the player approves release after one successful payment, BigSam replays the second tap and asks which test proves the duplicate path is closed.",
+      "retry": "Repeat the failed trace or regression check while keeping the original order timeline."
     },
     "rewards": {
       "xp": 155,
       "skillBadges": [
-        "Contract Testing"
+        "Payment Reliability"
       ],
       "portfolioArtifacts": [
-        "Duplicate-payment test report"
+        "Duplicate-payment reproduction and regression report"
       ]
     },
     "storyFlags": [
       "m06_complete",
-      "duplicate_payment_bug_blocked"
+      "duplicate_payment_bug_blocked",
+      "release_paused_for_regression"
     ],
     "nextMissionId": "m07",
-    "ending": "The duplicate-processing path is fixed in the test build, and the team refuses to treat a successful demo as proof of safety. BigSam postpones launch until the full test suite passes.",
-    "cliffhanger": "A trader who watched the test asks why a swap still returned less than its quote. In Ekiti, LunaX and OxNight are investigating a pool that looks deep until the actual trade lands.",
+    "ending": "The team traces both completed payments to one order and finds that a retry can pass through while the first request is pending. They add a stable order reference and a state check, then hold release until repeat-tap, timeout and retry tests all pass.",
+    "cliffhanger": "A trader waiting beside the test kiosk shows Laloba a different problem: the swap screen promised one amount, but the completed trade returned less. In Ekiti, LunaX and OxNight are checking the quote against the actual route.",
     "sceneLines": [
-      "Blockqueen: \"It charged the same order twice. The launch post is scheduled for noon, but I'm not signing off because the happy-path demo worked once.\"",
-      "Christol: \"I reproduced it by tapping Pay again while the first request was still loading. If the fix only blocks my exact timing, it isn't fixed. Let's rerun the same sequence after the patch.\""
+      "Laloba: \"The buyer paid once. The screen froze, so she tapped again—and now she's been charged twice. Please don't tell her to wait while we post a launch announcement. Show me exactly where the second payment got through.\"",
+      "BigSam: \"A successful demo proves one path worked once. It doesn't prove a retry is safe. Give every order one stable reference, reproduce the pending-state race, and keep the release paused until the same failure no longer passes.\""
     ]
   },
   {
@@ -533,7 +613,7 @@ const RAW_MISSIONS = [
     "chapterId": "ch04",
     "title": "The Price on the Screen",
     "state": "Ekiti",
-    "location": "Ekiti market stall, swap kiosk and pool-liquidity board",
+    "location": "Ekiti market stall, swap kiosk and liquidity comparison desk",
     "npcIds": [
       "lunax",
       "oxnight"
@@ -542,11 +622,11 @@ const RAW_MISSIONS = [
       "LunaX",
       "OxNight"
     ],
-    "narrativePurpose": "A trader says a swap returned less than the quoted amount. Follow the trade from the market stall to a swap kiosk and compare two liquidity pools. The issue may be price impact, fees or a token with a misleading symbol; do not blame the market until the evidence is checked.",
+    "narrativePurpose": "A trader's swap returned less than the amount shown before confirmation. LunaX suspects the route changed; OxNight spots two assets with the same ticker but different contract addresses. Follow the quote from the market stall to the kiosk, compare the exact assets and route, and explain the difference without pretending an estimate was a promise.",
     "learningObjectives": [
-      "How liquidity and price impact affect execution",
-      "Why token addresses matter more than symbols",
-      "How to inspect approvals before a swap"
+      "Verify a token by its contract address rather than ticker alone",
+      "Compare liquidity, fees and price impact across routes",
+      "Understand minimum received, slippage and approval scope"
     ],
     "prerequisites": [
       "m06"
@@ -554,57 +634,58 @@ const RAW_MISSIONS = [
     "objectives": [
       {
         "id": "m07-obj-1",
-        "label": "Compare liquidity pools for the trader's swap",
+        "label": "Compare the token addresses in the quote and completed trade",
         "interactionTarget": "story:m07:objective:1",
         "required": true
       },
       {
         "id": "m07-obj-2",
-        "label": "Estimate price impact before confirming",
+        "label": "Compare route liquidity, fees and price impact for the same trade size",
         "interactionTarget": "story:m07:objective:2",
         "required": true
       },
       {
         "id": "m07-obj-3",
-        "label": "Execute a small practice swap after reviewing the quote",
+        "label": "Check minimum received and the difference between quote and execution",
         "interactionTarget": "story:m07:objective:3",
         "required": true
       },
       {
         "id": "m07-obj-4",
-        "label": "Inspect token approval and explain slippage",
+        "label": "Review the token approval before the trader retries",
         "interactionTarget": "story:m07:objective:4",
         "required": true
       }
     ],
     "successConditions": [
-      "The player identifies the route's price-impact and fee differences",
-      "The practice swap uses a verified token and reviewed quote",
-      "The approval is limited to what the task requires"
+      "The ticker mismatch is resolved by checking the exact token addresses",
+      "The player can explain the difference between quote, fees, price impact and final output",
+      "The trader does not repeat the swap until route and approval details are reviewed"
     ],
     "failureAndRetry": {
-      "onFailure": "If the player trusts a symbol or approves unlimited spending automatically, OxNight asks them to inspect the token address and permission screen again.",
-      "retry": "Repeat the quote and approval review without resetting the pool comparison."
+      "onFailure": "If the player trusts the ticker or blames slippage without checking the route, OxNight opens the token details and asks them to compare the addresses first.",
+      "retry": "Recheck the quote and approval fields without losing the route comparison."
     },
     "rewards": {
       "xp": 165,
       "skillBadges": [
-        "Swap Literacy"
+        "Swap Safety"
       ],
       "portfolioArtifacts": [
-        "Swap route comparison"
+        "Swap quote and token-identity review"
       ]
     },
     "storyFlags": [
       "m07_complete",
-      "swap_route_reviewed"
+      "swap_route_reviewed",
+      "token_identity_checked"
     ],
     "nextMissionId": "m08",
-    "ending": "The trader learns that the quote was an estimate, not a promise. LunaX flags the suspicious token listing and updates the team's checklist before anyone makes another swap.",
-    "cliffhanger": "The group now relies on a centralized exchange for cash-outs, but withdrawals have paused. Moon and The Cryptonian are at the branch office where customers are demanding answers.",
+    "ending": "The ticker was not enough to identify the asset. Comparing contract addresses reveals a lookalike token, while the route and fee breakdown explain the rest of the output difference. LunaX tells the trader to pause and verify the asset and approval before trying again.",
+    "cliffhanger": "At the next desk, a different queue is growing: customers cannot withdraw from the exchange, and a fake support account is already promising instant fixes. Moon and The Cryptonian need a public update that says only what the records support.",
     "sceneLines": [
-      "Laloba: \"My quote said I'd get more than this. Don't tell me 'slippage' and expect me to go home—show me which token I bought and what the pool actually returned.\"",
-      "BigSam: \"The ticker matches, but the contract address doesn't match the token we listed. Stop the next swap. Let's check the approval and quote before we blame the pool or the trader.\""
+      "LunaX: \"The screen showed the amount I expected, but the trade came back short. Don't throw the word 'slippage' at me and call it solved. Show me the asset I received and the route the swap actually used.\"",
+      "OxNight: \"These two tokens share a ticker, not a contract address. Let's compare the exact asset, pool depth, fees and minimum received before anyone approves another transaction.\""
     ]
   },
   {
@@ -612,7 +693,7 @@ const RAW_MISSIONS = [
     "chapterId": "ch04",
     "title": "The Withdrawal Queue",
     "state": "Ekiti",
-    "location": "Exchange branch, public notice board and customer waiting area",
+    "location": "Ekiti exchange branch, customer waiting area and public notice board",
     "npcIds": [
       "moon",
       "the-cryptonian"
@@ -621,11 +702,11 @@ const RAW_MISSIONS = [
       "Moon",
       "The Cryptonian"
     ],
-    "narrativePurpose": "Withdrawals are paused and customers are sharing rumours that the exchange has vanished. Walk the waiting area, read the official notice and compare it with support responses before drafting an update. You must give people useful next steps without inventing a cause.",
+    "narrativePurpose": "Withdrawals have been paused, customers are crowding the branch and screenshots claim the exchange has run out of money. Moon is being pressed to promise a restoration time; The Cryptonian has the official incident notice but no confirmed cause. Check what is affected, distinguish custodial control from public-chain evidence, and publish an update with safe next steps instead of guessing.",
     "learningObjectives": [
-      "How market and limit orders differ",
-      "What custodial platforms control",
-      "How to communicate an incident using verified facts"
+      "Distinguish confirmed incident facts from rumours",
+      "Explain what a custodial exchange controls and what a public transaction record can show",
+      "Write a useful status update with a source and next update point"
     ],
     "prerequisites": [
       "m07"
@@ -633,37 +714,37 @@ const RAW_MISSIONS = [
     "objectives": [
       {
         "id": "m08-obj-1",
-        "label": "Compare market and limit orders using the order book",
+        "label": "Compare the customer rumour with the official withdrawal notice",
         "interactionTarget": "story:m08:objective:1",
         "required": true
       },
       {
         "id": "m08-obj-2",
-        "label": "Inspect the withdrawal incident notice",
+        "label": "Identify which withdrawal routes are confirmed as affected",
         "interactionTarget": "story:m08:objective:2",
         "required": true
       },
       {
         "id": "m08-obj-3",
-        "label": "Compare custody models with a customer",
+        "label": "Explain custody and the limits of what the public record proves",
         "interactionTarget": "story:m08:objective:3",
         "required": true
       },
       {
         "id": "m08-obj-4",
-        "label": "Publish a verified status update",
+        "label": "Draft a status update with verified facts and safe next steps",
         "interactionTarget": "story:m08:objective:4",
         "required": true
       }
     ],
     "successConditions": [
-      "The player separates confirmed information from rumours",
-      "The customer receives a clear explanation of custody",
-      "The status update includes an official source and next update"
+      "The update states only the impact and cause that have been confirmed",
+      "Customers are directed to official channels and warned against fake support",
+      "The update gives a next-update point without inventing a restoration deadline"
     ],
     "failureAndRetry": {
-      "onFailure": "If the player publishes a guessed cause or guarantee, Moon rejects the draft and asks for the official notice.",
-      "retry": "Edit the update and submit again; preserve the evidence already gathered."
+      "onFailure": "If the player declares the funds lost or promises a deadline, Moon refuses to publish the draft until the source and wording are corrected.",
+      "retry": "Revise the notice using the official incident record and keep the confirmed details."
     },
     "rewards": {
       "xp": 175,
@@ -671,19 +752,20 @@ const RAW_MISSIONS = [
         "Incident Communication"
       ],
       "portfolioArtifacts": [
-        "Verified withdrawal-status notice"
+        "Verified withdrawal incident update"
       ]
     },
     "storyFlags": [
       "m08_complete",
-      "withdrawal_incident_reported"
+      "withdrawal_incident_reported",
+      "fake_support_warning_published"
     ],
     "nextMissionId": "m09",
-    "ending": "The update does not promise a timeline the team cannot support. Customers still have questions, but they know where to check official updates and what not to share with fake support accounts.",
-    "cliffhanger": "One customer has been trading through the night trying to recover a loss. In Delta, Joseph Nnadi and The Don are asking whether a trade plan can survive the trader's emotions.",
+    "ending": "The published notice confirms that withdrawals are paused while the team investigates; it does not claim the funds are lost or promise when service will return. Customers know where official updates will appear and are warned not to share passwords or recovery phrases with anyone claiming to help.",
+    "cliffhanger": "One customer has been trading through the night trying to win back a loss before the withdrawal queue clears. In Delta, Joseph Nnadi and The Don are asking whether he is following a plan—or chasing the last trade.",
     "sceneLines": [
-      "LunaX: \"Withdrawals have been pending since morning. People are DM'ing me screenshots and asking if their money is gone. I need something honest to tell them, not another 'soon' post.\"",
-      "OxNight: \"The queue is paused, but we don't have a confirmed cause yet. Tell users what is affected, what they should avoid doing, and where updates will appear. No made-up deadline.\""
+      "Moon: \"People have been waiting since morning. Somebody posted that all the money is gone, and now a fake support account says it can unlock withdrawals. I need a message people can use—not another 'soon' post.\"",
+      "The Cryptonian: \"The notice confirms the withdrawal pause, not the cause or a return time. State what is affected, link the official update route, warn people about impersonators and tell them when we'll post again.\""
     ]
   },
   {
@@ -691,7 +773,7 @@ const RAW_MISSIONS = [
     "chapterId": "ch05",
     "title": "The Trade After the Loss",
     "state": "Delta",
-    "location": "Delta roadside café, chart desk and journal bench",
+    "location": "Delta roadside café, chart desk and trading journal bench",
     "npcIds": [
       "joseph-nnadi",
       "the-don"
@@ -700,11 +782,11 @@ const RAW_MISSIONS = [
       "Joseph Nnadi",
       "The Don"
     ],
-    "narrativePurpose": "A trader loses money and wants to enter again before the next candle closes. Walk from the café where the argument starts to the chart desk and then the journal bench. Reconstruct the original plan before deciding whether another trade is justified.",
+    "narrativePurpose": "A trader took a loss, doubled the next position and now wants another entry before the candle closes. Joseph Nnadi has the plan written before the first trade; The Don has the second trade's order details. Reconstruct the decisions in order, calculate the risk that was agreed in advance, and record what changed without pretending the next market move is predictable.",
     "learningObjectives": [
-      "How entry, invalidation and position size fit together",
-      "Why a losing trade is not automatically a bad process",
-      "How to journal a decision without rewriting history"
+      "Separate a trade's outcome from the quality of the process",
+      "Calculate planned risk before changing size",
+      "Journal the original plan and actual decisions honestly"
     ],
     "prerequisites": [
       "m08"
@@ -712,57 +794,58 @@ const RAW_MISSIONS = [
     "objectives": [
       {
         "id": "m09-obj-1",
-        "label": "Read the market chart and mark the setup",
+        "label": "Reconstruct the original entry, invalidation and planned risk",
         "interactionTarget": "story:m09:objective:1",
         "required": true
       },
       {
         "id": "m09-obj-2",
-        "label": "Calculate risk before changing position size",
+        "label": "Compare the second position size with the original risk limit",
         "interactionTarget": "story:m09:objective:2",
         "required": true
       },
       {
         "id": "m09-obj-3",
-        "label": "Paper trade the revised setup",
+        "label": "Decide whether a new entry meets the written setup rules",
         "interactionTarget": "story:m09:objective:3",
         "required": true
       },
       {
         "id": "m09-obj-4",
-        "label": "Record the outcome in the trading journal",
+        "label": "Record both trades and the rule changes in the journal",
         "interactionTarget": "story:m09:objective:4",
         "required": true
       }
     ],
     "successConditions": [
-      "The player reconstructs the original plan and invalidation",
-      "Risk is calculated before any new position",
-      "The paper-trade result is recorded honestly"
+      "The original plan and invalidation are recovered before a new decision",
+      "The second position is shown to exceed the planned risk",
+      "The journal records the loss and the unplanned change without rewriting the timeline"
     ],
     "failureAndRetry": {
-      "onFailure": "If the player chooses revenge sizing, Joseph asks them to compare the risk with the plan they agreed before the loss.",
-      "retry": "Repeat the sizing decision and paper-trade review; keep the original journal entry."
+      "onFailure": "If the player increases size to recover the loss, Joseph puts the two risk calculations side by side and asks which written rule permits the larger position.",
+      "retry": "Recalculate the position against the original risk limit and preserve the first journal entry."
     },
     "rewards": {
       "xp": 185,
       "skillBadges": [
-        "Trade Process"
+        "Trading Process"
       ],
       "portfolioArtifacts": [
-        "Post-trade review journal"
+        "Post-loss decision journal"
       ]
     },
     "storyFlags": [
       "m09_complete",
-      "revenge_trade_avoided"
+      "revenge_trade_avoided",
+      "trade_plan_reconstructed"
     ],
     "nextMissionId": "m10",
-    "ending": "The trader decides not to force a new entry. The journal records the loss without rewriting the rules, and The Don admits that following a plan can mean sitting out.",
-    "cliffhanger": "Toza has been telling everyone that more leverage would have made the recovery faster. Praise calls you over when the margin buffer on his open position starts shrinking.",
+    "ending": "The records show that the first trade followed the plan and the second trade was opened to recover the loss, with more risk and no fresh setup. The trader steps away instead of forcing another entry, and the journal keeps both decisions visible.",
+    "cliffhanger": "Toza says extra leverage would have made the recovery faster. Praise calls you over when the margin buffer on his open position starts shrinking, and Craftore wants the numbers checked before anyone adds funds.",
     "sceneLines": [
-      "Moon: \"I took the loss and immediately doubled the next position. Now I'm down more and pretending I can win it back before dinner. Don't just tell me to calm down—help me see what I changed.\"",
-      "The Cryptonian: \"Your first plan had a stop and a fixed risk. The revenge trade had neither. Put the two orders side by side; the difference is in the decisions, not just the red numbers.\""
+      "Joseph Nnadi: \"The first trade had an entry, a stop and a fixed risk. After it lost, you doubled the next position before a new setup appeared. Let's rebuild the plan before you touch another order.\"",
+      "The Don: \"Don't edit the journal to make the second trade look planned. We have the order time, size and stop changes. Put them beside the original rules and tell us what changed.\""
     ]
   },
   {
@@ -781,11 +864,11 @@ const RAW_MISSIONS = [
       "Toza",
       "Craftore"
     ],
-    "narrativePurpose": "Toza's leveraged position is moving against him, and he wants to add more margin without checking his exposure. Follow him from the trading lounge to Craftore's risk desk, then to a quiet courtyard where the decision must be made before the next price update.",
+    "narrativePurpose": "Toza's leveraged position is moving against him. He wants to add margin and widen the stop because he believes the market will reverse; Praise is worried about the account's remaining buffer, while Craftore has the position and liquidation estimates. Calculate current exposure, compare the options against the risk limit agreed before entry, and record a decision without making a prediction about the next candle.",
     "learningObjectives": [
-      "How leverage changes exposure",
-      "How margin and liquidation risk interact",
-      "Why a pre-agreed close plan matters more than a rescue prediction"
+      "Understand how leverage magnifies exposure relative to margin",
+      "Read a liquidation estimate as a risk signal rather than a guaranteed price",
+      "Use a pre-agreed loss limit instead of escalating risk to rescue a trade"
     ],
     "prerequisites": [
       "m09"
@@ -793,58 +876,59 @@ const RAW_MISSIONS = [
     "objectives": [
       {
         "id": "m10-obj-1",
-        "label": "Open a futures position in the practice terminal",
+        "label": "Read the position size, leverage and remaining margin",
         "interactionTarget": "story:m10:objective:1",
         "required": true
       },
       {
         "id": "m10-obj-2",
-        "label": "Compare leverage and estimate margin",
+        "label": "Compare the liquidation estimate with the original loss limit",
         "interactionTarget": "story:m10:objective:2",
         "required": true
       },
       {
         "id": "m10-obj-3",
-        "label": "Identify liquidation risk from the position details",
+        "label": "Compare adding margin with reducing or closing the position",
         "interactionTarget": "story:m10:objective:3",
         "required": true
       },
       {
         "id": "m10-obj-4",
-        "label": "Review the loss and close plan",
+        "label": "Record the decision and the conditions that would invalidate it",
         "interactionTarget": "story:m10:objective:4",
         "required": true
       }
     ],
     "successConditions": [
-      "The player calculates exposure and margin",
-      "The liquidation threshold is understood",
-      "Toza follows the previously agreed risk plan"
+      "The player distinguishes position exposure from the margin posted",
+      "The liquidation estimate is treated as conditional and not a guaranteed exit price",
+      "The chosen action follows the documented risk limit instead of an unsupported reversal prediction"
     ],
     "failureAndRetry": {
-      "onFailure": "If the player recommends adding leverage without a new risk calculation, Craftore shows how the liquidation buffer changes and reopens the decision.",
-      "retry": "Retry the current risk decision; preserve the original position data."
+      "onFailure": "If the player recommends adding margin simply to avoid closing, Craftore recalculates the exposure and asks how that changes the maximum loss.",
+      "retry": "Review the position details again and compare each option with the original risk limit."
     },
     "rewards": {
       "xp": 195,
       "skillBadges": [
-        "Leverage Risk"
+        "Leverage and Margin Risk"
       ],
       "portfolioArtifacts": [
-        "Leveraged-position risk review"
+        "Leveraged-position decision record"
       ]
     },
     "storyFlags": [
       "m10_complete",
-      "leverage_risk_reviewed"
+      "leverage_risk_reviewed",
+      "risk_limit_recorded"
     ],
     "nextMissionId": "m11",
-    "ending": "Toza closes the position according to the plan. It is not the outcome he wanted, but the loss is bounded and the team has a record of what happened.",
-    "cliffhanger": "Craftore shares the case with a project that has thousands of online followers but few people doing useful work. In Anambra, Kodavic and Cybersage want to know where newcomers disappear.",
+    "ending": "The figures show that adding margin would extend exposure rather than fix the broken plan. Toza follows the agreed risk limit and records why the position was reduced or closed; the team does not claim to know where the next candle will go.",
+    "cliffhanger": "Craftore shares the case with a Web3 project that has thousands of followers but an almost empty community hall. In Anambra, Kodavic and Cybersage are trying to find out why newcomers sign up and disappear before doing anything useful.",
     "sceneLines": [
-      "Praise: \"You're staring at the liquidation line like it owes you money. Before you add anything, tell me how much of the account is already exposed.\"",
-      "Toza: \"I kept moving my stop because every dip looked temporary. Now the position is bigger than the plan I started with. Help me work out the damage without guessing the next candle.\"",
-      "Craftore: \"Here are the margin, position size and liquidation estimate. Pick the maximum loss first; if the numbers don't fit it, reduce the position instead of feeding it more collateral.\""
+      "Praise: \"The buffer is getting smaller and you keep saying one bounce will fix it. Before you add anything, show me the exposure and the maximum loss you agreed to take.\"",
+      "Toza: \"I moved the stop and increased the position because I didn't want to accept the loss. Now I can't tell what the original plan even was. Help me compare the numbers before I make it worse.\"",
+      "Craftore: \"This estimate depends on the current position, margin and exchange rules. It isn't a promise about the exact liquidation price. Compare reducing, closing and adding margin against the risk limit—not against a guess that price must reverse.\""
     ]
   },
   {
@@ -852,7 +936,7 @@ const RAW_MISSIONS = [
     "chapterId": "ch06",
     "title": "The Empty Community Hall",
     "state": "Anambra",
-    "location": "Anambra community hall, street food stall and onboarding desk",
+    "location": "Anambra community hall, welcome desk and street food stall",
     "npcIds": [
       "kodavic",
       "cybersage"
@@ -861,11 +945,11 @@ const RAW_MISSIONS = [
       "Kodavic",
       "Cybersage"
     ],
-    "narrativePurpose": "The project celebrates its follower count, but its weekly hall is nearly empty and new members never complete their first task. Walk the hall, talk to people who left early, and rebuild the first session around a real outcome rather than another giveaway.",
+    "narrativePurpose": "The project celebrates its follower count, but the weekly community hall is nearly empty and new sign-ups rarely return. Kodavic wants to open more channels and run another giveaway; Cybersage has watched a newcomer get lost between six channels without completing a single task. Follow the newcomer's first few minutes, find the actual point of friction, and test a simpler first step before buying more attention.",
     "learningObjectives": [
-      "How onboarding shapes participation",
-      "How to use member interviews and drop-off evidence",
-      "Why completed tasks and return visits matter more than raw membership"
+      "Map a real newcomer journey rather than infer intent from follower counts",
+      "Identify one barrier using observed behaviour",
+      "Test a focused onboarding change and measure completion"
     ],
     "prerequisites": [
       "m10"
@@ -873,57 +957,58 @@ const RAW_MISSIONS = [
     "objectives": [
       {
         "id": "m11-obj-1",
-        "label": "Inspect onboarding at the community entrance",
+        "label": "Follow a newcomer from sign-up to their first attempted action",
         "interactionTarget": "story:m11:objective:1",
         "required": true
       },
       {
         "id": "m11-obj-2",
-        "label": "Interview members who stopped attending",
+        "label": "Find the exact step where the newcomer gets stuck",
         "interactionTarget": "story:m11:objective:2",
         "required": true
       },
       {
         "id": "m11-obj-3",
-        "label": "Locate the drop-off in the first-task journey",
+        "label": "Replace the channel maze with one clear first task",
         "interactionTarget": "story:m11:objective:3",
         "required": true
       },
       {
         "id": "m11-obj-4",
-        "label": "Redesign the first session and choose a retention metric",
+        "label": "Test the revised welcome flow with another newcomer",
         "interactionTarget": "story:m11:objective:4",
         "required": true
       }
     ],
     "successConditions": [
-      "The player finds a documented onboarding obstacle",
-      "The first task is redesigned around a clear outcome",
-      "The team agrees to track completion and return visits"
+      "The friction point is based on the newcomer's observed journey",
+      "The team changes one barrier instead of adding channels or incentives first",
+      "The revised flow is tested and completion is recorded without pressuring the newcomer"
     ],
     "failureAndRetry": {
-      "onFailure": "If the player recommends a giveaway before fixing the first task, Cybersage asks for evidence that rewards solve the actual drop-off.",
-      "retry": "Revise the onboarding plan using the interview notes already collected."
+      "onFailure": "If the player proposes another giveaway before checking the journey, Cybersage asks them to follow one newcomer and show where the current flow fails.",
+      "retry": "Return to the welcome desk, keep the first observation and test one focused change."
     },
     "rewards": {
       "xp": 205,
       "skillBadges": [
-        "Community Design"
+        "Community Onboarding"
       ],
       "portfolioArtifacts": [
-        "Newcomer onboarding plan"
+        "Newcomer journey and onboarding test report"
       ]
     },
     "storyFlags": [
       "m11_complete",
-      "community_onboarding_rebuilt"
+      "newcomer_friction_confirmed",
+      "first_task_flow_tested"
     ],
     "nextMissionId": "m12",
-    "ending": "The next session starts with one practical task, a short explanation and a clear next step. More people finish it, and the team finally has a useful baseline.",
-    "cliffhanger": "A newcomer who returned receives a direct message from someone impersonating a moderator. Reina and Cclya are already moving through the hall to contain it.",
+    "ending": "The newcomer was not asking for more channels or a prize; they needed one clear next step and someone to show them where to begin. The revised welcome flow gets another person to complete the first task, giving the team a real signal to improve rather than another follower-count celebration.",
+    "cliffhanger": "As the second newcomer finishes, a message arrives from an account using a moderator's name. It says new members must verify their wallets through a private link. Kodavic has already seen three people click it. Reina and Cclya are tracing the impersonator before anyone shares a secret.",
     "sceneLines": [
-      "Praise: \"The event had two hundred sign-ups and barely anyone came back after joining. Don't show me follower counts; sit beside a newcomer and watch where they get lost.\"",
-      "Toza: \"She clicked Join, saw six channels and left. Give her one useful first task and a person who will answer her. If she finishes, we'll know more than the sign-up number ever told us.\""
+      "Kodavic: \"We have thousands of followers and still nobody shows up when we ask for help. I was about to buy another campaign, but Cybersage says a new member couldn't even work out where to start. Show me what they actually see.\"",
+      "Cybersage: \"She joined, opened six channels, asked where to begin and then went quiet. We don't know why everyone leaves, but we can follow one person through the first task and find the point where this flow loses them.\""
     ]
   },
   {
