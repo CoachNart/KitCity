@@ -987,55 +987,73 @@ CITIES.kitcity={
 Object.assign(LOOK,{
  kitcity:{h:'#07182D',z:'#123B63',sun:'#7CEBFF',sI:1.35,hS:'#C5E8F8',hG:'#07121F',hI:.9,off:[-42,74,36],exp:1.12,sat:1.16,con:1.12,fade:0,lift:[0,.01,.025],gain:[.94,1.04,1.12],vig:.16,grain:.012,bloom:.72,veil:['#0A2340',.025],cl:.22,cc:'#8CEBFF',fog:[150,500],dust:0,mil:0,rust:0,lat:0,dash:'#36E5F5',roof:'#17384B',ground:'#07121F',slab:'#172B3D',dirt:'#07121F',leaf:'#10C8DC',paint:['#10263A','#17384B','#203D54','#0D2A3B'],zinc:['#123047','#17384B','#0C2337']}
 });
-/* ===================== modern Nigerian city visual pass ===================== */
-/* Keep each city's layout, landmarks, traffic and regional character, but remove
-   the heavy sepia/rust treatment and give buildings contemporary urban finishes. */
-(function modernizeCityVisuals(){
-  const coolPalettes={
-    coastal:['#E8EFF2','#C6D9DF','#B7CBC7','#D9E5DC','#A9C1D1','#F0F1EA','#91AAB9','#D2DCE4'],
-    southwest:['#E9ECEF','#CCD7DD','#B7C9C6','#DCE5D8','#A8BCCC','#F0EEE8','#8EA6B5','#D3DDE2'],
-    southeast:['#E7EEF0','#C7D7D8','#B6C9C2','#DCE6D9','#AABED0','#F1EFE8','#8FA6B2','#D2DCE3'],
-    north:['#E7EBED','#D0D9DF','#BBCBD4','#E3E8E2','#AFC2CD','#F0F0E9','#94A9B5','#D5DDE2'],
-    capital:['#F0F2F3','#D5E0E7','#C0D0D8','#E1E9E5','#A8BFCE','#F3F1EA','#91A8B7','#DCE4E8']
-  };
-  const northern=new Set(['kano','kaduna','maiduguri','sokoto','katsina','birnin-kebbi','minna','dutse','gusau','damaturu','bauchi','gombe','lafia','jalingo','yola','kafanchan','damboa']);
-  const coastal=new Set(['lagos','ph','calabar','uyo','ikot-ekpene','yenagoa','warri','asaba','port-harcourt']);
-  const southeast=new Set(['enugu','benin','owerri','aba','umuahia','awka','onitsha','abakaliki','anambra']);
-  const capital=new Set(['abuja','jos']);
-  const steel=['#6E7C86','#7F8D96','#596A75','#8C989F','#657681','#4D5C66'];
-  Object.keys(CITIES).forEach((key,index)=>{
-    if(key==='kitcity') return;
-    const C=CITIES[key];
-    const palette=capital.has(key)?coolPalettes.capital:northern.has(key)?coolPalettes.north:coastal.has(key)?coolPalettes.coastal:southeast.has(key)?coolPalettes.southeast:coolPalettes.southwest;
-    const shift=(index*3)%palette.length;
-    C.paint=Array.from({length:palette.length},(_,i)=>palette[(i+shift)%palette.length]);
-    C.ground='#30363C';
-    C.slab='#BFC8CE';
-    C.dirt='#78838A';
-    C.zinc=steel.slice();
-    if(key==='ibadan') C.tag='The city of firsts';
-    if(Array.isArray(C.styles)){
-      C.styles=C.styles.map(([style,weight])=>[style,weight*(style==='glass'?1.45:style==='admin'?1.25:style==='flat'?1.2:style==='zinc'?.55:style==='banco'?.12:1)]);
-      const present=new Set(C.styles.map(x=>x[0]));
-      [['flat',.3],['admin',.18],['glass',.16],['zinc',.1]].forEach(([style,weight])=>{if(!present.has(style)) C.styles.push([style,weight]);});
-    }else{
-      C.styles=[['flat',.48],['admin',.2],['glass',.18],['zinc',.12],['banco',northern.has(key)?.04:.01]];
-    }
-    const old=LOOK[key]||{};
-    const sky=capital.has(key)?{h:'#C9DFEE',z:'#5889B5',sun:'#FFF5E7',cc:'#E9F4FA',hS:'#EAF3F8',hG:'#414B51'}:
-      northern.has(key)?{h:'#C8DDF0',z:'#719AC2',sun:'#FFF4E4',cc:'#EDF4F8',hS:'#EAF2F8',hG:'#454B4F'}:
-      coastal.has(key)?{h:'#BBDCE4',z:'#5E91A8',sun:'#FFF4E8',cc:'#E5F1F4',hS:'#E7F2F4',hG:'#38494B'}:
-      southeast.has(key)?{h:'#C4E0E0',z:'#6595B0',sun:'#FFF4E8',cc:'#E8F4F2',hS:'#E8F3F1',hG:'#3B4A47'}:
-      {h:'#C6DCEB',z:'#658FB7',sun:'#FFF4E7',cc:'#EAF3F8',hS:'#EAF2F7',hG:'#424B50'};
-    LOOK[key]=Object.assign({},old,sky,{
-      paint:C.paint,ground:C.ground,slab:C.slab,dirt:C.dirt,zinc:steel,roof:'#858F97',
-      rust:.025,dust:.025,lat:0,mil:Math.min(Number(old.mil)||0,.22),
-      fx:old.fx==='rain'?'rain':null,fade:0,grain:.016,bloom:.22,
-      sat:1.06,con:1.08,exp:1.04,veil:[sky.h,.025],
-      lift:[0,.006,.012],gain:[1.01,1.015,1.02],vig:.2,
-      dash:'#E8C95B'
-    });
-  });
+/* ===================== state-specific Nigerian visual identities ===================== */
+/* Keep each capital recognisable: regional architecture, terrain, materials and sky
+   should not be flattened into one generic grey city. Profiles are intentionally
+   city-specific; landmarks below add readable silhouettes to the street grid. */
+const CITY_VISUAL_PROFILES={
+ lagos:{paint:['#D8C3A0','#B9C9C1','#E4A58C','#C9B7D4','#8FAFBE','#F2C84B'],ground:'#34383B',slab:'#AEB7B8',dirt:'#8C654B',leaf:'#2F7846',sky:{h:'#B8DDE6',z:'#508FA9',sun:'#FFF1D9'},styles:[['flat',.46],['zinc',.24],['glass',.18],['admin',.12]]},
+ abuja:{paint:['#E7E5DD','#D3DEE5','#BBCBD7','#F2E7D1','#C4D1C9','#9FB6C8'],ground:'#3C4249',slab:'#CDD2D0',dirt:'#9C9D91',leaf:'#45834D',sky:{h:'#C8DFF0',z:'#5388BD',sun:'#FFF4E4'},styles:[['glass',.42],['admin',.32],['flat',.26]]},
+ kano:{paint:['#D8B98C','#C79B68','#E5CDA7','#B7824E','#D3AE7D','#EEDDB9'],ground:'#55473A',slab:'#C4AC8A',dirt:'#B68B5A',leaf:'#788B43',sky:{h:'#E4C49A',z:'#B79C7D',sun:'#FFDEA7'},styles:[['banco',.62],['flat',.28],['zinc',.1]]},
+ 'port-harcourt':{paint:['#93A89A','#7C9C90','#C3B9A2','#8396A6','#D0C4AA','#6D887F'],ground:'#26352F',slab:'#9DAAA3',dirt:'#5B4939',leaf:'#237347',sky:{h:'#AFC8C6',z:'#648F9D',sun:'#EDE4D0'},styles:[['flat',.42],['zinc',.34],['glass',.12],['admin',.12]]},
+ ibadan:{paint:['#B87550','#C78C65','#D8BA91','#9C6849','#D1C09F','#8F9D82'],ground:'#494039',slab:'#B9A58E',dirt:'#9C6540',leaf:'#4C7940',sky:{h:'#E3C49D',z:'#8B9FA7',sun:'#FFE0AC'},styles:[['flat',.42],['zinc',.27],['admin',.18],['banco',.13]]},
+ enugu:{paint:['#6F8D79','#8BAA8C','#C6B999','#9DAFBC','#D6C9A7','#66806D'],ground:'#34423B',slab:'#B0B7A9',dirt:'#74634C',leaf:'#2E7847',sky:{h:'#C7D8CF',z:'#608BA7',sun:'#FFF0D6'},styles:[['flat',.38],['admin',.22],['zinc',.2],['banco',.2]]},
+ benin:{paint:['#A65337','#C17A53','#D6A17A','#8E4A36','#D4BD99','#76957A'],ground:'#45352E',slab:'#B8A18B',dirt:'#945536',leaf:'#397543',sky:{h:'#DDBD94',z:'#7399A3',sun:'#FFE1B4'},styles:[['flat',.38],['banco',.24],['zinc',.2],['admin',.18]]},
+ calabar:{paint:['#D8B09B','#93C4B5','#E7CF8C','#B6A2C9','#85B1C8','#D99D91'],ground:'#34443F',slab:'#B9C4B8',dirt:'#80634D',leaf:'#237744',sky:{h:'#BDD5D1',z:'#568EAA',sun:'#FFF0D8'},styles:[['flat',.4],['admin',.2],['zinc',.2],['glass',.2]]},
+ jos:{paint:['#B7C7BD','#D6D0C0','#A6B7C8','#C2AD8A','#8CA39A','#E1D7C3'],ground:'#4B514F',slab:'#C2C9C5',dirt:'#8D8B7A',leaf:'#4B7E4C',sky:{h:'#D4E5EE',z:'#4F84B6',sun:'#FFF5E2'},styles:[['flat',.38],['admin',.2],['banco',.18],['zinc',.24]]},
+ lokoja:{paint:['#C9B17C','#A8B49A','#D7C8A0','#9BAEAF','#B98E6A','#D6D5C3'],ground:'#3C4038',slab:'#B9BBA8',dirt:'#9A754A',leaf:'#547D42',sky:{h:'#CBD8C9',z:'#6E98B4',sun:'#FFE2AF'},styles:[['flat',.4],['zinc',.24],['admin',.18],['banco',.18]]},
+ osogbo:{paint:['#B7C9A7','#D6C09A','#9AB9A5','#D2A17B','#8BA5B7','#E0D8B9'],ground:'#353D35',slab:'#B9B8A5',dirt:'#96734C',leaf:'#347A3F',sky:{h:'#D8D9B7',z:'#6B98AA',sun:'#FFE3B0'},styles:[['flat',.38],['banco',.22],['zinc',.22],['admin',.18]]},
+ abeokuta:{paint:['#C8B49A','#D9C6A7','#AAB5A0','#B7C6CB','#B98161','#D7D6C6'],ground:'#4A443D',slab:'#C1B6A6',dirt:'#A17A53',leaf:'#507B43',sky:{h:'#D9C9AC',z:'#7698B4',sun:'#FFE4B5'},styles:[['flat',.4],['banco',.24],['zinc',.2],['admin',.16]]},
+ maiduguri:{paint:['#D5B37D','#C89A61','#E7D0A0','#B47D4A','#D9C19A','#A78A61'],ground:'#544637',slab:'#C8B18B',dirt:'#C29A65',leaf:'#7A8B43',sky:{h:'#E8CDA1',z:'#C4AD88',sun:'#FFE2B0'},styles:[['banco',.44],['flat',.36],['zinc',.2]]},
+ kaduna:{paint:['#D8C8A5','#C9B68C','#AEB9A4','#E1D8C2','#B9A27E','#9DAEBA'],ground:'#49433A',slab:'#C6B89D',dirt:'#B08A5A',leaf:'#668644',sky:{h:'#E0D0AC',z:'#829FB8',sun:'#FFE6B7'},styles:[['flat',.38],['banco',.28],['admin',.18],['zinc',.16]]},
+ sokoto:{paint:['#E4C79A','#D3B17D','#EAD9B7','#BD925D','#D8C39D','#B2A080'],ground:'#5A4A37',slab:'#CFB995',dirt:'#C49A66',leaf:'#829044',sky:{h:'#E9CFA5',z:'#C3AD8E',sun:'#FFE3B0'},styles:[['banco',.55],['flat',.32],['zinc',.13]]},
+ katsina:{paint:['#DCC197','#C9A777','#E9D8B6','#B98D5A','#D7C29A','#AFA080'],ground:'#554738',slab:'#CBB692',dirt:'#BE945F',leaf:'#788A43',sky:{h:'#E6CCA1',z:'#B9A183',sun:'#FFE4B3'},styles:[['banco',.52],['flat',.34],['zinc',.14]]},
+ 'birnin-kebbi':{paint:['#D7C39A','#C5A978','#E4D5B2','#B78C5A','#D0BE9B','#A7A584'],ground:'#4E4739',slab:'#C5B89C',dirt:'#B88D5B',leaf:'#738744',sky:{h:'#E0D0A8',z:'#A8A98F',sun:'#FFE2B0'},styles:[['banco',.42],['flat',.38],['zinc',.2]]},
+ minna:{paint:['#CBB58B','#B7BE9E','#D9C9A1','#A9B6B5','#C18C69','#9BAA89'],ground:'#41443B',slab:'#BEBBA8',dirt:'#A78155',leaf:'#5C8144',sky:{h:'#D6D5B4',z:'#7D9EAC',sun:'#FFE4B2'},styles:[['flat',.38],['banco',.24],['zinc',.2],['admin',.18]]},
+ bauchi:{paint:['#D9C49B','#C6AC80','#E5D8B8','#B89A6B','#D2C19E','#A7AF92'],ground:'#4B4539',slab:'#C7B99C',dirt:'#B18D5D',leaf:'#7B8D45',sky:{h:'#DFD2AF',z:'#9AABB2',sun:'#FFE5B7'},styles:[['flat',.38],['banco',.32],['admin',.16],['zinc',.14]]},
+ gombe:{paint:['#D5BE91','#C4A879','#E4D2A8','#B68D5C','#D2BE97','#A6AD8E'],ground:'#4A4439',slab:'#C4B69A',dirt:'#AF895A',leaf:'#788B43',sky:{h:'#E1D0A8',z:'#9BAAAB',sun:'#FFE4B5'},styles:[['flat',.38],['banco',.3],['zinc',.18],['admin',.14]]},
+ damaturu:{paint:['#DCC397','#C8A777','#E8D5AF','#B88C59','#D5C19A','#B3A27D'],ground:'#514639',slab:'#C9B695',dirt:'#C19A66',leaf:'#788A43',sky:{h:'#E8D0A7',z:'#C2AB88',sun:'#FFE3B1'},styles:[['banco',.48],['flat',.36],['zinc',.16]]},
+ gusau:{paint:['#D8C097','#C8A574','#E7D3AA','#B78B59','#D4C099','#A8A17D'],ground:'#514539',slab:'#C8B494',dirt:'#BD925F',leaf:'#7A8B43',sky:{h:'#E4CCA2',z:'#B8A084',sun:'#FFE2AF'},styles:[['banco',.44],['flat',.38],['zinc',.18]]}
+};
+const CITY_PALETTE_FAMILIES={
+ coastal:['#D5C9B3','#8FB7B0','#C7A18B','#A7BAC7','#D5D5C7','#8BAA91'],
+ southwest:['#C9B49A','#D6C4A8','#AAB9A2','#B5C6CC','#B9805F','#D6D2BD'],
+ southeast:['#B6C8B8','#D2C1A1','#9DB6C0','#C98E70','#D6D6C8','#8AA68B'],
+ north:['#D8C197','#C7A675','#E7D5B0','#B88C5B','#D4C09A','#A9A282'],
+ highland:['#B7C8BF','#D2CDBD','#9EB4C8','#C3AF8E','#8DA79A','#DDD5C2']
+};
+const CITY_REGION={
+ 'port-harcourt':'coastal',ph:'coastal',calabar:'coastal',uyo:'coastal','ikot-ekpene':'coastal',yenagoa:'coastal',warri:'coastal',asaba:'coastal',lagos:'coastal',
+ ibadan:'southwest',osogbo:'southwest','ado-ekiti':'southwest',akure:'southwest',abeokuta:'southwest',ilorin:'southwest',
+ owerri:'southeast',aba:'southeast',umuahia:'southeast',awka:'southeast',onitsha:'southeast',abakaliki:'southeast',enugu:'southeast',benin:'southeast',
+ jos:'highland',kafanchan:'highland',makurdi:'highland',lokoja:'highland',minna:'highland',
+ kano:'north',kaduna:'north',maiduguri:'north',sokoto:'north',katsina:'north','birnin-kebbi':'north',dutse:'north',gusau:'north',damaturu:'north',bauchi:'north',gombe:'north',lafia:'north',jalingo:'north',yola:'north'
+};
+(function applyCityVisualProfiles(){
+ const keys=Object.keys(CITIES);
+ keys.forEach((key,index)=>{
+   if(key==='kitcity')return;
+   const C=CITIES[key],profile=CITY_VISUAL_PROFILES[key];
+   const family=CITY_REGION[key]||'southwest';
+   const base=CITY_PALETTE_FAMILIES[family];
+   if(profile){
+     C.paint=profile.paint.slice(); C.ground=profile.ground; C.slab=profile.slab; C.dirt=profile.dirt; C.leaf=profile.leaf;
+     if(profile.styles)C.styles=profile.styles.map(x=>x.slice());
+   }else{
+     // Give every remaining state capital its own stable palette rotation instead
+     // of assigning all towns the same four regional greys.
+     const shift=(index*2+key.length)%base.length;
+     C.paint=Array.from({length:base.length},(_,i)=>base[(i+shift)%base.length]);
+     const northern=family==='north';
+     C.ground=northern?'#4A4338':family==='coastal'?'#303C39':family==='highland'?'#414741':'#3D403B';
+     C.slab=northern?'#C5B18F':family==='coastal'?'#B7C4BA':family==='highland'?'#C1C6BB':'#BDB7A5';
+     C.dirt=northern?'#B78D5A':family==='coastal'?'#81664B':family==='highland'?'#93866A':'#98734E';
+     C.leaf=northern?'#788944':family==='coastal'?'#267545':family==='highland'?'#4B7C4B':'#477A42';
+   }
+   const old=LOOK[key]||{};
+   const sky=profile&&profile.sky?profile.sky:(family==='north'?{h:'#E0CBA4',z:'#B6A184',sun:'#FFE3B2'}:family==='coastal'?{h:'#BDD8D9',z:'#5F91A3',sun:'#FFF0D9'}:family==='highland'?{h:'#D1E0E4',z:'#5D8BB2',sun:'#FFF4E1'}:family==='southeast'?{h:'#C8DCD3',z:'#6595A7',sun:'#FFF1DA'}:{h:'#D7C9B0',z:'#7598B0',sun:'#FFE3B3'});
+   LOOK[key]=Object.assign({},old,sky,{paint:C.paint,ground:C.ground,slab:C.slab,dirt:C.dirt,leaf:C.leaf,roof:family==='north'?'#9D7953':family==='coastal'?'#687F7C':family==='highland'?'#818D83':'#8C8171',zinc:family==='north'?['#A18A6A','#8E7659','#B49B75','#7F6B54']:family==='coastal'?['#7D9690','#617B77','#A0B1A7','#6C8582']:['#A39B8C','#8C8477','#B5AA97','#7C817C'],rust:family==='north'?.12:.04,dust:family==='north'?.18:.02,lat:family==='coastal'?.18:0,fx:family==='coastal'&&['port-harcourt','ph','yenagoa','warri'].includes(key)?'rain':null,fade:0,grain:.02,bloom:.24,sat:family==='north'?.96:1.07,con:1.07,exp:1.04,veil:[sky.h,.035],lift:[0,.006,.012],gain:[1.01,1.01,1.02],vig:.2,dash:family==='north'?'#D0B785':'#D6BC6A'});
+ });
 })();
 const lkc=h=>new THREE.Color(h);
 function lkWeather(c,L){
