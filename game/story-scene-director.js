@@ -27,6 +27,8 @@ export function createStorySceneDirector({ camera, player, getCharacter, animate
   let bubbleBySpeaker = Object.create(null);
   let titleTimer = 0;
   let closingTimer = 0;
+  let navControls = null;
+  let manualAdvance = false;
 
   function ensureScene() {
     if (titleCard) return;
@@ -41,6 +43,19 @@ export function createStorySceneDirector({ camera, player, getCharacter, animate
     });
     bubbles = [];
     bubbleBySpeaker = Object.create(null);
+    navControls = document.createElement('div');
+    navControls.className = 'kitcity-dialogue-nav';
+    navControls.setAttribute('aria-label', 'Dialogue controls');
+    navControls.innerHTML = '<button type="button" data-step="-1" aria-label="Previous dialogue" title="Previous">‹ Prev</button><span aria-live="polite"></span><button type="button" data-step="1" aria-label="Next dialogue" title="Next">Next ›</button>';
+    document.body.appendChild(navControls);
+    navControls.addEventListener('click', event => {
+      const button = event.target.closest('button[data-step]');
+      if (!button || !active) return;
+      event.preventDefault();
+      manualAdvance = true;
+      const target = Math.max(0, Math.min(OPENING_LINES.length - 1, lineIndex + Number(button.dataset.step)));
+      showLine(target);
+    });
     ['Softstorm', 'IamAbdul', 'PLAYER'].forEach(speaker => {
       const el = document.createElement('div');
       el.className = 'kitcity-speech-bubble hidden';
@@ -76,8 +91,14 @@ export function createStorySceneDirector({ camera, player, getCharacter, animate
     void bubble.offsetWidth;
     bubble.classList.add('bubble-pop');
     lineIndex = index;
-    const readTime = Math.min(5200, Math.max(3000, line.text.length * 48));
-    nextLineAt = performance.now() + readTime;
+    const readTime = Math.min(9000, Math.max(5200, line.text.length * 82));
+    nextLineAt = manualAdvance ? Number.POSITIVE_INFINITY : performance.now() + readTime;
+    if (navControls) {
+      navControls.classList.remove('hidden');
+      navControls.querySelector('span').textContent = (index + 1) + ' / ' + OPENING_LINES.length;
+      navControls.querySelector('[data-step="-1"]').disabled = index <= 0;
+      navControls.querySelector('[data-step="1"]').textContent = index >= OPENING_LINES.length - 1 ? 'Finish ›' : 'Next ›';
+    }
   }
 
   function finish() {
@@ -86,6 +107,7 @@ export function createStorySceneDirector({ camera, player, getCharacter, animate
     clearTimeout(titleTimer);
     clearTimeout(closingTimer);
     hideBubbles();
+    if (navControls) navControls.classList.add('hidden');
     if (titleCard) titleCard.classList.add('hidden');
     document.body.classList.remove('kitcity-intro-active');
     document.documentElement.classList.remove('kitcity-intro-active');
@@ -102,6 +124,7 @@ export function createStorySceneDirector({ camera, player, getCharacter, animate
     onComplete = done;
     active = true;
     lineIndex = -1;
+    manualAdvance = false;
     startedAt = performance.now();
     nextLineAt = startedAt + 1050;
     document.body.classList.add('kitcity-intro-active');
@@ -146,6 +169,7 @@ export function createStorySceneDirector({ camera, player, getCharacter, animate
       if (lineIndex + 1 < OPENING_LINES.length) showLine(lineIndex + 1);
       else {
         hideBubbles();
+        if (navControls) navControls.classList.add('hidden');
         if (titleCard) {
           titleCard.querySelector('.kitcity-intro-copy').innerHTML =
             '<small>YOUR STORY STARTS HERE</small><strong>DON\'T TRUST A SCREENSHOT.</strong><span>Find out what really happened.</span>';
