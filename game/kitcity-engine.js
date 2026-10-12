@@ -287,6 +287,15 @@ const CITY_MUSIC={
 })();
 const DEFAULT_PLAYLIST='PLtZ6yiYzu2i3UoRZM3wmw2xpBRM9zYrwP';
 const YT=(function(){
+  /* During Next.js hot reload, an old hidden YouTube iframe can survive after
+     this module is evaluated again. Tear it down before creating a new player,
+     otherwise its old audio can continue underneath the newly selected track. */
+  try{
+    const previous=window.__KITCITY_MUSIC_PLAYER__;
+    if(previous){ try{previous.stopVideo();}catch(e){} try{previous.destroy();}catch(e){} }
+  }catch(e){}
+  try{ const staleHost=document.getElementById('ytHost'); if(staleHost) staleHost.remove(); }catch(e){}
+  try{ const staleFrame=document.getElementById('ytPlayer'); if(staleFrame) staleFrame.remove(); }catch(e){}
   let player=null,ready=false,failed=false,started=false,wantOn=true,duck=false,loading=false,errCount=0,currentKey='afrobeat';
 
   function parseId(v){
@@ -392,6 +401,7 @@ const YT=(function(){
         }
       }
     });
+    window.__KITCITY_MUSIC_PLAYER__=player;
   }
   function load(){
     if(loading||player||failed) return;
@@ -431,7 +441,10 @@ const YT=(function(){
       if(normalized!=='kitcity'){
         const key=CITY_MUSIC[normalized]||'afrobeat';
         currentKey=key;
-      }else if(!currentKey||currentKey==='custom'){
+      }else{
+        /* The shared hub has no separate legacy soundtrack. Use the selected
+           city if known; otherwise default deliberately to Lagos, never the
+           old generic mix or a previously attached player. */
         currentKey=CITY_MUSIC[curCity]||'lagos';
       }
       if(ready){
