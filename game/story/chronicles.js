@@ -1165,8 +1165,8 @@ const RAW_MISSIONS = [
     "ending": "The audience leaves with a checklist and a reporting route. Kenny clips the practical section, not the argument, and sends the recap to the people who missed the session.",
     "cliffhanger": "A founder asks why the recap reached people but their product announcement never does. Kore and Veedima are waiting at the next street corner with a message nobody understands.",
     "sceneLines": [
-      "Cybersage: \"The host just cancelled and the room is filling up. People didn't come here for a polished speech. Take the question from the front row and answer what we can prove.\"",
-      "Reina: \"Someone asked if our product guarantees profit. It doesn't. Show them what it does, what it cannot do, and how to test it without risking money they need.\""
+      "Leemah: \"The host just cancelled and the room is filling up. People didn't come here for a polished speech. Take the question from the front row and answer what we can prove.\"",
+      "Kenny: \"Someone asked if a wallet can ever be completely safe. Don't promise perfection. Explain what people can check, what risks remain, and where to report suspicious activity.\""
     ]
   },
   {
