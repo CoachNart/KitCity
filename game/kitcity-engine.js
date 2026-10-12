@@ -285,6 +285,24 @@ const CITY_MUSIC={
     if(city!=='lagos'&&!MUSIC_QUEUES[CITY_MUSIC[city]]) throw new Error('Missing city music queue: '+city);
   });
 })();
+/* Normalize both internal city keys and display names before soundtrack lookup.
+   Some navigation/settings flows pass "Port Harcourt" while the world uses "ph";
+   silently treating those names as Lagos made unrelated cities share Lagos audio. */
+const CITY_MUSIC_ALIASES={
+  'port-harcourt':'ph','port-harcourt-city':'ph','ph-city':'ph',
+  'benin-city':'benin','benin-city-edo':'benin',
+  'calabar-city':'calabar',
+  'federal-capital-territory':'abuja','abuja-fct':'abuja',
+  'ikot-epene':'ikot-ekpene','birnin-kebbi-city':'birnin-kebbi',
+  'ado-ekiti-city':'ado-ekiti'
+};
+function resolveCityMusicKey(value){
+  const normalized=String(value||'').trim().toLowerCase().replace(/\\s+/g,'-');
+  const key=CITY_MUSIC_ALIASES[normalized]||normalized;
+  if(MUSIC_QUEUES[key]) return key;
+  const mapped=CITY_MUSIC[key];
+  return mapped&&MUSIC_QUEUES[mapped]?mapped:null;
+}
 const YT=(function(){
   /* During Next.js hot reload, an old hidden YouTube iframe can survive after
      this module is evaluated again. Tear it down before creating a new player,
@@ -435,17 +453,16 @@ const YT=(function(){
     next(){ if(ready) try{ player.nextVideo(); }catch(e){} },
     setCity(city){
       const normalized=String(city||'').trim().toLowerCase().replace(/\\s+/g,'-');
-      /* The global KitCity hub is not a real city soundtrack; keep the last
-         selected city instead of switching back to the old generic mix. */
-      if(normalized!=='kitcity'){
-        const key=CITY_MUSIC[normalized]||'lagos';
-        currentKey=key;
-      }else{
-        /* The shared hub has no separate legacy soundtrack. Use the selected
-           city if known; otherwise default deliberately to Lagos, never the
-           old generic mix or a previously attached player. */
-        currentKey=CITY_MUSIC[curCity]||'lagos';
+      /* The shared hub keeps the last selected playable city's soundtrack. */
+      const requested=normalized==='kitcity'?(resolveCityMusicKey(curCity)||'lagos'):resolveCityMusicKey(normalized);
+      if(!requested){
+        /* Never hide a routing bug by playing Lagos in an unrelated city. */
+        console.error('[KitCity music] No city soundtrack mapping for:',city,'normalized as',normalized);
+        if(ready){ try{ player.stopVideo(); }catch(e){} }
+        return;
       }
+      currentKey=requested;
+      console.info('[KitCity music] City soundtrack selected:',city,'=>',currentKey,(MUSIC_QUEUES[currentKey]||{}).videos);
       if(ready){
         try{ loadQueue(); if(wantOn) play(); }catch(e){}
       }
@@ -455,7 +472,7 @@ const YT=(function(){
       /* Only a deliberate selection can switch away from the city soundtrack. */
       const id=parseId(v);
       P.pl=id?String(v).trim():'';
-      currentKey=id?'custom':(CITY_MUSIC[curCity]||'lagos');
+      currentKey=id?'custom':(resolveCityMusicKey(curCity)||'lagos');
       save();
       if(ready){ try{ loadQueue(); if(wantOn) play(); else player.pauseVideo(); }catch(e){} }
     }
