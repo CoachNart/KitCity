@@ -690,12 +690,12 @@ const RAW_MISSIONS = [
       "OxNight: \"Good. A ticker and logo can be copied. We'll compare the contract address first, then check the route and execution record separately. If the asset is wrong, slippage isn't an explanation. And no second approval until we know exactly which spender is asking.\""
     ]
   },
-  {
+{
     "id": "m08",
     "chapterId": "ch04",
-    "title": "The Withdrawal Queue",
+    "title": "The Withdrawal That Never Left",
     "state": "Ekiti",
-    "location": "Ekiti exchange branch, customer waiting area and public notice board",
+    "location": "Exchange service counter, incident desk and public status board",
     "npcIds": [
       "moon",
       "the-cryptonian"
@@ -704,11 +704,12 @@ const RAW_MISSIONS = [
       "Moon",
       "The Cryptonian"
     ],
-    "narrativePurpose": "Withdrawals have been paused, customers are crowding the branch and screenshots claim the exchange has run out of money. Moon is being pressed to promise a restoration time; The Cryptonian has the official incident notice but no confirmed cause. Check what is affected, distinguish custodial control from public-chain evidence, and publish an update with safe next steps instead of guessing.",
+    "narrativePurpose": "A withdrawal freeze turns a busy exchange counter into a rumour mill. Moon has a customer request marked 'processing' but no transaction hash; a cropped screenshot of the exchange's hot wallet is being passed around as proof that every customer balance is gone. The Cryptonian brings the incident log and public-chain records. Trace the specific request, establish which route is confirmed paused, separate internal customer balances from on-chain wallet movements, and publish an update that says what is known, what is not, and when the next update will arrive. A loud countdown on the status board is about to hit zero—but nobody has verified that it came from the exchange.",
     "learningObjectives": [
-      "Distinguish confirmed incident facts from rumours",
-      "Explain what a custodial exchange controls and what a public transaction record can show",
-      "Write a useful status update with a source and next update point"
+      "Trace a withdrawal request from internal status to transaction broadcast",
+      "Identify the exact scope of a confirmed service interruption",
+      "Explain what public wallet activity can and cannot prove about a custodial exchange",
+      "Publish a useful status update without inventing a cause or restoration time"
     ],
     "prerequisites": [
       "m07"
@@ -716,58 +717,58 @@ const RAW_MISSIONS = [
     "objectives": [
       {
         "id": "m08-obj-1",
-        "label": "Compare the customer rumour with the official withdrawal notice",
+        "label": "Trace the waiting withdrawal from request ID to its actual transaction status",
         "interactionTarget": "story:m08:objective:1",
         "required": true
       },
       {
         "id": "m08-obj-2",
-        "label": "Identify which withdrawal routes are confirmed as affected",
+        "label": "Confirm which withdrawal route is paused and which routes remain unverified",
         "interactionTarget": "story:m08:objective:2",
         "required": true
       },
       {
         "id": "m08-obj-3",
-        "label": "Explain custody and the limits of what the public record proves",
+        "label": "Compare the hot-wallet screenshot with the limits of public-chain evidence",
         "interactionTarget": "story:m08:objective:3",
         "required": true
       },
       {
         "id": "m08-obj-4",
-        "label": "Draft a status update with verified facts and safe next steps",
+        "label": "Publish an incident update with verified facts and a clear next update time",
         "interactionTarget": "story:m08:objective:4",
         "required": true
       }
     ],
     "successConditions": [
-      "The update states only the impact and cause that have been confirmed",
-      "Customers are directed to official channels and warned against fake support",
-      "The update gives a next-update point without inventing a restoration deadline"
+      "The customer's request is correctly classified as not yet broadcast, rather than falsely described as a failed on-chain transfer",
+      "The notice states the confirmed route impact and labels unknowns honestly",
+      "The public update avoids unsupported insolvency claims and gives customers a verified update route and next update time"
     ],
     "failureAndRetry": {
-      "onFailure": "If the player declares the funds lost or promises a deadline, Moon refuses to publish the draft until the source and wording are corrected.",
-      "retry": "Revise the notice using the official incident record and keep the confirmed details."
+      "onFailure": "If the player calls the exchange insolvent from a cropped wallet screenshot or promises a restoration time, Moon asks them to separate the evidence from the conclusion before publishing.",
+      "retry": "Recheck the request record, incident notice and chain evidence, then revise the public update."
     },
     "rewards": {
-      "xp": 175,
+      "xp": 205,
       "skillBadges": [
-        "Incident Communication"
+        "Incident Analysis"
       ],
       "portfolioArtifacts": [
-        "Verified withdrawal incident update"
+        "Customer withdrawal incident update"
       ]
     },
     "storyFlags": [
       "m08_complete",
-      "withdrawal_incident_reported",
-      "fake_support_warning_published"
+      "withdrawal_scope_verified",
+      "status_update_published"
     ],
     "nextMissionId": "m09",
-    "ending": "The published notice confirms that withdrawals are paused while the team investigates; it does not claim the funds are lost or promise when service will return. Customers know where official updates will appear and are warned not to share passwords or recovery phrases with anyone claiming to help.",
-    "cliffhanger": "One customer has been trading through the night trying to win back a loss before the withdrawal queue clears. In Delta, Joseph Nnadi and The Don are asking whether he is following a plan—or chasing the last trade.",
+    "ending": "The queue is still waiting, but the update now gives customers a verified route to check progress and a time for the next report. The countdown reaches zero. The board flashes a message: 'WITHDRAWALS RESTORED'—but the official status page still says paused.",
+    "cliffhanger": "Someone wants the room to celebrate. Moon refuses to announce a recovery until a real withdrawal is confirmed. The next customer at the counter is not asking about an exchange at all; they're trying to recover a trading loss with borrowed leverage.",
     "sceneLines": [
-      "Moon: \"People have been waiting since morning. Somebody posted that all the money is gone, and now a fake support account says it can unlock withdrawals. I need a message people can use—not another 'soon' post.\"",
-      "The Cryptonian: \"The notice confirms the withdrawal pause, not the cause or a return time. State what is affected, link the official update route, warn people about impersonators and tell them when we'll post again.\""
+      "Moon: \"This customer has refreshed the page forty times. Their request says processing, but there is no transaction hash. Now a screenshot of our hot wallet is going around with the caption 'everyone's money is gone'. I need to tell the queue what we can prove before that countdown hits zero.\"",
+      "The Cryptonian: \"The incident log confirms one withdrawal route is paused. It does not confirm insolvency, and a hot-wallet screenshot cannot show the full internal customer ledger. Let's trace this request, check the official notice and write only what the records support.\""
     ]
   },
   {
