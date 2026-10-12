@@ -799,3 +799,47 @@ html,body{height:100%;overflow:hidden;background:var(--ink);color:var(--ink);fon
   #sheet.chronicle-dialogue-card{max-height:48vh;width:100%}
   #sheet.chronicle-dialogue-card .row .btn{min-height:32px;padding:7px 8px}
 }
+
+
+/* In-world mission dialogue: readable speech bubbles, with a tiny manual navigator. */
+.kitcity-mission-dialogue-bubble{
+  position:fixed;z-index:190;left:50%;top:50%;transform:translate(-50%,-100%);
+  width:max-content;max-width:min(82vw,340px);max-height:30vh;overflow:auto;
+  padding:9px 12px 10px;border:2px solid #17191c;border-radius:14px 14px 14px 5px;
+  background:#fff;color:#17191c;box-shadow:3px 4px 0 rgba(0,0,0,.22);
+  pointer-events:none;overflow-wrap:anywhere;white-space:normal;overscroll-behavior:contain;
+}
+.kitcity-mission-dialogue-bubble:after{
+  content:"";position:absolute;left:17px;bottom:-10px;width:0;height:0;
+  border-top:10px solid #17191c;border-right:10px solid transparent;
+}
+.kitcity-mission-dialogue-bubble small{
+  display:block;margin-bottom:4px;color:#007f91;font:950 9px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.1em
+}
+.kitcity-mission-dialogue-bubble div{font:700 clamp(12px,3.3vw,15px)/1.4 system-ui,-apple-system,sans-serif}
+.kitcity-mission-dialogue-bubble p{margin:0 0 5px!important;white-space:normal}
+.kitcity-mission-dialogue-bubble p:last-child{margin-bottom:0!important}
+.kitcity-mission-dialogue-bubble b,.kitcity-mission-dialogue-bubble strong{color:#007f91}
+.kitcity-mission-dialogue-bubble.hidden,.kitcity-mission-dialogue-nav.hidden{display:none!important}
+.kitcity-mission-dialogue-nav{
+  position:fixed;z-index:191;left:50%;bottom:calc(76px + env(safe-area-inset-bottom));
+  transform:translateX(-50%);display:flex;align-items:center;justify-content:center;gap:6px;
+  max-width:calc(100vw - 20px);padding:4px 6px;border:1px solid rgba(255,255,255,.17);
+  border-radius:999px;background:rgba(7,14,20,.86);color:#f3fbff;
+  box-shadow:0 4px 16px rgba(0,0,0,.2);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)
+}
+.kitcity-mission-dialogue-nav button{
+  min-width:46px;min-height:30px;padding:6px 8px;border:1px solid rgba(255,255,255,.14);
+  border-radius:999px;background:rgba(255,255,255,.08);color:#fff;
+  font:800 10px/1 system-ui,-apple-system,sans-serif;touch-action:manipulation
+}
+.kitcity-mission-dialogue-nav button:disabled{opacity:.35}
+.kitcity-mission-dialogue-nav span{min-width:34px;text-align:center;color:#b8cbd3;font:700 9px/1 ui-monospace,monospace}
+#sheet.chronicle-dialogue-card .chronicle-talk-head{padding:8px 10px}
+#sheet.chronicle-dialogue-card .chronicle-talk-identity h3{font-size:16px}
+#sheet.chronicle-dialogue-card .chronicle-talk-identity span{font-size:10px}
+@media(max-width:480px){
+  .kitcity-mission-dialogue-bubble{max-width:min(86vw,310px);max-height:28vh;padding:8px 10px}
+  .kitcity-mission-dialogue-nav{bottom:calc(78px + env(safe-area-inset-bottom));gap:4px;padding:4px}
+  .kitcity-mission-dialogue-nav button{min-width:44px;min-height:30px;padding:6px}
+}
