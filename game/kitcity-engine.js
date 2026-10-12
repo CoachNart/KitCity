@@ -303,7 +303,7 @@ const CITY_MUSIC_ALIASES={
   'enugu-state':'enugu','gombe-state':'gombe','imo':'owerri','jigawa':'dutse',
   'kaduna-state':'kaduna','kano-state':'kano','katsina-state':'katsina',
   'kebbi':'birnin-kebbi','kogi':'lokoja','kwara':'ilorin','lagos-state':'lagos',
-  'nasarawa':'lafia','nassarawa':'lafia','niger-state':'minna','ogun':'abeokuta',
+  'nasarawa':'lafia','nassarawa':'lafia','niger':'minna','niger-state':'minna','delta':'asaba','ogun':'abeokuta',
   'ondo':'akure','osun':'osogbo','oyo':'ibadan','plateau':'jos',
   'rivers':'ph','river-state':'ph','sokoto-state':'sokoto','taraba':'jalingo',
   'yobe':'damaturu','zamfara':'gusau','federal-capital-territory-fct':'abuja'
