@@ -2312,11 +2312,11 @@ function positionMissionDialogueBubble(){
   actor.getWorldPosition(point);
   point.y+=actor===player?4.1:4.5;
   point.project(camera);
-  if(point.z<=-1||point.z>=1){missionDialogueBubble.classList.add('hidden');return;}
   missionDialogueBubble.classList.remove('hidden');
   const rect=document.querySelector('#gl')?.getBoundingClientRect()||{left:0,top:0,width:innerWidth,height:innerHeight};
-  const x=rect.left+(point.x*.5+.5)*rect.width;
-  const y=rect.top+(-point.y*.5+.5)*rect.height;
+  let x=rect.left+(point.x*.5+.5)*rect.width;
+  let y=rect.top+(-point.y*.5+.5)*rect.height;
+  if(point.z<=-1||point.z>=1){x=window.innerWidth/2;y=window.innerHeight*.68;}
   const margin=10;
   const width=Math.min(missionDialogueBubble.offsetWidth||300,window.innerWidth-margin*2);
   const height=missionDialogueBubble.offsetHeight||84;
