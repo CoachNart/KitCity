@@ -3358,6 +3358,40 @@ const MISSIONS=CHRONICLE_MISSIONS.map((story,index)=>{
         ]);
       }}
     ];
+  }else if(story.id==='m14'){
+    const kore=STORY_NPCS.Kore;
+    const veedima=STORY_NPCS.Veedima;
+    steps=[
+      {kind:'character',id:'m14-obj-1',label:story.objectives[0].label,spot:'buyer',npc:kore,run(){
+        talk(kore,"<p><b>KORE:</b> The safety recap from your Enugu session got shared because it answered a real question. Our product announcement? Nothing. It says ‘AI-powered, seamless, secure’ and a first-time user still asked, ‘Abeg, what does this thing do?’</p><p><b>YOU:</b> Before rewriting anything, I need to know who this is for and what they actually need.</p>",[
+          {t:'Ask street users what task they came to solve, what confuses them, and what would make them try a tool.',f:()=>talk(veedima,"<p><b>VEEDIMA:</b> Three people gave us the same clue: they want to spot possible market opportunities, but they don’t want a tool pretending to make decisions for them. That is a real audience need. Don’t write for ‘everyone in Web3’.</p>",[{t:'Define the audience as traders who want market alerts and analysis while keeping control of their own decisions.',f:()=>{G.evidence.m14_audience_defined=true;G.evidence.m14_user_need_verified=true;finishStep();}}])},
+          {t:'Call it the ultimate tool for every crypto user.',f:()=>talk(kore,"<p><b>KORE:</b> That tells nobody who it helps. The people we just spoke to need market context, not a slogan that claims to serve everyone.</p>",[{t:'Use the street feedback to define the audience and its actual problem.',f:()=>{G.evidence.m14_audience_defined=true;G.evidence.m14_user_need_verified=true;finishStep();}}])}
+        ]);
+      }},
+      {kind:'clue',id:'m14-obj-2',label:story.objectives[1].label,spot:'ledger',title:'The live product flow',sign:'CHECK THE CLAIMS',npc:veedima,run(){
+        talk(veedima,"<p><b>VEEDIMA:</b> Now check the product, not the pitch deck. The live flow surfaces market alerts and analysis. The user chooses what to do next. It does not place trades, guarantee profits or make a wallet safe by magic. Sort the claims before we publish.</p>",[
+          {t:'Keep only claims we can demonstrate: market alerts and analysis; users make their own decisions.',f:()=>{G.evidence.m14_product_inspected=true;G.evidence.m14_claims_verified=true;G.evidence.m14_unsupported_claims_removed=true;finishStep();}},
+          {t:'Keep “guaranteed profits” because bold claims get clicks.',f:()=>talk(veedima,"<p><b>VEEDIMA:</b> We cannot prove that, and it could mislead someone into risking money. Attention is not worth inventing a guarantee.</p>",[{t:'Remove guaranteed outcomes and keep the demonstrable features only.',f:()=>{G.evidence.m14_product_inspected=true;G.evidence.m14_claims_verified=true;G.evidence.m14_unsupported_claims_removed=true;finishStep();}}])}
+        ]);
+      }},
+      {kind:'character',id:'m14-obj-3',label:story.objectives[2].label,spot:'screenshot',npc:kore,run(){
+        talk(kore,"<p><b>KORE:</b> We know who this is for and what the product actually does. Turn that into one sentence a person outside our team can understand. No acronym parade. No ‘revolutionary’ filler.</p>",[
+          {t:'“Get market alerts and analysis to help you assess possible crypto opportunities. You stay in control of every trading decision.”',f:()=>talk(veedima,"<p><b>VEEDIMA:</b> Clear. It says what users get and does not pretend the tool trades for them. Now give the reader a useful next step instead of shouting ‘Sign up now!’</p>",[{t:'Use the plain-language version and add a next step to explore the available features and risk guidance.',f:()=>{G.evidence.m14_plain_language_copy=true;G.evidence.m14_limitations_disclosed=true;finishStep();}}])},
+          {t:'“The safest AI trading engine that guarantees winners.”',f:()=>talk(kore,"<p><b>KORE:</b> That claims safety and guaranteed results we cannot prove. The message must describe the actual feature, not manufacture trust.</p>",[{t:'Rewrite it around market alerts, analysis and user-controlled decisions.',f:()=>{G.evidence.m14_plain_language_copy=true;G.evidence.m14_limitations_disclosed=true;finishStep();}}])}
+        ]);
+      }},
+      {kind:'clue',id:'m14-obj-4',label:story.objectives[3].label,spot:'shopdesk',title:'The print-ready announcement',sign:'FINAL CLAIM CHECK',npc:veedima,run(){
+        talk(veedima,"<p><b>VEEDIMA:</b> Final check before this goes out. The post must tell people what it does, what it does not promise, and what to do next. It must not imply profits are guaranteed or that the tool makes decisions for them.</p>",[
+          {t:'Publish: “Want help spotting possible market opportunities? Explore market alerts and analysis, then make your own informed decision. Trading carries risk; no outcome is guaranteed.” Add the product’s real link and risk guidance.',f:()=>{G.evidence.m14_educational_post_published=true;G.evidence.m14_useful_next_step=true;G.evidence.m14_claim_check_passed=true;finishStep();}},
+          {t:'Publish “100% safe. Guaranteed profits. No risk.”',f:()=>talk(veedima,"<p><b>VEEDIMA:</b> That is exactly the kind of unsupported promise we agreed to remove. We can still make the post compelling without misleading anyone.</p>",[{t:'Publish the factual version with the real product link and risk guidance.',f:()=>{G.evidence.m14_educational_post_published=true;G.evidence.m14_useful_next_step=true;G.evidence.m14_claim_check_passed=true;finishStep();}}])}
+        ]);
+      }},
+      {kind:'character',id:'m14-close-message',label:'Publish the verified announcement',spot:'buyer',npc:kore,run(){
+        talk(kore,"<p><b>KORE:</b> That post finally answers the question we kept dodging: what does the product do for me?</p><p><b>VEEDIMA:</b> We kept the claims we can demonstrate, removed the guarantees, and gave people a sensible next step.</p><p><b>YOU:</b> We got attention by being clear—not by pretending the product can do everything.</p><p><b>KORE:</b> Someone replied asking if you can help with a Web3 role. Web3_Esta and Love are waiting with the application brief. They want evidence of your work, not another impressive bio.</p>",[
+          {t:'Save the verified announcement and follow the role lead.',f:()=>{P.storyFlags=Object.assign({},P.storyFlags||{},{m14_complete:true,product_message_verified:true});G.evidence.chapterSummary=true;finishStep();}}
+        ]);
+      }}
+    ];
   }else{
     steps=[];
     const objectives=story.objectives||[];
