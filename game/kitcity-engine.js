@@ -4514,7 +4514,7 @@ function loadStep(){
       entity.talk=()=>{ if(st.npc&&st.npc.name===name) st.run(); };
       entity.active=()=>!!(st.npc&&st.npc.name===name);
       ents.push(entity);
-      if(st.npc&&st.npc.name===name) target=entity;
+      if(st.npc&&st.npc.name===name){entity._missionTarget=true;target=entity;}
     });
     goal=target||ents[0]||null;
   }else if(m.id==='m03'){
@@ -4532,7 +4532,7 @@ function loadStep(){
       entity.talk=()=>{ if(st.npc&&st.npc.name===name) st.run(); };
       entity.active=()=>!!(st.npc&&st.npc.name===name);
       ents.push(entity);
-      if(st.npc&&st.npc.name===name) goal=entity;
+      if(st.npc&&st.npc.name===name){entity._missionTarget=true;goal=entity;}
     });
     if(st.kind==='clue'||st.kind==='challenge'){
       const clue=placeMissionEvidence(st,m,SPOTS[st.spot]||SPOTS.execution);
