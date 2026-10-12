@@ -25,13 +25,13 @@ const missionRegistryText = await readFile(new URL("./chronicles.js", import.met
 const authoredSceneCount = [...missionRegistryText.matchAll(/"sceneLines": \[/g)].length;
 if (authoredSceneCount !== 30) errors.push("Every mission after Lagos Mission 1 must provide authored scene dialogue.");
 if (!engine.includes("const authoredLine=Array.isArray(m.sceneLines)?m.sceneLines[index]:null;")) errors.push("Authored mission scene dialogue is not connected to the runtime.");
-requireText("Confirm the hash and network first", "branching Lagos investigation dialogue");
-requireText("The successful screenshot should be enough", "Lagos dialogue responds to a mistaken assumption");
-requireText("Hear the other person’s side first", "player-led dialogue choices across missions");
+requireText("Confirm the hash and network", "branching Lagos investigation dialogue");
+requireText("Trust the screenshot and release the laptop", "Lagos dialogue responds to a mistaken assumption");
+requireText("const STORY_PLAYER_CHOICES={", "player-owned, mission-specific dialogue choices");
 requireText("function chronicleClueStep(m,obj,index,spot)", "conversation-led mission clue interactions");
-requireText("Show me the evidence that matters.", "player engagement in contextual clue conversations");
+requireText("const STORY_PLAYER_REACTIONS={", "player dialogue reacts to each mission situation");
 requireText("function chronicleChallengeStep(m,obj,index,spot)", "conversation-led mission decisions");
-requireText("Let me check before I decide.", "player engagement in mission decisions");
+requireText("The consequences belong to this case.", "player-owned mission decision dialogue");
 if (engine.includes("escapeStoryHtml(story.ending)") || engine.includes("escapeStoryHtml(story.cliffhanger)")) errors.push("Narrator-style mission wrap-up is still rendered on a conversation card.");
 requireText("function updateLivesHUD()", "three-heart life display");
 requireText("G.lives=Math.max(0", "hazard life loss");
