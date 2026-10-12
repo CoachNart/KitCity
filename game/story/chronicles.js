@@ -1086,8 +1086,8 @@ const RAW_MISSIONS = [
     "ending": "The fake account is reported and the community gets a clear warning without the victim becoming the story. The group asks for a live session to explain what happened.",
     "cliffhanger": "The scheduled host cancels minutes before the session. Leemah and Kenny hand you the mic, a stack of questions and a room full of people who want honest answers.",
     "sceneLines": [
-      "Craftore: \"Someone copied my moderator photo and is asking members to 'verify' their wallets in DMs. One member has already clicked. Please don't repost their chat with their name showing.\"",
-      "Kodavic: \"I've found the impersonator account. We should pin the real support route, remove the link and contact the affected member privately. Don't ask them to paste secrets into this chat.\""
+      "Reina: \"Oi, you came at the right time. Someone with my photo is DMing people as a moderator and telling them their wallets will be restricted unless they verify now. One new member clicked the link. They’re scared, and the chat is already asking who got fooled. Don't repost their message.\"",
+      "Cclya: \"I checked the moderator roster. Our real account has a different handle, and this one isn't on the roster. The link leads to a wallet-connection prompt. Let's preserve the message privately, report the account, and help the member secure things without asking for their phrase or blaming them.\""
     ]
   },
   {
