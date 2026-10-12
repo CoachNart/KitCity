@@ -1286,86 +1286,86 @@ const RAW_MISSIONS = [
     ]
   },
   {
-    "id": "m16",
-    "chapterId": "ch08",
-    "title": "The Job That Costs Money",
-    "state": "Plateau",
-    "location": "Plateau hiring foyer, interview bench and application terminal",
-    "npcIds": [
-      "j-jonathan",
-      "essa"
-    ],
-    "npcs": [
-      "J.Jonathan",
-      "Essa"
-    ],
-    "narrativePurpose": "The recruiter offers a Web3 role but demands an activation fee and private wallet details before showing the job description. Follow the offer from the hiring foyer to the interview bench, verify the company and submit a professional response without giving away money or secrets.",
-    "learningObjectives": [
-      "How to verify a job opportunity",
-      "How to read role requirements and plan a skill gap",
-      "How to submit a focused application using work samples"
-    ],
-    "prerequisites": [
-      "m15"
-    ],
-    "objectives": [
-      {
-        "id": "m16-obj-1",
-        "label": "Review the role and verify the hiring source",
-        "interactionTarget": "story:m16:objective:1",
-        "required": true
-      },
-      {
-        "id": "m16-obj-2",
-        "label": "Map required skills against your portfolio",
-        "interactionTarget": "story:m16:objective:2",
-        "required": true
-      },
-      {
-        "id": "m16-obj-3",
-        "label": "Complete a relevant work sample",
-        "interactionTarget": "story:m16:objective:3",
-        "required": true
-      },
-      {
-        "id": "m16-obj-4",
-        "label": "Submit an application and respond to the fee demand",
-        "interactionTarget": "story:m16:objective:4",
-        "required": true
-      }
-    ],
-    "successConditions": [
-      "The recruiter and role are independently checked",
-      "The player submits a relevant work sample",
-      "No upfront payment or wallet secret is shared"
-    ],
-    "failureAndRetry": {
-      "onFailure": "If the player pays or shares secrets in the choice, Essa stops the action before it is committed and asks for an independent verification step.",
-      "retry": "Retry the decision; keep the role research and sample."
+    {
+  "id": "m16",
+  "chapterId": "ch08",
+  "title": "The Job That Costs Money",
+  "state": "Plateau",
+  "location": "Plateau hiring foyer, interview bench and application terminal",
+  "npcIds": [
+    "j-jonathan",
+    "essa"
+  ],
+  "npcs": [
+    "J.Jonathan",
+    "Essa"
+  ],
+  "narrativePurpose": "Mission 15 ends with a recruiter demanding an activation fee and private wallet details before revealing the screening task. J.Jonathan and Essa help you check the sender independently, compare the offer with the company's real careers channel, preserve evidence and keep the application moving without paying or handing over sensitive information. The deadline pressure is part of the test.",
+  "learningObjectives": [
+    "How to verify a job opportunity independently",
+    "How to match a real role to existing work samples",
+    "How to report suspicious recruitment without making unsupported public accusations"
+  ],
+  "prerequisites": [
+    "m15"
+  ],
+  "objectives": [
+    {
+      "id": "m16-obj-1",
+      "label": "Inspect the recruiter message and verify the source independently",
+      "interactionTarget": "story:m16:objective:1",
+      "required": true
     },
-    "rewards": {
-      "xp": 255,
-      "skillBadges": [
-        "Opportunity Screening"
-      ],
-      "portfolioArtifacts": [
-        "Verified job-application pack"
-      ]
+    {
+      "id": "m16-obj-2",
+      "label": "Compare the role against the official careers channel",
+      "interactionTarget": "story:m16:objective:2",
+      "required": true
     },
-    "storyFlags": [
-      "m16_complete",
-      "job_offer_screened"
+    {
+      "id": "m16-obj-3",
+      "label": "Prepare a relevant work sample for a verified role",
+      "interactionTarget": "story:m16:objective:3",
+      "required": true
+    },
+    {
+      "id": "m16-obj-4",
+      "label": "Respond safely and report the suspicious contact",
+      "interactionTarget": "story:m16:objective:4",
+      "required": true
+    }
+  ],
+  "successConditions": [
+    "The recruiter and role are checked through an independently reached official channel",
+    "The application uses a relevant, evidence-backed work sample",
+    "No money, identity documents or wallet secrets are sent to the unverified contact"
+  ],
+  "failureAndRetry": {
+    "onFailure": "If the player is tempted by the deadline or fee, Essa pauses the response and asks for independent verification before any message is sent.",
+    "retry": "Keep the role research and portfolio sample; retry the final response without paying or disclosing sensitive information."
+  },
+  "rewards": {
+    "xp": 255,
+    "skillBadges": [
+      "Opportunity Screening"
     ],
-    "nextMissionId": "m17",
-    "ending": "The fee demand fails the verification check. You submit the work sample through the company's official channel and report the suspicious contact without making public accusations you cannot prove.",
-    "cliffhanger": "The role's product team needs help with a real user problem in Kano. White Coach and Abdul are testing a service that could help small traders reconcile payments.",
-    "sceneLines": [
-      "Veedima: \"The recruiter says I must pay an activation fee before they'll reveal the company. The deadline is tonight and they're pushing me to send my ID too. Something is off.\"",
-      "Web3_Esta: \"The company site has no such vacancy, and the recruiter is using a lookalike email. Don't send money or identity documents. Save the message and apply through the verified careers page.\""
+    "portfolioArtifacts": [
+      "Verified job-application pack"
     ]
   },
-  {
-    "id": "m17",
+  "storyFlags": [
+    "m16_complete",
+    "job_offer_screened"
+  ],
+  "nextMissionId": "m17",
+  "ending": "The fee demand fails the verification check. You keep the suspicious message as evidence, submit your work sample only through the verified company channel if a matching vacancy exists, and report the contact without making public accusations you cannot prove.",
+  "cliffhanger": "A separate message arrives from Kano: White Coach and Abdul are testing a service that could help small traders reconcile payments, but their first user says the numbers still do not add up.",
+  "sceneLines": [
+    "J.Jonathan: You just built a portfolio you can stand behind. Now someone wants money before they'll even name the job. Don't let a deadline make the decision for you. Check the source without using the links they sent.",
+    "Essa: Open the company's careers page independently, compare the exact role and sender, and keep the message. No activation fee, no seed phrase, no private key—and don't send ID to an unverified contact. If there's a genuine vacancy, use its official application route."
+  ]
+},
+  "id": "m17",
     "chapterId": "ch09",
     "title": "The Trader's Missing Record",
     "state": "Kano",
