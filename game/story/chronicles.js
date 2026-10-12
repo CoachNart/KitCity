@@ -98,21 +98,21 @@ export const NIGERIAN_STATES = [
 
 export const CHAPTERS = [
   { id:"ch01", title:"The World I Didn't Know", state:"Lagos", missionIds:["m01","m02"] },
-  { id:"ch02", title:"Learning to Trust", state:"Oyo", missionIds:["m03","m04"] },
-  { id:"ch03", title:"Builders and Inventors", state:"Osun", missionIds:["m05","m06"] },
-  { id:"ch04", title:"Two Sides of the Market", state:"Ekiti", missionIds:["m07","m08"] },
-  { id:"ch05", title:"The Price of a Decision", state:"Delta", missionIds:["m09","m10"] },
-  { id:"ch06", title:"The People Who Build the Industry", state:"Anambra", missionIds:["m11","m12"] },
-  { id:"ch07", title:"The Voice of the Ecosystem", state:"Enugu", missionIds:["m13","m14"] },
-  { id:"ch08", title:"The Professional Journey", state:"Plateau", missionIds:["m15","m16"] },
-  { id:"ch09", title:"Beyond the Screen", state:"Kano", missionIds:["m17","m18"] },
-  { id:"ch10", title:"Following the Money", state:"Edo", missionIds:["m19","m20"] },
-  { id:"ch11", title:"The New Frontier", state:"Cross River", missionIds:["m21","m22"] },
-  { id:"ch12", title:"The Systems Behind the Scenes", state:"Bauchi", missionIds:["m23","m24"] },
-  { id:"ch13", title:"The Creator Economy", state:"Abia", missionIds:["m25"] },
-  { id:"ch14", title:"The Missing Piece", state:"Niger", missionIds:["m26","m27"] },
-  { id:"ch15", title:"The Road to KitCity", state:"Kogi", missionIds:["m28"] },
-  { id:"final", title:"KitCity", state:"KitCity", missionIds:["m29","m30","m31"] }
+  { id:"ch02", title:"Proof Before Blame", state:"Oyo", missionIds:["m03","m04"] },
+  { id:"ch03", title:"Build It Right", state:"Osun", missionIds:["m05","m06"] },
+  { id:"ch04", title:"The Cost of Trust", state:"Ekiti", missionIds:["m07","m08"] },
+  { id:"ch05", title:"Risk Has Consequences", state:"Delta", missionIds:["m09","m10"] },
+  { id:"ch06", title:"People Before Numbers", state:"Anambra", missionIds:["m11","m12"] },
+  { id:"ch07", title:"Say What You Can Prove", state:"Enugu", missionIds:["m13","m14"] },
+  { id:"ch08", title:"Work Speaks", state:"Plateau", missionIds:["m15","m16"] },
+  { id:"ch09", title:"Build for Real People", state:"Kano", missionIds:["m17","m18"] },
+  { id:"ch10", title:"What the Money Means", state:"Edo", missionIds:["m19","m20"] },
+  { id:"ch11", title:"Trust the Source", state:"Cross River", missionIds:["m21","m22"] },
+  { id:"ch12", title:"Accountability Is a Feature", state:"Bauchi", missionIds:["m23","m24"] },
+  { id:"ch13", title:"Rights Behind the Token", state:"Abia", missionIds:["m25"] },
+  { id:"ch14", title:"Follow the Mark", state:"Niger", missionIds:["m26","m27"] },
+  { id:"ch15", title:"The Broken Handoff", state:"Kogi", missionIds:["m28"] },
+  { id:"final", title:"The T3Kit Signal", state:"KitCity", missionIds:["m29","m30","m31"] }
 ];
 
 const RAW_MISSIONS = [
