@@ -372,81 +372,41 @@ const RAW_MISSIONS = [
   {
     "id": "m04",
     "chapterId": "ch02",
-    "title": "The Screenshot Trial",
+    "title": "The Screenshot That Lied",
     "state": "Oyo",
-    "location": "Oyo student courtyard, roadside print shop and community hall",
-    "npcIds": [
-      "goodness",
-      "semi"
-    ],
-    "npcs": [
-      "Goodness",
-      "Semi"
-    ],
-    "narrativePurpose": "Two screenshots tell different stories about Timi's wallet. Follow the trail from the student courtyard to a print shop where the images were edited, then to the community hall where the group is ready to publish accusations. Determine what the records actually establish.",
+    "location": "Oyo student courtyard, roadside print kiosk and community hall",
+    "npcIds": ["goodness", "semi"],
+    "npcs": ["Goodness", "Semi"],
+    "narrativePurpose": "The student group is turning Timi's screenshot into a public accusation. Goodness wants the rumour stopped; Semi has found the uncropped message and the wallet's public transaction history. Follow the mismatch, find what the screenshot leaves out, and help Timi face the group without exposing private details or accusing an unproven editor.",
     "learningObjectives": [
-      "How public records differ from screenshots",
-      "What blocks and confirmations can tell you",
-      "How to correct misinformation without overstating certainty"
+      "Compare a claim with the original record it refers to",
+      "Check transaction details without asking for wallet secrets",
+      "Correct a rumour while being honest about what remains unknown"
     ],
-    "prerequisites": [
-      "m03"
-    ],
+    "prerequisites": ["m03"],
     "objectives": [
-      {
-        "id": "m04-obj-1",
-        "label": "Inspect the transaction explorer record",
-        "interactionTarget": "story:m04:objective:1",
-        "required": true
-      },
-      {
-        "id": "m04-obj-2",
-        "label": "Identify its block and confirmation details",
-        "interactionTarget": "story:m04:objective:2",
-        "required": true
-      },
-      {
-        "id": "m04-obj-3",
-        "label": "Investigate the proposed record change",
-        "interactionTarget": "story:m04:objective:3",
-        "required": true
-      },
-      {
-        "id": "m04-obj-4",
-        "label": "Explain consensus using the evidence",
-        "interactionTarget": "story:m04:objective:4",
-        "required": true
-      }
+      {"id":"m04-obj-1","label":"Stop the group from naming Timi before the claim is checked","interactionTarget":"story:m04:objective:1","required":true},
+      {"id":"m04-obj-2","label":"Compare the viral screenshot with the original message","interactionTarget":"story:m04:objective:2","required":true},
+      {"id":"m04-obj-3","label":"Check the wallet activity against the screenshot's claim","interactionTarget":"story:m04:objective:3","required":true},
+      {"id":"m04-obj-4","label":"Correct the group without exposing Timi or guessing who edited it","interactionTarget":"story:m04:objective:4","required":true}
     ],
     "successConditions": [
-      "The player finds the matching transaction record",
-      "The original evidence is preserved and the edited images are labelled as unverified",
-      "The public correction distinguishes known facts from unknown intent"
+      "The original message and screenshot are preserved before anyone alters or deletes them",
+      "The screenshot's claim is compared against the relevant wallet activity and source context",
+      "The correction states what the records show and leaves the editor's identity unresolved"
     ],
     "failureAndRetry": {
-      "onFailure": "If the player edits or deletes the original evidence, Semi restores the saved copy and asks the player to document the change transparently.",
-      "retry": "Retry the disputed evidence step with the original record preserved."
+      "onFailure":"If the player repeats the accusation or posts Timi's private details, Goodness stops the post and Semi brings the original evidence back into view.",
+      "retry":"Retry the current decision with the source message and wallet activity preserved."
     },
-    "rewards": {
-      "xp": 135,
-      "skillBadges": [
-        "Evidence Handling"
-      ],
-      "portfolioArtifacts": [
-        "Public-record verification note"
-      ]
-    },
-    "storyFlags": [
-      "m04_complete",
-      "edited_screenshot_detected",
-      "original_evidence_preserved"
-    ],
-    "nextMissionId": "m05",
-    "ending": "The transaction record does not support the rumour that Timi's wallet was drained. The group posts a correction, and the edited screenshots are retained as evidence rather than passed around as proof.",
-    "cliffhanger": "Goodness's correction gets shared by a small team building a payment app for local traders. In Osun, Blockqueen and Christol are arguing over why customers abandon it halfway through checkout.",
-    "sceneLines": [
-      "Goodness: \"They've already put Timi's face in the group chat and called him a thief. The screenshot they're sharing isn't even the original. I'm not posting another accusation until we line it up with the transaction.\"",
-      "Semi: \"See this crop? The timestamp and the top of the record are missing. The chain record doesn't show the wallet being drained. We can correct the claim without pretending we know who edited this.\""
+    "rewards":{"xp":135,"skillBadges":["Evidence Handling"],"portfolioArtifacts":["Oyo screenshot-claim verification note"]},
+    "storyFlags":["m04_complete","screenshot_claim_checked","original_message_preserved"],
+    "nextMissionId":"m05",
+    "ending":"The screenshot does not prove that Timi's wallet was drained. The source message and relevant wallet activity contradict the viral claim, but the available evidence still does not identify who altered or circulated the image. Goodness posts a correction and removes Timi's private details.",
+    "cliffhanger":"The correction reaches a small team building a payment app for market traders in Osun. Blockqueen is calling the checkout a success; Christol points at the queue of customers who gave up halfway through.",
+    "sceneLines":[
+      "Goodness: \"Abeg, look at what they've done. They put Timi's name beside 'thief' and now people are forwarding it like they watched the wallet get emptied. Nobody has checked the record. Help me stop this before the whole campus joins in. \"",
+      "Semi: \"Wait first. I found the message before it was cropped. The screenshot leaves out the transaction details, and the time on it doesn't line up with the story in the chat. That is a reason to check—not proof of who edited it. Let's open the source and compare properly. \""
     ]
   },
   {
