@@ -3875,10 +3875,15 @@ function loadStep(){
       const castSpot={x:anchor.x+offset[0],z:anchor.z+offset[1],f:index===0?anchor.f:-anchor.f};
       const entity=placeNPC(npc,castSpot);
       const isTarget=st.kind==='character'&&activeName===name;
-      entity.talk=()=>{if(isTarget)st.run();};
-      entity.active=()=>isTarget;
+      if(st.kind==='character'){
+        entity.talk=()=>{if(isTarget)st.run();};
+        entity.active=()=>isTarget;
+        if(isTarget)goal=entity;
+      }else if(st.kind==='clue'||st.kind==='challenge'){
+        entity.talk=()=>{};
+        entity.active=()=>false;
+      }
       ents.push(entity);
-      if(isTarget)goal=entity;
     });
     if(st.kind==='clue'||st.kind==='challenge'){
       const clue=m.id==='m01'?placeStoryClue(st,SPOTS[st.spot]||SPOTS.execution):placeMissionEvidence(st,m,SPOTS[st.spot]||SPOTS.execution);
