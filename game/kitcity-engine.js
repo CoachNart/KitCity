@@ -1347,6 +1347,99 @@ function mergeStatic(group){
   kill.forEach(o=>{ if(o.parent) o.parent.remove(o); });
   out.forEach(m=>group.add(m));
 }
+/* Each playable capital has its own architecture + street kit. These are not colour
+   swaps: archetypes change roof silhouettes, frontage, supports, road markings,
+   kerbs and roadside infrastructure. */
+const CITY_ARCH_ROAD={
+ lagos:{arch:'balcony',road:'lane',roof:'#59636A',kerb:'#D4C8B2',mark:'#F4C342',edge:'drain',feature:'balcony'},
+ abuja:{arch:'monument',road:'boulevard',roof:'#AEBCC8',kerb:'#F1F1E8',mark:'#E8E4D6',edge:'median',feature:'portico'},
+ kano:{arch:'adobe',road:'market-lanes',roof:'#B18A5B',kerb:'#C5A577',mark:'#DCC79C',edge:'gutter',feature:'parapet'},
+ ph:{arch:'industrial',road:'harbour',roof:'#687E78',kerb:'#A6B8B1',mark:'#E2D4A7',edge:'drain',feature:'steel'},
+ ibadan:{arch:'terrace',road:'hillside',roof:'#9B5B3D',kerb:'#B99A7D',mark:'#D4B57C',edge:'open-gutter',feature:'terrace'},
+ kaduna:{arch:'rail',road:'rail-crossing',roof:'#A98B64',kerb:'#D3C2A1',mark:'#F0D8A0',edge:'rail',feature:'canopy'},
+ enugu:{arch:'coal',road:'incline',roof:'#63766A',kerb:'#B3BEB2',mark:'#E7D9A6',edge:'stone-drain',feature:'gable'},
+ benin:{arch:'bronze',road:'heritage',roof:'#8B4C36',kerb:'#C18A63',mark:'#D9B76A',edge:'brick',feature:'court'},
+ calabar:{arch:'verandah',road:'rainforest',roof:'#718B7C',kerb:'#C5D5C8',mark:'#E4E5CE',edge:'canal',feature:'verandah'},
+ owerri:{arch:'pavilion',road:'garden',roof:'#8C6C4B',kerb:'#B6C9AE',mark:'#E8D7A8',edge:'green-strip',feature:'pavilion'},
+ aba:{arch:'workshop',road:'trade',roof:'#7C6657',kerb:'#BA9D7B',mark:'#F0C75E',edge:'loading-bay',feature:'workshop'},
+ umuahia:{arch:'compound',road:'compound',roof:'#8A7057',kerb:'#C2B39B',mark:'#DCCB9D',edge:'yard',feature:'compound'},
+ awka:{arch:'civic-tower',road:'civic',roof:'#8E9E9B',kerb:'#C5D0C8',mark:'#E6D9A5',edge:'stone',feature:'tower'},
+ onitsha:{arch:'market-stack',road:'market-grid',roof:'#827468',kerb:'#B8A38A',mark:'#F3C74F',edge:'loading-bay',feature:'market'},
+ asaba:{arch:'riverfront',road:'riverfront',roof:'#8B9998',kerb:'#C7D3CE',mark:'#E7E7D8',edge:'water-channel',feature:'river'},
+ uyo:{arch:'modern-lowrise',road:'boulevard-palms',roof:'#748F82',kerb:'#C7D5C8',mark:'#E7E1C9',edge:'green-strip',feature:'canopy'},
+ 'ikot-ekpene':{arch:'raffia',road:'craft-quarter',roof:'#8A7250',kerb:'#C4B18E',mark:'#E2C98E',edge:'woven-drain',feature:'raffia'},
+ yenagoa:{arch:'stilt',road:'wetland',roof:'#697E78',kerb:'#9BB9B2',mark:'#DDE8D9',edge:'water-channel',feature:'stilt'},
+ warri:{arch:'oil-yard',road:'industrial-link',roof:'#6F7976',kerb:'#B4B6A7',mark:'#F0D27B',edge:'service-ditch',feature:'industrial'},
+ makurdi:{arch:'river-market',road:'river-road',roof:'#8B795C',kerb:'#C6B89A',mark:'#E3D5A5',edge:'earth-shoulder',feature:'river'},
+ ilorin:{arch:'emirate',road:'courtyard',roof:'#B39B75',kerb:'#D2C4A6',mark:'#E6D7B3',edge:'gutter',feature:'dome'},
+ akure:{arch:'hill-roof',road:'ridge',roof:'#777E68',kerb:'#C5C4AA',mark:'#E7D6A3',edge:'stone-drain',feature:'hill'},
+ 'ado-ekiti':{arch:'spring-court',road:'rolling',roof:'#718666',kerb:'#C3CEB6',mark:'#E4D9AC',edge:'green-strip',feature:'spring'},
+ osogbo:{arch:'sculpture',road:'grove',roof:'#6F835B',kerb:'#BFC7A7',mark:'#E2D7A1',edge:'rooted',feature:'sculpture'},
+ abeokuta:{arch:'granite',road:'rock-cut',roof:'#9A8066',kerb:'#C4B49A',mark:'#E3D3A6',edge:'rock',feature:'granite'},
+ lokoja:{arch:'confluence',road:'confluence',roof:'#8C8D7A',kerb:'#C2C5B3',mark:'#D8E0C9',edge:'water-channel',feature:'river'},
+ lafia:{arch:'savanna-compound',road:'savanna',roof:'#B69A6D',kerb:'#D0C09C',mark:'#E4D3A6',edge:'earth-shoulder',feature:'compound'},
+ bauchi:{arch:'yankari-lodge',road:'parkway',roof:'#A7A078',kerb:'#C9C6A6',mark:'#E2D8AD',edge:'earth-shoulder',feature:'pavilion'},
+ gombe:{arch:'escarpment',road:'escarpment',roof:'#A69A77',kerb:'#C9C0A2',mark:'#E4D5A8',edge:'stone',feature:'hill'},
+ damaturu:{arch:'sahel-court',road:'sahel',roof:'#B99561',kerb:'#D0B98D',mark:'#EAD7A8',edge:'sand-shoulder',feature:'parapet'},
+ jalingo:{arch:'mambilla',road:'highland',roof:'#71856A',kerb:'#B8C5B0',mark:'#E0DDB6',edge:'stone-drain',feature:'gable'},
+ yola:{arch:'adamawa',road:'plateau-link',roof:'#9A8C6D',kerb:'#C8BCA0',mark:'#E4D7AF',edge:'earth-shoulder',feature:'terrace'},
+ sokoto:{arch:'sultanate',road:'historic-gate',roof:'#D1B58B',kerb:'#DCC9A8',mark:'#E8D8B6',edge:'gutter',feature:'dome'},
+ katsina:{arch:'minaret',road:'old-city',roof:'#C4A578',kerb:'#D9C7A5',mark:'#E8D9B8',edge:'gutter',feature:'tower'},
+ 'birnin-kebbi':{arch:'river-courtyard',road:'fishing-quarter',roof:'#B5A078',kerb:'#C8C4A4',mark:'#D8E0C6',edge:'water-channel',feature:'river'},
+ minna:{arch:'granite-modern',road:'rocky-link',roof:'#A9A18A',kerb:'#C5C5B0',mark:'#E4D8B0',edge:'rock',feature:'granite'},
+ dutse:{arch:'rock-city',road:'rock-pass',roof:'#A79A7D',kerb:'#C7BDA3',mark:'#E5D9B4',edge:'rock',feature:'hill'},
+ gusau:{arch:'northern-trade',road:'trade-gate',roof:'#B69A70',kerb:'#D2C19D',mark:'#E7D7B0',edge:'earth-shoulder',feature:'canopy'},
+ kafanchan:{arch:'rail-junction',road:'rail-yard',roof:'#9D8C70',kerb:'#C3B99E',mark:'#E0D4AC',edge:'rail',feature:'rail'},
+ damboa:{arch:'kanuri-compound',road:'dry-season',roof:'#C4A274',kerb:'#D7C49F',mark:'#E8D7B2',edge:'sand-shoulder',feature:'compound'}
+};
+function cityKit(key){return CITY_ARCH_ROAD[key]||{arch:'local-'+key,road:'local-'+key,roof:'#8A8172',kerb:'#B9B2A4',mark:'#E2D1A0',edge:'local',feature:'local'};}
+function addArchitectureDetail(key,x,z,w,h,d,color,xb){
+ const A=cityKit(key),edge=A.roof,trim=A.kerb;
+ // A different structural silhouette per location, not a tint-only variation.
+ switch(A.arch){
+ case 'balcony': for(let y=5;y<h-3;y+=5)for(const side of [-1,1])xb(w+.8,.35,.65,trim,x,y,z+side*(d/2+.15)); break;
+ case 'monument': xb(w+2,.8,d+2,trim,x,h+.4,z); xb(w*.72,.7,d*.72,edge,x,h+1.1,z); break;
+ case 'adobe': for(let side of [-1,1])xb(.8,h*.72,d+.8,trim,x+side*(w/2-.8),h*.48,z); xb(w+1,1.1,d+1,edge,x,h+.55,z); break;
+ case 'industrial': for(let side of [-1,1]){xb(.45,h,.45,edge,x+side*(w/2-.5),h/2,z-d/2);xb(.45,h,.45,edge,x+side*(w/2-.5),h/2,z+d/2);} xb(w+1,.4,.5,trim,x,h*.72,z); break;
+ case 'terrace': xb(w+1,.7,d+1,edge,x,h+.35,z); xb(w*.72,.5,d*.7,trim,x,h+.95,z); break;
+ case 'rail': xb(w+1,.7,d+1,trim,x,h+.35,z); for(let i=-1;i<=1;i++)xb(.25,h*.45,.25,edge,x+i*w*.25,h*.72,z+d/2); break;
+ case 'coal': xb(w+1,.7,d+1,edge,x,h+.35,z); xb(w*.7,.35,d*.7,trim,x,h+.85,z); break;
+ case 'bronze': for(let side of [-1,1])xb(1.1,h*.8,1.1,edge,x+side*(w/2-.6),h*.4,z+d/2); xb(w+1,.6,d+1,trim,x,h+.3,z); break;
+ case 'verandah': xb(w+1,.5,d+2,trim,x,h*.7,z+d/2); for(let i=-1;i<=1;i++)xb(.3,h*.68,.3,edge,x+i*w*.28,h*.34,z+d/2); break;
+ case 'pavilion': xb(w+2,.5,d+2,edge,x,h+.25,z); xb(w*.75,.45,d*.75,trim,x,h+.8,z); break;
+ case 'workshop': for(let i=-1;i<=1;i++)xb(.5,h*.8,.5,edge,x+i*w*.28,h*.4,z-d/2); xb(w+1,.45,d+1,trim,x,h+.22,z); break;
+ case 'compound': xb(w+1,1.2,d+1,trim,x,h+.6,z); xb(w*.5,.5,d*.5,edge,x,h+1.45,z); break;
+ case 'civic-tower': xb(w*.7,Math.max(3,h*.35),d*.7,trim,x,h+Math.max(2,h*.18),z); break;
+ case 'market-stack': for(let y=3;y<h-1;y+=3)xb(w+1,.3,d+1,edge,x,y,z); break;
+ case 'riverfront': xb(w+1,.6,d+1,trim,x,h+.3,z); xb(w*.8,.4,d*.8,edge,x,h+.8,z); break;
+ case 'modern-lowrise': xb(w+1,.4,d+1,trim,x,h+.2,z); for(let y=3;y<h-2;y+=4)xb(w+.3,.2,.3,edge,x,y,z+d/2); break;
+ case 'raffia': for(let side of [-1,1])xb(.6,h*.8,.6,edge,x+side*(w/2-.4),h*.4,z); xb(w+1,.5,d+1,trim,x,h+.25,z); break;
+ case 'stilt': for(let sx of [-1,1])for(let sz of [-1,1])xb(.35,h*.5,.35,edge,x+sx*w*.35,h*.25,z+sz*d*.35); xb(w+1,.4,d+1,trim,x,h*.5,z); break;
+ case 'oil-yard': xb(w+1,.7,d+1,edge,x,h+.35,z); for(let i=-1;i<=1;i++)xb(.25,h*.9,.25,trim,x+i*w*.25,h*.45,z); break;
+ case 'river-market': xb(w+1,.6,d+1,trim,x,h+.3,z); xb(w*.6,.4,d*.6,edge,x,h+.8,z); break;
+ case 'emirate': for(let side of [-1,1]){const dome=new THREE.Mesh(new THREE.SphereGeometry(Math.max(1,Math.min(w,d)*.13),8,6,0,Math.PI*2,0,Math.PI/2),lam(edge));dome.position.set(x+side*w*.28,h,z);cityGroup.add(dome);} break;
+ case 'hill-roof': xb(w+1,.5,d+1,edge,x,h+.25,z); xb(w*.55,.4,d*.55,trim,x,h+.7,z); break;
+ case 'spring-court': xb(w+1,.5,d+1,trim,x,h+.25,z); xb(w*.65,.4,d*.65,edge,x,h+.7,z); break;
+ case 'sculpture': for(let side of [-1,1]){const s=new THREE.Mesh(new THREE.ConeGeometry(1.1,h*.35,5),lam(edge));s.position.set(x+side*w*.32,h*.75,z+d/2);cityGroup.add(s);} break;
+ case 'granite': for(let side of [-1,1])xb(1.5,h*.85,1.5,edge,x+side*w*.34,h*.42,z); break;
+ case 'confluence': xb(w+1,.6,d+1,trim,x,h+.3,z); xb(w*.65,.5,d*.65,edge,x,h+.85,z); break;
+ case 'savanna-compound': xb(w+1,.8,d+1,edge,x,h+.4,z); break;
+ case 'yankari-lodge': xb(w+1,.6,d+1,trim,x,h+.3,z); for(let side of [-1,1])xb(.4,h*.65,.4,edge,x+side*w*.35,h*.32,z); break;
+ case 'escarpment': xb(w+1,.6,d+1,edge,x,h+.3,z); xb(w*.65,.45,d*.65,trim,x,h+.8,z); break;
+ case 'sahel-court': xb(w+1,1.1,d+1,trim,x,h+.55,z); break;
+ case 'mambilla': xb(w+1,.5,d+1,edge,x,h+.25,z); for(let i=-1;i<=1;i++)xb(.3,h*.7,.3,trim,x+i*w*.25,h*.35,z+d/2); break;
+ case 'adamawa': xb(w+1,.6,d+1,trim,x,h+.3,z); xb(w*.7,.5,d*.7,edge,x,h+.85,z); break;
+ case 'sultanate': for(let side of [-1,1]){const dome=new THREE.Mesh(new THREE.SphereGeometry(Math.max(1,Math.min(w,d)*.16),10,7,0,Math.PI*2,0,Math.PI/2),lam(edge));dome.position.set(x+side*w*.25,h,z);cityGroup.add(dome);} break;
+ case 'minaret': xb(w*.35,h*.35,d*.35,edge,x,h+h*.15,z); break;
+ case 'river-courtyard': xb(w+1,.6,d+1,trim,x,h+.3,z); xb(w*.55,.4,d*.55,edge,x,h+.8,z); break;
+ case 'granite-modern': xb(w+1,.5,d+1,trim,x,h+.25,z); for(let i=-1;i<=1;i++)xb(.35,h*.85,.35,edge,x+i*w*.25,h*.42,z); break;
+ case 'rock-city': for(let side of [-1,1])xb(1.1,h*.9,1.1,edge,x+side*w*.34,h*.45,z); break;
+ case 'northern-trade': xb(w+1,.8,d+1,trim,x,h+.4,z); break;
+ case 'rail-junction': xb(w+1,.5,d+1,edge,x,h+.25,z); for(let i=-1;i<=1;i++)xb(.3,h*.7,.3,trim,x+i*w*.25,h*.35,z+d/2); break;
+ case 'kanuri-compound': xb(w+1,1,d+1,trim,x,h+.5,z); break;
+ default: xb(w+1,.5,d+1,trim,x,h+.25,z); xb(w*.6,.4,d*.6,edge,x,h+.75,z);
+ }
+}
 function addBuilding(x,z,w,d,style,color,cx,cz,ox,oz){
   let h; if(style==='zinc') h=rr(6,9); else if(style==='banco') h=rr(7,13); else if(style==='glass') h=rr(30,46); else if(style==='admin') h=rr(12,18); else h=rr(14,30);
   const mats=[],vv=Math.floor(RN()*3),tex=FACT[style][vv],th=FAC_TH[style];
