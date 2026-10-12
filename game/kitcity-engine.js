@@ -2343,7 +2343,7 @@ CHARACTER_ORDER.forEach((name,index)=>{
   npc.name=name;npc.originalName=name;npc.signBg=color;npc.signFg='#ffffff';STORY_NPCS[name]=npc;
 });
 const CHRONICLE_CHALLENGES={
-m02:{q:"The copied page and transaction record disagree. What is the strongest next step?",o:["Preserve the URL and timestamp, then compare the exact recipient","Accuse the buyer because the address differs","Trust the page because its logo looks familiar"],a:0,w:"A mismatch is confirmed, but intent is not. Preserve the source and report only what can be verified."},
+m02:{q:"The cybercafé session is about to clear, and the copied payment page may disappear. What do you save first?",o:["Capture the full page, URL and timestamp as it is","Refresh the page and hope the address corrects itself","Post the account name publicly before the evidence is gone"],a:0,w:"Preserve the page as it appeared first. A changing page and a familiar display name are not proof of who made it."},
 m03:{q:"The recovery page asks for twelve secret words. What should you do?",o:["Stop and use a verified official recovery route","Enter the words before the offer expires","Send the words to a helpful-looking moderator"],a:0,w:"A recovery phrase can control the wallet. A legitimate helper should not ask you to disclose it."},
 m04:{q:"Two screenshots conflict with the public record. How should you correct the rumour?",o:["Preserve the originals and publish a correction tied to the verified record","Edit the screenshot until it matches the claim","Name the person you suspect and post it publicly"],a:0,w:"Keep the original evidence and separate what is confirmed from what remains unknown."},
 m05:{q:"The team wants to add a dashboard, but traders abandon checkout. What should happen first?",o:["Fix and retest the observed network-selection confusion","Build the dashboard because it looks more advanced","Assume the traders need to learn more jargon"],a:0,w:"Product changes should address a repeated user problem supported by observation."},
@@ -2538,6 +2538,9 @@ function chronicleNpcStep(m,name,index){
 }
 const CHRONICLE_ACTIVITY_RULES=[
 {r:/identify the source of the copied address/i,q:"The transaction went to a different address. Which evidence helps explain where the buyer copied it from?",o:["Preserve the page URL, timestamp and address shown","Guess who changed the page","Use the buyer's display name as proof"],a:0,w:"Preserve the source and time before the page changes. The address mismatch is confirmed; intent still needs evidence."},
+ {r:/compare the copied link with softstorm's real shop page/i,q:"Both pages carry the same shop logo. What exposes the lookalike?",o:["Compare the full link with the shop's saved genuine link","Trust the matching logo and colours","Assume the first page in the chat is official"],a:0,w:"A copied logo is easy to imitate. Compare the actual link and preserve both versions."},
+ {r:/trace how the altered link reached the buyer/i,q:"The link was forwarded from a familiar display name. What can you safely record?",o:["The original message, sender handle and timestamps","That the account owner definitely created the page","A public accusation before checking the message trail"],a:0,w:"A message trail can show how a link spread; it does not automatically prove who created it or controlled the account."},
+ {r:/write an incident report that separates facts from guesses/i,q:"What belongs in the incident report?",o:["The confirmed wrong recipient, captured lookalike link, message times and unanswered questions","The sender's name labelled as the culprit","A confident explanation even where the trail has gaps"],a:0,w:"A useful report separates verified facts from unanswered questions and keeps the evidence reviewable."},
 {r:/identify the fake recovery interface/i,q:"The recovery page offers help but asks for secret wallet words. What makes it unsafe?",o:["It asks for the recovery phrase on a website","It links to an official help article","It explains how to find a public address"],a:0,w:"A recovery phrase can control the wallet. Do not enter it into a website or share it with support."},
 {r:/reproduce the payment bug with a test case/i,q:"The checkout can process one payment twice. What should the test reproduce?",o:["The same repeated-call sequence that triggers the duplicate processing","Only a successful single payment","The app's welcome animation"],a:0,w:"A repeatable failing sequence lets the team verify the fix and guard against regression."},
 {r:/execute a small practice swap after reviewing the quote/i,q:"Before confirming the practice swap, what should you compare?",o:["The token address, network, fees and expected output","Only the ticker symbol","A promoter's claim that the pool is safe"],a:0,w:"A token symbol can be copied. Check the actual token, network, quote and permissions."},
@@ -2860,6 +2863,55 @@ const MISSIONS=CHRONICLE_MISSIONS.map((story,index)=>{
           talk(STORY_NPCS.Softstorm,"<p>You compare the public record with the shop's expected address. The payment was confirmed, but it went somewhere else.</p><p><b>SOFTSTORM:</b> So the screenshot wasn't necessarily fake. It just didn't prove that the money reached us.</p><p><b>PLAYER:</b> Exactly. No matching payment, no laptop.</p><p>The buyer is asked to resolve the wrong-address transfer before collecting the laptop.</p><p><b>SOFTSTORM:</b> You came here looking for breakfast and ended up saving my business.</p>",[
             {t:"Keep the laptop until the correct payment arrives.",f:()=>{G.evidence.dispute_resolved=true;P.storyFlags=Object.assign({},P.storyFlags||{},{payment_dispute_resolved:true,web3_first_lesson:true});save();finishStep();}},
             {t:"Release it because the transaction says confirmed.",f:()=>talk(STORY_NPCS.Softstorm,"<p>Wait. We just proved the recipient address is wrong. A confirmed transaction to another address is not payment to this shop.</p>",[{t:"Keep the laptop until the correct payment arrives.",f:()=>{G.evidence.dispute_resolved=true;P.storyFlags=Object.assign({},P.storyFlags||{},{payment_dispute_resolved:true,web3_first_lesson:true});save();finishStep();}}])}
+          ]);
+        }
+      }
+    ];
+  }else if(story.id==='m02'){
+    const joe=STORY_NPCS.Joe_Sef;
+    const larai=STORY_NPCS.Larai;
+    steps=[
+      {
+        kind:'character',id:'m02-obj-1',label:story.objectives[0].label,spot:'a',npc:joe,
+        run(){
+          talk(joe,"<p><b>JOE_SEF:</b> Softstorm sent you, abi? The buyer copied a payment link from a market chat. I found the page still open on this café machine, but the session clears when people log out.</p><p><b>YOU:</b> Then let's save what he saw before it disappears. No guessing who did it yet.</p>",[
+            {t:'Save the full page, URL and timestamp now.',f:()=>{G.evidence.m02_page_capture_saved=true;G.evidence.m02_source_url_saved=true;finishStep();}},
+            {t:'Refresh it first. Maybe the address will correct itself.',f:()=>talk(joe,"<p><b>JOE_SEF:</b> Guy, if the page changes on refresh, we lose the version the buyer actually saw. Save it first. We can test the link after.</p>",[{t:'Save the page exactly as it is.',f:()=>{G.evidence.m02_page_capture_saved=true;G.evidence.m02_source_url_saved=true;finishStep();}}])}
+          ]);
+        }
+      },
+      {
+        kind:'clue',id:'m02-obj-2',label:story.objectives[1].label,spot:'screenshot',title:'Two payment links',sign:'COMPARE LINKS',npc:joe,
+        run(){
+          talk(joe,"<p><b>JOE_SEF:</b> Here’s the link from the buyer’s chat. Now compare it with the one Softstorm sent us directly.</p><p><b>Copied page:</b> softstorm-electronic.example/pay</p><p><b>Softstorm’s saved link:</b> softstorm-electronics.example/pay</p><p><b>YOU:</b> One letter missing. The logo was never the proof.</p>",[
+            {t:'Flag the different link and keep both captures.',f:()=>{G.evidence.m02_lookalike_link_confirmed=true;G.evidence.m02_both_links_saved=true;finishStep();}},
+            {t:'The logo matches, so the page must be genuine.',f:()=>talk(joe,"<p><b>JOE_SEF:</b> Anybody can copy a logo. Check the address bar, not the decoration. The two links are different, so keep both captures.</p>",[{t:'Flag the different link and keep both captures.',f:()=>{G.evidence.m02_lookalike_link_confirmed=true;G.evidence.m02_both_links_saved=true;finishStep();}}])}
+          ]);
+        }
+      },
+      {
+        kind:'character',id:'m02-obj-3',label:story.objectives[2].label,spot:'story',npc:larai,
+        run(){
+          talk(larai,"<p><b>LARAI:</b> I sent Softstorm’s real link to the market group at 10:16. At 10:42, another link appeared under a familiar display name. The buyer says that’s the one he tapped.</p><p><b>YOU:</b> We can trace when it spread. We can’t say who made it just because we recognise the name.</p>",[
+            {t:'Save the original message, handle and both timestamps.',f:()=>{G.evidence.m02_message_trail_saved=true;G.evidence.m02_timestamps_saved=true;finishStep();}},
+            {t:'Post the sender’s name and call them a thief.',f:()=>talk(larai,"<p><b>LARAI:</b> And if someone hijacked that account? You’d turn a lead into another victim. Save the original message first; let the evidence speak.</p>",[{t:'Save the original message, handle and both timestamps.',f:()=>{G.evidence.m02_message_trail_saved=true;G.evidence.m02_timestamps_saved=true;finishStep();}}])}
+          ]);
+        }
+      },
+      {
+        kind:'clue',id:'m02-obj-4',label:story.objectives[3].label,spot:'shopdesk',title:'Incident report',sign:'SAVE REPORT',npc:larai,
+        run(){
+          talk(larai,"<p><b>LARAI:</b> We have the confirmed wrong recipient from Softstorm’s case, the lookalike link, and the times it moved through the group. We still don’t know who created the page or who controlled that display name.</p><p><b>YOU:</b> Put the facts in the report. Leave the unanswered parts open.</p>",[
+            {t:'Record the evidence and mark the unknowns clearly.',f:()=>{G.evidence.m02_report_saved=true;G.evidence.m02_facts_separated=true;finishStep();}},
+            {t:'Name the account holder as the culprit.',f:()=>talk(larai,"<p><b>LARAI:</b> The record doesn’t prove that. We can report the suspicious link and preserve the trail without pretending we know who made it.</p>",[{t:'Record the evidence and mark the unknowns clearly.',f:()=>{G.evidence.m02_report_saved=true;G.evidence.m02_facts_separated=true;finishStep();}}])}
+          ]);
+        }
+      },
+      {
+        kind:'character',id:'m02-close-case',label:'Send the report to Softstorm',spot:'a',npc:joe,
+        run(){
+          talk(joe,"<p><b>JOE_SEF:</b> Report sent. Softstorm has the real link and the lookalike side by side now. We’ve got enough to warn people without making up a culprit.</p><p><b>LARAI:</b> Wait—this just came in from Oyo. A student called Timi says the same page is now offering wallet recovery. It wants twelve secret words.</p><p><b>YOU:</b> That’s not payment support. Tell Timi not to enter anything. We’re checking on them next.</p>",[
+            {t:'Save the report and follow the Oyo lead.',f:()=>{P.storyFlags=Object.assign({},P.storyFlags||{},{m02_complete:true,payment_recipient_mismatch_confirmed:true,copied_address_source_preserved:true});G.evidence.chapterSummary=true;finishStep();}}
           ]);
         }
       }
