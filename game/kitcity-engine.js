@@ -188,6 +188,54 @@ const MUSIC_QUEUES={
   'kafanchan':{label:"Kafanchan · Southern Kaduna",videos:["dkPClcO4Whw"]},
   'damboa':{label:"Damboa · Kanuri / Hausa",videos:["hLJcQH_2Onk"]}
 };
+/* Cultural music routing. Each city keeps its own dedicated queue/video ID;
+   Lagos is intentionally excluded so its existing soundtrack remains untouched. */
+const CITY_MUSIC_PROFILE={
+  abuja:{genre:'Contemporary Nigerian Afrobeats',label:'Abuja · Contemporary Afrobeats'},
+  ph:{genre:'Niger Delta / Ijaw Afrobeat',label:'Port Harcourt · Niger Delta / Ijaw'},
+  benin:{genre:'Edo Afrobeat',label:'Benin City · Edo Afrobeat'},
+  calabar:{genre:'Efik / Ibibio Afrobeat',label:'Calabar · Efik / Ibibio Afrobeat'},
+  jos:{genre:'Plateau regional Afrobeat',label:'Jos · Plateau regional Afrobeat'},
+  ibadan:{genre:'Yoruba Afrobeat / Fuji',label:'Ibadan · Yoruba Afrobeat / Fuji'},
+  enugu:{genre:'Igbo Afrobeat / Highlife',label:'Enugu · Igbo Afrobeat / Highlife'},
+  kano:{genre:'Hausa Afrobeat / Arewa',label:'Kano · Hausa Afrobeat / Arewa'},
+  kaduna:{genre:'Hausa Afrobeat / Arewa',label:'Kaduna · Hausa Afrobeat / Arewa'},
+  maiduguri:{genre:'Kanuri / Hausa Afrobeat',label:'Maiduguri · Kanuri / Hausa Afrobeat'},
+  owerri:{genre:'Igbo Afrobeat / Highlife',label:'Owerri · Igbo Afrobeat / Highlife'},
+  aba:{genre:'Igbo Afrobeat / Highlife',label:'Aba · Igbo Afrobeat / Highlife'},
+  umuahia:{genre:'Igbo Afrobeat / Highlife',label:'Umuahia · Igbo Afrobeat / Highlife'},
+  awka:{genre:'Igbo Afrobeat / Highlife',label:'Awka · Igbo Afrobeat / Highlife'},
+  onitsha:{genre:'Igbo Afrobeat / Highlife',label:'Onitsha · Igbo Afrobeat / Highlife'},
+  asaba:{genre:'Anioma / Igbo Afrobeat',label:'Asaba · Anioma / Igbo Afrobeat'},
+  uyo:{genre:'Ibibio Afrobeat',label:'Uyo · Ibibio Afrobeat'},
+  'ikot-ekpene':{genre:'Ibibio Afrobeat',label:'Ikot Ekpene · Ibibio Afrobeat'},
+  yenagoa:{genre:'Ijaw Afrobeat',label:'Yenagoa · Ijaw Afrobeat'},
+  warri:{genre:'Urhobo / Itsekiri Afrobeat',label:'Warri · Urhobo / Itsekiri Afrobeat'},
+  makurdi:{genre:'Tiv / Middle Belt Afrobeat',label:'Makurdi · Tiv / Middle Belt Afrobeat'},
+  ilorin:{genre:'Yoruba Afrobeat / Fuji',label:'Ilorin · Yoruba Afrobeat / Fuji'},
+  akure:{genre:'Yoruba Afrobeat / Fuji',label:'Akure · Yoruba Afrobeat / Fuji'},
+  'ado-ekiti':{genre:'Yoruba Afrobeat / Fuji',label:'Ado-Ekiti · Yoruba Afrobeat / Fuji'},
+  osogbo:{genre:'Yoruba Afrobeat / Fuji',label:'Osogbo · Yoruba Afrobeat / Fuji'},
+  abeokuta:{genre:'Yoruba Afrobeat / Fuji',label:'Abeokuta · Yoruba Afrobeat / Fuji'},
+  lokoja:{genre:'Igala / Confluence Afrobeat',label:'Lokoja · Igala / Confluence Afrobeat'},
+  lafia:{genre:'Hausa Afrobeat / Arewa',label:'Lafia · Hausa Afrobeat / Arewa'},
+  bauchi:{genre:'Hausa Afrobeat / Arewa',label:'Bauchi · Hausa Afrobeat / Arewa'},
+  gombe:{genre:'Hausa Afrobeat / Arewa',label:'Gombe · Hausa Afrobeat / Arewa'},
+  damaturu:{genre:'Kanuri Afrobeat',label:'Damaturu · Kanuri Afrobeat'},
+  jalingo:{genre:'Fulfulde / Jukun regional Afrobeat',label:'Jalingo · Fulfulde / Jukun regional Afrobeat'},
+  yola:{genre:'Fulfulde regional Afrobeat',label:'Yola · Fulfulde regional Afrobeat'},
+  sokoto:{genre:'Hausa Afrobeat / Arewa',label:'Sokoto · Hausa Afrobeat / Arewa'},
+  katsina:{genre:'Hausa Afrobeat / Arewa',label:'Katsina · Hausa Afrobeat / Arewa'},
+  'birnin-kebbi':{genre:'Hausa Afrobeat / Arewa',label:'Birnin Kebbi · Hausa Afrobeat / Arewa'},
+  minna:{genre:'Nupe / Niger regional Afrobeat',label:'Minna · Nupe / Niger regional Afrobeat'},
+  dutse:{genre:'Hausa Afrobeat / Arewa',label:'Dutse · Hausa Afrobeat / Arewa'},
+  gusau:{genre:'Hausa Afrobeat / Arewa',label:'Gusau · Hausa Afrobeat / Arewa'},
+  kafanchan:{genre:'Southern Kaduna regional Afrobeat',label:'Kafanchan · Southern Kaduna regional Afrobeat'},
+  damboa:{genre:'Kanuri Afrobeat',label:'Damboa · Kanuri Afrobeat'}
+};
+Object.entries(CITY_MUSIC_PROFILE).forEach(([key,profile])=>{
+  if(MUSIC_QUEUES[key]) MUSIC_QUEUES[key].label=profile.label;
+});
 const CITY_MUSIC={
   lagos:'lagos', abuja:'abuja', ph:'ph', benin:'benin', calabar:'calabar',
   jos:'jos', ibadan:'ibadan', enugu:'enugu', kano:'kano', kaduna:'kaduna', maiduguri:'maiduguri',
@@ -223,6 +271,20 @@ const CITY_MUSIC={
   'kafanchan':'kafanchan',
   'damboa':'damboa'
 };
+/* Guard against accidental queue reuse or a city silently falling back to Lagos. */
+(()=>{
+  const seen=new Map();
+  Object.entries(MUSIC_QUEUES).forEach(([city,queue])=>{
+    if(city==='lagos') return;
+    (queue.videos||[]).forEach(id=>{
+      if(seen.has(id)) throw new Error('Music source reused by '+seen.get(id)+' and '+city);
+      seen.set(id,city);
+    });
+  });
+  Object.keys(CITY_MUSIC).forEach(city=>{
+    if(city!=='lagos'&&!MUSIC_QUEUES[CITY_MUSIC[city]]) throw new Error('Missing city music queue: '+city);
+  });
+})();
 const DEFAULT_PLAYLIST='PLtZ6yiYzu2i3UoRZM3wmw2xpBRM9zYrwP';
 const YT=(function(){
   let player=null,ready=false,failed=false,started=false,wantOn=true,duck=false,loading=false,errCount=0,currentKey='afrobeat';
