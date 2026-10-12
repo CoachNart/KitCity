@@ -608,7 +608,7 @@ const RAW_MISSIONS = [
       "Laloba: \"The merchant-approved address and the release configuration disagree. That is a finding, not yet proof anyone stole anything. Show me which role can change the destination and whether the change leaves a record we can verify.\"",
       "BigSam: \"Don't test this against a live deployment. I've opened the test build. If one admin can redirect a merchant payout with one call and no delay, we'll reproduce it, document the impact and block release until the control is fixed.\""
     ]
-  }
+  },
   {
     "id": "m07",
     "chapterId": "ch04",
