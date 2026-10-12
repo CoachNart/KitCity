@@ -5553,7 +5553,7 @@ function update(dt,time){
   const compass=$('#compass');
   const stepNow=G&&G.m&&G.m.steps?G.m.steps[G.i]:null;
   const activeNav=ents.find(e=>{try{return e.active&&e.active();}catch(_){return false;}})||null;
-  const navCandidates=[goal,activeNav,stepNow&&SPOTS[stepNow.spot],(G&&G.m&&(G.m.city==='lagos'||curCity==='lagos'))?(SPOTS.a||{x:0,z:0}):null];
+  const navCandidates=[goal,activeNav,stepNow&&safeMissionSpot(SPOTS[stepNow.spot]||SPOTS.a),(G&&G.m&&(G.m.city==='lagos'||curCity==='lagos'))?safeMissionSpot(SPOTS.a||{x:0,z:0}):null];
   const navGoal=navCandidates.find(t=>{
     if(!t)return false;
     const x=t.object&&t.object.position?t.object.position.x:t.x;
