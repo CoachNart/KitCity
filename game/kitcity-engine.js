@@ -496,8 +496,8 @@ const Snd=(function(){
 })();
 window.addEventListener('pointerdown',()=>Snd.unlock());
 
-/* ===================== language: English / Naija Pidgin ===================== */
-const L=(en,pcm)=>P.lang==='pcm'?pcm:en;
+/* ===================== language: English / Naija Pidgin / Igbo / Hausa ===================== */
+const L=(en,pcm)=>P.lang==='pcm'?pcm:tr(en);
 const PCM={
 /*PCM_BEGIN*/
 /*PCM_END*/
@@ -506,20 +506,62 @@ const RULES=[
 /*RULES_BEGIN*/
 /*RULES_END*/
 ];
+const LOCALIZED_UI={
+  ig:{
+    'Settings':'Ntọala','Language':'Asụsụ','Choose how the game talks to you.':'Họrọ asụsụ egwuregwu ga-eji agwa gị okwu.',
+    'Mission':'Ọrụ','Missions':'Ọrụ','Activity':'Ọganihu','Sign out':'Pụọ','Sign in':'Banye','Create account':'Mepụta akaụntụ',
+    'Graphics':'Ngosipụta','High has real sun shadows and cinematic lighting. Low uses fewer pixels and no shadows, so it runs better on older phones.':'Ngosipụta dị elu nwere onyinyo anyanwụ na ọkụ sinima. Nke dị ala na-arụ ọrụ nke ọma na ekwentị ochie.',
+    'Low':'Ala','High':'Elu','Switch to High':'Gbanwee gaa Elu','Switch to Low':'Gbanwee gaa Ala',
+    'Music':'Egwu','City-based Nigerian music from YouTube. Needs internet.':'Egwu Naịjirịa dabere n’obodo. Ọ chọrọ ịntanetị.',
+    'Playlist':'Ndepụta egwu','Paste any public YouTube playlist link to use your own songs.':'Tinye njikọ ndepụta egwu YouTube ọha iji kpọọ egwu nke gị.',
+    'Use playlist':'Jiri ndepụta egwu','Skip song':'Mafee egwu','Default':'Nke ndabara','Sound effects':'Ụda egwuregwu',
+    'Footsteps, chimes and voices.':'Ụda nzọụkwụ, mgbịrịgba na olu.','How to play':'Otu esi egwu','Move with the left stick or WASD. Hold Run or Shift to run. Tap Talk or press E near a glowing person. The arrow points to your goal. Avoid traffic.':'Jiri joystick aka ekpe ma ọ bụ WASD mee njem. Pịa Gbaa ọsọ ma ọ bụ Shift ka ị gbaa ọsọ. Pịa Kwuo okwu ma ọ bụ E n’akụkụ onye na-enwu. Àkụ́ na-egosi ebe ị na-aga. Zere ụgbọala.',
+    'About the streets':'Banyere okporo ụzọ','Reset progress':'Malite ọganihu ọzọ','Reset':'Malite ọzọ','Yes, erase everything':'Ee, hichapụ ihe niile',
+    'No wallet yet':'Ị nwebeghị akpa ego','Here':'Ebe a','Talk':'Kwuo okwu','Run':'Gbaa ọsọ','Loading':'Na-ebu',
+    'Choose language':'Họrọ asụsụ','Wallet':'Akpa ego','View certificate':'Lee asambodo','Share on WhatsApp':'Kesaa na WhatsApp',
+    'No wallet yet. Finish mission 1 to open one.':'Ị nwebeghị akpa ego. Mezue ọrụ nke mbụ iji mepee ya.',
+    'Mission badges':'Akara ọrụ','Journey progress':'Ọganihu njem','Missions complete':'Ọrụ emechara','City journeys complete':'Njem obodo emechara',
+    'NOT EARNED YET':'Enwetabeghị','ACHIEVEMENT EARNED':'Enwetara ihe nrite','Learn web3 before it costs you.':'Mụta Web3 tupu ọ kpatara gị nsogbu.',
+    'Every city teaches you something new.':'Obodo ọ bụla na-akụziri gị ihe ọhụrụ.','A T3Kit game.':'Egwuregwu T3Kit.','Easy access to everything in web3.':'Ụzọ dị mfe ịbanye n’ụwa Web3.'
+  },
+  ha:{
+    'Settings':'Saituna','Language':'Harshe','Choose how the game talks to you.':'Zaɓi harshen da wasan zai yi amfani da shi.',
+    'Mission':'Manufa','Missions':'Manufofi','Activity':'Ci gaba','Sign out':'Fita','Sign in':'Shiga','Create account':'Ƙirƙiri asusu',
+    'Graphics':'Zane','High has real sun shadows and cinematic lighting. Low uses fewer pixels and no shadows, so it runs better on older phones.':'Ingantaccen zane yana da inuwa da hasken fim. Ƙaramin zane ya fi sauƙi ga tsofaffin wayoyi.',
+    'Low':'Ƙasa','High':'Sama','Switch to High':'Canza zuwa sama','Switch to Low':'Canza zuwa ƙasa',
+    'Music':'Kiɗa','City-based Nigerian music from YouTube. Needs internet.':'Kiɗan Najeriya bisa birni daga YouTube. Ana buƙatar intanet.',
+    'Playlist':'Jerin kiɗa','Paste any public YouTube playlist link to use your own songs.':'Manna hanyar jerin kiɗan YouTube na jama’a don amfani da waƙoƙinka.',
+    'Use playlist':'Yi amfani da jerin kiɗa','Skip song':'Tsallake waƙa','Default':'Na asali','Sound effects':'Sautin wasa',
+    'Footsteps, chimes and voices.':'Sautin tafiya, ƙararrawa da murya.','How to play':'Yadda ake wasa','Move with the left stick or WASD. Hold Run or Shift to run. Tap Talk or press E near a glowing person. The arrow points to your goal. Avoid traffic.':'Yi motsi da sandar hagu ko WASD. Riƙe Gudu ko Shift don gudu. Danna Yi magana ko E kusa da mutum mai haske. Kibiya tana nuna inda za ka je. Guji ababen hawa.',
+    'About the streets':'Game da tituna','Reset progress':'Sake farawa','Reset':'Sake saita','Yes, erase everything':'Eh, goge komai',
+    'No wallet yet':'Ba ka da walat tukuna','Here':'Nan','Talk':'Yi magana','Run':'Gudu','Loading':'Ana lodawa',
+    'Choose language':'Zaɓi harshe','Wallet':'Walat','View certificate':'Duba takardar shaida','Share on WhatsApp':'Raba a WhatsApp',
+    'No wallet yet. Finish mission 1 to open one.':'Ba ka da walat tukuna. Kammala manufa ta farko don buɗe shi.',
+    'Mission badges':'Alamomin manufa','Journey progress':'Ci gaban tafiya','Missions complete':'Manufofin da aka kammala','City journeys complete':'Tafiyar biranen da aka kammala',
+    'NOT EARNED YET':'Ba a samu ba tukuna','ACHIEVEMENT EARNED':'An samu nasara','Learn web3 before it costs you.':'Koyi Web3 kafin ya jawo maka asara.',
+    'Every city teaches you something new.':'Kowane birni yana koya maka sabon abu.','A T3Kit game.':'Wasan T3Kit.','Easy access to everything in web3.':'Sauƙin shiga duniyar Web3.'
+  }
+};
 function tr(t){
-  if(P.lang!=='pcm'||!t) return t;
+  if(!t) return t;
   const m=t.match(/^(\s*)([\s\S]*?)(\s*)$/),core=m[2];
   if(!core||!/[A-Za-z]/.test(core)) return t;
-  /*MISS*/
-  let out=PCM[core];
-  if(out===undefined){ for(let i=0;i<RULES.length;i++){ const mm=core.match(RULES[i][0]); if(mm){ out=RULES[i][1].apply(null,mm); break; } } }
-  return out===undefined?t:m[1]+out+m[3];
+  if(P.lang==='pcm'){
+    /*MISS*/
+    let out=PCM[core];
+    if(out===undefined){ for(let i=0;i<RULES.length;i++){ const mm=core.match(RULES[i][0]); if(mm){ out=RULES[i][1].apply(null,mm); break; } } }
+    return out===undefined?t:m[1]+out+m[3];
+  }
+  if(P.lang==='ig'||P.lang==='ha'){
+    const out=LOCALIZED_UI[P.lang][core];
+    return out===undefined?t:m[1]+out+m[3];
+  }
+  return t;
 }
 function tx(html){
-  if(P.lang!=='pcm'||!html) return html;
+  if(P.lang==='en'||!html) return html;
   return html.replace(/(^|>)([^<>]+)(?=<|$)/g,(m,a,t)=>a+tr(t));
 }
-
 /* ===================== renderer / scene ===================== */
 const renderer=new THREE.WebGLRenderer({canvas:$('#gl'),antialias:true,powerPreference:'high-performance'});
 function setPR(){ renderer.setPixelRatio(P.low?1:Math.min(window.devicePixelRatio||1,1.75)); }
@@ -4838,7 +4880,7 @@ function renderHub(){
     h+='<div class="h2">Wallet</div>'+(P.wallet?'<div class="stat"><span>Address</span><b style="font-family:ui-monospace,Menlo,monospace;font-size:13px">'+short(P.wallet)+'</b></div><div class="stat"><span>USDC</span><b>'+P.usdc.toFixed(2)+'</b></div><div class="stat"><span>Naira token</span><b>'+fmtN(P.ngn)+'</b></div>':'<p class="soft">No wallet yet. Finish mission 1 to open one.</p>');
     if(all) h+='<div class="row"><button class="btn brand" data-a="cert" type="button">View certificate</button></div>';
   } else {
-    h+='<div class="h2">Settings</div><div class="card"><div class="ch"><div><b>Language</b><small>Choose how the game talks to you.</small></div></div><div class="row"><button class="btn '+(P.lang==='en'?'brand':'line')+'" data-a="lang" data-v="en" type="button">English</button><button class="btn '+(P.lang==='pcm'?'brand':'line')+'" data-a="lang" data-v="pcm" type="button">Naija Pidgin</button></div></div>';
+    h+='<div class="h2">Settings</div><div class="card"><div class="ch"><div><b>Language</b><small>Choose how the game talks to you.</small></div></div><div class="language-switch" role="group" aria-label="Choose language"><button class="lang-option '+(P.lang==='en'?'on':'')+'" data-a="lang" data-v="en" type="button" aria-label="English">EN</button><button class="lang-option '+(P.lang==='pcm'?'on':'')+'" data-a="lang" data-v="pcm" type="button" aria-label="Naija Pidgin">PID</button><button class="lang-option '+(P.lang==='ig'?'on':'')+'" data-a="lang" data-v="ig" type="button" aria-label="Igbo">IG</button><button class="lang-option '+(P.lang==='ha'?'on':'')+'" data-a="lang" data-v="ha" type="button" aria-label="Hausa">HA</button></div></div></div>';
     h+='<div class="card"><div class="ch"><div><b>Graphics</b><small>High has real sun shadows and cinematic lighting. Low uses fewer pixels and no shadows, so it runs better on older phones.</small></div></div><div class="cf"><span>'+(P.low?'Low':'High')+'</span><button class="btn line" data-a="quality" type="button">Switch to '+(P.low?'High':'Low')+'</button></div></div>';
     const tg=(k,t,d)=>'<div class="card"><div class="ch"><div><b>'+t+'</b><small>'+d+'</small></div></div><div class="cf"><span>'+(P[k]?'On':'Off')+'</span><button class="btn line" data-a="snd" data-v="'+k+'" type="button">Turn '+(P[k]?'off':'on')+'</button></div></div>';
     h+=tg('music','Music','City-based Nigerian music from YouTube. Needs internet.')+'<div class="card"><div class="ch"><div><b>Playlist</b><small>Paste any public YouTube playlist link to use your own songs.</small></div></div><input id="plIn" type="url" inputmode="url" placeholder="https://www.youtube.com/playlist?list=..." value="'+(P.pl||'').replace(/"/g,'&quot;')+'" style="width:100%;margin-top:10px;padding:11px;border-radius:6px;border:2px solid rgba(255,255,255,.35);background:#1B1C20;color:#fff;font:14px system-ui"><div class="row"><button class="btn brand" data-a="plset" type="button">Use playlist</button><button class="btn line" data-a="plnext" type="button">Skip song</button><button class="btn line" data-a="pldef" type="button">Default</button></div></div>'+tg('sfx','Sound effects','Footsteps, chimes and voices.');
@@ -5096,7 +5138,7 @@ if(LOCAL_GUEST_TEST&&!firebaseConfigured){
   setTimeout(()=>{ void submitPlayerName(); },0);
 }
 function applyLang(){
-  document.documentElement.lang=P.lang==='pcm'?'pcm':'en';
+  document.documentElement.lang=({pcm:'pcm',ig:'ig',ha:'ha',en:'en'})[P.lang]||'en';
   document.querySelectorAll('[data-t]').forEach(el=>{ if(!el.dataset.en) el.dataset.en=el.textContent; el.textContent=(P.lang==='pcm'&&el.dataset.pcm)?el.dataset.pcm:tr(el.dataset.en); });
   document.querySelectorAll('[data-lang]').forEach(b=>b.classList.toggle('on',b.dataset.lang===P.lang));
   updateAuthButton();
