@@ -3059,6 +3059,40 @@ const MISSIONS=CHRONICLE_MISSIONS.map((story,index)=>{
         ]);
       }}
     ];
+  }else if(story.id==='m12'){
+    const reina=STORY_NPCS.Reina;
+    const cclya=STORY_NPCS.Cclya;
+    steps=[
+      {kind:'character',id:'m12-obj-1',label:story.objectives[0].label,spot:'buyer',npc:reina,run(){
+        talk(reina,"<p><b>REINA:</b> Hold on—someone is DMing people with my photo, telling them their wallets will be restricted unless they verify right now. One new member clicked the link. The group chat is already asking who fell for it.</p><p><b>YOU:</b> Don't repost their private chat. Let's check the account before we call it yours.</p>",[
+          {t:'Compare the exact handle with the published moderator roster.',f:()=>talk(cclya,"<p><b>CCLYA:</b> Here’s the official roster from the community’s pinned page. Reina’s real handle ends in <b>_reina</b>. The account that sent the link uses <b>_reina_support</b> and is not on this list. Same photo, different account.</p><p><b>YOU:</b> That confirms this account is impersonating a moderator. It doesn't tell us who is behind it.</p>",[{t:'Record the handle mismatch without guessing who controls it.',f:()=>{G.evidence.m12_identity_verified=true;G.evidence.m12_impersonator_handle_saved=true;finishStep();}}])},
+          {t:'Trust the photo and follow the verification link.',f:()=>talk(reina,"<p><b>REINA:</b> That photo is mine; the account isn't. Anyone can copy it. Check the exact handle against the roster before touching the link.</p>",[{t:'Compare the handle with the official moderator roster.',f:()=>talk(cclya,"<p><b>CCLYA:</b> The handle doesn't match any account on the published roster. We'll record that mismatch and report the impersonator without naming a suspected person.</p>",[{t:'Record the mismatch as evidence.',f:()=>{G.evidence.m12_identity_verified=true;G.evidence.m12_impersonator_handle_saved=true;finishStep();}}])}])}
+        ]);
+      }},
+      {kind:'clue',id:'m12-obj-2',label:story.objectives[1].label,spot:'screenshot',title:'Impersonation message',sign:'PRESERVE & REPORT',npc:cclya,run(){
+        talk(cclya,"<p><b>CCLYA:</b> We need the original DM, sender handle, timestamp and destination address for the report. Keep the capture in the moderator incident record—not in the public chat. Then report the account through the platform's own reporting flow.</p><p><b>REINA:</b> And don't paste the malicious link into the warning. We don't need to send more people to it.</p>",[
+          {t:'Save the original privately, report the account and remove the link from community view.',f:()=>{G.evidence.m12_evidence_preserved=true;G.evidence.m12_account_reported=true;G.evidence.m12_link_contained=true;finishStep();}},
+          {t:'Forward the link to the whole group so everyone can inspect it.',f:()=>talk(cclya,"<p><b>CCLYA:</b> Please don't amplify it. People can tap it before reading your warning. Keep the original in the incident record and post a warning that identifies the fake handle without repeating the destination.</p>",[{t:'Preserve the original and report it without reposting the link.',f:()=>{G.evidence.m12_evidence_preserved=true;G.evidence.m12_account_reported=true;G.evidence.m12_link_contained=true;finishStep();}}])}
+        ]);
+      }},
+      {kind:'clue',id:'m12-obj-3',label:story.objectives[2].label,spot:'shopdesk',title:'Help the affected member',sign:'SECURE THE ACCOUNT',npc:reina,run(){
+        talk(reina,"<p><b>REINA:</b> I've reached the member privately. They opened the page, saw a wallet-connection prompt and closed it. They haven't shared a recovery phrase or approved anything as far as they know. They're frightened that they've already lost everything.</p><p><b>YOU:</b> We won't promise that nothing happened. We'll check safely, through the wallet's own interface.</p>",[
+          {t:'Close the page; check the wallet’s connected sites in the official wallet app and remove any unrecognised connection or approval. Never share recovery words.',f:()=>talk(cclya,"<p><b>CCLYA:</b> Good. If they entered a password, they should change it using the service's independently verified official route. We can review connected sites and approvals through the wallet itself. We never ask for their recovery phrase, and we won't claim funds are safe or stolen until the relevant records are checked.</p>",[{t:'Walk them through those checks privately and record only the steps taken.',f:()=>{G.evidence.m12_member_contacted_privately=true;G.evidence.m12_safe_account_steps_given=true;G.evidence.m12_no_secrets_requested=true;finishStep();}}])},
+          {t:'Ask them to send their recovery phrase so the team can check the wallet.',f:()=>talk(reina,"<p><b>REINA:</b> No. Nobody on the team needs their recovery phrase. That phrase gives control of the wallet. We'll use the wallet's own settings and verified support route, and keep the member's details private.</p>",[{t:'Help them check connected sites and approvals without revealing secrets.',f:()=>{G.evidence.m12_member_contacted_privately=true;G.evidence.m12_safe_account_steps_given=true;G.evidence.m12_no_secrets_requested=true;finishStep();}}])}
+        ]);
+      }},
+      {kind:'clue',id:'m12-obj-4',label:story.objectives[3].label,spot:'ledger',title:'Community safety notice',sign:'PUBLISH THE FACTS',npc:cclya,run(){
+        talk(cclya,"<p><b>CCLYA:</b> The account has been reported. We have the handle mismatch and the message capture. We don't have proof of who controls it, and we haven't established that the member lost funds. The notice needs to say what members should do next—not turn the person who clicked into the headline.</p><p><b>YOU:</b> Name the fake handle, not the victim. Give people the real reporting route and tell them never to share wallet secrets.</p>",[
+          {t:'Publish a factual warning with the fake handle, official moderator roster and reporting route; omit the victim and the malicious URL.',f:()=>{G.evidence.m12_notice_published=true;G.evidence.m12_victim_privacy_protected=true;finishStep();}},
+          {t:'Post the member’s name and the full malicious link as a warning.',f:()=>talk(cclya,"<p><b>CCLYA:</b> Take those details out. That exposes the member and spreads the destination further. The warning can identify the fake handle and explain how to verify real moderators without sharing the link.</p>",[{t:'Publish the warning without the member’s identity or malicious URL.',f:()=>{G.evidence.m12_notice_published=true;G.evidence.m12_victim_privacy_protected=true;finishStep();}}])}
+        ]);
+      }},
+      {kind:'character',id:'m12-close-case',label:'Check that the warning is live',spot:'buyer',npc:reina,run(){
+        talk(reina,"<p><b>REINA:</b> The notice is pinned. It names the impersonator handle, points to the real moderator roster and tells people to report suspicious DMs. Nobody has reposted the member's private chat.</p><p><b>CCLYA:</b> We reported the account and helped the member check their wallet settings through the official interface. We still haven't identified the person behind the fake account, and we won't invent an answer.</p><p><b>YOU:</b> Good. The warning protects the next person without turning the person who clicked into the story.</p><p><b>REINA:</b> Wait—the host for tonight's community safety session just cancelled. The room is already filling up.</p><p><b>CCLYA:</b> Leemah and Kenny are asking if you'll take the mic.</p>",[
+          {t:'Save the incident response plan and head to the live session.',f:()=>{P.storyFlags=Object.assign({},P.storyFlags||{},{m12_complete:true,impersonator_contained:true,community_safety_notice_published:true});G.evidence.chapterSummary=true;finishStep();}}
+        ]);
+      }}
+    ];
   }else{
     steps=[];
     const objectives=story.objectives||[];
