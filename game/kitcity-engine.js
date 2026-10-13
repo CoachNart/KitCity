@@ -3484,7 +3484,7 @@ function mapSVG(){
 }
 
 function renderHub(){
-  $('#hubTop').innerHTML=tx('<span class="wm"><img class="header-logo" src="https://i.postimg.cc/qqbdTXky/file-00000000958881f4a776df689a235dec.png" alt="KitCity" /></span><div class="lvl"><b>Wallet</b><div class="balance-line"><strong>'+P.usdc.toFixed(2)+' USDC</strong><small>'+Object.keys(P.done).filter(k=>P.done[k]).length+' missions completed</small></div>'+(TEST_UNLOCK_ALL_MISSIONS?'<small style="display:inline-block;margin-top:6px;color:#10c8dc;font-weight:800;letter-spacing:.08em">TEST MODE · ALL MISSIONS UNLOCKED</small>':'')+'</div>');
+  $('#hubTop').innerHTML=tx('<span class="wm"><img class="header-logo" src="https://i.postimg.cc/qqbdTXky/file-00000000958881f4a776df689a235dec.png" alt="KitCity" /></span><div class="lvl"><b>Wallet</b><div class="balance-line"><strong>'+P.usdc.toFixed(2)+' USDC</strong><small>'+MISSIONS.filter(m=>P.done[m.id]).length+' missions completed</small></div>'+(TEST_UNLOCK_ALL_MISSIONS?'<small style="display:inline-block;margin-top:6px;color:#10c8dc;font-weight:800;letter-spacing:.08em">TEST MODE · ALL MISSIONS UNLOCKED</small>':'')+'</div>');
   document.querySelectorAll('#nav [data-v="kitlab"]').forEach(b=>b.remove());
   if(hubTab==='kitlab'||hubTab==='cityhub') hubTab='missions';
   document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===hubTab));
@@ -3563,7 +3563,7 @@ $('#hub').addEventListener('click',async e=>{
   else if(a==='snd'){ P[v]=!P[v]; save(); Snd.set(v,P[v]); Snd.sfx('click'); renderHub(); }
   else if(a==='reset'){
     if(!resetArm){ resetArm=true; renderHub(); return; }
-    Store.del(KEY); Object.assign(P,{wallet:null,usdc:0,ngn:0,done:{},dodged:0,fell:0,scores:{},web3:null,storyPrologueSeen:false,chroniclesPrologueSeen:false,storyProgress:{},storyFlags:{}}); save(); resetArm=false; hubCity='lagos'; hubTab='missions'; renderHub(); toast('Progress erased');
+    Store.del(KEY); Object.assign(P,{wallet:null,usdc:0,ngn:0,done:{},dodged:0,fell:0,scores:{},web3:null,storyProgress:{},storyFlags:{}}); save(); resetArm=false; hubCity='lagos'; hubTab='missions'; renderHub(); toast('Progress erased');
   }
 });
 const LOCAL_GUEST_TEST=process.env.NODE_ENV==='development'&&window.location.hostname==='localhost';
