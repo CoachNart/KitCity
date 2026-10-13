@@ -4358,7 +4358,7 @@ function renderHub(){
   } else if(hubTab==='cityhub'){
     hubTab='missions';
     const C=CITIES[hubCity];
-    h+=mapSVG()+'<div class="map-selected"><div><span>SELECTED CITY</span><b>'+C.name+'</b><small>'+C.tag+'</small></div><strong>'+currentCityMissions(hubCity).filter(m=>P.done[m.id]).length+' / '+currentCityMissions(hubCity).length+' missions</strong></div>'+currentCityMissions(hubCity).map(m=>missionCard(m)).join('')+(currentCityMissions(hubCity).length?'':'<section class="current-missions-empty"><span class="current-missions-kicker">THE LOST VALUE</span><h3>No active story mission here yet</h3><p>This city remains on the KitCity map. Its current story mission will appear here when it is part of the active arc.</p></section>');
+    h+=mapSVG()+'<div class="map-selected"><div><span>SELECTED CITY</span><b>'+C.name+'</b><small>'+C.tag+'</small></div><strong>'+currentCityMissions(hubCity).filter(m=>P.done[m.id]).length+' / '+currentCityMissions(hubCity).length+' missions</strong></div><section id="currentMissionCards" class="current-mission-cards">'+currentCityMissions(hubCity).map(m=>missionCard(m)).join('')+'</section>'+(currentCityMissions(hubCity).length?'':'<section class="current-missions-empty"><span class="current-missions-kicker">THE LOST VALUE</span><h3>No active story mission here yet</h3><p>This city remains on the KitCity map. Its current story mission will appear here when it is part of the active arc.</p></section>');
   } else if(hubTab==='passport'){
     const allMissions=MISSIONS;
     const done=allMissions.filter(m=>P.done[m.id]).length,all=done===allMissions.length;
