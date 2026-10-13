@@ -607,7 +607,7 @@ const SPOTS={
   e:{x:-80,z:-35,f:1}, f:{x:-60,z:-105,f:-1}, g:{x:10,z:-175,f:-1}, h:{x:-10,z:-175,f:1},
   i:{x:150,z:-35,f:-1}, j:{x:130,z:-175,f:1}, k:{x:-150,z:-35,f:1}, l:{x:-130,z:-175,f:-1},
   m:{x:80,z:35,f:-1}, n:{x:-80,z:105,f:1}, o:{x:10,z:175,f:-1}, story:{x:24,z:-32,f:1}, x1:{x:60,z:-105,f:1},
-  lvA:{x:18,z:-30,f:-1}, lvB:{x:30,z:-30,f:1}, lvC:{x:18,z:-43,f:-1}, lvD:{x:30,z:-43,f:1}, lvE:{x:42,z:-38,f:-1}, lvF:{x:42,z:-26,f:1}, lvG:{x:54,z:-38,f:-1}
+  lvA:{x:18,z:-30,f:-1}, lvB:{x:30,z:-30,f:1}, lvC:{x:18,z:-43,f:-1}, lvD:{x:30,z:-43,f:1}, lvE:{x:105,z:-105,f:-1}, lvF:{x:42,z:-26,f:1}, lvG:{x:54,z:-38,f:-1}
 };
 const special=Object.keys(SPOTS).map(k=>SPOTS[k]).concat([SPAWN]);
 const nearSpecial=(x,z,d)=>special.some(s=>Math.hypot(s.x-x,s.z-z)<d);
@@ -1957,8 +1957,13 @@ function buildCity(key){
     const slab=new THREE.Mesh(slabGeo,paveMat); slab.position.set(cx,0.05,cz); cityGroup.add(slab);
     const lmk=(C.lm||[]).find(l=>l[1]===cx&&l[2]===cz);
     if(lmk) landmark(lmk[0],cx,cz);
+    // Keep the opening story cast in a clear plaza; no market or buildings may occlude them.
+    else if(i===0&&j===-1) { /* open story plaza around the Lagos opening and Lost Value cast */ }
     else if((((i+j)%C.market)+C.market)%C.market===0) addMarket(cx,cz);
-    else for(const ox of [-11,11])for(const oz of [-11,11]) addBuilding(cx+ox+rr(-1,1),cz+oz+rr(-1,1),rr(14,20),rr(14,20),pickStyle(C),pk(C.paint),cx,cz,ox,oz);
+    else for(const ox of [-11,11])for(const oz of [-11,11]) {
+      const bx=cx+ox+rr(-1,1),bz=cz+oz+rr(-1,1);
+      if(!nearSpecial(bx,bz,18)) addBuilding(bx,bz,rr(14,20),rr(14,20),pickStyle(C),pk(C.paint),cx,cz,ox,oz);
+    }
     // Roadside/block-edge tree placement removed: keep streets and road verges clear.
   }
   streetDetails(C,blocks); roadDecals(C,blocks);
@@ -2008,6 +2013,11 @@ function stripeTex(a,b){
   for(let i=0;i<8;i++){ g.fillStyle=i%2?b:a; g.fillRect(i*8,0,8,8); }
   const t=new THREE.Texture(c); t.needsUpdate=true; return t;
 }
+function addNpcHighlight(actor){
+  const ring=new THREE.Mesh(new THREE.RingGeometry(1.15,1.48,32),new THREE.MeshBasicMaterial({color:0x00E5FF,transparent:true,opacity:.78,depthWrite:false,depthTest:false,side:THREE.DoubleSide}));
+  ring.rotation.x=-Math.PI/2; ring.position.y=.035; ring.renderOrder=12; ring.userData.npcHighlight=true; actor.add(ring);
+  return actor;
+}
 function buildStall(def,spot){
   const o=def.stall,x=spot.x,z=spot.z,face=spot.f;
   const KS=1.35;
@@ -2021,7 +2031,7 @@ function buildStall(def,spot){
   colliders.push({x0:x-3.2,x1:x+3.2,z0:z-3.7,z1:z+3.7});
   const sp=label(tr(def.sign||def.name),def.signBg,def.signFg); sp.position.set(x,8.4,z); missionGroup.add(sp);
   if(o.sub){ const s2=label(tr(o.sub),'#ffffff',INK,1.25); s2.position.set(x,6.4,z); missionGroup.add(s2); }
-  const att=buildPerson(def.look); att.userData.storyCharacter=def.name; att.userData.storyRole=def.role;
+  const att=addNpcHighlight(buildPerson(def.look)); att.userData.storyCharacter=def.name; att.userData.storyRole=def.role;
   if(G&&G.m&&G.m.id==='m0'&&(def.name==='Softstorm'||def.name==='IamAbdul')){
     /* Stage the opening pair together in front of their separate stalls for the comic scene. */
     const soft=def.name==='Softstorm'; att.position.set(soft?15:19,.05,-22.5); att.rotation.y=soft?Math.PI/2:-Math.PI/2;
@@ -2058,7 +2068,7 @@ function placeStoryClue(def,spot){
 function placeNPC(def,spot){
   if(def.stall) buildStall(def,spot);
   else {
-    const p=buildPerson(def.look); p.userData.storyCharacter=def.name; p.userData.storyRole=def.role; p.position.set(spot.x,.05,spot.z); p.rotation.y=spot.f>0?Math.PI/2:-Math.PI/2; missionGroup.add(p);
+    const p=addNpcHighlight(buildPerson(def.look)); p.userData.storyCharacter=def.name; p.userData.storyRole=def.role; p.position.set(spot.x,.05,spot.z); p.rotation.y=spot.f>0?Math.PI/2:-Math.PI/2; missionGroup.add(p);
     const sp=label(tr(def.sign||def.name),def.signBg,def.signFg); sp.position.set(spot.x,6,spot.z); missionGroup.add(sp);
     colliders.push({x0:spot.x-1,x1:spot.x+1,z0:spot.z-1,z1:spot.z+1});
   }
@@ -2095,13 +2105,13 @@ const SUYA_ADDR='0x'+hex(20);
 const storyCastGroup=new THREE.Group();
 storyCastGroup.name='KitCity opening story cast';
 scene.add(storyCastGroup);
-const storySoftstorm=buildPerson(LK.mama);
+const storySoftstorm=addNpcHighlight(buildPerson(LK.mama));
 storySoftstorm.userData.storyCharacter='Softstorm';
 storySoftstorm.userData.storyRole='The one with the card';
 storySoftstorm.position.set(9.1,.05,-30);
 storySoftstorm.rotation.y=Math.PI/2;
 storyCastGroup.add(storySoftstorm);
-const storyAbdul=buildPerson(LK.suya);
+const storyAbdul=addNpcHighlight(buildPerson(LK.suya));
 storyAbdul.userData.storyCharacter='IamAbdul';
 storyAbdul.userData.storyRole='The one who heard it first';
 storyAbdul.position.set(12.9,.05,-30);
