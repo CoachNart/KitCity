@@ -614,7 +614,18 @@ const SPOTS={
   m:{x:80,z:35,f:-1}, n:{x:-80,z:105,f:1}, o:{x:10,z:175,f:-1}, story:{x:125,z:-185,f:1}, x1:{x:60,z:-105,f:1},
   lvA:{x:108,z:-115,f:-1}, lvB:{x:120,z:-115,f:1}, lvC:{x:108,z:-128,f:-1}, lvD:{x:120,z:-128,f:1}, lvE:{x:235,z:-245,f:-1}, lvF:{x:132,z:-112,f:1}, lvG:{x:132,z:-125,f:-1}
 };
-const special=Object.keys(SPOTS).map(k=>SPOTS[k]).concat([SPAWN]);
+// Mission locations are semantic anchors, not street-grid coordinates. Keep the
+// current world coordinates as the compatibility fallback while each city gets
+// its own road graph. This lets the road generator evolve without silently
+// moving story characters, clues, or mission objectives.
+const MISSION_ANCHORS=Object.freeze(Object.keys(SPOTS).reduce((out,key)=>{
+  out[key]=Object.freeze({x:SPOTS[key].x,z:SPOTS[key].z,f:SPOTS[key].f}); return out;
+},{}));
+function resolveMissionSpot(key){
+  const spot=MISSION_ANCHORS[key];
+  return spot?{x:spot.x,z:spot.z,f:spot.f}:undefined;
+}
+const special=Object.keys(MISSION_ANCHORS).map(resolveMissionSpot).concat([SPAWN]);
 const nearSpecial=(x,z,d)=>special.some(s=>Math.hypot(s.x-x,s.z-z)<d);
 
 const CITIES={
@@ -2597,7 +2608,7 @@ const MISSIONS=[
     ]);
   }}
  ],
- extras:[{id:'iamabdul-story',spot:SPOTS.story,npc:SUYA,run(){talk(SUYA,'<p>You heard us talking about T3Kit? I only know the name keeps turning up. Ask me after you speak with Softstorm.</p>',[{t:'I’ll come back',f:closeSheet}]);}}]
+ extras:[{id:'iamabdul-story',spot:resolveMissionSpot('story'),npc:SUYA,run(){talk(SUYA,'<p>You heard us talking about T3Kit? I only know the name keeps turning up. Ask me after you speak with Softstorm.</p>',[{t:'I’ll come back',f:closeSheet}]);}}]
 },
 {id:'m1',n:2,city:'lagos',title:'Your first wallet',goal:'Create a wallet, receive USDC and make your first payment.',
  steps:[
@@ -2617,7 +2628,7 @@ const MISSIONS=[
         talk(SUYA,'<h3>Payment confirmed</h3><div class="kv"><span>Receipt</span><b class="mono">'+short(h)+'</b></div><div class="kv"><span>Balance</span><b>'+P.usdc.toFixed(2)+' USDC</b></div><p>IamAbdul hands you a hot stick. Your receipt is permanent and public, so anyone can check that you paid.</p>',[{t:'Continue',f:finishStep}]); }});
   }}
  ],
- extras:[{id:'guy',spot:SPOTS.x1,npc:GUY,run:giveawayGuy}]
+ extras:[{id:'guy',spot:resolveMissionSpot('x1'),npc:GUY,run:giveawayGuy}]
 },
 {id:'m2',n:3,city:'lagos',title:'Bureau de Change',goal:'Learn rates, fees and slippage by swapping USDC for a naira token.',
  steps:[
@@ -4339,16 +4350,16 @@ function loadStep(){
   // Keep the complete Lost Value cast clustered around the current objective so
   // every actor can remain visible in the mobile conversation framing.
   const isLostValueMission=String(m.id||'').startsWith('lost-value-');
-  const stageCenter=SPOTS[st.spot]||SPAWN;
+  const stageCenter=resolveMissionSpot(st.spot)||SPAWN;
   const castOffsets=[{x:-4,z:-2},{x:4,z:-2},{x:-4,z:2},{x:4,z:2},{x:0,z:-4},{x:0,z:4}];
   if(Array.isArray(m.cast)) m.cast.forEach((entry,index)=>{
     if(entry.npc===st.npc) return;
     const assignedSpot=isLostValueMission
       ? {x:stageCenter.x+castOffsets[index%castOffsets.length].x,z:stageCenter.z+castOffsets[index%castOffsets.length].z,f:stageCenter.f||1}
-      : SPOTS[entry.spot];
+      : resolveMissionSpot(entry.spot);
     if(assignedSpot) placeNPC(entry.npc,assignedSpot);
   });
-  const e=st.kind==='clue'?placeStoryClue(st,SPOTS[st.spot]):placeNPC(st.npc,SPOTS[st.spot]); e.talk=()=>st.run(); e.active=()=>true; ents.push(e); goal=e;
+  const e=st.kind==='clue'?placeStoryClue(st,resolveMissionSpot(st.spot)):placeNPC(st.npc,resolveMissionSpot(st.spot)); e.talk=()=>st.run(); e.active=()=>true; ents.push(e); goal=e;
   for(const ex of (m.extras||[])){
     if(G.used[ex.id]) continue;
     const e2=placeNPC(ex.npc,ex.spot); e2.ex=ex; e2.talk=()=>ex.run(e2); e2.active=()=>!G.used[ex.id]; ents.push(e2);
