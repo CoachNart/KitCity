@@ -508,6 +508,40 @@ for (const responsiveRule of [
 const missionIds = MISSIONS.map((mission) => mission.id);
 if (new Set(missionIds).size !== missionIds.length) errors.push("Duplicate mission IDs would create repeated cards or overwrite progress.");
 if (MISSIONS.length !== 31) errors.push("Expected the complete 31-mission canonical story registry.");
+
+const continuityHandoffs = [
+  ["m02","m03","shortened link","twelve secret words","voice note from Lagos"],
+  ["m04","m05","payment app","PAID","flashes PAID"],
+  ["m05","m06","payout destination","merchant-approved address","payout destination"],
+  ["m20","m21","AI-generated summary","different owner","warehouse due-diligence packet"],
+  ["m21","m22","destination record","pending","issuing network"],
+  ["m22","m23","fund another bridge route","failure plan","community vote"],
+  ["m23","m24","privileged permission","redirect funds","privileged contract role"],
+  ["m24","m25","digital collectible","artwork","digital collectible"],
+  ["m25","m26","open-source component","licence notice","minting page"],
+  ["m26","m27","cyan marker","archive metadata","cyan marker"],
+  ["m27","m28","case reference","loses","hand-off"],
+  ["m28","m29","KitCity","deployment route","KitCity"],
+  ["m29","m30","three teams","show your work","three teams"],
+  ["m30","m31","signed deployment record","T3Kit","evidence-routing pathway"]
+];
+for (const [fromId, toId, hookA, hookB, purposeTerm] of continuityHandoffs) {
+  const from = MISSIONS.find((mission) => mission.id === fromId);
+  const to = MISSIONS.find((mission) => mission.id === toId);
+  if (!from || !to || from.nextMissionId !== toId || !to.prerequisites.includes(fromId)) {
+    errors.push("Continuity link " + fromId + " -> " + toId + " is missing its hand-off or prerequisite.");
+    continue;
+  }
+  const hook = String(from.cliffhanger || "").toLowerCase();
+  const purpose = String(to.narrativePurpose || "").toLowerCase();
+  if (!hook.includes(hookA.toLowerCase()) || !hook.includes(hookB.toLowerCase())) errors.push(fromId + " cliffhanger is missing a continuity cue.");
+  if (!purpose.includes(purposeTerm.toLowerCase())) errors.push(toId + " narrative purpose is missing its hand-off context.");
+}
+const finaleMission = MISSIONS.find((mission) => mission.id === "m31");
+if (finaleMission && !/does not connect T3Kit to the operation of every scam/i.test(finaleMission.ending)) {
+  errors.push("Finale must state the limit of what the signed deployment record proves.");
+}
+
 if (errors.length) {
   console.error("CHRONICLES RUNTIME VALIDATION FAILED");
   errors.forEach((error) => console.error(" - " + error));
