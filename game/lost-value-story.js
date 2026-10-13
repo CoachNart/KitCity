@@ -7,7 +7,7 @@ export const LOST_VALUE_STORY = [
   {
     id:'lost-value-01', n:2, state:'Lagos State', city:'lagos', title:'The First Promise',
     goal:'Introduce the original promise of Web3 through a real problem, rather than a lecture.',
-    value:'PURPOSE', cast:['Softstorm','IamAbdul','Local Trader'],
+    value:'PURPOSE', cast:['Softstorm','IamAbdul','Local Trader'], splitAfter:8,
     dialogue:[
       ['Local Trader','I did everything they told me to do. Connected my wallet, paid the fee, joined the group. Now the project has disappeared.'],
       ['Customer','You people always say DYOR after everything don finish.'],
@@ -17,7 +17,6 @@ export const LOST_VALUE_STORY = [
       ['Softstorm','If everything was a scam, people wouldn’t still be here trying to build something useful.'],
       ['IamAbdul','But if the good ones keep promising and the bad ones keep collecting, how is anybody supposed to know the difference?'],
       ['Softstorm','That’s the question we should be asking.'],
-      ['NOTICEBOARD','THE ORIGINAL PROMISE — Own what you create. Participate without asking permission from a gatekeeper. Verify what you can. Build things people can use. LAST UPDATED: UNKNOWN'],
       ['PLAYER','These promises sound good. So what went wrong?'],
       ['IamAbdul','Maybe people stopped caring about the promises.'],
       ['Softstorm','Or maybe they discovered they could make more money selling the promise than keeping it.'],
@@ -25,13 +24,13 @@ export const LOST_VALUE_STORY = [
     ],
     choices:[],
     task:'Inspect the original promise noticeboard and return to Softstorm.',
-    evidenceTitle:'The Original Promise', evidenceBody:'Own what you create. Participate without asking permission from a gatekeeper. Verify what you can. Build things people can use. The noticeboard has no last-updated date.',
+    evidenceTitle:'The Original Promise', evidenceBody:'THE ORIGINAL PROMISE: Own what you create. Participate without asking permission from a gatekeeper. Verify what you can. Build things people can use. LAST UPDATED: UNKNOWN.',
     reward:'You cannot restore something you don’t understand.'
   },
   {
     id:'lost-value-02', n:3, state:'Oyo State', city:'ibadan', title:'The Price of Trust',
     goal:'Show how trust can be exploited when people rely on reputation instead of evidence.',
-    value:'ACCOUNTABILITY', cast:['Joseph','Larai'],
+    value:'ACCOUNTABILITY', cast:['Joseph','Larai'], splitAfter:8,
     dialogue:[
       ['Larai','You told everybody the project was safe.'],
       ['Joseph','I shared what the founder told me. I didn’t know they were going to disappear.'],
@@ -58,7 +57,7 @@ export const LOST_VALUE_STORY = [
   {
     id:'lost-value-03', n:4, state:'Osun State', city:'osun', title:'The Empty Promise',
     goal:'Explore the difference between speculation and real utility.',
-    value:'UTILITY', cast:['Unique','Smrt huntr'],
+    value:'UTILITY', cast:['Unique','Smrt huntr'], splitAfter:10,
     dialogue:[
       ['Unique','Welcome! This is the next generation of decentralized community infrastructure.'],
       ['Smrt huntr','Nice presentation. Can I use it?'],
@@ -87,7 +86,7 @@ export const LOST_VALUE_STORY = [
   {
     id:'lost-value-04', n:5, state:'Ekiti State', city:'adoekiti', title:'The People Who Built It',
     goal:'Reveal how contributors can create value without receiving recognition, ownership, or fair rewards.',
-    value:'CONTRIBUTION', cast:['Goodness','Semi'],
+    value:'CONTRIBUTION', cast:['Goodness','Semi'], splitAfter:6,
     dialogue:[
       ['Goodness','We built the first version in three months.'],
       ['Semi','Four months.'],
@@ -113,7 +112,7 @@ export const LOST_VALUE_STORY = [
   {
     id:'lost-value-05', n:6, state:'Delta State', city:'asaba', title:'Who Owns the Work?',
     goal:'Distinguish between owning a token, controlling a system, and having meaningful ownership.',
-    value:'OWNERSHIP', cast:['Blockqueen','Christol'],
+    value:'OWNERSHIP', cast:['Blockqueen','Christol'], splitAfter:5,
     dialogue:[
       ['Blockqueen','The community owns this project.'],
       ['Christol','Then why can’t the community change anything?'],
@@ -135,7 +134,7 @@ export const LOST_VALUE_STORY = [
   {
     id:'lost-value-06', n:7, state:'Anambra State', city:'anambra', title:'The Exit',
     goal:'Explore extractive behaviour and the consequences of treating communities as sources of money.',
-    value:'INTEGRITY', cast:['Laloba','BigSam'],
+    value:'INTEGRITY', cast:['Laloba','BigSam'], splitAfter:7,
     dialogue:[
       ['Laloba','You said you were building with us.'],
       ['BigSam','I was.'],
@@ -158,7 +157,7 @@ export const LOST_VALUE_STORY = [
   {
     id:'lost-value-07', n:8, state:'Enugu State', city:'enugu', title:'The Community That Disappeared',
     goal:'Show how communities become disposable when engagement matters more than people.',
-    value:'COMMUNITY', cast:['LunaX','OxNight'],
+    value:'COMMUNITY', cast:['LunaX','OxNight'], splitAfter:6,
     dialogue:[
       ['LunaX','At one point, you couldn’t find a seat in here.'],
       ['OxNight','Events every week. Spaces every night. Everybody had something to say.'],
@@ -182,7 +181,7 @@ export const LOST_VALUE_STORY = [
   {
     id:'lost-value-08', n:9, state:'Plateau State', city:'jos', title:'The Numbers Game',
     goal:'Show how activity metrics can hide the absence of meaningful progress.',
-    value:'PROOF', cast:['Moon','The cryptonian'],
+    value:'PROOF', cast:['Moon','The cryptonian'], splitAfter:6,
     dialogue:[
       ['Moon','Look at this. Ten thousand users. Fifty thousand transactions. The project is growing.'],
       ['The cryptonian','How many people came back this month?'],
@@ -206,7 +205,7 @@ export const LOST_VALUE_STORY = [
   {
     id:'lost-value-09', n:10, state:'Kano State', city:'kano', title:'The Open Door',
     goal:'Explore the original promise of access and how complicated systems can exclude the people they claim to serve.',
-    value:'ACCESS', cast:['Joseph Nnadi','The don'],
+    value:'ACCESS', cast:['Joseph Nnadi','The don'], splitAfter:7,
     dialogue:[
       ['STUDENT','I’ve watched the tutorials three times. I still don’t understand what I’m signing.'],
       ['The don','Read the documentation.'],
@@ -231,7 +230,7 @@ export const LOST_VALUE_STORY = [
   {
     id:'lost-value-10', n:11, state:'Edo State', city:'benin', title:'Building for Nobody',
     goal:'Reveal what happens when projects prioritise trends over actual human problems.',
-    value:'USEFULNESS', cast:['Praise','Toza'],
+    value:'USEFULNESS', cast:['Praise','Toza'], splitAfter:8,
     dialogue:[
       ['Praise','AI agent. Token. Marketplace. Points. Governance. We can combine everything.'],
       ['Toza','What problem does it solve?'],
@@ -241,9 +240,6 @@ export const LOST_VALUE_STORY = [
       ['PLAYER','Who is supposed to use this?'],
       ['Praise','Crypto users, creators, traders, communities. Anybody.'],
       ['Toza','So everybody is the target, and nobody is the actual user.'],
-      ['USER 1','I need a way to keep track of my small business payments.'],
-      ['USER 2','I want to learn a skill that can get me paid.'],
-      ['USER 3','I just want to know whether this investment opportunity is legitimate.'],
       ['PLAYER','People have real problems. But this product doesn’t have a clear answer for any of them.'],
       ['Praise','Are you saying we should stop experimenting?'],
       ['Toza','No. Experiment. But don’t confuse the newest technology with the most useful solution.'],
@@ -253,13 +249,13 @@ export const LOST_VALUE_STORY = [
     ],
     choices:[],
     task:'Interview potential users and match one practical feature to a real problem.',
-    evidenceTitle:'User Needs Record', evidenceBody:'Small-business payment tracking, skills that lead to paid work, and checking whether an investment opportunity is legitimate are real needs raised by potential users.',
+    evidenceTitle:'User Needs Record', evidenceBody:'USER 1: “I need a way to keep track of my small business payments.” USER 2: “I want to learn a skill that can get me paid.” USER 3: “I just want to know whether this investment opportunity is legitimate.”',
     reward:'Start with the problem, not the trend.'
   },
   {
     id:'lost-value-11', n:12, state:'Cross River State', city:'calabar', title:'The People Left Behind',
     goal:'Connect Web3’s promises to practical opportunities beyond trading and speculation.',
-    value:'OPPORTUNITY', cast:['Craftore','Kodavic'],
+    value:'OPPORTUNITY', cast:['Craftore','Kodavic'], splitAfter:6,
     dialogue:[
       ['Craftore','People come here to talk about financial freedom.'],
       ['Kodavic','Then they show everybody how to trade.'],
@@ -267,9 +263,6 @@ export const LOST_VALUE_STORY = [
       ['Kodavic','No. But not everybody wants to trade. Some people want customers. Some want jobs. Some want to learn how to build software. Some just need a better way to run their business.'],
       ['PLAYER','Can Web3 help with those things?'],
       ['Craftore','It can. But only if somebody builds a solution that fits the problem.'],
-      ['BUSINESS OWNER','I don’t need another token. I need to know who paid, who hasn’t paid, and where my orders are.'],
-      ['PLAYER','What if a tool could help you track those things?'],
-      ['BUSINESS OWNER','If it works, doesn’t cost too much, and I can understand how to use it, I’ll try it.'],
       ['Kodavic','That’s the part people forget. The technology is not the final goal.'],
       ['Craftore','It’s a tool. If the tool doesn’t help anyone, why should they care what chain it runs on?'],
       ['PLAYER','So restoring value means giving people reasons to participate beyond price.'],
@@ -277,13 +270,13 @@ export const LOST_VALUE_STORY = [
     ],
     choices:[],
     task:'Record the business owner’s needs and propose a practical feature with a clear user benefit.',
-    evidenceTitle:'Local Business Needs', evidenceBody:'The business owner needs an understandable, affordable way to track payments and orders.',
+    evidenceTitle:'Local Business Needs', evidenceBody:'BUSINESS OWNER: “I don’t need another token. I need to know who paid, who hasn’t paid, and where my orders are.” PLAYER: “What if a tool could help you track those things?” BUSINESS OWNER: “If it works, doesn’t cost too much, and I can understand how to use it, I’ll try it.”',
     reward:'Technology becomes valuable when it helps people do something they couldn’t do as well before.'
   },
   {
     id:'lost-value-12', n:13, state:'Bauchi State', city:'bauchi', title:'The Rules for Everyone',
     goal:'Explore transparency, fair rules, and the danger of systems where powerful insiders are exempt from accountability.',
-    value:'TRANSPARENCY', cast:['Cybersage','Reina'],
+    value:'TRANSPARENCY', cast:['Cybersage','Reina'], splitAfter:8,
     dialogue:[
       ['Reina','The community voted against the change.'],
       ['Cybersage','The change has already been applied.'],
@@ -307,7 +300,7 @@ export const LOST_VALUE_STORY = [
   {
     id:'lost-value-13', n:14, state:'Abia State', city:'abia', title:'The Cost of Starting Over',
     goal:'Show the long-term damage caused when people lose trust in an entire ecosystem because of repeated failures.',
-    value:'TRUSTWORTHINESS', cast:['Cclya','Leemah'],
+    value:'TRUSTWORTHINESS', cast:['Cclya','Leemah'], splitAfter:6,
     dialogue:[
       ['Leemah','Nobody even wants to hear what we’re building.'],
       ['Cclya','Can you blame them?'],
@@ -331,7 +324,7 @@ export const LOST_VALUE_STORY = [
   {
     id:'lost-value-14', n:15, state:'Niger State', city:'minna', title:'The Things Worth Keeping',
     goal:'Bring together the values discovered across the previous missions and make the player consider what should be rebuilt.',
-    value:'PURPOSE WITH ACCOUNTABILITY', cast:['Kenny','Softstorm'],
+    value:'PURPOSE WITH ACCOUNTABILITY', cast:['Kenny','Softstorm'], splitAfter:5,
     dialogue:[
       ['Kenny','Look at everything we’ve found.'],
       ['Softstorm','People who lost money. Builders who lost control. Communities that disappeared. Products nobody needed. Rules that only worked for the people in charge.'],
@@ -351,7 +344,7 @@ export const LOST_VALUE_STORY = [
   {
     id:'lost-value-15', n:16, state:'Kogi State', city:'kogi', title:'The Lost Value',
     goal:'Close the first playable arc, connect the evidence, and establish the larger journey through the remaining states.',
-    value:'THE LOST VALUE', cast:['Softstorm','IamAbdul','Kenny'],
+    value:'THE LOST VALUE', cast:['Softstorm','IamAbdul','Kenny'], splitAfter:8,
     dialogue:[
       ['IamAbdul','Fifteen states.'],
       ['Kenny','Fifteen different places. More problems than we expected.'],
