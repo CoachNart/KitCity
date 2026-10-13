@@ -613,7 +613,7 @@ const SPOTS={
   e:{x:-80,z:-35,f:1}, f:{x:-60,z:-105,f:-1}, g:{x:10,z:-175,f:-1}, h:{x:-10,z:-175,f:1},
   i:{x:150,z:-35,f:-1}, j:{x:130,z:-175,f:1}, k:{x:-150,z:-35,f:1}, l:{x:-130,z:-175,f:-1},
   m:{x:80,z:35,f:-1}, n:{x:-80,z:105,f:1}, o:{x:10,z:175,f:-1}, story:{x:125,z:-185,f:1}, x1:{x:60,z:-105,f:1},
-  lvA:{x:108,z:-115,f:-1}, lvB:{x:120,z:-115,f:1}, lvC:{x:108,z:-128,f:-1}, lvD:{x:120,z:-128,f:1}, lvE:{x:235,z:-245,f:-1}, lvF:{x:132,z:-112,f:1}, lvG:{x:132,z:-125,f:-1}
+  lvA:{x:108,z:-115,f:-1}, lvB:{x:120,z:-115,f:1}, lvC:{x:108,z:-128,f:-1}, lvD:{x:120,z:-128,f:1}, lvE:{x:175,z:-175,f:-1}, lvF:{x:132,z:-112,f:1}, lvG:{x:132,z:-125,f:-1}
 };
 // Mission locations are semantic anchors, not street-grid coordinates. Keep the
 // current world coordinates as the compatibility fallback while each city gets
