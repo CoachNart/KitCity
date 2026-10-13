@@ -4317,7 +4317,6 @@ function renderHub(){
       const id=card.dataset.missionId||'';
       const mission=active.find(m=>String(m.id)===id);
       const title=mission?String(m.title||'').normalize('NFKC').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim():'';
-      const goal=mission?String(mission.goal||'').normalize('NFKC').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim():'';
       const contentKey=title;
       if(!activeIds.has(id)||card.dataset.city!==hubCity||seenIds.has(id)||seenContent.has(contentKey)){
         card.remove(); return;
