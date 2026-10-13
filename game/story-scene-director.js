@@ -49,7 +49,7 @@ export function createStorySceneDirector({ camera, player, getCharacter, animate
     overlay.setAttribute('aria-modal', 'true');
     overlay.setAttribute('aria-label', 'KitCity story scene');
     overlay.innerHTML = `
-      <div class="comic-scene-top"><span class="comic-brand">KITCITY <i>·</i> THE T3KIT CHRONICLES</span><button type="button" class="comic-skip">SKIP SCENE ↗</button></div>
+      <div class="comic-scene-top"><span class="comic-brand">KITCITY <i>·</i> THE LOST VALUE</span><button type="button" class="comic-skip">SKIP SCENE ↗</button></div>
       <div class="comic-scene-frame">
         <div class="comic-frame-stamp">ISSUE 001</div>
         <div class="comic-card-symbol" aria-hidden="true"><span> T3 </span><b>KIT</b></div>
@@ -59,7 +59,7 @@ export function createStorySceneDirector({ camera, player, getCharacter, animate
         <div class="comic-dialogue-meta"><span class="comic-speaker"></span><span class="comic-counter"></span></div>
         <p class="comic-dialogue-text"></p>
         <div class="comic-choices"></div>
-        <div class="comic-actions"><span class="comic-hint">A STORY IN MOTION · LAGOS</span><button type="button" class="comic-next">NEXT PANEL →</button></div>
+        <div class="comic-actions"><span class="comic-hint">THE LOST VALUE · LAGOS</span><button type="button" class="comic-next">NEXT PANEL →</button></div>
       </div>`;
     document.body.appendChild(overlay);
     captionEl = overlay.querySelector('.comic-caption-text');
