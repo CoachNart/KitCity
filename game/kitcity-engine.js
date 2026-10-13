@@ -3999,10 +3999,11 @@ const lostValueMissions=LOST_VALUE_STORY.map(story=>{
   const cast=story.cast.map((name,index)=>({name,npc:lostValueNpc(name),spot:['lvA','lvB','lvC','lvD','lvF','lvG'][index%6]}));
   const castByName=Object.fromEntries(cast.map(entry=>[entry.name,entry]));
   const splitAfter=Number.isInteger(story.splitAfter)?Math.max(0,Math.min(story.dialogue.length,story.splitAfter)):story.dialogue.length;
-  const openingLines=story.dialogue.slice(0,splitAfter),closingLines=story.dialogue.slice(splitAfter);
+  const openingLines=story.dialogue.slice(0,splitAfter),closingLines=story.dialogue.slice(splitAfter),interludeLines=story.interludeDialogue||[];
   const firstCastSpeaker=lines=>lines.map(([speaker])=>castByName[speaker]).find(Boolean);
   const openingLead=firstCastSpeaker(openingLines)||cast[0];
-  const closingLead=firstCastSpeaker(closingLines)||openingLead;
+  const interludeLead=firstCastSpeaker(interludeLines)||openingLead;
+  const closingLead=firstCastSpeaker(closingLines)||interludeLead;
   const choiceButtons=story.choices.map(choice=>({label:choice.label,onSelect:()=>{
     if(G) G.storyChoice=choice.label;
     if(story.id==='lost-value-14') Store.set(storageKey+'_lost_value_focus',choice.label);
@@ -4029,14 +4030,19 @@ const lostValueMissions=LOST_VALUE_STORY.map(story=>{
         [{t:'Record evidence',f:()=>{if(G){G.evidence[story.id]=true;}closeSheet();finishStep();}}]);
     }
   };
+  const steps=[conversationStep('Speak with '+openingLead.name,openingLines,openingLead,false)];
+  if(interludeLines.length) steps.push(conversationStep(story.interludeLabel||'Speak with the local users',interludeLines,interludeLead,false));
+  if(story.evidenceAfterDialogue){
+    if(closingLines.length) steps.push(conversationStep('Discuss the evidence with '+closingLead.name,closingLines,closingLead,true));
+    steps.push(clue);
+  }else{
+    steps.push(clue);
+    if(closingLines.length) steps.push(conversationStep('Discuss the evidence with '+closingLead.name,closingLines,closingLead,true));
+  }
   return {
     id:story.id,n:story.n,city:story.city,title:story.title,goal:story.goal,
     storyState:story.state,storyValue:story.value,storyReward:story.reward,storyFinale:!!story.finale,
-    cast:cast.map(({npc,spot})=>({npc,spot})),steps:[
-      conversationStep('Speak with '+openingLead.name,openingLines,openingLead,false),
-      clue,
-      ...(closingLines.length?[conversationStep('Discuss the evidence with '+closingLead.name,closingLines,closingLead,true)]:[])
-    ],extras:[]
+    cast:cast.map(({npc,spot})=>({npc,spot})),steps,extras:[]
   };
 });
 /* Keep the existing Lagos prologue first. The approved 15-state story arc follows
