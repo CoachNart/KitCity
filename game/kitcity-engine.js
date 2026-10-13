@@ -574,14 +574,42 @@ CITY_LOOKS.ibadan=CITY_LOOKS.lagos; CITY_LOOKS.benin=CITY_LOOKS.ph; CITY_LOOKS.c
 CITY_LOOKS.kaduna=CITY_LOOKS.kano.concat(CITY_LOOKS.abuja); CITY_LOOKS.jos=CITY_LOOKS.abuja.concat(CITY_LOOKS.kano); CITY_LOOKS.maiduguri=CITY_LOOKS.kano;
 let LOOKSC=LOOKS;
 const LK={
-  mama:{top:BRAND,bottom:'#E4572E',female:true,style:'wrapper',hair:'gele',hat:'#F6B21A',skin:'#6b3f26',detail:true},
-  suya:{top:'#f2f2f2',bottom:'#f2f2f2',style:'kaftan',hair:'cap',hat:'#ffffff',skin:'#5a3421',detail:true},
-  guy:{top:'#6a3fb5',bottom:INK,hair:'cap',hat:INK,shades:true,skin:'#8d5a3b',detail:true},
-  trader:{top:'#C7457E',bottom:'#E7D27A',female:true,style:'wrapper',hair:'gele',hat:'#2D6FB3',skin:'#7a4a2e',detail:true},
-  man:{top:'#2D6FB3',bottom:'#2a2d3a',hair:'short',skin:'#6b3f26',detail:true},
-  elder:{top:'#ffffff',bottom:'#ffffff',style:'kaftan',hair:'cap',hat:'#0B7A43',skin:'#5a3421',detail:true},
-  woman:{top:'#0897A8',bottom:'#2a2d3a',female:true,hair:'bun',skin:'#7a4a2e',detail:true},
-  clerk:{top:'#e9e9e9',bottom:'#2a2d3a',hair:'short',skin:'#8d5a3b',detail:true}
+  /* Named character looks: gender and silhouette are explicit, not inferred from dialogue. */
+  mama:{top:BRAND,bottom:'#E4572E',female:true,style:'wrapper',hair:'gele',hat:'#F6B21A',hairColor:'#17110F',skin:'#6b3f26',detail:true},
+  suya:{top:'#f2f2f2',bottom:'#f2f2f2',style:'kaftan',hair:'cap',hat:'#ffffff',hairColor:'#17110F',skin:'#5a3421',detail:true},
+  guy:{top:'#6a3fb5',bottom:INK,hair:'cap',hat:INK,hairColor:'#17110F',shades:true,skin:'#8d5a3b',detail:true},
+  trader:{top:'#C7457E',bottom:'#E7D27A',female:true,style:'wrapper',hair:'gele',hat:'#2D6FB3',hairColor:'#17110F',skin:'#7a4a2e',detail:true},
+  man:{top:'#2D6FB3',bottom:'#2a2d3a',hair:'short',hairColor:'#17110F',skin:'#6b3f26',detail:true},
+  elder:{top:'#ffffff',bottom:'#ffffff',style:'kaftan',hair:'cap',hat:'#0B7A43',hairColor:'#17110F',skin:'#5a3421',detail:true},
+  woman:{top:'#0897A8',bottom:'#2a2d3a',female:true,style:'wrapper',hair:'bun',hairColor:'#17110F',skin:'#7a4a2e',detail:true},
+  clerk:{top:'#e9e9e9',bottom:'#2a2d3a',hair:'short',hairColor:'#17110F',skin:'#8d5a3b',detail:true},
+  softstorm:{top:BRAND,bottom:'#E4572E',female:true,style:'wrapper',hair:'gele',hat:'#F6B21A',hairColor:'#17110F',skin:'#6b3f26',detail:true,logo:true},
+  abdul:{top:'#F2F2F2',bottom:'#1E232A',style:'kaftan',hair:'cap',hat:'#FFFFFF',hairColor:'#17110F',skin:'#5a3421',detail:true},
+  josephNnadi:{top:'#6A3FB5',bottom:'#181A20',hair:'cap',hat:'#171717',hairColor:'#17110F',shades:true,skin:'#8d5a3b',detail:true,backpack:true},
+  larai:{top:'#2D6FB3',bottom:'#E7D27A',female:true,style:'wrapper',hair:'gele',hat:'#C7457E',hairColor:'#17110F',skin:'#7a4a2e',detail:true},
+  unique:{top:'#1F4F82',bottom:'#E4572E',female:true,style:'wrapper',hair:'bun',hairColor:'#17110F',skin:'#8d5a3b',detail:true,logo:true},
+  smrtHuntr:{top:'#6A3FB5',bottom:'#22252B',hair:'afro',hairColor:'#17110F',skin:'#8d5a3b',detail:true,backpack:true},
+  goodness:{top:'#C7457E',bottom:'#E7D27A',female:true,style:'wrapper',hair:'bun',hairColor:'#17110F',skin:'#6b3f26',detail:true},
+  semi:{top:'#E4572E',bottom:'#2A2D3A',female:true,style:'wrapper',hair:'gele',hat:'#F6B21A',hairColor:'#17110F',skin:'#7a4a2e',detail:true},
+  blockqueen:{top:'#5A3A22',bottom:'#C7457E',female:true,style:'wrapper',hair:'gele',hat:'#0B7A43',hairColor:'#17110F',skin:'#5a3421',detail:true},
+  christol:{top:'#2D6FB3',bottom:'#20232A',hair:'short',hairColor:'#17110F',skin:'#8d5a3b',detail:true,logo:true},
+  laloba:{top:'#C7457E',bottom:'#E7D27A',female:true,style:'wrapper',hair:'gele',hat:'#E4572E',hairColor:'#17110F',skin:'#7a4a2e',detail:true},
+  kenny:{top:'#0B7A43',bottom:'#20232A',hair:'fila',hat:'#F6B21A',hairColor:'#17110F',skin:'#6b3f26',detail:true},
+  leemah:{top:'#0897A8',bottom:'#20232A',hair:'short',hairColor:'#17110F',skin:'#8d5a3b',detail:true,backpack:true},
+  cybersage:{top:'#6A3FB5',bottom:'#20232A',hair:'afro',hairColor:'#17110F',skin:'#5a3421',detail:true,backpack:true},
+  kodavic:{top:'#2D6FB3',bottom:'#20232A',hair:'fila',hat:'#0B7A43',hairColor:'#17110F',skin:'#8d5a3b',detail:true},
+  toza:{top:'#E4572E',bottom:'#20232A',hair:'short',hairColor:'#17110F',skin:'#7a4a2e',detail:true,backpack:true},
+  craftore:{top:'#0B7A43',bottom:'#20232A',hair:'cap',hat:'#FFFFFF',hairColor:'#17110F',skin:'#6b3f26',detail:true,logo:true},
+  oxnight:{top:'#1F4F82',bottom:'#181A20',hair:'afro',hairColor:'#17110F',skin:'#6b3f26',detail:true},
+  moon:{top:'#6A3FB5',bottom:'#20232A',hair:'fila',hat:'#F6B21A',hairColor:'#17110F',skin:'#7a4a2e',detail:true},
+  cryptonian:{top:'#0B7A43',bottom:'#20232A',hair:'cap',hat:'#0B7A43',hairColor:'#17110F',skin:'#5a3421',detail:true,shades:true},
+  joeSef:{top:'#2D6FB3',bottom:'#20232A',hair:'short',hairColor:'#17110F',skin:'#8d5a3b',detail:true,backpack:true},
+  theDon:{top:'#5A3A22',bottom:'#FFFFFF',style:'kaftan',hair:'turban',hat:'#0B7A43',hairColor:'#17110F',skin:'#5a3421',detail:true},
+  praise:{top:'#C7457E',bottom:'#20232A',hair:'short',hairColor:'#17110F',skin:'#8d5a3b',detail:true,logo:true},
+  bigSam:{top:'#E4572E',bottom:'#20232A',hair:'afro',hairColor:'#17110F',skin:'#6b3f26',detail:true},
+  lunaX:{top:'#0897A8',bottom:'#20232A',hair:'cap',hat:'#0897A8',hairColor:'#17110F',skin:'#7a4a2e',detail:true,shades:true},
+  reina:{top:'#2D6FB3',bottom:'#E7D27A',female:true,style:'wrapper',hair:'bun',hairColor:'#17110F',skin:'#8d5a3b',detail:true,backpack:true},
+  cclya:{top:'#0B7A43',bottom:'#C7457E',female:true,style:'wrapper',hair:'gele',hat:'#F6B21A',hairColor:'#17110F',skin:'#6b3f26',detail:true}
 };
 
 /* =====================  labels  ===================== */
@@ -2105,13 +2133,13 @@ const SUYA_ADDR='0x'+hex(20);
 const storyCastGroup=new THREE.Group();
 storyCastGroup.name='KitCity opening story cast';
 scene.add(storyCastGroup);
-const storySoftstorm=addNpcHighlight(buildPerson(LK.mama));
+const storySoftstorm=addNpcHighlight(buildPerson(LK.softstorm));
 storySoftstorm.userData.storyCharacter='Softstorm';
 storySoftstorm.userData.storyRole='The one with the card';
 storySoftstorm.position.set(9.1,.05,-30);
 storySoftstorm.rotation.y=Math.PI/2;
 storyCastGroup.add(storySoftstorm);
-const storyAbdul=addNpcHighlight(buildPerson(LK.suya));
+const storyAbdul=addNpcHighlight(buildPerson(LK.abdul));
 storyAbdul.userData.storyCharacter='IamAbdul';
 storyAbdul.userData.storyRole='The one who heard it first';
 storyAbdul.position.set(12.9,.05,-30);
@@ -2218,34 +2246,34 @@ function updateHUD(){
 
 /* =====================  missions  ===================== */
 const NPC=(name,role,color,look,stall,sign)=>({name,role,color,look,stall,sign});
-const MAMA=NPC('Softstorm','KitCity wallet kiosk','#0897A8',LK.mama,{body:'#0897A8',a:'#ffffff',b:BRAND,sub:'KitCity wallet'});
-const SUYA=NPC('IamAbdul','Best suya on the street',EMBER,LK.suya,{body:'#8E2F1B',a:'#ffffff',b:EMBER,grill:true});
-const GUY=NPC('Joseph Nnadi','Says he is your friend','#6a3fb5',LK.guy,null,'Free USDC giveaway!'); GUY.signBg='#6a3fb5'; GUY.signFg='#ffffff';
-const ALHAJA=NPC('Larai','Bureau de Change','#2D6FB3',LK.trader,{body:'#2D6FB3',a:'#ffffff',b:'#2D6FB3',sub:'Bureau de Change'});
-const CLERK=NPC('Unique','Swap counter','#1f4f82',LK.clerk,{body:'#1f4f82',a:'#ffffff',b:YELLOW,sub:'Swap counter'});
-const BRIGHT=NPC('Smrt huntr','Shows you a text message','#6a3fb5',LK.guy,null,'Check this text'); BRIGHT.signBg='#6a3fb5'; BRIGHT.signFg='#ffffff';
-const HASSAN=NPC('Goodness','Messaged you online','#C7457E',LK.man,null,'New DM'); HASSAN.signBg='#C7457E'; HASSAN.signFg='#ffffff';
-const CHIOMA=NPC('Semi','Shows you a post','#E4572E',LK.woman,null,'Airdrop alert'); CHIOMA.signBg='#E4572E'; CHIOMA.signFg='#ffffff';
-const KEEPER=NPC('Blockqueen','Guardian of secrets','#5a3a22',LK.elder,{body:'#5a3a22',a:'#ffffff',b:GREEN,sub:'Recovery vault'});
-const NOTARY=NPC('Christol','Checks your memory','#2D6FB3',LK.clerk,{body:'#2D6FB3',a:'#ffffff',b:YELLOW,sub:'Notary'});
-const MUSA=NPC('Laloba','Market trader','#C7457E',LK.woman,{body:'#C7457E',a:'#ffffff',b:'#E7D27A',sub:'Fresh yam'});
-const REG=NPC('Kenny','Passport registry','#0B7A43',LK.woman,{body:'#0B7A43',a:'#ffffff',b:BRAND,sub:'KitCity Passport'});
-const MINT=NPC('Leemah','Passport mint','#0897A8',LK.clerk,{body:'#0897A8',a:'#ffffff',b:BRAND,sub:'Free mint'});
-const CHAIR=NPC('Cybersage','Community leader','#6a3fb5',LK.trader,{body:'#6a3fb5',a:'#ffffff',b:BRAND,sub:'Community'});
-const HALL=NPC('Kodavic','Counts the votes','#2D6FB3',LK.clerk,{body:'#1f4f82',a:'#ffffff',b:BRAND,sub:'Town hall'});
-const ADA=NPC('Toza','P2P trader','#E4572E',LK.woman,{body:'#E4572E',a:'#ffffff',b:YELLOW,sub:'P2P desk'});
-const TOLA=NPC('Craftore','Bank agent','#0B7A43',LK.clerk,{body:'#0B7A43',a:'#ffffff',b:'#ffffff',sub:'Bank agent'});
+const MAMA=NPC('Softstorm','KitCity wallet kiosk','#0897A8',LK.softstorm,{body:'#0897A8',a:'#ffffff',b:BRAND,sub:'KitCity wallet'});
+const SUYA=NPC('IamAbdul','Best suya on the street',EMBER,LK.abdul,{body:'#8E2F1B',a:'#ffffff',b:EMBER,grill:true});
+const GUY=NPC('Joseph Nnadi','Says he is your friend','#6a3fb5',LK.josephNnadi,null,'Free USDC giveaway!'); GUY.signBg='#6a3fb5'; GUY.signFg='#ffffff';
+const ALHAJA=NPC('Larai','Bureau de Change','#2D6FB3',LK.larai,{body:'#2D6FB3',a:'#ffffff',b:'#2D6FB3',sub:'Bureau de Change'});
+const CLERK=NPC('Unique','Swap counter','#1f4f82',LK.unique,{body:'#1f4f82',a:'#ffffff',b:YELLOW,sub:'Swap counter'});
+const BRIGHT=NPC('Smrt huntr','Shows you a text message','#6a3fb5',LK.smrtHuntr,null,'Check this text'); BRIGHT.signBg='#6a3fb5'; BRIGHT.signFg='#ffffff';
+const HASSAN=NPC('Goodness','Messaged you online','#C7457E',LK.goodness,null,'New DM'); HASSAN.signBg='#C7457E'; HASSAN.signFg='#ffffff';
+const CHIOMA=NPC('Semi','Shows you a post','#E4572E',LK.semi,null,'Airdrop alert'); CHIOMA.signBg='#E4572E'; CHIOMA.signFg='#ffffff';
+const KEEPER=NPC('Blockqueen','Guardian of secrets','#5a3a22',LK.blockqueen,{body:'#5a3a22',a:'#ffffff',b:GREEN,sub:'Recovery vault'});
+const NOTARY=NPC('Christol','Checks your memory','#2D6FB3',LK.christol,{body:'#2D6FB3',a:'#ffffff',b:YELLOW,sub:'Notary'});
+const MUSA=NPC('Laloba','Market trader','#C7457E',LK.laloba,{body:'#C7457E',a:'#ffffff',b:'#E7D27A',sub:'Fresh yam'});
+const REG=NPC('Kenny','Passport registry','#0B7A43',LK.kenny,{body:'#0B7A43',a:'#ffffff',b:BRAND,sub:'KitCity Passport'});
+const MINT=NPC('Leemah','Passport mint','#0897A8',LK.leemah,{body:'#0897A8',a:'#ffffff',b:BRAND,sub:'Free mint'});
+const CHAIR=NPC('Cybersage','Community leader','#6a3fb5',LK.cybersage,{body:'#6a3fb5',a:'#ffffff',b:BRAND,sub:'Community'});
+const HALL=NPC('Kodavic','Counts the votes','#2D6FB3',LK.kodavic,{body:'#1f4f82',a:'#ffffff',b:BRAND,sub:'Town hall'});
+const ADA=NPC('Toza','P2P trader','#E4572E',LK.toza,{body:'#E4572E',a:'#ffffff',b:YELLOW,sub:'P2P desk'});
+const TOLA=NPC('Craftore','Bank agent','#0B7A43',LK.craftore,{body:'#0B7A43',a:'#ffffff',b:'#ffffff',sub:'Bank agent'});
 
 /* ---- extra mission characters ---- */
 const mkSign=(name,role,color,look,sign)=>{ const n=NPC(name,role,color,look,null,sign); n.signBg=color; n.signFg='#ffffff'; return n; };
-const OXNIGHT=mkSign('OxNight','Knows the street rules','#1f4f82',LK.man,'Share or keep?');
-const MOON=mkSign('Moon','Rate watcher','#6a3fb5',LK.woman,'Check the quote');
-const CRYPT=mkSign('The cryptonian','Scam veteran','#0B7A43',LK.guy,'Spot the red flag');
-const NNADI=mkSign('Joe_Sef','Backup advisor','#2D6FB3',LK.clerk,'Where to keep it');
-const DON=mkSign('The don','Careful sender','#5a3a22',LK.elder,'Test first');
-const PRAISE=mkSign('Praise','Signature checker','#C7457E',LK.trader,'Read before signing');
-const BIGSAM=mkSign('BigSam','Community organiser','#E4572E',LK.man,'Read the proposal');
-const LUNAX=mkSign('LunaX','Trusted trader','#0897A8',LK.woman,'Name must match');
+const OXNIGHT=mkSign('OxNight','Knows the street rules','#1f4f82',LK.oxnight,'Share or keep?');
+const MOON=mkSign('Moon','Rate watcher','#6a3fb5',LK.moon,'Check the quote');
+const CRYPT=mkSign('The cryptonian','Scam veteran','#0B7A43',LK.cryptonian,'Spot the red flag');
+const NNADI=mkSign('Joe_Sef','Backup advisor','#2D6FB3',LK.joeSef,'Where to keep it');
+const DON=mkSign('The don','Careful sender','#5a3a22',LK.theDon,'Test first');
+const PRAISE=mkSign('Praise','Signature checker','#C7457E',LK.praise,'Read before signing');
+const BIGSAM=mkSign('BigSam','Community organiser','#E4572E',LK.bigSam,'Read the proposal');
+const LUNAX=mkSign('LunaX','Trusted trader','#0897A8',LK.lunaX,'Name must match');
 
 /* One answer earns USDC; an incorrect answer deducts USDC. */
 function askStep(o){
@@ -2615,7 +2643,7 @@ const MISSIONS=[
     opts:[['Base',1],['Ethereum',0],['Solana',0]],
     wrong:'Your USDC is on Base. Money sent on another network does not reach your wallet, and it can be lost.',
     say:'Christol confirms Base in her app. Good. The network must match on both sides.'}),
-  taskStep({label:'Pay your design tool on Base',spot:'k',npc:mkSign('Reina','Design tools','#2D6FB3',LK.clerk,'Subscriptions'),
+  taskStep({label:'Pay your design tool on Base',spot:'k',npc:mkSign('Reina','Design tools','#2D6FB3',LK.reina,'Subscriptions'),
     intro:'Your design tool takes USDC. Choose where to pay from.',q:'Which network do you pay on?',
     opts:[['Base',1],['Ethereum',0]],
     wrong:'Your USDC balance is on Base. Paying from Ethereum would fail, because you hold nothing there.',
@@ -2652,7 +2680,7 @@ const MISSIONS=[
     tx:{title:'Deposit to exchange',amt:2,btn:'Send 2 USDC',done:'Deposit sent',note:'Naira is credited after the exchange sees the deposit.',
         rows:x=>[['To','Ola Exchange deposit',0],['Amount','2.00 USDC'],['Network',x]]},
     say:'The exchange credits your naira once the deposit is confirmed.'}),
-  taskStep({label:'Move 1 USDC to savings',spot:'k',npc:mkSign('Cclya','Savings app','#0B7A43',LK.clerk,'Savings'),
+  taskStep({label:'Move 1 USDC to savings',spot:'k',npc:mkSign('Cclya','Savings app','#0B7A43',LK.cclya,'Savings'),
     intro:'Your savings wallet is your own address. Choose where the 1 USDC goes.',q:'Which address do you send to?',
     opts:[['My own savings address',1],['An address a stranger sent you on social media',0]],
     wrong:'Never move savings to an address that someone messaged you. Only send to a wallet you control.',
