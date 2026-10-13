@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import { createStorySceneDirector } from './story-scene-director';
 import {
   authenticateEmailPassword,
   firebaseConfigured,
@@ -2854,36 +2853,6 @@ function buildStall(def,spot){
     }
   }
 }
-function placeStoryClue(def,spot){
-  spot=safeMissionSpot(spot,10,10);
-  const g=new THREE.Group(); g.position.set(spot.x,0,spot.z);
-  const wood=lam('#45352A'),paper=lam('#F4F5F0'),cyan=lam(BRAND),dark=lam('#17212A');
-  for(const x of [-1.35,1.35]){
-    const post=new THREE.Mesh(new THREE.BoxGeometry(.13,3.9,.13),wood); post.position.set(x,1.95,0); g.add(post);
-  }
-  const board=new THREE.Mesh(new THREE.BoxGeometry(3.15,3.55,.16),wood); board.position.set(0,3.45,0); g.add(board);
-  const sheet=new THREE.Mesh(new THREE.BoxGeometry(2.72,3.1,.08),paper); sheet.position.set(0,3.48,.13); g.add(sheet);
-  const mark=new THREE.Mesh(new THREE.BoxGeometry(.68,.68,.08),cyan); mark.position.set(-.76,4.45,.2); g.add(mark);
-  const barA=new THREE.Mesh(new THREE.BoxGeometry(1.35,.1,.06),dark); barA.position.set(.42,4.55,.2); g.add(barA);
-  const barB=new THREE.Mesh(new THREE.BoxGeometry(1.75,.08,.06),dark); barB.position.set(.18,4.25,.2); g.add(barB);
-  for(let row=0;row<4;row++){
-    const line=new THREE.Mesh(new THREE.BoxGeometry(2.1-row*.18,.055,.05),dark);
-    line.position.set(0,3.72-row*.27,.2); g.add(line);
-  }
-  if(def.id==='m01-transaction-record'){
-    /* A distinct verification kiosk makes this stop feel like a place, not another floating clue. */
-    const consoleBody=new THREE.Mesh(new THREE.BoxGeometry(2.8,1.25,1.35),lam('#26343E'));
-    consoleBody.position.set(0,.63,2.05);g.add(consoleBody);
-    const screen=new THREE.Mesh(new THREE.BoxGeometry(2.05,1.25,.1),lam('#0D202B',{emissive:0x073C4A,emissiveIntensity:.7}));
-    screen.position.set(0,2.05,1.34);screen.rotation.x=-.12;g.add(screen);
-    const screenLine=new THREE.Mesh(new THREE.BoxGeometry(1.4,.09,.05),lam(BRAND));screenLine.position.set(0,2.25,1.27);g.add(screenLine);
-    const screenDot=new THREE.Mesh(new THREE.CircleGeometry(.12,12),lam('#55E6C1'));screenDot.position.set(.7,1.85,1.27);g.add(screenDot);
-    const foot=new THREE.Mesh(new THREE.BoxGeometry(3.4,.15,1.7),lam('#17232B'));foot.position.set(0,.08,2.05);g.add(foot);
-  }
-  missionGroup.add(g);
-  const sign=label(tr(def.sign||def.title),BRAND,'#071827',1.25); sign.position.set(spot.x,6.6,spot.z); missionGroup.add(sign);
-  return {x:spot.x,z:spot.z,r:6.5,clue:true};
-}
 function placeMissionEvidence(def,mission,spot){
   spot=safeMissionSpot(spot,10,10);
   const g=new THREE.Group();g.position.set(spot.x,0,spot.z);
@@ -2977,25 +2946,6 @@ function safeMissionSpot(spot,offsetX=0,offsetZ=0){
     z:safeAxis(spot.z,'z',offsetZ)
   });
 }
-function placeStoryOffice(spot){
-  spot=safeMissionSpot(spot);
-  /* The office is offset from its authored anchor, so validate the final building
-     position too; otherwise the redesign can push its footprint back onto a road. */
-  const officeSpot=safeMissionSpot({x:spot.x,z:spot.z-13,f:spot.f});
-  /* A small open-front office gives Abdul a clear, separate destination from Softstorm. */
-  const office=new THREE.Group();
-  office.position.set(officeSpot.x,0,officeSpot.z);
-  const floor=new THREE.Mesh(new THREE.BoxGeometry(8,.22,6),lam('#39464F'));floor.position.set(0,.11,0);office.add(floor);
-  const back=new THREE.Mesh(new THREE.BoxGeometry(8,4,.25),lam('#23313A'));back.position.set(0,2,-2.9);office.add(back);
-  const left=new THREE.Mesh(new THREE.BoxGeometry(.25,4,6),lam('#2D3D46'));left.position.set(-3.9,2,0);office.add(left);
-  const right=new THREE.Mesh(new THREE.BoxGeometry(.25,4,6),lam('#2D3D46'));right.position.set(3.9,2,0);office.add(right);
-  const roof=new THREE.Mesh(new THREE.BoxGeometry(8.4,.25,6.4),lam('#17242C'));roof.position.set(0,4.1,0);office.add(roof);
-  const desk=new THREE.Mesh(new THREE.BoxGeometry(3.2,1,1.1),lam('#5A4638'));desk.position.set(0,.72,1.4);office.add(desk);
-  const terminal=new THREE.Mesh(new THREE.BoxGeometry(1.25,.85,.12),lam('#0D202B',{emissive:0x073C4A,emissiveIntensity:.6}));terminal.position.set(0,1.65,1.05);office.add(terminal);
-  const accent=new THREE.Mesh(new THREE.BoxGeometry(1.1,.07,.05),lam(BRAND));accent.position.set(0,1.78,.98);office.add(accent);
-  missionGroup.add(office);
-  const sign=label("IAMABDUL'S OFFICE",BRAND,'#071827',1.35);sign.position.set(officeSpot.x,6.4,officeSpot.z);missionGroup.add(sign);
-}
 function placeNPC(def,spot){
   spot=safeMissionSpot(spot);
   if(def.stall) buildStall(def,spot);
@@ -3043,31 +2993,6 @@ const S={phase:'title',modal:false};
 let G=null,ents=[],goal=null,nearEnt=null;
 const storyNPCActors=[];
 let hubTab='missions',hubCity='lagos',resetArm=false;
-const SUYA_ADDR='0x'+hex(20);
-// Dedicated cinematic actors: the regular Softstorm/IamAbdul NPC definitions are stalls,
- // so searching missionGroup alone cannot ever produce two visible people in the opening scene.
-const storyCastGroup=new THREE.Group();
-storyCastGroup.name='KitCity opening story cast';
-scene.add(storyCastGroup);
-const storySoftstorm=buildPerson(LK.mama);
-storySoftstorm.userData.storyCharacter='Softstorm';
-storySoftstorm.userData.storyRole='The one with the card';
-storySoftstorm.position.set(25,.05,-30);
-storySoftstorm.rotation.y=Math.PI/2;
-storyCastGroup.add(storySoftstorm);
-const storyAbdul=buildPerson(LK.suya);
-storyAbdul.userData.storyCharacter='IamAbdul';
-storyAbdul.userData.storyRole='The one who heard it first';
-storyAbdul.position.set(33,.05,-30);
-storyAbdul.rotation.y=-Math.PI/2;
-storyCastGroup.add(storyAbdul);
-storyCastGroup.visible=false;
-const storyDirector=createStorySceneDirector({camera,player,getCharacter(name){
-  const staged=name==='Softstorm'?storySoftstorm:name==='IamAbdul'?storyAbdul:null;
-  if(storyCastGroup.visible&&staged) return staged;
-  let found=null;missionGroup.traverse(o=>{if(!found&&o.userData&&o.userData.storyCharacter===name) found=o;});return found;
-},animateCharacter:animatePerson,setModal(value){S.modal=value;Snd.duck(value);}});
-
 /* ===================== sheet UI ===================== */
 const modalEl=$('#modal'),sheetEl=$('#sheet'),talkBtn=$('#talkBtn');
 let cbs=[],toastT=0,chat={npc:null,log:[]},sheetTok=0,pendingReveal=null,hazardSpeechActive=false,pendingFeetLine=false;
@@ -3289,7 +3214,7 @@ const STORY_NPCS=Object.create(null);
 const MISSIONS=[];
 const MBY=Object.create(null);
 /* TEST ONLY: set false before any production release to restore sequential mission locks. */
-const TEST_UNLOCK_ALL_MISSIONS = true;
+const TEST_UNLOCK_ALL_MISSIONS = false;
 /* Progress is tracked by completed missions and the in-game wallet balance. */
 const isUnlocked=m=>{ if(TEST_UNLOCK_ALL_MISSIONS) return true; const k=MISSIONS.indexOf(m); return k===0||!!P.done[MISSIONS[k-1].id]; };
 
@@ -3347,137 +3272,63 @@ function bannerSprite(text,sub){
  g.fillStyle='#9deef5';g.font='700 24px Arial';g.fillText(sub.toUpperCase(),c.width/2,132,700);
  const t=new THREE.CanvasTexture(c);t.needsUpdate=true;const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:t,transparent:true,depthTest:true}));sp.scale.set(12,3,1);return sp;
 }
+function getStoryNpc(value){
+  const name=typeof value==='string'?value:(value&&value.name);
+  if(!name) return value&&typeof value==='object'?value:null;
+  if(!STORY_NPCS[name]){
+    const npc=NPC(name,'Resident',BRAND,LK.guy,null,name);
+    npc.name=name;npc.originalName=name;npc.signBg=BRAND;npc.signFg='#ffffff';
+    STORY_NPCS[name]=npc;
+  }
+  return STORY_NPCS[name];
+}
 function loadStep(){
-  clearGroup(missionGroup); storyNPCActors.length=0; colliders.length=cityCols; smoke=[]; ents=[]; goal=null;
-  const m=G.m,st=m.steps[G.i];
-  if(m.id==='m01'&&st.kind==='character'&&G.i<m.characterStepCount){
-    let target=null;
-    const fallbackSpots=['b','c','d','e','f','g','h'];
-    if(m.id==='m01') placeStoryOffice(SPOTS.story);
-    m.npcs.forEach((name,index)=>{
-      const npc=STORY_NPCS[name];
-      const spotKey=index===0?'a':index===1?'story':fallbackSpots[(index-2)%fallbackSpots.length];
-      const entity=placeNPC(npc,SPOTS[spotKey]||SPOTS.a);
-      entity.talk=()=>{ if(st.npc&&st.npc.name===name) st.run(); };
-      entity.active=()=>!!(st.npc&&st.npc.name===name);
-      ents.push(entity);
-      if(st.npc&&st.npc.name===name){entity._missionTarget=true;target=entity;}
-    });
-    goal=target||ents[0]||null;
-  }else if(m.id==='m03'){
-    // Keep the complete Oyo scene physically present: Unique, Smrt huntr and Timi.
-    const sceneAnchor=safeMissionSpot(SPOTS[st.spot]||SPOTS.a);
-    const sceneCast=[
-      {name:'Unique',offset:[0,0]},
-      {name:'Smrt huntr',offset:[4,-2]},
-      {name:'Timi',offset:[-4,-2]}
-    ];
-    sceneCast.forEach(({name,offset},index)=>{
-      const npc=STORY_NPCS[name];
-      if(!npc) return;
-      const entity=placeNPC(npc,{x:sceneAnchor.x+offset[0],z:sceneAnchor.z+offset[1],f:index===0?sceneAnchor.f:-sceneAnchor.f});
-      entity.talk=()=>{ if(st.npc&&st.npc.name===name) st.run(); };
-      entity.active=()=>!!(st.npc&&st.npc.name===name);
-      ents.push(entity);
-      if(st.npc&&st.npc.name===name){entity._missionTarget=true;goal=entity;}
-    });
-    if(st.kind==='clue'||st.kind==='challenge'){
-      const clue=placeMissionEvidence(st,m,SPOTS[st.spot]||SPOTS.execution);
-      clue.talk=()=>st.run();clue.active=()=>true;ents.push(clue);goal=clue;
-    }
+  clearGroup(missionGroup);storyNPCActors.length=0;colliders.length=cityCols;smoke=[];ents=[];goal=null;
+  const m=G.m,st=m.steps[G.i];if(!st)return;
+  const castNames=[];
+  const addCastName=value=>{const name=typeof value==='string'?value:(value&&value.name);if(name&&!castNames.includes(name))castNames.push(name);};
+  (m.npcs||[]).forEach(addCastName);(m.sceneCast||[]).forEach(addCastName);
+  (m.steps||[]).forEach(step=>{addCastName(step.npc);(step.npcs||[]).forEach(addCastName);});
+  const activeName=st.npc&&(st.npc.name||st.npc);
+  if(activeName&&!castNames.includes(activeName))castNames.push(activeName);
+  const anchor=safeMissionSpot(SPOTS[st.spot]||SPOTS.a);
+  const offsets=[[0,0],[4,-2],[-4,-2],[0,4],[6,3],[-6,3],[0,-6],[8,-1],[-8,-1]];
+  if(st.kind==='clue'||st.kind==='challenge'){
+    const clue=placeMissionEvidence(st,m,SPOTS[st.spot]||SPOTS.execution);
+    clue.talk=()=>st.run();clue.active=()=>true;ents.push(clue);goal=clue;
   }else{
-    // Stage the full mission cast together in every scene, not only the speaking NPC.
-    // The current interaction target remains the only active character; other cast
-    // members stay visible for continuity without hijacking the objective.
-    const castNames=[];
-    const addCastName=value=>{const name=typeof value==='string'?value:(value&&value.name);if(name&&!castNames.includes(name))castNames.push(name);};
-    (m.npcs||[]).forEach(addCastName);
-    (m.sceneCast||[]).forEach(addCastName);
-    /* Some missions keep supporting characters only on individual steps. Include those
-       step-level cast members too, otherwise they never spawn at their mission centre. */
-    (m.steps||[]).forEach(step=>{addCastName(step.npc);(step.npcs||[]).forEach(addCastName);});
-    const activeName=st.npc&&(st.npc.name||st.npc);
-    const activeOriginalName=st.npc&&typeof st.npc==='object'&&(st.npc.originalName||st.npc.name);
-    if(activeName&&!castNames.includes(activeName)&&!(m.id==='m01'&&(st.kind==='clue'||st.kind==='challenge')))castNames.push(activeName);
-    const anchor=safeMissionSpot(SPOTS[st.spot]||SPOTS.a);
-    const castOffsets=[[0,0],[4,-2],[-4,-2],[0,4],[6,3],[-6,3],[0,-6],[8,-1],[-8,-1]];
     castNames.forEach((name,index)=>{
-      const npc=STORY_NPCS[name];
-      if(!npc)return;
-      const offset=castOffsets[index%castOffsets.length];
-      const castSpot={x:anchor.x+offset[0],z:anchor.z+offset[1],f:index===0?anchor.f:-anchor.f};
-      const entity=placeNPC(npc,castSpot);
-      /* Dialogue aliases can change npc.name at runtime. Match the active target
-         by object identity and canonical/original name as well as display name. */
-      const isTarget=st.kind==='character'&&!!st.npc&&(
-        st.npc===npc ||
-        String(activeOriginalName||'').toLowerCase()===String(name).toLowerCase() ||
-        String(activeName||'').toLowerCase()===String(name).toLowerCase() ||
-        String(npc.originalName||'').toLowerCase()===String(activeName||'').toLowerCase()
+      const npc=getStoryNpc(name);if(!npc)return;
+      const offset=offsets[index%offsets.length];
+      const entity=placeNPC(npc,{x:anchor.x+offset[0],z:anchor.z+offset[1],f:index===0?anchor.f:-anchor.f});
+      const isTarget=st.kind==='character'&&(
+        st.npc===npc||
+        String(activeName||'').toLowerCase()===String(name).toLowerCase()||
+        String(npc.originalName||npc.name).toLowerCase()===String(activeName||'').toLowerCase()
       );
       if(st.kind==='character'){
-        entity.talk=()=>{if(isTarget)st.run();};
-        entity.active=()=>isTarget;
+        entity.talk=()=>{if(isTarget)st.run();};entity.active=()=>isTarget;
         if(isTarget){entity._missionTarget=true;goal=entity;}
-      }else if(st.kind==='clue'||st.kind==='challenge'){
-        entity.talk=()=>{};
-        entity.active=()=>false;
-      }
+      }else{entity.talk=()=>{};entity.active=()=>false;}
       ents.push(entity);
     });
-    if(st.kind==='clue'||st.kind==='challenge'){
-      const clue=m.id==='m01'?placeStoryClue(st,SPOTS[st.spot]||SPOTS.execution):placeMissionEvidence(st,m,SPOTS[st.spot]||SPOTS.execution);
-      clue.talk=()=>st.run();clue.active=()=>true;ents.push(clue);goal=clue;
-    }else if(!goal){
-      goal=ents[0]||null;
+    if(!goal&&st.kind==='character'){
+      const targetNpc=getStoryNpc(st.npc),targetSpot=safeMissionSpot(SPOTS[st.spot]||SPOTS.a);
+      const target=targetNpc?placeNPC(targetNpc,targetSpot):{x:targetSpot.x,z:targetSpot.z,r:18};
+      target.r=Math.max(Number(target.r)||0,24);target.talk=()=>st.run();target.active=()=>true;target._missionTarget=true;
+      ents.unshift(target);goal=target;
     }
-    if(m.id==='m01'&&st.id==='m01-transaction-record'){
-      /* Abdul meets the player at the separate verification centre for the guided check. */
-      const guide=placeNPC(STORY_NPCS.IamAbdul,SPOTS.ledgerGuide);
-      guide.active=()=>false; guide.talk=()=>{}; ents.push(guide);
-    }
-    if(m.id==='m01'&&(st.id==='m01-screenshot'||st.id==='m01-shop-records')){
-      /* Keep Softstorm physically at the shop while the player inspects the evidence there. */
-      const shopkeeper=placeNPC(STORY_NPCS.Softstorm,SPOTS.a);
-      shopkeeper.active=()=>false; shopkeeper.talk=()=>{}; ents.push(shopkeeper);
-    }
-  }
-  /* Hard fallback: mission steps must always have an interactable conversation target,
-     even if a character alias is absent from STORY_NPCS. */
-  if(st.kind==='character'&&!ents.some(e=>e._missionTarget)){
-    const targetNpc=typeof st.npc==='object'?st.npc:STORY_NPCS[st.npc||st.characterName];
-    const targetSpot=safeMissionSpot(SPOTS[st.spot]||SPOTS.a);
-    let target;
-    if(targetNpc){
-      target=placeNPC(targetNpc,targetSpot);
-    }else{
-      /* Last resort for a missing registry entry: retain a usable interaction at the
-         objective anchor rather than leaving the player stranded without a Talk button. */
-      target={x:targetSpot.x,z:targetSpot.z,r:18};
-    }
-    target.r=Math.max(Number(target.r)||0,24);
-    target.talk=()=>st.run();
-    target.active=()=>true;
-    target._missionTarget=true;
-    ents.unshift(target);
-    goal=target;
-  }
-  /* Keep every tagged mission target interactable after any dialogue-name remapping.
-     A larger radius prevents the Talk control disappearing at redesigned mission centres. */
-  const missionTarget=ents.find(e=>e._missionTarget&&typeof e.talk==='function');
-  if(missionTarget){
-    missionTarget.active=()=>true;
-    missionTarget.r=Math.max(Number(missionTarget.r)||0,24);
   }
   for(const ex of (m.extras||[])){
-    if(G.used[ex.id]) continue;
-    const entity=placeNPC(ex.npc,ex.spot); entity.ex=ex; entity.talk=()=>ex.run(entity); entity.active=()=>!G.used[ex.id]; ents.push(entity);
+    if(G.used[ex.id])continue;
+    const entity=placeNPC(getStoryNpc(ex.npc),ex.spot);entity.ex=ex;entity.talk=()=>ex.run(entity);entity.active=()=>!G.used[ex.id];ents.push(entity);
   }
   updateHUD();
-  if(goal){ beacon.visible=true; beacon.position.set(goal.object?.position?.x??goal.x,0,goal.object?.position?.z??goal.z); }
+  if(goal){beacon.visible=true;beacon.position.set(goal.object?.position?.x??goal.x,0,goal.object?.position?.z??goal.z);}
   const compass=$('#compass');
   if(goal&&compass){compass.classList.remove('hidden');compass.classList.add('force-visible');compass.style.display='grid';compass.style.visibility='visible';compass.style.opacity='1';}
 }
+
 function startMission(id,restart){
   const m=MBY[id];
   if(!m||!isUnlocked(m)){ toast('Finish the previous city journey first'); renderHub(); return; }
@@ -3492,22 +3343,8 @@ function startMission(id,restart){
     S.phase='play'; closeSheet(); Snd.setMode('play'); lastLoc=''; resetPlayer();
     $('#loading').classList.add('hidden');
     updateHUD();
-    if(m.id==='m01'&&P.chroniclesPrologueVersion!==2){
-      missionGroup.visible=false;
-      storyCastGroup.visible=true;
-      storyDirector.playOpening(()=>{
-        storyCastGroup.visible=false;
-        missionGroup.visible=true;
-        P.chroniclesPrologueSeen=true;
-        P.chroniclesPrologueVersion=2;
-        save();
-        loadStep();
-        toast('Your turn. Walk up to someone and press Talk when you are ready.',{duration:3600});
-      });
-    }else{
-      loadStep();
-      toast('Look around. Walk up to someone and press Talk when you are ready.',{duration:3600});
-    }
+    loadStep();
+    toast('Look around. Walk up to someone and press Talk when you are ready.',{duration:3600});
   },60);
 }
 function finishStep(){
@@ -4283,7 +4120,6 @@ function update(dt,time){
   camera.position.lerp(camDesired,1-Math.pow(.0004,dt));
   if(shake>0){ camera.position.x+=(Math.random()-.5)*shake; camera.position.y+=(Math.random()-.5)*shake*.5; shake=Math.max(0,shake-dt*2); }
   camera.lookAt(camTarget.x,1.5,camTarget.z-1);
-  storyDirector.update(dt,time);
   fadeBuildings(dt,true);
 }
 function tick(){
