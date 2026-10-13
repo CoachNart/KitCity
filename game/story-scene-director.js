@@ -164,10 +164,12 @@ export function createStorySceneDirector({ camera, player, getCharacter, getChar
         const maxZ = Math.max(...castPoints.map(point => point.z));
         target = new camera.position.constructor((minX + maxX) / 2, 0, (minZ + maxZ) / 2);
         const spanX = maxX - minX, spanZ = maxZ - minZ;
+        // Pull the camera back enough to keep every staged character readable
+        // on a narrow phone screen; tight framing made the cast fill the screen.
         const distance = mobilePortrait
-          ? Math.max(25, spanX * 1.8 + 16, spanZ * 1.8 + 16)
-          : Math.max(17, spanX * 1.25 + 9, spanZ * 1.25 + 9);
-        const height = mobilePortrait ? Math.max(8, distance * .28) : Math.max(5, distance * .25);
+          ? Math.max(38, spanX * 2.5 + 24, spanZ * 2.5 + 24)
+          : Math.max(24, spanX * 1.65 + 16, spanZ * 1.65 + 16);
+        const height = mobilePortrait ? Math.max(10, distance * .25) : Math.max(7, distance * .22);
         position = target.clone().add(new camera.position.constructor(0, height, distance));
       } else {
         target = worldPosition(speaker && getCharacter(speaker)) || hero || soft || abdul || target;
