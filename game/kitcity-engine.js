@@ -4001,8 +4001,9 @@ const lostValueMissions=LOST_VALUE_STORY.map(story=>{
   const lead=cast[0];
   const dialogueHtml=story.dialogue.map(([speaker,line])=>'<p><b>'+lostValueEscape(speaker)+'</b>: '+lostValueEscape(line)+'</p>').join('');
   const choiceButtons=story.choices.map(choice=>({t:choice.label,f:()=>{
-    const reply='<p><b>'+lostValueEscape(choice.speaker)+'</b>: '+lostValueEscape(choice.reply)+'</p>';
-    talk(castByName[choice.speaker]?.npc||lead.npc,reply,[{t:'Continue',f:finishStep}]);
+    if(G) G.storyChoice=choice.label;
+    if(story.id==='lost-value-14') Store.set(storageKey+'_lost_value_focus',choice.label);
+    finishStep();
   }}));
   const clue={
     kind:'clue',label:story.task,spot:'lvE',title:story.evidenceTitle,sign:story.evidenceTitle.toUpperCase(),
