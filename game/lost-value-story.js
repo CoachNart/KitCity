@@ -1,0 +1,430 @@
+/**
+ * KITCITY: THE LOST VALUE
+ * Approved story arc data. Keep dialogue and mission intent aligned with the
+ * approved script; do not paraphrase or invent replacement story beats here.
+ */
+export const LOST_VALUE_STORY = [
+  {
+    id:'lost-value-01', n:2, state:'Lagos State', city:'lagos', title:'The First Promise',
+    goal:'Introduce the original promise of Web3 through a real problem, rather than a lecture.',
+    value:'PURPOSE', cast:['Softstorm','IamAbdul','Local Trader'],
+    dialogue:[
+      ['Local Trader','I did everything they told me to do. Connected my wallet, paid the fee, joined the group. Now the project has disappeared.'],
+      ['Customer','You people always say DYOR after everything don finish.'],
+      ['PLAYER','What happened to them?'],
+      ['Softstorm','Same thing that keeps happening. Somebody promises people an opportunity. People trust the promise. Then everybody starts looking for somebody else to blame.'],
+      ['PLAYER','So Web3 is a scam?'],
+      ['Softstorm','If everything was a scam, people wouldn’t still be here trying to build something useful.'],
+      ['IamAbdul','But if the good ones keep promising and the bad ones keep collecting, how is anybody supposed to know the difference?'],
+      ['Softstorm','That’s the question we should be asking.'],
+      ['NOTICEBOARD','THE ORIGINAL PROMISE — Own what you create. Participate without asking permission from a gatekeeper. Verify what you can. Build things people can use. LAST UPDATED: UNKNOWN'],
+      ['PLAYER','These promises sound good. So what went wrong?'],
+      ['IamAbdul','Maybe people stopped caring about the promises.'],
+      ['Softstorm','Or maybe they discovered they could make more money selling the promise than keeping it.'],
+      ['Softstorm','Don’t decide who’s right yet. Find out what happened to the people who believed in it.']
+    ],
+    choices:[
+      {label:'Ask Softstorm to explain the noticeboard',speaker:'Softstorm',reply:'You cannot restore something you don’t understand. Find out what happened to the people who believed in it.'},
+      {label:'Ask IamAbdul what he thinks went wrong',speaker:'IamAbdul',reply:'I don’t know yet. But if people keep paying for promises, somebody needs to check what was actually delivered.'}
+    ],
+    task:'Inspect the original promise noticeboard and return to Softstorm.',
+    evidenceTitle:'The Original Promise', evidenceBody:'Own what you create. Participate without asking permission from a gatekeeper. Verify what you can. Build things people can use. The noticeboard has no last-updated date.',
+    reward:'You cannot restore something you don’t understand.'
+  },
+  {
+    id:'lost-value-02', n:3, state:'Oyo State', city:'ibadan', title:'The Price of Trust',
+    goal:'Show how trust can be exploited when people rely on reputation instead of evidence.',
+    value:'ACCOUNTABILITY', cast:['Joseph','Larai'],
+    dialogue:[
+      ['Larai','You told everybody the project was safe.'],
+      ['Joseph','I shared what the founder told me. I didn’t know they were going to disappear.'],
+      ['Larai','But people trusted you. Some of them used their school money.'],
+      ['Joseph','And you think I don’t know that?'],
+      ['PLAYER','What happened here?'],
+      ['Joseph','A project promised to fund local builders. People contributed money, ideas, and time. When it was time to deliver, the team vanished.'],
+      ['Larai','And now Joseph says he didn’t know.'],
+      ['Joseph','Because I didn’t!'],
+      ['PLAYER','Did anyone check the project before contributing?'],
+      ['Larai','We checked their page. Their followers. Their partners. They had testimonials.'],
+      ['Joseph','Even people we respected vouched for them.'],
+      ['PLAYER','But did anyone verify what they had actually built?'],
+      ['PLAYER','So we should trust nobody?'],
+      ['Larai','No. Ask better questions. Give people room to prove themselves. And don’t confuse popularity with proof.'],
+      ['Joseph','I thought trusting the right people was enough.'],
+      ['Larai','Trusting people isn’t the problem. Making trust a substitute for evidence is.']
+    ],
+    choices:[
+      {label:'Ask Joseph to show the original project records',speaker:'Joseph',reply:'I thought trusting the right people was enough. I’ll show you the records we still have.'},
+      {label:'Ask Larai to show the community evidence',speaker:'Larai',reply:'Trusting people isn’t the problem. Making trust a substitute for evidence is. Let’s inspect what we can verify.'}
+    ],
+    task:'Review the project page and identify the missing delivery evidence.',
+    evidenceTitle:'Project Promise Record', evidenceBody:'Thousands of future users. Major partnerships. Guaranteed community rewards. Verified work: insufficient evidence.',
+    reward:'Trust matters. Evidence matters too.'
+  },
+  {
+    id:'lost-value-03', n:4, state:'Osun State', city:'osun', title:'The Empty Promise',
+    goal:'Explore the difference between speculation and real utility.',
+    value:'UTILITY', cast:['Unique','Smrt huntr'],
+    dialogue:[
+      ['Unique','Welcome! This is the next generation of decentralized community infrastructure.'],
+      ['Smrt huntr','Nice presentation. Can I use it?'],
+      ['Unique','The full release is coming soon.'],
+      ['Smrt huntr','What about the current version?'],
+      ['Unique','We’re still polishing it.'],
+      ['Smrt huntr','And the version before this one?'],
+      ['Unique','That was a test.'],
+      ['Smrt huntr','And the one before that?'],
+      ['Unique','An early experiment.'],
+      ['Smrt huntr','At this point, even the experiments are in beta.'],
+      ['PLAYER','Why keep announcing products that aren’t ready?'],
+      ['Unique','Attention is difficult to get. If we wait until everything is perfect, nobody will notice us.'],
+      ['Smrt huntr','Nobody is asking you to be perfect. We’re asking you to make something that works.'],
+      ['Unique','You think it’s that simple? Builders need funding. Funding needs attention. Attention comes from announcements.'],
+      ['Smrt huntr','Then what happens when the announcements become the product?'],
+      ['PLAYER','There’s nothing wrong with raising money for something you’re building. But people need to know what exists now and what’s still a promise.'],
+      ['Unique','If I tell people the truth about how early the product is, they might leave.'],
+      ['Smrt huntr','And if you don’t tell them, they might never trust another builder again.']
+    ],
+    choices:[
+      {label:'Publish working features and the unfinished roadmap',speaker:'PLAYER',reply:'People need to know what exists now and what’s still a promise.'},
+      {label:'Add a public progress tracker',speaker:'Smrt huntr',reply:'Nobody is asking you to be perfect. We’re asking you to make something that works.'}
+    ],
+    task:'Test the demo and record which promised features actually work.',
+    evidenceTitle:'Product Demo Review', evidenceBody:'Announced features: 8. Working features: 2. Verified user benefit: limited.',
+    reward:'A promise can attract attention. Only delivery can justify it.'
+  },
+  {
+    id:'lost-value-04', n:5, state:'Ekiti State', city:'adoekiti', title:'The People Who Built It',
+    goal:'Reveal how contributors can create value without receiving recognition, ownership, or fair rewards.',
+    value:'CONTRIBUTION', cast:['Goodness','Semi'],
+    dialogue:[
+      ['Goodness','We built the first version in three months.'],
+      ['Semi','Four months.'],
+      ['Goodness','Four months, then. We worked every weekend. Some of us paid for tools ourselves.'],
+      ['PLAYER','What happened?'],
+      ['Semi','The project started making money. Then the founder changed the access permissions.'],
+      ['Goodness','Our names disappeared from the credits. The people who built the product couldn’t even update it anymore.'],
+      ['PLAYER','Did you agree to give up control?'],
+      ['Goodness','No.'],
+      ['Semi','We thought contributing meant we were building something together.'],
+      ['Goodness','But the people controlling the system got to decide what our contributions meant.'],
+      ['PLAYER','Does contributing mean you automatically own part of a project?'],
+      ['Semi','No. Agreements matter. Some people contribute for payment, some for experience, some because they believe in the mission.'],
+      ['Goodness','But people should know what they’re agreeing to before they give their time away.'],
+      ['PLAYER','And if the agreement changes?'],
+      ['Goodness','Then the people affected deserve a say. At the very least, they deserve the truth.']
+    ],
+    choices:[
+      {label:'Review the contribution record',speaker:'Semi',reply:'People should know what they’re agreeing to before they give their time away.'},
+      {label:'Submit a public contribution report',speaker:'Goodness',reply:'The people affected deserve a say. At the very least, they deserve the truth.'}
+    ],
+    task:'Review the contribution record and submit a public report naming the original contributors.',
+    evidenceTitle:'Contribution Record', evidenceBody:'Product design: Goodness. Testing and documentation: Semi. Early development: community contributors. Current control: restricted.',
+    reward:'A healthy ecosystem recognises the people who make it possible.'
+  },
+  {
+    id:'lost-value-05', n:6, state:'Delta State', city:'asaba', title:'Who Owns the Work?',
+    goal:'Distinguish between owning a token, controlling a system, and having meaningful ownership.',
+    value:'OWNERSHIP', cast:['Blockqueen','Christol'],
+    dialogue:[
+      ['Blockqueen','The community owns this project.'],
+      ['Christol','Then why can’t the community change anything?'],
+      ['Blockqueen','Because the admin controls the permissions.'],
+      ['Christol','Who controls the admin?'],
+      ['PLAYER','What exactly does the community own?'],
+      ['PLAYER','Did the community receive the control it was promised?'],
+      ['Blockqueen','People bought the token because they believed they were part of something.'],
+      ['Christol','Owning a token and controlling a system aren’t automatically the same thing.'],
+      ['Blockqueen','So the token means nothing?'],
+      ['Christol','That’s not what I’m saying. A token can give access, rights, or a role in governance. But those rights have to exist in practice.'],
+      ['PLAYER','Then the real question isn’t just who owns the token.'],
+      ['Christol','It’s what ownership allows them to do.']
+    ],
+    choices:[
+      {label:'Inspect the project permissions',speaker:'PLAYER',reply:'The real question isn’t just who owns the token. It’s what ownership allows people to do.'},
+      {label:'Compare advertised ownership with actual control',speaker:'Christol',reply:'A token can give access, rights, or a role in governance. But those rights have to exist in practice.'}
+    ],
+    task:'Inspect the project permissions and identify a promised right the community never received.',
+    evidenceTitle:'Ownership and Access Audit', evidenceBody:'Token holders: 4,800. Administrators: 2. Community proposals accepted: 0. Critical settings: controlled by admin.',
+    reward:'Ownership means more than holding an asset. Understand the rights attached to it.'
+  },
+  {
+    id:'lost-value-06', n:7, state:'Anambra State', city:'anambra', title:'The Exit',
+    goal:'Explore extractive behaviour and the consequences of treating communities as sources of money.',
+    value:'INTEGRITY', cast:['Laloba','BigSam'],
+    dialogue:[
+      ['Laloba','You said you were building with us.'],
+      ['BigSam','I was.'],
+      ['Laloba','Then why did you sell everything the moment the price went up?'],
+      ['BigSam','I invested my money. I’m allowed to sell.'],
+      ['Laloba','You told people to hold because you believed in the project!'],
+      ['BigSam','I did believe in it. That doesn’t mean I can’t take profit.'],
+      ['PLAYER','Did you tell them you were planning to sell?'],
+      ['BigSam','People act like taking profit is a crime. Nobody owes you a green chart.'],
+      ['Laloba','Taking profit isn’t the issue. Encouraging people to trust your long-term commitment while hiding information that changes the situation is the issue.'],
+      ['BigSam','Everybody is responsible for their own money.'],
+      ['PLAYER','True. But responsibility doesn’t disappear just because somebody else made a decision.'],
+      ['BigSam','So what do you want me to do?']
+    ],
+    choices:[
+      {label:'Publish the claims and verified transactions',speaker:'PLAYER',reply:'Publish what can be verified. Don’t label a sale a crime without evidence; show the claims and the timing.'},
+      {label:'Hold a public meeting to present evidence',speaker:'Laloba',reply:'Taking profit isn’t the issue. Misleading the people who trusted you is the issue.'}
+    ],
+    task:'Compare public statements with the verified transaction history and record the evidence.',
+    evidenceTitle:'Public Claims and Transaction Record', evidenceBody:'Public message: “We are here for the long term.” Verified transaction: large position sold before a major announcement. The record shows timing, not by itself proof of a crime.',
+    reward:'Taking a profit isn’t the same as misleading the people who trusted you.'
+  },
+  {
+    id:'lost-value-07', n:8, state:'Enugu State', city:'enugu', title:'The Community That Disappeared',
+    goal:'Show how communities become disposable when engagement matters more than people.',
+    value:'COMMUNITY', cast:['LunaX','OxNight'],
+    dialogue:[
+      ['LunaX','At one point, you couldn’t find a seat in here.'],
+      ['OxNight','Events every week. Spaces every night. Everybody had something to say.'],
+      ['PLAYER','What happened?'],
+      ['LunaX','The rewards stopped.'],
+      ['OxNight','And most of the people stopped showing up.'],
+      ['LunaX','Some of them were only here for the rewards. But others were here because they thought they were part of something.'],
+      ['PLAYER','Did the community ever decide what it wanted to build?'],
+      ['OxNight','We had ideas. Lots of them.'],
+      ['LunaX','But the team measured success by how many people showed up, how many messages were posted, and how many people shared announcements.'],
+      ['OxNight','We were busy looking active.'],
+      ['LunaX','We never stopped to ask whether any of it was useful.'],
+      ['PLAYER','So the community wasn’t necessarily fake.'],
+      ['LunaX','No. The people were real. Their time was real. But nobody built a system that turned that energy into lasting value.']
+    ],
+    choices:[
+      {label:'Recover the archived community proposals',speaker:'OxNight',reply:'We had ideas. Lots of them. Let’s see which ones were never followed through.'},
+      {label:'Choose one proposal to complete',speaker:'LunaX',reply:'The people were real. Their time was real. Let’s turn some of that energy into lasting value.'}
+    ],
+    task:'Recover archived proposals, identify three unfinished ideas, and select one realistic proposal to complete.',
+    evidenceTitle:'Archived Community Proposals', evidenceBody:'The community recorded ideas but did not track delivery or lasting user benefit.',
+    reward:'A crowd is not automatically a community. Shared work gives people something to build together.'
+  },
+  {
+    id:'lost-value-08', n:9, state:'Plateau State', city:'jos', title:'The Numbers Game',
+    goal:'Show how activity metrics can hide the absence of meaningful progress.',
+    value:'PROOF', cast:['Moon','The cryptonian'],
+    dialogue:[
+      ['Moon','Look at this. Ten thousand users. Fifty thousand transactions. The project is growing.'],
+      ['The cryptonian','How many people came back this month?'],
+      ['Moon','We have the total registrations here.'],
+      ['The cryptonian','That’s not what I asked.'],
+      ['PLAYER','How many people actually use the product?'],
+      ['Moon','We haven’t separated that from registrations yet.'],
+      ['Moon','We worked hard to get those numbers.'],
+      ['The cryptonian','I’m not saying the work was useless. I’m saying the numbers don’t prove what we want them to prove.'],
+      ['Moon','So what should we measure?'],
+      ['PLAYER','Start with what the product is supposed to help people do.'],
+      ['The cryptonian','Then measure whether people can actually do it, whether they return because it helps them, and whether it keeps helping them.'],
+      ['Moon','That sounds less impressive than ten thousand users.'],
+      ['The cryptonian','Until ten thousand users can prove the product is worth using.']
+    ],
+    choices:[
+      {label:'Separate registrations from active usage',speaker:'PLAYER',reply:'Start with what the product is supposed to help people do.'},
+      {label:'Measure repeat use and real outcomes',speaker:'The cryptonian',reply:'Measure whether people can do the task, return because it helps them, and keep getting value from it.'}
+    ],
+    task:'Review the dashboard and select a measure that reflects actual product use.',
+    evidenceTitle:'Project Metrics Review', evidenceBody:'Registered accounts: 10,000. Active users: unknown. Repeat usage: unknown. Completed tasks: unverified. Real-world outcomes: not measured.',
+    reward:'Activity is easy to count. Value takes evidence.'
+  },
+  {
+    id:'lost-value-09', n:10, state:'Kano State', city:'kano', title:'The Open Door',
+    goal:'Explore the original promise of access and how complicated systems can exclude the people they claim to serve.',
+    value:'ACCESS', cast:['Joseph Nnadi','The don'],
+    dialogue:[
+      ['STUDENT','I’ve watched the tutorials three times. I still don’t understand what I’m signing.'],
+      ['The don','Read the documentation.'],
+      ['STUDENT','I did.'],
+      ['The don','Then read it again.'],
+      ['Joseph Nnadi','That isn’t helping.'],
+      ['PLAYER','What’s the problem?'],
+      ['Joseph Nnadi','The product says it’s open to everybody. But if you already understand wallets, fees, keys, signatures, and networks, you’re the only kind of person who can use it without help.'],
+      ['PLAYER','How can someone make a safe decision if they don’t understand what they’re approving?'],
+      ['The don','People are responsible for learning.'],
+      ['Joseph Nnadi','Yes. But builders are responsible for making things understandable too.'],
+      ['The don','We can’t simplify everything.'],
+      ['Joseph Nnadi','We don’t have to simplify the technology until it’s meaningless. We need to explain the consequences in language people understand.'],
+      ['PLAYER','Access isn’t just allowing someone to create an account.'],
+      ['Joseph Nnadi','It’s giving them a fair chance to understand what they’re doing.']
+    ],
+    choices:[
+      {label:'Complete the transaction walkthrough',speaker:'Joseph Nnadi',reply:'Explain the consequences in language people understand.'},
+      {label:'Identify the action, cost, and risk',speaker:'PLAYER',reply:'Access isn’t just allowing someone to create an account. It’s giving them a fair chance to understand what they’re doing.'}
+    ],
+    task:'Complete a transaction walkthrough and identify the action, cost, and risk.',
+    evidenceTitle:'First-Time User Transaction', evidenceBody:'The transaction prompt shows technical details without clearly explaining what the user is approving.',
+    reward:'A door isn’t truly open if people cannot understand how to enter safely.'
+  },
+  {
+    id:'lost-value-10', n:11, state:'Edo State', city:'benin', title:'Building for Nobody',
+    goal:'Reveal what happens when projects prioritise trends over actual human problems.',
+    value:'USEFULNESS', cast:['Praise','Toza'],
+    dialogue:[
+      ['Praise','AI agent. Token. Marketplace. Points. Governance. We can combine everything.'],
+      ['Toza','What problem does it solve?'],
+      ['Praise','Everything is moving in that direction.'],
+      ['Toza','That isn’t a problem.'],
+      ['Praise','If we don’t move now, someone else will.'],
+      ['PLAYER','Who is supposed to use this?'],
+      ['Praise','Crypto users, creators, traders, communities. Anybody.'],
+      ['Toza','So everybody is the target, and nobody is the actual user.'],
+      ['USER 1','I need a way to keep track of my small business payments.'],
+      ['USER 2','I want to learn a skill that can get me paid.'],
+      ['USER 3','I just want to know whether this investment opportunity is legitimate.'],
+      ['PLAYER','People have real problems. But this product doesn’t have a clear answer for any of them.'],
+      ['Praise','Are you saying we should stop experimenting?'],
+      ['Toza','No. Experiment. But don’t confuse the newest technology with the most useful solution.'],
+      ['Praise','Then where do we start?'],
+      ['PLAYER','Pick one problem. Find the people who experience it. Build something small that helps. Test whether it works.'],
+      ['Toza','And let the evidence decide what comes next.']
+    ],
+    choices:[
+      {label:'Prioritise the small-business payment problem',speaker:'PLAYER',reply:'Pick one problem. Find the people who experience it. Build something small that helps. Test whether it works.'},
+      {label:'Match a feature to a real user need',speaker:'Toza',reply:'Don’t confuse the newest technology with the most useful solution.'}
+    ],
+    task:'Interview potential users and match one practical feature to a real problem.',
+    evidenceTitle:'User Needs Record', evidenceBody:'Small-business payment tracking, skills that lead to paid work, and checking whether an investment opportunity is legitimate are real needs raised by potential users.',
+    reward:'Start with the problem, not the trend.'
+  },
+  {
+    id:'lost-value-11', n:12, state:'Cross River State', city:'calabar', title:'The People Left Behind',
+    goal:'Connect Web3’s promises to practical opportunities beyond trading and speculation.',
+    value:'OPPORTUNITY', cast:['Craftore','Kodavic'],
+    dialogue:[
+      ['Craftore','People come here to talk about financial freedom.'],
+      ['Kodavic','Then they show everybody how to trade.'],
+      ['Craftore','Nothing wrong with trading.'],
+      ['Kodavic','No. But not everybody wants to trade. Some people want customers. Some want jobs. Some want to learn how to build software. Some just need a better way to run their business.'],
+      ['PLAYER','Can Web3 help with those things?'],
+      ['Craftore','It can. But only if somebody builds a solution that fits the problem.'],
+      ['BUSINESS OWNER','I don’t need another token. I need to know who paid, who hasn’t paid, and where my orders are.'],
+      ['PLAYER','What if a tool could help you track those things?'],
+      ['BUSINESS OWNER','If it works, doesn’t cost too much, and I can understand how to use it, I’ll try it.'],
+      ['Kodavic','That’s the part people forget. The technology is not the final goal.'],
+      ['Craftore','It’s a tool. If the tool doesn’t help anyone, why should they care what chain it runs on?'],
+      ['PLAYER','So restoring value means giving people reasons to participate beyond price.'],
+      ['Craftore','Exactly. Give builders a reason to build. Give users a reason to stay. Give people a reason to trust what they’re using.']
+    ],
+    choices:[
+      {label:'Record the business owner’s needs',speaker:'PLAYER',reply:'The technology is not the final goal. It’s a tool for solving a problem.'},
+      {label:'Propose a practical solution',speaker:'Craftore',reply:'Give builders a reason to build. Give users a reason to stay. Give people a reason to trust what they’re using.'}
+    ],
+    task:'Record the business owner’s needs and propose a practical feature with a clear user benefit.',
+    evidenceTitle:'Local Business Needs', evidenceBody:'The business owner needs an understandable, affordable way to track payments and orders.',
+    reward:'Technology becomes valuable when it helps people do something they couldn’t do as well before.'
+  },
+  {
+    id:'lost-value-12', n:13, state:'Bauchi State', city:'bauchi', title:'The Rules for Everyone',
+    goal:'Explore transparency, fair rules, and the danger of systems where powerful insiders are exempt from accountability.',
+    value:'TRANSPARENCY', cast:['Cybersage','Reina'],
+    dialogue:[
+      ['Reina','The community voted against the change.'],
+      ['Cybersage','The change has already been applied.'],
+      ['Reina','Then why did you ask us to vote?'],
+      ['Cybersage','The vote was advisory.'],
+      ['PLAYER','Was that made clear before the vote?'],
+      ['Cybersage','It’s in the governance terms.'],
+      ['Reina','Buried in a document nobody showed us until after the decision.'],
+      ['Cybersage','Some decisions have to be made quickly. You can’t put everything to a vote.'],
+      ['Reina','Then define which decisions can be made quickly. Tell people who has the authority. Explain what happens when that authority is abused.'],
+      ['PLAYER','Decentralization doesn’t mean every person votes on every action.'],
+      ['Cybersage','Correct.'],
+      ['PLAYER','But it should mean the actual power is clear, and the people affected understand how decisions get made.'],
+      ['Reina','And that the rules apply to the people running the system too.']
+    ],
+    choices:[
+      {label:'Compare the vote with the administrative action',speaker:'PLAYER',reply:'The actual power should be clear, and the people affected should understand how decisions get made.'},
+      {label:'Publish a clear decision-making summary',speaker:'Reina',reply:'The rules must apply to the people running the system too.'}
+    ],
+    task:'Compare the community vote with the administrative action and publish a clear summary of the process.',
+    evidenceTitle:'Governance Decision Record', evidenceBody:'Community vote: change rejected. Administrative action: change approved. Notice before vote: unclear. Explanation after vote: incomplete.',
+    reward:'Rules mean little when people don’t know who can change them.'
+  },
+  {
+    id:'lost-value-13', n:14, state:'Abia State', city:'abia', title:'The Cost of Starting Over',
+    goal:'Show the long-term damage caused when people lose trust in an entire ecosystem because of repeated failures.',
+    value:'TRUSTWORTHINESS', cast:['Cclya','Leemah'],
+    dialogue:[
+      ['Leemah','Nobody even wants to hear what we’re building.'],
+      ['Cclya','Can you blame them?'],
+      ['Leemah','We didn’t do anything to them.'],
+      ['Cclya','They don’t know that.'],
+      ['PLAYER','What happened before?'],
+      ['Cclya','Three projects promised to solve the same problem. Two disappeared. One collected money and never delivered. Now people assume every new project is another version of the same story.'],
+      ['Leemah','We have something useful. But people don’t trust us enough to try it.'],
+      ['Cclya','Then don’t demand their trust.'],
+      ['Leemah','What do you mean?'],
+      ['Cclya','Show them what works. Show them what doesn’t. Keep records of what you change. Answer questions when things go wrong.'],
+      ['PLAYER','And don’t promise what you can’t deliver.'],
+      ['Leemah','That won’t fix everything overnight.'],
+      ['Cclya','No. Trust isn’t a switch. It’s a record of what you do over time.']
+    ],
+    choices:[
+      {label:'Test the working feature',speaker:'PLAYER',reply:'Show people what works, what doesn’t, and what changes over time.'},
+      {label:'Publish a transparent progress update',speaker:'Cclya',reply:'Trust isn’t a switch. It’s a record of what you do over time.'}
+    ],
+    task:'Test the product and publish a transparent update explaining what is complete and unfinished.',
+    evidenceTitle:'Public Progress Record', evidenceBody:'Core feature: working. Documentation: available. Project progress: public. User feedback: limited.',
+    reward:'Trust isn’t restored by asking for another chance. It’s rebuilt by giving people evidence.'
+  },
+  {
+    id:'lost-value-14', n:15, state:'Niger State', city:'minna', title:'The Things Worth Keeping',
+    goal:'Bring together the values discovered across the previous missions and make the player consider what should be rebuilt.',
+    value:'PURPOSE WITH ACCOUNTABILITY', cast:['Kenny','Softstorm'],
+    dialogue:[
+      ['Kenny','Look at everything we’ve found.'],
+      ['Softstorm','People who lost money. Builders who lost control. Communities that disappeared. Products nobody needed. Rules that only worked for the people in charge.'],
+      ['Kenny','Different states. Different problems.'],
+      ['PLAYER','But the same pattern.'],
+      ['Kenny','We keep talking about bringing back the old days.'],
+      ['Softstorm','The old days weren’t perfect either.'],
+      ['PLAYER','Then we’re not trying to rebuild the past.'],
+      ['Softstorm','No. We’re trying to recover what was worth keeping and do better with it.'],
+      ['PLAYER','What should a better ecosystem protect first?']
+    ],
+    choices:[
+      {label:'People who build should be treated fairly',speaker:'PLAYER',reply:'Contribution deserves clear agreements, fair treatment, and recognition.'},
+      {label:'Users should understand the systems they join',speaker:'PLAYER',reply:'People deserve to understand the systems they participate in.'},
+      {label:'Projects should prove their usefulness',speaker:'PLAYER',reply:'Useful products should prove their value through what they deliver.'},
+      {label:'Power and decision-making should be transparent',speaker:'PLAYER',reply:'People should know who has power and how decisions get made.'}
+    ],
+    task:'Place the recovered evidence on the archive wall and choose the value the next stage should emphasise.',
+    evidenceTitle:'The Evidence Wall', evidenceBody:'The First Promise. The Price of Trust. The Empty Promise. The People Who Built It. Who Owns the Work? The Exit. The Community That Disappeared. The Numbers Game. The Open Door. Building for Nobody. The People Left Behind. The Rules for Everyone. The Cost of Starting Over.',
+    reward:'Rebuilding is not repeating. It’s learning what deserves to survive.'
+  },
+  {
+    id:'lost-value-15', n:16, state:'Kogi State', city:'kogi', title:'The Lost Value',
+    goal:'Close the first playable arc, connect the evidence, and establish the larger journey through the remaining states.',
+    value:'THE LOST VALUE', cast:['Softstorm','IamAbdul','Kenny'],
+    dialogue:[
+      ['IamAbdul','Fifteen states.'],
+      ['Kenny','Fifteen different places. More problems than we expected.'],
+      ['Softstorm','And not one of them can be fixed by launching another token.'],
+      ['PLAYER','So what exactly are we trying to recover?'],
+      ['Softstorm','At first, I thought we were looking for a missing project.'],
+      ['IamAbdul','I thought somebody had stolen something.'],
+      ['Kenny','Maybe something was stolen. But not everything we found was taken by one person.'],
+      ['PLAYER','Then how did it get lost?'],
+      ['IamAbdul','So Web3 lost its value?'],
+      ['Softstorm','Not exactly.'],
+      ['IamAbdul','Then what did we lose?'],
+      ['Softstorm','We lost sight of what made the technology worth building in the first place.'],
+      ['Kenny','And we kept rewarding the things that made it easier to forget.'],
+      ['PLAYER','Can we bring it back?'],
+      ['Softstorm','Not by pretending nothing happened. Not by asking people to trust another promise.'],
+      ['IamAbdul','Then how?'],
+      ['Softstorm','Build something worth trusting. Make something people can use. Give contributors a fair place in the system. Be honest when things fail. Let people see what their participation actually means.'],
+      ['Kenny','That sounds like a lot of work.'],
+      ['Softstorm','It is.'],
+      ['Softstorm','That’s why somebody has to do it.']
+    ],
+    choices:[
+      {label:'Review the evidence wall',speaker:'Kenny',reply:'You have discovered what was lost. Now you must discover what it takes to restore it.'}
+    ],
+    task:'Place the final evidence on the archive wall and review the connections between the 15 missions.',
+    evidenceTitle:'The Lost Value', evidenceBody:'Ownership without control. Community without contribution. Access without understanding. Growth without usefulness. Trust without accountability. Promises without delivery.',
+    reward:'You have discovered what was lost. Now you must discover what it takes to restore it.',
+    finale:true
+  }
+];
