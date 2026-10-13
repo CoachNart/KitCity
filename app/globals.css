@@ -797,17 +797,21 @@ html.kitcity-story-active #modal{
 
 
 /* Dialogue shots show the live cast, not a comic-panel rectangle or its labels. */
-.comic-scene.has-dialogue .comic-scene-frame{
+/* Conversation shots should show the live 3D cast and floating speech only.
+   Remove the comic frame and all frame/caption labels from dialogue and choice shots. */
+.comic-scene.has-dialogue .comic-scene-frame,
+.comic-scene.has-choices .comic-scene-frame{
+  display:none!important;
   border:0!important;
-  border-radius:0!important;
   outline:0!important;
   box-shadow:none!important;
   background:transparent!important;
-  clip-path:none!important;
 }
 .comic-scene.has-dialogue .comic-scene-frame:after,
 .comic-scene.has-dialogue .comic-frame-stamp,
-.comic-scene.has-dialogue .comic-caption{
+.comic-scene.has-dialogue .comic-caption,
+.comic-scene.has-choices .comic-frame-stamp,
+.comic-scene.has-choices .comic-caption{
   display:none!important;
 }
 .comic-scene.has-dialogue .comic-scene-frame{
