@@ -3258,7 +3258,7 @@ function loadStep(){
   const anchor=safeMissionSpot(SPOTS[st.spot]||SPOTS.a);
   const offsets=[[0,0],[4,-2],[-4,-2],[0,4],[6,3],[-6,3],[0,-6],[8,-1],[-8,-1]];
   if(st.kind==='clue'||st.kind==='challenge'){
-    const clue=placeMissionEvidence(st,m,SPOTS[st.spot]||SPOTS.execution);
+    const clue=placeMissionEvidence(st,m,SPOTS[st.spot]||SPOTS.a);
     clue.talk=()=>st.run();clue.active=()=>true;ents.push(clue);goal=clue;
   }else{
     castNames.forEach((name,index)=>{
