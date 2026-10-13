@@ -3999,12 +3999,17 @@ const lostValueMissions=LOST_VALUE_STORY.map(story=>{
   const cast=story.cast.map((name,index)=>({name,npc:lostValueNpc(name),spot:['lvA','lvB','lvC','lvD'][index%4]}));
   const castByName=Object.fromEntries(cast.map(entry=>[entry.name,entry]));
   const lead=cast[0];
-  const dialogueHtml=story.dialogue.map(([speaker,line])=>'<p><b>'+lostValueEscape(speaker)+'</b>: '+lostValueEscape(line)+'</p>').join('');
+  const splitAfter=Number.isInteger(story.splitAfter)?Math.max(0,Math.min(story.dialogue.length,story.splitAfter)):story.dialogue.length;
+  const openingHtml=story.dialogue.slice(0,splitAfter).map(([speaker,line])=>'<p><b>'+lostValueEscape(speaker)+'</b>: '+lostValueEscape(line)+'</p>').join('');
+  const closingHtml=story.dialogue.slice(splitAfter).map(([speaker,line])=>'<p><b>'+lostValueEscape(speaker)+'</b>: '+lostValueEscape(line)+'</p>').join('');
   const choiceButtons=story.choices.map(choice=>({t:choice.label,f:()=>{
     if(G) G.storyChoice=choice.label;
     if(story.id==='lost-value-14') Store.set(storageKey+'_lost_value_focus',choice.label);
     finishStep();
   }}));
+  const conversationStep=(label,html,allowChoices)=>({label,spot:lead.spot,npc:lead.npc,run(){
+    talk(lead.npc,html,allowChoices&&choiceButtons.length?choiceButtons:[{t:'Continue',f:finishStep}]);
+  }});
   const clue={
     kind:'clue',label:story.task,spot:'lvE',title:story.evidenceTitle,sign:story.evidenceTitle.toUpperCase(),
     run(){
@@ -4016,10 +4021,9 @@ const lostValueMissions=LOST_VALUE_STORY.map(story=>{
     id:story.id,n:story.n,city:story.city,title:story.title,goal:story.goal,
     storyState:story.state,storyValue:story.value,storyReward:story.reward,storyFinale:!!story.finale,
     cast:cast.map(({npc,spot})=>({npc,spot})),steps:[
-      {label:'Speak with '+lead.name,spot:lead.spot,npc:lead.npc,run(){
-        talk(lead.npc,dialogueHtml,choiceButtons.length?choiceButtons:[{t:'Continue',f:finishStep}]);
-      }},
-      clue
+      conversationStep('Speak with '+lead.name,openingHtml,false),
+      clue,
+      ...(closingHtml?[conversationStep('Discuss the evidence with '+lead.name,closingHtml,true)]:[])
     ],extras:[]
   };
 });
