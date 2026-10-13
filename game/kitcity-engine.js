@@ -1978,6 +1978,10 @@ function locName(x,z){
   const C=CITIES[curCity],kx=Math.round(x/R),kz=Math.round(z/R);
   let road=null;
   if(Math.abs(x-kx*R)<9&&Math.abs(kx)<=3) road=C.nsRoads[kx+3]; else if(Math.abs(z-kz*R)<9&&Math.abs(kz)<=3) road=C.ewRoads[kz+3];
+  if(!road&&nearLocalStreet(C,x,z,1)){
+    const names={'historic':'Old Quarter Lane','sahel':'Compound Lane','dense-market':'Market Lane','organic-sprawl':'Community Street','dense-coastal':'Coastal Access Road','delta-port':'Port Access Road','oil-port':'Industrial Access Road','planned':'District Avenue','planned-tropical':'Garden District Road','planned-river':'Riverside Access Road'};
+    road=names[C.form]||'Local Street';
+  }
   const di=Math.max(0,Math.min(2,Math.floor((x+210)/140))),dj=Math.max(0,Math.min(2,Math.floor((z+210)/140)));
   return (road?road+', ':'')+C.districts[dj*3+di];
 }
@@ -2159,6 +2163,12 @@ function buildCity(key){
       if(road.i!==i||road.j!==j)continue;
       const geo=road.axis==='x'?new THREE.BoxGeometry(70.5,.045,road.width):new THREE.BoxGeometry(road.width,.045,70.5);
       const mesh=new THREE.Mesh(geo,localRoadMat);mesh.position.set(cx,.112,cz);mesh.userData.nomerge=true;cityGroup.add(mesh);
+      // Low raised footpaths stop short of arterial junctions so they don't
+      // create a curb across the existing traffic lanes.
+      const footGeo=road.axis==='x'?new THREE.BoxGeometry(58,.035,.8):new THREE.BoxGeometry(.8,.035,58);
+      for(const side of [-1,1]){
+        const foot=new THREE.Mesh(footGeo,paveMat);foot.position.set(cx+(road.axis==='z'?side*(road.width/2+.55):0),.125,cz+(road.axis==='x'?side*(road.width/2+.55):0));cityGroup.add(foot);
+      }
       const dashMat=new THREE.MeshBasicMaterial({color:C.roadStyle==='industrial'?'#E9BE35':'#D8D7CC',transparent:true,opacity:.65,depthWrite:false});
       for(let q=-2;q<=2;q++){
         const dashGeo=road.axis==='x'?new THREE.BoxGeometry(4,.018,.12):new THREE.BoxGeometry(.12,.018,4);
