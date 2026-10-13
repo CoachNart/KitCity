@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { createStorySceneDirector } from './story-scene-director';
+import { LOST_VALUE_STORY } from './lost-value-story';
 import {
   authenticateEmailPassword,
   firebaseConfigured,
@@ -605,7 +606,8 @@ const SPOTS={
   a:{x:10,z:-30,f:-1}, b:{x:-10,z:-105,f:1}, c:{x:80,z:-35,f:-1}, d:{x:60,z:-105,f:1},
   e:{x:-80,z:-35,f:1}, f:{x:-60,z:-105,f:-1}, g:{x:10,z:-175,f:-1}, h:{x:-10,z:-175,f:1},
   i:{x:150,z:-35,f:-1}, j:{x:130,z:-175,f:1}, k:{x:-150,z:-35,f:1}, l:{x:-130,z:-175,f:-1},
-  m:{x:80,z:35,f:-1}, n:{x:-80,z:105,f:1}, o:{x:10,z:175,f:-1}, story:{x:24,z:-32,f:1}, x1:{x:60,z:-105,f:1}
+  m:{x:80,z:35,f:-1}, n:{x:-80,z:105,f:1}, o:{x:10,z:175,f:-1}, story:{x:24,z:-32,f:1}, x1:{x:60,z:-105,f:1},
+  lvA:{x:18,z:-30,f:-1}, lvB:{x:30,z:-30,f:1}, lvC:{x:18,z:-43,f:-1}, lvD:{x:30,z:-43,f:1}, lvE:{x:42,z:-38,f:-1}
 };
 const special=Object.keys(SPOTS).map(k=>SPOTS[k]).concat([SPAWN]);
 const nearSpecial=(x,z,d)=>special.some(s=>Math.hypot(s.x-x,s.z-z)<d);
@@ -3976,6 +3978,55 @@ function buildMissionNameAliases(mission){
   ambiguous.forEach(name=>delete candidates[name]);
   return candidates;
 }
+
+/* =====================  KITCITY: THE LOST VALUE story arc  ===================== */
+/* These NPCs are created after the existing community-name assignment so their
+   approved story names remain stable and do not rename unrelated mission NPCs. */
+const lostValueNpcCache=new Map();
+const lostValueLooks=[LK.mama,LK.suya,LK.man,LK.clerk,LK.trader,LK.guy];
+const lostValueColors=['#00AFC2','#E4572E','#2D6FB3','#7A3B8F','#0B7A43','#B85C38','#4656A8'];
+function lostValueNpc(name){
+  if(lostValueNpcCache.has(name)) return lostValueNpcCache.get(name);
+  const index=lostValueNpcCache.size;
+  const def=NPC(name,'The Lost Value story',lostValueColors[index%lostValueColors.length],lostValueLooks[index%lostValueLooks.length],null,name);
+  lostValueNpcCache.set(name,def);
+  return def;
+}
+function lostValueEscape(value){
+  return String(value==null?'':value).replace(/[&<>"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));
+}
+const lostValueMissions=LOST_VALUE_STORY.map(story=>{
+  const cast=story.cast.map((name,index)=>({name,npc:lostValueNpc(name),spot:['lvA','lvB','lvC','lvD'][index%4]}));
+  const castByName=Object.fromEntries(cast.map(entry=>[entry.name,entry]));
+  const lead=cast[0];
+  const dialogueHtml=story.dialogue.map(([speaker,line])=>'<p><b>'+lostValueEscape(speaker)+'</b>: '+lostValueEscape(line)+'</p>').join('');
+  const choiceButtons=story.choices.map(choice=>({t:choice.label,f:()=>{
+    const reply='<p><b>'+lostValueEscape(choice.speaker)+'</b>: '+lostValueEscape(choice.reply)+'</p>';
+    talk(castByName[choice.speaker]?.npc||lead.npc,reply,[{t:'Continue',f:finishStep}]);
+  }}));
+  const clue={
+    kind:'clue',label:story.task,spot:'lvE',title:story.evidenceTitle,sign:story.evidenceTitle.toUpperCase(),
+    run(){
+      openSheet('<div class="who"><span class="av" style="background:'+BRAND+';color:'+INK+'">'+String(story.n).padStart(2,'0')+'</span><div><b>'+lostValueEscape(story.evidenceTitle)+'</b><small>Evidence · '+lostValueEscape(story.state)+'</small></div></div><p>'+lostValueEscape(story.evidenceBody)+'</p><p class="note">'+lostValueEscape(story.task)+'</p>',
+        [{t:'Record evidence',f:()=>{if(G){G.evidence[story.id]=true;}closeSheet();finishStep();}}]);
+    }
+  };
+  return {
+    id:story.id,n:story.n,city:story.city,title:story.title,goal:story.goal,
+    storyState:story.state,storyValue:story.value,storyReward:story.reward,storyFinale:!!story.finale,
+    cast:cast.map(({npc,spot})=>({npc,spot})),steps:[
+      {label:'Speak with '+lead.name,spot:lead.spot,npc:lead.npc,run(){
+        talk(lead.npc,dialogueHtml,choiceButtons.length?choiceButtons:[{t:'Continue',f:finishStep}]);
+      }},
+      clue
+    ],extras:[]
+  };
+});
+/* Keep the existing Lagos prologue first. The approved 15-state story arc follows
+   it, and the existing Web3 learning missions remain intact after the arc. */
+MISSIONS.slice(1).forEach(m=>{m.n+=LOST_VALUE_STORY.length;});
+MISSIONS.splice(1,0,...lostValueMissions);
+
 const cityMissions=city=>MISSIONS.filter(m=>m.city===city);
 const isCityComplete=city=>{const ms=cityMissions(city);return ms.length>0&&ms.every(m=>!!P.done[m.id]);};
 const isCityUnlocked=city=>{const ms=cityMissions(city);return ms.length>0&&isUnlocked(ms[0]);};
@@ -3995,6 +4046,9 @@ function bannerSprite(text,sub){
 function loadStep(){
   clearGroup(missionGroup); colliders.length=cityCols; smoke=[]; ents=[]; goal=null;
   const m=G.m,st=m.steps[G.i];
+  // The Lost Value missions stage the full scene cast every step. Only the current
+  // objective is interactable, so scene characters stay visible without duplicate Talk targets.
+  if(Array.isArray(m.cast)) m.cast.forEach(entry=>{ if(entry.npc!==st.npc) placeNPC(entry.npc,SPOTS[entry.spot]); });
   const e=st.kind==='clue'?placeStoryClue(st,SPOTS[st.spot]):placeNPC(st.npc,SPOTS[st.spot]); e.talk=()=>st.run(); e.active=()=>true; ents.push(e); goal=e;
   for(const ex of (m.extras||[])){
     if(G.used[ex.id]) continue;
