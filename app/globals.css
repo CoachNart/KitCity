@@ -676,5 +676,5 @@ html.kitcity-story-active #modal{
 
 
 .comic-scene.has-bubble .comic-scene-frame{inset:7% 8% 7%}
-@media(max-width:699px){.comic-scene.has-bubble .comic-scene-frame{inset:7% 4% 7%}}
+@media(max-width:699px) and (orientation:portrait){.comic-scene.has-bubble .comic-scene-frame{inset:10% 4% 38%}}
 @media(max-height:560px){.comic-scene.has-bubble .comic-scene-frame{inset:7% 5% 7%}}
