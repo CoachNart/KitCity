@@ -515,13 +515,13 @@ const continuityHandoffs = [
   ["m05","m06","payout destination","merchant-approved address","payout destination"],
   ["m20","m21","AI-generated summary","different owner","warehouse due-diligence packet"],
   ["m21","m22","destination record","pending","issuing network"],
-  ["m22","m23","fund another bridge route","failure plan","community vote"],
+  ["m22","m23","another bridge route","failure plan","community vote"],
   ["m23","m24","privileged permission","redirect funds","privileged contract role"],
   ["m24","m25","digital collectible","artwork","digital collectible"],
   ["m25","m26","open-source component","licence notice","minting page"],
   ["m26","m27","cyan marker","archive metadata","cyan marker"],
   ["m27","m28","case reference","loses","hand-off"],
-  ["m28","m29","KitCity","deployment route","KitCity"],
+  ["m28","m29","KitCity","deployment notes","KitCity"],
   ["m29","m30","three teams","show your work","three teams"],
   ["m30","m31","signed deployment record","T3Kit","evidence-routing pathway"]
 ];
@@ -538,7 +538,7 @@ for (const [fromId, toId, hookA, hookB, purposeTerm] of continuityHandoffs) {
   if (!purpose.includes(purposeTerm.toLowerCase())) errors.push(toId + " narrative purpose is missing its hand-off context.");
 }
 const finaleMission = MISSIONS.find((mission) => mission.id === "m31");
-if (finaleMission && !/does not connect T3Kit to the operation of every scam/i.test(finaleMission.ending)) {
+if (finaleMission && !/do not establish that T3Kit operated the suspicious pages/i.test(finaleMission.ending)) {
   errors.push("Finale must state the limit of what the signed deployment record proves.");
 }
 
