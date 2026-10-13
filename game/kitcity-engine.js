@@ -4311,12 +4311,12 @@ function renderHub(){
   const hubBody=$('#hubBody');
   if(hubTab==='missions'||hubTab==='cityhub'){
     const active=cityMissions(hubCity);
-    const activeIds=new Set(active.map(m=>String(m.id)));
+    const activeIds=new Set(active.map(activeMission=>String(activeMission.id)));
     const seenIds=new Set(),seenContent=new Set();
     hubBody.querySelectorAll('.mission-card').forEach(card=>{
       const id=card.dataset.missionId||'';
-      const mission=active.find(m=>String(m.id)===id);
-      const title=mission?String(m.title||'').normalize('NFKC').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim():'';
+      const matchedMission=active.find(candidateMission=>String(candidateMission.id)===id);
+      const title=matchedMission?String(matchedMission.title||'').normalize('NFKC').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim():'';
       const contentKey=title;
       if(!activeIds.has(id)||card.dataset.city!==hubCity||seenIds.has(id)||seenContent.has(contentKey)){
         card.remove(); return;
