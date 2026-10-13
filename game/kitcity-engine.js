@@ -1193,7 +1193,7 @@ function roadDecals(C,blocks){
       for(let q=0;q<5;q++){
         if((q+i+k)%stride!==0)continue;
         const px=i*R+8+q*10,pz=k*R;
-        addMark(px,pz,0);addMark(k*R,pz===k*R?i*R+8+q*10:i*R+8+q*10,Math.PI/2);
+        addMark(px,pz,0);addMark(k*R,i*R+8+q*10,Math.PI/2);
       }
     }
   }
