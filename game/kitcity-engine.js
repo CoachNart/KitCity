@@ -4904,7 +4904,7 @@ function update(dt,time){
   const currentStoryStep=G&&G.m&&Array.isArray(G.m.steps)?G.m.steps[G.i]:null;
   const autoStartConversation=!!((G&&G.m.id==='m0'&&!G.openingTriggered)||(G&&String(G.m.id||'').startsWith('lost-value-')&&currentStoryStep&&currentStoryStep.kind==='conversation'&&!S.modal));
   talkBtn.classList.toggle('hidden',autoStartConversation||!(nearEnt&&!S.modal));
-  if(autoStartConversation&&nearEnt&&nearEnt===goal) nearEnt.talk();
+  if(autoStartConversation&&goal&&Math.hypot(player.position.x-goal.x,player.position.z-goal.z)<goal.r) goal.talk();
   const compass=$('#compass');
   if(goal){
     compass.classList.remove('hidden');
