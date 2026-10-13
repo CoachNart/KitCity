@@ -3340,11 +3340,11 @@ m23:{q:"The treasury proposal has no clear cost breakdown. What should the commu
 m24:{q:"The privileged permission has not been independently retested. Can launch proceed?",o:["Hold release until the fix and regression tests are reviewed","Hide the finding to protect the deadline","Assume it is safe because nobody has complained"],a:0,w:"A critical finding needs a verified fix, not a promise."},
 m25:{q:"The collectible's authorship is disputed. What should the seller do?",o:["Pause the listing until authorship and licence rights are resolved","Mint first so the claim becomes official","Remove the original artist's name"],a:0,w:"A token does not automatically establish authorship or transfer copyright."},
 m26:{q:"What is the right response to copied open-source code with missing attribution?",o:["Restore the source trail, check the licence and submit a reviewable correction","Delete the repository history","Rename the author to the new project"],a:0,w:"Reuse must follow the licence, and maintainers should preserve a reviewable source history."},
-m27:{q:"The same cyan mark appears in several records. What does it prove?",o:["It is a lead to investigate, not proof of common ownership or intent","One person definitely caused every incident","The mark alone proves the projects are fraudulent"],a:0,w:"A recurring symbol helps connect cases but does not establish who controls them."},
+m27:{q:"A cyan marker appears in several archived case packets. What does that prove?",o:["The packets may share an export or evidence-routing system; investigate the metadata before drawing conclusions","One person definitely caused every incident","The marker proves the named project operated the suspicious pages"],a:0,w:"A marker in archived metadata can show provenance, but it does not prove who operated the underlying pages."},
 m28:{q:"Each screen works alone, but the full journey loses its source reference. What should happen?",o:["Fix the hand-off and rerun the complete end-to-end test","Approve it because the individual screens passed","Tell users to remember the missing reference"],a:0,w:"Integration is only reliable when the whole user journey preserves required context."},
 m29:{q:"What should the KitCity gate accept as evidence?",o:["A traceable reconstruction that includes contradictions and uncertainty","A confident accusation with no source","A polished slide deck alone"],a:0,w:"The gate tests reasoning and evidence, not confidence."},
 m30:{q:"What should the practical test prove?",o:["The payment is verified, the newcomer is protected and the hand-off is repeatably tested","The demo looks smooth once","Every possible risk has disappeared forever"],a:0,w:"A practical result should be repeatable, reviewable and honest about limits."},
-m31:{q:"What finally proves the cyan mark's connection to T3Kit?",o:["The signed deployment record and matching project documentation","The symbol by itself","A rumour repeated by several characters"],a:0,w:"The mark led to the records; the records support the conclusion."}
+m31:{q:"What does the signed deployment record actually establish?",o:["T3Kit commissioned the shared evidence-routing pathway within the record's stated scope","T3Kit operated every suspicious page in the case files","The cyan marker alone proves who caused the incidents"],a:0,w:"The signed record establishes the pathway's documented provenance, not responsibility for unrelated incidents."}
 };
 function escapeStoryHtml(value){return String(value==null?'':value).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 const STORY_PLAYER_REACTIONS={
@@ -3412,14 +3412,14 @@ const STORY_PLAYER_CHOICES={
   m31:["Inspect the signed deployment record","Choose a practical contribution backed by the evidence"]
 };
 const STORY_NPC_FOLLOWUPS={
-  m02:"I saved the page before it refreshed. Look at the address in the capture—the shop name stayed the same, but the destination did not.",
+  m02:"I saved the page before it refreshed. The market-chat short link now redirects to a second page asking for wallet recovery words. That connects the leads, but it still doesn't tell us who operates either page.",
   m03:"He said the words were needed to unlock the wallet. That's exactly why we're stopping here before Timi loses control of it.",
   m04:"The original message is saved, and the relevant wallet record does not support the screenshot’s claim. I’ll correct the group without exposing Timi or pretending we know who edited the image.",
-  m05:"The app marked success before the transaction was confirmed. We'll retest pending, confirmed and failed outcomes, then investigate the separate payout-address mismatch.",
+  m05:"The app marked success before the transaction was confirmed. We'll retest pending, confirmed and failed outcomes, then investigate the separate payout-address mismatch before releasing the merchant's stock.",
   m06:"The test shows an administrator can redirect the payout. We'll document the permission, add reviewed and visible controls, and keep release paused until regression tests pass.",
   m07:"The ticker concealed a different contract address. We'll compare the exact asset, route, fees and approval before the trader tries again.",
   m08:"The notice confirms a withdrawal pause but not its cause or end time. I'll point customers to the official update route and warn them about fake support.",
-  m09:"The journal shows the second position was opened to recover a loss, not because a new setup appeared. I'll preserve the original plan and record the deviation.",
+  m09:"The journal shows planned risk rose from ten dollars to thirty after the loss. I'll preserve the original plan and record the deviation without claiming the exchange caused it.",
   m10:"The liquidation estimate depends on current exposure, margin and venue rules. We'll compare every option with the agreed loss limit, not a prediction.",
   m11:"Dera showed us where the welcome flow lost her, and a second newcomer tested the simpler first task. We'll report the sample honestly before claiming the flow works for everyone.",
   m12:"The member has stopped replying in the public chat. I'll message them directly and never ask for their phrase or password.",
@@ -3431,17 +3431,17 @@ const STORY_NPC_FOLLOWUPS={
   m18:"We'll compare completed useful actions with the hypothesis we wrote before the experiment. Clicks alone won't tell us whether the prototype solved the problem.",
   m19:"The return is a projection, not a guarantee. These reporting clauses are what I'd want clarified before anyone signs.",
   m20:"They sent another token screenshot, but still no signed inventory document. I'm not going to call that backing.",
-  m21:"The source is about a different entity with a similar name. I'll mark the AI output as unsupported until the owner record is checked.",
-  m22:"The bridge message is still pending on the destination. Sending again would create a separate transfer and another risk.",
+  m21:"The source file does not support the owner named in the summary, and the token records span two networks. I'll mark the claim unresolved until both source records are checked.",
+  m22:"The warehouse-linked transfer is confirmed at the source, but its bridge message is still pending at the destination. Sending again could create a second transfer instead of completing the first.",
   m23:"The proposal can wait. We still don't know who owns maintenance after delivery, and that cost belongs in the vote.",
   m24:"The old contract fails the test and the patch passes it. I'll attach both results to the disclosure so the fix can be reviewed.",
   m25:"The token proves which collectible was transferred. It does not settle copyright or grant a commercial licence by itself.",
   m26:"The commit and licence are clear enough to raise a specific request. We'll send the maintainer evidence, not an insult.",
-  m27:"Two records share the mark, but the dates and ownership differ. I'll keep the timeline open until another link is verified.",
+  m27:"The cyan marker appears in archive metadata on several case packets; that tells us the records may share an export route, not that the incidents share an operator. I'll keep the timeline open until the deployment notes confirm its source.",
   m28:"The reference leaves the first tool but disappears in the second. I'll log the payload at both ends and retest the whole route.",
   m29:"The timeline supports a few links and leaves others open. That's the case file I'm willing to hand over.",
   m30:"All three checks produced records we can inspect. If a team cannot reproduce one, I won't mark that part complete.",
-  m31:"The signature verifies this deployment record and its stated scope. Anything beyond that needs a separate source."
+  m31:"The signature verifies that T3Kit commissioned the evidence-routing pathway described in this record. It does not prove T3Kit operated the suspicious pages; that claim would need separate evidence."
 };
 function chronicleNpcLine(m,name,index=0){
   const authoredLine=Array.isArray(m.sceneLines)?m.sceneLines[index]:null;
@@ -3469,18 +3469,18 @@ const STORY_BRIDGES={
   m17:'A community build team has ideas but no tested solution for a real local need',
   m18:'The prototype attracts clicks but few people complete its useful first action',
   m19:'The funding offer promises returns but hides obligations',
-  m20:'The token claim has no signed ownership record',
-  m21:'An AI summary names an owner the source does not support',
-  m22:'The transfer is confirmed on one network and pending on the other',
-  m23:'The treasury vote is being rushed without clear costs',
+  m20:'The warehouse stock is visible, but signed ownership, custody and holder-redemption rights are still missing',
+  m21:'The AI summary names an owner the signed file does not support and glosses over the cross-network token record',
+  m22:'The warehouse-token transfer is confirmed on its issuing network, but the bridge destination record is still pending',
+  m23:'The community is being asked to fund another bridge route before costs, maintenance ownership and failure terms are clear',
   m24:'A privileged contract role can redirect funds',
-  m25:'The collectible rights and authorship are disputed',
+  m25:'The community collectible has disputed artwork rights, and its minting page may misstate an open-source licence',
   m26:'A copied codebase has lost its attribution',
-  m27:'The cyan mark appears across several unrelated-looking records',
+  m27:'The cyan marker appears in archived case metadata, but its source and meaning are not yet verified',
   m28:'Evidence disappears between two tools',
   m29:'The KitCity gate requires a case file, not a rumour',
   m30:'Three teams must verify the payment, protect a newcomer and repair a hand-off',
-  m31:'A signed deployment record connects the evidence to T3Kit'
+  m31:'A signed deployment record identifies T3Kit as the commissioner of the shared evidence-routing pathway, not as the proven operator of the incidents'
 };
 function chronicleNpcStep(m,name,index){
   const npc=STORY_NPCS[name];
