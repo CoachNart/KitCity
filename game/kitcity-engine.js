@@ -4317,7 +4317,7 @@ function renderHub(){
       const id=card.dataset.missionId||'';
       const mission=active.find(m=>String(m.id)===id);
       const title=mission?String(m.title||'').normalize('NFKC').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim():'';
-      const goal=mission?String(m.goal||'').normalize('NFKC').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim():'';
+      const goal=mission?String(mission.goal||'').normalize('NFKC').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim():'';
       const contentKey=title;
       if(!activeIds.has(id)||card.dataset.city!==hubCity||seenIds.has(id)||seenContent.has(contentKey)){
         card.remove(); return;
@@ -4524,11 +4524,15 @@ async function resumeAuthenticatedUser(user){
   }
 }
 function beginGame(){
+  const title=$('#title'),hub=$('#hub'),hud=$('#hud');
+  // React can dispose a Strict Mode effect while an async guest/auth flow is pending.
+  // Ignore a stale initializer instead of throwing when its markup is no longer mounted.
+  if(!title||!hub||!hud){ console.warn('KitCity: skipped a stale game initializer because its page markup is no longer mounted.'); return; }
   Snd.unlock(); Snd.setMode('hub'); Snd.sfx('click');
-  $('#title').classList.add('hidden');
-  $('#hub').classList.remove('hidden');
-  $('#hub').setAttribute('aria-hidden','false');
-  $('#hud').classList.add('hidden');
+  title.classList.add('hidden');
+  hub.classList.remove('hidden');
+  hub.setAttribute('aria-hidden','false');
+  hud.classList.add('hidden');
   S.phase='hub'; G=null;
   const nextCity=cityOrder.find(city=>!isCityComplete(city));
   if(nextCity) hubCity=nextCity;
