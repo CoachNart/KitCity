@@ -2111,7 +2111,7 @@ const RAW_MISSIONS = [
     ],
     "nextMissionId": "m24",
     "ending": "The community delays the vote until costs, maintenance responsibility and the failure plan are published. The record explains why the vote was postponed and what would allow members to reconsider.",
-    "cliffhanger": "During the review, Mike finds a privileged contract permission that could redirect funds from the treasury, and the proposal never disclosed it. Gbemi has the launch build and needs a controlled impact test and responsible disclosure before the team proceeds.",
+    "cliffhanger": "During the review, Mike finds a privileged permission in the contract that could redirect funds from the treasury, and the proposal never disclosed it. Gbemi has the launch build and needs a controlled impact test and responsible disclosure before the team proceeds.",
     "sceneLines": [
       "Dorcas: \"The transfer delay made the risk real, but the proposal asks for a fast vote without naming who maintains the route or pays when it fails. Urgency is not readiness.\"",
       "Joe: \"Compare the budget, recipients, milestones and failure response. If missing information changes the decision, delay the vote and record what must be supplied before it returns.\""
