@@ -155,7 +155,7 @@ const MUSIC_QUEUES={
   'aba':{label:"Abia · Igbo-language Afrobeats",videos:["Uyr1c0pkpas"]},
   'umuahia':{label:"Umuahia · Igbo highlife / Afrobeat",videos:["W41TT8g3MnQ"]},
   'awka':{label:"Anambra · Anyidons — Igbo (Ofeke) (Igbo highlife)",videos:["X7puJxUZxa8"]},
-  'onitsha':{label:"Abakaliki · Igbo-language Afrobeats",videos:["nMXLMe4_x68"]},
+  'onitsha':{label:"Abakaliki · Umu Obiligbo ft. Zoro — Oga Police (Igbo highlife)",videos:["VyawBZXLot8"]},
   'asaba':{label:"Asaba · Anioma / Delta",videos:["l-_FcHIS4Yo"]},
   'uyo':{label:"Uyo · Efik / Ibibio",videos:["ulmVmlNoSL8"]},
   'ikot-ekpene':{label:"Ikot Ekpene · Efik / Ibibio",videos:["kc4PfiRWpog"]},
