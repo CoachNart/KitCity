@@ -613,7 +613,7 @@ const SPOTS={
   e:{x:-80,z:-35,f:1}, f:{x:-60,z:-105,f:-1}, g:{x:10,z:-175,f:-1}, h:{x:-10,z:-175,f:1},
   i:{x:150,z:-35,f:-1}, j:{x:130,z:-175,f:1}, k:{x:-150,z:-35,f:1}, l:{x:-130,z:-175,f:-1},
   m:{x:80,z:35,f:-1}, n:{x:-80,z:105,f:1}, o:{x:10,z:175,f:-1}, story:{x:125,z:-185,f:1}, x1:{x:60,z:-105,f:1},
-  lvA:{x:-170,z:-175,f:-1}, lvB:{x:170,z:-175,f:1}, lvC:{x:-170,z:175,f:-1}, lvD:{x:170,z:175,f:1}, lvE:{x:0,z:190,f:-1}, lvF:{x:-190,z:0,f:1}, lvG:{x:190,z:0,f:-1}
+  lvA:{x:-170,z:-175,f:-1}, lvB:{x:170,z:-175,f:1}, lvC:{x:-170,z:175,f:-1}, lvD:{x:170,z:175,f:1}, lvE:{x:140,z:190,f:-1}, lvF:{x:-190,z:0,f:1}, lvG:{x:190,z:0,f:-1}
 };
 // Mission locations are semantic anchors, not street-grid coordinates. Keep the
 // current world coordinates as the compatibility fallback while each city gets
@@ -4549,7 +4549,9 @@ function loadStep(){
   const isLostValueMission=String(m.id||'').startsWith('lost-value-');
   const stageCenter=resolveMissionSpot(st.spot)||SPAWN;
   const castOffsets=[{x:-4,z:-2},{x:4,z:-2},{x:-4,z:2},{x:4,z:2},{x:0,z:-4},{x:0,z:4}];
-  if(Array.isArray(m.cast)) m.cast.forEach((entry,index)=>{
+  // The Record Center is a player-only verification destination. Do not
+  // spawn any story cast around it while the player is inspecting evidence.
+  if(st.kind!=='clue' && Array.isArray(m.cast)) m.cast.forEach((entry,index)=>{
     if(entry.npc===st.npc) return;
     const assignedSpot=isLostValueMission
       ? {x:stageCenter.x+castOffsets[index%castOffsets.length].x,z:stageCenter.z+castOffsets[index%castOffsets.length].z,f:stageCenter.f||1}
