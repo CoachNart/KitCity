@@ -595,9 +595,7 @@ const LOCALIZED_UI={
     'Footsteps, chimes and voices.':'Ụda nzọụkwụ, mgbịrịgba na olu.','How to play':'Otu esi egwu','Move with the left stick or WASD. Hold Run or Shift to run. Tap Talk or press E near a glowing person. The arrow points to your goal. Avoid traffic.':'Jiri joystick aka ekpe ma ọ bụ WASD mee njem. Pịa Gbaa ọsọ ma ọ bụ Shift ka ị gbaa ọsọ. Pịa Kwuo okwu ma ọ bụ E n’akụkụ onye na-enwu. Àkụ́ na-egosi ebe ị na-aga. Zere ụgbọala.',
     'About the streets':'Banyere okporo ụzọ','Reset progress':'Malite ọganihu ọzọ','Reset':'Malite ọzọ','Yes, erase everything':'Ee, hichapụ ihe niile',
     'No wallet yet':'Ị nwebeghị akpa ego','Here':'Ebe a','Talk':'Kwuo okwu','Run':'Gbaa ọsọ','Loading':'Na-ebu',
-    'Choose language':'Họrọ asụsụ','Wallet':'Akpa ego','View certificate':'Lee asambodo','Share on WhatsApp':'Kesaa na WhatsApp',
-    'Mission badges':'Akara ọrụ','Journey progress':'Ọganihu njem','Missions complete':'Ọrụ emechara','City journeys complete':'Njem obodo emechara',
-    'NOT EARNED YET':'Enwetabeghị','ACHIEVEMENT EARNED':'Enwetara ihe nrite','Learn web3 before it costs you.':'Mụta Web3 tupu ọ kpatara gị nsogbu.',
+    'Choose language':'Họrọ asụsụ','Wallet':'Akpa ego','Learn web3 before it costs you.':'Mụta Web3 tupu ọ kpatara gị nsogbu.',
     'Every city teaches you something new.':'Obodo ọ bụla na-akụziri gị ihe ọhụrụ.','A T3Kit game.':'Egwuregwu T3Kit.','Easy access to everything in web3.':'Ụzọ dị mfe ịbanye n’ụwa Web3.'
   },
   ha:{
@@ -611,9 +609,7 @@ const LOCALIZED_UI={
     'Footsteps, chimes and voices.':'Sautin tafiya, ƙararrawa da murya.','How to play':'Yadda ake wasa','Move with the left stick or WASD. Hold Run or Shift to run. Tap Talk or press E near a glowing person. The arrow points to your goal. Avoid traffic.':'Yi motsi da sandar hagu ko WASD. Riƙe Gudu ko Shift don gudu. Danna Yi magana ko E kusa da mutum mai haske. Kibiya tana nuna inda za ka je. Guji ababen hawa.',
     'About the streets':'Game da tituna','Reset progress':'Sake farawa','Reset':'Sake saita','Yes, erase everything':'Eh, goge komai',
     'No wallet yet':'Ba ka da walat tukuna','Here':'Nan','Talk':'Yi magana','Run':'Gudu','Loading':'Ana lodawa',
-    'Choose language':'Zaɓi harshe','Wallet':'Walat','View certificate':'Duba takardar shaida','Share on WhatsApp':'Raba a WhatsApp',
-    'Mission badges':'Alamomin manufa','Journey progress':'Ci gaban tafiya','Missions complete':'Manufofin da aka kammala','City journeys complete':'Tafiyar biranen da aka kammala',
-    'NOT EARNED YET':'Ba a samu ba tukuna','ACHIEVEMENT EARNED':'An samu nasara','Learn web3 before it costs you.':'Koyi Web3 kafin ya jawo maka asara.',
+    'Choose language':'Zaɓi harshe','Wallet':'Walat','Learn web3 before it costs you.':'Koyi Web3 kafin ya jawo maka asara.',
     'Every city teaches you something new.':'Kowane birni yana koya maka sabon abu.','A T3Kit game.':'Wasan T3Kit.','Easy access to everything in web3.':'Sauƙin shiga duniyar Web3.'
   }
 };
@@ -3253,7 +3249,7 @@ function buildMissionNameAliases(mission){
 }
 const cityMissions=city=>MISSIONS.filter(m=>m.city===city);
 const isCityComplete=city=>{const ms=cityMissions(city);return ms.length>0&&ms.every(m=>!!P.done[m.id]);};
-const isCityUnlocked=city=>{if(TEST_UNLOCK_ALL_MISSIONS)return cityMissions(city).length>0;const ms=cityMissions(city);return ms.length>0&&isUnlocked(ms[0]);};
+const isCityUnlocked=city=>{const ms=cityMissions(city);return ms.length>0&&isUnlocked(ms[0]);};
 /* ===================== mission flow ===================== */
 function hideEnt(e){ e.hidden=true; loadStep(); }
 function resetPlayer(){
@@ -3481,7 +3477,7 @@ function mapSVG(){
 }
 
 function renderHub(){
-  $('#hubTop').innerHTML=tx('<span class="wm"><img class="header-logo" src="https://i.postimg.cc/qqbdTXky/file-00000000958881f4a776df689a235dec.png" alt="KitCity" /></span><div class="lvl"><b>Wallet</b><div class="balance-line"><strong>'+P.usdc.toFixed(2)+' USDC</strong><small>Storyline not published</small></div>'+(TEST_UNLOCK_ALL_MISSIONS?'<small style="display:inline-block;margin-top:6px;color:#10c8dc;font-weight:800;letter-spacing:.08em">TEST MODE · ALL MISSIONS UNLOCKED</small>':'')+'</div>');
+  $('#hubTop').innerHTML=tx('<span class="wm"><img class="header-logo" src="https://i.postimg.cc/qqbdTXky/file-00000000958881f4a776df689a235dec.png" alt="KitCity" /></span><div class="lvl"><b>Wallet</b><div class="balance-line"><strong>'+P.usdc.toFixed(2)+' USDC</strong><small>Storyline not published</small></div>'+'</div>');
   document.querySelectorAll('#nav [data-v="kitlab"]').forEach(b=>b.remove());
   if(hubTab==='kitlab'||hubTab==='cityhub') hubTab='missions';
   document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===hubTab));
