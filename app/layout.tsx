@@ -5,7 +5,7 @@ const logo = 'https://i.postimg.cc/qqbdTXky/file-00000000958881f4a776df689a235de
 
 export const metadata: Metadata = {
   title: 'KitCity — Learn Web3 on the Streets',
-  description: 'A realistic Nigerian city game that teaches Web3 through missions.',
+  description: 'Explore a realistic Nigerian city in KitCity.',
   applicationName: 'KitCity',
   manifest: '/manifest.webmanifest',
   icons: {
