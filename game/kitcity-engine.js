@@ -154,7 +154,7 @@ const MUSIC_QUEUES={
   'owerri':{label:"Owerri · Igbo highlife / Afrobeat",videos:["Ra1yHDcJygY"]},
   'aba':{label:"Abia · Igbo-language Afrobeats",videos:["Uyr1c0pkpas"]},
   'umuahia':{label:"Umuahia · Igbo highlife / Afrobeat",videos:["W41TT8g3MnQ"]},
-  'awka':{label:"Anambra · Igbo-language Afrobeats",videos:["9aEEIyw34Xw"]},
+  'awka':{label:"Anambra · Anyidons — Igbo (Ofeke) (Igbo highlife)",videos:["X7puJxUZxa8"]},
   'onitsha':{label:"Abakaliki · Igbo-language Afrobeats",videos:["nMXLMe4_x68"]},
   'asaba':{label:"Asaba · Anioma / Delta",videos:["l-_FcHIS4Yo"]},
   'uyo':{label:"Uyo · Efik / Ibibio",videos:["ulmVmlNoSL8"]},
