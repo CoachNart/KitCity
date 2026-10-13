@@ -230,7 +230,12 @@ export const LOST_VALUE_STORY = [
   {
     id:'lost-value-10', n:10, state:'Edo State', city:'benin', title:'Building for Nobody',
     goal:'Reveal what happens when projects prioritise trends over actual human problems.',
-    value:'USEFULNESS', cast:['Praise','Toza','USER 1','USER 2','USER 3'], splitAfter:8,
+    value:'USEFULNESS', cast:['Praise','Toza','USER 1','USER 2','USER 3'], splitAfter:8, evidenceAfterDialogue:true, interludeLabel:'Interview potential users',
+    interludeDialogue:[
+      ['USER 1','I need a way to keep track of my small business payments.'],
+      ['USER 2','I want to learn a skill that can get me paid.'],
+      ['USER 3','I just want to know whether this investment opportunity is legitimate.']
+    ],
     dialogue:[
       ['Praise','AI agent. Token. Marketplace. Points. Governance. We can combine everything.'],
       ['Toza','What problem does it solve?'],
@@ -249,13 +254,18 @@ export const LOST_VALUE_STORY = [
     ],
     choices:[],
     task:'Interview potential users and match one practical feature to a real problem.',
-    evidenceTitle:'User Needs Record', evidenceBody:'USER 1: “I need a way to keep track of my small business payments.” USER 2: “I want to learn a skill that can get me paid.” USER 3: “I just want to know whether this investment opportunity is legitimate.”',
+    evidenceTitle:'User Needs Record', evidenceBody:'Three potential users described different needs: small-business payment tracking, skills that lead to paid work, and checking whether an investment opportunity is legitimate.',
     reward:'Start with the problem, not the trend.'
   },
   {
     id:'lost-value-11', n:11, state:'Cross River State', city:'calabar', title:'The People Left Behind',
     goal:'Connect Web3’s promises to practical opportunities beyond trading and speculation.',
-    value:'OPPORTUNITY', cast:['Craftore','Kodavic','BUSINESS OWNER'], splitAfter:6,
+    value:'OPPORTUNITY', cast:['Craftore','Kodavic','BUSINESS OWNER'], splitAfter:6, evidenceAfterDialogue:true, interludeLabel:'Speak with the business owner',
+    interludeDialogue:[
+      ['BUSINESS OWNER','I don’t need another token. I need to know who paid, who hasn’t paid, and where my orders are.'],
+      ['PLAYER','What if a tool could help you track those things?'],
+      ['BUSINESS OWNER','If it works, doesn’t cost too much, and I can understand how to use it, I’ll try it.']
+    ],
     dialogue:[
       ['Craftore','People come here to talk about financial freedom.'],
       ['Kodavic','Then they show everybody how to trade.'],
@@ -270,7 +280,7 @@ export const LOST_VALUE_STORY = [
     ],
     choices:[],
     task:'Record the business owner’s needs and propose a practical feature with a clear user benefit.',
-    evidenceTitle:'Local Business Needs', evidenceBody:'BUSINESS OWNER: “I don’t need another token. I need to know who paid, who hasn’t paid, and where my orders are.” PLAYER: “What if a tool could help you track those things?” BUSINESS OWNER: “If it works, doesn’t cost too much, and I can understand how to use it, I’ll try it.”',
+    evidenceTitle:'Local Business Needs', evidenceBody:'The business owner needs an understandable, affordable way to track payments and orders.',
     reward:'Technology becomes valuable when it helps people do something they couldn’t do as well before.'
   },
   {
