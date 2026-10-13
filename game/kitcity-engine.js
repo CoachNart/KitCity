@@ -1176,6 +1176,34 @@ function roadDecals(C,blocks){
     const studs=[]; for(let k=-3;k<=3;k++){ for(let n=-3;n<=3;n++){ if(Math.abs(n)%2===0) studs.push({x:k*R,y:.22,z:n*R+18},{x:n*R+18,y:.22,z:k*R}); } }
     instanced(new THREE.BoxGeometry(.55,.18,.55),new THREE.MeshBasicMaterial({color:C.roadStyle==='boulevard'?'#F2F3F1':'#D8C79E'}),studs,cityGroup);
   }
+  // Road paint is authored by street type rather than copied unchanged between cities.
+  const style=C.roadStyle||'mixed',marks=[];
+  const addMark=(x,z,ry=0)=>marks.push({x,y:.085,z,ry});
+  for(let k=-3;k<=3;k++)for(let i=-3;i<=2;i++){
+    const x=i*R+35,z=k*R;
+    if(style==='industrial'){
+      // Port and industrial corridors use a double yellow centre line.
+      for(const off of [-.62,.62]){const m=boxMark(x,z+off,0);marks.push(m);}
+      const vx=k*R,vz=i*R+35;for(const off of [-.62,.62])marks.push(boxMark(vx+off,vz,Math.PI/2));
+    }else if(style==='boulevard'||style==='ceremonial'){
+      // Formal avenues have lane guides flanking the median.
+      for(const off of [-2.1,2.1]){marks.push(boxMark(x,z+off,0));marks.push(boxMark(k*R+off,i*R+35,Math.PI/2));}
+    }else{
+      const stride=style==='open'||style==='gate'?3:style==='market'?1:2;
+      for(let q=0;q<5;q++){
+        if((q+i+k)%stride!==0)continue;
+        const px=i*R+8+q*10,pz=k*R;
+        addMark(px,pz,0);addMark(k*R,pz===k*R?i*R+8+q*10:i*R+8+q*10,Math.PI/2);
+      }
+    }
+  }
+  function boxMark(x,z,ry){return {x,y:.085,z,ry};}
+  if(marks.length){
+    const g=new THREE.PlaneGeometry(style==='industrial'||style==='boulevard'||style==='ceremonial'?56:7,.22);g.rotateX(-Math.PI/2);
+    const laneColor=style==='industrial'?'#E9BE35':style==='market'?'#C9C6B9':style==='gate'||style==='open'?'#D2B56D':'#E5E8E7';
+    const laneMat=new THREE.MeshBasicMaterial({color:laneColor,transparent:true,opacity:style==='market'?.58:.9,depthWrite:false});
+    instanced(g,laneMat,marks,cityGroup);
+  }
 }
 function atmoSet(type){
   if(ATMO){ scene.remove(ATMO.o); ATMO.o.geometry.dispose(); ATMO=null; } if(!type) return;
