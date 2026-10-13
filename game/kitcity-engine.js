@@ -1134,54 +1134,55 @@ Object.assign(LOOK,{
 /* =====================  modern Nigerian city visual pass  ===================== */
 /* Keep each city's layout, landmarks, traffic and regional character, but remove
    the heavy sepia/rust treatment and give buildings contemporary urban finishes. */
-(function modernizeCityVisuals(){
-  const coolPalettes={
-    coastal:['#E8EFF2','#C6D9DF','#B7CBC7','#D9E5DC','#A9C1D1','#F0F1EA','#91AAB9','#D2DCE4'],
-    southwest:['#E9ECEF','#CCD7DD','#B7C9C6','#DCE5D8','#A8BCCC','#F0EEE8','#8EA6B5','#D3DDE2'],
-    southeast:['#E7EEF0','#C7D7D8','#B6C9C2','#DCE6D9','#AABED0','#F1EFE8','#8FA6B2','#D2DCE3'],
-    north:['#E7EBED','#D0D9DF','#BBCBD4','#E3E8E2','#AFC2CD','#F0F0E9','#94A9B5','#D5DDE2'],
-    capital:['#F0F2F3','#D5E0E7','#C0D0D8','#E1E9E5','#A8BFCE','#F3F1EA','#91A8B7','#DCE4E8']
-  };
-  const northern=new Set(['kano','kaduna','maiduguri','sokoto','katsina','birnin-kebbi','minna','dutse','gusau','damaturu','bauchi','gombe','lafia','jalingo','yola','kafanchan','damboa']);
-  const coastal=new Set(['lagos','ph','calabar','uyo','ikot-ekpene','yenagoa','warri','asaba','port-harcourt']);
-  const southeast=new Set(['enugu','benin','owerri','aba','umuahia','awka','onitsha','abakaliki','anambra']);
-  const capital=new Set(['abuja','jos']);
-  const steel=['#6E7C86','#7F8D96','#596A75','#8C989F','#657681','#4D5C66'];
+/* =====================  preserve regional Nigerian city identities  ===================== */
+/* The previous global modernizer replaced every city's palette, roof mix and ground
+   with one of five generic presets. Keep the shared renderer, but never flatten the
+   local identity profile that drives each city's buildings, roads and landmarks. */
+(function preserveCityVisuals(){
+  const profileKeys=Object.keys(CITY_IDENTITY);
+  const palettes=[
+    ['#D5D9D3','#C4D6D8','#D7BCA1','#9DB9C5','#E1D7C5','#A8B9A9'],
+    ['#E6E9E8','#CFDDE5','#BBCBD2','#E8E0D2','#AFC4D1','#D8DFD8'],
+    ['#D7B78C','#C9A77B','#E4CBA5','#B78D62','#D9C39E','#A98963'],
+    ['#C9A98A','#B9805D','#D7C2A2','#A6B1A0','#D2B56F','#B9A38C'],
+    ['#AFC5BE','#92B0A9','#C3C9BB','#9CB3C3','#D5C5A7','#A7B9B0'],
+    ['#E0B8A2','#A8CFC1','#E8D48E','#C6B7D8','#A4C2D8','#DFA6A2'],
+    ['#D6D1C4','#BBC9B8','#C9B99F','#A9BAC8','#DFCAA6','#9BAF9D'],
+    ['#C9825E','#B86F4C','#D9A781','#9D6049','#DCC29E','#9BAF98'],
+    ['#C6D4BE','#B4C9C6','#D9C5A3','#AFC1D4','#D3B88B','#A8B6A0'],
+    ['#C8D1C7','#B9C9D1','#D7B89A','#A7B7C5','#D8C78D','#B8A99A'],
+    ['#AFC6B0','#9FBDB7','#D0C39E','#A4BCC7','#C8B28D','#9EADA0'],
+    ['#D8BE91','#CBA878','#E5D2AA','#B98E5F','#D6B889','#A98B62']
+  ];
+  const own=(o,k)=>Object.prototype.hasOwnProperty.call(o,k);
   Object.keys(CITIES).forEach((key,index)=>{
     if(key==='kitcity') return;
-    const C=CITIES[key];
-    const palette=capital.has(key)?coolPalettes.capital:northern.has(key)?coolPalettes.north:coastal.has(key)?coolPalettes.coastal:southeast.has(key)?coolPalettes.southeast:coolPalettes.southwest;
-    const shift=(index*3)%palette.length;
-    C.paint=Array.from({length:palette.length},(_,i)=>palette[(i+shift)%palette.length]);
-    C.ground='#30363C';
-    C.slab='#BFC8CE';
-    C.dirt='#78838A';
-    C.zinc=steel.slice();
-    if(key==='ibadan') C.tag='The city of firsts';
-    if(Array.isArray(C.styles)){
-      C.styles=C.styles.map(([style,weight])=>[style,weight*(style==='glass'?1.45:style==='admin'?1.25:style==='flat'?1.2:style==='zinc'?.55:style==='banco'?.12:1)]);
-      const present=new Set(C.styles.map(x=>x[0]));
-      [['flat',.3],['admin',.18],['glass',.16],['zinc',.1]].forEach(([style,weight])=>{if(!present.has(style)) C.styles.push([style,weight]);});
-    }else{
-      C.styles=[['flat',.48],['admin',.2],['glass',.18],['zinc',.12],['banco',northern.has(key)?.04:.01]];
+    const C=CITIES[key], p=CITY_IDENTITY[key];
+    if(p){
+      C.form=p.form; C.roadStyle=p.road; C.styles=p.styles.map(v=>v.slice());
+      C.h=p.height.slice(); C.market=p.market;
+      C.ground=p.ground; C.slab=p.slab; C.dirt=p.dirt; C.paint=p.paint.slice();
+      C.cityFeature=p.feature;
+    } else {
+      // States without a dedicated named profile still keep their own source data;
+      // rotate a regionally compatible palette instead of inheriting Lagos defaults.
+      const palette=palettes[(Math.abs((C.seed||index*17)+index*7))%palettes.length];
+      if(!Array.isArray(C.paint)||C.paint.length<4) C.paint=palette.slice();
+      if(!C.ground) C.ground=['#343B3C','#3A3B36','#42413B','#303D3A'][index%4];
+      if(!C.slab) C.slab=['#BFC8C2','#C6B9A3','#B7C6C3','#C5C3B8'][index%4];
+      if(!C.dirt) C.dirt=['#8B795F','#9A805F','#7E7967','#A28A68'][index%4];
+      if(!C.form) C.form=['dense-market','organic-sprawl','regional-capital','green-hills','savanna-capital'][index%5];
+      if(!C.roadStyle) C.roadStyle=['market','mixed','arterial','contour','open'][index%5];
+      if(!Array.isArray(C.styles)) C.styles=[['flat',.34],['zinc',.25],['admin',.15],['glass',.12],['banco',.14]];
     }
-    const old=LOOK[key]||{};
-    const sky=capital.has(key)?{h:'#C9DFEE',z:'#5889B5',sun:'#FFF5E7',cc:'#E9F4FA',hS:'#EAF3F8',hG:'#414B51'}:
-      northern.has(key)?{h:'#C8DDF0',z:'#719AC2',sun:'#FFF4E4',cc:'#EDF4F8',hS:'#EAF2F8',hG:'#454B4F'}:
-      coastal.has(key)?{h:'#BBDCE4',z:'#5E91A8',sun:'#FFF4E8',cc:'#E5F1F4',hS:'#E7F2F4',hG:'#38494B'}:
-      southeast.has(key)?{h:'#C4E0E0',z:'#6595B0',sun:'#FFF4E8',cc:'#E8F4F2',hS:'#E8F3F1',hG:'#3B4A47'}:
-      {h:'#C6DCEB',z:'#658FB7',sun:'#FFF4E7',cc:'#EAF3F8',hS:'#EAF2F7',hG:'#424B50'};
-    LOOK[key]=Object.assign({},old,sky,{
-      paint:C.paint,ground:C.ground,slab:C.slab,dirt:C.dirt,zinc:steel,roof:'#858F97',
-      rust:.025,dust:.025,lat:0,mil:Math.min(Number(old.mil)||0,.22),
-      fx:old.fx==='rain'?'rain':null,fade:0,grain:.016,bloom:.22,
-      sat:1.06,con:1.08,exp:1.04,veil:[sky.h,.025],
-      lift:[0,.006,.012],gain:[1.01,1.015,1.02],vig:.2,
-      dash:'#E8C95B'
-    });
+    // Keep city architecture distributions recognizable; normalize only weights,
+    // never inject the same modern building mix into every location.
+    if(Array.isArray(C.styles)){
+      const total=C.styles.reduce((sum,item)=>sum+Math.max(0,Number(item[1])||0),0)||1;
+      C.styles=C.styles.map(([style,weight])=>[style,Math.max(0,Number(weight)||0)/total]);
+    }
   });
-})();
-const lkc=h=>new THREE.Color(h);
+})();const lkc=h=>new THREE.Color(h);
 function lkWeather(c,L){
   const g=c.getContext('2d'),S=c.width,R=mulberry(S*7+Math.floor(L.dust*100)+Math.floor(L.mil*100)+Math.floor(L.lat*100)),r=(a,b)=>a+R()*(b-a);
   const gr=g.createLinearGradient(0,S*.6,0,S); gr.addColorStop(0,'rgba(0,0,0,0)'); gr.addColorStop(1,L.lat>.25?'rgba(125,66,36,'+(.2+L.lat*.4)+')':'rgba(62,50,40,.3)'); g.fillStyle=gr; g.fillRect(0,S*.6,S,S*.4);
@@ -1214,8 +1215,18 @@ function lkPave(L){ const c=cv(128,128),g=c.getContext('2d'),R=mulberry(5); g.fi
   if(L.dust>0){ g.fillStyle='rgba(222,196,152,'+(L.dust*.4)+')'; g.fillRect(0,0,128,128); } return c; }
 function lkEdge(){ const c=cv(8,64),g=c.getContext('2d'),lg=g.createLinearGradient(0,0,0,64); lg.addColorStop(0,'rgba(255,255,255,0)'); lg.addColorStop(1,'rgba(255,255,255,.75)'); g.fillStyle=lg; g.fillRect(0,0,8,64); return c; }
 function applyLook(key,C){
-  const L=Object.assign({},LOOK_BASE,LOOK[key]||{}); LKC=L;
-  Object.assign(C,{paint:L.paint||C.paint,ground:L.ground,slab:L.slab,dirt:L.dirt,leaf:L.leaf,zinc:L.zinc,fog:L.fog});
+  const cityLook=LOOK[key]||{};
+  const L=Object.assign({},LOOK_BASE,cityLook);
+  // Atmospheric defaults are shared; city surfaces and architecture are not.
+  L.paint=cityLook.paint||C.paint||LOOK_BASE.paint;
+  L.ground=cityLook.ground||C.ground||LOOK_BASE.ground;
+  L.slab=cityLook.slab||C.slab||LOOK_BASE.slab;
+  L.dirt=cityLook.dirt||C.dirt||LOOK_BASE.dirt;
+  L.leaf=cityLook.leaf||C.leaf||LOOK_BASE.leaf;
+  L.zinc=cityLook.zinc||C.zinc||LOOK_BASE.zinc;
+  L.fog=cityLook.fog||C.fog||LOOK_BASE.fog;
+  LKC=L;
+  Object.assign(C,{paint:L.paint,ground:L.ground,slab:L.slab,dirt:L.dirt,leaf:L.leaf,zinc:L.zinc,fog:L.fog});
   if(L.paint===undefined) L.paint=C.paint;
   const hc=lkc(L.h); scene.background=hc; scene.fog=new THREE.Fog(hc,L.fog[0],L.fog[1]);
   hemi.color.set(L.hS); hemi.groundColor.set(L.hG); hemi.intensity=L.hI*LS; sun.intensity=L.sI*LS; sun.color.set(L.sun); LKS.col=lkc(L.sun);
