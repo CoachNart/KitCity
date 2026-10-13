@@ -22,7 +22,7 @@ function escapeHtml(value) {
   return String(value == null ? '' : value).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
 }
 
-export function createStorySceneDirector({ camera, player, getCharacter, animateCharacter, setModal }) {
+export function createStorySceneDirector({ camera, player, getCharacter, getCharacters, animateCharacter, setModal }) {
   let active = false;
   let activePanels = OPENING_PANELS;
   let genericScene = false;
@@ -154,8 +154,25 @@ export function createStorySceneDirector({ camera, player, getCharacter, animate
       target = soft || abdul || target;
       position = target.clone().add(new camera.position.constructor(mobilePortrait ? -11 : -8, mobilePortrait ? 6 : 4.5, mobilePortrait ? 15 : 8));
     } else if (key === 'character') {
-      target = worldPosition(speaker && getCharacter(speaker)) || hero || soft || abdul || target;
-      position = target.clone().add(new camera.position.constructor(mobilePortrait ? 7 : 4, mobilePortrait ? 6 : 3.5, mobilePortrait ? 23 : 9));
+      const castPoints = genericScene && typeof getCharacters === 'function'
+        ? getCharacters().map(worldPosition).filter(Boolean)
+        : [];
+      if (castPoints.length) {
+        const minX = Math.min(...castPoints.map(point => point.x));
+        const maxX = Math.max(...castPoints.map(point => point.x));
+        const minZ = Math.min(...castPoints.map(point => point.z));
+        const maxZ = Math.max(...castPoints.map(point => point.z));
+        target = new camera.position.constructor((minX + maxX) / 2, 0, (minZ + maxZ) / 2);
+        const spanX = maxX - minX, spanZ = maxZ - minZ;
+        const distance = mobilePortrait
+          ? Math.max(25, spanX * 1.8 + 16, spanZ * 1.8 + 16)
+          : Math.max(17, spanX * 1.25 + 9, spanZ * 1.25 + 9);
+        const height = mobilePortrait ? Math.max(8, distance * .28) : Math.max(5, distance * .25);
+        position = target.clone().add(new camera.position.constructor(0, height, distance));
+      } else {
+        target = worldPosition(speaker && getCharacter(speaker)) || hero || soft || abdul || target;
+        position = target.clone().add(new camera.position.constructor(mobilePortrait ? 7 : 4, mobilePortrait ? 6 : 3.5, mobilePortrait ? 23 : 9));
+      }
     } else {
       target = hero || soft || abdul || target;
       position = target.clone().add(new camera.position.constructor(7, 4, 8));
