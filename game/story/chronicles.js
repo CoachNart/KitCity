@@ -243,7 +243,7 @@ const RAW_MISSIONS = [
     ],
     "nextMissionId": "m03",
     "ending": "The copied page borrowed the shop's name and design, but its domain and payment destination differ from the original. You preserve the page and message trail. You know how the buyer was misdirected; you still do not know who created the page.",
-    "cliffhanger": "Larai receives a voice note from Oyo. A student named Timi says the same page now offers to restore wallets if people enter twelve secret words. Timi is frightened—but has not entered them. The case has moved from a wrong payment to a chance to stop a second loss.",
+    "cliffhanger": "Larai receives a voice note from Oyo. Timi says the shortened link shared in the market chat now redirects to a second page offering to 'restore' wallets in exchange for twelve secret words. Timi has not entered them. The redirect connects the cases, but it does not prove who operates either page. You head to Oyo to stop a second possible loss.",
     "sceneLines": [
       "Joe_Sef: \"Softstorm sent you? The buyer says this page gave him the address. The café wipes its sessions when people leave, so we have minutes—not hours. Save the page and its full address before clicking anything else. A screenshot without its source can lose the most useful clue.\"",
       "Larai: \"The real shop link is in my original message. Put the two addresses side by side; don't judge them by the logo. Then follow the timestamps. We can show where the link appeared, but a familiar name on a forwarded message doesn't prove who controlled that account.\""
@@ -493,8 +493,8 @@ const RAW_MISSIONS = [
     "ending": "The checkout now distinguishes pending from confirmed and the team retests both outcomes. The merchant can see what has actually happened. The payout destination still differs from the approved address, so the team pauses release rather than pretending the interface fix solved everything.",
     "cliffhanger": "Blockqueen asks Laloba and BigSam to inspect the code that controls the payout. The screen can report a payment correctly while a privileged setting still sends the money somewhere else.",
     "sceneLines": [
-      "Blockqueen: \"This seller almost handed over a laptop because the screen turned green. The transaction was still pending. He doesn't need another dashboard; he needs the receipt to tell the truth. Follow the checkout from the first tap and show me the exact moment the app claims more than the record proves.\"",
-      "Christol: \"I wanted to save the launch with a loyalty feature. The event log shows the real bug: we mark success when the wallet request returns, not when the payment reaches the required state. Let's fix that and test the failure path too. Then look at the payout setting—the destination isn't the one the merchant approved.\""
+      "Blockqueen: \"A seller nearly handed over a box of stock because the screen turned green while the payment was still pending. He doesn't need another dashboard; he needs the receipt to tell the truth. Follow checkout from the first tap and show me the exact moment the app claims more than the record proves.\"",
+      "Christol: \"I wanted to save the launch with a loyalty feature. The event log shows the real bug: we mark success when the wallet request returns, not when the payment reaches the required state. Let's fix that and test the failure path too. Then inspect the payout setting—the destination isn't the one the merchant approved.\""
     ]
   },
   {
@@ -814,7 +814,7 @@ const RAW_MISSIONS = [
     "cliffhanger": "Toza says leverage can make a large position look affordable because the initial margin is small. Then Praise receives a margin alert and considers using money reserved for a community event. Craftore asks you to separate the position's risk from the money it is borrowing.",
     "sceneLines": [
       "Joseph Nnadi: \"He says the exchange moved his stop, but this is the plan he wrote before the session. His screenshot cuts off the order times. Let's rebuild the sequence before we defend him or accuse the platform. A trade can go wrong without every bad outcome being someone else's fault.\"",
-      "The Don: \"The first position had ten dollars of planned risk. Three minutes after it closed, he opened a position twice as large with a wider stop—thirty dollars of planned exposure. That's what the records show. They don't tell us the exchange's intent, and another trade won't erase this one. Check whether the next setup meets his rules at all.\""
+      "The Don: \"The first position had ten dollars of planned risk. Three minutes after it closed, he opened another trade with a larger position and a wider stop, raising planned risk to thirty dollars. That's what the order history shows. It doesn't prove the exchange acted deliberately, and another trade won't erase this loss. Check whether the next setup meets his rules at all.\""
     ]
   },
   {
@@ -1695,7 +1695,7 @@ const RAW_MISSIONS = [
     ],
     "nextMissionId": "m21",
     "ending": "The team confirms that goods are physically present but cannot establish the claimed ownership, custody or holder redemption rights from the available records. The launch is paused and the missing documents are listed. The evidence does not justify either an endorsement or a fraud accusation.",
-    "cliffhanger": "An AI-generated summary in the file confidently names a different owner. In Cross River, Odion and Princess are testing the tool that produced it. The next task is to find out why a fluent answer can still be wrong.",
+    "cliffhanger": "The warehouse is real, but the file is not complete. Its token promotion also includes a record of units issued on more than one blockchain network. An AI-generated summary of the due-diligence packet confidently names a different owner, so the team sends the source documents and token-issuance records to Odion and Princess in Cross River. Before anyone moves the asset or repeats the claim, the report must be checked against its sources.",
     "sceneLines": [
       "BigWealth: \"The warehouse photos look convincing, and the sales deck says every token is backed by stock. But a photo proves only that someone photographed goods in a warehouse. We need the ownership record and the issuer's authority before we repeat the claim.\"",
       "Blessing: \"This seal number appears on two pallets in the inventory log. That could be a recording error or something more serious; we need to check the physical stock and the original records. I also can't find signed custody or redemption terms. Until those are verified, nobody should promise buyers what the token gives them.\""
@@ -1715,7 +1715,7 @@ const RAW_MISSIONS = [
       "Odion",
       "Princess"
     ],
-    "narrativePurpose": "An AI-generated summary confidently identifies the wrong owner of the warehouse. Move from the records room to the AI workstation and back to the field office to trace the source, correct the workflow and make sure a human verifies claims that can affect someone's rights.",
+    "narrativePurpose": "An AI-generated summary of the warehouse due-diligence packet confidently names the wrong owner and glosses over a token-issuance record that spans two blockchain networks. Move from the records room to the AI workstation and back to the field office to trace the unsupported claim, correct the workflow and produce a human-reviewed evidence packet before the project relies on it.",
     "learningObjectives": [
       "Recognise that a fluent AI answer can contain unsupported or invented claims",
       "Trace important statements to the original source documents",
@@ -1774,10 +1774,10 @@ const RAW_MISSIONS = [
     ],
     "nextMissionId": "m22",
     "ending": "The corrected report links each material claim to its source, flags the ownership question as unresolved and is reviewed by a person before sharing. The team records the AI's error instead of quietly replacing the answer and hiding the failure.",
-    "cliffhanger": "The records are then sent between two blockchain networks, but the receiving side has not updated. Racheal and Seun are tracing the transfer. Someone has suggested sending the funds again; you know a missing update is not proof that the first transfer failed.",
+    "cliffhanger": "The corrected packet leaves one unresolved detail: some of the warehouse-linked tokens were moved from the issuing network to a second network, but the destination record has not updated. Racheal and Seun are tracing that specific transfer. Someone suggests sending it again; first establish whether the original bridge message is pending, failed or complete.",
     "sceneLines": [
-      "Odion: \"The summary sounds certain, but it names an owner who doesn't appear in the signed records. Don't ask the model to sound more confident. Find the sentence that made the claim and trace it to the source it was supposed to summarise.\"",
-      "Princess: \"We need the output to show its evidence, distinguish missing information from a negative finding and stop when sources conflict. Retest it against the original ownership file. A human must verify a claim that can affect someone's rights before we publish it.\""
+      "Odion: \"The summary sounds certain, but it names an owner who doesn't appear in the signed records. It also treats the token list as if every network shows the same final state. Don't ask the model to sound more confident. Trace each claim to the exact source it was supposed to summarise.\"",
+      "Princess: \"The report must show its evidence, distinguish missing information from a negative finding and stop when sources conflict. Retest it against the original ownership file and the issuance records. A person must verify claims that affect someone's rights before the report is shared or used to move an asset.\""
     ]
   },
   {
@@ -1794,7 +1794,7 @@ const RAW_MISSIONS = [
       "Racheal",
       "Seun"
     ],
-    "narrativePurpose": "A record was sent between two networks and the receiving side has not updated. Follow the transfer from the network kiosk to the bridge operations room and then the receiving desk. Check the route, asset support and final status before anyone sends the funds a second time.",
+    "narrativePurpose": "The due-diligence packet from the warehouse-backed token project includes a transfer from its issuing network to a second network, but the receiving record has not updated. Follow that exact transfer from the source-network record to the bridge status desk and receiving network. Check the route, supported asset and final status before anyone repeats the transfer or claims the token arrived.",
     "learningObjectives": [
       "Understand that separate blockchain networks maintain separate transaction records",
       "Trace a cross-network transfer through its source, bridge message and destination status",
@@ -1852,11 +1852,11 @@ const RAW_MISSIONS = [
       "bridge_status_verified"
     ],
     "nextMissionId": "m23",
-    "ending": "The source transaction and bridge message are found; the destination update is delayed rather than shown as failed. The sender avoids a duplicate transfer and reports the fake bridge interface. The team records the remaining status uncertainty instead of claiming the bridge is risk-free.",
-    "cliffhanger": "The project now wants community approval to fund a new bridge route. In Bauchi, Dorcas and Joe discover that the vote is being promoted before the costs, beneficiaries and failure plan have been explained.",
+    "ending": "The source transaction and bridge message are found; the destination update is delayed rather than shown as failed. The sender avoids a duplicate transfer and reports the fake bridge interface. The due-diligence packet now records what is confirmed and what remains pending, so the project cannot mistake a source-chain transaction for proof that the destination asset arrived.",
+    "cliffhanger": "The project proposes adding another bridge route for the warehouse-backed token. In Bauchi, Dorcas and Joe discover that the community vote is being promoted before costs, beneficiaries, maintenance ownership and a failure plan have been explained. The transfer incident has made those omissions concrete: the community must decide what risk it is being asked to accept.",
     "sceneLines": [
-      "Racheal: \"The source transaction is confirmed, but the receiving wallet hasn't updated. Those are two different facts. First identify the exact networks and asset, then find the bridge's official status route independently. Don't send again just because one screen is behind.\"",
-      "Seun: \"A bridge coordinates a message or asset movement between systems; it adds another dependency and another place where delays or failures can occur. Match the source transaction to the bridge message ID and destination status. If the destination is still pending, a second transfer won't make the first one finish.\""
+      "Racheal: \"This is the transfer reference from the warehouse project's due-diligence packet. The source transaction is confirmed, but the receiving record hasn't updated. Those are two different facts. Verify the exact networks and asset, then find the bridge's official status route independently. Don't send again just because one screen is behind.\"",
+      "Seun: \"A bridge coordinates an asset or message movement between systems; it adds another dependency and another place where delays or failures can occur. Match the source transaction to the bridge message ID and destination status. If the destination is pending, repeating the transfer may create a second movement rather than finish the first.\""
     ]
   },
   {
@@ -2011,7 +2011,7 @@ const RAW_MISSIONS = [
     ],
     "nextMissionId": "m25",
     "ending": "The team receives a reproducible report, patches the redirect path and verifies the fix against the original and related tests. The launch remains paused until the review passes. The finding is disclosed through the agreed route rather than hidden or broadcast without a response plan.",
-    "cliffhanger": "A creator who helped explain the finding wants to sell a digital collectible based on the project. FemiY has found an earlier version of the artwork by another artist. Before anyone calls the token exclusive, you must find out what rights the seller can actually grant.",
+    "cliffhanger": "While the project prepares a revised launch plan, a creator who helped explain the security finding proposes a commemorative digital collectible for the same community. FemiY finds an earlier version of the artwork credited to another artist. Before the launch team advertises it as exclusive, you must establish what rights the creator can actually grant.",
     "sceneLines": [
       "Mike: \"The developer says nobody would abuse this role. That's not the question. What can the permission do if it is used, and what funds or users could it affect? Reproduce the path in a controlled test and preserve the exact evidence.\"",
       "Gbemi: \"Send the finding through the agreed security contact, with enough detail for the team to reproduce it—not a public exploit recipe. The patch must fail the old test on the old code and pass on the new code, plus the adjacent permission checks. Until an independent review confirms that, the launch stays on hold.\""
@@ -2029,7 +2029,7 @@ const RAW_MISSIONS = [
     "npcs": [
       "FemiY"
     ],
-    "narrativePurpose": "A digital artwork is about to be sold as an exclusive collectible, but the creator cannot show the licence and another artist claims the original. Follow the work from the studio to the print market and licensing desk. The question is not whether the token exists; it is what rights the seller can actually grant.",
+    "narrativePurpose": "The community project wants to sell a commemorative digital collectible, but the creator cannot show a licence and another artist claims the original artwork. The collectible's minting page also bundles a code component whose licence notice may be wrong. Follow both the artwork and the page from the studio to the licensing desk: a token record does not settle copyright, and an attractive interface does not excuse missing software attribution.",
     "learningObjectives": [
       "Distinguish owning a token from owning copyright or commercial-use rights",
       "Read licence terms and attribution evidence before making an exclusivity claim",
@@ -2088,7 +2088,7 @@ const RAW_MISSIONS = [
     ],
     "nextMissionId": "m26",
     "ending": "The listing is paused while the competing authorship claims and licence are checked. FemiY replaces the broad word 'exclusive' with a precise description of what is actually documented. The token's existence is not treated as proof of copyright ownership.",
-    "cliffhanger": "The listing also includes an open-source component whose licence notice was copied incorrectly. Softstorm and IamAbdul ask you to trace the code's origin and correct the attribution before another team builds on the same mistake.",
+    "cliffhanger": "The artwork listing is paused, but its minting page still uses an open-source component with a missing or incorrect licence notice. Softstorm and IamAbdul ask you to trace that exact component to its repository, restore the required attribution and confirm that the page's licence claims match the source before it goes live.",
     "sceneLines": [
       "FemiY: \"The token can prove that a particular token was transferred to a buyer. It doesn't automatically transfer copyright or permission to use the image commercially. Another artist has an earlier file, and this listing says 'exclusive' without a licence. We need to establish the rights before selling that promise.\""
     ]
@@ -2107,7 +2107,7 @@ const RAW_MISSIONS = [
       "Softstorm",
       "IamAbdul"
     ],
-    "narrativePurpose": "A project copied an open-source component, removed the author's notice and shipped it under a licence that does not match the repository. Travel from the workshop to the repository terminal and then meet the maintainer. Preserve the code history, identify the licence and propose a clean contribution path.",
+    "narrativePurpose": "The minting page for the disputed collectible copied an open-source component, removed the author's notice and shipped it under a licence that does not match the repository. Travel from the workshop to the repository terminal and then meet the maintainer. Preserve the code history, identify the actual licence and propose a clean contribution path before the listing returns.",
     "learningObjectives": [
       "Use repository history to trace where code came from",
       "Understand that open-source licences set conditions for reuse",
@@ -2166,7 +2166,7 @@ const RAW_MISSIONS = [
     ],
     "nextMissionId": "m27",
     "ending": "The project restores the required attribution and opens a focused change for review. The maintainer contacts the original author and documents the licence. The team corrects the record without claiming that one matching file proves every part of the dispute.",
-    "cliffhanger": "While comparing the repositories, Joe_Sef and Larai notice the same small cyan mark in several saved records: the payment page, the recovery message and this project. It is a clue worth investigating—but it is not yet proof that one person or team caused the incidents.",
+    "cliffhanger": "While checking the minting page's build and saved incident packet, Joe_Sef and Larai notice the same small cyan marker in the archive metadata attached to several case records. It appears on the records for the payment page and recovery redirect, but not as proof that those pages were operated by the same person. The marker may identify the evidence-routing system; you need more records before drawing that conclusion.",
     "sceneLines": [
       "Softstorm: \"The team says they wrote this component, but the commit history points to another repository. Before we call it theft, compare the exact files and dates and read the licence that came with them.\"",
       "IamAbdul: \"The licence requires attribution, and the notice disappeared in this copy. Preserve the source and licence, restore the required credit and open a focused change for review. A clean contribution lets the maintainer verify what changed instead of turning the issue into a public argument.\""
@@ -2186,7 +2186,7 @@ const RAW_MISSIONS = [
       "Joe_Sef",
       "Larai"
     ],
-    "narrativePurpose": "The same small cyan mark appears on the copied address page, the fake recovery interface, the payment prototype and the disputed repository. Follow the mark across saved screenshots and project records. It is not proof of one culprit; it is a lead connecting several tools and teams.",
+    "narrativePurpose": "A small cyan marker appears in the archive metadata of records from the payment dispute, recovery-page report, payment prototype and repository review. It is not a mark proven to have been placed by the people behind those incidents. Trace the marker through saved evidence packets and deployment notes to learn whether it identifies a shared record-routing tool or something else.",
     "learningObjectives": [
       "Combine evidence from separate incidents into a timeline with traceable sources",
       "Test competing explanations and notice evidence that contradicts an early theory",
@@ -2244,11 +2244,11 @@ const RAW_MISSIONS = [
       "cyan_mark_pattern_documented"
     ],
     "nextMissionId": "m28",
-    "ending": "The timeline confirms that the mark appears across several tools, but no source proves a common operator or shared intent. The team records the mark as a lead, not a verdict. A deployment note reveals that the tools were meant to pass evidence between one another.",
-    "cliffhanger": "That hand-off is failing: a user finishes a verification step in one tool and loses the evidence in the next. Unique and Christol are testing the integration in Kogi. The mystery now has a practical question—can these tools work together without losing the user's work or safety?",
+    "ending": "The timeline confirms that the cyan marker appears in archive metadata across several cases, but no source proves a common operator or shared intent. The team records it as a lead, not a verdict. A deployment note suggests the marker may belong to a shared evidence-routing tool designed to pass case references between systems.",
+    "cliffhanger": "That evidence hand-off is failing: a user completes a verification task in one tool, but the next tool loses the case reference. Unique and Christol are testing the integration in Kogi. The practical question is now clear—can the shared system carry a traceable case forward without losing the user's work or exposing private details?",
     "sceneLines": [
-      "Joe_Sef: \"There it is again—the cyan mark. People are already saying it proves one group was behind everything. Put every appearance on a timeline with the original file, date and source. If a clue doesn't survive comparison, it doesn't belong in the conclusion.\"",
-      "Larai: \"We have several appearances, but no verified record yet that ties them to one operator. Compare the deployment notes and account for the gaps. The useful question isn't 'Who can we blame?' It's 'What connection can we actually demonstrate, and what would prove or disprove it?'\""
+      "Joe_Sef: \"There it is again—the cyan marker in the archive footer. Be precise: we found it on saved case records, not proof that the people behind each incident put it on their pages. Put every appearance on a timeline with the original file, date and source. If a clue doesn't survive comparison, it doesn't belong in the conclusion.\"",
+      "Larai: \"We have several matching archive markers, but no verified record tying the incidents to one operator. Compare the export metadata and deployment notes, and account for the gaps. The useful question isn't 'Who can we blame?' It's 'Which system added this marker, and what record would prove or disprove that?'\""
     ]
   },
   {
@@ -2265,7 +2265,7 @@ const RAW_MISSIONS = [
       "Unique",
       "Christol"
     ],
-    "narrativePurpose": "A user completes a verification task in one tool, moves to another and loses the evidence they just collected. Walk the route from the roadside station to the integration workshop and run a full hand-off test. The systems share a mark and design language, but do they share clear rules?",
+    "narrativePurpose": "A user completes a verification task in one tool, moves to another and loses the evidence they just collected. The archive marker and deployment notes point to a shared evidence-routing system, but its hand-off is broken. Walk the route from the roadside station to the integration workshop and test whether the case reference survives each step without leaking private details.",
     "learningObjectives": [
       "Understand how connected tools pass references and state between systems",
       "Trace an end-to-end failure instead of fixing one screen in isolation",
@@ -2324,7 +2324,7 @@ const RAW_MISSIONS = [
     ],
     "nextMissionId": "m29",
     "ending": "The revised flow carries the case reference into the next tool and passes the end-to-end regression test. It shares only the information needed for the next step. The team records the remaining limits rather than declaring every possible integration safe.",
-    "cliffhanger": "The deployment route ends at a city that does not appear on the ordinary map: KitCity. Softstorm is waiting at its gate, where the cyan mark is carved into the entry panel. He asks you to bring the evidence—not a theory about who is guilty.",
+    "cliffhanger": "The repaired evidence route points to a city that does not appear on the ordinary map: KitCity. Softstorm is waiting at its gate, where the cyan marker is carved into the entry panel. Bring the traceable case references and deployment notes—not a theory about who is guilty.",
     "sceneLines": [
       "Unique: \"The user completed the first check and did everything asked. Then the second tool behaved as if nothing had happened. Don't make them repeat the whole task yet—trace the reference from the first screen and find where it disappears.\"",
       "Christol: \"The first tool sends a case reference; the second never stores it. Document what each side promises to send and receive, patch the missing step and replay the entire journey. Test the old failure and the retry path. The hand-off is fixed only when the evidence arrives and the private details stay private.\""
@@ -2407,9 +2407,9 @@ const RAW_MISSIONS = [
     "ending": "The gate opens when the timeline is supported by traceable sources and its uncertainties are labelled. The player is not rewarded for guessing a culprit; the reward comes from showing a defensible chain of reasoning.",
     "cliffhanger": "Inside, three teams are waiting with a practical problem. One needs a payment flow checked, one needs a newcomer protected and one needs a broken integration repaired. Softstorm lets you choose where to begin, but every team will ask you to show your work.",
     "sceneLines": [
-      "Softstorm: \"You made it to KitCity. The mark isn't a password and I'm not opening the gate because you guessed a name. Show me what happened, when it happened and which original source supports each part.\"",
-      "White Coach: \"Lay the cases along one timeline. The wrong payment, the fake recovery page and the broken hand-off may share a route, but similarity alone doesn't prove one culprit. Label facts, inferences and unanswered questions separately.\"",
-      "Craftore: \"Now choose the evidence that actually changes our decision at the gate. A large pile of screenshots is not a strong case if nobody can trace them to a source. Keep the gaps visible; careful uncertainty is a skill, not a failure.\""
+      "Softstorm: \"You made it to KitCity. The marker is part of the evidence route, not a password, and I'm not opening the gate because you guessed a name. Show me what happened, when it happened and which original source supports each part.\"",
+      "White Coach: \"Lay the cases along one timeline. The wrong payment, fake recovery redirect and broken hand-off may share an evidence route, but that doesn't prove one culprit. Label facts, inferences and unanswered questions separately.\"",
+      "Craftore: \"Now choose the evidence that actually changes our decision at the gate. A pile of screenshots is not a strong case if nobody can trace them to a source. Keep the gaps visible; careful uncertainty is a skill, not a failure.\""
     ]
   },
   {
@@ -2495,7 +2495,7 @@ const RAW_MISSIONS = [
     ],
     "nextMissionId": "m31",
     "ending": "The teams verify the payment status, protect the newcomer and pass the revised hand-off tests, including the original failure case. Each result has a source, an owner and a stated limit. KitCity records the work rather than awarding success for confidence alone.",
-    "cliffhanger": "The final review unlocks the deployment trail. The cyan mark appears beside a project name, T3Kit—but the mark itself was never proof. Softstorm takes you to the records room to verify what the signed deployment record actually says.",
+    "cliffhanger": "The final review unlocks the evidence-routing deployment trail. The cyan marker appears beside a project name, T3Kit—but the marker itself is not proof of responsibility for any incident. Softstorm takes you to the records room to inspect the signed deployment record and verify what relationship it actually establishes.",
     "sceneLines": [
       "Softstorm: \"Three teams, one shared deadline. Choose a task you can take responsibility for, then tell the others what evidence you'll bring back. We don't need three people doing the same work or one person claiming everything.\"",
       "IamAbdul: \"The newcomer has a recovery page open. Explain why the twelve words must stay private, then help them find support through a route you verify independently.\"",
@@ -2530,7 +2530,7 @@ const RAW_MISSIONS = [
       "Christol",
       "Craftore"
     ],
-    "narrativePurpose": "The records reveal that T3Kit commissioned the connected tools as a pathway for people to learn, build, verify and contribute—not as a shortcut to guaranteed money. Visit the records room, trace the signal to the tower and return to the square to decide what the city should build next. The mystery resolves through the evidence you collected and the work you proved.",
+    "narrativePurpose": "The signed deployment record identifies T3Kit as the project that commissioned the shared evidence-routing pathway used by the connected tools. The cyan marker is a provenance cue for that pathway, not proof that T3Kit operated the scams or authored every record. Visit the records room, compare the signed record with the evidence you collected and decide what the city should build next. The mystery resolves through documented provenance, not a convenient culprit.",
     "learningObjectives": [
       "Verify a project's stated role from a source record and distinguish that from broader claims",
       "Recognise roles across learning, building, security, communication and community work",
@@ -2589,11 +2589,11 @@ const RAW_MISSIONS = [
       "kitcity_journey_complete"
     ],
     "nextMissionId": null,
-    "ending": "The records confirm T3Kit commissioned the connected pathway for learning, building, verification and participation. They do not promise easy money or guaranteed outcomes. The player leaves with a portfolio of work, a chosen next step and a method for checking future claims.",
+    "ending": "The signed records confirm that T3Kit commissioned the shared evidence-routing pathway for learning, building, verification and participation. They do not connect T3Kit to the operation of every scam described in the cases, nor do they promise easy money or guaranteed outcomes. The player leaves with a portfolio of work, a chosen next step and a method for checking future claims.",
     "cliffhanger": "The square fills with new teams looking for people who can do the work. Your story does not end with the mission list: it continues with the next skill you practise, the evidence you create and the people your work helps.",
     "sceneLines": [
-      "Softstorm: \"The signal brought you here, but the cyan mark was never proof by itself. Open the signed deployment record and show me the exact relationship it establishes. If the record doesn't say it, don't add it to the story.\"",
-      "IamAbdul: \"The record names T3Kit as the commissioning project for this connected pathway. That tells us who initiated it; it doesn't guarantee a job, profit or shortcut. What matters now is what you learned to do and what you can prove.\"",
+      "Softstorm: \"The signal brought you here, but the cyan marker was never proof that one person caused every incident. Open the signed deployment record and show me the exact relationship it establishes. If the record doesn't say it, don't add it to the story.\"",
+      "IamAbdul: \"The record names T3Kit as the commissioning project for this shared evidence pathway. That tells us who initiated the tool—not who operated every suspicious page that appears in a case file, and not whether any product guarantees a job or profit. What matters now is what you learned to do and what you can prove.\"",
       "Joe_Sef: \"I've matched the deployment reference against the case notes. The links that agree are documented; the gaps stay marked as gaps. A complete story is not one where every mystery has a convenient answer—it's one where we know the difference between evidence and assumption.\"",
       "Larai: \"Look at the work you've touched: verify records, protect people, explain products, build and test tools, review permissions, respect licences and connect systems. Those are real contributions, and none requires you to pretend to know everything already.\"",
       "Unique: \"Choose one skill you want to practise next. Name a small deliverable someone else can inspect—a tested feature, a clear guide, a reviewed report or a useful community task.\"",
