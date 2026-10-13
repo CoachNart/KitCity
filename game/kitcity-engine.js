@@ -1011,6 +1011,13 @@ const CITY_IDENTITY={
   yobe:{form:'sahel',road:'open',styles:[['banco',.46],['flat',.28],['zinc',.22],['admin',.04]],height:[6,24],market:3,ground:'#4C4337',slab:'#D0BB94',dirt:'#C7A16D',paint:['#DCC398','#CBA979','#E5D2A9','#B98E5F','#D6B887','#A98A61'],feature:'city-gate'},
   zamfara:{form:'historic',road:'gate',styles:[['banco',.48],['flat',.28],['zinc',.18],['admin',.06]],height:[7,26],market:3,ground:'#494136',slab:'#CBB794',dirt:'#C29B6A',paint:['#D8BC91','#C9A87B','#E3CCA3','#B88D62','#D7C19A','#A98A62'],feature:'city-gate'}
 };
+// State/metro aliases used by mission data share their own tuned identity.
+Object.assign(CITY_IDENTITY,{
+  anambra:{form:'dense-market',road:'market',styles:[['flat',.32],['zinc',.3],['glass',.16],['admin',.12],['banco',.1]],height:[8,38],market:2,ground:'#3B3D39',slab:'#B8C0BB',dirt:'#907A5F',paint:['#CDD8D0','#B8CDD2','#D7C0A1','#A9B8CA','#D5C48E','#B6B6A9'],feature:'market'},
+  adoekiti:CITY_IDENTITY['ado-ekiti'],
+  abia:CITY_IDENTITY.umuahia,
+  osun:CITY_IDENTITY.osogbo
+});
 function applyCityIdentityProfiles(){
   Object.keys(CITIES).forEach(key=>{
     if(key==='kitcity') return;
