@@ -1893,7 +1893,7 @@ const RAW_MISSIONS = [
       "Racheal",
       "Seun"
     ],
-    "narrativePurpose": "Continue from Mission 21's corrected due-diligence packet. The issuing-network transaction is confirmed, but the destination record has not updated. Work with Racheal and Seun to trace the original transfer, verify the official bridge status and explain the delay without creating a duplicate transfer.",
+    "narrativePurpose": "Continue from Mission 21's corrected due-diligence packet. The transaction on the issuing network is confirmed, but the destination record has not updated. Work with Racheal and Seun to trace the original transfer, verify the official bridge status and explain the delay without creating a duplicate transfer.",
     "cardDescription": "Trace one transfer across two networks without mistaking a confirmed source for a completed destination.",
     "learningObjectives": [
       "Understand that separate blockchain networks maintain separate transaction records",
@@ -2111,7 +2111,7 @@ const RAW_MISSIONS = [
     ],
     "nextMissionId": "m24",
     "ending": "The community delays the vote until costs, maintenance responsibility and the failure plan are published. The record explains why the vote was postponed and what would allow members to reconsider.",
-    "cliffhanger": "During the review, Mike finds a privileged contract permission that could redirect treasury funds, and the proposal never disclosed it. Gbemi has the launch build and needs a controlled impact test and responsible disclosure before the team proceeds.",
+    "cliffhanger": "During the review, Mike finds a privileged contract permission that could redirect funds from the treasury, and the proposal never disclosed it. Gbemi has the launch build and needs a controlled impact test and responsible disclosure before the team proceeds.",
     "sceneLines": [
       "Dorcas: \"The transfer delay made the risk real, but the proposal asks for a fast vote without naming who maintains the route or pays when it fails. Urgency is not readiness.\"",
       "Joe: \"Compare the budget, recipients, milestones and failure response. If missing information changes the decision, delay the vote and record what must be supplied before it returns.\""
@@ -3163,11 +3163,7 @@ const RAW_MISSIONS = [
     "npcs": [
       "Softstorm",
       "IamAbdul",
-      "Joe_Sef",
-      "Larai",
-      "Unique",
-      "Christol",
-      "Craftore"
+      "Christol"
     ],
     "narrativePurpose": "Continue from Mission 29's open gate. Three teams need practical help: one has a premature payment-success screen, one has a newcomer facing a fake recovery page, and one has an integration that drops a case reference. Coordinate the work, test each real failure and report results without claiming the whole system is risk-free.",
     "cardDescription": "Solve three practical cases and verify the results through repeatable tests.",
@@ -3332,10 +3328,6 @@ const RAW_MISSIONS = [
     "npcs": [
       "Softstorm",
       "IamAbdul",
-      "Joe_Sef",
-      "Larai",
-      "Unique",
-      "Christol",
       "Craftore"
     ],
     "narrativePurpose": "Continue from Mission 30's tested results. The signed deployment record names T3Kit beside the shared evidence-routing pathway, but the record must be read within its stated scope. Verify the signature and project relationship, present the evidence limits, then choose a practical skill goal with a deliverable another person can review.",
