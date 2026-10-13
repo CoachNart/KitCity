@@ -173,6 +173,7 @@ export function createStorySceneDirector({ camera, player, getCharacter, animate
     overlay.classList.toggle('has-choices', !!panel.choices);
     overlay.querySelector('.comic-dialogue').classList.toggle('hidden', !panel.choices);
     const bubbleOn = !!(panel.speaker && panel.text && !panel.choices);
+    overlay.classList.toggle('has-bubble', bubbleOn || (genericScene && !panel.choices));
     speechBubble.classList.toggle('hidden', !bubbleOn);
     speechSpeaker.textContent = bubbleOn ? panel.speaker.toUpperCase() : '';
     speechText.textContent = bubbleOn ? panel.text : '';
