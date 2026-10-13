@@ -2360,7 +2360,8 @@ const RAW_MISSIONS = [
     "state": "Abia",
     "location": "Abia creator studio, print market and licensing desk",
     "npcIds": [
-      "femiy"
+      "femiy",
+      "softstorm"
     ],
     "npcs": [
       "FemiY",
@@ -3154,11 +3155,7 @@ const RAW_MISSIONS = [
     "npcIds": [
       "softstorm",
       "iamabdul",
-      "joe-sef",
-      "larai",
-      "unique",
-      "christol",
-      "craftore"
+      "christol"
     ],
     "npcs": [
       "Softstorm",
@@ -3319,10 +3316,6 @@ const RAW_MISSIONS = [
     "npcIds": [
       "softstorm",
       "iamabdul",
-      "joe-sef",
-      "larai",
-      "unique",
-      "christol",
       "craftore"
     ],
     "npcs": [
