@@ -2243,6 +2243,24 @@ function buildCity(key){
     const a=mkW(sp.x,sp.z,sp.dx*sg,sp.dz*sg,spd,{type:'pair',rem:rem}),b=mkW(sp.x+sp.dz*1.1,sp.z+sp.dx*1.1,sp.dx*sg,sp.dz*sg,spd,{type:'pair',rem:rem,ph:a.ph+.6});
     a.partner=b; b.partner=a;
   }
+  // Local-street pedestrians use the new footpaths and reverse at the ends
+  // of their own street segment, rather than wandering across block interiors.
+  let localWalkers=0;
+  for(const road of localRoadSegments){
+    if(localWalkers>=24) break;
+    for(const side of [-1,1]){
+      if(localWalkers>=24) break;
+      const along=rr(-18,18),sg=RN()<.5?1:-1;
+      const offset=road.width/2+.95;
+      const x=road.axis==='x'?road.cx+along:road.cx+side*offset;
+      const z=road.axis==='x'?road.cz+side*offset:road.cz+along;
+      if(nearSpecial(x,z,12)) continue;
+      const dx=road.axis==='x'?sg:0,dz=road.axis==='z'?sg:0;
+      const w=mkW(x,z,dx,dz,rr(1.5,2.4),{type:'street',rem:rr(10,24)});
+      w.streetBounds={axis:road.axis,min:-29,max:29,center:road.axis==='x'?road.cx:road.cz};
+      localWalkers++;
+    }
+  }
   let made=0,tr=0;
   while(made<32&&tr++<420){
     const i=Math.floor(rr(-3,4)),j=Math.floor(rr(-3,4)),o=RN()<.5?10.5:-10.5; let A,B,axis,coord,cc;
@@ -5099,6 +5117,11 @@ function updateWalkers(dt,time){
     }
     w.rem-=w.sp*dt; if(w.rem<=0){ w.dir.multiplyScalar(-1); w.rem=rand(18,40); }
     p.x+=w.dir.x*w.sp*dt; p.z+=w.dir.z*w.sp*dt;
+    if(w.streetBounds){
+      const b=w.streetBounds,coord=b.axis==='x'?p.x-b.center:p.z-b.center;
+      if(coord<b.min){ if(b.axis==='x')p.x=b.center+b.min;else p.z=b.center+b.min;w.dir.multiplyScalar(-1); }
+      else if(coord>b.max){ if(b.axis==='x')p.x=b.center+b.max;else p.z=b.center+b.max;w.dir.multiplyScalar(-1); }
+    }
     g.rotation.y=Math.atan2(w.dir.x,w.dir.z); w.ph+=dt*w.sp*2.4;
     if(w.near){ animatePerson(g,w.ph,1,0); if(w.type==='pair'&&((time*.4+w.ph*.3)%5)<1.8) gesture(g,time+w.ph,.8); }
     if(!w.near||w.type!=='walk'||w.cd>0) continue;
