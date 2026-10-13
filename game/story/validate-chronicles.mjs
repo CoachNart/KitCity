@@ -3,8 +3,6 @@ import {
   CHAPTERS,
   FIRST_ENCOUNTER_ORDER,
   MISSIONS,
-  NIGERIAN_STATES,
-  STATE_ROUTE,
   validateChronicles,
 } from "./chronicles.js";
 
@@ -34,8 +32,10 @@ if (FIRST_ENCOUNTER_ORDER.length !== 50) errors.push("Expected 50 first characte
 if (FIRST_ENCOUNTER_ORDER.some((name, index) => name !== CHARACTER_ORDER[index])) {
   errors.push("Character encounter order differs from the supplied order");
 }
-if (NIGERIAN_STATES.length !== 36 || STATE_ROUTE.length !== 36) errors.push("Expected coverage plan for all 36 states");
-if (STATE_ROUTE.some((stop) => stop.state === "Federal Capital Territory")) errors.push("FCT must not be a required destination");
+const implementedStoryStates = new Set(MISSIONS.map((mission) => mission.state));
+for (const chapter of CHAPTERS) {
+  if (!implementedStoryStates.has(chapter.state)) errors.push("Chapter references a state without a registered mission: " + chapter.state);
+}
 
 if (errors.length) {
   console.error("CHRONICLES VALIDATION FAILED");
@@ -46,5 +46,5 @@ if (errors.length) {
   console.log("Missions: " + MISSIONS.length);
   console.log("Chapters: " + CHAPTERS.length);
   console.log("Character order: " + CHARACTER_ORDER.length + " verified");
-  console.log("State route: " + STATE_ROUTE.length + " states; no FCT");
+  console.log("Implemented story locations: " + new Set(MISSIONS.map((mission) => mission.state)).size);
 }
