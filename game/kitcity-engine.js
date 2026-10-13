@@ -2127,6 +2127,11 @@ const storyDirector=createStorySceneDirector({camera,player,getCharacter(name){
   const staged=name==='Softstorm'?storySoftstorm:name==='IamAbdul'?storyAbdul:null;
   if(storyCastGroup.visible&&staged) return staged;
   let found=null;missionGroup.traverse(o=>{if(!found&&o.userData&&o.userData.storyCharacter===name) found=o;});return found;
+},getCharacters(){
+  const actors=[];
+  missionGroup.traverse(object=>{if(object.userData&&object.userData.storyCharacter&&object.isGroup) actors.push(object);});
+  if(storyCastGroup.visible) actors.push(storySoftstorm,storyAbdul);
+  return actors;
 },animateCharacter:animatePerson,setModal(value){S.modal=value;Snd.duck(value);}});
 
 /* =====================  sheet UI  ===================== */
