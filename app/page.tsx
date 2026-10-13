@@ -9,7 +9,7 @@ const GAME_MARKUP = `
 <div id="hud" class="hidden">
   <div id="lives" role="img" aria-label="3 of 3 lives remaining"><span class="life-heart alive">♥</span><span class="life-heart alive">♥</span><span class="life-heart alive">♥</span></div>
   <div id="mission" class="panel glass">
-    <div class="mh"><h2 id="mTitle">Mission</h2><button id="pauseBtn" type="button" aria-label="Pause menu">II</button></div>
+    <div class="mh"><h2 id="mTitle">Story</h2><button id="pauseBtn" type="button" aria-label="Pause menu">II</button></div>
     <div id="loc"></div>
     <ol id="steps"></ol>
   </div>
@@ -61,7 +61,7 @@ const GAME_MARKUP = `
   <div id="hubTop"></div>
   <div id="hubBody"></div>
   <nav id="nav" aria-label="Game menu">
-    <button type="button" data-a="tab" data-v="missions">Mission</button>
+    <button type="button" data-a="tab" data-v="missions">Story</button>
     <button type="button" data-a="tab" data-v="settings">Settings</button>
     <button type="button" data-a="tab" data-v="passport">Activity</button>
     <button type="button" data-a="signout">Sign out</button>
