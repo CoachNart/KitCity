@@ -2870,8 +2870,8 @@ function placeMissionEvidence(def,mission,spot){
   const add=(mesh,x,y,z)=>{mesh.position.set(x,y,z);g.add(mesh);return mesh;};
   const box=(w,h,d,mat,x,y,z)=>add(new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat),x,y,z);
   const monitor=(w=2.5,h=1.6)=>{box(w,.12,1.2,desk,0,.65,.1);box(w*.78,h,.14,screen,0,1.85,-.38);box(w*.52,.08,.05,cyan,0,2.18,-.47);};
-  const text=title.toLowerCase()+' '+String(def.label||'').toLowerCase();
-else if(/wallet|recovery phrase|seed phrase|scam|malicious|security|support impersonat/.test(text)){
+  const text=title.toLowerCase()+' '+String(def.label||'').toLowerCase(); 
+  if(/wallet|recovery phrase|seed phrase|scam|malicious|security|support impersonat/.test(text)){
     box(2.6,.9,1.8,desk,0,.45,0);box(1.15,1.9,.18,dark,0,1.85,-.25);box(.88,1.35,.06,screen,0,1.85,-.37);box(.6,.08,.04,cyan,0,2.2,-.42);
     box(.45,.5,.35,wood,-1.05,.65,.25);box(.2,.25,.06,cyan,-1.05,.65,.45);
   }else if(/app|user|test|bug|contract|code|repository|audit|developer|software/.test(text)){
