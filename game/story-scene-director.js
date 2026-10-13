@@ -310,7 +310,7 @@ export function createStorySceneDirector({ camera, player, getCharacter, animate
       advance();
     }
     const hero = player;
-    if (hero && panelIndex === 4 && animateCharacter) animateCharacter(hero, time * 1.4, .04, 0);
+    if (!genericScene && hero && panelIndex === 4 && animateCharacter) animateCharacter(hero, time * 1.4, .04, 0);
     overlay.style.setProperty('--panel-beat', String((performance.now() - startedAt) / 1000));
   }
 
