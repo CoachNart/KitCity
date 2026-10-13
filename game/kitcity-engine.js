@@ -433,7 +433,7 @@ const camera=new THREE.PerspectiveCamera(50,1,0.5,700);
 function resize(){
   const w=window.innerWidth,h=window.innerHeight;
   renderer.setSize(w,h,false);
-  camera.aspect=w/h; camera.fov=(w/h<0.8)?72:50; camera.updateProjectionMatrix(); onResizeHook();
+  camera.aspect=w/h; camera.fov=(w/h<0.8)?64:50; camera.updateProjectionMatrix(); onResizeHook();
 }
 window.addEventListener('resize',resize); resize();
 renderer.toneMapping=THREE.NoToneMapping;
