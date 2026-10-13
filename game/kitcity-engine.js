@@ -612,7 +612,7 @@ const SPOTS={
   e:{x:-80,z:-35,f:1}, f:{x:-60,z:-105,f:-1}, g:{x:10,z:-175,f:-1}, h:{x:-10,z:-175,f:1},
   i:{x:150,z:-35,f:-1}, j:{x:130,z:-175,f:1}, k:{x:-150,z:-35,f:1}, l:{x:-130,z:-175,f:-1},
   m:{x:80,z:35,f:-1}, n:{x:-80,z:105,f:1}, o:{x:10,z:175,f:-1}, story:{x:24,z:-32,f:1}, x1:{x:60,z:-105,f:1},
-  lvA:{x:18,z:-30,f:-1}, lvB:{x:30,z:-30,f:1}, lvC:{x:18,z:-43,f:-1}, lvD:{x:30,z:-43,f:1}, lvE:{x:170,z:-150,f:-1}, lvF:{x:42,z:-26,f:1}, lvG:{x:54,z:-38,f:-1}
+  lvA:{x:108,z:-115,f:-1}, lvB:{x:120,z:-115,f:1}, lvC:{x:108,z:-128,f:-1}, lvD:{x:120,z:-128,f:1}, lvE:{x:260,z:-260,f:-1}, lvF:{x:132,z:-112,f:1}, lvG:{x:132,z:-125,f:-1}
 };
 const special=Object.keys(SPOTS).map(k=>SPOTS[k]).concat([SPAWN]);
 const nearSpecial=(x,z,d)=>special.some(s=>Math.hypot(s.x-x,s.z-z)<d);
@@ -4100,6 +4100,10 @@ const cityMissions=city=>{
   }
   return out;
 };
+/* The state mission pages show only the active Lost Value story arc.
+   Legacy learning missions remain in the registry for progression compatibility,
+   but are deliberately excluded from the current mission-card UI. */
+const currentCityMissions=city=>cityMissions(city).filter(m=>String(m.id||'').startsWith('lost-value-'));
 const isCityComplete=city=>{const ms=cityMissions(city);return ms.length>0&&ms.every(m=>!!P.done[m.id]);};
 const isCityUnlocked=city=>{const ms=cityMissions(city);return ms.length>0&&isUnlocked(ms[0]);};
 /* =====================  mission flow  ===================== */
@@ -4311,14 +4315,15 @@ function renderHub(){
   let h='';
   if(hubTab==='missions'){
     const C=CITIES[hubCity];
-    h+=mapSVG()+'<div class="map-selected"><div><span>SELECTED CITY</span><b>'+C.name+'</b><small>'+C.tag+'</small></div><strong>'+cityMissions(hubCity).filter(m=>P.done[m.id]).length+' / '+cityMissions(hubCity).length+' missions</strong></div>';
+    h+=mapSVG()+'<div class="map-selected"><div><span>SELECTED CITY</span><b>'+C.name+'</b><small>'+C.tag+'</small></div><strong>'+currentCityMissions(hubCity).filter(m=>P.done[m.id]).length+' / '+currentCityMissions(hubCity).length+' missions</strong></div>';
     if(hubCity==='kitcity') h+='<section class="destination-card"><span class="destination-kicker">THE FINAL DESTINATION</span><h2>T3Kit Hub</h2><p>Every city prepared you for this. KitCity is the Web3 World: a premium campus for learning, building, verification, creators, open finance and community contribution.</p><div class="destination-pillars"><span>LEARN</span><span>BUILD</span><span>VERIFY</span><span>CONTRIBUTE</span></div></section>';
     h+='<div class="chips">'+cityOrder.map(k=>'<button class="chip'+(k===hubCity?' on':'')+'" data-a="city" data-v="'+k+'" type="button" '+(isCityUnlocked(k)?'':'disabled')+'>'+CITIES[k].name+(isCityUnlocked(k)?'':' · Locked')+'</button>').join('')+'</div>';
-    h+=cityMissions(hubCity).map(m=>missionCard(m)).join('');
+    h+=currentCityMissions(hubCity).map(m=>missionCard(m)).join('');
+    if(!currentCityMissions(hubCity).length) h+='<section class="current-missions-empty"><span class="current-missions-kicker">THE LOST VALUE</span><h3>No active story mission here yet</h3><p>This city remains on the KitCity map. Its current story mission will appear here when it is part of the active arc.</p></section>';
   } else if(hubTab==='cityhub'){
     hubTab='missions';
     const C=CITIES[hubCity];
-    h+=mapSVG()+'<div class="map-selected"><div><span>SELECTED CITY</span><b>'+C.name+'</b><small>'+C.tag+'</small></div><strong>'+cityMissions(hubCity).filter(m=>P.done[m.id]).length+' / '+cityMissions(hubCity).length+' missions</strong></div>'+cityMissions(hubCity).map(m=>missionCard(m)).join('');
+    h+=mapSVG()+'<div class="map-selected"><div><span>SELECTED CITY</span><b>'+C.name+'</b><small>'+C.tag+'</small></div><strong>'+currentCityMissions(hubCity).filter(m=>P.done[m.id]).length+' / '+currentCityMissions(hubCity).length+' missions</strong></div>'+currentCityMissions(hubCity).map(m=>missionCard(m)).join('')+(currentCityMissions(hubCity).length?'':'<section class="current-missions-empty"><span class="current-missions-kicker">THE LOST VALUE</span><h3>No active story mission here yet</h3><p>This city remains on the KitCity map. Its current story mission will appear here when it is part of the active arc.</p></section>');
   } else if(hubTab==='passport'){
     const allMissions=MISSIONS;
     const done=allMissions.filter(m=>P.done[m.id]).length,all=done===allMissions.length;
@@ -4340,7 +4345,7 @@ function renderHub(){
   $('#hubBody').innerHTML=tx(h);
   const hubBody=$('#hubBody');
   if(hubTab==='missions'||hubTab==='cityhub'){
-    const active=cityMissions(hubCity);
+    const active=currentCityMissions(hubCity);
     const activeIds=new Set(active.map(activeMission=>String(activeMission.id)));
     const seenIds=new Set(),seenContent=new Set();
     hubBody.querySelectorAll('.mission-card').forEach(card=>{
@@ -4353,9 +4358,14 @@ function renderHub(){
       }
       seenIds.add(id); seenContent.add(contentKey);
     });
+    /* This tab has one allowed card type: a current Lost Value mission card.
+       Remove generic/legacy cards and descriptions unconditionally so old UI cannot
+       leak back in from stale markup or language re-rendering. */
     hubBody.querySelectorAll('[data-legacy-mission],.legacy-mission-card,.old-mission-card,.mission-card-old').forEach(node=>node.remove());
-    hubBody.querySelectorAll('.card:not(.mission-card),article:not(.mission-card)').forEach(node=>{
-      if(/(?:prologue|mission\s+\d+\s*:)/i.test(node.textContent||'')) node.remove();
+    hubBody.querySelectorAll('.card:not(.mission-card),article:not(.mission-card)').forEach(node=>node.remove());
+    hubBody.querySelectorAll('.mission-card').forEach(card=>{
+      const id=card.dataset.missionId||'';
+      if(!activeIds.has(id)||card.dataset.city!==hubCity) card.remove();
     });
   }
 }
