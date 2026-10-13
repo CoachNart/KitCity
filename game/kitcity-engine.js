@@ -1700,7 +1700,7 @@ function addCar(axis,k,dir,C){ const road=k*R,kind=pickKind(C),v=makeVehicle(kin
 }
 function addLocalRoadCar(road,C){
   const kind=pickKind(C),v=makeVehicle(kind,C),dir=RN()<.5?1:-1;
-  const offset=(RN()<.5?-1:1)*Math.min(1.25,road.width*.2);
+  const offset=(RN()<.5?-1:1)*Math.min(1.25,Math.max(0,road.width/2-2.7));
   const lane=road.axis==='x'?road.cz+offset:road.cx+offset;
   const center=road.axis==='x'?road.cx:road.cz;
   const c={m:v.m,axis:road.axis,dir,lane,pos:center+rr(-18,18),speed:rr(v.sp[0]*.45,v.sp[1]*.55),hl:v.hl,hw:v.hw,kind,localRoad:true,localCenter:center,localMin:-25,localMax:25};
