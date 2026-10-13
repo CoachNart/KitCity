@@ -606,6 +606,7 @@ function label(text,bg,fg,H0){
 /* =====================  world  ===================== */
 const R=70;
 const colliders=[],buildings=[];
+let localRoadSegments=[];
 const SPAWN={x:9.5,z:-9.5};
 const SPOTS={
   a:{x:10,z:-30,f:-1}, b:{x:-10,z:-105,f:1}, c:{x:80,z:-35,f:-1}, d:{x:60,z:-105,f:1},
@@ -627,6 +628,37 @@ function resolveMissionSpot(key){
 }
 const special=Object.keys(MISSION_ANCHORS).map(resolveMissionSpot).concat([SPAWN]);
 const nearSpecial=(x,z,d)=>special.some(s=>Math.hypot(s.x-x,s.z-z)<d);
+function secondaryRoadAxis(C,i,j){
+  const n=Math.abs(i*7+j*11+(C.seed||0)),form=C.form||'mixed';
+  if(form==='historic'||form==='sahel') return n%5===0?null:((i+j+(C.seed||0))%2===0?'x':'z');
+  if(form==='dense-market'||form==='organic-sprawl') return n%4===0?null:((i*3+j+(C.seed||0))%2===0?'x':'z');
+  if(form==='dense-coastal') return n%3===0?null:((i+j+(C.seed||0))%2===0?'x':'z');
+  if(form==='delta-port'||form==='oil-port') return n%3===0?null:(form==='delta-port'?'x':'z');
+  if(form==='planned'||form==='planned-tropical'||form==='planned-river') return n%4===0?((i+j)%2===0?'x':'z'):null;
+  return n%3===0?((i+j+(C.seed||0))%2===0?'x':'z'):null;
+}
+function buildSecondaryRoadSegments(C){
+  const out=[];
+  for(let i=-3;i<=2;i++)for(let j=-3;j<=2;j++){
+    const axis=secondaryRoadAxis(C,i,j);if(!axis)continue;
+    const cx=i*R+35,cz=j*R+35,width=(C.form==='historic'||C.form==='sahel')?5.5:(C.form==='planned'||C.form==='planned-tropical'||C.form==='planned-river')?9:(C.form==='delta-port'||C.form==='oil-port')?8:6.5;
+    let blocked=false;
+    for(let d=-35;d<=35;d+=7){
+      const x=axis==='x'?cx+d:cx,z=axis==='z'?cz+d:cz;
+      if(nearSpecial(x,z,10)){blocked=true;break;}
+    }
+    if(blocked)continue;
+    out.push({i,j,axis,cx,cz,width});
+  }
+  return out;
+}
+function nearLocalStreet(C,x,z,margin=0){
+  for(const r of localRoadSegments){
+    if(r.axis==='x'&&Math.abs(z-r.cz)<=r.width/2+margin&&x>=r.cx-35-margin&&x<=r.cx+35+margin)return true;
+    if(r.axis==='z'&&Math.abs(x-r.cx)<=r.width/2+margin&&z>=r.cz-35-margin&&z<=r.cz+35+margin)return true;
+  }
+  return false;
+}
 
 const CITIES={
   lagos:{name:'Lagos',tag:'The hustle capital',lon:3.4,lat:6.5,seed:11,sky:0xF2B87A,fog:[95,250],ground:'#2B2C31',slab:'#B9B3A6',
@@ -2103,7 +2135,7 @@ function addCityIdentityFeature(C){
 function buildCity(key){
   const C=CITIES[key]; curCity=key;
   clearGroup(cityGroup); clearGroup(trafficGroup); texs.forEach(t=>t.dispose()); texs=[];
-  colliders.length=0; buildings.length=0; cars=[]; walkers=[]; hawkers=[]; ringTaken=[];
+  colliders.length=0; buildings.length=0; cars=[]; walkers=[]; hawkers=[]; ringTaken=[]; localRoadSegments=[];
   RN=mulberry(C.seed); dxReset(); LOOKSC=CITY_LOOKS[key]||LOOKS;
   applyLook(key,C);
   if(key==='kitcity'){ buildKitCity(C); return; }
@@ -2115,22 +2147,36 @@ function buildCity(key){
     const v=new THREE.Mesh(dashGeo,dashMat); v.rotation.set(-Math.PI/2,0,Math.PI/2); v.position.set(k*R,0.04,i*R+35); cityGroup.add(v);
   }
   const blocks=[];
+  const placeBuilding=(x,z,w,d,style,color,cx,cz,ox,oz)=>{if(nearSpecial(x,z,18)||nearLocalStreet(C,x,z,Math.max(w,d)/2+1.5))return;addBuilding(x,z,w,d,style,color,cx,cz,ox,oz);};
+  localRoadSegments=buildSecondaryRoadSegments(C);
+  const localRoadMat=lam(C.ground,{map:LKT.asph});
   for(let i=-3;i<=2;i++)for(let j=-3;j<=2;j++){
     const cx=i*R+35,cz=j*R+35; blocks.push({cx,cz});
     const vg=new THREE.Mesh(vergeGeo,dirtMat); vg.rotation.x=-Math.PI/2; vg.position.set(cx,.03,cz); cityGroup.add(vg);
     const slab=new THREE.Mesh(slabGeo,paveMat); slab.position.set(cx,0.05,cz); cityGroup.add(slab);
+    // Local streets cut through selected blocks and join the existing arterial network.
+    for(const road of localRoadSegments){
+      if(road.i!==i||road.j!==j)continue;
+      const geo=road.axis==='x'?new THREE.BoxGeometry(70.5,.045,road.width):new THREE.BoxGeometry(road.width,.045,70.5);
+      const mesh=new THREE.Mesh(geo,localRoadMat);mesh.position.set(cx,.112,cz);mesh.userData.nomerge=true;cityGroup.add(mesh);
+      const dashMat=new THREE.MeshBasicMaterial({color:C.roadStyle==='industrial'?'#E9BE35':'#D8D7CC',transparent:true,opacity:.65,depthWrite:false});
+      for(let q=-2;q<=2;q++){
+        const dashGeo=road.axis==='x'?new THREE.BoxGeometry(4,.018,.12):new THREE.BoxGeometry(.12,.018,4);
+        const dash=new THREE.Mesh(dashGeo,dashMat);dash.position.set(cx+(road.axis==='x'?q*12:0),.14,cz+(road.axis==='z'?q*12:0));cityGroup.add(dash);
+      }
+    }
     const lmk=(C.lm||[]).find(l=>l[1]===cx&&l[2]===cz);
     if(lmk) landmark(lmk[0],cx,cz);
     // The block plan follows the city, not one universal four-building stamp.
     else if(i===0&&j===-1) { /* preserve the opening story plaza */ }
-    else if((((i+j)%C.market)+C.market)%C.market===0) addMarket(cx,cz);
+    else if((((i+j)%C.market)+C.market)%C.market===0&&!nearLocalStreet(C,cx,cz,18)) addMarket(cx,cz);
     else if(C.form==='historic'||C.form==='sahel'){
       // Compact compound clusters and narrow irregular lanes, characteristic of
       // historic northern settlements; keep the existing mission corridors clear.
       const count=C.form==='historic'?6:5;
       for(let q=0;q<count;q++){
         const bx=cx+rr(-21,21),bz=cz+rr(-21,21),w=rr(7,13),d=rr(8,15);
-        if(!nearSpecial(bx,bz,18)) addBuilding(bx,bz,w,d,pickStyle(C),pk(C.paint),cx,cz,bx-cx,bz-cz);
+        placeBuilding(bx,bz,w,d,pickStyle(C),pk(C.paint),cx,cz,bx-cx,bz-cz);
       }
     } else if(C.form==='planned'||C.form==='planned-tropical'||C.form==='planned-river'){
       // Planned-capital blocks: fewer, larger footprints with open space between them.
@@ -2138,23 +2184,23 @@ function buildCity(key){
       const count=C.form==='planned'?3:2;
       for(let q=0;q<count;q++){
         const ox=spots[q][0],oz=spots[q][1],bx=cx+ox,bz=cz+oz;
-        if(!nearSpecial(bx,bz,18)) addBuilding(bx,bz,rr(17,23),rr(15,22),pickStyle(C),pk(C.paint),cx,cz,ox,oz);
+        placeBuilding(bx,bz,rr(17,23),rr(15,22),pickStyle(C),pk(C.paint),cx,cz,ox,oz);
       }
     } else if(C.form==='dense-market'||C.form==='dense-coastal'||C.form==='organic-sprawl'){
       const count=C.form==='dense-market'?6:5;
       for(let q=0;q<count;q++){
         const bx=cx+rr(-21,21),bz=cz+rr(-21,21),w=rr(8,17),d=rr(8,17);
-        if(!nearSpecial(bx,bz,18)) addBuilding(bx,bz,w,d,pickStyle(C),pk(C.paint),cx,cz,bx-cx,bz-cz);
+        placeBuilding(bx,bz,w,d,pickStyle(C),pk(C.paint),cx,cz,bx-cx,bz-cz);
       }
     } else if(C.form==='delta-port'||C.form==='oil-port'){
       for(const [ox,oz] of [[-15,-14],[15,14]]){
         const bx=cx+ox,bz=cz+oz;
-        if(!nearSpecial(bx,bz,18)) addBuilding(bx,bz,rr(18,25),rr(11,17),pickStyle(C),pk(C.paint),cx,cz,ox,oz);
+        placeBuilding(bx,bz,rr(18,25),rr(11,17),pickStyle(C),pk(C.paint),cx,cz,ox,oz);
       }
     } else {
       for(const ox of [-13,13])for(const oz of [-13,13]){
         const bx=cx+ox+rr(-4,4),bz=cz+oz+rr(-4,4);
-        if(!nearSpecial(bx,bz,18)) addBuilding(bx,bz,rr(10,20),rr(10,20),pickStyle(C),pk(C.paint),cx,cz,ox,oz);
+        placeBuilding(bx,bz,rr(10,20),rr(10,20),pickStyle(C),pk(C.paint),cx,cz,ox,oz);
       }
     }
     // Roadside/block-edge tree placement removed: keep streets and road verges clear.
