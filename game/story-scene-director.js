@@ -31,6 +31,9 @@ export function createStorySceneDirector({ camera, player, getCharacter, animate
   let startedAt = 0;
   let onComplete = null;
   let overlay = null;
+  let speechBubble = null;
+  let speechSpeaker = null;
+  let speechText = null;
   let captionEl = null;
   let kickerEl = null;
   let speakerEl = null;
@@ -57,6 +60,7 @@ export function createStorySceneDirector({ camera, player, getCharacter, animate
         <div class="comic-card-symbol" aria-hidden="true"><span> T3 </span><b>KIT</b></div>
         <div class="comic-caption"><small class="comic-kicker"></small><p class="comic-caption-text"></p></div>
       </div>
+      <div class="comic-speech-bubble hidden" aria-live="polite"><small class="comic-speech-speaker"></small><p class="comic-speech-text"></p></div>
       <div class="comic-dialogue">
         <div class="comic-dialogue-meta"><span class="comic-speaker"></span><span class="comic-counter"></span></div>
         <p class="comic-dialogue-text"></p>
@@ -64,6 +68,9 @@ export function createStorySceneDirector({ camera, player, getCharacter, animate
         <div class="comic-actions"><span class="comic-hint">THE LOST VALUE · LAGOS</span><button type="button" class="comic-next">NEXT PANEL →</button></div>
       </div>`;
     document.body.appendChild(overlay);
+    speechBubble = overlay.querySelector('.comic-speech-bubble');
+    speechSpeaker = overlay.querySelector('.comic-speech-speaker');
+    speechText = overlay.querySelector('.comic-speech-text');
     captionEl = overlay.querySelector('.comic-caption-text');
     kickerEl = overlay.querySelector('.comic-kicker');
     speakerEl = overlay.querySelector('.comic-speaker');
@@ -74,6 +81,12 @@ export function createStorySceneDirector({ camera, player, getCharacter, animate
     overlay.querySelector('.comic-skip').addEventListener('click', event => {
       event.preventDefault();
       finish();
+    });
+    overlay.addEventListener('click', event => {
+      if (!active || event.target.closest('button')) return;
+      const panel = activePanels[panelIndex];
+      if (panel && panel.choices) return;
+      if (panel && (panel.speaker || genericScene)) requestAdvance();
     });
     // Mobile browsers can occasionally lose a synthetic click over a full-screen canvas.
     // Advance on touch pointer-up, and debounce the follow-up click so one tap means one panel.
@@ -158,6 +171,11 @@ export function createStorySceneDirector({ camera, player, getCharacter, animate
     overlay.classList.toggle('has-card', !!panel.card);
     overlay.classList.toggle('has-dialogue', !!panel.speaker);
     overlay.classList.toggle('has-choices', !!panel.choices);
+    overlay.querySelector('.comic-dialogue').classList.toggle('hidden', !panel.choices);
+    const bubbleOn = !!(panel.speaker && panel.text && !panel.choices);
+    speechBubble.classList.toggle('hidden', !bubbleOn);
+    speechSpeaker.textContent = bubbleOn ? panel.speaker.toUpperCase() : '';
+    speechText.textContent = bubbleOn ? panel.text : '';
     kickerEl.textContent = panel.kicker || (panel.speaker ? (genericScene ? 'THE LOST VALUE · A CONVERSATION' : 'LAGOS · A CONVERSATION') : '');
     captionEl.textContent = panel.caption || '';
     speakerEl.textContent = panel.speaker ? (genericScene ? panel.speaker.toUpperCase() : (SPEAKER_LABELS[panel.speaker] || panel.speaker.toUpperCase())) : '';
@@ -274,6 +292,18 @@ export function createStorySceneDirector({ camera, player, getCharacter, animate
     const look = cameraGoal.target;
     camera.lookAt(look.x, look.y, look.z);
     const panel = activePanels[panelIndex];
+    if (speechBubble && !speechBubble.classList.contains('hidden') && panel && panel.speaker) {
+      const speakerObject = panel.speaker === 'PLAYER' ? player : getCharacter(panel.speaker);
+      const point = worldPosition(speakerObject);
+      if (point) {
+        point.y += 3.3;
+        point.project(camera);
+        const x = (point.x * .5 + .5) * window.innerWidth;
+        const y = (-point.y * .5 + .5) * window.innerHeight - 10;
+        speechBubble.style.left = Math.max(18, Math.min(window.innerWidth - 18, x)) + 'px';
+        speechBubble.style.top = Math.max(92, Math.min(window.innerHeight - 145, y)) + 'px';
+      }
+    }
     if (genericScene) {
       const lead = panel && panel.speaker ? (panel.speaker === 'PLAYER' ? player : getCharacter(panel.speaker)) : null;
       if (lead && animateCharacter) {
