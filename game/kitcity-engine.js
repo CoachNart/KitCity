@@ -2843,7 +2843,7 @@ function buildStall(def,spot){
   colliders.push({x0:x-3.2,x1:x+3.2,z0:z-3.7,z1:z+3.7});
   const sp=label(tr(def.sign||def.name),def.signBg,def.signFg); sp.position.set(x,8.4,z); missionGroup.add(sp);
   if(o.sub){ const s2=label(tr(o.sub),'#ffffff',INK,1.25); s2.position.set(x,6.4,z); missionGroup.add(s2); }
-  const att=buildPerson(def.look); att.userData.storyCharacter=def.name; att.userData.storyRole=def.role;
+  const att=buildPerson(def.look); att.userData.missionCharacter=def.name; att.userData.missionRole=def.role;
   /* Keep the stall owner beside the counter, but run the final actor position through
      the same road-clearance check as mission targets after every city redesign. */
   const actorSpot=safeMissionSpot({x:x+1.6*face,z:z+4.9*face,f:face});
@@ -2920,17 +2920,17 @@ function placeNPC(def,spot){
   else {
     const p=buildPerson(def.look);
     const angle=Math.random()*Math.PI*2, radius=.45+Math.random()*.95;
-    p.userData.storyCharacter=def.name; p.userData.storyRole=def.role;
-    p.userData.storyAnchorX=spot.x+Math.cos(angle)*radius;
-    p.userData.storyAnchorZ=spot.z+Math.sin(angle)*radius;
-    p.userData.storyPhase=Math.random()*Math.PI*2;
-    p.userData.storyGestureAt=Math.random()*3;
-    p.position.set(p.userData.storyAnchorX,.05,p.userData.storyAnchorZ);
+    p.userData.missionCharacter=def.name; p.userData.missionRole=def.role;
+    p.userData.missionAnchorX=spot.x+Math.cos(angle)*radius;
+    p.userData.missionAnchorZ=spot.z+Math.sin(angle)*radius;
+    p.userData.missionPhase=Math.random()*Math.PI*2;
+    p.userData.missionGestureAt=Math.random()*3;
+    p.position.set(p.userData.missionAnchorX,.05,p.userData.missionAnchorZ);
     p.rotation.y=Math.atan2(spot.x-p.position.x,spot.z-p.position.z);
     missionGroup.add(p);
-    const sp=label(tr(def.sign||def.name),def.signBg,def.signFg); sp.position.set(p.position.x,4.15,p.position.z); sp.material.depthTest=false; sp.renderOrder=50; sp.scale.set(6.2,1.55,1); p.userData.storyNameLabel=sp; missionGroup.add(sp);
+    const sp=label(tr(def.sign||def.name),def.signBg,def.signFg); sp.position.set(p.position.x,4.15,p.position.z); sp.material.depthTest=false; sp.renderOrder=50; sp.scale.set(6.2,1.55,1); p.userData.missionNameLabel=sp; missionGroup.add(sp);
     colliders.push({x0:p.position.x-1,x1:p.position.x+1,z0:p.position.z-1,z1:p.position.z+1});
-    storyNPCActors.push(p);
+    missionNPCActors.push(p);
     return {x:p.position.x,z:p.position.z,r:10,object:p};
   }
   return {x:spot.x,z:spot.z,r:10};
@@ -2959,7 +2959,7 @@ const beacon=new THREE.Group();
 /* ===================== state ===================== */
 const S={phase:'title',modal:false};
 let G=null,ents=[],goal=null,nearEnt=null;
-const storyNPCActors=[];
+const missionNPCActors=[];
 let hubTab='missions',hubCity='lagos',resetArm=false;
 /* ===================== sheet UI ===================== */
 const modalEl=$('#modal'),sheetEl=$('#sheet'),talkBtn=$('#talkBtn');
@@ -3038,10 +3038,10 @@ function clearMissionDialogueUI(){
 function missionDialogueActor(speaker,fallback){
   const name=String(speaker||'').trim().replace(/:$/,'').toLowerCase();
   if(['you','player','yourself'].includes(name))return player;
-  const found=storyNPCActors.find(actor=>String(actor.userData&&actor.userData.storyCharacter||'').trim().toLowerCase()===name);
+  const found=missionNPCActors.find(actor=>String(actor.userData&&actor.userData.missionCharacter||'').trim().toLowerCase()===name);
   if(found)return found;
   if(fallback&&fallback.object)return fallback.object;
-  return storyNPCActors.find(actor=>String(actor.userData&&actor.userData.storyCharacter||'').trim().toLowerCase()===String(fallback&&fallback.name||'').trim().toLowerCase())||player;
+  return missionNPCActors.find(actor=>String(actor.userData&&actor.userData.missionCharacter||'').trim().toLowerCase()===String(fallback&&fallback.name||'').trim().toLowerCase())||player;
 }
 function positionMissionDialogueBubble(){
   if(!activeMissionDialogue||!missionDialogueBubble)return;
@@ -3171,13 +3171,13 @@ function updateHUD(){
   $('#wallet').innerHTML=P.wallet?('<b>'+P.usdc.toFixed(2)+' USDC</b>'+(P.ngn>0?fmtN(P.ngn)+' token':short(P.wallet))):tr('No wallet yet');
 }
 
-/* ===================== KitCity story runtime =====================
-   The story registry drives mission order, character encounters and evidence.
+/* ===================== KitCity mission runtime =====================
+   The mission registry drives objectives, character encounters and evidence.
    Wallet, trading and identity tasks are handled through hands-on workbenches.
 */
 const NPC=(name,role,color,look,stall,sign)=>({name,role,color,look,stall,sign});
 CITIES.kitcity={...CITIES.lagos,name:'KitCity',tag:'The final city · Web3 District',lon:7.3,lat:6.1,seed:991,sky:0x142C3B,ground:'#18272E',slab:'#657985',paint:['#1B3440','#234653','#2D5360','#18313D','#37616A','#203B49'],h:[14,42],market:3,palm:.25};
-const STORY_NPCS=Object.create(null);
+const MISSION_NPCS=Object.create(null);
 const MISSIONS=[];
 const MBY=Object.create(null);
 /* Progress is tracked by completed missions and the in-game wallet balance. */
@@ -3191,7 +3191,7 @@ function missionNPCObjects(mission){
   const found=new Set();
   const add=value=>{
     const name=typeof value==='string'?value:(value&&value.name);
-    const npc=name&&STORY_NPCS[name];
+    const npc=name&&MISSION_NPCS[name];
     if(npc) found.add(npc);
   };
   (mission&&mission.npcs||[]).forEach(add);
@@ -3203,7 +3203,7 @@ function missionNPCObjects(mission){
   (mission&&mission.extras||[]).forEach(extra=>add(extra.npc));
   return Array.from(found);
 }
-for(const npc of Object.values(STORY_NPCS)) if(!npc.originalName) npc.originalName=npc.name;
+for(const npc of Object.values(MISSION_NPCS)) if(!npc.originalName) npc.originalName=npc.name;
 function buildMissionNameAliases(mission){
   const candidates=Object.create(null),ambiguous=new Set(),currentNames=new Set();
   const npcs=missionNPCObjects(mission);
@@ -3236,18 +3236,18 @@ function bannerSprite(text,sub){
  g.fillStyle='#9deef5';g.font='700 24px Arial';g.fillText(sub.toUpperCase(),c.width/2,132,700);
  const t=new THREE.CanvasTexture(c);t.needsUpdate=true;const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:t,transparent:true,depthTest:true}));sp.scale.set(12,3,1);return sp;
 }
-function getStoryNpc(value){
+function getMissionNpc(value){
   const name=typeof value==='string'?value:(value&&value.name);
   if(!name) return value&&typeof value==='object'?value:null;
-  if(!STORY_NPCS[name]){
+  if(!MISSION_NPCS[name]){
     const npc=NPC(name,'Resident',BRAND,LK.guy,null,name);
     npc.name=name;npc.originalName=name;npc.signBg=BRAND;npc.signFg='#ffffff';
-    STORY_NPCS[name]=npc;
+    MISSION_NPCS[name]=npc;
   }
-  return STORY_NPCS[name];
+  return MISSION_NPCS[name];
 }
 function loadStep(){
-  clearGroup(missionGroup);storyNPCActors.length=0;colliders.length=cityCols;smoke=[];ents=[];goal=null;
+  clearGroup(missionGroup);missionNPCActors.length=0;colliders.length=cityCols;smoke=[];ents=[];goal=null;
   const m=G.m,st=m.steps[G.i];if(!st)return;
   const castNames=[];
   const addCastName=value=>{const name=typeof value==='string'?value:(value&&value.name);if(name&&!castNames.includes(name))castNames.push(name);};
@@ -3262,7 +3262,7 @@ function loadStep(){
     clue.talk=()=>st.run();clue.active=()=>true;ents.push(clue);goal=clue;
   }else{
     castNames.forEach((name,index)=>{
-      const npc=getStoryNpc(name);if(!npc)return;
+      const npc=getMissionNpc(name);if(!npc)return;
       const offset=offsets[index%offsets.length];
       const entity=placeNPC(npc,{x:anchor.x+offset[0],z:anchor.z+offset[1],f:index===0?anchor.f:-anchor.f});
       const isTarget=st.kind==='character'&&(
@@ -3277,7 +3277,7 @@ function loadStep(){
       ents.push(entity);
     });
     if(!goal&&st.kind==='character'){
-      const targetNpc=getStoryNpc(st.npc),targetSpot=safeMissionSpot(SPOTS[st.spot]||SPOTS.a);
+      const targetNpc=getMissionNpc(st.npc),targetSpot=safeMissionSpot(SPOTS[st.spot]||SPOTS.a);
       const target=targetNpc?placeNPC(targetNpc,targetSpot):{x:targetSpot.x,z:targetSpot.z,r:18};
       target.r=Math.max(Number(target.r)||0,24);target.talk=()=>st.run();target.active=()=>true;target._missionTarget=true;
       ents.unshift(target);goal=target;
@@ -3285,7 +3285,7 @@ function loadStep(){
   }
   for(const ex of (m.extras||[])){
     if(G.used[ex.id])continue;
-    const entity=placeNPC(getStoryNpc(ex.npc),ex.spot);entity.ex=ex;entity.talk=()=>ex.run(entity);entity.active=()=>!G.used[ex.id];ents.push(entity);
+    const entity=placeNPC(getMissionNpc(ex.npc),ex.spot);entity.ex=ex;entity.talk=()=>ex.run(entity);entity.active=()=>!G.used[ex.id];ents.push(entity);
   }
   updateHUD();
   if(goal){beacon.visible=true;beacon.position.set(goal.object?.position?.x??goal.x,0,goal.object?.position?.z??goal.z);}
@@ -3918,25 +3918,25 @@ function crosserStep(w,dt){
   if(d<=st){ p.x=to.x; p.z=to.z; w.fwd=!w.fwd; w.state='rest'; w.timer=rand(2,6); return; }
   p.x+=dx/d*st; p.z+=dz/d*st; g.rotation.y=Math.atan2(dx,dz); w.ph+=dt*w.sp*2.4; if(w.near) animatePerson(g,w.ph,1,0);
 }
-function updateStoryNPCActors(dt,time){
-  for(const actor of storyNPCActors){
+function updateMissionNPCActors(dt,time){
+  for(const actor of missionNPCActors){
     if(!actor||!actor.parent) continue;
-    const u=actor.userData||{},phase=(u.storyPhase||0)+time*.72;
-    const ax=u.storyAnchorX==null?actor.position.x:u.storyAnchorX;
-    const az=u.storyAnchorZ==null?actor.position.z:u.storyAnchorZ;
+    const u=actor.userData||{},phase=(u.missionPhase||0)+time*.72;
+    const ax=u.missionAnchorX==null?actor.position.x:u.missionAnchorX;
+    const az=u.missionAnchorZ==null?actor.position.z:u.missionAnchorZ;
     actor.position.x=ax+Math.sin(phase)*.22;
-    actor.position.z=az+Math.sin(phase*.63+(u.storyPhase||0))*.16;
-    if(u.storyNameLabel) u.storyNameLabel.position.set(actor.position.x,4.15,actor.position.z);
+    actor.position.z=az+Math.sin(phase*.63+(u.missionPhase||0))*.16;
+    if(u.missionNameLabel) u.missionNameLabel.position.set(actor.position.x,4.15,actor.position.z);
     const close=G&&Math.hypot(player.position.x-actor.position.x,player.position.z-actor.position.z)<9;
     if(close){
       actor.rotation.y=Math.atan2(player.position.x-actor.position.x,player.position.z-actor.position.z);
-      animatePerson(actor,time*1.35+(u.storyPhase||0),.12,.012);
-      const gestureCycle=(time+(u.storyGestureAt||0))%6.5;
-      if(gestureCycle<1.15) gesture(actor,time+(u.storyPhase||0),.45);
-      if(u.head) u.head.rotation.y=Math.sin(time*1.1+(u.storyPhase||0))*.1;
+      animatePerson(actor,time*1.35+(u.missionPhase||0),.12,.012);
+      const gestureCycle=(time+(u.missionGestureAt||0))%6.5;
+      if(gestureCycle<1.15) gesture(actor,time+(u.missionPhase||0),.45);
+      if(u.head) u.head.rotation.y=Math.sin(time*1.1+(u.missionPhase||0))*.1;
     }else{
-      actor.rotation.y+=Math.sin(time*.45+(u.storyPhase||0))*dt*.12;
-      animatePerson(actor,time*.8+(u.storyPhase||0),.055,0);
+      actor.rotation.y+=Math.sin(time*.45+(u.missionPhase||0))*dt*.12;
+      animatePerson(actor,time*.8+(u.missionPhase||0),.055,0);
     }
   }
 }
@@ -4024,7 +4024,7 @@ function update(dt,time){
     }
   }
   nearEnt=null; let best=1e9;
-  updateStoryNPCActors(dt,time);
+  updateMissionNPCActors(dt,time);
   /* One malformed or stale NPC must never abort the interaction scan for the
      whole frame. This previously could leave Talk hidden even at the mission marker. */
   for(const e of ents){
