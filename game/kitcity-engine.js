@@ -613,7 +613,7 @@ const SPOTS={
   e:{x:-80,z:-35,f:1}, f:{x:-60,z:-105,f:-1}, g:{x:10,z:-175,f:-1}, h:{x:-10,z:-175,f:1},
   i:{x:150,z:-35,f:-1}, j:{x:130,z:-175,f:1}, k:{x:-150,z:-35,f:1}, l:{x:-130,z:-175,f:-1},
   m:{x:80,z:35,f:-1}, n:{x:-80,z:105,f:1}, o:{x:10,z:175,f:-1}, story:{x:125,z:-185,f:1}, x1:{x:60,z:-105,f:1},
-  lvA:{x:108,z:-115,f:-1}, lvB:{x:120,z:-115,f:1}, lvC:{x:108,z:-128,f:-1}, lvD:{x:120,z:-128,f:1}, lvE:{x:175,z:-175,f:-1}, lvF:{x:132,z:-112,f:1}, lvG:{x:132,z:-125,f:-1}
+  lvA:{x:-170,z:-175,f:-1}, lvB:{x:170,z:-175,f:1}, lvC:{x:-170,z:175,f:-1}, lvD:{x:170,z:175,f:1}, lvE:{x:0,z:190,f:-1}, lvF:{x:-190,z:0,f:1}, lvG:{x:190,z:0,f:-1}
 };
 // Mission locations are semantic anchors, not street-grid coordinates. Keep the
 // current world coordinates as the compatibility fallback while each city gets
@@ -2601,6 +2601,13 @@ function updateHUD(){
     $('#mTitle').textContent=tr(personalize('Mission '+G.m.n+': '+G.m.title,null));
     $('#steps').innerHTML=G.m.steps.map((s,i)=>'<li class="'+(G.i>i?'done':(G.i===i?'now':''))+'">'+personalize(tr(s.label),G.m,s.npc)+'</li>').join('');
   }
+  const health=$('#health');
+  if(health){
+    const hearts=G?Math.max(0,Math.min(3,Number(G.hearts)||0)):3;
+    health.setAttribute('aria-label','Player health: '+hearts+' of 3 hearts');
+    health.innerHTML=[0,1,2].map(i=>'<span class="heart'+(i<hearts?' full':' empty')+'" aria-hidden="true">♥</span>').join('');
+    health.classList.toggle('critical',hearts===1);
+  }
   $('#wallet').innerHTML=P.wallet?('<b>'+P.usdc.toFixed(2)+' USDC</b>'+(P.ngn>0?fmtN(P.ngn)+' token':short(P.wallet))):tr('No wallet yet');
 }
 
@@ -4562,7 +4569,7 @@ function startMission(id){
   $('#loadTxt').textContent=L('Loading '+CITIES[m.city].name+'\u2026','We dey load '+CITIES[m.city].name+'\u2026'); $('#loading').classList.remove('hidden');
   setTimeout(()=>{
     if(curCity!==m.city) buildCity(m.city); else setupBarks(CITIES[curCity]);
-    G={m,i:0,correct:0,wrong:0,used:{},evidence:{},words:null,addr:null,slip:null,nameAliases:buildMissionNameAliases(m)};
+    G={m,i:0,correct:0,wrong:0,hearts:3,used:{},evidence:{},words:null,addr:null,slip:null,nameAliases:buildMissionNameAliases(m)};
     $('#hub').classList.add('hidden'); $('#hub').setAttribute('aria-hidden','true'); $('#title').classList.add('hidden'); $('#hud').classList.remove('hidden');
     S.phase='play'; closeSheet(); Snd.setMode('play'); lastLoc=''; resetPlayer(); loadStep();
     $('#loading').classList.add('hidden');
@@ -5143,14 +5150,15 @@ function carHit(dt){ if(hitCd>0)hitCd=Math.max(0,hitCd-dt);
       if(c.axis==='x')p.z=cz+(p.z>=cz?1:-1)*(hz+3.5);else p.x=cx+(p.x>=cx?1:-1)*(hx+3.5);
       hitCd=2.2;fallTimer=1.5;fallLean=(p.x-cx)>=0?1:-1;shake=1.2;
       const missionToRestart=G?G.m.id:null;
-      const penalty=Math.min(.50,P.usdc);
-      P.usdc=Math.round((P.usdc-penalty)*100)/100;save();updateHUD();Snd.sfx('bump');
+      if(G) G.hearts=Math.max(0,(Number(G.hearts)||0)-1);
+      P.fell=(Number(P.fell)||0)+1; save(); updateHUD(); Snd.sfx('bump');
       resolve(p,1);resolve(p,1);
       const shout=pick(HAZARD_LINES[P.lang==='pcm'?'pcm':'en']);
-      const hitMessage=shout+' '+(penalty>0?'(−'+penalty.toFixed(2)+' USDC)':'(no USDC left to deduct)');
-      if(P.usdc<=1e-9&&missionToRestart){
-        toast(hitMessage+' No USDC left — mission restarting!',{bubble:true,duration:8500});
-        startMission(missionToRestart);
+      const heartsLeft=G?G.hearts:3;
+      const hitMessage=shout+'  '+heartsLeft+'/3 hearts remaining.';
+      if(heartsLeft===0&&missionToRestart){
+        toast(hitMessage+' No hearts left — restarting mission!',{bubble:true,duration:8500});
+        setTimeout(()=>{ if(G&&G.m.id===missionToRestart) startMission(missionToRestart); },1900);
       } else {
         toast(hitMessage,{bubble:true,duration:8500});
       }
