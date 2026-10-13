@@ -2965,8 +2965,8 @@ function safeMissionSpot(spot,offsetX=0,offsetZ=0){
       const mid=roadMid(n,axis),dist=Math.abs(v-mid);
       if(dist<bestDist){bestDist=dist;bestN=n;bestMid=mid;}
     }
-    const left=roadCoord(bestN,axis)+roadWidthFor(curCity,bestN)/2+18;
-    const right=roadCoord(bestN+1,axis)-roadWidthFor(curCity,bestN+1)/2-18;
+    const left=roadCoord(bestN,axis)+roadWidthFor(curCity,bestN)/2+22;
+    const right=roadCoord(bestN+1,axis)-roadWidthFor(curCity,bestN+1)/2-22;
     if(left>right) return bestMid;
     /* If the authored spot is on/too near a road, move it to the block interior,
        not merely to the edge of the safe zone. Offsets then keep a scene cast spread out. */
@@ -4777,7 +4777,7 @@ function loadStep(){
          objective anchor rather than leaving the player stranded without a Talk button. */
       target={x:targetSpot.x,z:targetSpot.z,r:18};
     }
-    target.r=Math.max(Number(target.r)||0,18);
+    target.r=Math.max(Number(target.r)||0,24);
     target.talk=()=>st.run();
     target.active=()=>true;
     target._missionTarget=true;
@@ -4789,7 +4789,7 @@ function loadStep(){
   const missionTarget=ents.find(e=>e._missionTarget&&typeof e.talk==='function');
   if(missionTarget){
     missionTarget.active=()=>true;
-    missionTarget.r=Math.max(Number(missionTarget.r)||0,18);
+    missionTarget.r=Math.max(Number(missionTarget.r)||0,24);
   }
   for(const ex of (m.extras||[])){
     if(G.used[ex.id]) continue;
@@ -5559,11 +5559,30 @@ function update(dt,time){
   }
   nearEnt=null; let best=1e9;
   updateStoryNPCActors(dt,time);
+  /* One malformed or stale NPC must never abort the interaction scan for the
+     whole frame. This previously could leave Talk hidden even at the mission marker. */
   for(const e of ents){
-    if(e.object){e.x=e.object.position.x;e.z=e.object.position.z;}
-    if(e.hidden||!e.active()) continue;
-    const d=Math.hypot(player.position.x-e.x,player.position.z-e.z);
-    if(d<e.r&&d<best){ best=d; nearEnt=e; }
+    try{
+      if(e.object){e.x=e.object.position.x;e.z=e.object.position.z;}
+      if(e.hidden||typeof e.active!=='function'||!e.active()) continue;
+      const d=Math.hypot(player.position.x-e.x,player.position.z-e.z);
+      if(d<(Number(e.r)||0)&&d<best){ best=d; nearEnt=e; }
+    }catch(err){
+      console.warn('[KitCity mission] Skipping invalid interaction entity',err);
+    }
+  }
+  /* The active objective and its beacon must agree. If a redesigned scene leaves
+     the NPC anchor a little offset from its visible label, proximity to that
+     objective still exposes the same conversation instead of stranding the player. */
+  if(!nearEnt&&S.phase==='play'&&!S.modal&&G){
+    const target=ents.find(e=>e._missionTarget&&typeof e.talk==='function');
+    if(target){
+      const tx=target.object&&target.object.position?target.object.position.x:Number(target.x);
+      const tz=target.object&&target.object.position?target.object.position.z:Number(target.z);
+      if(Number.isFinite(tx)&&Number.isFinite(tz)&&Math.hypot(player.position.x-tx,player.position.z-tz)<=26){
+        nearEnt=target;
+      }
+    }
   }
   talkBtn.classList.toggle('hidden',!(nearEnt&&!S.modal));
   const compass=$('#compass');
