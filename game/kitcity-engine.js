@@ -4059,7 +4059,7 @@ const lostValueMissions=LOST_VALUE_STORY.map(story=>{
     if(G) G.storyChoice=choice.label;
     if(story.id==='lost-value-14') Store.set(storageKey+'_lost_value_focus',choice.label);
   }}));
-  const conversationStep=(label,lines,actor,allowChoices)=>({kind:'conversation',label,spot:actor.spot,npc:actor.npc,run(){
+  const conversationStep=(label,lines,actor,allowChoices,finalConversation=false)=>({kind:'conversation',label,spot:actor.spot,npc:actor.npc,run(){
     const panels=[{
       shot:'character',speaker:actor.name,kicker:story.state.toUpperCase()+' · THE LOST VALUE',
       caption:story.title.toUpperCase(),next:'next'
@@ -4068,8 +4068,19 @@ const lostValueMissions=LOST_VALUE_STORY.map(story=>{
       shot:speaker==='PLAYER'?'player':'character',speaker,text,next:'next'
     }));
     if(allowChoices&&choiceButtons.length){
-      panels.push({shot:'player',kicker:'YOUR MOVE',caption:story.id==='lost-value-14'?'What should a better ecosystem protect first?':'',choices:choiceButtons});
-    }else{
+      panels.push({
+        shot:'player',kicker:'YOUR MOVE',
+        caption:story.id==='lost-value-14'?'What should a better ecosystem protect first?':'',
+        choices:choiceButtons,continueAfterChoice:finalConversation
+      });
+    }
+    if(finalConversation){
+      panels.push({
+        shot:'wide',kicker:'NEXT OBJECTIVE',
+        caption:'Now head to the Record Center and inspect '+story.evidenceTitle+'. Follow the compass arrow.',
+        finish:true
+      });
+    }else if(!allowChoices||!choiceButtons.length){
       panels[panels.length-1].finish=true;
     }
     storyDirector.playPanels(panels,finishStep);
@@ -4081,15 +4092,12 @@ const lostValueMissions=LOST_VALUE_STORY.map(story=>{
         [{t:'Record evidence',f:()=>{if(G){G.evidence[story.id]=true;}closeSheet();finishStep();}}]);
     }
   };
-  const steps=[conversationStep('Speak with '+openingLead.name,openingLines,openingLead,false)];
-  if(interludeLines.length) steps.push(conversationStep(story.interludeLabel||'Speak with the local users',interludeLines,interludeLead,false));
-  if(story.evidenceAfterDialogue){
-    if(closingLines.length) steps.push(conversationStep('Discuss the evidence with '+closingLead.name,closingLines,closingLead,true));
-    steps.push(clue);
-  }else{
-    steps.push(clue);
-    if(closingLines.length) steps.push(conversationStep('Discuss the evidence with '+closingLead.name,closingLines,closingLead,true));
-  }
+  const steps=[conversationStep('Speak with '+openingLead.name,openingLines,openingLead,false,!interludeLines.length&&!closingLines.length)];
+  if(interludeLines.length) steps.push(conversationStep(story.interludeLabel||'Speak with the local users',interludeLines,interludeLead,false,!closingLines.length));
+  if(closingLines.length) steps.push(conversationStep('Discuss the evidence with '+closingLead.name,closingLines,closingLead,true,true));
+  // Every story conversation now ends with a clear Record Center instruction.
+  // Keep the clue step after the complete conversation so it remains the next navigable objective.
+  steps.push(clue);
   return {
     id:story.id,n:story.n,city:story.city,title:story.title,goal:story.goal,
     storyState:story.state,storyValue:story.value,storyReward:story.reward,storyFinale:!!story.finale,
