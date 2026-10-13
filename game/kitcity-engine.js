@@ -2892,34 +2892,7 @@ function placeMissionEvidence(def,mission,spot){
   const sign=label(labelText,BRAND,'#071827',1.25);sign.position.set(spot.x,6.5,spot.z);missionGroup.add(sign);
   return {x:spot.x,z:spot.z,r:6.7,clue:true};
 }
-function storyExecutionStation(m,stepIndex){
-  const base=safeMissionSpot(SPOTS.execution);
-  const objectiveIndex=Math.max(0,stepIndex-(m.characterStepCount||0));
-  const angle=objectiveIndex*2.399963229728653;
-  return safeMissionSpot({x:base.x+Math.cos(angle)*10,z:base.z+Math.sin(angle)*10,f:-1});
-}
-function placeExecutionCenter(def,base,station){
-  base=safeMissionSpot(base);
-  station=safeMissionSpot(station,10,10);
-  const hall=new THREE.Group();hall.position.set(base.x,0,base.z);
-  const floor=new THREE.Mesh(new THREE.BoxGeometry(15,.24,12),lam('#34434B'));floor.position.y=.12;hall.add(floor);
-  const roof=new THREE.Mesh(new THREE.BoxGeometry(15.5,.28,12.5),lam('#17262F'));roof.position.set(0,4.25,0);hall.add(roof);
-  for(const x of [-7,7]) for(const z of [-5.5,5.5]){
-    const pillar=new THREE.Mesh(new THREE.BoxGeometry(.32,4.2,.32),lam('#637681'));pillar.position.set(x,2.1,z);hall.add(pillar);
-  }
-  const back=new THREE.Mesh(new THREE.BoxGeometry(14,.16,.3),lam('#50616A'));back.position.set(0,2.4,-5.7);hall.add(back);
-  missionGroup.add(hall);
-  const centerSign=label("EXECUTION CENTRE",BRAND,'#071827',1.45);centerSign.position.set(base.x,6.3,base.z-5.5);missionGroup.add(centerSign);
-  const stationGroup=new THREE.Group();stationGroup.position.set(station.x,0,station.z);
-  const desk=new THREE.Mesh(new THREE.BoxGeometry(2.7,1.05,1.35),lam('#465760'));desk.position.set(0,.55,0);stationGroup.add(desk);
-  const screen=new THREE.Mesh(new THREE.BoxGeometry(1.65,1.1,.12),lam('#0D202B',{emissive:0x073C4A,emissiveIntensity:.75}));screen.position.set(0,1.85,-.22);screen.rotation.x=-.12;stationGroup.add(screen);
-  const screenBar=new THREE.Mesh(new THREE.BoxGeometry(1.12,.08,.05),lam(BRAND));screenBar.position.set(0,2.05,-.3);stationGroup.add(screenBar);
-  const screenDot=new THREE.Mesh(new THREE.CircleGeometry(.1,12),lam('#55E6C1'));screenDot.position.set(.54,1.66,-.3);stationGroup.add(screenDot);
-  missionGroup.add(stationGroup);
-  const stationSign=label(tr(def.sign||def.title||def.label||'WORKSTATION'),BRAND,'#071827',1.1);stationSign.position.set(station.x,4.1,station.z);missionGroup.add(stationSign);
-  return {x:station.x,z:station.z,r:7.2,clue:true};
-}
-function safeMissionSpot(spot,offsetX=0,offsetZ=0){
+function safeMissionSpot(function safeMissionSpot(spot,offsetX=0,offsetZ=0){
   if(!spot||!Number.isFinite(Number(spot.x))||!Number.isFinite(Number(spot.z))) return spot;
   const safeAxis=(value,axis,offset)=>{
     const v=Number(value);
@@ -3204,16 +3177,14 @@ function updateHUD(){
 */
 const NPC=(name,role,color,look,stall,sign)=>({name,role,color,look,stall,sign});
 CITIES.kitcity={...CITIES.lagos,name:'KitCity',tag:'The final city · Web3 District',lon:7.3,lat:6.1,seed:991,sky:0x142C3B,ground:'#18272E',slab:'#657985',paint:['#1B3440','#234653','#2D5360','#18313D','#37616A','#203B49'],h:[14,42],market:3,palm:.25};
-const STORY_CITY_BY_STATE=Object.create(null);
 const STORY_NPCS=Object.create(null);
 const MISSIONS=[];
 const MBY=Object.create(null);
-/* TEST ONLY: set false before any production release to restore sequential mission locks. */
 /* Progress is tracked by completed missions and the in-game wallet balance. */
 const isUnlocked=m=>{ const k=MISSIONS.indexOf(m); return k===0||!!P.done[MISSIONS[k-1].id]; };
 
 
-const cityOrder=[...new Set(MISSIONS.map(m=>m.city))];
+const cityOrder=Object.keys(CITIES);
 
 /* Mission character names are explicit; never infer them from array position. */
 function missionNPCObjects(mission){
@@ -3252,7 +3223,7 @@ function buildMissionNameAliases(mission){
 }
 const cityMissions=city=>MISSIONS.filter(m=>m.city===city);
 const isCityComplete=city=>{const ms=cityMissions(city);return ms.length>0&&ms.every(m=>!!P.done[m.id]);};
-const isCityUnlocked=city=>{const ms=cityMissions(city);return ms.length>0&&isUnlocked(ms[0]);};
+const isCityUnlocked=city=>{const ms=cityMissions(city);return ms.length===0||isUnlocked(ms[0]);};
 /* ===================== mission flow ===================== */
 function hideEnt(e){ e.hidden=true; loadStep(); }
 function resetPlayer(){
@@ -3456,7 +3427,7 @@ function mapSVG(){
   for(const k of cityOrder){
     const c=CITIES[k],p=mapXY(c.lon,c.lat),open=isCityUnlocked(k),sel=k===hubCity;
     const done=cityMissions(k).filter(m=>P.done[m.id]).length,total=cityMissions(k).length;
-    const color=k==='kitcity'?'#F4C76B':done===total?'#72E0B0':open?'#53DDF0':'#718093';
+    const color=k==='kitcity'?'#F4C76B':(total>0&&done===total)?'#72E0B0':open?'#53DDF0':'#718093';
     const off=MAP_OFFSETS[k]||(p.x>280?[-8,-8]:[8,-7]);
     const showLabel=sel||MAP_LABELS.has(k);
     const lx=p.x+off[0],ly=p.y+off[1],anchor=off[0]<0?'end':'start';
