@@ -4101,7 +4101,7 @@ function startMission(id){
 }
 function briefing(){
   const m=G.m,C=CITIES[m.city];
-  openSheet('<div class="who"><span class="av" style="background:'+INK+'">'+m.n+'</span><div><b>'+personalize('Mission '+m.n+': '+m.title,null)+'</b><small>'+C.name+', '+(m.storyState?m.storyState+' · ':'')+C.tag+'</small></div></div><p>'+personalize(m.goal,null)+'</p><p class="web3-focus">WEB3 SKILL · '+web3Focus(m)+'</p><ul class="pts">'+m.steps.map(s=>'<li>'+personalize(tr(s.label),m,s.npc)+'</li>').join('')+'</ul>'+(m.n===1?'<p class="note">Move with the left stick or WASD. Hold Run or Shift to run. Tap Talk or press E to speak. Follow the arrow.</p>':'<p class="note">Follow the arrow to the next person. Watch for traffic.</p>'),
+  openSheet('<div class="who"><span class="av" style="background:'+INK+'">'+m.n+'</span><div><b>'+personalize('Mission '+m.n+': '+m.title,null)+'</b><small>'+C.name+', '+(m.storyState?m.storyState+' · ':'')+C.tag+'</small></div></div><p>'+personalize(m.goal,null)+'</p><ul class="pts">'+m.steps.map(s=>'<li>'+personalize(tr(s.label),m,s.npc)+'</li>').join('')+'</ul>'+(m.n===1?'<p class="note">Move with the left stick or WASD. Hold Run or Shift to run. Tap Talk or press E to speak. Follow the arrow.</p>':'<p class="note">Follow the arrow to the next person. Watch for traffic.</p>'),
     [{t:'Start mission',f:closeSheet},{t:'Back to hub',g:1,f:exitToHub}]);
 }
 function finishStep(){
@@ -4256,8 +4256,7 @@ function web3Focus(m){
 }
 function missionCard(m){
   const un=isUnlocked(m),dn=!!P.done[m.id];
-  const focus=web3Focus(m);
-  return '<div class="card'+(un?'':' lock')+(m.city==='kitcity'?' final-destination':'')+'"><div class="ch">'+badgeSVG(m.id==='m0'?1:m.n,false,46)+'<div><b>'+personalize(m.id==='m0'?'PROLOGUE: '+m.title:'Mission '+m.n+': '+m.title,null)+'</b><small>'+personalize(m.goal,null)+'</small><span class="web3-focus">WEB3 FOCUS · '+focus+'</span></div></div><div class="cf"><span>'+(dn?'Completed':'Up to +0.50 USDC')+'</span>'+(un?'<button class="btn brand" data-a="play" data-v="'+m.id+'" type="button">'+(dn?'Replay':'Play')+'</button>':'<span>Finish mission '+(m.n-1)+' first</span>')+'</div></div>';
+  return '<div class="card'+(un?'':' lock')+(m.city==='kitcity'?' final-destination':'')+'"><div class="ch">'+badgeSVG(m.id==='m0'?1:m.n,false,46)+'<div><b>'+personalize(m.id==='m0'?'PROLOGUE: '+m.title:'Mission '+m.n+': '+m.title,null)+'</b><small>'+personalize(m.goal,null)+'</small></div></div><div class="cf"><span>'+(dn?'Completed':'Up to +0.50 USDC')+'</span>'+(un?'<button class="btn brand" data-a="play" data-v="'+m.id+'" type="button">'+(dn?'Replay':'Play')+'</button>':'<span>Finish mission '+(m.n-1)+' first</span>')+'</div></div>';
 }
 function renderHub(){
   $('#hubTop').innerHTML=tx('<span class="wm"><img class="header-logo" src="https://i.postimg.cc/qqbdTXky/file-00000000958881f4a776df689a235dec.png" alt="KitCity" /></span><div class="lvl"><b>Practice wallet</b><div class="balance-line"><strong>'+P.usdc.toFixed(2)+' USDC</strong><small>'+Object.keys(P.done).filter(k=>P.done[k]).length+' missions completed</small></div></div>');
