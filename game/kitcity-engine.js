@@ -4606,7 +4606,7 @@ const MISSIONS=CHRONICLE_MISSIONS.map((story,index)=>{
       talk(npc,'<p><b>'+escapeStoryHtml(npc.name.toUpperCase())+':</b> '+escapeStoryHtml(recap)+'</p><p><b>'+escapeStoryHtml(partner.name.toUpperCase())+':</b> Next, we need to deal with this: '+escapeStoryHtml(nextLine)+'</p><p><b>YOU:</b> '+escapeStoryHtml(playerReply)+'</p>',[{t:'Save the chapter findings',f:()=>{P.storyFlags=Object.assign({},P.storyFlags||{},Object.fromEntries((story.storyFlags||[]).map(flag=>[flag,true])));G.evidence.chapterSummary=true;finishStep();}}]);
     }});
   }
-  return {id:story.id,n:index+1,city,title:story.title,goal:story.narrativePurpose,state:story.state,story,npcs:story.npcs,characterStepCount:story.id==='m01'?2:people.length,steps,extras:[],storyFlags:story.storyFlags||[],xp:story.rewards&&story.rewards.xp||100};
+  return {id:story.id,n:index+1,city,title:story.title,goal:story.cardDescription||story.narrativePurpose,state:story.state,story,npcs:story.npcs,characterStepCount:story.id==='m01'?2:people.length,steps,extras:[],storyFlags:story.storyFlags||[],xp:story.rewards&&story.rewards.xp||100};
 });
 
 const MBY={}; MISSIONS.forEach(m=>{ MBY[m.id]=m; });
