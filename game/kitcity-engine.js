@@ -4017,7 +4017,7 @@ const lostValueMissions=LOST_VALUE_STORY.map(story=>{
       shot:speaker==='PLAYER'?'player':'character',speaker,text,next:'next'
     }));
     if(allowChoices&&choiceButtons.length){
-      panels.push({shot:'player',kicker:'YOUR MOVE',caption:'What do you do?',choices:choiceButtons});
+      panels.push({shot:'player',kicker:'YOUR MOVE',caption:story.id==='lost-value-14'?'What should a better ecosystem protect first?':'',choices:choiceButtons});
     }else{
       panels[panels.length-1].finish=true;
     }
@@ -4097,7 +4097,7 @@ function startMission(id){
         storyCastGroup.visible=false; P.storyPrologueSeen=true; P.done.m0=true;
         if(G) G.used['iamabdul-story']=true;
         save(); updateHUD();
-        openSheet('<section class="lost-value-finale"><p>MISSION UNLOCKED</p><h3>THE FIRST PROMISE</h3><p>Lagos State · Your investigation begins.</p></section>',[
+        openSheet('<section class="lost-value-finale"><p>MISSION UNLOCKED</p><h3>THE FIRST PROMISE</h3><p>Lagos State</p></section>',[
           {t:'Start The First Promise',f:()=>startMission('lost-value-01')},
           {t:'Back to hub',g:1,f:exitToHub}
         ]);
