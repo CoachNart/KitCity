@@ -23,10 +23,7 @@ export const LOST_VALUE_STORY = [
       ['Softstorm','Or maybe they discovered they could make more money selling the promise than keeping it.'],
       ['Softstorm','Don’t decide who’s right yet. Find out what happened to the people who believed in it.']
     ],
-    choices:[
-      {label:'Ask Softstorm to explain the noticeboard',speaker:'Softstorm',reply:'You cannot restore something you don’t understand. Find out what happened to the people who believed in it.'},
-      {label:'Ask IamAbdul what he thinks went wrong',speaker:'IamAbdul',reply:'I don’t know yet. But if people keep paying for promises, somebody needs to check what was actually delivered.'}
-    ],
+    choices:[],
     task:'Inspect the original promise noticeboard and return to Softstorm.',
     evidenceTitle:'The Original Promise', evidenceBody:'Own what you create. Participate without asking permission from a gatekeeper. Verify what you can. Build things people can use. The noticeboard has no last-updated date.',
     reward:'You cannot restore something you don’t understand.'
@@ -48,15 +45,12 @@ export const LOST_VALUE_STORY = [
       ['Larai','We checked their page. Their followers. Their partners. They had testimonials.'],
       ['Joseph','Even people we respected vouched for them.'],
       ['PLAYER','But did anyone verify what they had actually built?'],
-      ['PLAYER','So we should trust nobody?'],
-      ['Larai','No. Ask better questions. Give people room to prove themselves. And don’t confuse popularity with proof.'],
       ['Joseph','I thought trusting the right people was enough.'],
-      ['Larai','Trusting people isn’t the problem. Making trust a substitute for evidence is.']
+      ['Larai','Trusting people isn’t the problem. Making trust a substitute for evidence is.'],
+      ['PLAYER','So we should trust nobody?'],
+      ['Larai','No. Ask better questions. Give people room to prove themselves. And don’t confuse popularity with proof.']
     ],
-    choices:[
-      {label:'Ask Joseph to show the original project records',speaker:'Joseph',reply:'I thought trusting the right people was enough. I’ll show you the records we still have.'},
-      {label:'Ask Larai to show the community evidence',speaker:'Larai',reply:'Trusting people isn’t the problem. Making trust a substitute for evidence is. Let’s inspect what we can verify.'}
-    ],
+    choices:[{"label":"Ask Joseph to show the original project records"},{"label":"Ask Larai to show the evidence collected by the community"}],
     task:'Review the project page and identify the missing delivery evidence.',
     evidenceTitle:'Project Promise Record', evidenceBody:'Thousands of future users. Major partnerships. Guaranteed community rewards. Verified work: insufficient evidence.',
     reward:'Trust matters. Evidence matters too.'
@@ -85,10 +79,7 @@ export const LOST_VALUE_STORY = [
       ['Unique','If I tell people the truth about how early the product is, they might leave.'],
       ['Smrt huntr','And if you don’t tell them, they might never trust another builder again.']
     ],
-    choices:[
-      {label:'Publish working features and the unfinished roadmap',speaker:'PLAYER',reply:'People need to know what exists now and what’s still a promise.'},
-      {label:'Add a public progress tracker',speaker:'Smrt huntr',reply:'Nobody is asking you to be perfect. We’re asking you to make something that works.'}
-    ],
+    choices:[{"label":"Publish the working features and the unfinished roadmap"},{"label":"Keep the current marketing but add a public progress tracker"}],
     task:'Test the demo and record which promised features actually work.',
     evidenceTitle:'Product Demo Review', evidenceBody:'Announced features: 8. Working features: 2. Verified user benefit: limited.',
     reward:'A promise can attract attention. Only delivery can justify it.'
@@ -114,10 +105,7 @@ export const LOST_VALUE_STORY = [
       ['PLAYER','And if the agreement changes?'],
       ['Goodness','Then the people affected deserve a say. At the very least, they deserve the truth.']
     ],
-    choices:[
-      {label:'Review the contribution record',speaker:'Semi',reply:'People should know what they’re agreeing to before they give their time away.'},
-      {label:'Submit a public contribution report',speaker:'Goodness',reply:'The people affected deserve a say. At the very least, they deserve the truth.'}
-    ],
+    choices:[],
     task:'Review the contribution record and submit a public report naming the original contributors.',
     evidenceTitle:'Contribution Record', evidenceBody:'Product design: Goodness. Testing and documentation: Semi. Early development: community contributors. Current control: restricted.',
     reward:'A healthy ecosystem recognises the people who make it possible.'
@@ -132,7 +120,6 @@ export const LOST_VALUE_STORY = [
       ['Blockqueen','Because the admin controls the permissions.'],
       ['Christol','Who controls the admin?'],
       ['PLAYER','What exactly does the community own?'],
-      ['PLAYER','Did the community receive the control it was promised?'],
       ['Blockqueen','People bought the token because they believed they were part of something.'],
       ['Christol','Owning a token and controlling a system aren’t automatically the same thing.'],
       ['Blockqueen','So the token means nothing?'],
@@ -140,10 +127,7 @@ export const LOST_VALUE_STORY = [
       ['PLAYER','Then the real question isn’t just who owns the token.'],
       ['Christol','It’s what ownership allows them to do.']
     ],
-    choices:[
-      {label:'Inspect the project permissions',speaker:'PLAYER',reply:'The real question isn’t just who owns the token. It’s what ownership allows people to do.'},
-      {label:'Compare advertised ownership with actual control',speaker:'Christol',reply:'A token can give access, rights, or a role in governance. But those rights have to exist in practice.'}
-    ],
+    choices:[],
     task:'Inspect the project permissions and identify a promised right the community never received.',
     evidenceTitle:'Ownership and Access Audit', evidenceBody:'Token holders: 4,800. Administrators: 2. Community proposals accepted: 0. Critical settings: controlled by admin.',
     reward:'Ownership means more than holding an asset. Understand the rights attached to it.'
@@ -166,10 +150,7 @@ export const LOST_VALUE_STORY = [
       ['PLAYER','True. But responsibility doesn’t disappear just because somebody else made a decision.'],
       ['BigSam','So what do you want me to do?']
     ],
-    choices:[
-      {label:'Publish the claims and verified transactions',speaker:'PLAYER',reply:'Publish what can be verified. Don’t label a sale a crime without evidence; show the claims and the timing.'},
-      {label:'Hold a public meeting to present evidence',speaker:'Laloba',reply:'Taking profit isn’t the issue. Misleading the people who trusted you is the issue.'}
-    ],
+    choices:[{"label":"Publish a clear account of the claims made and the verified transactions"},{"label":"Hold a public meeting where both sides present their evidence"}],
     task:'Compare public statements with the verified transaction history and record the evidence.',
     evidenceTitle:'Public Claims and Transaction Record', evidenceBody:'Public message: “We are here for the long term.” Verified transaction: large position sold before a major announcement. The record shows timing, not by itself proof of a crime.',
     reward:'Taking a profit isn’t the same as misleading the people who trusted you.'
@@ -193,10 +174,7 @@ export const LOST_VALUE_STORY = [
       ['PLAYER','So the community wasn’t necessarily fake.'],
       ['LunaX','No. The people were real. Their time was real. But nobody built a system that turned that energy into lasting value.']
     ],
-    choices:[
-      {label:'Recover the archived community proposals',speaker:'OxNight',reply:'We had ideas. Lots of them. Let’s see which ones were never followed through.'},
-      {label:'Choose one proposal to complete',speaker:'LunaX',reply:'The people were real. Their time was real. Let’s turn some of that energy into lasting value.'}
-    ],
+    choices:[],
     task:'Recover archived proposals, identify three unfinished ideas, and select one realistic proposal to complete.',
     evidenceTitle:'Archived Community Proposals', evidenceBody:'The community recorded ideas but did not track delivery or lasting user benefit.',
     reward:'A crowd is not automatically a community. Shared work gives people something to build together.'
@@ -220,10 +198,7 @@ export const LOST_VALUE_STORY = [
       ['Moon','That sounds less impressive than ten thousand users.'],
       ['The cryptonian','Until ten thousand users can prove the product is worth using.']
     ],
-    choices:[
-      {label:'Separate registrations from active usage',speaker:'PLAYER',reply:'Start with what the product is supposed to help people do.'},
-      {label:'Measure repeat use and real outcomes',speaker:'The cryptonian',reply:'Measure whether people can do the task, return because it helps them, and keep getting value from it.'}
-    ],
+    choices:[],
     task:'Review the dashboard and select a measure that reflects actual product use.',
     evidenceTitle:'Project Metrics Review', evidenceBody:'Registered accounts: 10,000. Active users: unknown. Repeat usage: unknown. Completed tasks: unverified. Real-world outcomes: not measured.',
     reward:'Activity is easy to count. Value takes evidence.'
@@ -248,10 +223,7 @@ export const LOST_VALUE_STORY = [
       ['PLAYER','Access isn’t just allowing someone to create an account.'],
       ['Joseph Nnadi','It’s giving them a fair chance to understand what they’re doing.']
     ],
-    choices:[
-      {label:'Complete the transaction walkthrough',speaker:'Joseph Nnadi',reply:'Explain the consequences in language people understand.'},
-      {label:'Identify the action, cost, and risk',speaker:'PLAYER',reply:'Access isn’t just allowing someone to create an account. It’s giving them a fair chance to understand what they’re doing.'}
-    ],
+    choices:[],
     task:'Complete a transaction walkthrough and identify the action, cost, and risk.',
     evidenceTitle:'First-Time User Transaction', evidenceBody:'The transaction prompt shows technical details without clearly explaining what the user is approving.',
     reward:'A door isn’t truly open if people cannot understand how to enter safely.'
@@ -279,10 +251,7 @@ export const LOST_VALUE_STORY = [
       ['PLAYER','Pick one problem. Find the people who experience it. Build something small that helps. Test whether it works.'],
       ['Toza','And let the evidence decide what comes next.']
     ],
-    choices:[
-      {label:'Prioritise the small-business payment problem',speaker:'PLAYER',reply:'Pick one problem. Find the people who experience it. Build something small that helps. Test whether it works.'},
-      {label:'Match a feature to a real user need',speaker:'Toza',reply:'Don’t confuse the newest technology with the most useful solution.'}
-    ],
+    choices:[],
     task:'Interview potential users and match one practical feature to a real problem.',
     evidenceTitle:'User Needs Record', evidenceBody:'Small-business payment tracking, skills that lead to paid work, and checking whether an investment opportunity is legitimate are real needs raised by potential users.',
     reward:'Start with the problem, not the trend.'
@@ -306,10 +275,7 @@ export const LOST_VALUE_STORY = [
       ['PLAYER','So restoring value means giving people reasons to participate beyond price.'],
       ['Craftore','Exactly. Give builders a reason to build. Give users a reason to stay. Give people a reason to trust what they’re using.']
     ],
-    choices:[
-      {label:'Record the business owner’s needs',speaker:'PLAYER',reply:'The technology is not the final goal. It’s a tool for solving a problem.'},
-      {label:'Propose a practical solution',speaker:'Craftore',reply:'Give builders a reason to build. Give users a reason to stay. Give people a reason to trust what they’re using.'}
-    ],
+    choices:[],
     task:'Record the business owner’s needs and propose a practical feature with a clear user benefit.',
     evidenceTitle:'Local Business Needs', evidenceBody:'The business owner needs an understandable, affordable way to track payments and orders.',
     reward:'Technology becomes valuable when it helps people do something they couldn’t do as well before.'
@@ -333,10 +299,7 @@ export const LOST_VALUE_STORY = [
       ['PLAYER','But it should mean the actual power is clear, and the people affected understand how decisions get made.'],
       ['Reina','And that the rules apply to the people running the system too.']
     ],
-    choices:[
-      {label:'Compare the vote with the administrative action',speaker:'PLAYER',reply:'The actual power should be clear, and the people affected should understand how decisions get made.'},
-      {label:'Publish a clear decision-making summary',speaker:'Reina',reply:'The rules must apply to the people running the system too.'}
-    ],
+    choices:[],
     task:'Compare the community vote with the administrative action and publish a clear summary of the process.',
     evidenceTitle:'Governance Decision Record', evidenceBody:'Community vote: change rejected. Administrative action: change approved. Notice before vote: unclear. Explanation after vote: incomplete.',
     reward:'Rules mean little when people don’t know who can change them.'
@@ -360,10 +323,7 @@ export const LOST_VALUE_STORY = [
       ['Leemah','That won’t fix everything overnight.'],
       ['Cclya','No. Trust isn’t a switch. It’s a record of what you do over time.']
     ],
-    choices:[
-      {label:'Test the working feature',speaker:'PLAYER',reply:'Show people what works, what doesn’t, and what changes over time.'},
-      {label:'Publish a transparent progress update',speaker:'Cclya',reply:'Trust isn’t a switch. It’s a record of what you do over time.'}
-    ],
+    choices:[],
     task:'Test the product and publish a transparent update explaining what is complete and unfinished.',
     evidenceTitle:'Public Progress Record', evidenceBody:'Core feature: working. Documentation: available. Project progress: public. User feedback: limited.',
     reward:'Trust isn’t restored by asking for another chance. It’s rebuilt by giving people evidence.'
@@ -383,12 +343,7 @@ export const LOST_VALUE_STORY = [
       ['Softstorm','No. We’re trying to recover what was worth keeping and do better with it.'],
       ['PLAYER','What should a better ecosystem protect first?']
     ],
-    choices:[
-      {label:'People who build should be treated fairly',speaker:'PLAYER',reply:'Contribution deserves clear agreements, fair treatment, and recognition.'},
-      {label:'Users should understand the systems they join',speaker:'PLAYER',reply:'People deserve to understand the systems they participate in.'},
-      {label:'Projects should prove their usefulness',speaker:'PLAYER',reply:'Useful products should prove their value through what they deliver.'},
-      {label:'Power and decision-making should be transparent',speaker:'PLAYER',reply:'People should know who has power and how decisions get made.'}
-    ],
+    choices:[{"label":"People who build should be treated fairly"},{"label":"Users should understand the systems they participate in"},{"label":"Projects should prove their usefulness"},{"label":"Power and decision-making should be transparent"}],
     task:'Place the recovered evidence on the archive wall and choose the value the next stage should emphasise.',
     evidenceTitle:'The Evidence Wall', evidenceBody:'The First Promise. The Price of Trust. The Empty Promise. The People Who Built It. Who Owns the Work? The Exit. The Community That Disappeared. The Numbers Game. The Open Door. Building for Nobody. The People Left Behind. The Rules for Everyone. The Cost of Starting Over.',
     reward:'Rebuilding is not repeating. It’s learning what deserves to survive.'
@@ -419,9 +374,7 @@ export const LOST_VALUE_STORY = [
       ['Softstorm','It is.'],
       ['Softstorm','That’s why somebody has to do it.']
     ],
-    choices:[
-      {label:'Review the evidence wall',speaker:'Kenny',reply:'You have discovered what was lost. Now you must discover what it takes to restore it.'}
-    ],
+    choices:[],
     task:'Place the final evidence on the archive wall and review the connections between the 15 missions.',
     evidenceTitle:'The Lost Value', evidenceBody:'Ownership without control. Community without contribution. Access without understanding. Growth without usefulness. Trust without accountability. Promises without delivery.',
     reward:'You have discovered what was lost. Now you must discover what it takes to restore it.',
