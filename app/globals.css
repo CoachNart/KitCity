@@ -651,3 +651,24 @@ html.kitcity-story-active #modal{
   margin:15px auto 12px;padding:10px 12px;max-width:260px;border:1px solid #00E5FF;
   border-radius:8px;color:#00E5FF;font-size:12px;font-weight:900;letter-spacing:.13em;
 }
+
+
+/* In-scene dialogue: character lines float over the speaking actor; decision cards remain in the dialogue tray. */
+.comic-speech-bubble{
+  position:absolute;z-index:30;left:50%;top:40%;transform:translate(-50%,-100%);
+  width:max-content;max-width:min(82vw,360px);padding:11px 14px 12px;
+  border:2px solid #101923;border-radius:14px;background:#f7fbff;color:#101923;
+  box-shadow:0 5px 0 rgba(0,0,0,.28),0 12px 28px rgba(0,0,0,.25);
+  pointer-events:none;text-align:left;
+}
+.comic-speech-bubble:after{
+  content:"";position:absolute;left:calc(50% - 8px);bottom:-10px;width:15px;height:15px;
+  background:#f7fbff;border-right:2px solid #101923;border-bottom:2px solid #101923;transform:rotate(45deg);
+}
+.comic-speech-speaker{display:block;margin-bottom:4px;color:#007e91;font-size:9px;font-weight:950;letter-spacing:.12em}
+.comic-speech-text{margin:0;font-size:clamp(12px,2.2vw,16px);font-weight:750;line-height:1.35;overflow-wrap:anywhere}
+@media(max-width:520px){
+  .comic-speech-bubble{max-width:min(84vw,320px);padding:9px 11px 10px;border-radius:12px}
+  .comic-speech-speaker{font-size:8px}
+  .comic-speech-text{font-size:12px;line-height:1.32}
+}
