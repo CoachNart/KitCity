@@ -2185,10 +2185,45 @@ function buildCity(key){
       for(const side of [-1,1]){
         const foot=new THREE.Mesh(footGeo,paveMat);foot.position.set(cx+(road.axis==='z'?side*(road.width/2+.55):0),.125,cz+(road.axis==='x'?side*(road.width/2+.55):0));cityGroup.add(foot);
       }
-      const dashMat=new THREE.MeshBasicMaterial({color:C.roadStyle==='industrial'?'#E9BE35':'#D8D7CC',transparent:true,opacity:.65,depthWrite:false});
-      for(let q=-2;q<=2;q++){
-        const dashGeo=road.axis==='x'?new THREE.BoxGeometry(4,.018,.12):new THREE.BoxGeometry(.12,.018,4);
-        const dash=new THREE.Mesh(dashGeo,dashMat);dash.position.set(cx+(road.axis==='x'?q*12:0),.14,cz+(road.axis==='z'?q*12:0));cityGroup.add(dash);
+      const roadStyle=C.roadStyle||'mixed';
+      // Markings follow the local street's character instead of repeating one
+      // generic dashed line through every Nigerian city.
+      if(roadStyle==='industrial'){
+        const yellow=new THREE.MeshBasicMaterial({color:'#E9BE35',transparent:true,opacity:.92,depthWrite:false});
+        for(const side of [-1,1]){
+          const geo=road.axis==='x'?new THREE.BoxGeometry(70,.018,.1):new THREE.BoxGeometry(.1,.018,70);
+          const mark=new THREE.Mesh(geo,yellow);
+          mark.position.set(cx+(road.axis==='x'?0:side*.62),.145,cz+(road.axis==='z'?0:side*.62));cityGroup.add(mark);
+        }
+      }else if(roadStyle==='boulevard'||roadStyle==='ceremonial'){
+        const white=new THREE.MeshBasicMaterial({color:'#F0F0E9',transparent:true,opacity:.82,depthWrite:false});
+        const edge=new THREE.MeshBasicMaterial({color:'#C9D1D0',transparent:true,opacity:.6,depthWrite:false});
+        const midGeo=road.axis==='x'?new THREE.BoxGeometry(4,.018,.13):new THREE.BoxGeometry(.13,.018,4);
+        for(let q=-2;q<=2;q++){
+          const mark=new THREE.Mesh(midGeo,white);
+          mark.position.set(cx+(road.axis==='x'?q*12:0),.145,cz+(road.axis==='z'?q*12:0));cityGroup.add(mark);
+        }
+        for(const side of [-1,1]){
+          const edgeGeo=road.axis==='x'?new THREE.BoxGeometry(70,.012,.08):new THREE.BoxGeometry(.08,.012,70);
+          const line=new THREE.Mesh(edgeGeo,edge);
+          line.position.set(cx+(road.axis==='x'?0:side*(road.width/2-.35)),.143,cz+(road.axis==='z'?0:side*(road.width/2-.35)));cityGroup.add(line);
+        }
+      }else if(roadStyle==='market'||roadStyle==='gate'||roadStyle==='open'){
+        // Older market and quarter lanes use worn edge stones, not modern
+        // highway markings; small stone studs sit outside the wheel path.
+        const stoneMat=new THREE.MeshLambertMaterial({color:roadStyle==='market'?'#B8B1A2':'#C5AD86'});
+        for(const side of [-1,1])for(let q=-2;q<=2;q++){
+          const stone=new THREE.Mesh(new THREE.BoxGeometry(.38,.07,.38),stoneMat);
+          stone.position.set(cx+(road.axis==='x'?q*13:side*(road.width/2+.22)),.17,cz+(road.axis==='z'?q*13:side*(road.width/2+.22)));cityGroup.add(stone);
+        }
+      }else{
+        const worn=new THREE.MeshBasicMaterial({color:'#D8D7CC',transparent:true,opacity:.48,depthWrite:false});
+        for(let q=-2;q<=2;q++){
+          if((q+road.i+road.j)%2!==0)continue;
+          const dashGeo=road.axis==='x'?new THREE.BoxGeometry(2.5,.014,.09):new THREE.BoxGeometry(.09,.014,2.5);
+          const dash=new THREE.Mesh(dashGeo,worn);
+          dash.position.set(cx+(road.axis==='x'?q*14:0),.143,cz+(road.axis==='z'?q*14:0));cityGroup.add(dash);
+        }
       }
     }
     const lmk=(C.lm||[]).find(l=>l[1]===cx&&l[2]===cz);
