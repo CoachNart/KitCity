@@ -15,12 +15,6 @@ for (const text of [
   "STORY_PLAYER_REACTIONS",
   "CHRONICLE_CHALLENGES",
   "chronicleAuthoredStep",
-  "The World I Didn't Know",
-  "Just Another Day",
-  "The T3Kit Signal",
-  "Softstorm",
-  "IamAbdul",
-  "Timi",
   "Mission badges",
   "Finish mission 1",
   "TEST MODE · ALL MISSIONS UNLOCKED"
