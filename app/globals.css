@@ -628,3 +628,26 @@ html.kitcity-story-active #modal{
  .comic-scene-frame,.comic-card-symbol{transition:none}
  .comic-scene .panel-enter,.comic-scene .dialogue-enter{animation:none}
 }
+
+
+/* The Lost Value story completion cards */
+.story-value-reward{
+  margin:16px 0;padding:15px;border:1px solid rgba(0,229,255,.38);
+  border-radius:14px;background:linear-gradient(145deg,rgba(0,229,255,.12),rgba(10,19,30,.9));
+}
+.story-value-reward small{display:block;color:#00E5FF;font-size:10px;font-weight:900;letter-spacing:.16em}
+.story-value-reward h3{margin:7px 0 5px;color:#fff;font-size:19px;letter-spacing:.04em}
+.story-value-reward p{margin:0;color:#d5e2e8;line-height:1.5}
+.lost-value-finale{
+  margin:15px 0 5px;padding:19px 13px;border:1px solid rgba(0,229,255,.45);
+  border-radius:16px;text-align:center;color:#eaf7fb;
+  background:radial-gradient(ellipse at 50% 0%,rgba(0,229,255,.16),transparent 62%),#0a111a;
+}
+.lost-value-finale p{margin:7px 0;font-size:11px;line-height:1.5;letter-spacing:.08em}
+.lost-value-finale hr{width:42%;margin:16px auto;border:0;border-top:1px solid rgba(0,229,255,.4)}
+.lost-value-finale h2{margin:0;color:#fff;font-size:28px;font-weight:950;letter-spacing:.14em}
+.lost-value-finale h3{margin:4px 0 12px;color:#00E5FF;font-size:17px;font-weight:900;letter-spacing:.08em}
+.lost-value-finale .coming-soon{
+  margin:15px auto 12px;padding:10px 12px;max-width:260px;border:1px solid #00E5FF;
+  border-radius:8px;color:#00E5FF;font-size:12px;font-weight:900;letter-spacing:.13em;
+}
