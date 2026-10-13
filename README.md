@@ -1,15 +1,13 @@
 # KitCity
 
-KitCity is now hosted in a proper Next.js + React + Three.js application.
+KitCity is hosted as a Next.js + React + Three.js application.
 
-## Source fidelity
-
-The original supplied HTML game remains the gameplay and presentation source of truth. The migration separates:
+## Project structure
 
 - page shell and metadata
 - global game CSS
-- the existing Three.js game engine
+- Three.js game engine
 - npm-managed Three.js dependency
 - Next.js build/runtime
 
-No gameplay systems, missions, city data, controls, UI copy, progression rules, or visual styling were intentionally redesigned during the migration.
+The previous storyline catalogue and narrative content have been removed. The game currently presents an empty story state; future narrative content must be authored independently.
