@@ -8,7 +8,7 @@ if (MISSIONS.length !== 0) errors.push("The mission registry must be empty.");
 if (CHAPTERS.length !== 0) errors.push("The chapter registry must be empty.");
 if (CHARACTER_ORDER.length !== 0) errors.push("The retired story cast must be empty.");
 if (!engine.includes("Storyline in preparation")) errors.push("The empty storyline state is missing from the mission screen.");
-if (!engine.includes("No mission records")) errors.push("The empty storyline state is missing from the passport screen.");
+if (!engine.includes("No journey records")) errors.push("The empty storyline state is missing from the passport screen.");
 if (!engine.includes("const MISSIONS=[];")) errors.push("The runtime must not register mission content.");
 if (engine.includes("function missionCard(")) errors.push("The old mission-card renderer remains.");
 
