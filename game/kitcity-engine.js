@@ -2841,8 +2841,10 @@ function buildStall(def,spot){
   const sp=label(tr(def.sign||def.name),def.signBg,def.signFg); sp.position.set(x,8.4,z); missionGroup.add(sp);
   if(o.sub){ const s2=label(tr(o.sub),'#ffffff',INK,1.25); s2.position.set(x,6.4,z); missionGroup.add(s2); }
   const att=buildPerson(def.look); att.userData.storyCharacter=def.name; att.userData.storyRole=def.role;
-  /* Keep every character at their own world anchor; the opening-only actors handle the shared cinematic. */
-  att.position.set(x+1.6*face,.05,z+4.9*face); att.rotation.y=face>0?Math.PI/2:-Math.PI/2;
+  /* Keep the stall owner beside the counter, but run the final actor position through
+     the same road-clearance check as mission targets after every city redesign. */
+  const actorSpot=safeMissionSpot({x:x+1.6*face,z:z+4.9*face,f:face});
+  att.position.set(actorSpot.x,.05,actorSpot.z); att.rotation.y=face>0?Math.PI/2:-Math.PI/2;
   missionGroup.add(att);
   if(o.grill){
     const gx=x+2.3*face;
@@ -2978,9 +2980,12 @@ function safeMissionSpot(spot,offsetX=0,offsetZ=0){
 }
 function placeStoryOffice(spot){
   spot=safeMissionSpot(spot);
+  /* The office is offset from its authored anchor, so validate the final building
+     position too; otherwise the redesign can push its footprint back onto a road. */
+  const officeSpot=safeMissionSpot({x:spot.x,z:spot.z-13,f:spot.f});
   /* A small open-front office gives Abdul a clear, separate destination from Softstorm. */
   const office=new THREE.Group();
-  office.position.set(spot.x,0,spot.z-13);
+  office.position.set(officeSpot.x,0,officeSpot.z);
   const floor=new THREE.Mesh(new THREE.BoxGeometry(8,.22,6),lam('#39464F'));floor.position.set(0,.11,0);office.add(floor);
   const back=new THREE.Mesh(new THREE.BoxGeometry(8,4,.25),lam('#23313A'));back.position.set(0,2,-2.9);office.add(back);
   const left=new THREE.Mesh(new THREE.BoxGeometry(.25,4,6),lam('#2D3D46'));left.position.set(-3.9,2,0);office.add(left);
@@ -2990,7 +2995,7 @@ function placeStoryOffice(spot){
   const terminal=new THREE.Mesh(new THREE.BoxGeometry(1.25,.85,.12),lam('#0D202B',{emissive:0x073C4A,emissiveIntensity:.6}));terminal.position.set(0,1.65,1.05);office.add(terminal);
   const accent=new THREE.Mesh(new THREE.BoxGeometry(1.1,.07,.05),lam(BRAND));accent.position.set(0,1.78,.98);office.add(accent);
   missionGroup.add(office);
-  const sign=label("IAMABDUL'S OFFICE",BRAND,'#071827',1.35);sign.position.set(spot.x,6.4,spot.z-13);missionGroup.add(sign);
+  const sign=label("IAMABDUL'S OFFICE",BRAND,'#071827',1.35);sign.position.set(officeSpot.x,6.4,officeSpot.z);missionGroup.add(sign);
 }
 function placeNPC(def,spot){
   spot=safeMissionSpot(spot);
@@ -3479,7 +3484,7 @@ const STORY_BRIDGES={
 };
 function chronicleNpcStep(m,name,index){
   const npc=STORY_NPCS[name];
-  const step={kind:'character',characterIndex:index,label:'Talk to '+name,spot:index===0?'a':index===1?'story':['b','c','d','e','f','g','h'][index%7],npc};
+  const step={kind:'character',characterIndex:index,characterName:name,label:'Talk to '+name,spot:index===0?'a':index===1?'story':['b','c','d','e','f','g','h'][index%7],npc};
   step.run=function(){
     const line=chronicleNpcLine(m,name,index);
     const playerLine=(STORY_PLAYER_REACTIONS[m.id]||[])[index]||'I want to understand what happened here before we decide what to do.';
@@ -4761,15 +4766,15 @@ function loadStep(){
   }
   /* Hard fallback: mission steps must always have an interactable conversation target,
      even if a character alias is absent from STORY_NPCS. */
-  if(st.kind==='character'&&st.npc&&!ents.some(e=>e._missionTarget)){
-    const targetNpc=typeof st.npc==='object'?st.npc:STORY_NPCS[st.npc];
+  if(st.kind==='character'&&!ents.some(e=>e._missionTarget)){
+    const targetNpc=typeof st.npc==='object'?st.npc:STORY_NPCS[st.npc||st.characterName];
     const targetSpot=safeMissionSpot(SPOTS[st.spot]||SPOTS.a);
     let target;
     if(targetNpc){
       target=placeNPC(targetNpc,targetSpot);
     }else{
-      /* Invisible proxy is a last resort for a missing registry entry; it keeps the step
-         playable and places the interaction at the same safe objective anchor. */
+      /* Last resort for a missing registry entry: retain a usable interaction at the
+         objective anchor rather than leaving the player stranded without a Talk button. */
       target={x:targetSpot.x,z:targetSpot.z,r:18};
     }
     target.r=Math.max(Number(target.r)||0,18);
