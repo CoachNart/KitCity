@@ -146,7 +146,7 @@ const MUSIC_QUEUES={
   'benin':{label:"Benin City · Edo / Delta grooves",videos:["qcBFntpoW4M"]},
   'calabar':{label:"Calabar · Efik / Ibibio",videos:["qbefFtgUVTY"]},
   'jos':{label:"Jos · Plateau / regional Naija",videos:["MsZhYgo9MoA"]},
-  'ibadan':{label:"Ibadan · Yoruba / Fuji",videos:["RFPqZKpsl90"]},
+  'ibadan':{label:"Ibadan · Lil Kesh — Shoki",videos:["f34zcceVu7U"]},
   'enugu':{label:"Enugu · Igbo highlife / Afrobeat",videos:["q49JaeHIuF4"]},
   'kano':{label:"Kano · Hausa / Arewa",videos:["6euD2iXZAlg"]},
   'kaduna':{label:"Kaduna · Hausa / Arewa",videos:["w69hlGyNEYI"]},
@@ -162,11 +162,11 @@ const MUSIC_QUEUES={
   'yenagoa':{label:"Yenagoa · Niger Delta / Ijaw",videos:["k6eE3c70hgg"]},
   'warri':{label:"Warri · Urhobo / Itsekiri",videos:["DqUd72pK15Y"]},
   'makurdi':{label:"Makurdi · Tiv / Middle Belt",videos:["VmakV_meVY0"]},
-  'ilorin':{label:"Ilorin · Yoruba / Fuji",videos:["ZyXvPdVt474"]},
-  'akure':{label:"Akure · Yoruba / Fuji",videos:["bcs_jFdPQn4"]},
-  'ado-ekiti':{label:"Ado-Ekiti · Yoruba / Fuji",videos:["zzhKmRovdMY"]},
-  'osogbo':{label:"Osogbo · Yoruba / Apala & Fuji",videos:["yUUsKekKQLM"]},
-  'abeokuta':{label:"Abeokuta · Yoruba / Fuji",videos:["_hKuvfH1j_w"]},
+  'ilorin':{label:"Ilorin · CDQ — Flex",videos:["fC-AD3TXceg"]},
+  'akure':{label:"Akure · Chinko Ekun ft. MohBad — Jafafa",videos:["BS7UkTH7c3U"]},
+  'ado-ekiti':{label:"Ado-Ekiti · DJ Tunez & Terry Apala — Apala Disco",videos:["7kfk_paAGoA"]},
+  'osogbo':{label:"Osogbo · FOLA & BahdBoi OML — Alone",videos:["qHgPzF4SpxY"]},
+  'abeokuta':{label:"Abeokuta · Muyeez & Seyi Vibez — Instagram",videos:["-zoC0Qdbidc"]},
   'lokoja':{label:"Lokoja · Igala / Confluence",videos:["ddXZE34DFbQ"]},
   'lafia':{label:"Lafia · Hausa / Arewa",videos:["aGhY4twLRM"]},
   'bauchi':{label:"Bauchi · Hausa / Arewa",videos:["jwxbXMCHj5c"]},
@@ -186,37 +186,14 @@ const MUSIC_QUEUES={
 const CITY_MUSIC={
   lagos:'lagos', abuja:'abuja', ph:'ph', benin:'benin', calabar:'calabar',
   jos:'jos', ibadan:'ibadan', enugu:'enugu', kano:'kano', kaduna:'kaduna', maiduguri:'maiduguri',
-  'owerri':'owerri',
-  'aba':'aba',
-  'umuahia':'umuahia',
-  'awka':'awka',
-  'onitsha':'onitsha',
-  'asaba':'asaba',
-  'uyo':'uyo',
-  'ikot-ekpene':'ikot-ekpene',
-  'yenagoa':'yenagoa',
-  'warri':'warri',
-  'makurdi':'makurdi',
-  'ilorin':'ilorin',
-  'akure':'akure',
-  'ado-ekiti':'ado-ekiti',
-  'osogbo':'osogbo',
-  'abeokuta':'abeokuta',
-  'lokoja':'lokoja',
-  'lafia':'lafia',
-  'bauchi':'bauchi',
-  'gombe':'gombe',
-  'damaturu':'damaturu',
-  'jalingo':'jalingo',
-  'yola':'yola',
-  'sokoto':'sokoto',
-  'katsina':'katsina',
-  'birnin-kebbi':'birnin-kebbi',
-  'minna':'minna',
-  'dutse':'dutse',
-  'gusau':'gusau',
-  'kafanchan':'kafanchan',
-  'damboa':'damboa'
+  owerri:'owerri', ilorin:'ilorin', sokoto:'sokoto', abeokuta:'abeokuta', asaba:'asaba',
+  uyo:'uyo', katsina:'katsina', makurdi:'makurdi', akure:'akure', bauchi:'bauchi',
+  gombe:'gombe', yola:'yola',
+  /* Active mission-registry slugs that previously fell through to the generic queue. */
+  anambra:'awka', abakaliki:'onitsha', abia:'aba', bayelsa:'yenagoa',
+  jigawa:'dutse', kebbi:'birnin-kebbi', kogi:'lokoja', nasarawa:'lafia',
+  osun:'osogbo', taraba:'jalingo', yobe:'damaturu', zamfara:'gusau',
+  adoekiti:'ado-ekiti', kitcity:'abuja'
 };
 const DEFAULT_PLAYLIST='PLtZ6yiYzu2i3UoRZM3wmw2xpBRM9zYrwP';
 const YT=(function(){
@@ -4091,7 +4068,17 @@ MISSIONS.splice(1,0,...lostValueMissions);
 lostValueMissions.forEach(m=>{MBY[m.id]=m;});
 cityOrder.length=0; cityOrder.push(...new Set(MISSIONS.map(m=>m.city)));
 
-const cityMissions=city=>MISSIONS.filter(m=>m.city===city);
+const cityMissions=city=>{
+  const seenIds=new Set(),seenContent=new Set(),out=[];
+  for(const m of MISSIONS){
+    if(m.city!==city||seenIds.has(m.id)) continue;
+    const key=String(m.title||'').normalize('NFKC').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
+    const contentKey=key+'|'+String(m.goal||'').normalize('NFKC').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
+    if(seenContent.has(contentKey)) continue;
+    seenIds.add(m.id); seenContent.add(contentKey); out.push(m);
+  }
+  return out;
+};
 const isCityComplete=city=>{const ms=cityMissions(city);return ms.length>0&&ms.every(m=>!!P.done[m.id]);};
 const isCityUnlocked=city=>{const ms=cityMissions(city);return ms.length>0&&isUnlocked(ms[0]);};
 /* =====================  mission flow  ===================== */
@@ -4284,7 +4271,7 @@ function mapSVG(){
 
 function missionCard(m){
   const un=isUnlocked(m),dn=!!P.done[m.id];
-  return '<div class="card'+(un?'':' lock')+(m.city==='kitcity'?' final-destination':'')+'"><div class="ch">'+badgeSVG(m.id==='m0'?1:m.n,false,46)+'<div><b>'+personalize(m.id==='m0'?'PROLOGUE: '+m.title:'Mission '+m.n+': '+m.title,null)+'</b><small>'+personalize(m.goal,null)+'</small></div></div><div class="cf"><span>'+(dn?'Completed':'Up to +0.50 USDC')+'</span>'+(un?'<button class="btn brand" data-a="play" data-v="'+m.id+'" type="button">'+(dn?'Replay':'Play')+'</button>':'<span>Finish mission '+(m.n-1)+' first</span>')+'</div></div>';
+  return '<article class="card mission-card'+(un?'':' lock')+(m.city==='kitcity'?' final-destination':'')+'" data-mission-id="'+String(m.id).replace(/"/g,'&quot;')+'" data-city="'+String(m.city).replace(/"/g,'&quot;')+'"><div class="ch">'+badgeSVG(m.id==='m0'?1:m.n,false,46)+'<div><b>'+personalize(m.id==='m0'?'PROLOGUE: '+m.title:'Mission '+m.n+': '+m.title,null)+'</b><small>'+personalize(m.goal,null)+'</small></div></div><div class="cf"><span>'+(dn?'Completed':'Up to +0.50 USDC')+'</span>'+(un?'<button class="btn brand" data-a="play" data-v="'+m.id+'" type="button">'+(dn?'Replay':'Play')+'</button>':'<span>Finish mission '+(m.n-1)+' first</span>')+'</div></article>';
 }
 function renderHub(){
   $('#hubTop').innerHTML=tx('<span class="wm"><img class="header-logo" src="https://i.postimg.cc/qqbdTXky/file-00000000958881f4a776df689a235dec.png" alt="KitCity" /></span><div class="lvl"><b>Practice wallet</b><div class="balance-line"><strong>'+P.usdc.toFixed(2)+' USDC</strong><small>'+Object.keys(P.done).filter(k=>P.done[k]).length+' missions completed</small></div></div>');
@@ -4321,6 +4308,27 @@ function renderHub(){
     h+='<p class="soft">Prototype: wallets, balances and payments are simulated. Rates are samples. Nothing here is financial advice.</p>';
   }
   $('#hubBody').innerHTML=tx(h);
+  const hubBody=$('#hubBody');
+  if(hubTab==='missions'||hubTab==='cityhub'){
+    const active=cityMissions(hubCity);
+    const activeIds=new Set(active.map(m=>String(m.id)));
+    const seenIds=new Set(),seenContent=new Set();
+    hubBody.querySelectorAll('.mission-card').forEach(card=>{
+      const id=card.dataset.missionId||'';
+      const mission=active.find(m=>String(m.id)===id);
+      const title=mission?String(m.title||'').normalize('NFKC').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim():'';
+      const goal=mission?String(m.goal||'').normalize('NFKC').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim():'';
+      const contentKey=title+'|'+goal;
+      if(!activeIds.has(id)||card.dataset.city!==hubCity||seenIds.has(id)||seenContent.has(contentKey)){
+        card.remove(); return;
+      }
+      seenIds.add(id); seenContent.add(contentKey);
+    });
+    hubBody.querySelectorAll('[data-legacy-mission],.legacy-mission-card,.old-mission-card,.mission-card-old').forEach(node=>node.remove());
+    hubBody.querySelectorAll('.card:not(.mission-card),article:not(.mission-card)').forEach(node=>{
+      if(/(?:prologue|mission\s+\d+\s*:)/i.test(node.textContent||'')) node.remove();
+    });
+  }
 }
 $('#hub').addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.closest('.map g[data-a="city"]')){e.preventDefault();e.target.dispatchEvent(new MouseEvent('click',{bubbles:true}));}});
 $('#hub').addEventListener('click',async e=>{
