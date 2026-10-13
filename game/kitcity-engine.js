@@ -4041,7 +4041,7 @@ const lostValueMissions=LOST_VALUE_STORY.map(story=>{
   const clue={
     kind:'clue',label:story.task,spot:'lvE',title:story.evidenceTitle,sign:story.evidenceTitle.toUpperCase(),
     run(){
-      openSheet('<div class="who"><span class="av" style="background:'+BRAND+';color:'+INK+'">'+String(story.n).padStart(2,'0')+'</span><div><b>'+lostValueEscape(story.evidenceTitle)+'</b><small>Evidence · '+lostValueEscape(story.state)+'</small></div></div><p>'+lostValueEscape(story.evidenceBody)+'</p><p class="note">'+lostValueEscape(story.task)+'</p>',
+      openSheet('<section class="record-center-card"><div class="record-center-top"><span class="record-center-mark">KITCITY / FIELD ARCHIVE</span><span class="record-center-index">'+String(story.n).padStart(2,'0')+' / 15</span></div><div class="record-center-heading"><span class="record-center-icon">✳</span><div><small>RECORD CENTER · '+lostValueEscape(story.state)+'</small><h3>'+lostValueEscape(story.evidenceTitle)+'</h3></div></div><div class="record-center-copy">'+lostValueEscape(story.evidenceBody)+'</div><div class="record-center-task"><span>YOUR OBJECTIVE</span><b>'+lostValueEscape(story.task)+'</b></div></section>',
         [{t:'Record evidence',f:()=>{if(G){G.evidence[story.id]=true;}closeSheet();finishStep();}}]);
     }
   };
@@ -4132,7 +4132,7 @@ function startMission(id){
 }
 function briefing(){
   const m=G.m,C=CITIES[m.city];
-  openSheet('<div class="who"><span class="av" style="background:'+INK+'">'+m.n+'</span><div><b>'+personalize('Mission '+m.n+': '+m.title,null)+'</b><small>'+C.name+', '+(m.storyState?m.storyState+' · ':'')+C.tag+'</small></div></div><p>'+personalize(m.goal,null)+'</p><ul class="pts">'+m.steps.map(s=>'<li>'+personalize(tr(s.label),m,s.npc)+'</li>').join('')+'</ul>'+(m.n===1?'<p class="note">Move with the left stick or WASD. Hold Run or Shift to run. Tap Talk or press E to speak. Follow the arrow.</p>':'<p class="note">Follow the arrow to the next person. Watch for traffic.</p>'),
+  openSheet('<section class="mission-brief-card"><div class="mission-brief-top"><span>MISSION BRIEFING</span><span>\u25C6 '+String(m.n).padStart(2,'0')+'</span></div><div class="who mission-brief-who"><span class="av" style="background:'+INK+';color:'+BRAND+'">'+m.n+'</span><div><b>'+personalize('Mission '+m.n+': '+m.title,null)+'</b><small>'+C.name+', '+(m.storyState?m.storyState+' · ':'')+C.tag+'</small></div></div><div class="mission-brief-goal"><span>THE OBJECTIVE</span><p>'+personalize(m.goal,null)+'</p></div><div class="mission-brief-steps"><div class="mission-brief-section-title">YOUR CHECKLIST <span>'+m.steps.length+' STEPS</span></div><ul class="pts">'+m.steps.map((s,i)=>'<li><span class="mission-step-num">'+String(i+1).padStart(2,'0')+'</span><span>'+personalize(tr(s.label),m,s.npc)+'</span></li>').join('')+'</ul></div><div class="mission-brief-tip"><span>FIELD TIP</span><p>'+(m.n===1?'Move with the left stick or WASD. Hold Run or Shift to run. Tap Talk or press E to speak. Follow the arrow.':'Follow the arrow to the next person. Watch for traffic.')+'</p></div></section>'),
     [{t:'Start mission',f:closeSheet},{t:'Back to hub',g:1,f:exitToHub}]);
 }
 function finishStep(){
