@@ -45,15 +45,19 @@ const Store=(function(){
   };
 })();
 const KEY='kitnaija_v1';
-const DEFAULT_PLAYER={wallet:null,usdc:0,ngn:0,done:{},dodged:0,fell:0,low:false,music:true,sfx:true,lang:'en',pl:'',name:'',scores:{},web3:null,storyPrologueSeen:false,chroniclesPrologueSeen:false,storyProgress:{},storyFlags:{}};
+const DEFAULT_PLAYER={wallet:null,usdc:0,ngn:0,done:{},dodged:0,fell:0,low:false,music:true,sfx:true,lang:'en',pl:'',name:'',scores:{},web3:null,storyProgress:{},storyFlags:{}};
 let activeUid=Store.get('kitcity_active_uid',null);
 let storageKey=activeUid?KEY+'_user_'+activeUid:KEY;
 const P=Object.assign({},DEFAULT_PLAYER,Store.get(storageKey,{}));
+const STORY_RESET_VERSION=1;
+if(Number(P.storyResetVersion||0)<STORY_RESET_VERSION){
+  P.done={};P.storyProgress={};P.storyFlags={};P.storyResetVersion=STORY_RESET_VERSION;
+}
 if(!P.done||typeof P.done!=='object') P.done={};
 if(!P.storyProgress||typeof P.storyProgress!=='object') P.storyProgress={};
 if(!P.storyFlags||typeof P.storyFlags!=='object') P.storyFlags={};
 let cloudSyncReady=false;
-function progressSnapshot(){ return {wallet:P.wallet,usdc:P.usdc,ngn:P.ngn,done:P.done,dodged:P.dodged,fell:P.fell,low:P.low,music:P.music,sfx:P.sfx,lang:P.lang,pl:P.pl,name:P.name,scores:P.scores,web3:P.web3,storyPrologueSeen:!!P.storyPrologueSeen,chroniclesPrologueSeen:!!P.chroniclesPrologueSeen,storyProgress:P.storyProgress||{},storyFlags:P.storyFlags||{}}; }
+function progressSnapshot(){ return {wallet:P.wallet,usdc:P.usdc,ngn:P.ngn,done:P.done,dodged:P.dodged,fell:P.fell,low:P.low,music:P.music,sfx:P.sfx,lang:P.lang,pl:P.pl,name:P.name,scores:P.scores,web3:P.web3,storyProgress:P.storyProgress||{},storyFlags:P.storyFlags||{},storyResetVersion:STORY_RESET_VERSION}; }
 function save(){
   const snapshot=progressSnapshot();
   Store.set(storageKey,snapshot);
@@ -91,11 +95,15 @@ function mergeCloudProgress(remote){
   merged.dodged=Math.max(Number(remote.dodged)||0,Number(local.dodged)||0);
   merged.fell=Math.max(Number(remote.fell)||0,Number(local.fell)||0);
   merged.web3=local.web3||remote.web3||null;
-  merged.storyPrologueSeen=!!(remote.storyPrologueSeen||local.storyPrologueSeen);
-  merged.chroniclesPrologueSeen=!!(remote.chroniclesPrologueSeen||local.chroniclesPrologueSeen);
-  merged.storyProgress=Object.assign({},remote.storyProgress||{},local.storyProgress||{});
-  merged.storyFlags=Object.assign({},remote.storyFlags||{},local.storyFlags||{});
+  if(Number(remote.storyResetVersion||0)<STORY_RESET_VERSION){
+    merged.done={};merged.storyProgress={};merged.storyFlags={};merged.storyResetVersion=STORY_RESET_VERSION;
+  }else{
+    merged.storyProgress=Object.assign({},remote.storyProgress||{},local.storyProgress||{});
+    merged.storyFlags=Object.assign({},remote.storyFlags||{},local.storyFlags||{});
+    merged.storyResetVersion=STORY_RESET_VERSION;
+  }
   replacePlayerState(merged);
+  save();
 }
 delete P.xp;
 save();
@@ -2863,17 +2871,7 @@ function placeMissionEvidence(def,mission,spot){
   const box=(w,h,d,mat,x,y,z)=>add(new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat),x,y,z);
   const monitor=(w=2.5,h=1.6)=>{box(w,.12,1.2,desk,0,.65,.1);box(w*.78,h,.14,screen,0,1.85,-.38);box(w*.52,.08,.05,cyan,0,2.18,-.47);};
   const text=title.toLowerCase()+' '+String(def.label||'').toLowerCase();
-  if(mission.id==='m02'&&/transaction explorer|transaction hash|ledger|recipient address|trace a transaction/.test(text)){
-    if(/record the address mismatch|incident note/.test(text)){
-      box(2.8,.8,1.8,desk,0,.4,0);box(1.75,.05,1.25,paper,0,.84,-.05);box(.85,.06,.08,cyan,-.28,.89,-.55);box(1.1,.04,.07,dark,.18,.89,-.28);
-      for(let i=0;i<3;i++)box(1.6-i*.15,.035,.05,dark,0,.89-i*.14,.22);
-    }else if(/trace a transaction|recipient address/.test(text)){
-      box(3.5,.75,1.4,desk,0,.38,0);
-      box(1.3,1.5,.12,screen,-.85,1.55,-.48);box(1.3,1.5,.12,screen,.85,1.55,-.48);
-      box(.8,.08,.05,cyan,-.85,1.9,-.56);box(.8,.08,.05,cyan,.85,1.9,-.56);
-      box(.95,.06,.05,paper,-.85,1.62,-.56);box(.95,.06,.05,paper,.85,1.62,-.56);
-    }else monitor(2.7,1.7);
-  }else if(/wallet|recovery phrase|seed phrase|scam|malicious|security|support impersonat/.test(text)){
+else if(/wallet|recovery phrase|seed phrase|scam|malicious|security|support impersonat/.test(text)){
     box(2.6,.9,1.8,desk,0,.45,0);box(1.15,1.9,.18,dark,0,1.85,-.25);box(.88,1.35,.06,screen,0,1.85,-.37);box(.6,.08,.04,cyan,0,2.2,-.42);
     box(.45,.5,.35,wood,-1.05,.65,.25);box(.2,.25,.06,cyan,-1.05,.65,.45);
   }else if(/app|user|test|bug|contract|code|repository|audit|developer|software/.test(text)){
@@ -3485,10 +3483,6 @@ function mapSVG(){
     '<div class="map-legend"><span><i class="map-dot unlocked"></i>Unlocked</span><span><i class="map-dot completed"></i>Completed</span><span><i class="map-dot locked"></i>Locked</span><span class="map-legend-note">Tap a labelled city to explore</span></div></section>';
 }
 
-function missionCard(m){
-  const un=isUnlocked(m),dn=!!P.done[m.id],reward=m.city==='kitcity'?2.5:MISSION_CLEAR_REWARD;
-  return '<article class="card mission-card'+(un?'':' lock')+(m.city==='kitcity'?' final-destination':'')+'" data-mission-id="'+m.id+'"><div class="ch">'+badgeSVG(m.n,dn,46)+'<div><b>'+personalize('Mission '+m.n+': '+m.title,null)+'</b><small>'+personalize(m.goal,null)+'</small></div></div><div class="cf"><span>'+(dn?'Completed':'Up to +'+reward.toFixed(2)+' USDC')+'</span>'+(un?'<button class="btn brand" data-a="play" data-v="'+m.id+'" type="button">'+(dn?'Replay':'Play')+'</button>':'<span>Finish mission '+(m.n-1)+' first</span>')+'</div></article>';
-}
 function renderHub(){
   $('#hubTop').innerHTML=tx('<span class="wm"><img class="header-logo" src="https://i.postimg.cc/qqbdTXky/file-00000000958881f4a776df689a235dec.png" alt="KitCity" /></span><div class="lvl"><b>Wallet</b><div class="balance-line"><strong>'+P.usdc.toFixed(2)+' USDC</strong><small>'+Object.keys(P.done).filter(k=>P.done[k]).length+' missions completed</small></div>'+(TEST_UNLOCK_ALL_MISSIONS?'<small style="display:inline-block;margin-top:6px;color:#10c8dc;font-weight:800;letter-spacing:.08em">TEST MODE · ALL MISSIONS UNLOCKED</small>':'')+'</div>');
   document.querySelectorAll('#nav [data-v="kitlab"]').forEach(b=>b.remove());
