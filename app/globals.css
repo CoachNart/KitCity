@@ -589,6 +589,7 @@ html.kitcity-story-active #modal{
  .comic-scene{height:100vh;height:100dvh;min-height:100svh;padding:calc(8px + env(safe-area-inset-top)) 9px calc(8px + env(safe-area-inset-bottom));gap:6px;justify-content:flex-start}
  .comic-scene-top{flex:0 0 auto;min-height:30px}
  .comic-scene-frame{inset:8% 3% 39%}
+ .comic-scene.has-bubble .comic-scene-frame{inset:10% 4% 38%}
  .comic-scene[data-shot="conversation"] .comic-scene-frame{inset:8% 3% 39%}
  .comic-dialogue{width:100%;max-height:36dvh;min-height:0;margin-top:auto;padding:9px 10px 8px;flex:0 0 auto;overflow-y:auto;clip-path:none;border-radius:5px}
  .comic-dialogue:before{display:none}
@@ -668,9 +669,9 @@ html.kitcity-story-active #modal{
 .comic-speech-speaker{display:block;margin-bottom:4px;color:#007e91;font-size:9px;font-weight:950;letter-spacing:.12em}
 .comic-speech-text{margin:0;font-size:clamp(12px,2.2vw,16px);font-weight:750;line-height:1.35;overflow-wrap:anywhere}
 @media(max-width:520px){
-  .comic-speech-bubble{max-width:min(84vw,320px);padding:9px 11px 10px;border-radius:12px}
+  .comic-speech-bubble{max-width:min(78vw,300px);padding:8px 10px 9px;border-radius:12px}
   .comic-speech-speaker{font-size:8px}
-  .comic-speech-text{font-size:12px;line-height:1.32}
+  .comic-speech-text{font-size:11.5px;line-height:1.3}
 }
 
 
