@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "validate:chronicles": "node game/story/validate-chronicles.mjs && node game/story/validate-chronicles-runtime.mjs"
+    "validate:empty-story": "node game/story/validate-empty-story.mjs && node game/story/validate-empty-story-runtime.mjs"
   },
   "dependencies": {
     "next": "16.3.8",
