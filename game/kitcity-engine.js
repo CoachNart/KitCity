@@ -4027,6 +4027,8 @@ const lostValueMissions=LOST_VALUE_STORY.map(story=>{
    it, and the existing Web3 learning missions remain intact after the arc. */
 MISSIONS.slice(1).forEach(m=>{m.n+=LOST_VALUE_STORY.length;});
 MISSIONS.splice(1,0,...lostValueMissions);
+lostValueMissions.forEach(m=>{MBY[m.id]=m;});
+cityOrder.length=0; cityOrder.push(...new Set(MISSIONS.map(m=>m.city)));
 
 const cityMissions=city=>MISSIONS.filter(m=>m.city===city);
 const isCityComplete=city=>{const ms=cityMissions(city);return ms.length>0&&ms.every(m=>!!P.done[m.id]);};
