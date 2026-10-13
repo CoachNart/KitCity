@@ -4,18 +4,18 @@ const SPEAKER_LABELS = {
 };
 
 const OPENING_PANELS = [
-  { shot: 'wide', kicker: 'LAGOS · 3:42 PM', caption: 'Nothing unusual. Just another day.', next: 'next' },
+  { shot: 'wide', kicker: 'LAGOS · 3:42 PM', caption: 'Another day. Another transaction. Another promise of something better.', next: 'next' },
   { shot: 'conversation', speaker: 'IamAbdul', text: 'So this T3Kit thing connects all these people?', next: 'next' },
   { shot: 'conversation', speaker: 'Softstorm', text: 'That’s what I’m trying to figure out. The same name keeps showing up in places that should have nothing in common.', next: 'next' },
   { shot: 'conversation', speaker: 'IamAbdul', text: 'Then why does nobody explain what it is?', next: 'next' },
-  { shot: 'player', kicker: 'YOUR THOUGHTS', caption: 'T3Kit? First time you’ve heard that name. But now you want to know why it keeps appearing.', next: 'next' },
+  { shot: 'player', kicker: 'YOUR THOUGHTS', caption: 'T3Kit? You’ve heard the name for the first time today. But something about the way they’re talking makes you want to know more.', next: 'next' },
   { shot: 'wide', kicker: 'YOUR MOVE', caption: 'What do you do?', choices: [
     { label: 'Walk over and ask them', target: 6 },
     { label: 'Stay back and listen a little longer', target: 7 },
   ] },
-  { shot: 'softstorm', speaker: 'Softstorm', text: 'You heard us, abi? Fair enough. If you want answers, start with the people and places connected to that name.', next: 'next' },
+  { shot: 'softstorm', speaker: 'Softstorm', text: 'You heard us, abi? Fair enough. We’re trying to understand something ourselves. If you want answers, start with the people connected to it.', next: 'next' },
   { shot: 'abdul', speaker: 'IamAbdul', text: 'I saw that symbol on an old meetup poster too. Same mark. Different place. That can’t be a coincidence.', next: 'next' },
-  { shot: 'clue', kicker: 'CLUE ACQUIRED · 001', caption: 'A cyan mark. One name. Two people who don’t have the full story. Your journey starts here.', card: true, finish: true },
+  { shot: 'clue', kicker: 'CLUE ACQUIRED: THE T3KIT MARK', caption: 'One name. Two people. No clear answers.', card: true, finish: true },
 ];
 
 function escapeHtml(value) {
