@@ -2892,7 +2892,7 @@ function placeMissionEvidence(def,mission,spot){
   const sign=label(labelText,BRAND,'#071827',1.25);sign.position.set(spot.x,6.5,spot.z);missionGroup.add(sign);
   return {x:spot.x,z:spot.z,r:6.7,clue:true};
 }
-function safeMissionSpot(function safeMissionSpot(spot,offsetX=0,offsetZ=0){
+function safeMissionSpot(spot,offsetX=0,offsetZ=0){
   if(!spot||!Number.isFinite(Number(spot.x))||!Number.isFinite(Number(spot.z))) return spot;
   const safeAxis=(value,axis,offset)=>{
     const v=Number(value);
