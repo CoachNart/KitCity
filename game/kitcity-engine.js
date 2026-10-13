@@ -49,7 +49,7 @@ const DEFAULT_PLAYER={wallet:null,usdc:0,ngn:0,done:{},dodged:0,fell:0,low:false
 let activeUid=Store.get('kitcity_active_uid',null);
 let storageKey=activeUid?KEY+'_user_'+activeUid:KEY;
 const P=Object.assign({},DEFAULT_PLAYER,Store.get(storageKey,{}));
-const STORY_RESET_VERSION=1;
+const STORY_RESET_VERSION=2;
 if(Number(P.storyResetVersion||0)<STORY_RESET_VERSION){
   P.done={};P.storyProgress={};P.storyFlags={};P.storyResetVersion=STORY_RESET_VERSION;
 }
@@ -3017,7 +3017,7 @@ function openSheet(html,btns,typingMs,preserveIdentity){
     setTimeout(pendingReveal,typingMs);
   } else { sheetEl.classList.remove('typing'); pendingReveal=null; }
 }
-function closeSheet(){ clearMissionDialogueUI(); S.modal=false; cbs=[]; sheetTok++; pendingReveal=null; chat={npc:null,log:[]}; sheetEl.classList.remove('typing','chronicle-dialogue-card'); modalEl.classList.remove('chronicle-dialogue-open'); modalEl.classList.add('hidden'); sheetEl.innerHTML=''; Snd.duck(false); }
+function closeSheet(){ clearMissionDialogueUI(); S.modal=false; cbs=[]; sheetTok++; pendingReveal=null; chat={npc:null,log:[]}; sheetEl.classList.remove('typing','dialogue-card'); modalEl.classList.remove('dialogue-open'); modalEl.classList.add('hidden'); sheetEl.innerHTML=''; Snd.duck(false); }
 sheetEl.addEventListener('click',e=>{
   if(pendingReveal){ pendingReveal(); return; }
   const b=e.target.closest('[data-i]'); if(!b) return;
@@ -3118,10 +3118,10 @@ function revealMissionDialogueChoices(){
   clearMissionDialogueUI();
   if(!dialogue.buttons.length){closeSheet();return;}
   const def=dialogue.def;
-  const card='<div class="chronicle-talk-head"><span class="chronicle-talk-avatar" style="--npc-accent:'+escapeStoryHtml(def.color||BRAND)+'">'+escapeStoryHtml(String(def.name||'').slice(0,1).toUpperCase())+'</span><div class="chronicle-talk-identity"><small>YOUR MOVE</small><h3>'+escapeStoryHtml(String(def.name||'Local resident'))+'</h3><span>Choose what happens next.</span></div></div>';
+  const card='<div class="dialogue-talk-head"><span class="dialogue-talk-avatar" style="--npc-accent:'+escapeStoryHtml(def.color||BRAND)+'">'+escapeStoryHtml(String(def.name||'').slice(0,1).toUpperCase())+'</span><div class="dialogue-talk-identity"><small>YOUR MOVE</small><h3>'+escapeStoryHtml(String(def.name||'Local resident'))+'</h3><span>Choose what happens next.</span></div></div>';
   openSheet(card,dialogue.buttons,0,true);
-  sheetEl.classList.add('chronicle-dialogue-card');
-  modalEl.classList.add('chronicle-dialogue-open');
+  sheetEl.classList.add('dialogue-card');
+  modalEl.classList.add('dialogue-open');
 }
 function talk(def,html,btns){
   html=tx(personalize(html,G&&G.m,def));
@@ -3192,7 +3192,7 @@ function updateLivesHUD(){
 function updateHUD(){
   updateLivesHUD();
   if(G){
-    $('#mTitle').textContent=tr(personalize('Mission '+G.m.n+': '+G.m.title,null));
+    $('#mTitle').textContent=tr(personalize(G.m.title,null));
     $('#steps').innerHTML=G.m.steps.map((s,i)=>'<li class="'+(G.i>i?'done':(G.i===i?'now':''))+'">'+personalize(tr(s.label),G.m,s.npc)+'</li>').join('');
   }
   $('#wallet').innerHTML=P.wallet?('<b>'+P.usdc.toFixed(2)+' USDC</b>'+(P.ngn>0?fmtN(P.ngn)+' token':short(P.wallet))):tr('No wallet yet');
@@ -3215,7 +3215,7 @@ const isUnlocked=m=>{ const k=MISSIONS.indexOf(m); return k===0||!!P.done[MISSIO
 
 const cityOrder=[...new Set(MISSIONS.map(m=>m.city))];
 
-/* Story character names are canonical: never rename by array position. */
+/* Mission character names are explicit; never infer them from array position. */
 function missionNPCObjects(mission){
   const found=new Set();
   const add=value=>{
@@ -3325,7 +3325,7 @@ function loadStep(){
 
 function startMission(id,restart){
   const m=MBY[id];
-  if(!m||!isUnlocked(m)){ toast('Finish the previous city journey first'); renderHub(); return; }
+  if(!m||!isUnlocked(m)){ toast('This mission is not available yet.'); renderHub(); return; }
   $('#loadTxt').textContent=L('Loading '+CITIES[m.city].name+'\u2026','We dey load '+CITIES[m.city].name+'\u2026'); $('#loading').classList.remove('hidden');
   setTimeout(()=>{
     if(curCity!==m.city) buildCity(m.city); else setupBarks(CITIES[curCity]);
@@ -3364,20 +3364,20 @@ function completeMission(){
   if(cityComplete)btns.push({t:'Collect city badge',f:()=>showCityBadge(m.city,()=>next?startMission(next.id):exitToHub())});
   if(next)btns.push({t:next.city!==m.city?'Continue to '+CITIES[next.city].name:'Next: '+next.title,f:()=>startMission(next.id)});
   btns.push({t:'Back to hub',g:1,f:exitToHub});
-  openSheet('<div class="who"><span class="av" style="background:'+INK+'">'+m.n+'</span><div><h3 style="margin:0">Mission '+m.n+' complete</h3><small>'+CITIES[m.city].name+' · '+personalize(m.title,null)+'</small></div></div>'+
+  openSheet('<div class="who"><span class="av" style="background:'+INK+'">'+m.n+'</span><div><h3 style="margin:0">Mission complete</h3><small>'+CITIES[m.city].name+'</small></div></div>'+
     (first?'<div class="kv"><span>Mission reward</span><b>+'+missionReward.toFixed(2)+' USDC</b></div><p class="note">'+(wrong===0?'Clean run reward collected.':'Completed after '+wrong+' retry attempt'+(wrong===1?'':'s')+'.')+'</p>':'<p class="note">Replay complete. The first-clear reward has already been collected.</p>')+
-    (m.city==='kitcity'?'<p><b>Welcome to KitCity. Your journey through Nigeria has brought you here to see how Web3 works in the real world.</b></p>':'')+
-    (cityComplete?'<p><b>All missions in '+CITIES[m.city].name+' are complete. Your city badge is available.</b></p>':'')+
+    
+    (cityComplete?'<p><b>All available missions in '+CITIES[m.city].name+' are complete.</b></p>':'')+
     '<div class="kv"><span>Wallet balance</span><b>'+P.usdc.toFixed(2)+' USDC</b></div>',btns);
 }
 function showCityBadge(city,after){
  const name=CITIES[city]?.name||city;
- openSheet('<div class="badge">'+badgeSVG('★',true,96)+'<div><h3 style="margin-top:0">'+name+' Pathfinder</h3><small>City journey completed</small></div></div><p>You completed the story missions in '+name+' and earned the city badge.</p>',[{t:'Continue journey',f:()=>{closeSheet();if(after)after();}}]);
+ openSheet('<div class="badge">'+badgeSVG('★',true,96)+'<div><h3 style="margin-top:0">'+name+' Badge</h3><small>Completed</small></div></div><p>You completed the available missions in '+name+'.</p>',[{t:'Continue journey',f:()=>{closeSheet();if(after)after();}}]);
 }
 function certificate(){
   const totalMissions=MISSIONS.length;
-  const msg=encodeURIComponent(L('I finished all '+totalMissions+' KitCity missions and learned how to use a crypto wallet safely. Can you survive Naija with your wallet?','I don finish all '+totalMissions+' KitCity missions and I don learn how to use crypto wallet safely. You fit survive Naija with your wallet?'));
-  openSheet('<div class="badge">'+badgeSVG('\u2605',true,96)+'<div><h3 style="margin-top:0">KitCity Graduate</h3><small>All '+totalMissions+' missions complete</small></div></div><p>You completed the full KitCity mission journey across all cities. Your wallet balance is <b>'+P.usdc.toFixed(2)+' USDC</b>.</p>',
+  const msg=encodeURIComponent(L('I finished all '+totalMissions+' KitCity missions. Check out KitCity.','I don finish all '+totalMissions+' KitCity missions. Check out KitCity.'));
+  openSheet('<div class="badge">'+badgeSVG('\u2605',true,96)+'<div><h3 style="margin-top:0">KitCity Complete</h3><small>All '+totalMissions+' missions complete</small></div></div><p>You completed all available missions. Your wallet balance is <b>'+P.usdc.toFixed(2)+' USDC</b>.</p>',
     [{t:'Back to hub',f:exitToHub}]);
   sheetEl.insertAdjacentHTML('beforeend',tx('<div class="row"><a class="btn" href="https://wa.me/?text='+msg+'" target="_blank" rel="noopener">Share on WhatsApp</a></div>'));
 }
@@ -3391,7 +3391,7 @@ function exitToHub(){
 }
 $('#pauseBtn').addEventListener('click',()=>{
   if(S.phase!=='play'||S.modal) return;
-  openSheet('<h3>Paused</h3><p class="note">'+personalize('Mission '+G.m.n+': '+G.m.title,null)+'</p>',[
+  openSheet('<h3>Paused</h3><p class="note">'+personalize(G.m.title,null)+'</p>',[
     {t:'Resume',f:closeSheet},
     {t:'Restart mission',g:1,f:()=>startMission(G.m.id,true)},
     {t:'Back to hub',g:1,f:exitToHub}
@@ -3501,7 +3501,7 @@ function renderHub(){
     h+='';
   }
   $('#hubBody').innerHTML=tx(h);
-  /* Render only canonical registry missions; discard any orphaned or duplicate legacy cards. */
+  /* Render only missions present in the active registry. */
   const hubBody=$('#hubBody');
   const currentMissionIds=new Set(MISSIONS.map(m=>m.id)),renderedMissionIds=new Set();
   hubBody.querySelectorAll('.mission-card').forEach(card=>{
@@ -3529,7 +3529,7 @@ $('#hub').addEventListener('click',async e=>{
   const b=e.target.closest('[data-a]'); if(!b) return;
   const a=b.dataset.a,v=b.dataset.v;
   if(a==='tab'){ hubTab=v; resetArm=false; renderHub(); $('#hubBody').scrollTop=0; }
-  else if(a==='city'){ if(!isCityUnlocked(v)){ toast('Finish the previous city journey first'); return; } hubCity=v; hubTab='missions'; renderHub(); }
+  else if(a==='city'){ if(!isCityUnlocked(v)){ toast('That mission is not available yet.'); return; } hubCity=v; hubTab='missions'; renderHub(); }
   else if(a==='cityhub'){ hubTab='missions'; renderHub(); $('#hubBody').scrollTop=0; }
   else if(a==='signout'){
     try{
