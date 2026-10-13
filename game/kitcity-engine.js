@@ -956,6 +956,75 @@ Object.keys(NEWC).forEach(k=>{
   const o=NEWC[k],base={h:[10,30],fog:[95,250],bridges:[],bump:10,pud:8,oka:5,pal:{danfo:['#F6B21A','#1B1C20'],keke:['#F6B21A','#1B1C20'],sedan:['#E9E4DA','#2b2b30','#8a8d93','#C8402A','#2D6FB3'],stripe:null}};
   const c=Object.assign({},base,o); c.signs=CITIES.lagos.signs.slice(0,9).concat(o.more||[]); CITIES[k]=c;
 });
+/* =====================  Nigerian city identity profiles  ===================== */
+/* Research-led visual differences: terrain, street rhythm, rooflines, density and
+   civic landmarks are deliberately local. Shared engine, distinct urban forms. */
+const CITY_IDENTITY={
+  lagos:{form:'dense-coastal',road:'arterial',styles:[['flat',.34],['zinc',.24],['glass',.22],['admin',.12],['banco',.08]],height:[10,46],market:3,ground:'#30383B',slab:'#AEBBC0',dirt:'#88745E',paint:['#D5D9D3','#C4D6D8','#D7BCA1','#9DB9C5','#E1D7C5','#A8B9A9'],feature:'waterfront'},
+  abuja:{form:'planned',road:'boulevard',styles:[['glass',.34],['admin',.3],['flat',.3],['zinc',.06]],height:[18,62],market:6,ground:'#3B4247',slab:'#D0D5D5',dirt:'#9B9A8A',paint:['#E6E9E8','#CFDDE5','#BBCBD2','#E8E0D2','#AFC4D1','#D8DFD8'],feature:'roundabout'},
+  kano:{form:'historic',road:'gate',styles:[['banco',.62],['flat',.16],['zinc',.17],['admin',.05]],height:[7,23],market:2,ground:'#493E32',slab:'#C8B18E',dirt:'#C4A071',paint:['#D7B78C','#C9A77B','#E4CBA5','#B78D62','#D9C39E','#A98963'],feature:'city-gate'},
+  ibadan:{form:'organic-sprawl',road:'mixed',styles:[['zinc',.42],['flat',.3],['banco',.12],['admin',.1],['glass',.06]],height:[7,34],market:3,ground:'#393B38',slab:'#B9B6A8',dirt:'#9A7454',paint:['#C9A98A','#B9805D','#D7C2A2','#A6B1A0','#D2B56F','#B9A38C'],feature:'hills'},
+  ph:{form:'delta-port',road:'industrial',styles:[['flat',.36],['zinc',.22],['glass',.12],['admin',.12],['banco',.18]],height:[8,38],market:4,ground:'#303C3D',slab:'#AAB9B7',dirt:'#6D6957',paint:['#AFC5BE','#92B0A9','#C3C9BB','#9CB3C3','#D5C5A7','#A7B9B0'],feature:'waterfront'},
+  kaduna:{form:'rail-crossroads',road:'arterial',styles:[['flat',.32],['admin',.22],['banco',.2],['zinc',.2],['glass',.06]],height:[8,38],market:4,ground:'#3C403D',slab:'#C2C3B9',dirt:'#B29A73',paint:['#D7C9AC','#C8B78F','#E2D7BC','#AEBFC3','#C8A77E','#B4B9A8'],feature:'rail'},
+  enugu:{form:'hillside',road:'mixed',styles:[['flat',.4],['zinc',.28],['admin',.16],['glass',.08],['banco',.08]],height:[8,38],market:4,ground:'#353D39',slab:'#B6C2B7',dirt:'#8C745D',paint:['#AFC5B0','#CAD8B9','#D8C7A8','#A3B9C8','#D4C58C','#B7B7A7'],feature:'hills'},
+  benin:{form:'heritage',road:'ceremonial',styles:[['flat',.34],['zinc',.24],['admin',.16],['banco',.16],['glass',.1]],height:[8,36],market:3,ground:'#393633',slab:'#C2B5A4',dirt:'#A66A47',paint:['#C9825E','#B86F4C','#D9A781','#9D6049','#DCC29E','#9BAF98'],feature:'heritage-wall'},
+  calabar:{form:'colonial-coast',road:'promenade',styles:[['flat',.34],['admin',.24],['zinc',.2],['glass',.14],['banco',.08]],height:[8,34],market:3,ground:'#33403D',slab:'#C0C9C0',dirt:'#766C56',paint:['#E0B8A2','#A8CFC1','#E8D48E','#C6B7D8','#A4C2D8','#DFA6A2'],feature:'waterfront'},
+  jos:{form:'plateau',road:'contour',styles:[['zinc',.3],['flat',.3],['admin',.18],['banco',.14],['glass',.08]],height:[7,32],market:3,ground:'#454A4B',slab:'#C3C7C3',dirt:'#92785F',paint:['#D6D1C4','#BBC9B8','#C9B99F','#A9BAC8','#DFCAA6','#9BAF9D'],feature:'rocky-outcrops'},
+  maiduguri:{form:'sahel',road:'open',styles:[['banco',.46],['flat',.28],['zinc',.22],['admin',.04]],height:[6,24],market:3,ground:'#514537',slab:'#D1BB94',dirt:'#C8A16E',paint:['#D8BE91','#CBA878','#E5D2AA','#B98E5F','#D6B889','#A98B62'],feature:'city-gate'},
+  owerri:{form:'southeast-market',road:'mixed',styles:[['flat',.35],['zinc',.28],['glass',.14],['admin',.13],['banco',.1]],height:[8,34],market:4,ground:'#344039',slab:'#BCC5B8',dirt:'#887459',paint:['#C6D4BE','#B4C9C6','#D9C5A3','#AFC1D4','#D3B88B','#A8B6A0'],feature:'civic-plaza'},
+  aba:{form:'dense-market',road:'market',styles:[['flat',.32],['zinc',.34],['admin',.12],['glass',.1],['banco',.12]],height:[7,30],market:2,ground:'#3C3935',slab:'#B9B6AC',dirt:'#97765B',paint:['#C8D1C7','#B9C9D1','#D7B89A','#A7B7C5','#D8C78D','#B8A99A'],feature:'market'},
+  umuahia:{form:'regional-capital',road:'arterial',styles:[['flat',.38],['zinc',.28],['admin',.18],['glass',.08],['banco',.08]],height:[8,32],market:4,ground:'#39403A',slab:'#BEC5B8',dirt:'#8E795B',paint:['#D4D3BE','#B9CBB9','#D8C5A3','#A9BFC9','#CBB78E','#B5B6A1'],feature:'civic-plaza'},
+  awka:{form:'hillside',road:'mixed',styles:[['flat',.34],['zinc',.26],['admin',.18],['glass',.12],['banco',.1]],height:[8,34],market:4,ground:'#374039',slab:'#BCC5B8',dirt:'#8B7457',paint:['#CAD6C0','#B7C9C6','#D6C3A4','#AABDD0','#C8B58A','#AEB8A7'],feature:'hills'},
+  onitsha:{form:'dense-market',road:'market',styles:[['flat',.34],['zinc',.3],['glass',.16],['admin',.12],['banco',.08]],height:[8,40],market:2,ground:'#3C3D3B',slab:'#B8C0BB',dirt:'#907A5F',paint:['#D0D8D2','#B8CDD2','#D7C0A1','#A9B8CA','#D5C48E','#B6B6A9'],feature:'market'},
+  asaba:{form:'planned-river',road:'boulevard',styles:[['flat',.38],['admin',.24],['glass',.18],['zinc',.14],['banco',.06]],height:[10,42],market:5,ground:'#34403E',slab:'#C3CBC5',dirt:'#8C7A5E',paint:['#C8D8D0','#B7CED1','#D9C9AA','#AEC2D1','#D9D4C2','#A7B9AB'],feature:'waterfront'},
+  uyo:{form:'planned-tropical',road:'boulevard',styles:[['flat',.36],['admin',.24],['glass',.18],['zinc',.14],['banco',.08]],height:[10,42],market:5,ground:'#34413B',slab:'#C5CDC2',dirt:'#8C7A5A',paint:['#C6D8C2','#B4D0CA','#DCC9A6','#B2C4D7','#D6D9C8','#A9BBAA'],feature:'civic-plaza'},
+  yenagoa:{form:'creek-town',road:'promenade',styles:[['flat',.34],['zinc',.26],['glass',.12],['admin',.12],['banco',.16]],height:[7,32],market:4,ground:'#303D39',slab:'#B4C3B9',dirt:'#77684E',paint:['#AFC6B0','#9FBDB7','#D0C39E','#A4BCC7','#C8B28D','#9EADA0'],feature:'waterfront'},
+  warri:{form:'oil-port',road:'industrial',styles:[['flat',.32],['zinc',.3],['admin',.16],['glass',.12],['banco',.1]],height:[7,36],market:3,ground:'#363D3A',slab:'#B8C2BA',dirt:'#837154',paint:['#B8C9BE','#A7BFC4','#D0BE9F','#A8B8C9','#D1C08D','#A6B2A5'],feature:'waterfront'},
+  makurdi:{form:'river-town',road:'mixed',styles:[['flat',.36],['zinc',.24],['admin',.14],['glass',.1],['banco',.16]],height:[7,32],market:4,ground:'#3A4038',slab:'#C0C4B5',dirt:'#927B59',paint:['#C8D0B6','#B5C6C0','#D7C5A0','#AFC0CF','#D0B98A','#ADB9A0'],feature:'waterfront'},
+  ilorin:{form:'north-south-mix',road:'arterial',styles:[['flat',.32],['banco',.24],['zinc',.2],['admin',.14],['glass',.1]],height:[8,34],market:3,ground:'#41403A',slab:'#C4BBA9',dirt:'#B1936A',paint:['#D4C3A0','#C7B18C','#E2D1AC','#AEBFC6','#D0B68A','#B7B29A'],feature:'civic-plaza'},
+  akure:{form:'southwest-sprawl',road:'mixed',styles:[['flat',.34],['zinc',.28],['banco',.14],['admin',.14],['glass',.1]],height:[7,34],market:4,ground:'#3B4039',slab:'#BEC5B7',dirt:'#97785A',paint:['#C9D0B8','#B8C9C3','#D8C4A0','#AABBCB','#D4B889','#B1B9A4'],feature:'rocky-outcrops'},
+  'ado-ekiti':{form:'hillside',road:'mixed',styles:[['flat',.32],['zinc',.28],['banco',.16],['admin',.14],['glass',.1]],height:[7,32],market:4,ground:'#394039',slab:'#BFC6B7',dirt:'#927657',paint:['#CAD4BA','#B8C9C2','#D7C4A0','#AABDD0','#D1B889','#AFB9A3'],feature:'hills'},
+  osogbo:{form:'heritage',road:'ceremonial',styles:[['flat',.3],['zinc',.24],['banco',.22],['admin',.14],['glass',.1]],height:[7,30],market:3,ground:'#3A3D37',slab:'#C0C3B4',dirt:'#997755',paint:['#D0C39D','#C2B08A','#E0D0A9','#B1BCA0','#C9B78C','#A9B7A1'],feature:'heritage-wall'},
+  abeokuta:{form:'rock-city',road:'contour',styles:[['flat',.32],['zinc',.25],['banco',.18],['admin',.15],['glass',.1]],height:[7,34],market:3,ground:'#45413B',slab:'#C4B7A3',dirt:'#A47753',paint:['#D4B69A','#C4A082','#E1C9A7','#A8B9AC','#D4B58A','#B7A58F'],feature:'rocky-outcrops'},
+  lokoja:{form:'confluence',road:'promenade',styles:[['flat',.32],['zinc',.24],['admin',.16],['glass',.12],['banco',.16]],height:[7,34],market:4,ground:'#3B413B',slab:'#BEC4B8',dirt:'#947D5C',paint:['#C7D0B8','#B5C9C5','#D7C4A0','#A7BCCB','#D1B78A','#AFB8A3'],feature:'waterfront'},
+  lafia:{form:'savanna-capital',road:'open',styles:[['flat',.32],['banco',.26],['zinc',.22],['admin',.12],['glass',.08]],height:[7,30],market:4,ground:'#454139',slab:'#C9BDA5',dirt:'#B49A70',paint:['#D8C7A2','#C7B28B','#E3D2AD','#B8C4B6','#D3B88A','#AFA083'],feature:'civic-plaza'},
+  bauchi:{form:'sahel',road:'open',styles:[['banco',.38],['flat',.28],['zinc',.2],['admin',.1],['glass',.04]],height:[7,28],market:3,ground:'#494239',slab:'#CBB997',dirt:'#C1A071',paint:['#D8C49C','#C9AE83','#E3D2AA','#B7A17D','#D7BC8D','#A99C7D'],feature:'city-gate'},
+  gombe:{form:'savanna-capital',road:'open',styles:[['banco',.34],['flat',.3],['zinc',.2],['admin',.1],['glass',.06]],height:[7,30],market:3,ground:'#484138',slab:'#C9B997',dirt:'#C09B6A',paint:['#D9C49B','#C9AE81','#E4D2A9','#B7A07A','#D7BC8B','#AC9B78'],feature:'city-gate'},
+  damaturu:{form:'sahel',road:'open',styles:[['banco',.46],['flat',.28],['zinc',.22],['admin',.04]],height:[6,24],market:3,ground:'#4C4337',slab:'#D0BB94',dirt:'#C7A16D',paint:['#DCC398','#CBA979','#E5D2A9','#B98E5F','#D6B887','#A98A61'],feature:'city-gate'},
+  jalingo:{form:'green-hills',road:'contour',styles:[['flat',.32],['zinc',.24],['banco',.18],['admin',.14],['glass',.12]],height:[7,32],market:4,ground:'#3B4035',slab:'#C0C6B6',dirt:'#967954',paint:['#C9D1B3','#B6C7B7','#D6C5A1','#AABED0','#D2BA8D','#AAB7A0'],feature:'hills'},
+  yola:{form:'river-town',road:'mixed',styles:[['flat',.32],['banco',.24],['zinc',.2],['admin',.14],['glass',.1]],height:[7,32],market:4,ground:'#3F4139',slab:'#C5C1B0',dirt:'#A58A61',paint:['#D4C49D','#C4AE85','#E1D1A8','#B4C4B8','#D1B78A','#AEB49A'],feature:'waterfront'},
+  sokoto:{form:'historic',road:'gate',styles:[['banco',.58],['flat',.18],['zinc',.18],['admin',.06]],height:[7,24],market:2,ground:'#494035',slab:'#CDB995',dirt:'#C5A171',paint:['#D8BC90','#C9A779','#E4CEA5','#B88D61','#D9C39B','#A98A61'],feature:'city-gate'},
+  katsina:{form:'historic',road:'gate',styles:[['banco',.56],['flat',.2],['zinc',.18],['admin',.06]],height:[7,24],market:2,ground:'#494035',slab:'#CBB692',dirt:'#C4A071',paint:['#D8BC91','#C9A87B','#E4CDA4','#B98E62','#D9C39A','#A88A62'],feature:'city-gate'},
+  'birnin-kebbi':{form:'savanna-capital',road:'open',styles:[['banco',.4],['flat',.28],['zinc',.22],['admin',.1]],height:[7,28],market:3,ground:'#474036',slab:'#C9B795',dirt:'#C09A69',paint:['#D8C39B','#C9AD82','#E3D1A9','#B7A07B','#D6BB8A','#A99A77'],feature:'civic-plaza'},
+  minna:{form:'rail-crossroads',road:'arterial',styles:[['flat',.34],['banco',.22],['zinc',.22],['admin',.14],['glass',.08]],height:[8,34],market:4,ground:'#3D403B',slab:'#C1C4B7',dirt:'#A08A65',paint:['#D2C7A8','#C2B18E','#DED0AB','#B5C3B7','#CBB58A','#AAB3A0'],feature:'rocky-outcrops'},
+  dutse:{form:'historic',road:'gate',styles:[['banco',.5],['flat',.24],['zinc',.2],['admin',.06]],height:[7,25],market:3,ground:'#494136',slab:'#CBB794',dirt:'#C29B6A',paint:['#D8BC91','#C9A87B','#E3CCA3','#B88D62','#D7C19A','#A98A62'],feature:'city-gate'},
+  gusau:{form:'savanna-capital',road:'open',styles:[['banco',.4],['flat',.28],['zinc',.22],['admin',.1]],height:[7,28],market:3,ground:'#484037',slab:'#C9B694',dirt:'#C19A68',paint:['#D8C29A','#C8AC81','#E2D0A7','#B69F79','#D5BA89','#A99975'],feature:'city-gate'},
+  kafanchan:{form:'rail-crossroads',road:'arterial',styles:[['flat',.32],['zinc',.26],['banco',.2],['admin',.14],['glass',.08]],height:[7,30],market:4,ground:'#414039',slab:'#C4C2B6',dirt:'#A38A63',paint:['#D3C5A5','#C1B08A','#DFD0AA','#B4C2B7','#CBB58A','#ADB4A0'],feature:'rail'},
+  damboa:{form:'sahel',road:'open',styles:[['banco',.5],['flat',.25],['zinc',.22],['admin',.03]],height:[6,22],market:3,ground:'#4A4136',slab:'#D0BB94',dirt:'#C7A16E',paint:['#DCC398','#CBA979','#E5D2A9','#B98E5F','#D6B887','#A98A61'],feature:'city-gate'},
+  abakaliki:{form:'southeast-market',road:'market',styles:[['flat',.32],['zinc',.26],['banco',.18],['admin',.14],['glass',.1]],height:[7,30],market:3,ground:'#3B4037',slab:'#BEC5B8',dirt:'#987A58',paint:['#C9D2B5','#B8C9B6','#D7C4A0','#A8BDC8','#D2B88B','#AEB79F'],feature:'market'},
+  bayelsa:{form:'creek-town',road:'promenade',styles:[['flat',.34],['zinc',.26],['glass',.12],['admin',.12],['banco',.16]],height:[7,30],market:4,ground:'#303D39',slab:'#B4C3B9',dirt:'#77684E',paint:['#AFC6B0','#9FBDB7','#D0C39E','#A4BCC7','#C8B28D','#9EADA0'],feature:'waterfront'},
+  jigawa:{form:'historic',road:'gate',styles:[['banco',.52],['flat',.22],['zinc',.2],['admin',.06]],height:[7,24],market:3,ground:'#494136',slab:'#CBB794',dirt:'#C29B6A',paint:['#D8BC91','#C9A87B','#E3CCA3','#B88D62','#D7C19A','#A98A62'],feature:'city-gate'},
+  kebbi:{form:'savanna-capital',road:'open',styles:[['banco',.42],['flat',.28],['zinc',.2],['admin',.1]],height:[7,28],market:3,ground:'#474036',slab:'#C9B795',dirt:'#C09A69',paint:['#D8C39B','#C9AD82','#E3D1A9','#B7A07B','#D6BB8A','#A99A77'],feature:'civic-plaza'},
+  kogi:{form:'confluence',road:'promenade',styles:[['flat',.32],['zinc',.24],['admin',.16],['glass',.12],['banco',.16]],height:[7,34],market:4,ground:'#3B413B',slab:'#BEC4B8',dirt:'#947D5C',paint:['#C7D0B8','#B5C9C5','#D7C4A0','#A7BCCB','#D1B78A','#AFB8A3'],feature:'waterfront'},
+  nasarawa:{form:'savanna-capital',road:'open',styles:[['flat',.34],['banco',.24],['zinc',.2],['admin',.14],['glass',.08]],height:[7,30],market:4,ground:'#454139',slab:'#C9BDA5',dirt:'#B49A70',paint:['#D8C7A2','#C7B28B','#E3D2AD','#B8C4B6','#D3B88A','#AFA083'],feature:'civic-plaza'},
+  taraba:{form:'green-hills',road:'contour',styles:[['flat',.32],['zinc',.24],['banco',.18],['admin',.14],['glass',.12]],height:[7,32],market:4,ground:'#3B4035',slab:'#C0C6B6',dirt:'#967954',paint:['#C9D1B3','#B6C7B7','#D6C5A1','#AABED0','#D2BA8D','#AAB7A0'],feature:'hills'},
+  yobe:{form:'sahel',road:'open',styles:[['banco',.46],['flat',.28],['zinc',.22],['admin',.04]],height:[6,24],market:3,ground:'#4C4337',slab:'#D0BB94',dirt:'#C7A16D',paint:['#DCC398','#CBA979','#E5D2A9','#B98E5F','#D6B887','#A98A61'],feature:'city-gate'},
+  zamfara:{form:'historic',road:'gate',styles:[['banco',.48],['flat',.28],['zinc',.18],['admin',.06]],height:[7,26],market:3,ground:'#494136',slab:'#CBB794',dirt:'#C29B6A',paint:['#D8BC91','#C9A87B','#E3CCA3','#B88D62','#D7C19A','#A98A62'],feature:'city-gate'}
+};
+function applyCityIdentityProfiles(){
+  Object.keys(CITIES).forEach(key=>{
+    if(key==='kitcity') return;
+    const C=CITIES[key],p=CITY_IDENTITY[key];
+    if(!p) return;
+    C.form=p.form; C.roadStyle=p.road; C.styles=p.styles.map(v=>v.slice());
+    C.h=p.height.slice(); C.market=p.market;
+    C.ground=p.ground; C.slab=p.slab; C.dirt=p.dirt; C.paint=p.paint.slice();
+    C.cityFeature=p.feature;
+  });
+}
+applyCityIdentityProfiles();
+/* =====================  End Nigerian city identity profiles  ===================== */
+
 /* =====================  KitCity LOOK: real-city grading, skies, weathering  ===================== */
 var GR=null,LKT={},LKC={roof:'#9a958a'},LKS={sx:-40,sy:60,sz:30,col:0xFFD59A,dir:[-.5,.7,.4]},ATMO=null,SKY=null,LS=1;
 const LOOK_BASE={h:'#E3C9A0',z:'#6F94B5',sun:'#FFD9A0',sI:.95,hS:'#F4E4C8',hG:'#5A4636',hI:.6,off:[-45,55,32],exp:1.05,sat:1.0,con:1.08,fade:.02,lift:[0,.01,.025],gain:[1.04,1,.94],vig:.3,grain:.03,bloom:.4,veil:['#E8C896',.1],cl:.4,cc:'#F6EBDD',fog:[55,210],dust:.1,mil:.3,rust:.3,lat:.2,dash:'#D9A62A',fx:null,roof:'#9a958a',zinc:['#8a4a2c','#7c4b34','#6b4630','#9a5a38','#7d7266','#5e5b55'],ground:'#2A2A2C',slab:'#A39C8E',dirt:'#8E5638',leaf:'#35603a'};
@@ -1088,9 +1157,18 @@ function applyLook(key,C){
     b.textContent='LOOK v2 \u2022 '+key+' \u2022 grade '+(GR?'ON':'OFF (fallback)'); b.style.opacity=1; clearTimeout(b._t); b._t=setTimeout(()=>{b.style.opacity=0;},6000); }catch(e){}
 }
 function roadDecals(C,blocks){
-  const L=LKC,dc=L.lat>.3?'#9a5a38':(L.dust>.2?'#cdb48a':'#8a7e6a'),its=[]; const geo=new THREE.PlaneGeometry(56,2.8); geo.rotateX(-Math.PI/2);
+  const L=LKC,dc=C.roadStyle==='boulevard'?'#D9DDE0':C.roadStyle==='promenade'?'#A9C7C5':C.roadStyle==='gate'?'#B99B70':C.roadStyle==='market'?'#C4B8A3':L.lat>.3?'#9a5a38':(L.dust>.2?'#cdb48a':'#8a7e6a'),its=[];
+  const geo=new THREE.PlaneGeometry(56,C.roadStyle==='boulevard'?3.4:2.8); geo.rotateX(-Math.PI/2);
   blocks.forEach(b=>{ const o=30.4; its.push({x:b.cx,y:.047,z:b.cz-o},{x:b.cx,y:.047,z:b.cz+o,ry:Math.PI},{x:b.cx-o,y:.047,z:b.cz,ry:Math.PI/2},{x:b.cx+o,y:.047,z:b.cz,ry:-Math.PI/2}); });
   instanced(geo,new THREE.MeshLambertMaterial({color:dc,map:LKT.edge,transparent:true,opacity:.35+L.dust*.6+L.lat*.3,depthWrite:false}),its,cityGroup);
+  // A restrained, low-profile median gives planned capitals a different road rhythm
+  // without blocking traffic or changing the mission navigation grid.
+  if(C.roadStyle==='boulevard'||C.roadStyle==='ceremonial'){
+    const med=[]; for(let k=-2;k<=2;k++){ med.push({x:k*R,y:.09,z:0,sx:1.15,sy:.18,sz:520}); med.push({x:0,y:.09,z:k*R,sx:520,sy:.18,sz:1.15}); }
+    instanced(new THREE.BoxGeometry(1,1,1),new THREE.MeshLambertMaterial({color:C.roadStyle==='boulevard'?'#B7C2C6':'#B8A68F'}),med,cityGroup);
+    const studs=[]; for(let k=-3;k<=3;k++){ for(let n=-3;n<=3;n++){ if(Math.abs(n)%2===0) studs.push({x:k*R,y:.22,z:n*R+18},{x:n*R+18,y:.22,z:k*R}); } }
+    instanced(new THREE.BoxGeometry(.55,.18,.55),new THREE.MeshBasicMaterial({color:C.roadStyle==='boulevard'?'#F2F3F1':'#D8C79E'}),studs,cityGroup);
+  }
 }
 function atmoSet(type){
   if(ATMO){ scene.remove(ATMO.o); ATMO.o.geometry.dispose(); ATMO=null; } if(!type) return;
@@ -1331,7 +1409,8 @@ function mergeStatic(group){
   out.forEach(m=>group.add(m));
 }
 function addBuilding(x,z,w,d,style,color,cx,cz,ox,oz){
-  let h; if(style==='zinc') h=rr(6,9); else if(style==='banco') h=rr(7,13); else if(style==='glass') h=rr(30,46); else if(style==='admin') h=rr(12,18); else h=rr(14,30);
+  const profile=CITIES[curCity]||{},range=profile.h||[8,30];
+  let h; if(style==='zinc') h=rr(Math.max(5,range[0]*.65),Math.max(9,range[0]*1.15)); else if(style==='banco') h=rr(Math.max(6,range[0]*.7),Math.max(13,range[1]*.62)); else if(style==='glass') h=rr(Math.max(24,range[1]*.65),Math.max(32,range[1])); else if(style==='admin') h=rr(Math.max(10,range[0]*1.1),Math.max(18,range[1]*.72)); else h=rr(Math.max(10,range[0]),Math.max(22,range[1]*.78));
   const mats=[],vv=Math.floor(RN()*3),tex=FACT[style][vv],th=FAC_TH[style];
   const geo=new THREE.BoxGeometry(w,h,d),uv=geo.attributes.uv,rxd=Math.max(1,Math.round(d/10)),rxw=Math.max(1,Math.round(w/10)),ry=Math.max(1,Math.round(h/th));
   for(let i=0;i<uv.count;i++){ const f=Math.floor(i/4),rx=(f===0||f===1)?rxd:rxw; if(f===2||f===3) uv.setXY(i,uv.getX(i)*rxw,uv.getY(i)*rxd); else uv.setXY(i,uv.getX(i)*rx,uv.getY(i)*ry); }
@@ -1941,6 +2020,40 @@ function buildKitCity(C){
   mergeStatic(cityGroup); flagShadows(cityGroup); flagShadows(trafficGroup); freeze(cityGroup);
   setupBarks(C); Snd.setCity('kitcity');
 }
+function addCityIdentityFeature(C){
+  const feature=C.cityFeature;if(!feature)return;
+  const mat=c=>lam(c),box=(w,h,d,c,x,y,z)=>{const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat(c));m.position.set(x,y,z);cityGroup.add(m);return m;};
+  const cyl=(r1,r2,h,c,x,y,z,n=16)=>{const m=new THREE.Mesh(new THREE.CylinderGeometry(r1,r2,h,n),mat(c));m.position.set(x,y,z);cityGroup.add(m);return m;};
+  // Keep signature landmarks at the edge of the playable district so they read
+  // in the skyline without covering mission characters or street traffic.
+  if(feature==='waterfront'){
+    const water=new THREE.Mesh(new THREE.PlaneGeometry(620,76),new THREE.MeshLambertMaterial({color:'#3F8290',transparent:true,opacity:.78}));
+    water.rotation.x=-Math.PI/2;water.position.set(0,-.015,255);cityGroup.add(water);
+    for(let q=0;q<8;q++){const x=-225+q*64;box(13,.5,5,'#B7B7A7',x,.18,213);box(1.2,3,1.2,'#7C827D',x-5,1.5,213);box(1.2,3,1.2,'#7C827D',x+5,1.5,213);}
+    for(let q=0;q<7;q++){const x=-210+q*66;box(22,.8,7,'#A89A80',x,.35,225);box(1.2,5,1.2,'#6E7777',x-8,2.5,225);box(1.2,5,1.2,'#6E7777',x+8,2.5,225);}
+  } else if(feature==='roundabout'){
+    cyl(18,18,.35,'#C4CBCD',0,.12,-210,32);cyl(13,13,.45,'#A9B9B5',0,.35,-210,32);cyl(7,7,1.4,'#B6C2C3',0,1,-210,24);
+    cyl(2.4,2.4,7,'#6D7F89',0,5,-210,12);cyl(3.4,3.4,.45,'#D4D9D7',0,8.6,-210,16);
+  } else if(feature==='city-gate'){
+    const c=feature==='city-gate'?'#C6A77B':'#B9A88C';
+    box(34,2.2,3,c,0,12,-220);box(3,13,4,c,-15.5,6.5,-220);box(3,13,4,c,15.5,6.5,-220);
+    box(7,8,2,'#7E684F',0,5.8,-218.3);box(38,.8,5,'#D7C39F',0,14,-220);
+  } else if(feature==='heritage-wall'){
+    for(let q=0;q<9;q++){const x=-216+q*54;box(3,7,2.5,'#A55F40',x,3.5,218);if(q<8)box(51,3,2.5,'#B36D4B',x+27,2,218);}
+  } else if(feature==='rocky-outcrops'||feature==='hills'){
+    const colors=feature==='rocky-outcrops'?['#7B776D','#8B8578','#A29A89']:['#60775D','#71856A','#8B9272'];
+    for(let q=0;q<9;q++){const x=-235+q*58,z=feature==='rocky-outcrops'?225+(q%2)*9:236+(q%3)*5;const r=feature==='rocky-outcrops'?rr(8,15):rr(11,21);
+      const m=new THREE.Mesh(new THREE.DodecahedronGeometry(r,0),mat(pk(colors)));m.position.set(x,r*.58,z);m.scale.y=feature==='hills'?rr(.65,1.25):rr(.45,.8);cityGroup.add(m);}
+  } else if(feature==='rail'){
+    for(let q=0;q<2;q++){const z=206+q*5;box(520,.16,.35,'#55595B',0,.2,z);box(520,.12,.35,'#55595B',0,.2,z+1.6);for(let x=-250;x<=250;x+=9)box(2,.16,4.4,'#776C5C',x,.12,z+.8);}
+    box(48,8,12,'#C6C4B7',-150,4,194);box(52,1.2,15,'#717C80',-150,8.5,194);
+  } else if(feature==='market'){
+    for(let q=0;q<8;q++){const x=-210+q*60;box(30,1.2,18,'#8E7256',x,.6,218);box(30,.35,18,['#C96B46','#2D6FB3','#B5A04B','#397A56'][q%4],x,3.2,218);for(let p=-1;p<=1;p++)box(.5,4,.5,'#6B5B49',x+p*12,2,218);}
+  } else if(feature==='civic-plaza'){
+    box(58,.4,28,'#C7C8BD',0,.18,218);for(let q=-2;q<=2;q++){box(1,.3,24,'#A7B2AF',q*10,.42,218);}
+    cyl(5,6,1,'#B7C4C3',0,.7,218,20);cyl(2.5,3,.7,'#8DA4A4',0,1.55,218,20);
+  }
+}
 function buildCity(key){
   const C=CITIES[key]; curCity=key;
   clearGroup(cityGroup); clearGroup(trafficGroup); texs.forEach(t=>t.dispose()); texs=[];
@@ -1962,16 +2075,45 @@ function buildCity(key){
     const slab=new THREE.Mesh(slabGeo,paveMat); slab.position.set(cx,0.05,cz); cityGroup.add(slab);
     const lmk=(C.lm||[]).find(l=>l[1]===cx&&l[2]===cz);
     if(lmk) landmark(lmk[0],cx,cz);
-    // Keep the opening story cast in a clear plaza; no market or buildings may occlude them.
-    else if(i===0&&j===-1) { /* open story plaza around the Lagos opening and Lost Value cast */ }
+    // The block plan follows the city, not one universal four-building stamp.
+    else if(i===0&&j===-1) { /* preserve the opening story plaza */ }
     else if((((i+j)%C.market)+C.market)%C.market===0) addMarket(cx,cz);
-    else for(const ox of [-11,11])for(const oz of [-11,11]) {
-      const bx=cx+ox+rr(-1,1),bz=cz+oz+rr(-1,1);
-      if(!nearSpecial(bx,bz,18)) addBuilding(bx,bz,rr(14,20),rr(14,20),pickStyle(C),pk(C.paint),cx,cz,ox,oz);
+    else if(C.form==='historic'||C.form==='sahel'){
+      // Compact compound clusters and narrow irregular lanes, characteristic of
+      // historic northern settlements; keep the existing mission corridors clear.
+      const count=C.form==='historic'?6:5;
+      for(let q=0;q<count;q++){
+        const bx=cx+rr(-21,21),bz=cz+rr(-21,21),w=rr(7,13),d=rr(8,15);
+        if(!nearSpecial(bx,bz,18)) addBuilding(bx,bz,w,d,pickStyle(C),pk(C.paint),cx,cz,bx-cx,bz-cz);
+      }
+    } else if(C.form==='planned'||C.form==='planned-tropical'||C.form==='planned-river'){
+      // Planned-capital blocks: fewer, larger footprints with open space between them.
+      const spots=[[-15,-13],[15,13],[15,-15]];
+      const count=C.form==='planned'?3:2;
+      for(let q=0;q<count;q++){
+        const ox=spots[q][0],oz=spots[q][1],bx=cx+ox,bz=cz+oz;
+        if(!nearSpecial(bx,bz,18)) addBuilding(bx,bz,rr(17,23),rr(15,22),pickStyle(C),pk(C.paint),cx,cz,ox,oz);
+      }
+    } else if(C.form==='dense-market'||C.form==='dense-coastal'||C.form==='organic-sprawl'){
+      const count=C.form==='dense-market'?6:5;
+      for(let q=0;q<count;q++){
+        const bx=cx+rr(-21,21),bz=cz+rr(-21,21),w=rr(8,17),d=rr(8,17);
+        if(!nearSpecial(bx,bz,18)) addBuilding(bx,bz,w,d,pickStyle(C),pk(C.paint),cx,cz,bx-cx,bz-cz);
+      }
+    } else if(C.form==='delta-port'||C.form==='oil-port'){
+      for(const [ox,oz] of [[-15,-14],[15,14]]){
+        const bx=cx+ox,bz=cz+oz;
+        if(!nearSpecial(bx,bz,18)) addBuilding(bx,bz,rr(18,25),rr(11,17),pickStyle(C),pk(C.paint),cx,cz,ox,oz);
+      }
+    } else {
+      for(const ox of [-13,13])for(const oz of [-13,13]){
+        const bx=cx+ox+rr(-4,4),bz=cz+oz+rr(-4,4);
+        if(!nearSpecial(bx,bz,18)) addBuilding(bx,bz,rr(10,20),rr(10,20),pickStyle(C),pk(C.paint),cx,cz,ox,oz);
+      }
     }
     // Roadside/block-edge tree placement removed: keep streets and road verges clear.
   }
-  streetDetails(C,blocks); roadDecals(C,blocks);
+  streetDetails(C,blocks); roadDecals(C,blocks); addCityIdentityFeature(C);
   dxFlush(C);
   cityCols=colliders.length;
   for(let k=-3;k<=3;k++)for(const axis of ['x','z'])for(const dir of [1,-1]){
