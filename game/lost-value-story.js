@@ -7,7 +7,7 @@ export const LOST_VALUE_STORY = [
   {
     id:'lost-value-01', n:2, state:'Lagos State', city:'lagos', title:'The First Promise',
     goal:'Introduce the original promise of Web3 through a real problem, rather than a lecture.',
-    value:'PURPOSE', cast:['Softstorm','IamAbdul','Local Trader'], splitAfter:8,
+    value:'PURPOSE', cast:['Local Trader','Customer','Softstorm','IamAbdul'], splitAfter:8,
     dialogue:[
       ['Local Trader','I did everything they told me to do. Connected my wallet, paid the fee, joined the group. Now the project has disappeared.'],
       ['Customer','You people always say DYOR after everything don finish.'],
@@ -205,7 +205,7 @@ export const LOST_VALUE_STORY = [
   {
     id:'lost-value-09', n:10, state:'Kano State', city:'kano', title:'The Open Door',
     goal:'Explore the original promise of access and how complicated systems can exclude the people they claim to serve.',
-    value:'ACCESS', cast:['Joseph Nnadi','The don'], splitAfter:7,
+    value:'ACCESS', cast:['STUDENT','The don','Joseph Nnadi'], splitAfter:7,
     dialogue:[
       ['STUDENT','I’ve watched the tutorials three times. I still don’t understand what I’m signing.'],
       ['The don','Read the documentation.'],
@@ -230,7 +230,7 @@ export const LOST_VALUE_STORY = [
   {
     id:'lost-value-10', n:11, state:'Edo State', city:'benin', title:'Building for Nobody',
     goal:'Reveal what happens when projects prioritise trends over actual human problems.',
-    value:'USEFULNESS', cast:['Praise','Toza'], splitAfter:8,
+    value:'USEFULNESS', cast:['Praise','Toza','USER 1','USER 2','USER 3'], splitAfter:8,
     dialogue:[
       ['Praise','AI agent. Token. Marketplace. Points. Governance. We can combine everything.'],
       ['Toza','What problem does it solve?'],
@@ -255,7 +255,7 @@ export const LOST_VALUE_STORY = [
   {
     id:'lost-value-11', n:12, state:'Cross River State', city:'calabar', title:'The People Left Behind',
     goal:'Connect Web3’s promises to practical opportunities beyond trading and speculation.',
-    value:'OPPORTUNITY', cast:['Craftore','Kodavic'], splitAfter:6,
+    value:'OPPORTUNITY', cast:['Craftore','Kodavic','BUSINESS OWNER'], splitAfter:6,
     dialogue:[
       ['Craftore','People come here to talk about financial freedom.'],
       ['Kodavic','Then they show everybody how to trade.'],
