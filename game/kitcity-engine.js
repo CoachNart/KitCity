@@ -1698,9 +1698,25 @@ function addCar(axis,k,dir,C){ const road=k*R,kind=pickKind(C),v=makeVehicle(kin
   for(let tries=0;tries<36;tries++){const candidate=rr(-225,225),box=vehicleBox(c,candidate);if(cars.every(o=>!boxesOverlap(box,vehicleBox(o)))){c.pos=candidate;break;}if(tries===35)c.pos=rr(-225,225);}
   trafficGroup.add(v.m);placeCar(c);cars.push(c);
 }
+function addLocalRoadCar(road,C){
+  const kind=pickKind(C),v=makeVehicle(kind,C),dir=RN()<.5?1:-1;
+  const offset=(RN()<.5?-1:1)*Math.min(1.25,road.width*.2);
+  const lane=road.axis==='x'?road.cz+offset:road.cx+offset;
+  const center=road.axis==='x'?road.cx:road.cz;
+  const c={m:v.m,axis:road.axis,dir,lane,pos:center+rr(-18,18),speed:rr(v.sp[0]*.45,v.sp[1]*.55),hl:v.hl,hw:v.hw,kind,localRoad:true,localCenter:center,localMin:-25,localMax:25};
+  const box=vehicleBox(c,c.pos);
+  if(cars.some(o=>boxesOverlap(box,vehicleBox(o),1.2)))return;
+  trafficGroup.add(v.m);placeCar(c);cars.push(c);
+}
 function updateCars(dt){ for(const c of cars){let sp=c.speed;
   for(const o of cars){if(o===c||o.axis!==c.axis||o.lane!==c.lane||o.dir!==c.dir)continue;const gap=(o.pos-c.pos)*c.dir,free=gap-c.hl-o.hl;if(gap>0&&free<8)sp=Math.min(sp,free<3?0:o.speed*.9);}
-  let next=c.pos+c.dir*sp*dt;if(next*c.dir>240)next=-240*c.dir;const box=vehicleBox(c,next);for(const o of cars){if(o!==c&&boxesOverlap(box,vehicleBox(o),.45)){sp=0;next=c.pos;break;}}c.pos=next;placeCar(c);}
+  let next=c.pos+c.dir*sp*dt;
+  if(c.localRoad){
+    const rel=next-c.localCenter;
+    if(rel<c.localMin){next=c.localCenter+c.localMin;c.dir=1;}
+    else if(rel>c.localMax){next=c.localCenter+c.localMax;c.dir=-1;}
+  } else if(next*c.dir>240)next=-240*c.dir;
+  const box=vehicleBox(c,next);for(const o of cars){if(o!==c&&boxesOverlap(box,vehicleBox(o),.45)){sp=0;next=c.pos;break;}}c.pos=next;placeCar(c);}
 }
 /* ---- Nigerian street life: furniture, shops, bridges, landmarks, barks ---- */
 let ringTaken=[],hawkers=[];
@@ -2222,6 +2238,9 @@ function buildCity(key){
     const n=(k===0||k===-1)?8:(RN()<.45?5:4);
     for(let q=0;q<n;q++) addCar(axis,k,dir,C);
   }
+  // A small amount of slow, bounded traffic enters selected local streets.
+  // These vehicles reverse at segment ends; they never wrap across the map.
+  for(const road of localRoadSegments) if(RN()<.42) addLocalRoadCar(road,C);
   const spotWalk=()=>{
     for(let t=0;t<40;t++){
       const b=pk(blocks),side=Math.floor(RN()*4); let ax,az,dx,dz;
