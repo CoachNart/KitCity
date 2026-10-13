@@ -629,19 +629,43 @@ function resolveMissionSpot(key){
 const special=Object.keys(MISSION_ANCHORS).map(resolveMissionSpot).concat([SPAWN]);
 const nearSpecial=(x,z,d)=>special.some(s=>Math.hypot(s.x-x,s.z-z)<d);
 function secondaryRoadAxis(C,i,j){
-  const n=Math.abs(i*7+j*11+(C.seed||0)),form=C.form||'mixed';
-  if(form==='historic'||form==='sahel') return n%5===0?null:((i+j+(C.seed||0))%2===0?'x':'z');
-  if(form==='dense-market'||form==='organic-sprawl') return n%4===0?null:((i*3+j+(C.seed||0))%2===0?'x':'z');
-  if(form==='dense-coastal') return n%3===0?null:((i+j+(C.seed||0))%2===0?'x':'z');
-  if(form==='delta-port'||form==='oil-port') return n%3===0?null:(form==='delta-port'?'x':'z');
-  if(form==='planned'||form==='planned-tropical'||form==='planned-river') return n%4===0?((i+j)%2===0?'x':'z'):null;
-  return n%3===0?((i+j+(C.seed||0))%2===0?'x':'z'):null;
+  const seed=C.seed||0,form=C.form||'mixed';
+  const n=Math.abs(i*7+j*11+seed),mix=Math.abs(i*13-j*5+seed);
+  const cross=((i*3+j+seed)%2===0)?'x':'z';
+  // Distinct local-road patterns: dense organic networks, compact old quarters,
+  // formal planned districts, linear industrial corridors and terrain-led towns.
+  if(form==='historic'||form==='sahel'||form==='heritage'||form==='colonial-coast')
+    return n%5===0?null:((i+j+seed)%2===0?'x':'z');
+  if(form==='dense-market'||form==='southeast-market'||form==='organic-sprawl'||form==='southwest-sprawl')
+    return n%4===0?null:cross;
+  if(form==='dense-coastal')
+    return n%3===0?null:((i+j+seed)%2===0?'x':'z');
+  if(form==='delta-port'||form==='oil-port')
+    return n%3===0?null:(form==='delta-port'?'x':'z');
+  if(form==='rail-crossroads')
+    return n%3===0?null:((i+seed)%2===0?'x':'z');
+  if(form==='hillside'||form==='green-hills'||form==='rock-city')
+    return n%2===0?null:((j+seed)%2===0?'x':'z');
+  if(form==='creek-town'||form==='river-town'||form==='planned-river'||form==='confluence')
+    return n%4===0?null:((mix%3===0)?cross:((seed%2===0)?'x':'z'));
+  if(form==='planned'||form==='planned-tropical')
+    return n%4===0?((i+j)%2===0?'x':'z'):null;
+  if(form==='plateau'||form==='savanna-capital'||form==='regional-capital')
+    return n%3===0?null:((i+j+seed)%2===0?'x':'z');
+  return n%3===0?cross:null;
 }
 function buildSecondaryRoadSegments(C){
-  const out=[];
+  const out=[],form=C.form||'mixed';
+  let width=6.5;
+  if(['historic','sahel','heritage','colonial-coast'].includes(form))width=5.5;
+  else if(['planned','planned-tropical','planned-river','regional-capital','savanna-capital'].includes(form))width=9;
+  else if(['delta-port','oil-port','rail-crossroads'].includes(form))width=8;
+  else if(['dense-market','southeast-market'].includes(form))width=5.8;
+  else if(['hillside','green-hills','rock-city'].includes(form))width=5.6;
+  else if(['dense-coastal','organic-sprawl','southwest-sprawl'].includes(form))width=6.8;
   for(let i=-3;i<=2;i++)for(let j=-3;j<=2;j++){
     const axis=secondaryRoadAxis(C,i,j);if(!axis)continue;
-    const cx=i*R+35,cz=j*R+35,width=(C.form==='historic'||C.form==='sahel')?5.5:(C.form==='planned'||C.form==='planned-tropical'||C.form==='planned-river')?9:(C.form==='delta-port'||C.form==='oil-port')?8:6.5;
+    const cx=i*R+35,cz=j*R+35;
     let blocked=false;
     for(let d=-35;d<=35;d+=7){
       const x=axis==='x'?cx+d:cx,z=axis==='z'?cz+d:cz;
