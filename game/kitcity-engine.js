@@ -4059,7 +4059,7 @@ const lostValueMissions=LOST_VALUE_STORY.map(story=>{
     if(G) G.storyChoice=choice.label;
     if(story.id==='lost-value-14') Store.set(storageKey+'_lost_value_focus',choice.label);
   }}));
-  const conversationStep=(label,lines,actor,allowChoices,finalConversation=false)=>({kind:'conversation',label,spot:actor.spot,npc:actor.npc,run(){
+  const conversationStep=(label,lines,actor,allowChoices,ending='record')=>({kind:'conversation',label,spot:actor.spot,npc:actor.npc,run(){
     const panels=[{
       shot:'character',speaker:actor.name,kicker:story.state.toUpperCase()+' · THE LOST VALUE',
       caption:story.title.toUpperCase(),next:'next'
@@ -4071,13 +4071,19 @@ const lostValueMissions=LOST_VALUE_STORY.map(story=>{
       panels.push({
         shot:'player',kicker:'YOUR MOVE',
         caption:story.id==='lost-value-14'?'What should a better ecosystem protect first?':'',
-        choices:choiceButtons,continueAfterChoice:finalConversation
+        choices:choiceButtons,continueAfterChoice:ending==='report'
       });
     }
-    if(finalConversation){
+    if(ending==='record'){
       panels.push({
         shot:'wide',kicker:'NEXT OBJECTIVE',
         caption:'Now head to the Record Center and inspect '+story.evidenceTitle+'. Follow the compass arrow.',
+        finish:true
+      });
+    }else if(ending==='report'){
+      panels.push({
+        shot:'wide',kicker:'REPORT COMPLETE',
+        caption:'You have returned to report what you found. The evidence is now part of the record.',
         finish:true
       });
     }else if(!allowChoices||!choiceButtons.length){
@@ -4089,15 +4095,23 @@ const lostValueMissions=LOST_VALUE_STORY.map(story=>{
     kind:'clue',label:story.task,spot:'lvE',title:story.evidenceTitle,sign:story.evidenceTitle.toUpperCase(),
     run(){
       openSheet('<section class="record-center-card"><div class="record-center-top"><span class="record-center-mark">KITCITY / FIELD ARCHIVE</span><span class="record-center-index">'+String(story.n).padStart(2,'0')+' / 15</span></div><div class="record-center-heading"><span class="record-center-icon">✳</span><div><small>RECORD CENTER · '+lostValueEscape(story.state)+'</small><h3>'+lostValueEscape(story.evidenceTitle)+'</h3></div></div><div class="record-center-copy">'+lostValueEscape(story.evidenceBody)+'</div><div class="record-center-task"><span>YOUR OBJECTIVE</span><b>'+lostValueEscape(story.task)+'</b></div></section>',
-        [{t:'Record evidence',f:()=>{if(G){G.evidence[story.id]=true;}closeSheet();finishStep();}}]);
+        [{t:'Record evidence',f:()=>{
+          if(G) G.evidence[story.id]=true;
+          closeSheet();
+          finishStep();
+          if(closingLines.length){
+            openSheet('<section class="record-center-card"><div class="record-center-top"><span class="record-center-mark">KITCITY / FIELD REPORT</span><span class="record-center-index">'+String(story.n).padStart(2,'0')+' / 15</span></div><div class="record-center-heading"><span class="record-center-icon">✓</span><div><small>EVIDENCE RECORDED</small><h3>Report your findings</h3></div></div><div class="record-center-copy">The record has been inspected. Return to '+lostValueEscape(closingLead.name)+' and report what you found. Follow the compass arrow.</div></section>',
+              [{t:'Return to '+lostValueEscape(closingLead.name),f:closeSheet}]);
+          }
+        }}]);
     }
   };
-  const steps=[conversationStep('Speak with '+openingLead.name,openingLines,openingLead,false,!interludeLines.length&&!closingLines.length)];
-  if(interludeLines.length) steps.push(conversationStep(story.interludeLabel||'Speak with the local users',interludeLines,interludeLead,false,!closingLines.length));
-  if(closingLines.length) steps.push(conversationStep('Discuss the evidence with '+closingLead.name,closingLines,closingLead,true,true));
-  // Every story conversation now ends with a clear Record Center instruction.
-  // Keep the clue step after the complete conversation so it remains the next navigable objective.
+  // One conversation leads to the audit; the report conversation is deliberately
+  // held until the player has inspected the record and chosen to return.
+  const preAuditLines=openingLines.concat(interludeLines);
+  const steps=[conversationStep('Speak with '+openingLead.name,preAuditLines,openingLead,false,'record')];
   steps.push(clue);
+  if(closingLines.length) steps.push(conversationStep('Return and report to '+closingLead.name,closingLines,closingLead,true,'report'));
   return {
     id:story.id,n:story.n,city:story.city,title:story.title,goal:story.goal,
     storyState:story.state,storyValue:story.value,storyReward:story.reward,storyFinale:!!story.finale,
