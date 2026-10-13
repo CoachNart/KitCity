@@ -4041,7 +4041,8 @@ const lostValueMissions=LOST_VALUE_STORY.map(story=>{
 });
 /* Keep the existing Lagos prologue first. The approved 15-state story arc follows
    it, and the existing Web3 learning missions remain intact after the arc. */
-MISSIONS.slice(1).forEach(m=>{m.n+=LOST_VALUE_STORY.length;});
+MISSIONS[0].n=0;
+MISSIONS.slice(1).forEach(m=>{m.n+=LOST_VALUE_STORY.length-1;});
 MISSIONS.splice(1,0,...lostValueMissions);
 lostValueMissions.forEach(m=>{MBY[m.id]=m;});
 cityOrder.length=0; cityOrder.push(...new Set(MISSIONS.map(m=>m.city)));
@@ -4086,7 +4087,15 @@ function startMission(id){
     S.phase='play'; closeSheet(); Snd.setMode('play'); lastLoc=''; resetPlayer(); loadStep();
     $('#loading').classList.add('hidden');
     if(m.id==='m0'){
-      storyCastGroup.visible=true; storyDirector.playOpening(()=>{ storyCastGroup.visible=false; P.storyPrologueSeen=true; if(G) G.used['iamabdul-story']=true; save(); briefing(); });
+      storyCastGroup.visible=true; storyDirector.playOpening(()=>{
+        storyCastGroup.visible=false; P.storyPrologueSeen=true; P.done.m0=true;
+        if(G) G.used['iamabdul-story']=true;
+        save(); updateHUD();
+        openSheet('<section class="lost-value-finale"><p>MISSION UNLOCKED</p><h3>THE FIRST PROMISE</h3><p>Lagos State · Your investigation begins.</p></section>',[
+          {t:'Start The First Promise',f:()=>startMission('lost-value-01')},
+          {t:'Back to hub',g:1,f:exitToHub}
+        ]);
+      });
     }else briefing();
   },60);
 }
@@ -4126,7 +4135,7 @@ function showCityBadge(city,after){
  openSheet('<div class="badge">'+badgeSVG('★',true,96)+'<div><h3 style="margin-top:0">'+name+' Pathfinder</h3><small>City journey completed</small></div></div><p>You completed both missions and earned the '+name+' city badge.</p>',[{t:'Continue journey',f:()=>{closeSheet();if(after)after();}}]);
 }
 function certificate(){
-  const totalMissions=MISSIONS.length;
+  const totalMissions=MISSIONS.length-1;
   const msg=encodeURIComponent(L('I finished all '+totalMissions+' KitCity missions and learned how to use a crypto wallet safely. Can you survive Naija with your wallet?','I don finish all '+totalMissions+' KitCity missions and I don learn how to use crypto wallet safely. You fit survive Naija with your wallet?'));
   openSheet('<div class="badge">'+badgeSVG('\u2605',true,96)+'<div><h3 style="margin-top:0">KitCity Graduate</h3><small>All '+totalMissions+' missions complete</small></div></div><p>You completed the full KitCity mission journey across all cities. Your practice balance is <b>'+P.usdc.toFixed(2)+' USDC</b>.</p>',
     [{t:'Back to hub',f:exitToHub}]);
@@ -4248,7 +4257,7 @@ function web3Focus(m){
 function missionCard(m){
   const un=isUnlocked(m),dn=!!P.done[m.id];
   const focus=web3Focus(m);
-  return '<div class="card'+(un?'':' lock')+(m.city==='kitcity'?' final-destination':'')+'"><div class="ch">'+badgeSVG(m.n,false,46)+'<div><b>'+personalize('Mission '+m.n+': '+m.title,null)+'</b><small>'+personalize(m.goal,null)+'</small><span class="web3-focus">WEB3 FOCUS · '+focus+'</span></div></div><div class="cf"><span>'+(dn?'Completed':'Up to +0.50 USDC')+'</span>'+(un?'<button class="btn brand" data-a="play" data-v="'+m.id+'" type="button">'+(dn?'Replay':'Play')+'</button>':'<span>Finish mission '+(m.n-1)+' first</span>')+'</div></div>';
+  return '<div class="card'+(un?'':' lock')+(m.city==='kitcity'?' final-destination':'')+'"><div class="ch">'+badgeSVG(m.id==='m0'?1:m.n,false,46)+'<div><b>'+personalize(m.id==='m0'?'PROLOGUE: '+m.title:'Mission '+m.n+': '+m.title,null)+'</b><small>'+personalize(m.goal,null)+'</small><span class="web3-focus">WEB3 FOCUS · '+focus+'</span></div></div><div class="cf"><span>'+(dn?'Completed':'Up to +0.50 USDC')+'</span>'+(un?'<button class="btn brand" data-a="play" data-v="'+m.id+'" type="button">'+(dn?'Replay':'Play')+'</button>':'<span>Finish mission '+(m.n-1)+' first</span>')+'</div></div>';
 }
 function renderHub(){
   $('#hubTop').innerHTML=tx('<span class="wm"><img class="header-logo" src="https://i.postimg.cc/qqbdTXky/file-00000000958881f4a776df689a235dec.png" alt="KitCity" /></span><div class="lvl"><b>Practice wallet</b><div class="balance-line"><strong>'+P.usdc.toFixed(2)+' USDC</strong><small>'+Object.keys(P.done).filter(k=>P.done[k]).length+' missions completed</small></div></div>');
