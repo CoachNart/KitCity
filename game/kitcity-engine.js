@@ -1135,48 +1135,23 @@ Object.assign(LOOK,{
 /* Keep each city's layout, landmarks, traffic and regional character, but remove
    the heavy sepia/rust treatment and give buildings contemporary urban finishes. */
 /* =====================  preserve regional Nigerian city identities  ===================== */
-/* The previous global modernizer replaced every city's palette, roof mix and ground
-   with one of five generic presets. Keep the shared renderer, but never flatten the
-   local identity profile that drives each city's buildings, roads and landmarks. */
+/* Preserve city layout and architecture without applying the extra city color palettes. */
 (function preserveCityVisuals(){
-  const profileKeys=Object.keys(CITY_IDENTITY);
-  const palettes=[
-    ['#D5D9D3','#C4D6D8','#D7BCA1','#9DB9C5','#E1D7C5','#A8B9A9'],
-    ['#E6E9E8','#CFDDE5','#BBCBD2','#E8E0D2','#AFC4D1','#D8DFD8'],
-    ['#D7B78C','#C9A77B','#E4CBA5','#B78D62','#D9C39E','#A98963'],
-    ['#C9A98A','#B9805D','#D7C2A2','#A6B1A0','#D2B56F','#B9A38C'],
-    ['#AFC5BE','#92B0A9','#C3C9BB','#9CB3C3','#D5C5A7','#A7B9B0'],
-    ['#E0B8A2','#A8CFC1','#E8D48E','#C6B7D8','#A4C2D8','#DFA6A2'],
-    ['#D6D1C4','#BBC9B8','#C9B99F','#A9BAC8','#DFCAA6','#9BAF9D'],
-    ['#C9825E','#B86F4C','#D9A781','#9D6049','#DCC29E','#9BAF98'],
-    ['#C6D4BE','#B4C9C6','#D9C5A3','#AFC1D4','#D3B88B','#A8B6A0'],
-    ['#C8D1C7','#B9C9D1','#D7B89A','#A7B7C5','#D8C78D','#B8A99A'],
-    ['#AFC6B0','#9FBDB7','#D0C39E','#A4BCC7','#C8B28D','#9EADA0'],
-    ['#D8BE91','#CBA878','#E5D2AA','#B98E5F','#D6B889','#A98B62']
-  ];
-  const own=(o,k)=>Object.prototype.hasOwnProperty.call(o,k);
   Object.keys(CITIES).forEach((key,index)=>{
     if(key==='kitcity') return;
     const C=CITIES[key], p=CITY_IDENTITY[key];
     if(p){
       C.form=p.form; C.roadStyle=p.road; C.styles=p.styles.map(v=>v.slice());
       C.h=p.height.slice(); C.market=p.market;
-      C.ground=p.ground; C.slab=p.slab; C.dirt=p.dirt; C.paint=p.paint.slice();
+      // Deliberately keep the city's existing paint, ground, slab and dirt colors.
       C.cityFeature=p.feature;
     } else {
-      // States without a dedicated named profile still keep their own source data;
-      // rotate a regionally compatible palette instead of inheriting Lagos defaults.
-      const palette=palettes[(Math.abs((C.seed||index*17)+index*7))%palettes.length];
-      if(!Array.isArray(C.paint)||C.paint.length<4) C.paint=palette.slice();
-      if(!C.ground) C.ground=['#343B3C','#3A3B36','#42413B','#303D3A'][index%4];
-      if(!C.slab) C.slab=['#BFC8C2','#C6B9A3','#B7C6C3','#C5C3B8'][index%4];
-      if(!C.dirt) C.dirt=['#8B795F','#9A805F','#7E7967','#A28A68'][index%4];
+      // Keep source colors untouched for cities without a dedicated profile.
       if(!C.form) C.form=['dense-market','organic-sprawl','regional-capital','green-hills','savanna-capital'][index%5];
       if(!C.roadStyle) C.roadStyle=['market','mixed','arterial','contour','open'][index%5];
       if(!Array.isArray(C.styles)) C.styles=[['flat',.34],['zinc',.25],['admin',.15],['glass',.12],['banco',.14]];
     }
-    // Keep city architecture distributions recognizable; normalize only weights,
-    // never inject the same modern building mix into every location.
+    // Keep architecture distributions recognizable; normalize weights only.
     if(Array.isArray(C.styles)){
       const total=C.styles.reduce((sum,item)=>sum+Math.max(0,Number(item[1])||0),0)||1;
       C.styles=C.styles.map(([style,weight])=>[style,Math.max(0,Number(weight)||0)/total]);
