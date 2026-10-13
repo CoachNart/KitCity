@@ -818,7 +818,7 @@ const SPOTS={
   a:{x:10,z:-30,f:-1}, b:{x:-10,z:-105,f:1}, c:{x:80,z:-35,f:-1}, d:{x:60,z:-105,f:1},
   e:{x:-80,z:-35,f:1}, f:{x:-60,z:-105,f:-1}, g:{x:10,z:-175,f:-1}, h:{x:-10,z:-175,f:1},
   i:{x:150,z:-35,f:-1}, j:{x:130,z:-175,f:1}, k:{x:-150,z:-35,f:1}, l:{x:-130,z:-175,f:-1},
-  m:{x:80,z:35,f:-1}, n:{x:-80,z:105,f:1}, o:{x:10,z:175,f:-1}, story:{x:-95,z:-35,f:1}, x1:{x:60,z:-105,f:1}, shopdesk:{x:25,z:-42,f:1}, screenshot:{x:18,z:-38,f:-1}, buyer:{x:130,z:105,f:-1}, ledger:{x:-150,z:105,f:1}, ledgerGuide:{x:-156,z:110,f:1}, execution:{x:90,z:115,f:-1}
+  m:{x:80,z:35,f:-1}, n:{x:-80,z:105,f:1}, o:{x:10,z:175,f:-1}
 };
 const special=Object.keys(SPOTS).map(k=>SPOTS[k]).concat([SPAWN]);
 const nearSpecial=(x,z,d)=>special.some(s=>Math.hypot(s.x-x,s.z-z)<d);
@@ -3212,8 +3212,7 @@ function buildMissionNameAliases(mission){
     const original=String(npc.originalName||'').trim();
     const current=String(npc.name||'').trim();
     if(!original||!current||original===current) continue;
-    /* Never rewrite a name that is already the canonical name of another NPC in this mission.
-       Otherwise a card for Praise or The don can be renamed by an unrelated dialogue alias. */
+    /* Never rewrite a name that is already canonical for another NPC in this mission. */
     if(currentNames.has(original.toLowerCase())) continue;
     if(Object.prototype.hasOwnProperty.call(candidates,original)&&candidates[original]!==current) ambiguous.add(original);
     else candidates[original]=current;
