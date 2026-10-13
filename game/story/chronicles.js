@@ -92,6 +92,7 @@ const RAW_MISSIONS = [
       "IamAbdul"
     ],
     "narrativePurpose": "At a Lagos electronics shop, a buyer says he paid 120 USDC for a laptop, but Softstorm's records show no matching payment. You are new to this world and don't need to know crypto jargon yet: follow the screenshot back to its source, compare the transaction with the shop's address and decide what the evidence actually proves before anyone hands over the laptop.",
+    "cardDescription": "A buyer says he paid for a laptop. Check the screenshot against the shop’s records before deciding what happened.",
     "learningObjectives": [
       "Understand that a screenshot is a claim, not proof that the shop received money",
       "Learn what a transaction record and recipient address tell you",
@@ -184,6 +185,7 @@ const RAW_MISSIONS = [
       "Larai"
     ],
     "narrativePurpose": "The wrong-address payment is already confirmed from the previous mission. Now follow the buyer's trail: he copied the payment link from a lookalike page shared in a market chat. Work with Joe_Sef to preserve the page before it disappears, then join Larai to trace how the link spread and document what is known without blaming someone the evidence cannot identify.",
+    "cardDescription": "Trace the payment to the wrong address and uncover how a lookalike link misled the buyer.",
     "learningObjectives": [
       "Preserve a suspicious page, its exact URL and timestamp before it changes",
       "Compare a familiar logo with the actual domain and payment destination",
@@ -267,6 +269,7 @@ const RAW_MISSIONS = [
       "Timi"
     ],
     "narrativePurpose": "The voice note from Lagos leads you to Timi at an Oyo bus park. A stranger's wallet-recovery page is counting down and demanding twelve secret words. Timi has not submitted them. Stop the rushed decision, find out what the page is really asking for, and help Timi get out safely before the message spreads.",
+    "cardDescription": "Help Timi respond to a wallet-recovery page demanding his secret recovery words.",
     "learningObjectives": [
       "Explain in plain language why a recovery phrase can give someone control of a wallet",
       "Recognise urgency and secret-word requests as warning signs",
@@ -352,6 +355,7 @@ const RAW_MISSIONS = [
       "Timi"
     ],
     "narrativePurpose": "The student group is turning Timi's screenshot into a public accusation. Goodness wants the rumour stopped; Semi has found the uncropped message and the wallet's public transaction history. Follow the mismatch, find what the screenshot leaves out, and help Timi face the group without exposing private details or accusing an unproven editor.",
+    "cardDescription": "Separate verified facts from a spreading accusation and decide what the evidence really supports.",
     "learningObjectives": [
       "Trace a screenshot claim back to its original message and context",
       "Check relevant public wallet activity without asking for secret information",
@@ -432,6 +436,7 @@ const RAW_MISSIONS = [
       "Christol"
     ],
     "narrativePurpose": "At a busy market demo, a merchant's app flashes PAID before the payment is confirmed. Christol wants to ship a flashy loyalty dashboard to rescue the launch; Blockqueen says sellers have stopped trusting the receipt. Follow the actual checkout, compare the app's status with the transaction record, then help the team fix and retest the status flow. The retest exposes a payout destination that does not match the merchant's agreed address.",
+    "cardDescription": "A merchant app says PAID too early. Test the checkout flow and stop an unconfirmed payment from being treated as complete.",
     "learningObjectives": [
       "Observe a user's real problem before adding features",
       "Distinguish a submitted payment request from a confirmed transaction",
@@ -512,6 +517,7 @@ const RAW_MISSIONS = [
       "BigSam"
     ],
     "narrativePurpose": "The checkout status is fixed, but its payout destination differs from the merchant-approved address. Laloba suspects the release contract gives one administrator quiet control over where every payout lands; BigSam says the team cannot accuse the contract without reproducing the path. Inspect the access role and destination-change function, reproduce the change in a test deployment, then agree on controls that prevent a silent unilateral redirect before release.",
+    "cardDescription": "Inspect the payout setup and find out who can redirect the merchant’s funds.",
     "learningObjectives": [
       "Understand that a smart contract follows code and permissions rather than good intentions",
       "Trace who can change a critical destination and what evidence that action leaves",
@@ -592,6 +598,7 @@ const RAW_MISSIONS = [
       "OxNight"
     ],
     "narrativePurpose": "A trader named LunaX swaps tokens to settle a time-sensitive parts order, but the wallet shows a smaller amount of an asset than she expected. The seller is packing up, the quote screenshot is spreading through the market chat, and someone urges her to approve the swap again. OxNight helps trace the exact token contract and execution record, separating a lookalike asset from ordinary quote movement, pool liquidity, fees and price impact. The player must preserve evidence, explain what the transaction actually did and stop a risky retry.",
+    "cardDescription": "Investigate a trader’s unexpected token balance and compare the wallet evidence with the claim.",
     "learningObjectives": [
       "Identify a token by its contract address rather than its ticker or logo",
       "Compare quotes fairly using the same trade size, route, fees and liquidity",
@@ -672,6 +679,7 @@ const RAW_MISSIONS = [
       "The Cryptonian"
     ],
     "narrativePurpose": "A withdrawal freeze turns a busy exchange counter into a rumour mill. Moon has a customer request marked 'processing' but no transaction hash; a cropped screenshot of the exchange's hot wallet is being passed around as proof that every customer balance is gone. The Cryptonian brings the incident log and public-chain records. Trace the specific request, establish which route is confirmed paused, separate internal customer balances from on-chain wallet movements, and publish an update that says what is known, what is not, and when the next update will arrive. A loud countdown on the status board is about to hit zero—but nobody has verified that it came from the exchange.",
+    "cardDescription": "A withdrawal is stuck in processing. Check the transaction status before trusting screenshots or rumours.",
     "learningObjectives": [
       "Trace a withdrawal from the exchange's request status to a broadcast transaction",
       "Report only the routes and impacts confirmed by incident records",
@@ -752,6 +760,7 @@ const RAW_MISSIONS = [
       "The Don"
     ],
     "narrativePurpose": "A trader's clipped screenshot is spreading through the café with the caption 'the exchange moved my stop'. He wants the group to back him and is already lining up another entry to win back the loss. Joseph Nnadi has the plan the trader wrote before the session; The Don pulls up the original order history. Rebuild the timeline, calculate how the second position changed the risk, and separate what the records prove from what the screenshot merely suggests.",
+    "cardDescription": "Review a disputed trading screenshot and work out what the available evidence can actually prove.",
     "learningObjectives": [
       "Use an original trading plan and full order history to reconstruct an event",
       "Understand that position size and stop distance both affect planned loss",
@@ -834,6 +843,7 @@ const RAW_MISSIONS = [
       "Craftore"
     ],
     "narrativePurpose": "An urgent margin alert hits while Toza is preparing a payment for a community event venue. His leveraged trade is moving against him, and he wants to top up the position using money already set aside for the venue deposit. Praise refuses to let panic turn shared funds into trading collateral. Craftore brings the original order ticket, current exposure and a conditional liquidation estimate. Reconstruct the real risk, test the options against Toza's written limit and help him make a decision without pretending to know the next candle.",
+    "cardDescription": "An urgent margin problem threatens a community payment. Weigh the risks before choosing what to do.",
     "learningObjectives": [
       "Distinguish position exposure from the margin posted to open or maintain it",
       "Treat liquidation estimates as conditional rather than guaranteed prices",
@@ -917,6 +927,7 @@ const RAW_MISSIONS = [
       "Cybersage"
     ],
     "narrativePurpose": "The team posts a triumphant '1,000 members' banner, but the hall booked for its first builder meetup is almost empty. Kodavic wants to announce a prize to pull people in. Cybersage shows you the signup path: six channels, a wall of rules, and a request for newcomers to explain their whole Web3 identity before doing anything. A newcomer called Dera has arrived in person and is ready to leave. Find the exact moment the welcome flow loses her, replace it with one useful first action, and test whether a second newcomer can finish it without needing a wallet connection or a giveaway.",
+    "cardDescription": "A community event has plenty of online hype but few attendees. Find a better way to build real participation.",
     "learningObjectives": [
       "Measure the first useful action rather than follower or signup counts alone",
       "Find friction by observing a real newcomer journey",
@@ -998,6 +1009,7 @@ const RAW_MISSIONS = [
       "Cclya"
     ],
     "narrativePurpose": "The incident starts exactly where the previous mission ended: the newcomer who stayed to test the new welcome card shows Cybersage a DM from an account using Reina's name and photo. Three attendees received the same threat that their wallets will be restricted unless they verify immediately; one opened the link. Reina and Cclya lead the player from the hall to the message kiosk to compare the sender against the real moderator roster, preserve and report the evidence without spreading the link, then help the affected member check their wallet safely. The team must protect the member, avoid guessing who runs the fake account, and publish a useful warning before the scheduled safety session in Enugu.",
+    "cardDescription": "A fake account impersonates a trusted community member. Trace the message and help protect newcomers.",
     "learningObjectives": [
       "Verify a moderator by the exact account handle and an independently found official roster",
       "Contain and report an impersonation attempt without amplifying its link",
@@ -1078,6 +1090,7 @@ const RAW_MISSIONS = [
       "Kenny"
     ],
     "narrativePurpose": "You arrive in Enugu carrying Reina and Cclya’s verified report about the fake moderator DM from the last mission. The host cancels minutes before the session, but the room is already full—and one attendee says their friend connected a wallet after receiving a similar message. Leemah needs you to separate confirmed facts from rumours, then Kenny puts you on the live mic. Keep the affected member anonymous, answer hard questions without pretending the incident proves funds were stolen, and leave the audience with a practical response plan.",
+    "cardDescription": "Help a community recover from a last-minute event cancellation by sharing clear, verified safety information.",
     "learningObjectives": [
       "Separate confirmed incident facts from unverified reports",
       "Answer difficult questions without shaming people or promising perfect safety",
@@ -1157,6 +1170,7 @@ const RAW_MISSIONS = [
       "Veedima"
     ],
     "narrativePurpose": "The safety session in Mission 13 ends, but the lesson follows you into the street: people trust clear, useful information more than dramatic claims. Kore and Veedima bring you an announcement for a real product, packed with words like AI-powered, seamless and secure, yet nobody can tell what it actually does. Speak to the intended users, inspect the working flow, remove claims the team cannot prove, and publish a plain-language message with one useful next step. The challenge is to earn attention without borrowing trust the product has not earned.",
+    "cardDescription": "Turn useful Web3 knowledge into a practical product announcement people can understand and trust.",
     "learningObjectives": [
       "Start product messaging from a real user problem",
       "Separate working capabilities from assumptions and unsupported claims",
@@ -1236,6 +1250,7 @@ const RAW_MISSIONS = [
       "Love"
     ],
     "narrativePurpose": "The reader who replied to your verified product announcement has sent a real Web3 role brief. In Plateau, Web3_Esta and Love help you turn the work you just did—and earlier investigations, safety communication and product tests—into evidence a hiring lead can inspect. The brief asks for proof, not a grand bio. Choose work you can stand behind, explain exactly what you contributed, and name the gap you still need to close before the screening task.",
+    "cardDescription": "Review a Web3 job offer that demands an activation fee and private wallet details before revealing the work.",
     "learningObjectives": [
       "Match evidence to the actual requirements of a role",
       "Distinguish your own contribution from a team's work",
@@ -1315,6 +1330,7 @@ const RAW_MISSIONS = [
       "Essa"
     ],
     "narrativePurpose": "Mission 15 ends with a recruiter demanding an activation fee and private wallet details before revealing the screening task. J.Jonathan and Essa help you check the sender independently, compare the offer with the company's real careers channel, preserve evidence and keep the application moving without paying or handing over sensitive information. The deadline pressure is part of the test.",
+    "cardDescription": "Create an honest work sample and use it to move toward a real community-building opportunity.",
     "learningObjectives": [
       "Verify a job opportunity through a source found independently of the recruiter message",
       "Recognise upfront fees and requests for wallet secrets as warning signs",
@@ -1394,6 +1410,7 @@ const RAW_MISSIONS = [
       "Abdul"
     ],
     "narrativePurpose": "Mission 16 ends with J.Jonathan forwarding the player's honest work sample to White Coach and Abdul in Kano. They are leading a community build challenge, but by the night before the public demo, teams are duplicating ideas, waiting on one another and abandoning unfinished projects. Help the group stop chasing impressive ideas, identify a real local need, choose a finishable solution and deliver a working first version before morning.",
+    "cardDescription": "Help launch a local creative directory and decide how to make it useful to the people it serves.",
     "learningObjectives": [
       "Discover a real user need before selecting a project",
       "Reduce scope until the team can deliver a testable result",
@@ -1476,6 +1493,7 @@ const RAW_MISSIONS = [
       "Kanyin"
     ],
     "narrativePurpose": "Mission 17 ends with a usable first version of a local creative directory and people asking how to find it. David wants to push a big launch campaign; Kanyin's previous campaign dashboard shows thousands of clicks but very few completed actions. Find out what people think the prototype offers, identify where their expectations break from reality, and run a small honest experiment before anyone spends more money.",
+    "cardDescription": "Test whether the directory is reaching real users before choosing how to grow it.",
     "learningObjectives": [
       "Write a testable growth hypothesis linked to a real user need",
       "Measure meaningful completion rather than impressions or raw signups",
@@ -1557,6 +1575,7 @@ const RAW_MISSIONS = [
       "Alpha.RWA"
     ],
     "narrativePurpose": "After Mission 18's growth test, a founder offers to fund the directory's next stage—but promises fixed returns while leaving reporting, release conditions and responsibility for missed milestones vague. Mcbond is ready to sign because the team is nearly out of runway; Alpha.RWA refuses to let the headline number decide. Help them negotiate the actual obligations, stage the money against verifiable delivery, and leave the room with terms the team can review rather than a rushed signature.",
+    "cardDescription": "Investigate a token claiming to represent goods held in a warehouse. Check whether the ownership evidence supports the claim.",
     "learningObjectives": [
       "Distinguish a headline funding promise from enforceable terms and real risk",
       "Tie staged funding to verifiable milestones and named responsibilities",
@@ -1637,6 +1656,7 @@ const RAW_MISSIONS = [
       "Blessing"
     ],
     "narrativePurpose": "A token promotion claims each token represents stock held in an Edo warehouse. BigWealth brings glossy photos and a sales deck; Blessing, who tracks incoming and outgoing goods, spots a pallet seal number that appears twice. The player must compare the physical stock with the inventory record, trace the paperwork to its issuer, and test what holders can actually claim or redeem. The warehouse is real; that alone does not establish ownership, control of the goods, or enforceable rights for token holders.",
+    "cardDescription": "Review an AI-generated due-diligence report, identify its mistaken ownership claim and inspect the cross-network records.",
     "learningObjectives": [
       "Separate the existence of a physical asset from proof of ownership and control",
       "Check inventory, issuer authority, custody and redemption terms against independent records",
@@ -1716,6 +1736,7 @@ const RAW_MISSIONS = [
       "Princess"
     ],
     "narrativePurpose": "An AI-generated summary of the warehouse due-diligence packet confidently names the wrong owner and glosses over a token-issuance record that spans two blockchain networks. Move from the records room to the AI workstation and back to the field office to trace the unsupported claim, correct the workflow and produce a human-reviewed evidence packet before the project relies on it.",
+    "cardDescription": "Trace a cross-chain transfer and distinguish a confirmed source transaction from a destination that is still pending.",
     "learningObjectives": [
       "Recognise that a fluent AI answer can contain unsupported or invented claims",
       "Trace important statements to the original source documents",
@@ -1795,6 +1816,7 @@ const RAW_MISSIONS = [
       "Seun"
     ],
     "narrativePurpose": "The due-diligence packet from the warehouse-backed token project includes a transfer from its issuing network to a second network, but the receiving record has not updated. Follow that exact transfer from the source-network record to the bridge status desk and receiving network. Check the route, supported asset and final status before anyone repeats the transfer or claims the token arrived.",
+    "cardDescription": "Assess a proposal for a new cross-network route, including its costs, risks and failure conditions, before voting.",
     "learningObjectives": [
       "Understand that separate blockchain networks maintain separate transaction records",
       "Trace a cross-network transfer through its source, bridge message and destination status",
@@ -1874,6 +1896,7 @@ const RAW_MISSIONS = [
       "Joe"
     ],
     "narrativePurpose": "A community vote is scheduled for a proposal to fund a new cross-network route. Walk from the meeting hall to the proposal board and treasury desk. Supporters are counting votes, but the budget, beneficiaries and risks have not been explained clearly.",
+    "cardDescription": "A privileged contract role can redirect funds. Decide how to report the security finding before launch.",
     "learningObjectives": [
       "Read a governance proposal for goals, costs, risks and accountable owners",
       "Compare treasury spending with measurable milestones and delivery responsibilities",
@@ -1953,6 +1976,7 @@ const RAW_MISSIONS = [
       "Gbemi"
     ],
     "narrativePurpose": "A reviewer finds that one privileged contract role can redirect funds, but the launch team wants to hide the finding until after the vote. Move from the code review room to the test bench, reproduce the risk, and prepare a responsible disclosure and patch-verification plan.",
+    "cardDescription": "Review the risks and responsibilities behind a proposed digital collectible before the project proceeds.",
     "learningObjectives": [
       "Assess a security finding by its real capability and potential impact",
       "Disclose a vulnerability responsibly without needlessly exposing users to exploitation",
@@ -2030,6 +2054,7 @@ const RAW_MISSIONS = [
       "FemiY"
     ],
     "narrativePurpose": "The community project wants to sell a commemorative digital collectible, but the creator cannot show a licence and another artist claims the original artwork. The collectible's minting page also bundles a code component whose licence notice may be wrong. Follow both the artwork and the page from the studio to the licensing desk: a token record does not settle copyright, and an attractive interface does not excuse missing software attribution.",
+    "cardDescription": "Check a collectible’s artwork rights and minting details before anyone treats ownership as settled.",
     "learningObjectives": [
       "Distinguish owning a token from owning copyright or commercial-use rights",
       "Read licence terms and attribution evidence before making an exclusivity claim",
@@ -2108,6 +2133,7 @@ const RAW_MISSIONS = [
       "IamAbdul"
     ],
     "narrativePurpose": "The minting page for the disputed collectible copied an open-source component, removed the author's notice and shipped it under a licence that does not match the repository. Travel from the workshop to the repository terminal and then meet the maintainer. Preserve the code history, identify the actual licence and propose a clean contribution path before the listing returns.",
+    "cardDescription": "Inspect an open-source component whose author attribution was removed and determine what its licence requires.",
     "learningObjectives": [
       "Use repository history to trace where code came from",
       "Understand that open-source licences set conditions for reuse",
@@ -2187,6 +2213,7 @@ const RAW_MISSIONS = [
       "Larai"
     ],
     "narrativePurpose": "A small cyan marker appears in the archive metadata of records from the payment dispute, recovery-page report, payment prototype and repository review. It is not a mark proven to have been placed by the people behind those incidents. Trace the marker through saved evidence packets and deployment notes to learn whether it identifies a shared record-routing tool or something else.",
+    "cardDescription": "Follow a cyan marker through archived evidence without assuming it proves that one person operated every incident.",
     "learningObjectives": [
       "Combine evidence from separate incidents into a timeline with traceable sources",
       "Test competing explanations and notice evidence that contradicts an early theory",
@@ -2266,6 +2293,7 @@ const RAW_MISSIONS = [
       "Christol"
     ],
     "narrativePurpose": "A user completes a verification task in one tool, moves to another and loses the evidence they just collected. The archive marker and deployment notes point to a shared evidence-routing system, but its hand-off is broken. Walk the route from the roadside station to the integration workshop and test whether the case reference survives each step without leaking private details.",
+    "cardDescription": "Repair a broken handoff between tools so verified evidence survives the journey from one task to the next.",
     "learningObjectives": [
       "Understand how connected tools pass references and state between systems",
       "Trace an end-to-end failure instead of fixing one screen in isolation",
@@ -2347,6 +2375,7 @@ const RAW_MISSIONS = [
       "Craftore"
     ],
     "narrativePurpose": "You reach KitCity and find the recurring cyan mark carved into the gate. Softstorm will not explain it yet. Move between the inspection arch and public records wall, connect the evidence from earlier cases, and show that you can distinguish a strong lead from an unsupported accusation.",
+    "cardDescription": "Reach KitCity and connect the lessons from earlier cases to the evidence preserved at its gate.",
     "learningObjectives": [
       "Reconstruct a multi-stage investigation from original sources and saved work",
       "Choose evidence that changes a decision instead of collecting clues for their own sake",
@@ -2437,6 +2466,7 @@ const RAW_MISSIONS = [
       "Craftore"
     ],
     "narrativePurpose": "Three teams in KitCity have one afternoon to investigate a suspicious payment flow, protect a newcomer and repair a broken hand-off between two tools. Move between the workshop, field-test square and review chamber. Use the evidence, test the fix and leave a record another person can verify.",
+    "cardDescription": "Work with three teams to investigate a suspicious payment flow, protect a newcomer and repair a broken handoff.",
     "learningObjectives": [
       "Combine verification, wallet safety and product testing in one end-to-end task",
       "Coordinate responsibilities while keeping each contribution reviewable",
@@ -2531,6 +2561,7 @@ const RAW_MISSIONS = [
       "Craftore"
     ],
     "narrativePurpose": "The signed deployment record identifies T3Kit as the project that commissioned the shared evidence-routing pathway used by the connected tools. The cyan marker is a provenance cue for that pathway, not proof that T3Kit operated the scams or authored every record. Visit the records room, compare the signed record with the evidence you collected and decide what the city should build next. The mystery resolves through documented provenance, not a convenient culprit.",
+    "cardDescription": "Examine the signed deployment record to establish who commissioned the shared evidence-routing pathway—and what it does not prove.",
     "learningObjectives": [
       "Verify a project's stated role from a source record and distinguish that from broader claims",
       "Recognise roles across learning, building, security, communication and community work",
