@@ -86,7 +86,7 @@ export function createStorySceneDirector({ camera, player, getCharacter, animate
       if (!active || event.target.closest('button')) return;
       const panel = activePanels[panelIndex];
       if (panel && panel.choices) return;
-      if (panel && (panel.speaker || genericScene)) requestAdvance();
+      if (panel && !panel.choices) requestAdvance();
     });
     // Mobile browsers can occasionally lose a synthetic click over a full-screen canvas.
     // Advance on touch pointer-up, and debounce the follow-up click so one tap means one panel.
