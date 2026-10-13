@@ -70,6 +70,9 @@ function replacePlayerState(data){
   if(!P.done||typeof P.done!=='object') P.done={};
   if(!P.storyProgress||typeof P.storyProgress!=='object') P.storyProgress={};
   if(!P.storyFlags||typeof P.storyFlags!=='object') P.storyFlags={};
+  if(Number(P.storyResetVersion||0)<STORY_RESET_VERSION){
+    P.done={};P.storyProgress={};P.storyFlags={};P.storyResetVersion=STORY_RESET_VERSION;
+  }
 }
 function activateUserProgress(uid){
   const nextKey=KEY+'_user_'+uid;
