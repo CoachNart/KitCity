@@ -142,7 +142,7 @@ const MUSIC_QUEUES={
   afrobeat:{label:'Naija Afrobeats Mix 2026',videos:['bGgjIvWj2I0']},
   'lagos':{label:"Lagos · Soundtrack",videos:["rhrCG0Vtx3g"]},
   'abuja':{label:"Abuja · Contemporary Afrobeats",videos:["XCjU9qbfv1U"]},
-  'ph':{label:"Port Harcourt · Niger Delta / Ijaw",videos:["xodanM9AfrI"]},
+  'ph':{label:"Port Harcourt · Niger Delta / Ijaw regional groove",videos:["qcBFntpoW4M"]},
   'benin':{label:"Benin City · Shallipopi — Na So (Edo street Afrobeats)",videos:["xodanM9AfrI"]},
   'calabar':{label:"Calabar · Efik / Ibibio",videos:["qbefFtgUVTY"]},
   'jos':{label:"Jos · Plateau / regional Naija",videos:["MsZhYgo9MoA"]},
