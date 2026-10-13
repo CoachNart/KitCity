@@ -139,23 +139,23 @@ export function createStorySceneDirector({ camera, player, getCharacter, animate
       // Keep the full pair visible on portrait phones: the narrow screen needs
       // a wider establishing shot, not a close-up that crops either character.
       const height = key === 'clue'
-        ? (mobilePortrait ? 8 : 11)
-        : key === 'conversation' ? (mobilePortrait ? 8.5 : 5.8)
-        : (mobilePortrait ? 10 : 17);
+        ? (mobilePortrait ? 11.5 : 11)
+        : key === 'conversation' ? (mobilePortrait ? 11 : 5.8)
+        : (mobilePortrait ? 12 : 17);
       const distance = key === 'clue'
-        ? (mobilePortrait ? 27 : 20)
-        : key === 'conversation' ? (mobilePortrait ? 30 : 13.5)
-        : (mobilePortrait ? 32 : 28);
+        ? (mobilePortrait ? 36 : 20)
+        : key === 'conversation' ? (mobilePortrait ? 39 : 13.5)
+        : (mobilePortrait ? 42 : 28);
       position = target.clone().add(new camera.position.constructor(0, height, distance));
     } else if (key === 'abdul') {
       target = abdul || soft || target;
-      position = target.clone().add(new camera.position.constructor(8, 4.5, 8));
+      position = target.clone().add(new camera.position.constructor(mobilePortrait ? 11 : 8, mobilePortrait ? 6 : 4.5, mobilePortrait ? 15 : 8));
     } else if (key === 'softstorm') {
       target = soft || abdul || target;
-      position = target.clone().add(new camera.position.constructor(-8, 4.5, 8));
+      position = target.clone().add(new camera.position.constructor(mobilePortrait ? -11 : -8, mobilePortrait ? 6 : 4.5, mobilePortrait ? 15 : 8));
     } else if (key === 'character') {
       target = worldPosition(speaker && getCharacter(speaker)) || hero || soft || abdul || target;
-      position = target.clone().add(new camera.position.constructor(mobilePortrait ? 5 : 4, mobilePortrait ? 5 : 3.5, mobilePortrait ? 15 : 9));
+      position = target.clone().add(new camera.position.constructor(mobilePortrait ? 7 : 4, mobilePortrait ? 6 : 3.5, mobilePortrait ? 23 : 9));
     } else {
       target = hero || soft || abdul || target;
       position = target.clone().add(new camera.position.constructor(7, 4, 8));
@@ -301,8 +301,14 @@ export function createStorySceneDirector({ camera, player, getCharacter, animate
         point.project(camera);
         const x = (point.x * .5 + .5) * window.innerWidth;
         const y = (-point.y * .5 + .5) * window.innerHeight - 10;
-        speechBubble.style.left = Math.max(18, Math.min(window.innerWidth - 18, x)) + 'px';
-        speechBubble.style.top = Math.max(92, Math.min(window.innerHeight - 145, y)) + 'px';
+        const bubbleWidth = speechBubble.offsetWidth || 280;
+        const bubbleHeight = speechBubble.offsetHeight || 90;
+        const halfBubble = bubbleWidth / 2;
+        const dialogueTop = overlay.querySelector('.comic-dialogue').getBoundingClientRect().top;
+        const minAnchorY = bubbleHeight + 12;
+        const maxAnchorY = Math.max(minAnchorY, Math.min(dialogueTop - 12, window.innerHeight - 12));
+        speechBubble.style.left = Math.max(halfBubble + 12, Math.min(window.innerWidth - halfBubble - 12, x)) + 'px';
+        speechBubble.style.top = Math.max(minAnchorY, Math.min(maxAnchorY, y)) + 'px';
       }
     }
     if (genericScene) {
