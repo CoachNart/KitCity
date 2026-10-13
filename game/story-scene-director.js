@@ -1,15 +1,15 @@
 const OPENING_LINES = [
   { speaker: 'Softstorm', text: "I'm telling you, the transfer went through. He sent me the screenshot twice." },
-  { speaker: 'IamAbdul', text: "Screenshot no be money, abeg. Has the shop actually received it?" },
-  { speaker: 'Softstorm', text: "The buyer is already coming for the laptop. If this payment is fake, na me go explain." },
-  { speaker: 'IamAbdul', text: "Then hold the laptop. Get the transaction details and check the recipient address. No guessing." },
-  { speaker: 'PLAYER', text: "Abeg, wetin una dey argue about?" },
-  { speaker: 'Softstorm', text: "Buyer says he paid 120 USDC. All we have is a screenshot." },
-  { speaker: 'PLAYER', text: "Wait, so una never see the money, but he wants to collect the laptop?" },
-  { speaker: 'IamAbdul', text: "Exactly. I'll head back to my office across the block. Come find me there, and I'll show you how to check it." },
-  { speaker: 'Softstorm', text: "Help us first. If you're right, breakfast is on me." },
-  { speaker: 'PLAYER', text: "Now you're speaking my language." },
-];;
+  { speaker: 'IamAbdul', text: "A screenshot shows what someone wants us to believe. It doesn't show that the shop received the money." },
+  { speaker: 'Softstorm', text: "The buyer says he paid 120 USDC for this laptop. USDC is a digital token meant to track the value of one US dollar, but I can't find the payment in our records." },
+  { speaker: 'IamAbdul', text: "Then we don't guess. Every transfer has details we can check: which network it used, where it was sent, and whether it reached the right address." },
+  { speaker: 'PLAYER', text: "Abeg, wetin una dey argue about? Why can't the screenshot settle it?" },
+  { speaker: 'Softstorm', text: "Because a screenshot can be edited, and even a real transfer can go to the wrong address. The buyer may have paid someone—just not the shop." },
+  { speaker: 'PLAYER', text: "So first we check whether a transfer happened, then check who received it?" },
+  { speaker: 'IamAbdul', text: "Exactly. I'll show you how to read the transaction record. You don't need to know all the jargon yet; just follow the evidence one step at a time." },
+  { speaker: 'Softstorm', text: "Help us before the buyer carries the laptop away. If the evidence says we're wrong, I'll own that too." },
+  { speaker: 'PLAYER', text: "Deal. Let's check the record before we blame anybody." },
+];;;
 
 function escapeHtml(value) {
   return String(value == null ? '' : value).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
