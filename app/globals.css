@@ -672,3 +672,8 @@ html.kitcity-story-active #modal{
   .comic-speech-speaker{font-size:8px}
   .comic-speech-text{font-size:12px;line-height:1.32}
 }
+
+
+.comic-scene.has-bubble .comic-scene-frame{inset:7% 8% 7%}
+@media(max-width:699px){.comic-scene.has-bubble .comic-scene-frame{inset:7% 4% 7%}}
+@media(max-height:560px){.comic-scene.has-bubble .comic-scene-frame{inset:7% 5% 7%}}
