@@ -1,8 +1,8 @@
 /**
  * Canonical narrative registry for KitCity's connected story missions.
  * The runtime consumes stable mission IDs, character order and objective data.
- * All 31 story missions are wired to the game loop; the 36-state route is a
- * coverage plan, and not every state yet has its own dedicated mission or world.
+ * Only implemented story locations are registered here. New state stops are
+ * added when their missions and playable city integrations are ready.
  */
 export const CHARACTER_ORDER = [
   "Softstorm",
@@ -55,45 +55,6 @@ export const CHARACTER_ORDER = [
   "Mike",
   "Gbemi",
   "FemiY"
-];
-
-export const NIGERIAN_STATES = [
-  "Abia",
-  "Adamawa",
-  "Akwa Ibom",
-  "Anambra",
-  "Bauchi",
-  "Bayelsa",
-  "Benue",
-  "Borno",
-  "Cross River",
-  "Delta",
-  "Ebonyi",
-  "Edo",
-  "Ekiti",
-  "Enugu",
-  "Gombe",
-  "Imo",
-  "Jigawa",
-  "Kaduna",
-  "Kano",
-  "Katsina",
-  "Kebbi",
-  "Kogi",
-  "Kwara",
-  "Lagos",
-  "Nasarawa",
-  "Niger",
-  "Ogun",
-  "Ondo",
-  "Osun",
-  "Oyo",
-  "Plateau",
-  "Rivers",
-  "Sokoto",
-  "Taraba",
-  "Yobe",
-  "Zamfara"
 ];
 
 export const CHAPTERS = [
@@ -2609,25 +2570,6 @@ export const MISSIONS = RAW_MISSIONS.map((mission) => Object.freeze({
 }));
 
 
-export const STORY_ROUTE_ORDER = [
-  "Lagos","Ogun","Oyo","Osun","Ekiti","Ondo","Delta","Bayelsa","Rivers",
-  "Akwa Ibom","Anambra","Enugu","Ebonyi","Abia","Imo","Plateau","Nasarawa",
-  "Benue","Kano","Jigawa","Bauchi","Gombe","Yobe","Borno","Adamawa","Taraba",
-  "Kaduna","Katsina","Zamfara","Sokoto","Kebbi","Edo","Cross River","Niger",
-  "Kogi","Kwara"
-];
-
-export const STATE_ROUTE = STORY_ROUTE_ORDER.map((state, index) => {
-  const mission = MISSIONS.find((item) => item.state === state);
-  return Object.freeze({
-    state,
-    routeIndex: index + 1,
-    routeStatus: mission ? "mission-stop" : "planned-story-stop",
-    missionId: mission ? mission.id : null,
-    note: mission ? "Main-story mission stop." : "Planned narrative stop to be connected to the journey; no FCT detour."
-  });
-});
-
 export const FIRST_ENCOUNTER_ORDER = Object.freeze((() => {
   const seen = new Set();
   const ordered = [];
@@ -2658,8 +2600,24 @@ export function validateChronicles() {
   const names = new Set(CHARACTER_ORDER);
   if (names.size !== 50) errors.push("Expected 50 unique supplied character names.");
   if (FIRST_ENCOUNTER_ORDER.length !== CHARACTER_ORDER.length || FIRST_ENCOUNTER_ORDER.some((name, index) => name !== CHARACTER_ORDER[index])) errors.push("First story encounters must follow the supplied 50-character order.");
-  if (NIGERIAN_STATES.length !== 36 || NIGERIAN_STATES.includes("Federal Capital Territory") || STORY_ROUTE_ORDER.length !== 36 || new Set(STORY_ROUTE_ORDER).size !== 36 || STORY_ROUTE_ORDER.some((state) => !NIGERIAN_STATES.includes(state))) errors.push("State route must cover all 36 states exactly once and exclude FCT.");
-  const covered = new Set(MISSIONS.map((mission) => mission.state));
-  const plannedStateCoverage = STATE_ROUTE.map((stop) => ({ ...stop, coveredByMission: covered.has(stop.state) }));
-  return { valid: errors.length === 0, errors, missionCount: MISSIONS.length, characterCount: CHARACTER_ORDER.length, plannedStateCoverage };
+  const chapterById = new Map(CHAPTERS.map((chapter) => [chapter.id, chapter]));
+  for (const mission of MISSIONS) {
+    const chapter = chapterById.get(mission.chapterId);
+    if (!chapter) errors.push("Unknown chapter " + mission.chapterId + " for " + mission.id);
+    else if (chapter.state !== mission.state) errors.push("Mission/chapter state mismatch: " + mission.id);
+  }
+  const chapterMissionIds = new Set(CHAPTERS.flatMap((chapter) => chapter.missionIds));
+  for (const chapter of CHAPTERS) {
+    if (!chapter.missionIds.length) errors.push("Chapter has no missions: " + chapter.id);
+    for (const missionId of chapter.missionIds) {
+      if (!MISSIONS.some((mission) => mission.id === missionId && mission.chapterId === chapter.id)) {
+        errors.push("Chapter references an unregistered or mismatched mission: " + chapter.id + "/" + missionId);
+      }
+    }
+  }
+  for (const mission of MISSIONS) {
+    if (!chapterMissionIds.has(mission.id)) errors.push("Mission is not assigned to a chapter: " + mission.id);
+  }
+  const implementedStoryStates = [...new Set(MISSIONS.map((mission) => mission.state))];
+  return { valid: errors.length === 0, errors, missionCount: MISSIONS.length, characterCount: CHARACTER_ORDER.length, implementedStoryStates };
 }
