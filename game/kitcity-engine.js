@@ -2258,10 +2258,48 @@ function buildCity(key){
         const bx=cx+ox,bz=cz+oz;
         placeBuilding(bx,bz,rr(18,25),rr(11,17),pickStyle(C),pk(C.paint),cx,cz,ox,oz);
       }
+    } else if(C.form==='hillside'||C.form==='green-hills'||C.form==='rock-city'){
+      // Hillside and rocky cities use staggered terraces with open slope breaks,
+      // rather than a flat four-building stamp.
+      for(let q=0;q<4;q++){
+        const ox=-19+q*12,oz=(q%2===0?-15:12)+rr(-2,2);
+        if((i+j+q)%4===0)continue;
+        placeBuilding(cx+ox,cz+oz,rr(8,13),rr(10,17),pickStyle(C),pk(C.paint),cx,cz,ox,oz);
+      }
+    } else if(C.form==='rail-crossroads'){
+      // Long workshops and depots run parallel to the rail/industrial axis.
+      for(let q=0;q<3;q++){
+        const ox=-18+q*18,oz=(q%2===0?-12:13);
+        placeBuilding(cx+ox,cz+oz,rr(13,19),rr(7,10),pickStyle(C),pk(C.paint),cx,cz,ox,oz);
+      }
+      if((i+j)%2===0)placeBuilding(cx+rr(-5,5),cz+rr(-3,3),rr(8,12),rr(8,12),pickStyle(C),pk(C.paint),cx,cz,0,0);
+    } else if(C.form==='heritage'||C.form==='colonial-coast'){
+      // Perimeter buildings leave a recognisable shared courtyard in each block.
+      for(const [ox,oz,w,d] of [[-17,-17,15,9],[17,-17,15,9],[-17,17,15,9],[17,17,15,9]]){
+        placeBuilding(cx+ox+rr(-2,2),cz+oz+rr(-2,2),w,d,pickStyle(C),pk(C.paint),cx,cz,ox,oz);
+      }
+    } else if(C.form==='creek-town'||C.form==='river-town'){
+      // River and creek settlements favour narrow linear footprints and gaps.
+      for(let q=0;q<5;q++){
+        const ox=-20+q*10,oz=(q%2===0?-13:13)+rr(-2,2);
+        placeBuilding(cx+ox,cz+oz,rr(6,9),rr(11,16),pickStyle(C),pk(C.paint),cx,cz,ox,oz);
+      }
+    } else if(C.form==='southeast-market'||C.form==='southwest-sprawl'){
+      // Dense shopfront strips and irregular compound additions break up the grid.
+      for(let q=0;q<5;q++){
+        const ox=-21+q*10.5,oz=(q%2===0?-15:14)+rr(-3,3);
+        const w=C.form==='southeast-market'?rr(6,9):rr(8,13),d=rr(8,13);
+        placeBuilding(cx+ox,cz+oz,w,d,pickStyle(C),pk(C.paint),cx,cz,ox,oz);
+      }
+      if(C.form==='southwest-sprawl'&&(i*j)%2===0){
+        const ox=rr(-7,7),oz=rr(-5,5);
+        placeBuilding(cx+ox,cz+oz,rr(7,11),rr(7,12),pickStyle(C),pk(C.paint),cx,cz,ox,oz);
+      }
     } else {
-      for(const ox of [-13,13])for(const oz of [-13,13]){
-        const bx=cx+ox+rr(-4,4),bz=cz+oz+rr(-4,4);
-        placeBuilding(bx,bz,rr(10,20),rr(10,20),pickStyle(C),pk(C.paint),cx,cz,ox,oz);
+      // Regional towns mix modest footprints with a little variation in spacing.
+      for(const [ox,oz] of [[-15,-14],[15,-15],[-14,15],[15,14]]){
+        const jx=rr(-3,3),jz=rr(-3,3);
+        placeBuilding(cx+ox+jx,cz+oz+jz,rr(9,17),rr(9,17),pickStyle(C),pk(C.paint),cx,cz,ox+jx,oz+jz);
       }
     }
     // Roadside/block-edge tree placement removed: keep streets and road verges clear.
