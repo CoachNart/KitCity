@@ -683,6 +683,19 @@ function nearLocalStreet(C,x,z,margin=0){
   }
   return false;
 }
+/* Pick a genuinely off-road evidence location after the active city's roads exist.
+   Arterials sit on the R grid; local streets are checked against their real segments. */
+function resolveRecordCenterSpot(){
+  const base={x:140,z:190};
+  let best=null,bestScore=Infinity;
+  for(let x=90;x<=220;x+=5)for(let z=90;z<=230;z+=5){
+    const arterialGap=Math.min(Math.abs(x-Math.round(x/R)*R),Math.abs(z-Math.round(z/R)*R));
+    if(arterialGap<14||nearLocalStreet(CITIES[curCity],x,z,7))continue;
+    const score=Math.hypot(x-base.x,z-base.z);
+    if(score<bestScore){best={x,z,f:-1};bestScore=score;}
+  }
+  return best||{x:155,z:185,f:-1};
+}
 
 const CITIES={
   lagos:{name:'Lagos',tag:'The hustle capital',lon:3.4,lat:6.5,seed:11,sky:0xF2B87A,fog:[95,250],ground:'#2B2C31',slab:'#B9B3A6',
@@ -4558,7 +4571,7 @@ function loadStep(){
       : resolveMissionSpot(entry.spot);
     if(assignedSpot) placeNPC(entry.npc,assignedSpot);
   });
-  const e=st.kind==='clue'?placeStoryClue(st,resolveMissionSpot(st.spot)):placeNPC(st.npc,resolveMissionSpot(st.spot)); e.talk=()=>st.run(); e.active=()=>true; ents.push(e); goal=e;
+  const e=st.kind==='clue'?placeStoryClue(st,resolveRecordCenterSpot()):placeNPC(st.npc,resolveMissionSpot(st.spot)); e.talk=()=>st.run(); e.active=()=>true; ents.push(e); goal=e;
   for(const ex of (m.extras||[])){
     if(G.used[ex.id]) continue;
     const e2=placeNPC(ex.npc,ex.spot); e2.ex=ex; e2.talk=()=>ex.run(e2); e2.active=()=>!G.used[ex.id]; ents.push(e2);
@@ -4609,8 +4622,8 @@ function startMission(id){
   },60);
 }
 function briefing(){
-  const m=G.m,C=CITIES[m.city];
-  openSheet('<section class="mission-brief-card"><div class="mission-brief-top"><span>MISSION BRIEFING</span><span>\u25C6 '+String(m.n).padStart(2,'0')+'</span></div><div class="who mission-brief-who"><span class="av" style="background:'+INK+';color:'+BRAND+'">'+m.n+'</span><div><b>'+personalize('Mission '+m.n+': '+m.title,null)+'</b><small>'+C.name+', '+(m.storyState?m.storyState+' · ':'')+C.tag+'</small></div></div><div class="mission-brief-goal"><span>THE OBJECTIVE</span><p>'+personalize(m.goal,null)+'</p></div><div class="mission-brief-steps"><div class="mission-brief-section-title">YOUR CHECKLIST <span>'+m.steps.length+' STEPS</span></div><ul class="pts">'+m.steps.map((s,i)=>'<li><span class="mission-step-num">'+String(i+1).padStart(2,'0')+'</span><span>'+personalize(tr(s.label),m,s.npc)+'</span></li>').join('')+'</ul></div><div class="mission-brief-tip"><span>FIELD TIP</span><p>'+(m.n===1?'Move with the left stick or WASD. Hold Run or Shift to run. Tap Talk or press E to speak. Follow the arrow.':'Follow the arrow to the next person. Watch for traffic.')+'</p></div></section>',
+  const m=G.m,C=CITIES[m.city],firstStep=m.steps[0];
+  openSheet('<section class="mission-brief-card mission-brief-compact"><div class="mission-brief-top"><span>MISSION '+String(m.n).padStart(2,'0')+'</span><span>'+C.name+'</span></div><h3>'+personalize(m.title,null)+'</h3><p class="mission-brief-summary">'+personalize(m.goal,null)+'</p><div class="mission-brief-next"><small>FIRST MOVE</small><b>'+personalize(tr(firstStep.label),m,firstStep.npc)+'</b></div><p class="mission-brief-tip">'+(m.n===1?'Follow the arrow. Talk with the person you find.':'Follow the arrow and watch for traffic.')+'</p></section>',
     [{t:'Start mission',f:closeSheet},{t:'Back to hub',g:1,f:exitToHub}]);
 }
 function finishStep(){
