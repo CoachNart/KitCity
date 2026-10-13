@@ -2436,7 +2436,7 @@ const RAW_MISSIONS = [
       "Christol",
       "Craftore"
     ],
-    "narrativePurpose": "Three KitCity teams have one afternoon to investigate a suspicious payment flow, protect a newcomer and repair a broken hand-off between two tools. Move between the workshop, field-test square and review chamber. Use the evidence, test the fix and leave a record another person can verify.",
+    "narrativePurpose": "Three teams in KitCity have one afternoon to investigate a suspicious payment flow, protect a newcomer and repair a broken hand-off between two tools. Move between the workshop, field-test square and review chamber. Use the evidence, test the fix and leave a record another person can verify.",
     "learningObjectives": [
       "Combine verification, wallet safety and product testing in one end-to-end task",
       "Coordinate responsibilities while keeping each contribution reviewable",
