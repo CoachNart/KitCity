@@ -596,7 +596,6 @@ const LOCALIZED_UI={
     'About the streets':'Banyere okporo ụzọ','Reset progress':'Malite ọganihu ọzọ','Reset':'Malite ọzọ','Yes, erase everything':'Ee, hichapụ ihe niile',
     'No wallet yet':'Ị nwebeghị akpa ego','Here':'Ebe a','Talk':'Kwuo okwu','Run':'Gbaa ọsọ','Loading':'Na-ebu',
     'Choose language':'Họrọ asụsụ','Wallet':'Akpa ego','View certificate':'Lee asambodo','Share on WhatsApp':'Kesaa na WhatsApp',
-    'No wallet yet. Finish mission 1 to open one.':'Ị nwebeghị akpa ego. Mezue ọrụ nke mbụ iji mepee ya.',
     'Mission badges':'Akara ọrụ','Journey progress':'Ọganihu njem','Missions complete':'Ọrụ emechara','City journeys complete':'Njem obodo emechara',
     'NOT EARNED YET':'Enwetabeghị','ACHIEVEMENT EARNED':'Enwetara ihe nrite','Learn web3 before it costs you.':'Mụta Web3 tupu ọ kpatara gị nsogbu.',
     'Every city teaches you something new.':'Obodo ọ bụla na-akụziri gị ihe ọhụrụ.','A T3Kit game.':'Egwuregwu T3Kit.','Easy access to everything in web3.':'Ụzọ dị mfe ịbanye n’ụwa Web3.'
@@ -613,7 +612,6 @@ const LOCALIZED_UI={
     'About the streets':'Game da tituna','Reset progress':'Sake farawa','Reset':'Sake saita','Yes, erase everything':'Eh, goge komai',
     'No wallet yet':'Ba ka da walat tukuna','Here':'Nan','Talk':'Yi magana','Run':'Gudu','Loading':'Ana lodawa',
     'Choose language':'Zaɓi harshe','Wallet':'Walat','View certificate':'Duba takardar shaida','Share on WhatsApp':'Raba a WhatsApp',
-    'No wallet yet. Finish mission 1 to open one.':'Ba ka da walat tukuna. Kammala manufa ta farko don buɗe shi.',
     'Mission badges':'Alamomin manufa','Journey progress':'Ci gaban tafiya','Missions complete':'Manufofin da aka kammala','City journeys complete':'Tafiyar biranen da aka kammala',
     'NOT EARNED YET':'Ba a samu ba tukuna','ACHIEVEMENT EARNED':'An samu nasara','Learn web3 before it costs you.':'Koyi Web3 kafin ya jawo maka asara.',
     'Every city teaches you something new.':'Kowane birni yana koya maka sabon abu.','A T3Kit game.':'Wasan T3Kit.','Easy access to everything in web3.':'Sauƙin shiga duniyar Web3.'
@@ -3212,9 +3210,8 @@ const STORY_NPCS=Object.create(null);
 const MISSIONS=[];
 const MBY=Object.create(null);
 /* TEST ONLY: set false before any production release to restore sequential mission locks. */
-const TEST_UNLOCK_ALL_MISSIONS = false;
 /* Progress is tracked by completed missions and the in-game wallet balance. */
-const isUnlocked=m=>{ if(TEST_UNLOCK_ALL_MISSIONS) return true; const k=MISSIONS.indexOf(m); return k===0||!!P.done[MISSIONS[k-1].id]; };
+const isUnlocked=m=>{ const k=MISSIONS.indexOf(m); return k===0||!!P.done[MISSIONS[k-1].id]; };
 
 
 const cityOrder=[...new Set(MISSIONS.map(m=>m.city))];
@@ -3484,7 +3481,7 @@ function mapSVG(){
 }
 
 function renderHub(){
-  $('#hubTop').innerHTML=tx('<span class="wm"><img class="header-logo" src="https://i.postimg.cc/qqbdTXky/file-00000000958881f4a776df689a235dec.png" alt="KitCity" /></span><div class="lvl"><b>Wallet</b><div class="balance-line"><strong>'+P.usdc.toFixed(2)+' USDC</strong><small>'+MISSIONS.filter(m=>P.done[m.id]).length+' missions completed</small></div>'+(TEST_UNLOCK_ALL_MISSIONS?'<small style="display:inline-block;margin-top:6px;color:#10c8dc;font-weight:800;letter-spacing:.08em">TEST MODE · ALL MISSIONS UNLOCKED</small>':'')+'</div>');
+  $('#hubTop').innerHTML=tx('<span class="wm"><img class="header-logo" src="https://i.postimg.cc/qqbdTXky/file-00000000958881f4a776df689a235dec.png" alt="KitCity" /></span><div class="lvl"><b>Wallet</b><div class="balance-line"><strong>'+P.usdc.toFixed(2)+' USDC</strong><small>Storyline not published</small></div>'+(TEST_UNLOCK_ALL_MISSIONS?'<small style="display:inline-block;margin-top:6px;color:#10c8dc;font-weight:800;letter-spacing:.08em">TEST MODE · ALL MISSIONS UNLOCKED</small>':'')+'</div>');
   document.querySelectorAll('#nav [data-v="kitlab"]').forEach(b=>b.remove());
   if(hubTab==='kitlab'||hubTab==='cityhub') hubTab='missions';
   document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===hubTab));
@@ -3501,7 +3498,7 @@ function renderHub(){
     h+=tg('music','Music','City-based Nigerian music from YouTube. Needs internet.')+'<div class="card"><div class="ch"><div><b>Playlist</b><small>Paste any public YouTube playlist link to use your own songs.</small></div></div><input id="plIn" type="url" inputmode="url" placeholder="https://www.youtube.com/playlist?list=..." value="'+(P.pl||'').replace(/"/g,'&quot;')+'" style="width:100%;margin-top:10px;padding:11px;border-radius:6px;border:2px solid rgba(255,255,255,.35);background:#1B1C20;color:#fff;font:14px system-ui"><div class="row"><button class="btn brand" data-a="plset" type="button">Use playlist</button><button class="btn line" data-a="plnext" type="button">Skip song</button><button class="btn line" data-a="pldef" type="button">Default</button></div></div>'+tg('sfx','Sound effects','Footsteps, chimes and voices.');
     h+='<div class="card"><div class="ch"><div><b>How to play</b><small>Move with the left stick or WASD. Hold Run or Shift to run. Tap Talk or press E near a glowing person. The arrow points to your goal. Avoid traffic.</small></div></div></div>';
     h+='<div class="card"><div class="ch"><div><b>About the streets</b><small>Street and district names are inspired by real places in each city. The layout is a stylised grid, not a survey map.</small></div></div></div>';
-    h+='<div class="card"><div class="ch"><div><b>Reset progress</b><small>Erases badges, mission progress and your wallet on this device.</small></div></div><div class="cf"><span>'+(resetArm?'Tap again to confirm':'')+'</span><button class="btn line" data-a="reset" type="button">'+(resetArm?'Yes, erase everything':'Reset')+'</button></div></div>';
+    h+='<div class="card"><div class="ch"><div><b>Reset progress</b><small>Erases saved game data and your wallet on this device.</small></div></div><div class="cf"><span>'+(resetArm?'Tap again to confirm':'')+'</span><button class="btn line" data-a="reset" type="button">'+(resetArm?'Yes, erase everything':'Reset')+'</button></div></div>';
     h+='';
   }
   $('#hubBody').innerHTML=tx(h);
