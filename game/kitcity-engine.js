@@ -4073,7 +4073,7 @@ const cityMissions=city=>{
   for(const m of MISSIONS){
     if(m.city!==city||seenIds.has(m.id)) continue;
     const key=String(m.title||'').normalize('NFKC').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
-    const contentKey=key+'|'+String(m.goal||'').normalize('NFKC').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
+    const contentKey=key;
     if(seenContent.has(contentKey)) continue;
     seenIds.add(m.id); seenContent.add(contentKey); out.push(m);
   }
@@ -4318,7 +4318,7 @@ function renderHub(){
       const mission=active.find(m=>String(m.id)===id);
       const title=mission?String(m.title||'').normalize('NFKC').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim():'';
       const goal=mission?String(m.goal||'').normalize('NFKC').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim():'';
-      const contentKey=title+'|'+goal;
+      const contentKey=title;
       if(!activeIds.has(id)||card.dataset.city!==hubCity||seenIds.has(id)||seenContent.has(contentKey)){
         card.remove(); return;
       }
