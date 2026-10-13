@@ -821,3 +821,51 @@ html.kitcity-story-active #modal{
 .comic-scene.has-dialogue .comic-speech-bubble:after{
   border:0;
 }
+
+
+/* Empty state for cities outside the active Lost Value story arc. */
+.current-missions-empty{
+  position:relative;
+  overflow:hidden;
+  margin:18px 0 24px;
+  padding:24px 22px;
+  border:1px solid rgba(0,229,255,.24);
+  border-radius:20px;
+  background:
+    radial-gradient(ellipse at 100% 0%,rgba(0,229,255,.12),transparent 48%),
+    linear-gradient(145deg,rgba(17,29,40,.98),rgba(8,16,24,.98));
+  box-shadow:0 18px 44px rgba(0,0,0,.22),inset 0 1px 0 rgba(255,255,255,.035);
+}
+.current-missions-empty:before{
+  content:"";
+  position:absolute;
+  left:0;top:18px;bottom:18px;
+  width:3px;border-radius:0 4px 4px 0;
+  background:linear-gradient(180deg,#00e5ff,#167eae);
+}
+.current-missions-kicker{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  color:#67eafa;
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:.18em;
+}
+.current-missions-empty h3{
+  margin:12px 0 8px;
+  color:#f5fbff;
+  font-size:clamp(19px,4vw,25px);
+  line-height:1.15;
+  letter-spacing:-.035em;
+}
+.current-missions-empty p{
+  max-width:42ch;
+  margin:0;
+  color:#aabac7;
+  font-size:13px;
+  line-height:1.65;
+}
+@media(max-width:380px){
+  .current-missions-empty{padding:20px 17px;border-radius:16px}
+}
