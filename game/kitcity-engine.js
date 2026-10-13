@@ -611,8 +611,8 @@ const SPOTS={
   a:{x:10,z:-30,f:-1}, b:{x:-10,z:-105,f:1}, c:{x:80,z:-35,f:-1}, d:{x:60,z:-105,f:1},
   e:{x:-80,z:-35,f:1}, f:{x:-60,z:-105,f:-1}, g:{x:10,z:-175,f:-1}, h:{x:-10,z:-175,f:1},
   i:{x:150,z:-35,f:-1}, j:{x:130,z:-175,f:1}, k:{x:-150,z:-35,f:1}, l:{x:-130,z:-175,f:-1},
-  m:{x:80,z:35,f:-1}, n:{x:-80,z:105,f:1}, o:{x:10,z:175,f:-1}, story:{x:24,z:-32,f:1}, x1:{x:60,z:-105,f:1},
-  lvA:{x:108,z:-115,f:-1}, lvB:{x:120,z:-115,f:1}, lvC:{x:108,z:-128,f:-1}, lvD:{x:120,z:-128,f:1}, lvE:{x:260,z:-260,f:-1}, lvF:{x:132,z:-112,f:1}, lvG:{x:132,z:-125,f:-1}
+  m:{x:80,z:35,f:-1}, n:{x:-80,z:105,f:1}, o:{x:10,z:175,f:-1}, story:{x:77,z:-100,f:1}, x1:{x:60,z:-105,f:1},
+  lvA:{x:108,z:-115,f:-1}, lvB:{x:120,z:-115,f:1}, lvC:{x:108,z:-128,f:-1}, lvD:{x:120,z:-128,f:1}, lvE:{x:175,z:-175,f:-1}, lvF:{x:132,z:-112,f:1}, lvG:{x:132,z:-125,f:-1}
 };
 const special=Object.keys(SPOTS).map(k=>SPOTS[k]).concat([SPAWN]);
 const nearSpecial=(x,z,d)=>special.some(s=>Math.hypot(s.x-x,s.z-z)<d);
@@ -2113,13 +2113,13 @@ scene.add(storyCastGroup);
 const storySoftstorm=addNpcHighlight(buildPerson(LK.softstorm));
 storySoftstorm.userData.storyCharacter='Softstorm';
 storySoftstorm.userData.storyRole='The one with the card';
-storySoftstorm.position.set(9.1,.05,-30);
+storySoftstorm.position.set(75,.05,-100);
 storySoftstorm.rotation.y=Math.PI/2;
 storyCastGroup.add(storySoftstorm);
 const storyAbdul=addNpcHighlight(buildPerson(LK.abdul));
 storyAbdul.userData.storyCharacter='IamAbdul';
 storyAbdul.userData.storyRole='The one who heard it first';
-storyAbdul.position.set(12.9,.05,-30);
+storyAbdul.position.set(79,.05,-100);
 storyAbdul.rotation.y=-Math.PI/2;
 storyCastGroup.add(storyAbdul);
 storyCastGroup.visible=false;
@@ -3956,6 +3956,19 @@ for(const mission of MISSIONS){
 /* Assign the supplied community names across mission NPCs in city progression order.
    Keep Laloba in Kano; use regional names for every NPC after the supplied list. */
 const orderedNPCObjects=allNPCObjects.slice();
+/* Renaming an NPC must also update its visual profile. Otherwise a male name can
+   inherit the female model (or vice versa) from the unrelated NPC it replaced. */
+const COMMUNITY_LOOKS_BY_NAME={
+  'softstorm':LK.softstorm,'iamabdul':LK.abdul,'joseph':LK.josephNnadi,
+  'larai':LK.larai,'unique':LK.unique,'smrt huntr':LK.smrtHuntr,
+  'goodness':LK.goodness,'semi':LK.semi,'blockqueen':LK.blockqueen,
+  'christol':LK.christol,'laloba':LK.laloba,'bigsam':LK.bigSam,
+  'lunax':LK.lunaX,'oxnight':LK.oxnight,'moon':LK.moon,
+  'the cryptonian':LK.cryptonian,'joseph nnadi':LK.josephNnadi,
+  'the don':LK.theDon,'praise':LK.praise,'toza':LK.toza,
+  'craftore':LK.craftore,'kodavic':LK.kodavic,'cybersage':LK.cybersage,
+  'reina':LK.reina,'cclya':LK.cclya,'leemah':LK.leemah,'kenny':LK.kenny
+};
 for(const npc of orderedNPCObjects) if(!npc.originalName) npc.originalName=npc.name;
 let priorityNameIndex=0;
 const usedNPCNameKeys=new Set();
@@ -3964,6 +3977,8 @@ for(const npc of orderedNPCObjects){
   if(priorityNameIndex>=PRIORITY_COMMUNITY_NAMES.length) break;
   const nextName=PRIORITY_COMMUNITY_NAMES[priorityNameIndex++];
   npc.name=nextName;
+  const canonicalLook=COMMUNITY_LOOKS_BY_NAME[nextName.trim().toLowerCase()];
+  if(canonicalLook) npc.look=canonicalLook;
   priorityAssignedNPCs.add(npc);
   usedNPCNameKeys.add(nextName.toLowerCase());
 }
@@ -4152,15 +4167,35 @@ function startMission(id){
     S.phase='play'; closeSheet(); Snd.setMode('play'); lastLoc=''; resetPlayer(); loadStep();
     $('#loading').classList.add('hidden');
     if(m.id==='m0'){
-      storyCastGroup.visible=true; storyDirector.playOpening(()=>{
-        storyCastGroup.visible=false; P.storyPrologueSeen=true; P.done.m0=true;
-        if(G) G.used['iamabdul-story']=true;
-        save(); updateHUD();
-        openSheet('<section class="lost-value-finale"><p>MISSION UNLOCKED</p><h3>THE FIRST PROMISE</h3><p>Lagos State</p></section>',[
-          {t:'Start The First Promise',f:()=>startMission('lost-value-01')},
-          {t:'Back to hub',g:1,f:exitToHub}
-        ]);
-      });
+      // The prologue is a real walk-up encounter, not a cutscene that teleports
+      // the player into a scene beside spawn. Keep its destination inside the
+      // playable city bounds so the compass can guide the player there.
+      clearGroup(missionGroup); colliders.length=cityCols; smoke=[]; ents=[];
+      storySoftstorm.position.set(75,.05,-100);
+      storyAbdul.position.set(79,.05,-100);
+      storySoftstorm.rotation.y=Math.PI/2;
+      storyAbdul.rotation.y=-Math.PI/2;
+      storyCastGroup.visible=true;
+      const openingGoal={
+        x:77,z:-100,r:8,hidden:false,
+        active:()=>!!G&&!G.openingTriggered,
+        talk:()=>{
+          if(!G||G.openingTriggered) return;
+          G.openingTriggered=true;
+          storyDirector.playOpening(()=>{
+            storyCastGroup.visible=false;
+            P.storyPrologueSeen=true; P.done.m0=true;
+            if(G) G.used['iamabdul-story']=true;
+            goal=null;
+            save(); updateHUD();
+            openSheet('<section class="lost-value-finale"><p>MISSION UNLOCKED</p><h3>THE FIRST PROMISE</h3><p>Lagos State</p></section>',[
+              {t:'Start The First Promise',f:()=>startMission('lost-value-01')},
+              {t:'Back to hub',g:1,f:exitToHub}
+            ]);
+          });
+        }
+      };
+      goal=openingGoal; ents.push(openingGoal);
     }else briefing();
   },60);
 }
@@ -4318,7 +4353,7 @@ function renderHub(){
     h+=mapSVG()+'<div class="map-selected"><div><span>SELECTED CITY</span><b>'+C.name+'</b><small>'+C.tag+'</small></div><strong>'+currentCityMissions(hubCity).filter(m=>P.done[m.id]).length+' / '+currentCityMissions(hubCity).length+' missions</strong></div>';
     if(hubCity==='kitcity') h+='<section class="destination-card"><span class="destination-kicker">THE FINAL DESTINATION</span><h2>T3Kit Hub</h2><p>Every city prepared you for this. KitCity is the Web3 World: a premium campus for learning, building, verification, creators, open finance and community contribution.</p><div class="destination-pillars"><span>LEARN</span><span>BUILD</span><span>VERIFY</span><span>CONTRIBUTE</span></div></section>';
     h+='<div class="chips">'+cityOrder.map(k=>'<button class="chip'+(k===hubCity?' on':'')+'" data-a="city" data-v="'+k+'" type="button" '+(isCityUnlocked(k)?'':'disabled')+'>'+CITIES[k].name+(isCityUnlocked(k)?'':' · Locked')+'</button>').join('')+'</div>';
-    h+=currentCityMissions(hubCity).map(m=>missionCard(m)).join('');
+    h+='<section id="currentMissionCards" class="current-mission-cards">'+currentCityMissions(hubCity).map(m=>missionCard(m)).join('')+'</section>';
     if(!currentCityMissions(hubCity).length) h+='<section class="current-missions-empty"><span class="current-missions-kicker">THE LOST VALUE</span><h3>No active story mission here yet</h3><p>This city remains on the KitCity map. Its current story mission will appear here when it is part of the active arc.</p></section>';
   } else if(hubTab==='cityhub'){
     hubTab='missions';
@@ -4361,11 +4396,11 @@ function renderHub(){
     /* This tab has one allowed card type: a current Lost Value mission card.
        Remove generic/legacy cards and descriptions unconditionally so old UI cannot
        leak back in from stale markup or language re-rendering. */
-    hubBody.querySelectorAll('[data-legacy-mission],.legacy-mission-card,.old-mission-card,.mission-card-old').forEach(node=>node.remove());
+    hubBody.querySelectorAll('[data-legacy-mission],.legacy-mission-card,.old-mission-card,.mission-card-old,[data-legacy-description],.legacy-mission-description,.old-mission-description,.mission-description-old').forEach(node=>node.remove());
     hubBody.querySelectorAll('.card:not(.mission-card),article:not(.mission-card)').forEach(node=>node.remove());
     hubBody.querySelectorAll('.mission-card').forEach(card=>{
       const id=card.dataset.missionId||'';
-      if(!activeIds.has(id)||card.dataset.city!==hubCity) card.remove();
+      if(!card.closest('#currentMissionCards')||!activeIds.has(id)||card.dataset.city!==hubCity) card.remove();
     });
   }
 }
@@ -4867,7 +4902,7 @@ function update(dt,time){
     if(d<e.r&&d<best){ best=d; nearEnt=e; }
   }
   const currentStoryStep=G&&G.m&&Array.isArray(G.m.steps)?G.m.steps[G.i]:null;
-  const autoStartConversation=!!(G&&String(G.m.id||'').startsWith('lost-value-')&&currentStoryStep&&currentStoryStep.kind==='conversation'&&!S.modal);
+  const autoStartConversation=!!((G&&G.m.id==='m0'&&!G.openingTriggered)||(G&&String(G.m.id||'').startsWith('lost-value-')&&currentStoryStep&&currentStoryStep.kind==='conversation'&&!S.modal));
   talkBtn.classList.toggle('hidden',autoStartConversation||!(nearEnt&&!S.modal));
   if(autoStartConversation&&nearEnt&&nearEnt===goal) nearEnt.talk();
   const compass=$('#compass');
