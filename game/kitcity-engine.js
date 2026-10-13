@@ -4000,18 +4000,27 @@ const lostValueMissions=LOST_VALUE_STORY.map(story=>{
   const castByName=Object.fromEntries(cast.map(entry=>[entry.name,entry]));
   const splitAfter=Number.isInteger(story.splitAfter)?Math.max(0,Math.min(story.dialogue.length,story.splitAfter)):story.dialogue.length;
   const openingLines=story.dialogue.slice(0,splitAfter),closingLines=story.dialogue.slice(splitAfter);
-  const dialogueHtml=lines=>lines.map(([speaker,line])=>'<p><b>'+lostValueEscape(speaker)+'</b>: '+lostValueEscape(line)+'</p>').join('');
-  const openingHtml=dialogueHtml(openingLines),closingHtml=dialogueHtml(closingLines);
   const firstCastSpeaker=lines=>lines.map(([speaker])=>castByName[speaker]).find(Boolean);
   const openingLead=firstCastSpeaker(openingLines)||cast[0];
   const closingLead=firstCastSpeaker(closingLines)||openingLead;
-  const choiceButtons=story.choices.map(choice=>({t:choice.label,f:()=>{
+  const choiceButtons=story.choices.map(choice=>({label:choice.label,onSelect:()=>{
     if(G) G.storyChoice=choice.label;
     if(story.id==='lost-value-14') Store.set(storageKey+'_lost_value_focus',choice.label);
-    finishStep();
   }}));
-  const conversationStep=(label,html,actor,allowChoices)=>({label,spot:actor.spot,npc:actor.npc,run(){
-    talk(actor.npc,html,allowChoices&&choiceButtons.length?choiceButtons:[{t:'Continue',f:finishStep}]);
+  const conversationStep=(label,lines,actor,allowChoices)=>({label,spot:actor.spot,npc:actor.npc,run(){
+    const panels=[{
+      shot:'character',speaker:actor.name,kicker:story.state.toUpperCase()+' · THE LOST VALUE',
+      caption:story.title.toUpperCase(),next:'next'
+    }];
+    lines.forEach(([speaker,text])=>panels.push({
+      shot:speaker==='PLAYER'?'player':'character',speaker,text,next:'next'
+    }));
+    if(allowChoices&&choiceButtons.length){
+      panels.push({shot:'player',kicker:'YOUR MOVE',caption:'What do you do?',choices:choiceButtons});
+    }else{
+      panels[panels.length-1].finish=true;
+    }
+    storyDirector.playPanels(panels,finishStep);
   }});
   const clue={
     kind:'clue',label:story.task,spot:'lvE',title:story.evidenceTitle,sign:story.evidenceTitle.toUpperCase(),
@@ -4024,9 +4033,9 @@ const lostValueMissions=LOST_VALUE_STORY.map(story=>{
     id:story.id,n:story.n,city:story.city,title:story.title,goal:story.goal,
     storyState:story.state,storyValue:story.value,storyReward:story.reward,storyFinale:!!story.finale,
     cast:cast.map(({npc,spot})=>({npc,spot})),steps:[
-      conversationStep('Speak with '+openingLead.name,openingHtml,openingLead,false),
+      conversationStep('Speak with '+openingLead.name,openingLines,openingLead,false),
       clue,
-      ...(closingHtml?[conversationStep('Discuss the evidence with '+closingLead.name,closingHtml,closingLead,true)]:[])
+      ...(closingLines.length?[conversationStep('Discuss the evidence with '+closingLead.name,closingLines,closingLead,true)]:[])
     ],extras:[]
   };
 });
