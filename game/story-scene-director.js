@@ -275,7 +275,7 @@ export function createStorySceneDirector({ camera, player, getCharacter, animate
     camera.lookAt(look.x, look.y, look.z);
     const panel = activePanels[panelIndex];
     if (genericScene) {
-      const lead = panel && panel.speaker && panel.speaker !== 'PLAYER' ? getCharacter(panel.speaker) : null;
+      const lead = panel && panel.speaker ? (panel.speaker === 'PLAYER' ? player : getCharacter(panel.speaker)) : null;
       if (lead && animateCharacter) {
         animateCharacter(lead, time * 2.2, .12, -.025);
         const u = lead.userData || {};
