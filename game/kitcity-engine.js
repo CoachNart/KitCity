@@ -49,7 +49,7 @@ const DEFAULT_PLAYER={wallet:null,usdc:0,ngn:0,done:{},dodged:0,fell:0,low:false
 let activeUid=Store.get('kitcity_active_uid',null);
 let storageKey=activeUid?KEY+'_user_'+activeUid:KEY;
 const P=Object.assign({},DEFAULT_PLAYER,Store.get(storageKey,{}));
-const STORY_RESET_VERSION=2;
+const STORY_RESET_VERSION=3;
 if(Number(P.storyResetVersion||0)<STORY_RESET_VERSION){
   P.done={};P.storyProgress={};P.storyFlags={};P.storyResetVersion=STORY_RESET_VERSION;
 }
@@ -3456,9 +3456,9 @@ function renderHub(){
   document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===hubTab));
   let h='';
   if(hubTab==='missions'){
-    h+='<section class="card empty-storyline" aria-live="polite"><div class="ch"><div><b>Storyline in preparation</b><small>The mission catalogue is empty. New content will appear here when it is ready.</small></div></div></section>';
+    h+='<section class="card empty-storyline" aria-live="polite"><div class="ch"><div><b>Storyline in preparation</b><small>No story is available yet. A completely new storyline will appear here when it is ready.</small></div></div></section>';
   } else if(hubTab==='passport'){
-    h+='<div class="card empty-storyline"><div class="ch"><div><b>No mission records</b><small>Badges and journey progress will appear when a new storyline is ready.</small></div></div></div>';
+    h+='<div class="card empty-storyline"><div class="ch"><div><b>No journey records</b><small>Badges and journey progress will appear when a new storyline is ready.</small></div></div></div>';
     h+='<div class="h2">Wallet</div>'+(P.wallet?'<div class="stat"><span>Address</span><b style="font-family:ui-monospace,Menlo,monospace;font-size:13px">'+short(P.wallet)+'</b></div><div class="stat"><span>USDC</span><b>'+P.usdc.toFixed(2)+'</b></div><div class="stat"><span>Naira token</span><b>'+fmtN(P.ngn)+'</b></div>':'<p class="soft">Wallet tools will appear here when available.</p>');
   } else {
     h+='<div class="h2">Settings</div><div class="card"><div class="ch"><div><b>Language</b><small>Choose how the game talks to you.</small></div></div><div class="language-switch" role="group" aria-label="Choose language"><button class="lang-option '+(P.lang==='en'?'on':'')+'" data-a="lang" data-v="en" type="button" aria-label="English">EN</button><button class="lang-option '+(P.lang==='pcm'?'on':'')+'" data-a="lang" data-v="pcm" type="button" aria-label="Naija Pidgin">PID</button><button class="lang-option '+(P.lang==='ig'?'on':'')+'" data-a="lang" data-v="ig" type="button" aria-label="Igbo">IG</button><button class="lang-option '+(P.lang==='ha'?'on':'')+'" data-a="lang" data-v="ha" type="button" aria-label="Hausa">HA</button></div></div></div>';
