@@ -3843,6 +3843,34 @@ function chronicleChallengeStep(m,obj,index,spot){
   };
   return step;
 }
+function chronicleAuthoredStep(story,obj,index,spot){
+  const plan=(story.interactionPlan||{})[obj.id];
+  if(!plan) return chronicleChallengeStep(story,obj,index,spot);
+  const speakerIndex=Number.isInteger(plan.speaker)?plan.speaker:index%story.npcs.length;
+  const npc=STORY_NPCS[story.npcs[speakerIndex]]||STORY_NPCS[story.npcs[0]];
+  const step={kind:'challenge',id:obj.id,label:obj.label,spot,npc};
+  step.run=function(){
+    const buttons=(plan.choices||[]).map((choice,choiceIndex)=>({t:choice.text,g:!choice.correct,f:()=>{
+      if(!choice.correct){
+        G.wrong=(G.wrong||0)+1;
+        talk(npc,'<p><b>'+escapeStoryHtml(npc.name.toUpperCase())+':</b> '+escapeStoryHtml(choice.response||'That choice is not supported by the evidence in this case.')+'</p><p><b>YOU:</b> I will check the source and try again.</p>',[{t:'Review the evidence and try again',f:()=>step.run()}]);
+        return;
+      }
+      G.correct=(G.correct||0)+1;
+      const activity=chronicleActivityFor(story,obj);
+      talk(npc,'<p><b>'+escapeStoryHtml(npc.name.toUpperCase())+':</b> '+escapeStoryHtml(choice.response||plan.resolution||'That is the evidence-backed next step.')+'</p><p><b>YOU:</b> Record the reason, not just the decision.</p>',[{t:'Record the finding',f:()=>{
+        if(activity) applyChronicleActivityEffect(activity.effect,story,obj,choiceIndex,activity.o);
+        G.evidence[obj.id]=true;
+        if(plan.evidenceFlag) G.evidence[plan.evidenceFlag]=true;
+        P.storyFlags=Object.assign({},P.storyFlags||{},{['evidence_'+obj.id]:true});
+        save();
+        finishStep();
+      }}]);
+    }}));
+    talk(npc,'<p><b>'+escapeStoryHtml(npc.name.toUpperCase())+':</b> '+escapeStoryHtml(plan.prompt||obj.label)+'</p><p><b>YOU:</b> '+escapeStoryHtml(plan.playerPrompt||'I will check the evidence before deciding.')+'</p><p><b>'+escapeStoryHtml(npc.name.toUpperCase())+':</b> Choose the response that matches the records.</p>',buttons);
+  };
+  return step;
+}
 const MISSIONS=CHRONICLE_MISSIONS.map((story,index)=>{
   const city=STORY_CITY_BY_STATE[story.state];
   if(!city||!CITIES[city]) throw new Error('No playable city mapping for story state '+story.state);
@@ -4589,14 +4617,20 @@ const MISSIONS=CHRONICLE_MISSIONS.map((story,index)=>{
     steps=[];
     const objectives=story.objectives||[];
     const objectiveSpots=['ledger','screenshot','shopdesk','buyer','b','c','d','e','f','g','h','i','j','k','l','m','n','o'];
-    let personIndex=0;
-    objectives.forEach((obj,j)=>{
-      if(personIndex<people.length) steps.push(people[personIndex++]);
-      const spot=objectiveSpots[(j+index)%objectiveSpots.length];
-      const npcIndex=Math.max(0,Math.min(personIndex-1,story.npcs.length-1));
-      steps.push(j===0?chronicleChallengeStep(story,obj,npcIndex,spot):chronicleClueStep(story,obj,npcIndex,spot));
-    });
-    while(personIndex<people.length) steps.push(people[personIndex++]);
+    if(story.interactionPlan){
+      objectives.forEach((obj,j)=>{
+        steps.push(chronicleAuthoredStep(story,obj,j,objectiveSpots[j%objectiveSpots.length]));
+      });
+    }else{
+      let personIndex=0;
+      objectives.forEach((obj,j)=>{
+        if(personIndex<people.length) steps.push(people[personIndex++]);
+        const spot=objectiveSpots[(j+index)%objectiveSpots.length];
+        const npcIndex=Math.max(0,Math.min(personIndex-1,story.npcs.length-1));
+        steps.push(j===0?chronicleChallengeStep(story,obj,npcIndex,spot):chronicleClueStep(story,obj,npcIndex,spot));
+      });
+      while(personIndex<people.length) steps.push(people[personIndex++]);
+    }
     steps.push({label:'Bring the evidence together',spot:'a',npc:STORY_NPCS[story.npcs[0]],run(){
       const npc=STORY_NPCS[story.npcs[0]],partner=STORY_NPCS[story.npcs[1]]||npc;
       const ending=story.ending||('We have enough evidence to close '+story.title+'.');
