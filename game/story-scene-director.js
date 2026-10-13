@@ -210,8 +210,11 @@ export function createStorySceneDirector({ camera, player, getCharacter, getChar
         button.className = 'comic-choice';
         button.textContent = choice.label;
         button.addEventListener('click', () => {
-          if (typeof choice.onSelect === 'function') { choice.onSelect(); finish(); }
-          else show(choice.target);
+          if (typeof choice.onSelect === 'function') {
+            choice.onSelect();
+            if (panel.continueAfterChoice && panelIndex < activePanels.length - 1) show(panelIndex + 1);
+            else finish();
+          } else show(choice.target);
         });
         choicesEl.appendChild(button);
       });
