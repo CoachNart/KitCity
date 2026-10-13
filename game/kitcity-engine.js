@@ -3857,7 +3857,7 @@ function chronicleAuthoredStep(story,obj,index,spot){
         return;
       }
       G.correct=(G.correct||0)+1;
-      const activity=chronicleActivityFor(story,obj);
+      const activity=chronicleActivityFor(obj);
       talk(npc,'<p><b>'+escapeStoryHtml(npc.name.toUpperCase())+':</b> '+escapeStoryHtml(choice.response||plan.resolution||'That is the evidence-backed next step.')+'</p><p><b>YOU:</b> Record the reason, not just the decision.</p>',[{t:'Record the finding',f:()=>{
         if(activity) applyChronicleActivityEffect(activity.effect,story,obj,choiceIndex,activity.o);
         G.evidence[obj.id]=true;
