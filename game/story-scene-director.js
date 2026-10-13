@@ -24,6 +24,8 @@ function escapeHtml(value) {
 
 export function createStorySceneDirector({ camera, player, getCharacter, animateCharacter, setModal }) {
   let active = false;
+  let activePanels = OPENING_PANELS;
+  let genericScene = false;
   let panelIndex = 0;
   let cameraGoal = null;
   let startedAt = 0;
@@ -110,7 +112,7 @@ export function createStorySceneDirector({ camera, player, getCharacter, animate
     };
   }
 
-  function shotFor(key) {
+  function shotFor(key, speaker) {
     const cast = characters();
     const soft = worldPosition(cast.softstorm);
     const abdul = worldPosition(cast.abdul);
@@ -138,6 +140,9 @@ export function createStorySceneDirector({ camera, player, getCharacter, animate
     } else if (key === 'softstorm') {
       target = soft || abdul || target;
       position = target.clone().add(new camera.position.constructor(-8, 4.5, 8));
+    } else if (key === 'character') {
+      target = worldPosition(speaker && getCharacter(speaker)) || hero || soft || abdul || target;
+      position = target.clone().add(new camera.position.constructor(mobilePortrait ? 5 : 4, mobilePortrait ? 5 : 3.5, mobilePortrait ? 15 : 9));
     } else {
       target = hero || soft || abdul || target;
       position = target.clone().add(new camera.position.constructor(7, 4, 8));
@@ -146,18 +151,19 @@ export function createStorySceneDirector({ camera, player, getCharacter, animate
   }
 
   function show(index) {
-    panelIndex = Math.max(0, Math.min(index, OPENING_PANELS.length - 1));
-    const panel = OPENING_PANELS[panelIndex];
+    panelIndex = Math.max(0, Math.min(index, activePanels.length - 1));
+    const panel = activePanels[panelIndex];
     const frame = overlay.querySelector('.comic-scene-frame');
     overlay.dataset.shot = panel.shot;
     overlay.classList.toggle('has-card', !!panel.card);
     overlay.classList.toggle('has-dialogue', !!panel.speaker);
     overlay.classList.toggle('has-choices', !!panel.choices);
-    kickerEl.textContent = panel.kicker || (panel.speaker ? 'LAGOS · A CONVERSATION' : '');
+    kickerEl.textContent = panel.kicker || (panel.speaker ? (genericScene ? 'THE LOST VALUE · A CONVERSATION' : 'LAGOS · A CONVERSATION') : '');
     captionEl.textContent = panel.caption || '';
-    speakerEl.textContent = panel.speaker ? (SPEAKER_LABELS[panel.speaker] || panel.speaker.toUpperCase()) : '';
+    speakerEl.textContent = panel.speaker ? (genericScene ? panel.speaker.toUpperCase() : (SPEAKER_LABELS[panel.speaker] || panel.speaker.toUpperCase())) : '';
     dialogueEl.textContent = panel.text || '';
-    counterEl.textContent = String(panelIndex + 1).padStart(2, '0') + ' / ' + String(OPENING_PANELS.length).padStart(2, '0');
+    counterEl.textContent = String(panelIndex + 1).padStart(2, '0') + ' / ' + String(activePanels.length).padStart(2, '0');
+    overlay.querySelector('.comic-frame-stamp').textContent = genericScene ? 'THE LOST VALUE · ' + String(panelIndex + 1).padStart(2, '0') : 'ISSUE 001';
     choicesEl.innerHTML = '';
     if (panel.choices) {
       panel.choices.forEach(choice => {
@@ -165,14 +171,17 @@ export function createStorySceneDirector({ camera, player, getCharacter, animate
         button.type = 'button';
         button.className = 'comic-choice';
         button.textContent = choice.label;
-        button.addEventListener('click', () => show(choice.target));
+        button.addEventListener('click', () => {
+          if (typeof choice.onSelect === 'function') { choice.onSelect(); finish(); }
+          else show(choice.target);
+        });
         choicesEl.appendChild(button);
       });
     }
     choicesEl.classList.toggle('hidden', !panel.choices);
     nextBtn.classList.toggle('hidden', !!panel.choices);
-    nextBtn.textContent = panel.finish ? 'ENTER THE STORY →' : 'TAP TO CONTINUE →';
-    cameraGoal = shotFor(panel.shot);
+    nextBtn.textContent = panel.finish ? (genericScene ? 'RETURN TO MISSION →' : 'ENTER THE STORY →') : 'TAP TO CONTINUE →';
+    cameraGoal = shotFor(panel.shot, panel.speaker);
     startedAt = performance.now();
     // Cinematic panels advance on their own; dialogue stays up long enough to read.
     const textLength = (panel.text || panel.caption || '').length;
@@ -198,7 +207,7 @@ export function createStorySceneDirector({ camera, player, getCharacter, animate
   }
 
   function advance() {
-    const panel = OPENING_PANELS[panelIndex];
+    const panel = activePanels[panelIndex];
     if (panel && panel.finish) {
       finish();
       return;
@@ -220,10 +229,31 @@ export function createStorySceneDirector({ camera, player, getCharacter, animate
       onComplete = null;
       done();
     }
+    activePanels = OPENING_PANELS;
+    genericScene = false;
   }
 
   function playOpening(done) {
     ensureOverlay();
+    activePanels = OPENING_PANELS;
+    genericScene = false;
+    onComplete = done;
+    active = true;
+    panelIndex = 0;
+    lastAdvanceAt = 0;
+    autoAdvanceAt = 0;
+    document.body.classList.add('kitcity-story-active');
+    document.documentElement.classList.add('kitcity-story-active');
+    setModal(true);
+    overlay.classList.remove('hidden');
+    show(0);
+  }
+
+  function playPanels(panels, done) {
+    if (!Array.isArray(panels) || !panels.length) { if (done) done(); return; }
+    ensureOverlay();
+    activePanels = panels;
+    genericScene = true;
     onComplete = done;
     active = true;
     panelIndex = 0;
@@ -243,26 +273,36 @@ export function createStorySceneDirector({ camera, player, getCharacter, animate
     camera.position.lerp(cameraGoal.position, smooth);
     const look = cameraGoal.target;
     camera.lookAt(look.x, look.y, look.z);
-    const cast = characters();
-    const speaker = OPENING_PANELS[panelIndex] && OPENING_PANELS[panelIndex].speaker;
-    const lead = speaker === 'Softstorm' ? cast.softstorm : speaker === 'IamAbdul' ? cast.abdul : null;
-    const other = lead === cast.softstorm ? cast.abdul : cast.softstorm;
-    if (lead && other) {
-      const a = worldPosition(lead), b = worldPosition(other);
-      // Keep the pair facing each other and frame both, rather than cutting to an isolated NPC.
-      if (a && b) {
-        lead.rotation.y = Math.atan2(b.x - a.x, b.z - a.z);
-        other.rotation.y = Math.atan2(a.x - b.x, a.z - b.z);
+    const panel = activePanels[panelIndex];
+    if (genericScene) {
+      const lead = panel && panel.speaker && panel.speaker !== 'PLAYER' ? getCharacter(panel.speaker) : null;
+      if (lead && animateCharacter) {
+        animateCharacter(lead, time * 2.2, .12, -.025);
+        const u = lead.userData || {};
+        if (u.armR && u.armR.sh) u.armR.sh.rotation.z = Math.sin(time * 2.2) * .2 - .2;
+        if (u.head) u.head.rotation.y = Math.sin(time * 1.8) * .07;
       }
-      if (animateCharacter) {
-        animateCharacter(lead, time * 2.4, .16, -.025);
-        animateCharacter(other, time * 1.35, .045, 0);
+    } else {
+      const cast = characters();
+      const speaker = panel && panel.speaker;
+      const lead = speaker === 'Softstorm' ? cast.softstorm : speaker === 'IamAbdul' ? cast.abdul : null;
+      const other = lead === cast.softstorm ? cast.abdul : cast.softstorm;
+      if (lead && other) {
+        const a = worldPosition(lead), b = worldPosition(other);
+        if (a && b) {
+          lead.rotation.y = Math.atan2(b.x - a.x, b.z - a.z);
+          other.rotation.y = Math.atan2(a.x - b.x, a.z - b.z);
+        }
+        if (animateCharacter) {
+          animateCharacter(lead, time * 2.4, .16, -.025);
+          animateCharacter(other, time * 1.35, .045, 0);
+        }
+        const u = lead.userData || {};
+        if (u.armR && u.armR.sh) u.armR.sh.rotation.z = Math.sin(time * 2.4) * .22 - .22;
+        if (u.head) u.head.rotation.y = Math.sin(time * 1.8) * .08;
+        const listener = other.userData || {};
+        if (listener.head) listener.head.rotation.y = Math.sin(time * 1.3 + .7) * .09;
       }
-      const u = lead.userData || {};
-      if (u.armR && u.armR.sh) u.armR.sh.rotation.z = Math.sin(time * 2.4) * .22 - .22;
-      if (u.head) u.head.rotation.y = Math.sin(time * 1.8) * .08;
-      const listener = other.userData || {};
-      if (listener.head) listener.head.rotation.y = Math.sin(time * 1.3 + .7) * .09;
     }
     // Non-choice panels continue after their reading beat; choices intentionally pause.
     if (autoAdvanceAt && performance.now() >= autoAdvanceAt) {
@@ -274,5 +314,5 @@ export function createStorySceneDirector({ camera, player, getCharacter, animate
     overlay.style.setProperty('--panel-beat', String((performance.now() - startedAt) / 1000));
   }
 
-  return { playOpening, update, get active() { return active; } };
+  return { playOpening, playPanels, update, get active() { return active; } };
 }
