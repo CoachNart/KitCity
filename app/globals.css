@@ -678,3 +678,119 @@ html.kitcity-story-active #modal{
 .comic-scene.has-bubble .comic-scene-frame{inset:7% 8% 7%}
 @media(max-width:699px) and (orientation:portrait){.comic-scene.has-bubble .comic-scene-frame{inset:10% 4% 38%}}
 @media(max-height:560px){.comic-scene.has-bubble .comic-scene-frame{inset:7% 5% 7%}}
+
+
+/* Premium story cards: field briefing + record-centre evidence */
+.mission-brief-card,
+.record-center-card{
+  --card-ink:#07131D;
+  --card-cyan:#00E5FF;
+  color:#F3FAFC;
+  background:
+    radial-gradient(ellipse at 100% 0%,rgba(0,229,255,.15),transparent 43%),
+    linear-gradient(145deg,#102433 0%,#07131D 72%);
+  border:1px solid rgba(0,229,255,.3);
+  border-radius:20px;
+  padding:18px;
+  overflow:hidden;
+  position:relative;
+  box-shadow:0 14px 34px rgba(3,12,19,.22),inset 0 1px 0 rgba(255,255,255,.07);
+}
+.mission-brief-card:before,
+.record-center-card:before{
+  content:"";
+  position:absolute;
+  top:0;left:18px;right:18px;height:2px;
+  background:linear-gradient(90deg,transparent,var(--card-cyan),transparent);
+  opacity:.9;
+}
+.mission-brief-top,
+.record-center-top{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  color:var(--card-cyan);font:850 10px/1.3 ui-monospace,Menlo,monospace;
+  letter-spacing:.13em;text-transform:uppercase;
+  padding-bottom:14px;border-bottom:1px solid rgba(220,245,255,.12);
+}
+.mission-brief-top span:last-child,
+.record-center-index{
+  border:1px solid rgba(0,229,255,.28);border-radius:999px;
+  padding:5px 8px;background:rgba(0,229,255,.07);white-space:nowrap;
+}
+.mission-brief-who{gap:12px;padding:16px 0 14px}
+.mission-brief-who .av{
+  width:48px;height:48px;border:1px solid rgba(0,229,255,.6);
+  border-radius:15px;box-shadow:0 0 22px rgba(0,229,255,.09);
+  font-size:20px;
+}
+#sheet .mission-brief-who b{color:#F6FCFF;font-size:18px;line-height:1.2;letter-spacing:-.025em}
+#sheet .mission-brief-who small{color:#AFC3CE;opacity:1;font-size:12px;margin-top:5px;line-height:1.4}
+.mission-brief-goal{
+  padding:13px 14px;margin:0 0 16px;
+  border:1px solid rgba(0,229,255,.2);border-radius:14px;
+  background:linear-gradient(110deg,rgba(0,229,255,.1),rgba(0,229,255,.025));
+}
+.mission-brief-goal>span,
+.mission-brief-section-title,
+.mission-brief-tip>span,
+.record-center-task>span{
+  color:var(--card-cyan);font:850 10px/1.4 ui-monospace,Menlo,monospace;
+  letter-spacing:.12em;text-transform:uppercase;
+}
+#sheet .mission-brief-goal p{
+  color:#F1F7FA;font-size:14px;line-height:1.55;margin:7px 0 0;
+}
+.mission-brief-section-title{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.mission-brief-section-title span{color:#8DA7B5;letter-spacing:.06em;font-size:9px}
+#sheet .mission-brief-steps .pts{
+  margin:10px 0 0;padding:0;list-style:none;display:grid;gap:7px;
+}
+#sheet .mission-brief-steps .pts li{
+  display:flex;align-items:flex-start;gap:10px;margin:0;
+  padding:10px 11px;border-radius:11px;
+  border:1px solid rgba(220,245,255,.09);background:rgba(255,255,255,.035);
+  color:#E6F0F5;font-size:13px;line-height:1.4;
+}
+.mission-step-num{
+  flex:none;color:var(--card-cyan);font:800 10px/1.6 ui-monospace,Menlo,monospace;
+}
+.mission-brief-tip{
+  display:flex;align-items:flex-start;gap:10px;margin-top:14px;padding-top:13px;
+  border-top:1px solid rgba(220,245,255,.12);
+}
+.mission-brief-tip>span{flex:none;padding-top:2px}
+#sheet .mission-brief-tip p{color:#B9CBD4;font-size:12px;line-height:1.5;margin:0}
+.record-center-top{padding-bottom:13px}
+.record-center-mark{opacity:.9}
+.record-center-heading{display:flex;align-items:center;gap:13px;padding:19px 0 16px}
+.record-center-icon{
+  width:48px;height:48px;display:grid;place-items:center;flex:none;
+  border-radius:15px;color:var(--card-cyan);font-size:24px;
+  background:linear-gradient(145deg,rgba(0,229,255,.17),rgba(0,229,255,.035));
+  border:1px solid rgba(0,229,255,.34);
+  box-shadow:0 0 24px rgba(0,229,255,.08);
+}
+.record-center-heading small{
+  display:block;color:var(--card-cyan);font:800 9px/1.4 ui-monospace,Menlo,monospace;
+  letter-spacing:.11em;text-transform:uppercase;margin-bottom:5px;
+}
+#sheet .record-center-heading h3{
+  color:#F6FCFF;font-size:21px;line-height:1.13;letter-spacing:-.025em;margin:0;
+}
+.record-center-copy{
+  color:#D9E7ED;font-size:14px;line-height:1.65;
+  padding:0 1px 17px;
+}
+.record-center-task{
+  border:1px solid rgba(0,229,255,.22);border-radius:13px;
+  padding:13px 14px;background:rgba(0,229,255,.075);
+}
+.record-center-task>span{display:block;margin-bottom:6px}
+#sheet .record-center-task b{display:block;color:#F5FBFE;font-size:13px;line-height:1.5}
+#sheet .mission-brief-card + .row,
+#sheet .record-center-card + .row{margin-top:14px}
+@media(max-width:380px){
+  .mission-brief-card,.record-center-card{padding:14px;border-radius:16px}
+  .mission-brief-who .av,.record-center-icon{width:42px;height:42px;border-radius:12px}
+  #sheet .mission-brief-who b{font-size:16px}
+  #sheet .record-center-heading h3{font-size:19px}
+}
