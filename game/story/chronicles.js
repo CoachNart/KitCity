@@ -1724,7 +1724,7 @@ const RAW_MISSIONS = [
   {
     "id": "m21",
     "chapterId": "ch11",
-    "title": "The Confident Machine",
+    "title": "The Report Without a Source",
     "state": "Cross River",
     "location": "Cross River records room, AI workstation and field office",
     "npcIds": [
@@ -1736,7 +1736,7 @@ const RAW_MISSIONS = [
       "Princess"
     ],
     "narrativePurpose": "Continue from Mission 20's warehouse due-diligence packet. An AI-generated summary names a different owner even though the signed ownership file is missing and issuance records conflict. Work with Odion and Princess to trace each claim to its source, correct the workflow and keep ownership unresolved until a person can verify it.",
-    "cardDescription": "Check an AI-generated ownership claim against the original warehouse and token records.",
+    "cardDescription": "Audit an AI ownership claim against signed records before it reaches the public.",
     "learningObjectives": [
       "Recognise that a fluent AI answer can contain unsupported or invented claims",
       "Trace important statements to the original source documents",
@@ -1748,33 +1748,33 @@ const RAW_MISSIONS = [
     "objectives": [
       {
         "id": "m21-obj-1",
-        "label": "Find false assumptions in the AI-generated report",
+        "label": "Trace the AI's owner claim to its original evidence",
         "interactionTarget": "story:m21:objective:1",
         "required": true
       },
       {
         "id": "m21-obj-2",
-        "label": "Improve instructions for the AI workflow",
+        "label": "Separate verified inventory from missing title records",
         "interactionTarget": "story:m21:objective:2",
         "required": true
       },
       {
         "id": "m21-obj-3",
-        "label": "Retest output against the source documents",
+        "label": "Retest the summary against the conflicting issuance entries",
         "interactionTarget": "story:m21:objective:3",
         "required": true
       },
       {
         "id": "m21-obj-4",
-        "label": "Verify the corrected ownership claim before sharing",
+        "label": "Approve only a source-linked report with unresolved facts clearly marked",
         "interactionTarget": "story:m21:objective:4",
         "required": true
       }
     ],
     "successConditions": [
-      "The unsupported ownership claim is traced to its source",
-      "The workflow marks missing evidence instead of inventing details",
-      "The corrected report is reviewed against original records"
+      "The unsupported owner claim is traced to its source",
+      "Conflicting and missing evidence is explicitly labelled",
+      "A human reviewer checks the corrected source-linked report"
     ],
     "failureAndRetry": {
       "onFailure": "If the player asks the model to confirm its own claim, Odion returns the source file and asks for independent verification.",
@@ -1803,8 +1803,8 @@ const RAW_MISSIONS = [
     "interactionPlan": {
       "m21-obj-1": {
         "speaker": 0,
-        "prompt": "The AI summary names an owner, but the signed warehouse file does not support that name.",
-        "playerPrompt": "I will check the source before deciding.",
+        "prompt": "Which original record, if any, supports the owner named by the AI?",
+        "playerPrompt": "I need the original record behind that name, not another confident summary.",
         "choices": [
           {
             "text": "Trace the claim to the signed inventory and transfer records; leave ownership unresolved if neither proves it.",
@@ -1822,8 +1822,8 @@ const RAW_MISSIONS = [
       },
       "m21-obj-2": {
         "speaker": 1,
-        "prompt": "The report blends confirmed stock, missing title and conflicting token records into one paragraph.",
-        "playerPrompt": "I will check the source before deciding.",
+        "prompt": "The summary mixes physical inventory, legal title and token issuance. How should those be represented?",
+        "playerPrompt": "I'll separate what is verified from what is absent or in conflict.",
         "choices": [
           {
             "text": "Require a source for every material claim and separate confirmed, missing and conflicting evidence.",
@@ -1841,8 +1841,8 @@ const RAW_MISSIONS = [
       },
       "m21-obj-3": {
         "speaker": 0,
-        "prompt": "The revised report links to sources, but one sentence still conflicts with the issuance record.",
-        "playerPrompt": "I will check the source before deciding.",
+        "prompt": "One output sentence conflicts with the issuance ledger. What must the retest check?",
+        "playerPrompt": "I'll compare the claim line by line with the source documents.",
         "choices": [
           {
             "text": "Compare each ownership and issuance statement directly with the original documents.",
@@ -1860,8 +1860,8 @@ const RAW_MISSIONS = [
       },
       "m21-obj-4": {
         "speaker": 1,
-        "prompt": "The report now lists the missing signature and conflicting issuance entry.",
-        "playerPrompt": "I will check the source before deciding.",
+        "prompt": "The evidence still lacks a signed title record. What can responsibly be published?",
+        "playerPrompt": "I'll keep the owner unresolved until the missing proof is supplied.",
         "choices": [
           {
             "text": "Keep the owner field unresolved and require a human review before sharing.",
@@ -1882,7 +1882,7 @@ const RAW_MISSIONS = [
   {
     "id": "m22",
     "chapterId": "ch11",
-    "title": "The Transfer Across the Water",
+    "title": "Confirmed Here, Missing There",
     "state": "Cross River",
     "location": "Cross River network kiosk, bridge operations room and receiving desk",
     "npcIds": [
@@ -1894,7 +1894,7 @@ const RAW_MISSIONS = [
       "Seun"
     ],
     "narrativePurpose": "Continue from Mission 21's corrected due-diligence packet. The transaction on the issuing network is confirmed, but the destination record has not updated. Work with Racheal and Seun to trace the original transfer, verify the official bridge status and explain the delay without creating a duplicate transfer.",
-    "cardDescription": "Trace one transfer across two networks without mistaking a confirmed source for a completed destination.",
+    "cardDescription": "Trace the warehouse token transfer across networks without sending it twice.",
     "learningObjectives": [
       "Understand that separate blockchain networks maintain separate transaction records",
       "Trace a cross-network transfer through its source, bridge message and destination status",
@@ -1906,32 +1906,32 @@ const RAW_MISSIONS = [
     "objectives": [
       {
         "id": "m22-obj-1",
-        "label": "Compare blockchain networks for the transfer",
+        "label": "Match the source transaction to the intended destination network",
         "interactionTarget": "story:m22:objective:1",
         "required": true
       },
       {
         "id": "m22-obj-2",
-        "label": "Inspect the bridge role and transfer status",
+        "label": "Trace the bridge message and current destination status",
         "interactionTarget": "story:m22:objective:2",
         "required": true
       },
       {
         "id": "m22-obj-3",
-        "label": "Identify a fake bridge interface",
+        "label": "Verify the bridge interface before using it",
         "interactionTarget": "story:m22:objective:3",
         "required": true
       },
       {
         "id": "m22-obj-4",
-        "label": "Explain bridge risks and fees to the sender",
+        "label": "Explain the pending transfer and agree on the next status check",
         "interactionTarget": "story:m22:objective:4",
         "required": true
       }
     ],
     "successConditions": [
-      "The player traces the source transaction and destination status",
-      "The fake interface is rejected",
+      "Source, network and asset references match the original transfer",
+      "The official bridge status is checked and the fake interface rejected",
       "The sender receives a clear update and does not duplicate the transfer"
     ],
     "failureAndRetry": {
@@ -1961,8 +1961,8 @@ const RAW_MISSIONS = [
     "interactionPlan": {
       "m22-obj-1": {
         "speaker": 0,
-        "prompt": "The source transaction is confirmed, but the receiving network has no completed destination record.",
-        "playerPrompt": "I will check the source before deciding.",
+        "prompt": "The source transaction is confirmed. Which details identify the intended destination?",
+        "playerPrompt": "I'll match the network and asset details before calling this complete.",
         "choices": [
           {
             "text": "Match the source and destination networks, asset contract and original transaction reference.",
@@ -1980,8 +1980,8 @@ const RAW_MISSIONS = [
       },
       "m22-obj-2": {
         "speaker": 1,
-        "prompt": "The bridge message has a reference, but the destination status is still pending.",
-        "playerPrompt": "I will check the source before deciding.",
+        "prompt": "The bridge message exists, but the receiving record is pending. What should you verify next?",
+        "playerPrompt": "I need the official message status before I recommend another action.",
         "choices": [
           {
             "text": "Match the message ID to the independently reached official status page and destination record.",
@@ -1999,8 +1999,8 @@ const RAW_MISSIONS = [
       },
       "m22-obj-3": {
         "speaker": 0,
-        "prompt": "A bridge page has a familiar logo but a slightly different domain.",
-        "playerPrompt": "I will check the source before deciding.",
+        "prompt": "A second site offers to 'complete' the transfer if the sender reconnects. How do you verify it?",
+        "playerPrompt": "I'll verify the service independently instead of following the new link.",
         "choices": [
           {
             "text": "Navigate to the official bridge from a trusted source and compare the exact domain.",
@@ -2018,8 +2018,8 @@ const RAW_MISSIONS = [
       },
       "m22-obj-4": {
         "speaker": 1,
-        "prompt": "The source transaction and bridge message are found; the destination remains pending.",
-        "playerPrompt": "I will check the source before deciding.",
+        "prompt": "The sender wants to try again now. What should the update explain?",
+        "playerPrompt": "I'll explain what is confirmed, what is pending and when we'll check again.",
         "choices": [
           {
             "text": "Explain the fee, delay and bridge dependency without promising arrival or resending.",
@@ -2040,7 +2040,7 @@ const RAW_MISSIONS = [
   {
     "id": "m23",
     "chapterId": "ch12",
-    "title": "The Vote Before the Facts",
+    "title": "Before the Community Votes",
     "state": "Bauchi",
     "location": "Bauchi meeting hall, public proposal board and treasury desk",
     "npcIds": [
@@ -2052,7 +2052,7 @@ const RAW_MISSIONS = [
       "Joe"
     ],
     "narrativePurpose": "Continue from Mission 22's unresolved destination status. A proposal to add another bridge route is heading to a community vote, but its costs, beneficiaries, maintenance owner and failure plan are incomplete. Help Dorcas and Joe make the missing obligations visible before members commit treasury funds.",
-    "cardDescription": "Review a treasury proposal's costs, owners and failure plan before voting.",
+    "cardDescription": "Expose the missing cost, ownership and failure plan before treasury members vote.",
     "learningObjectives": [
       "Read a governance proposal for goals, costs, risks and accountable owners",
       "Compare treasury spending with measurable milestones and delivery responsibilities",
@@ -2064,33 +2064,33 @@ const RAW_MISSIONS = [
     "objectives": [
       {
         "id": "m23-obj-1",
-        "label": "Read proposals and compare their trade-offs",
+        "label": "Compare the proposed bridge route with the current route",
         "interactionTarget": "story:m23:objective:1",
         "required": true
       },
       {
         "id": "m23-obj-2",
-        "label": "Inspect the treasury and milestone plan",
+        "label": "Check the budget, maintenance owner and failure obligations",
         "interactionTarget": "story:m23:objective:2",
         "required": true
       },
       {
         "id": "m23-obj-3",
-        "label": "Cast a governance vote based on the evidence",
+        "label": "Decide whether the vote is ready to proceed",
         "interactionTarget": "story:m23:objective:3",
         "required": true
       },
       {
         "id": "m23-obj-4",
-        "label": "Explain the outcome and participation limits",
+        "label": "Publish the missing information members need before voting",
         "interactionTarget": "story:m23:objective:4",
         "required": true
       }
     ],
     "successConditions": [
-      "The proposal's cost and beneficiaries are understood",
-      "The player makes a reasoned decision rather than following popularity",
-      "The outcome summary records the result and unresolved risks"
+      "The proposal's benefits and trade-offs are compared",
+      "Treasury costs and operational responsibilities are visible",
+      "The vote is paused until members can review the missing obligations"
     ],
     "failureAndRetry": {
       "onFailure": "If the player votes without reading the proposal, Dorcas asks them to review the budget and identify who benefits.",
@@ -2119,8 +2119,8 @@ const RAW_MISSIONS = [
     "interactionPlan": {
       "m23-obj-1": {
         "speaker": 0,
-        "prompt": "The proposal asks for a fast vote but leaves costs, beneficiaries and maintenance unclear.",
-        "playerPrompt": "I will check the source before deciding.",
+        "prompt": "The new route promises convenience. Which trade-offs must members compare?",
+        "playerPrompt": "I'll compare the practical trade-offs, not just the promise.",
         "choices": [
           {
             "text": "Request the budget, recipient list, named maintainer and failure plan before voting.",
@@ -2138,8 +2138,8 @@ const RAW_MISSIONS = [
       },
       "m23-obj-2": {
         "speaker": 1,
-        "prompt": "The team wants to release all funds for a broad goal called growth.",
-        "playerPrompt": "I will check the source before deciding.",
+        "prompt": "Who pays for maintenance, and who responds if the route fails?",
+        "playerPrompt": "A proposal needs named owners and a failure plan, not only a budget figure.",
         "choices": [
           {
             "text": "Split the plan into deliverables with owners, budgets, evidence and review dates.",
@@ -2157,8 +2157,8 @@ const RAW_MISSIONS = [
       },
       "m23-obj-3": {
         "speaker": 0,
-        "prompt": "The proposal still has no maintenance owner or failure response.",
-        "playerPrompt": "I will check the source before deciding.",
+        "prompt": "The proposal is missing those answers. Is the vote ready?",
+        "playerPrompt": "I won't treat an incomplete proposal as ready for a binding vote.",
         "choices": [
           {
             "text": "Delay the vote until those obligations are published, then record the trade-offs.",
@@ -2176,8 +2176,8 @@ const RAW_MISSIONS = [
       },
       "m23-obj-4": {
         "speaker": 1,
-        "prompt": "Members disagree about whether postponing the vote is too cautious.",
-        "playerPrompt": "I will check the source before deciding.",
+        "prompt": "How should the team explain the delay without steering members toward a predetermined vote?",
+        "playerPrompt": "I'll tell members exactly what's missing and what must be published.",
         "choices": [
           {
             "text": "Publish the reason for delay and the conditions required for a new vote.",
@@ -2198,7 +2198,7 @@ const RAW_MISSIONS = [
   {
     "id": "m24",
     "chapterId": "ch12",
-    "title": "The Finding in the Footnote",
+    "title": "The Permission Nobody Disclosed",
     "state": "Bauchi",
     "location": "Bauchi code review room, test bench and disclosure office",
     "npcIds": [
@@ -2210,7 +2210,7 @@ const RAW_MISSIONS = [
       "Gbemi"
     ],
     "narrativePurpose": "Continue from Mission 23's delayed governance vote. A privileged contract role can redirect funds, a capability missing from the proposal. Work with Mike and Gbemi to reproduce the path safely, report it through the agreed security route, test the patch and decide whether launch must remain paused.",
-    "cardDescription": "Test and report a privileged contract risk before the project launches.",
+    "cardDescription": "Reproduce a privileged fund-redirection risk, report it responsibly and retest the fix.",
     "learningObjectives": [
       "Assess a security finding by its real capability and potential impact",
       "Disclose a vulnerability responsibly without needlessly exposing users to exploitation",
@@ -2222,33 +2222,33 @@ const RAW_MISSIONS = [
     "objectives": [
       {
         "id": "m24-obj-1",
-        "label": "Estimate the impact of the privileged permission",
+        "label": "Reproduce the privileged role's ability to redirect funds in a test",
         "interactionTarget": "story:m24:objective:1",
         "required": true
       },
       {
         "id": "m24-obj-2",
-        "label": "Prepare a responsible vulnerability disclosure",
+        "label": "Send a reproducible private report through the agreed security route",
         "interactionTarget": "story:m24:objective:2",
         "required": true
       },
       {
         "id": "m24-obj-3",
-        "label": "Verify the patch with regression tests",
+        "label": "Retest the patch and related permission paths",
         "interactionTarget": "story:m24:objective:3",
         "required": true
       },
       {
         "id": "m24-obj-4",
-        "label": "Recommend whether launch can proceed",
+        "label": "Set the release condition based on independent verification",
         "interactionTarget": "story:m24:objective:4",
         "required": true
       }
     ],
     "successConditions": [
-      "The player documents the finding and its impact",
-      "The patch is tested against the original reproduction",
-      "The launch decision reflects the verification status"
+      "The risky capability is reproduced only in a controlled test",
+      "The report contains a clear impact and safe reproduction path",
+      "The patch passes regression tests and launch remains paused pending independent review"
     ],
     "failureAndRetry": {
       "onFailure": "If the player hides the finding or accepts an untested patch, Mike reruns the reproduction and reopens the release decision.",
@@ -2277,8 +2277,8 @@ const RAW_MISSIONS = [
     "interactionPlan": {
       "m24-obj-1": {
         "speaker": 0,
-        "prompt": "A privileged contract role can redirect funds, although the proposal never mentioned it.",
-        "playerPrompt": "I will check the source before deciding.",
+        "prompt": "The role can change the treasury destination. How do you confirm the actual impact safely?",
+        "playerPrompt": "I'll reproduce the capability in the test deployment, never with real funds.",
         "choices": [
           {
             "text": "Trace the role in a test deployment and document which funds or actions it can affect.",
@@ -2296,8 +2296,8 @@ const RAW_MISSIONS = [
       },
       "m24-obj-2": {
         "speaker": 1,
-        "prompt": "The redirect path is reproduced and needs responsible disclosure.",
-        "playerPrompt": "I will check the source before deciding.",
+        "prompt": "The team needs enough detail to fix the flaw without exposing users. What belongs in the report?",
+        "playerPrompt": "I'll report the evidence privately through the agreed channel.",
         "choices": [
           {
             "text": "Send the impact and reproduction steps privately through the agreed security contact.",
@@ -2315,8 +2315,8 @@ const RAW_MISSIONS = [
       },
       "m24-obj-3": {
         "speaker": 0,
-        "prompt": "A patch is ready, but only the normal successful transaction was tested.",
-        "playerPrompt": "I will check the source before deciding.",
+        "prompt": "The first test passes after the patch. What else should regression testing cover?",
+        "playerPrompt": "I'll retest the original failure and nearby permission paths.",
         "choices": [
           {
             "text": "Run the original failing test and adjacent permission regression tests.",
@@ -2334,8 +2334,8 @@ const RAW_MISSIONS = [
       },
       "m24-obj-4": {
         "speaker": 1,
-        "prompt": "The deadline is tomorrow, but independent review has not confirmed the patch.",
-        "playerPrompt": "I will check the source before deciding.",
+        "prompt": "Can the team launch solely because its own test passes?",
+        "playerPrompt": "The release decision needs independent review, not confidence alone.",
         "choices": [
           {
             "text": "Keep launch paused until regression tests and independent review pass.",
@@ -2356,7 +2356,7 @@ const RAW_MISSIONS = [
   {
     "id": "m25",
     "chapterId": "ch13",
-    "title": "The Art With Two Owners",
+    "title": "A Token Is Not a Copyright",
     "state": "Abia",
     "location": "Abia creator studio, print market and licensing desk",
     "npcIds": [
@@ -2368,7 +2368,7 @@ const RAW_MISSIONS = [
       "Softstorm"
     ],
     "narrativePurpose": "Continue from Mission 24's paused launch. A commemorative digital collectible is being prepared, but an earlier artwork file names another creator and the listing promises exclusivity without a clear licence. Work with FemiY and Softstorm to separate token ownership from copyright, verify the terms and pause unsupported claims.",
-    "cardDescription": "Check artwork authorship and licence terms before promising collectible ownership rights.",
+    "cardDescription": "Check authorship and licence terms before promising collectible buyers exclusive rights.",
     "learningObjectives": [
       "Distinguish owning a token from owning copyright or commercial-use rights",
       "Read licence terms and attribution evidence before making an exclusivity claim",
@@ -2380,33 +2380,33 @@ const RAW_MISSIONS = [
     "objectives": [
       {
         "id": "m25-obj-1",
-        "label": "Read licence terms before listing the collectible",
+        "label": "Trace the artwork to its creator and original publication",
         "interactionTarget": "story:m25:objective:1",
         "required": true
       },
       {
         "id": "m25-obj-2",
-        "label": "Identify the buyer's rights from the listing",
+        "label": "Compare the listing's promised rights with the actual licence",
         "interactionTarget": "story:m25:objective:2",
         "required": true
       },
       {
         "id": "m25-obj-3",
-        "label": "Review creator revenue models and resale terms",
+        "label": "Check attribution, resale and commercial-use terms",
         "interactionTarget": "story:m25:objective:3",
         "required": true
       },
       {
         "id": "m25-obj-4",
-        "label": "Rewrite unclear ownership terms before launch",
+        "label": "Rewrite the listing and hold the mint until rights are verified",
         "interactionTarget": "story:m25:objective:4",
         "required": true
       }
     ],
     "successConditions": [
-      "The player distinguishes token possession from copyright",
-      "Licence and authorship evidence are checked",
-      "The listing is paused until the rights are clear"
+      "The original creator and available provenance are checked",
+      "The promised buyer rights are compared with the actual licence",
+      "Unsupported exclusivity claims are removed before the listing proceeds"
     ],
     "failureAndRetry": {
       "onFailure": "If the player treats the mint as proof of authorship, FemiY asks for the original files and licence trail.",
@@ -2435,8 +2435,8 @@ const RAW_MISSIONS = [
     "interactionPlan": {
       "m25-obj-1": {
         "speaker": 0,
-        "prompt": "The collectible says exclusive, but an earlier artwork file names another creator.",
-        "playerPrompt": "I will check the source before deciding.",
+        "prompt": "The artwork file predates this listing and names another creator. What evidence establishes provenance?",
+        "playerPrompt": "I'll trace the original file and publication before naming an owner.",
         "choices": [
           {
             "text": "Check file history, attribution and the licence before repeating the exclusivity claim.",
@@ -2454,8 +2454,8 @@ const RAW_MISSIONS = [
       },
       "m25-obj-2": {
         "speaker": 1,
-        "prompt": "The seller wants to say buyers own the artwork outright.",
-        "playerPrompt": "I will check the source before deciding.",
+        "prompt": "The listing says token ownership includes exclusive commercial rights. Where must that promise be verified?",
+        "playerPrompt": "A token sale cannot grant rights the seller doesn't have.",
         "choices": [
           {
             "text": "State separately what the buyer owns, what the licence permits and what stays with the creator.",
@@ -2473,8 +2473,8 @@ const RAW_MISSIONS = [
       },
       "m25-obj-3": {
         "speaker": 0,
-        "prompt": "The draft promises royalties on every resale, but no marketplace terms are attached.",
-        "playerPrompt": "I will check the source before deciding.",
+        "prompt": "The licence allows some uses but does not clearly grant exclusivity. What else needs review?",
+        "playerPrompt": "I'll check attribution and the precise permitted uses before publishing.",
         "choices": [
           {
             "text": "Verify the contract and marketplace terms, then state any limits.",
@@ -2492,8 +2492,8 @@ const RAW_MISSIONS = [
       },
       "m25-obj-4": {
         "speaker": 1,
-        "prompt": "The artwork and minting page disagree about exclusivity and commercial use.",
-        "playerPrompt": "I will check the source before deciding.",
+        "prompt": "What should the listing say while the rights remain unresolved?",
+        "playerPrompt": "I'll remove the unsupported promise and pause the mint until the licence is clear.",
         "choices": [
           {
             "text": "Pause the launch and publish precise rights only after the licence review.",
@@ -2514,7 +2514,7 @@ const RAW_MISSIONS = [
   {
     "id": "m26",
     "chapterId": "ch14",
-    "title": "Who Wrote This Code?",
+    "title": "The Credit Left Out",
     "state": "Niger",
     "location": "Niger workshop, repository terminal and maintainer's bench",
     "npcIds": [
@@ -2526,7 +2526,7 @@ const RAW_MISSIONS = [
       "IamAbdul"
     ],
     "narrativePurpose": "Continue from Mission 25's paused minting page. Its open-source component points to another repository, and the required licence notice is missing. Work with Softstorm and IamAbdul to inspect the history, restore attribution and submit a focused change for review without making an unsupported accusation.",
-    "cardDescription": "Restore missing open-source attribution through a traceable, reviewable change.",
+    "cardDescription": "Restore the source and licence notice to a copied component through a reviewable change.",
     "learningObjectives": [
       "Use repository history to trace where code came from",
       "Understand that open-source licences set conditions for reuse",
@@ -2538,33 +2538,33 @@ const RAW_MISSIONS = [
     "objectives": [
       {
         "id": "m26-obj-1",
-        "label": "Explore the repository and its contribution history",
+        "label": "Trace the component to its original repository and history",
         "interactionTarget": "story:m26:objective:1",
         "required": true
       },
       {
         "id": "m26-obj-2",
-        "label": "Read licence terms for the copied component",
+        "label": "Confirm the licence and required attribution terms",
         "interactionTarget": "story:m26:objective:2",
         "required": true
       },
       {
         "id": "m26-obj-3",
-        "label": "Propose a contribution that fixes attribution",
+        "label": "Prepare a focused change that restores source and credit",
         "interactionTarget": "story:m26:objective:3",
         "required": true
       },
       {
         "id": "m26-obj-4",
-        "label": "Use version control and review before merging",
+        "label": "Submit the change for review before merging it",
         "interactionTarget": "story:m26:objective:4",
         "required": true
       }
     ],
     "successConditions": [
-      "The original source and licence are identified",
-      "Attribution is restored and the change is reviewable",
-      "The maintainer approves only after the licence path is clear"
+      "The component's source and contribution history are identified",
+      "Required licence and attribution terms are understood",
+      "A focused, reviewable change restores the required notice"
     ],
     "failureAndRetry": {
       "onFailure": "If the player removes the history or guesses at the licence, IamAbdul asks them to inspect the repository's actual terms.",
@@ -2593,8 +2593,8 @@ const RAW_MISSIONS = [
     "interactionPlan": {
       "m26-obj-1": {
         "speaker": 0,
-        "prompt": "The minting page uses a component whose history points to another repository.",
-        "playerPrompt": "I will check the source before deciding.",
+        "prompt": "The component resembles code in another repository. What history can establish where it came from?",
+        "playerPrompt": "I'll inspect the repository history and compare the source, not accuse someone from a resemblance alone.",
         "choices": [
           {
             "text": "Compare exact files, dates and repository history, then preserve the source licence.",
@@ -2612,8 +2612,8 @@ const RAW_MISSIONS = [
       },
       "m26-obj-2": {
         "speaker": 1,
-        "prompt": "The source is identified, but the copied component has no licence notice.",
-        "playerPrompt": "I will check the source before deciding.",
+        "prompt": "The files match, but which licence obligations actually apply?",
+        "playerPrompt": "I'll read the actual licence terms before deciding what attribution is required.",
         "choices": [
           {
             "text": "Read the actual licence and identify required attribution before editing the copy.",
@@ -2631,8 +2631,8 @@ const RAW_MISSIONS = [
       },
       "m26-obj-3": {
         "speaker": 0,
-        "prompt": "The notice needs restoring without changing unrelated code.",
-        "playerPrompt": "I will check the source before deciding.",
+        "prompt": "How can you restore the notice without hiding unrelated changes in the same patch?",
+        "playerPrompt": "I'll keep the fix narrow so the maintainer can review it clearly.",
         "choices": [
           {
             "text": "Restore attribution, link the source and keep the change focused.",
@@ -2650,8 +2650,8 @@ const RAW_MISSIONS = [
       },
       "m26-obj-4": {
         "speaker": 1,
-        "prompt": "The fix is ready, but no one has reviewed the attribution or tests.",
-        "playerPrompt": "I will check the source before deciding.",
+        "prompt": "What review steps should happen before the correction is merged?",
+        "playerPrompt": "I'll link the source and licence and wait for review before merging.",
         "choices": [
           {
             "text": "Open a review with the source reference, licence note and relevant tests.",
@@ -2672,7 +2672,7 @@ const RAW_MISSIONS = [
   {
     "id": "m27",
     "chapterId": "ch14",
-    "title": "The Mark in Every Case",
+    "title": "One Marker, Many Questions",
     "state": "Niger",
     "location": "Niger archive room, roadside notice wall and records desk",
     "npcIds": [
@@ -2684,7 +2684,7 @@ const RAW_MISSIONS = [
       "Larai"
     ],
     "narrativePurpose": "Continue from Mission 26's saved review packet. A cyan marker appears in archived records for several earlier incidents, including the payment page and recovery redirect. Work with Joe_Sef and Larai to build a source-linked timeline, test competing explanations and avoid treating shared archive metadata as proof of a common operator.",
-    "cardDescription": "Investigate the cyan archive marker without confusing shared metadata with proof of guilt.",
+    "cardDescription": "Compare the recurring cyan archive marker without mistaking metadata for identity evidence.",
     "learningObjectives": [
       "Combine evidence from separate incidents into a timeline with traceable sources",
       "Test competing explanations and notice evidence that contradicts an early theory",
@@ -2696,33 +2696,33 @@ const RAW_MISSIONS = [
     "objectives": [
       {
         "id": "m27-obj-1",
-        "label": "Review saved evidence from the earlier cases",
+        "label": "Locate the cyan marker in each preserved case record",
         "interactionTarget": "story:m27:objective:1",
         "required": true
       },
       {
         "id": "m27-obj-2",
-        "label": "Identify contradictions across the records",
+        "label": "Compare timestamps and archive formats for meaningful differences",
         "interactionTarget": "story:m27:objective:2",
         "required": true
       },
       {
         "id": "m27-obj-3",
-        "label": "Connect clues and test competing explanations",
+        "label": "Test whether the marker links incidents or only the export process",
         "interactionTarget": "story:m27:objective:3",
         "required": true
       },
       {
         "id": "m27-obj-4",
-        "label": "Present an evidence summary to Joe_Sef and Larai",
+        "label": "Present a timeline that separates evidence from hypotheses",
         "interactionTarget": "story:m27:objective:4",
         "required": true
       }
     ],
     "successConditions": [
-      "The player builds a source-by-source timeline",
-      "Contradictory records are retained",
-      "The conclusion identifies the mark as a lead, not proof"
+      "The marker is compared across preserved source records",
+      "Differences in timing and archive format are documented",
+      "The conclusion avoids identifying an operator without a source that supports it"
     ],
     "failureAndRetry": {
       "onFailure": "If the player names a culprit from the symbol alone, Larai asks which record proves control of the page.",
@@ -2751,8 +2751,8 @@ const RAW_MISSIONS = [
     "interactionPlan": {
       "m27-obj-1": {
         "speaker": 0,
-        "prompt": "The cyan marker appears in saved packets for several earlier incidents.",
-        "playerPrompt": "I will check the source before deciding.",
+        "prompt": "The marker appears in several exports. Which preserved records show it, and in what context?",
+        "playerPrompt": "I'll record the source and context for each appearance of the marker.",
         "choices": [
           {
             "text": "Build a timeline with each marker's original file, timestamp and archive metadata.",
@@ -2770,8 +2770,8 @@ const RAW_MISSIONS = [
       },
       "m27-obj-2": {
         "speaker": 1,
-        "prompt": "The archive exports share a marker, but timestamps and deployment notes differ.",
-        "playerPrompt": "I will check the source before deciding.",
+        "prompt": "Do the timestamps and archive formats line up, or could the exports share a common process?",
+        "playerPrompt": "I'll compare the metadata before assuming the cases share a cause.",
         "choices": [
           {
             "text": "Compare export versions and deployment notes, including records that contradict the first theory.",
@@ -2789,8 +2789,8 @@ const RAW_MISSIONS = [
       },
       "m27-obj-3": {
         "speaker": 0,
-        "prompt": "Two explanations remain: a shared archive tool or one common operator.",
-        "playerPrompt": "I will check the source before deciding.",
+        "prompt": "What evidence would distinguish a shared tool from a shared operator?",
+        "playerPrompt": "A shared marker isn't enough to identify a person; I'll test alternatives.",
         "choices": [
           {
             "text": "Test whether the marker was added during export and seek a signed link to the original pages.",
@@ -2808,8 +2808,8 @@ const RAW_MISSIONS = [
       },
       "m27-obj-4": {
         "speaker": 1,
-        "prompt": "The marker repeats in archive metadata, but no source links it to one operator.",
-        "playerPrompt": "I will check the source before deciding.",
+        "prompt": "How can the timeline report the lead without overstating what it proves?",
+        "playerPrompt": "I'll present the confirmed pattern and keep the operator question open.",
         "choices": [
           {
             "text": "Report what the marker establishes and leave operator identity unresolved.",
@@ -2830,7 +2830,7 @@ const RAW_MISSIONS = [
   {
     "id": "m28",
     "chapterId": "ch15",
-    "title": "The Broken Handoff",
+    "title": "The Reference That Went Missing",
     "state": "Kogi",
     "location": "Kogi roadside station, integration workshop and field-test lane",
     "npcIds": [
@@ -2842,7 +2842,7 @@ const RAW_MISSIONS = [
       "Christol"
     ],
     "narrativePurpose": "Continue from Mission 27's archive notes. The evidence-routing path is losing a case reference between two tools, so a completed verification appears missing at the next step. Work with Unique and Christol to map the full journey, document the interface contract, repair the hand-off and retest failure, timeout and retry paths.",
-    "cardDescription": "Repair and test the hand-off so verified work reaches the next tool safely.",
+    "cardDescription": "Find and repair the lost case reference, then test the whole hand-off including failures.",
     "learningObjectives": [
       "Understand how connected tools pass references and state between systems",
       "Trace an end-to-end failure instead of fixing one screen in isolation",
@@ -2854,33 +2854,33 @@ const RAW_MISSIONS = [
     "objectives": [
       {
         "id": "m28-obj-1",
-        "label": "Map how the connected tools hand off a user",
+        "label": "Follow one case reference through both connected tools",
         "interactionTarget": "story:m28:objective:1",
         "required": true
       },
       {
         "id": "m28-obj-2",
-        "label": "Improve documentation for the shared interface",
+        "label": "Define the fields the next tool needs and what must stay private",
         "interactionTarget": "story:m28:objective:2",
         "required": true
       },
       {
         "id": "m28-obj-3",
-        "label": "Build a safe prototype of the end-to-end journey",
+        "label": "Repair the hand-off so the reference and verification state survive",
         "interactionTarget": "story:m28:objective:3",
         "required": true
       },
       {
         "id": "m28-obj-4",
-        "label": "Test the revised flow and review feedback",
+        "label": "Test success, timeout and retry paths before accepting the fix",
         "interactionTarget": "story:m28:objective:4",
         "required": true
       }
     ],
     "successConditions": [
-      "The player maps the current hand-off",
-      "The prototype preserves required evidence without leaking secrets",
-      "The complete route passes a repeatable test"
+      "The point where the case reference is lost is reproduced",
+      "The interface contract passes only necessary information",
+      "The repaired flow survives end-to-end, timeout and retry tests"
     ],
     "failureAndRetry": {
       "onFailure": "If the player approves isolated screen tests as sufficient, Christol reruns the full journey and points to the missing reference.",
@@ -2909,8 +2909,8 @@ const RAW_MISSIONS = [
     "interactionPlan": {
       "m28-obj-1": {
         "speaker": 0,
-        "prompt": "The user completes verification in one tool, but the next opens without the case reference.",
-        "playerPrompt": "I will check the source before deciding.",
+        "prompt": "The first tool shows verification complete, but the next tool cannot find the case. Where does the reference disappear?",
+        "playerPrompt": "I'll trace the same case ID at each boundary until I find where it drops.",
         "choices": [
           {
             "text": "Trace the same case ID through the request, response and receiving tool.",
@@ -2928,8 +2928,8 @@ const RAW_MISSIONS = [
       },
       "m28-obj-2": {
         "speaker": 1,
-        "prompt": "The two tools disagree about which fields the hand-off must carry.",
-        "playerPrompt": "I will check the source before deciding.",
+        "prompt": "What is the minimum information the next tool needs to continue safely?",
+        "playerPrompt": "I'll pass only the reference and fields the next step needs.",
         "choices": [
           {
             "text": "Document the required case reference, status fields and privacy limits on both sides.",
@@ -2947,8 +2947,8 @@ const RAW_MISSIONS = [
       },
       "m28-obj-3": {
         "speaker": 0,
-        "prompt": "The receiving tool drops the case reference when it stores the response.",
-        "playerPrompt": "I will check the source before deciding.",
+        "prompt": "How will the repair preserve the case ID without leaking unnecessary user data?",
+        "playerPrompt": "I'll preserve the verification state and avoid copying private details.",
         "choices": [
           {
             "text": "Fix the mapping and test with a synthetic case containing no private data.",
@@ -2966,8 +2966,8 @@ const RAW_MISSIONS = [
       },
       "m28-obj-4": {
         "speaker": 1,
-        "prompt": "The happy path works, but timeout and retry behaviour remain untested.",
-        "playerPrompt": "I will check the source before deciding.",
+        "prompt": "Which failure paths must pass before the team accepts the fix?",
+        "playerPrompt": "I'll test timeout and retry as well as the happy path.",
         "choices": [
           {
             "text": "Run the original failure, timeout, retry and privacy checks end to end.",
@@ -2988,7 +2988,7 @@ const RAW_MISSIONS = [
   {
     "id": "m29",
     "chapterId": "final",
-    "title": "The Gate That Asks Questions",
+    "title": "The Gate to KitCity",
     "state": "KitCity",
     "location": "KitCity outer gate, inspection arch and public records wall",
     "npcIds": [
@@ -3002,7 +3002,7 @@ const RAW_MISSIONS = [
       "Craftore"
     ],
     "narrativePurpose": "Continue from Mission 28's repaired hand-off. The case references lead to KitCity, where Softstorm, White Coach and Craftore ask you to reconstruct the connected incidents from source records. Build a timeline, choose work you can demonstrate and separate verified facts from inferences before the gate opens.",
-    "cardDescription": "Build a source-linked timeline to open KitCity's evidence gate.",
+    "cardDescription": "Reconstruct the linked cases from source records and show what the evidence can actually prove.",
     "learningObjectives": [
       "Reconstruct a multi-stage investigation from original sources and saved work",
       "Choose evidence that changes a decision instead of collecting clues for their own sake",
@@ -3014,33 +3014,33 @@ const RAW_MISSIONS = [
     "objectives": [
       {
         "id": "m29-obj-1",
-        "label": "Connect clues from different cities into a timeline",
+        "label": "Build a timeline using the original records from each case",
         "interactionTarget": "story:m29:objective:1",
         "required": true
       },
       {
         "id": "m29-obj-2",
-        "label": "Choose relevant skills for the KitCity challenge",
+        "label": "Choose skills that match the evidence and tasks you can demonstrate",
         "interactionTarget": "story:m29:objective:2",
         "required": true
       },
       {
         "id": "m29-obj-3",
-        "label": "Coordinate a team to review the case file",
+        "label": "Assign reviewers to challenge gaps and conflicting interpretations",
         "interactionTarget": "story:m29:objective:3",
         "required": true
       },
       {
         "id": "m29-obj-4",
-        "label": "Submit a reconstruction to the gatekeeper",
+        "label": "Present the source-linked reconstruction and unresolved questions",
         "interactionTarget": "story:m29:objective:4",
         "required": true
       }
     ],
     "successConditions": [
-      "The player links earlier clues to their sources",
-      "Contradictions and uncertainties remain visible",
-      "The reconstruction is accepted for practical assessment"
+      "Material events are placed in a timeline with source links",
+      "The player selects relevant, demonstrable skills and review roles",
+      "The gatekeeper can distinguish verified facts, inferences and open questions"
     ],
     "failureAndRetry": {
       "onFailure": "If the player overstates what the mark proves, White Coach asks them to identify the exact source for that claim.",
@@ -3070,8 +3070,8 @@ const RAW_MISSIONS = [
     "interactionPlan": {
       "m29-obj-1": {
         "speaker": 0,
-        "prompt": "The gatekeeper has several case records, but the sources are scattered.",
-        "playerPrompt": "I will check the source before deciding.",
+        "prompt": "Several cases appear connected. Which dated source records establish the order of events?",
+        "playerPrompt": "I'll order the events from source records, not from the most dramatic theory.",
         "choices": [
           {
             "text": "Connect the incidents using dated source records and label facts, inferences and gaps.",
@@ -3089,8 +3089,8 @@ const RAW_MISSIONS = [
       },
       "m29-obj-2": {
         "speaker": 1,
-        "prompt": "The gate also checks what you can contribute to the next task.",
-        "playerPrompt": "I will check the source before deciding.",
+        "prompt": "Which skills can you demonstrate with evidence rather than simply claim?",
+        "playerPrompt": "I'll choose work I can actually show and explain.",
         "choices": [
           {
             "text": "Choose a role tied to a demonstrated skill and name the artifact that proves the result.",
@@ -3108,8 +3108,8 @@ const RAW_MISSIONS = [
       },
       "m29-obj-3": {
         "speaker": 0,
-        "prompt": "Three teams need help under one deadline.",
-        "playerPrompt": "I will check the source before deciding.",
+        "prompt": "Who should independently challenge the timeline and identify its gaps?",
+        "playerPrompt": "I'll invite a second reviewer to challenge the gaps in my reasoning.",
         "choices": [
           {
             "text": "Assign one owner per case, agree on evidence to return and set a check-in.",
@@ -3127,8 +3127,8 @@ const RAW_MISSIONS = [
       },
       "m29-obj-4": {
         "speaker": 1,
-        "prompt": "The gatekeeper asks for the reconstruction, including unresolved questions.",
-        "playerPrompt": "I will check the source before deciding.",
+        "prompt": "What must the gatekeeper see before accepting the reconstruction?",
+        "playerPrompt": "I'll submit the facts, the inferences and the questions the records cannot settle.",
         "choices": [
           {
             "text": "Submit a source-linked timeline with facts, inferences and unknowns clearly labelled.",
@@ -3149,7 +3149,7 @@ const RAW_MISSIONS = [
   {
     "id": "m30",
     "chapterId": "final",
-    "title": "Build Something That Holds Up",
+    "title": "Three Problems, One Build",
     "state": "KitCity",
     "location": "KitCity workshop, field-test square and review chamber",
     "npcIds": [
@@ -3163,7 +3163,7 @@ const RAW_MISSIONS = [
       "Christol"
     ],
     "narrativePurpose": "Continue from Mission 29's open gate. Three teams need practical help: one has a premature payment-success screen, one has a newcomer facing a fake recovery page, and one has an integration that drops a case reference. Coordinate the work, test each real failure and report results without claiming the whole system is risk-free.",
-    "cardDescription": "Solve three practical cases and verify the results through repeatable tests.",
+    "cardDescription": "Test a payment status, protect a newcomer and repair a case hand-off in one practical review.",
     "learningObjectives": [
       "Combine verification, wallet safety and product testing in one end-to-end task",
       "Coordinate responsibilities while keeping each contribution reviewable",
@@ -3175,33 +3175,33 @@ const RAW_MISSIONS = [
     "objectives": [
       {
         "id": "m30-obj-1",
-        "label": "Review saved evidence from the earlier cases",
+        "label": "Verify the payment status against the underlying transaction record",
         "interactionTarget": "story:m30:objective:1",
         "required": true
       },
       {
         "id": "m30-obj-2",
-        "label": "Identify a fake interface and secure the practice wallet",
+        "label": "Guide the newcomer away from the fake recovery page safely",
         "interactionTarget": "story:m30:objective:2",
         "required": true
       },
       {
         "id": "m30-obj-3",
-        "label": "Build and test a safe prototype for the broken hand-off",
+        "label": "Repair and test the case-reference hand-off end to end",
         "interactionTarget": "story:m30:objective:3",
         "required": true
       },
       {
         "id": "m30-obj-4",
-        "label": "Present the result with evidence and limitations",
+        "label": "Present each result with its evidence, owner and remaining limits",
         "interactionTarget": "story:m30:objective:4",
         "required": true
       }
     ],
     "successConditions": [
-      "The payment evidence is correctly interpreted",
-      "The recovery-phrase request is rejected",
-      "The hand-off test passes and the result is documented with limits"
+      "The payment screen reflects the actual transaction state",
+      "The newcomer receives safe guidance without sharing wallet secrets",
+      "The integration passes end-to-end checks and each team records remaining limits"
     ],
     "failureAndRetry": {
       "onFailure": "If the player skips a safety check or reports an untested fix as complete, the relevant team sends the player back to that stage.",
@@ -3231,8 +3231,8 @@ const RAW_MISSIONS = [
     "interactionPlan": {
       "m30-obj-1": {
         "speaker": 0,
-        "prompt": "The teams bring a payment screenshot, a newcomer report and a broken hand-off.",
-        "playerPrompt": "I will check the source before deciding.",
+        "prompt": "The checkout says paid, but the transaction is still pending. Which status should the interface show?",
+        "playerPrompt": "I'll use the transaction state as the source of truth, not the colour of the badge.",
         "choices": [
           {
             "text": "Use the original transaction, private incident record and case-reference trace; assign an owner to each.",
@@ -3250,8 +3250,8 @@ const RAW_MISSIONS = [
       },
       "m30-obj-2": {
         "speaker": 1,
-        "prompt": "A newcomer has opened a lookalike recovery page on a practice device.",
-        "playerPrompt": "I will check the source before deciding.",
+        "prompt": "A recovery page demands secret words and uses a countdown. What is the safe response?",
+        "playerPrompt": "I'll close and report the fake page without entering or sharing recovery words.",
         "choices": [
           {
             "text": "Close it, verify support independently and never expose recovery words.",
@@ -3269,8 +3269,8 @@ const RAW_MISSIONS = [
       },
       "m30-obj-3": {
         "speaker": 0,
-        "prompt": "The payment screen turns green early, and the second tool loses the case ID.",
-        "playerPrompt": "I will check the source before deciding.",
+        "prompt": "The next tool loses the case reference. How will you verify that the repair holds across the full journey?",
+        "playerPrompt": "I'll test the entire hand-off, including failure and retry paths.",
         "choices": [
           {
             "text": "Require confirmed payment state and preserve the same case reference across the hand-off.",
@@ -3288,8 +3288,8 @@ const RAW_MISSIONS = [
       },
       "m30-obj-4": {
         "speaker": 1,
-        "prompt": "The happy path passes, but pending payment and failed hand-off cases have not been tested.",
-        "playerPrompt": "I will check the source before deciding.",
+        "prompt": "How will the three teams document what passed, who owns it and what remains untested?",
+        "playerPrompt": "I'll report each result separately and state the limits of the tests.",
         "choices": [
           {
             "text": "Test pending and confirmed payment, missing reference, timeout and retry; report limits.",
@@ -3310,7 +3310,7 @@ const RAW_MISSIONS = [
   {
     "id": "m31",
     "chapterId": "final",
-    "title": "What the Mark Was For",
+    "title": "What the Signature Actually Says",
     "state": "KitCity",
     "location": "KitCity central records room, signal tower and city square",
     "npcIds": [
@@ -3324,7 +3324,7 @@ const RAW_MISSIONS = [
       "Craftore"
     ],
     "narrativePurpose": "Continue from Mission 30's tested results. The signed deployment record names T3Kit beside the shared evidence-routing pathway, but the record must be read within its stated scope. Verify the signature and project relationship, present the evidence limits, then choose a practical skill goal with a deliverable another person can review.",
-    "cardDescription": "Verify the signed deployment record and finish with a defensible conclusion and practical next step.",
+    "cardDescription": "Verify the signed deployment record, state its limits and leave with a reviewable next step.",
     "learningObjectives": [
       "Verify a project's stated role from a source record and distinguish that from broader claims",
       "Recognise roles across learning, building, security, communication and community work",
@@ -3336,33 +3336,33 @@ const RAW_MISSIONS = [
     "objectives": [
       {
         "id": "m31-obj-1",
-        "label": "Review the deployment records and verify the T3Kit link",
+        "label": "Verify the deployment signature and the exact project scope it covers",
         "interactionTarget": "story:m31:objective:1",
         "required": true
       },
       {
         "id": "m31-obj-2",
-        "label": "Map professional roles across the connected tools",
+        "label": "Compare the signed record with the cyan-marker timeline without assuming guilt",
         "interactionTarget": "story:m31:objective:2",
         "required": true
       },
       {
         "id": "m31-obj-3",
-        "label": "Choose a specialization and practical next step",
+        "label": "Choose one practical specialization and a deliverable to prove progress",
         "interactionTarget": "story:m31:objective:3",
         "required": true
       },
       {
         "id": "m31-obj-4",
-        "label": "Present the result and record your future direction",
+        "label": "Present the final evidence summary and record the next deliverable",
         "interactionTarget": "story:m31:objective:4",
         "required": true
       }
     ],
     "successConditions": [
-      "The player verifies the T3Kit connection using records, not the mark alone",
-      "The player recognises multiple Web3 career and contribution paths",
-      "The player records a practical next step based on the journey"
+      "The signature and deployment scope are checked against the original record",
+      "The conclusion distinguishes commissioning a tool from operating suspicious pages",
+      "The player leaves with a specific next step and a reviewable portfolio artifact"
     ],
     "failureAndRetry": {
       "onFailure": "If the player claims T3Kit is proven by the symbol alone or expects a guaranteed outcome, Softstorm asks them to revisit the records and state what they can support.",
@@ -3393,8 +3393,8 @@ const RAW_MISSIONS = [
     "interactionPlan": {
       "m31-obj-1": {
         "speaker": 0,
-        "prompt": "The cyan marker sits beside a project name, but the team needs the signed deployment record.",
-        "playerPrompt": "I will check the source before deciding.",
+        "prompt": "The deployment record is signed. What identity, integrity and scope checks establish what it says?",
+        "playerPrompt": "I'll verify the signature and read the scope rather than relying on a copied summary.",
         "choices": [
           {
             "text": "Check the signature, project identity and the relationship the record explicitly documents.",
@@ -3412,8 +3412,8 @@ const RAW_MISSIONS = [
       },
       "m31-obj-2": {
         "speaker": 1,
-        "prompt": "The record names who commissioned the pathway, not who caused every incident.",
-        "playerPrompt": "I will check the source before deciding.",
+        "prompt": "The project name appears beside the shared evidence-routing tool. Does that establish who operated the suspicious pages?",
+        "playerPrompt": "The record shows a project relationship, not proof that the project operated the pages.",
         "choices": [
           {
             "text": "Map the verified role to the pathway and leave unrelated incident responsibility unresolved.",
@@ -3431,8 +3431,8 @@ const RAW_MISSIONS = [
       },
       "m31-obj-3": {
         "speaker": 0,
-        "prompt": "You have worked on verification, wallet safety, communication, product tests and integration.",
-        "playerPrompt": "I will check the source before deciding.",
+        "prompt": "Which skill area can you practise next, and what concrete artifact will show progress?",
+        "playerPrompt": "I'll choose one skill and define a deliverable another person can review.",
         "choices": [
           {
             "text": "Choose one skill and define a small deliverable, reviewer and check-in date.",
@@ -3450,8 +3450,8 @@ const RAW_MISSIONS = [
       },
       "m31-obj-4": {
         "speaker": 1,
-        "prompt": "The final file contains source records, test results and a learning direction.",
-        "playerPrompt": "I will check the source before deciding.",
+        "prompt": "What can you defend from the evidence, and what will you build or document next?",
+        "playerPrompt": "I'll present the conclusion with its limits and commit to a concrete next artifact.",
         "choices": [
           {
             "text": "Present what the record proves, what it does not, your portfolio and one next deliverable.",
