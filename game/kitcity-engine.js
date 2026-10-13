@@ -151,7 +151,7 @@ const MUSIC_QUEUES={
   'benin':{label:"Benin City · Edo / Contemporary Afrobeats",videos:["eYsldLTYyrM"]},
   'calabar':{label:"Calabar · Contemporary Afrobeats",videos:["OFtYscjjdCk"]},
   'jos':{label:"Jos · Afrobeats",videos:["k6eE3c70hgg"]},
-  'ibadan':{label:"Ibadan · Terry Apala — Apala Wifi",videos:["ByCqof3jMWs"]},
+  'ibadan':{label:"Ibadan · Lil Kesh — Shoki",videos:["f34zcceVu7U"]},
   'enugu':{label:"Enugu · Igbo Pop / Afrobeats",videos:["yMSTYtMSbL0"]},
   'kano':{label:"Kano · Contemporary Hausa Music",videos:["1tn8vcSPe70"]},
   'kaduna':{label:"Kaduna · Contemporary Hausa Music",videos:["ddXZE34DFbQ"]},
@@ -170,7 +170,7 @@ const MUSIC_QUEUES={
   'ilorin':{label:"Ilorin · Seyi Vibez — Lagos",videos:["lKeP2yDK_78"]},
   'akure':{label:"Akure · Bella Shmurda & FOLA — Dangbana Riddim",videos:["nwSYUMzIXPM"]},
   'ado-ekiti':{label:"Ado-Ekiti · Chinko Ekun, Lil Kesh & Zlatan — Able God",videos:["rvSyIqZSzHw"]},
-  'osogbo':{label:"Osogbo · DJ Tunez & Terry Apala — Apala Disco",videos:["SrGJ9Kh4xXw"]},
+  'osogbo':{label:"Osogbo · DJ Tunez, Wizkid, Seyi Vibez & Terry Apala — Apala Disco Remix",videos:["Q-6wx4LekUE"]},
   'abeokuta':{label:"Abeokuta · Seyi Vibez — Instagram",videos:["-zoC0Qdbidc"]},
   'lokoja':{label:"Lokoja · Contemporary Afrobeats",videos:["77iJTnmILrw"]},
   'lafia':{label:"Lafia · Contemporary Hausa Music",videos:["mxULSjNvC7Y"]},
@@ -4759,21 +4759,32 @@ function loadStep(){
       shopkeeper.active=()=>false; shopkeeper.talk=()=>{}; ents.push(shopkeeper);
     }
   }
-  /* Hard fallback: some Lagos mission steps use one-off NPC objects that are not
-     registered in STORY_NPCS. If the cast lookup cannot create an active target,
-     place the exact step NPC at the blue objective marker and make it interactable. */
+  /* Hard fallback: mission steps must always have an interactable conversation target,
+     even if a character alias is absent from STORY_NPCS. */
   if(st.kind==='character'&&st.npc&&!ents.some(e=>e._missionTarget)){
     const targetNpc=typeof st.npc==='object'?st.npc:STORY_NPCS[st.npc];
+    const targetSpot=safeMissionSpot(SPOTS[st.spot]||SPOTS.a);
+    let target;
     if(targetNpc){
-      const targetSpot=SPOTS[st.spot]||SPOTS.a;
-      const target=placeNPC(targetNpc,targetSpot);
-      target.r=14;
-      target.talk=()=>st.run();
-      target.active=()=>true;
-      target._missionTarget=true;
-      ents.unshift(target);
-      goal=target;
+      target=placeNPC(targetNpc,targetSpot);
+    }else{
+      /* Invisible proxy is a last resort for a missing registry entry; it keeps the step
+         playable and places the interaction at the same safe objective anchor. */
+      target={x:targetSpot.x,z:targetSpot.z,r:18};
     }
+    target.r=Math.max(Number(target.r)||0,18);
+    target.talk=()=>st.run();
+    target.active=()=>true;
+    target._missionTarget=true;
+    ents.unshift(target);
+    goal=target;
+  }
+  /* Keep every tagged mission target interactable after any dialogue-name remapping.
+     A larger radius prevents the Talk control disappearing at redesigned mission centres. */
+  const missionTarget=ents.find(e=>e._missionTarget&&typeof e.talk==='function');
+  if(missionTarget){
+    missionTarget.active=()=>true;
+    missionTarget.r=Math.max(Number(missionTarget.r)||0,18);
   }
   for(const ex of (m.extras||[])){
     if(G.used[ex.id]) continue;
