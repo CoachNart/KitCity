@@ -612,7 +612,7 @@ const SPOTS={
   e:{x:-80,z:-35,f:1}, f:{x:-60,z:-105,f:-1}, g:{x:10,z:-175,f:-1}, h:{x:-10,z:-175,f:1},
   i:{x:150,z:-35,f:-1}, j:{x:130,z:-175,f:1}, k:{x:-150,z:-35,f:1}, l:{x:-130,z:-175,f:-1},
   m:{x:80,z:35,f:-1}, n:{x:-80,z:105,f:1}, o:{x:10,z:175,f:-1}, story:{x:24,z:-32,f:1}, x1:{x:60,z:-105,f:1},
-  lvA:{x:18,z:-30,f:-1}, lvB:{x:30,z:-30,f:1}, lvC:{x:18,z:-43,f:-1}, lvD:{x:30,z:-43,f:1}, lvE:{x:260,z:-260,f:-1}, lvF:{x:42,z:-26,f:1}, lvG:{x:54,z:-38,f:-1}
+  lvA:{x:18,z:-30,f:-1}, lvB:{x:30,z:-30,f:1}, lvC:{x:18,z:-43,f:-1}, lvD:{x:30,z:-43,f:1}, lvE:{x:170,z:-150,f:-1}, lvF:{x:42,z:-26,f:1}, lvG:{x:54,z:-38,f:-1}
 };
 const special=Object.keys(SPOTS).map(k=>SPOTS[k]).concat([SPAWN]);
 const nearSpecial=(x,z,d)=>special.some(s=>Math.hypot(s.x-x,s.z-z)<d);
@@ -3998,12 +3998,28 @@ function buildMissionNameAliases(mission){
 /* These NPCs are created after the existing community-name assignment so their
    approved story names remain stable and do not rename unrelated mission NPCs. */
 const lostValueNpcCache=new Map();
-const lostValueLooks=[LK.mama,LK.suya,LK.man,LK.clerk,LK.trader,LK.guy];
 const lostValueColors=['#00AFC2','#E4572E','#2D6FB3','#7A3B8F','#0B7A43','#B85C38','#4656A8'];
+const LOST_VALUE_NAMED_LOOKS={
+  'softstorm':LK.softstorm,'iamabdul':LK.abdul,
+  'joseph':LK.josephNnadi,'joseph nnadi':LK.josephNnadi,'larai':LK.larai,'unique':LK.unique,
+  'smrt huntr':LK.smrtHuntr,'goodness':LK.goodness,'semi':LK.semi,'blockqueen':LK.blockqueen,
+  'christol':LK.christol,'laloba':LK.laloba,'bigsam':LK.bigSam,'lunax':LK.lunaX,
+  'oxnight':LK.oxnight,'moon':LK.moon,'the cryptonian':LK.cryptonian,'the don':LK.theDon,
+  'praise':LK.praise,'toza':LK.toza,'craftore':LK.craftore,'kodavic':LK.kodavic,
+  'cybersage':LK.cybersage,'reina':LK.reina,'cclya':LK.cclya,'leemah':LK.leemah,'kenny':LK.kenny
+};
+const LOST_VALUE_GENERIC_LOOKS={
+  'local trader':LK.trader,'customer':LK.man,'student':LK.guy,
+  'user 1':LK.man,'user 2':LK.clerk,'user 3':LK.suya,'business owner':LK.elder
+};
 function lostValueNpc(name){
   if(lostValueNpcCache.has(name)) return lostValueNpcCache.get(name);
   const index=lostValueNpcCache.size;
-  const def=NPC(name,'The Lost Value story',lostValueColors[index%lostValueColors.length],lostValueLooks[index%lostValueLooks.length],null,name);
+  const key=String(name||'').trim().toLowerCase();
+  const namedLook=LOST_VALUE_NAMED_LOOKS[key]||null;
+  const genericLook=LOST_VALUE_GENERIC_LOOKS[key]||LK.man;
+  const look=namedLook||Object.assign({},genericLook,{top:lostValueColors[index%lostValueColors.length]});
+  const def=NPC(name,'The Lost Value story',lostValueColors[index%lostValueColors.length],look,null,name);
   lostValueNpcCache.set(name,def);
   return def;
 }
@@ -4023,7 +4039,7 @@ const lostValueMissions=LOST_VALUE_STORY.map(story=>{
     if(G) G.storyChoice=choice.label;
     if(story.id==='lost-value-14') Store.set(storageKey+'_lost_value_focus',choice.label);
   }}));
-  const conversationStep=(label,lines,actor,allowChoices)=>({label,spot:actor.spot,npc:actor.npc,run(){
+  const conversationStep=(label,lines,actor,allowChoices)=>({kind:'conversation',label,spot:actor.spot,npc:actor.npc,run(){
     const panels=[{
       shot:'character',speaker:actor.name,kicker:story.state.toUpperCase()+' · THE LOST VALUE',
       caption:story.title.toUpperCase(),next:'next'
@@ -4097,9 +4113,18 @@ function bannerSprite(text,sub){
 function loadStep(){
   clearGroup(missionGroup); colliders.length=cityCols; smoke=[]; ents=[]; goal=null;
   const m=G.m,st=m.steps[G.i];
-  // The Lost Value missions stage the full scene cast every step. Only the current
-  // objective is interactable, so scene characters stay visible without duplicate Talk targets.
-  if(Array.isArray(m.cast)) m.cast.forEach(entry=>{ if(entry.npc!==st.npc) placeNPC(entry.npc,SPOTS[entry.spot]); });
+  // Keep the complete Lost Value cast clustered around the current objective so
+  // every actor can remain visible in the mobile conversation framing.
+  const isLostValueMission=String(m.id||'').startsWith('lost-value-');
+  const stageCenter=SPOTS[st.spot]||SPAWN;
+  const castOffsets=[{x:-4,z:-2},{x:4,z:-2},{x:-4,z:2},{x:4,z:2},{x:0,z:-4},{x:0,z:4}];
+  if(Array.isArray(m.cast)) m.cast.forEach((entry,index)=>{
+    if(entry.npc===st.npc) return;
+    const assignedSpot=isLostValueMission
+      ? {x:stageCenter.x+castOffsets[index%castOffsets.length].x,z:stageCenter.z+castOffsets[index%castOffsets.length].z,f:stageCenter.f||1}
+      : SPOTS[entry.spot];
+    if(assignedSpot) placeNPC(entry.npc,assignedSpot);
+  });
   const e=st.kind==='clue'?placeStoryClue(st,SPOTS[st.spot]):placeNPC(st.npc,SPOTS[st.spot]); e.talk=()=>st.run(); e.active=()=>true; ents.push(e); goal=e;
   for(const ex of (m.extras||[])){
     if(G.used[ex.id]) continue;
@@ -4826,14 +4851,20 @@ function update(dt,time){
     const d=Math.hypot(player.position.x-e.x,player.position.z-e.z);
     if(d<e.r&&d<best){ best=d; nearEnt=e; }
   }
-  talkBtn.classList.toggle('hidden',!(nearEnt&&!S.modal));
+  const currentStoryStep=G&&G.m&&Array.isArray(G.m.steps)?G.m.steps[G.i]:null;
+  const autoStartConversation=!!(G&&String(G.m.id||'').startsWith('lost-value-')&&currentStoryStep&&currentStoryStep.kind==='conversation'&&!S.modal);
+  talkBtn.classList.toggle('hidden',autoStartConversation||!(nearEnt&&!S.modal));
+  if(autoStartConversation&&nearEnt&&nearEnt===goal) nearEnt.talk();
   const compass=$('#compass');
   if(goal){
     compass.classList.remove('hidden');
     beacon.visible=true; beacon.position.set(goal.x,0,goal.z);
     beacon.getObjectByName('ring').scale.setScalar(1+.18*Math.sin(time*4));
     const dx=goal.x-player.position.x,dz=goal.z-player.position.z,d=Math.round(Math.hypot(dx,dz));
-    $('#arrow').style.transform='rotate('+Math.atan2(dx,-dz)+'rad)';
+    const bearing=Math.atan2(dx,-dz);
+    const arrow=$('#arrow');
+    arrow.style.transformOrigin='50% 50%';
+    arrow.style.transform='rotate('+bearing+'rad)';
     if(d!==lastDist){ lastDist=d; $('#dist').textContent=d<9?tr('Here'):Math.round(d/2)+' m'; }
   } else { beacon.visible=false; compass.classList.add('hidden'); }
   { updateBarks(dt);
