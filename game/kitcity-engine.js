@@ -607,7 +607,7 @@ const SPOTS={
   e:{x:-80,z:-35,f:1}, f:{x:-60,z:-105,f:-1}, g:{x:10,z:-175,f:-1}, h:{x:-10,z:-175,f:1},
   i:{x:150,z:-35,f:-1}, j:{x:130,z:-175,f:1}, k:{x:-150,z:-35,f:1}, l:{x:-130,z:-175,f:-1},
   m:{x:80,z:35,f:-1}, n:{x:-80,z:105,f:1}, o:{x:10,z:175,f:-1}, story:{x:24,z:-32,f:1}, x1:{x:60,z:-105,f:1},
-  lvA:{x:18,z:-30,f:-1}, lvB:{x:30,z:-30,f:1}, lvC:{x:18,z:-43,f:-1}, lvD:{x:30,z:-43,f:1}, lvE:{x:42,z:-38,f:-1}
+  lvA:{x:18,z:-30,f:-1}, lvB:{x:30,z:-30,f:1}, lvC:{x:18,z:-43,f:-1}, lvD:{x:30,z:-43,f:1}, lvE:{x:42,z:-38,f:-1}, lvF:{x:42,z:-26,f:1}, lvG:{x:54,z:-38,f:-1}
 };
 const special=Object.keys(SPOTS).map(k=>SPOTS[k]).concat([SPAWN]);
 const nearSpecial=(x,z,d)=>special.some(s=>Math.hypot(s.x-x,s.z-z)<d);
@@ -3996,19 +3996,22 @@ function lostValueEscape(value){
   return String(value==null?'':value).replace(/[&<>"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));
 }
 const lostValueMissions=LOST_VALUE_STORY.map(story=>{
-  const cast=story.cast.map((name,index)=>({name,npc:lostValueNpc(name),spot:['lvA','lvB','lvC','lvD'][index%4]}));
+  const cast=story.cast.map((name,index)=>({name,npc:lostValueNpc(name),spot:['lvA','lvB','lvC','lvD','lvF','lvG'][index%6]}));
   const castByName=Object.fromEntries(cast.map(entry=>[entry.name,entry]));
-  const lead=cast[0];
   const splitAfter=Number.isInteger(story.splitAfter)?Math.max(0,Math.min(story.dialogue.length,story.splitAfter)):story.dialogue.length;
-  const openingHtml=story.dialogue.slice(0,splitAfter).map(([speaker,line])=>'<p><b>'+lostValueEscape(speaker)+'</b>: '+lostValueEscape(line)+'</p>').join('');
-  const closingHtml=story.dialogue.slice(splitAfter).map(([speaker,line])=>'<p><b>'+lostValueEscape(speaker)+'</b>: '+lostValueEscape(line)+'</p>').join('');
+  const openingLines=story.dialogue.slice(0,splitAfter),closingLines=story.dialogue.slice(splitAfter);
+  const dialogueHtml=lines=>lines.map(([speaker,line])=>'<p><b>'+lostValueEscape(speaker)+'</b>: '+lostValueEscape(line)+'</p>').join('');
+  const openingHtml=dialogueHtml(openingLines),closingHtml=dialogueHtml(closingLines);
+  const firstCastSpeaker=lines=>lines.map(([speaker])=>castByName[speaker]).find(Boolean);
+  const openingLead=firstCastSpeaker(openingLines)||cast[0];
+  const closingLead=firstCastSpeaker(closingLines)||openingLead;
   const choiceButtons=story.choices.map(choice=>({t:choice.label,f:()=>{
     if(G) G.storyChoice=choice.label;
     if(story.id==='lost-value-14') Store.set(storageKey+'_lost_value_focus',choice.label);
     finishStep();
   }}));
-  const conversationStep=(label,html,allowChoices)=>({label,spot:lead.spot,npc:lead.npc,run(){
-    talk(lead.npc,html,allowChoices&&choiceButtons.length?choiceButtons:[{t:'Continue',f:finishStep}]);
+  const conversationStep=(label,html,actor,allowChoices)=>({label,spot:actor.spot,npc:actor.npc,run(){
+    talk(actor.npc,html,allowChoices&&choiceButtons.length?choiceButtons:[{t:'Continue',f:finishStep}]);
   }});
   const clue={
     kind:'clue',label:story.task,spot:'lvE',title:story.evidenceTitle,sign:story.evidenceTitle.toUpperCase(),
@@ -4021,9 +4024,9 @@ const lostValueMissions=LOST_VALUE_STORY.map(story=>{
     id:story.id,n:story.n,city:story.city,title:story.title,goal:story.goal,
     storyState:story.state,storyValue:story.value,storyReward:story.reward,storyFinale:!!story.finale,
     cast:cast.map(({npc,spot})=>({npc,spot})),steps:[
-      conversationStep('Speak with '+lead.name,openingHtml,false),
+      conversationStep('Speak with '+openingLead.name,openingHtml,openingLead,false),
       clue,
-      ...(closingHtml?[conversationStep('Discuss the evidence with '+lead.name,closingHtml,true)]:[])
+      ...(closingHtml?[conversationStep('Discuss the evidence with '+closingLead.name,closingHtml,closingLead,true)]:[])
     ],extras:[]
   };
 });
