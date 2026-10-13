@@ -243,7 +243,7 @@ const RAW_MISSIONS = [
     ],
     "nextMissionId": "m03",
     "ending": "The copied page borrowed the shop's name and design, but its domain and payment destination differ from the original. You preserve the page and message trail. You know how the buyer was misdirected; you still do not know who created the page.",
-    "cliffhanger": "Larai receives a voice note from Oyo. Timi says the shortened link shared in the market chat now redirects to a second page offering to 'restore' wallets in exchange for twelve secret words. Timi has not entered them. The redirect connects the cases, but it does not prove who operates either page. You head to Oyo to stop a second possible loss.",
+    "cliffhanger": "Larai receives a voice note from Oyo. Timi says he followed the same shortened link from the market chat later that day, and it now redirects to a second page offering to 'restore' wallets in exchange for twelve secret words. Timi has not entered them. The redirect connects the leads, but it does not prove who operates either page. You head to Oyo to stop a second possible loss.",
     "sceneLines": [
       "Joe_Sef: \"Softstorm sent you? The buyer says this page gave him the address. The café wipes its sessions when people leave, so we have minutes—not hours. Save the page and its full address before clicking anything else. A screenshot without its source can lose the most useful clue.\"",
       "Larai: \"The real shop link is in my original message. Put the two addresses side by side; don't judge them by the logo. Then follow the timestamps. We can show where the link appeared, but a familiar name on a forwarded message doesn't prove who controlled that account.\""
@@ -491,7 +491,7 @@ const RAW_MISSIONS = [
     ],
     "nextMissionId": "m06",
     "ending": "The checkout now distinguishes pending from confirmed and the team retests both outcomes. The merchant can see what has actually happened. The payout destination still differs from the approved address, so the team pauses release rather than pretending the interface fix solved everything.",
-    "cliffhanger": "Blockqueen asks Laloba and BigSam to inspect the code that controls the payout. The screen can report a payment correctly while a privileged setting still sends the money somewhere else.",
+    "cliffhanger": "Blockqueen asks Laloba and BigSam to inspect the code that controls the payout. The checkout now reports payment status correctly, but the payout destination still differs from the merchant-approved address. The team must verify who can change it before releasing any stock.",
     "sceneLines": [
       "Blockqueen: \"A seller nearly handed over a box of stock because the screen turned green while the payment was still pending. He doesn't need another dashboard; he needs the receipt to tell the truth. Follow checkout from the first tap and show me the exact moment the app claims more than the record proves.\"",
       "Christol: \"I wanted to save the launch with a loyalty feature. The event log shows the real bug: we mark success when the wallet request returns, not when the payment reaches the required state. Let's fix that and test the failure path too. Then inspect the payout setting—the destination isn't the one the merchant approved.\""
@@ -2436,7 +2436,7 @@ const RAW_MISSIONS = [
       "Christol",
       "Craftore"
     ],
-    "narrativePurpose": "KitCity's teams have one afternoon to investigate a suspicious payment flow, protect a newcomer and repair a broken hand-off between two tools. Move between the workshop, field-test square and review chamber. Use the evidence, test the fix and leave a record another person can verify.",
+    "narrativePurpose": "Three KitCity teams have one afternoon to investigate a suspicious payment flow, protect a newcomer and repair a broken hand-off between two tools. Move between the workshop, field-test square and review chamber. Use the evidence, test the fix and leave a record another person can verify.",
     "learningObjectives": [
       "Combine verification, wallet safety and product testing in one end-to-end task",
       "Coordinate responsibilities while keeping each contribution reviewable",
@@ -2589,7 +2589,7 @@ const RAW_MISSIONS = [
       "kitcity_journey_complete"
     ],
     "nextMissionId": null,
-    "ending": "The signed records confirm that T3Kit commissioned the shared evidence-routing pathway for learning, building, verification and participation. They do not connect T3Kit to the operation of every scam described in the cases, nor do they promise easy money or guaranteed outcomes. The player leaves with a portfolio of work, a chosen next step and a method for checking future claims.",
+    "ending": "The signed records confirm that T3Kit commissioned the shared evidence-routing pathway for learning, building, verification and participation. They do not establish that T3Kit operated the suspicious pages described in the cases, nor do they promise easy money or guaranteed outcomes. The player leaves with a portfolio of work, a chosen next step and a method for checking future claims.",
     "cliffhanger": "The square fills with new teams looking for people who can do the work. Your story does not end with the mission list: it continues with the next skill you practise, the evidence you create and the people your work helps.",
     "sceneLines": [
       "Softstorm: \"The signal brought you here, but the cyan marker was never proof that one person caused every incident. Open the signed deployment record and show me the exact relationship it establishes. If the record doesn't say it, don't add it to the story.\"",
