@@ -1,0 +1,49 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {
+  SUPPORTED_LANGUAGES,
+  translateText,
+  translateHTML,
+  auditLocalization,
+} from './localization.js';
+
+test('all supported language codes are present', () => {
+  assert.deepEqual(Object.keys(SUPPORTED_LANGUAGES), ['en', 'pcm', 'ha', 'yo', 'ig']);
+});
+
+test('reviewed UI phrases translate for each supported language', () => {
+  const expected = {
+    pcm: 'Settings',
+    ha: 'Saituna',
+    yo: 'Ètò',
+    ig: 'Ntọala',
+  };
+  for (const [language, translation] of Object.entries(expected)) {
+    assert.equal(translateText('Settings', language), translation);
+    assert.notEqual(translateText('No wallet yet', language), 'No wallet yet');
+  }
+});
+
+test('translation preserves whitespace and leaves unknown phrases safe', () => {
+  assert.equal(translateText('  Settings  ', 'ha'), '  Saituna  ');
+  assert.equal(translateText('A newly added mission line', 'yo'), 'A newly added mission line');
+  assert.equal(translateText('Settings', 'en'), 'Settings');
+  assert.equal(translateText('Settings', 'unsupported'), 'Settings');
+});
+
+test('HTML translation changes text nodes only and keeps markup intact', () => {
+  assert.equal(translateHTML('<button>Settings</button>', 'ha'), '<button>Saituna</button>');
+  assert.equal(
+    translateHTML('<p>Settings</p><span class="tag">No wallet yet</span>', 'yo'),
+    '<p>Ètò</p><span class="tag">O kò tíì ní àpò owó</span>'
+  );
+  assert.equal(translateHTML('<a href="/settings">Unknown label</a>', 'ig'), '<a href="/settings">Unknown label</a>');
+});
+
+test('coverage audit reports missing phrases instead of silently claiming completeness', () => {
+  const report = auditLocalization(['Settings', 'No wallet yet', 'New dialogue never catalogued'], 'ha');
+  assert.equal(report.total, 3);
+  assert.equal(report.translated, 2);
+  assert.equal(report.percent, 67);
+  assert.deepEqual(report.missing, ['New dialogue never catalogued']);
+});
