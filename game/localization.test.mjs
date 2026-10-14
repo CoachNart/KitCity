@@ -74,18 +74,18 @@ test('Pidgin covers every dialogue line in the full story registry', async () =>
 
 test('Lost Value continuation connects Kogi through the FCT and KitCity', async () => {
   const source = await readFile(new URL('./lost-value-continuation.js', import.meta.url), 'utf8');
-  const ids = [...source.matchAll(/id:'(lost-value-\\d+)'/g)].map(match => match[1]);
+  const ids = [...source.matchAll(/id:'(lost-value-\d+)'/g)].map(match => match[1]);
   assert.equal(ids.length, 23, 'continuation must cover missions 16 through 38');
   assert.equal(new Set(ids).size, ids.length, 'continuation mission IDs must be unique');
   assert.equal(ids[0], 'lost-value-16');
   assert.equal(ids.at(-1), 'lost-value-38');
-  const missions = [...source.matchAll(/id:'(lost-value-\\d+)'[\\s\\S]*?state:'([^']+)', city:'([^']+)'[\\s\\S]*?dialogue:\\s*\\[([\\s\\S]*?)\\n\\s*\\],[\\s\\S]*?task:'([^']+)'[\\s\\S]*?evidenceTitle:'([^']+)'[\\s\\S]*?evidenceBody:'([^']+)'[\\s\\S]*?reward:'([^']+)'/g)];
+  const missions = [...source.matchAll(/id:'(lost-value-\d+)'[\s\S]*?state:'([^']+)', city:'([^']+)'[\s\S]*?dialogue:\s*\[([\s\S]*?)\n\s*\],[\s\S]*?task:'([^']+)'[\s\S]*?evidenceTitle:'([^']+)'[\s\S]*?evidenceBody:'([^']+)'[\s\S]*?reward:'([^']+)'/g)];
   assert.equal(missions.length, 23, 'each continuation stop must have dialogue, an objective, evidence, and a reward');
   assert.equal(missions[21][2], 'Federal Capital Territory');
   assert.equal(missions[21][3], 'abuja');
   assert.equal(missions[22][2], 'KitCity');
   assert.equal(missions[22][3], 'kitcity');
-  assert.match(source, /id:'lost-value-38'[\\s\\S]*?finale:true/);
+  assert.match(source, /id:'lost-value-38'[\s\S]*?finale:true/);
 });
 
 test('Pidgin covers the opening cinematic and its choices', async () => {
