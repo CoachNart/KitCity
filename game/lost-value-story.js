@@ -383,4 +383,5 @@ export const LOST_VALUE_STORY = [
     reward:'You have discovered what was lost. Now you must discover what it takes to restore it.',
     finale:true
   }
+  ...LOST_VALUE_CONTINUATION,
 ];
