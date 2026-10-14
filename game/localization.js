@@ -197,6 +197,7 @@ const CATALOG = {
     "Community vote: change rejected. Administrative action: change approved. Notice before vote: unclear. Explanation after vote: incomplete.": "Community vote: change rejected. Admin action: change approved. Notice before vote: no clear. Explanation after vote: no complete.",
     "Core feature: working. Documentation: available. Project progress: public. User feedback: limited.": "Main feature dey work. Documentation dey available. Project progress dey public. User feedback small.",
     "Ownership without control. Community without contribution. Access without understanding. Growth without usefulness. Trust without accountability. Promises without delivery.": "Ownership without control. Community without contribution. Access without understanding. Growth without real use. Trust without accountability. Promise without delivery.",
+    "The First Promise. The Price of Trust. The Empty Promise. The People Who Built It. Who Owns the Work? The Exit. The Community That Disappeared. The Numbers Game. The Open Door. Building for Nobody. The People Left Behind. The Rules for Everyone. The Cost of Starting Over.": "Di First Promise. Wetin Trust Cost. Promise Wey Empty. People Wey Build Am. Who Get Di Work? Di Way Out. Di Community Wey Disappear. Di Number Game. Open Door. Building for Nobody. People Wey Dem Leave Behind. Rules for Everybody. Wetin E Cost to Start Again.",
   },
   ha: {
     'Settings': 'Saituna',
@@ -359,6 +360,7 @@ const CATALOG = {
     "Community vote: change rejected. Administrative action: change approved. Notice before vote: unclear. Explanation after vote: incomplete.": "Ƙuri'ar al'umma: an ƙi canji. Matakin gudanarwa: an amince da canji. Sanarwa kafin ƙuri'a: ba a bayyana ba. Bayani bayan ƙuri'a: bai cika ba.",
     "Core feature: working. Documentation: available. Project progress: public. User feedback: limited.": "Babban fasali yana aiki. Takardu suna nan. Ci gaban aikin a bayyane yake. Ra'ayin masu amfani kaɗan ne.",
     "Ownership without control. Community without contribution. Access without understanding. Growth without usefulness. Trust without accountability. Promises without delivery.": "Mallaka ba tare da iko ba. Al'umma ba tare da gudummawa ba. Samun dama ba tare da fahimta ba. Girma ba tare da amfani ba. Amincewa ba tare da ɗaukar alhaki ba. Alkawari ba tare da cikawa ba.",
+    "The First Promise. The Price of Trust. The Empty Promise. The People Who Built It. Who Owns the Work? The Exit. The Community That Disappeared. The Numbers Game. The Open Door. Building for Nobody. The People Left Behind. The Rules for Everyone. The Cost of Starting Over.": "Alkawari na Farko. Farashin Amincewa. Alkawarin Banza. Mutanen da Suka Gina Shi. Wa Ya Mallaki Aikin? Hanyar Fita. Al'ummar da Ta ɓace. Wasan Lambobi. Ƙofar Buɗe. Gina wa Babu Kowa. Mutanen da Aka Bari a Baya. Dokoki ga Kowa. Kuɗin Sake Farawa.",
   },
   yo: {
     'Settings': 'Ètò',
@@ -521,6 +523,7 @@ const CATALOG = {
     "Community vote: change rejected. Administrative action: change approved. Notice before vote: unclear. Explanation after vote: incomplete.": "Ìdìbò àwùjọ: a kọ ìyípadà. Ìgbésẹ̀ alákóso: a fọwọ́ sí ìyípadà. Ìfitónilétí ṣáájú ìdìbò: kò ṣe kedere. Àlàyé lẹ́yìn ìdìbò: kò pé.",
     "Core feature: working. Documentation: available. Project progress: public. User feedback: limited.": "Ẹ̀yà pàtàkì: ó ń ṣiṣẹ́. Àkọsílẹ̀: ó wà. Ìlọsíwájú iṣẹ́: ó ṣí síta. Èrò àwọn olùlò: díẹ̀.",
     "Ownership without control. Community without contribution. Access without understanding. Growth without usefulness. Trust without accountability. Promises without delivery.": "Níní ohun-ìní láìsí ìṣàkóso. Àwùjọ láìsí ìkópa. Ìwọlé láìsí òye. Ìdàgbàsókè láìsí ìlò. Ìgbẹ́kẹ̀lé láìsí jíjẹ́ jíyàn. Ìlérí láìsí ìmúṣẹ.",
+    "The First Promise. The Price of Trust. The Empty Promise. The People Who Built It. Who Owns the Work? The Exit. The Community That Disappeared. The Numbers Game. The Open Door. Building for Nobody. The People Left Behind. The Rules for Everyone. The Cost of Starting Over.": "Ìlérí Àkọ́kọ́. Owó Ìgbẹ́kẹ̀lé. Ìlérí Asán. Àwọn Tó Kọ́ Ọ. Ta Ni Ó Ní Iṣẹ́ Náà? Ọ̀nà Ìjáde. Àwùjọ Tó Sọnù. Eré Àwọn Nọ́ńbà. Ilẹ̀kùn Ṣíṣí. Kíkọ́ Fún Ẹnikẹ́ni Kò Sí. Àwọn Tí A Fi Sílẹ̀. Òfin Fún Gbogbo Ènìyàn. Ìnáwó Bíbẹ̀rẹ̀ Lẹ́ẹ̀kan Sí I.",
   },
   ig: {
     'Settings': 'Ntọala',
@@ -683,6 +686,7 @@ const CATALOG = {
     "Community vote: change rejected. Administrative action: change approved. Notice before vote: unclear. Explanation after vote: incomplete.": "Ntuli aka obodo: ajụrụ mgbanwe. Ihe ndị nchịkwa mere: akwadoro mgbanwe. Ọkwa tupu ntuli aka: edoghị anya. Nkọwa mgbe ntuli aka gasịrị: ezughị.",
     "Core feature: working. Documentation: available. Project progress: public. User feedback: limited.": "Akụkụ bụ isi na-arụ ọrụ. Akwụkwọ dị. Ọganihu ọrụ bụ nke ọha. Nzaghachi ndị ọrụ pere mpe.",
     "Ownership without control. Community without contribution. Access without understanding. Growth without usefulness. Trust without accountability. Promises without delivery.": "Inwe ihe n’enweghị njikwa. Obodo n’enweghị onyinye. Ịnweta n’enweghị nghọta. Uto n’enweghị uru. Ntụkwasị obi n’enweghị aza ajụjụ. Nkwa n’enweghị mmezu.",
+    "The First Promise. The Price of Trust. The Empty Promise. The People Who Built It. Who Owns the Work? The Exit. The Community That Disappeared. The Numbers Game. The Open Door. Building for Nobody. The People Left Behind. The Rules for Everyone. The Cost of Starting Over.": "Nkwa Mbụ. Ọnụ Ahịa Ntụkwasị Obi. Nkwa Efughị Efu. Ndị Wulitere Ya. Onye Nwe Ọrụ Ahụ? Ụzọ Ọpụpụ. Obodo Furu Efú. Egwuregwu Ọnụọgụ. Ọnụ Ụzọ Meghere. Iwulite Maka Onye Ọ Bụla. Ndị A Hapụrụ Azụ. Iwu Maka Onye Ọ Bụla. Ọnụ Ahịa Ịmalite Ọzọ.",
   },
 };
 
