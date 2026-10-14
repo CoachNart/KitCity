@@ -5063,14 +5063,26 @@ if(firebaseConfigured){
 function applyLang(){
   if(!['en','pcm'].includes(P.lang)) P.lang='en';
   document.documentElement.lang=P.lang;
-  document.querySelectorAll('[data-t]').forEach(el=>{ if(!el.dataset.en) el.dataset.en=el.textContent; const translated=el.dataset[P.lang]; el.textContent=translated||tr(el.dataset.en); });
-  document.querySelectorAll('[data-lang]').forEach(b=>b.classList.toggle('on',b.dataset.lang===P.lang));
+  // Remove stale language controls left by older cached markup/builds.
+  document.querySelectorAll('[data-lang]').forEach(b=>{
+    if(!['en','pcm'].includes(b.dataset.lang)) b.remove();
+    else b.classList.toggle('on',b.dataset.lang===P.lang);
+  });
+  document.querySelectorAll('[data-t]').forEach(el=>{
+    if(!el.dataset.en) el.dataset.en=el.textContent;
+    const translated=el.dataset[P.lang];
+    el.textContent=translated||tr(el.dataset.en);
+  });
   translateDOM(document,P.lang);
   updateAuthButton();
   if(G) updateHUD();
   renderHub();
 }
-$('#title').addEventListener('click',e=>{ const b=e.target.closest('[data-lang]'); if(!b) return; P.lang=b.dataset.lang; save(); applyLang(); Snd.unlock(); Snd.sfx('click'); });
+$('#title').addEventListener('click',e=>{
+  const b=e.target.closest('[data-lang]');
+  if(!b||!['en','pcm'].includes(b.dataset.lang)) return;
+  P.lang=b.dataset.lang; save(); applyLang(); Snd.unlock(); Snd.sfx('click');
+});
 
 /* =====================  input  ===================== */
 const keys={};
