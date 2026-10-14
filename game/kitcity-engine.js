@@ -1,4 +1,6 @@
 import * as THREE from 'three';
+import { createStorySceneDirector } from './story-scene-director';
+import { LOST_VALUE_STORY } from './lost-value-story';
 import {
   authenticateEmailPassword,
   firebaseConfigured,
@@ -45,13 +47,13 @@ const Store=(function(){
   };
 })();
 const KEY='kitnaija_v1';
-const DEFAULT_PLAYER={wallet:null,usdc:0,ngn:0,done:{},dodged:0,fell:0,low:false,music:true,sfx:true,lang:'en',pl:'',name:'',scores:{},web3:null};
+const DEFAULT_PLAYER={wallet:null,usdc:0,ngn:0,done:{},dodged:0,fell:0,low:false,music:true,sfx:true,lang:'en',pl:'',name:'',scores:{},web3:null,storyPrologueSeen:false};
 let activeUid=Store.get('kitcity_active_uid',null);
 let storageKey=activeUid?KEY+'_user_'+activeUid:KEY;
 const P=Object.assign({},DEFAULT_PLAYER,Store.get(storageKey,{}));
 if(!P.done||typeof P.done!=='object') P.done={};
 let cloudSyncReady=false;
-function progressSnapshot(){ return {wallet:P.wallet,usdc:P.usdc,ngn:P.ngn,done:P.done,dodged:P.dodged,fell:P.fell,low:P.low,music:P.music,sfx:P.sfx,lang:P.lang,pl:P.pl,name:P.name,scores:P.scores,web3:P.web3}; }
+function progressSnapshot(){ return {wallet:P.wallet,usdc:P.usdc,ngn:P.ngn,done:P.done,dodged:P.dodged,fell:P.fell,low:P.low,music:P.music,sfx:P.sfx,lang:P.lang,pl:P.pl,name:P.name,scores:P.scores,web3:P.web3,storyPrologueSeen:!!P.storyPrologueSeen}; }
 function save(){
   const snapshot=progressSnapshot();
   Store.set(storageKey,snapshot);
@@ -87,6 +89,7 @@ function mergeCloudProgress(remote){
   merged.dodged=Math.max(Number(remote.dodged)||0,Number(local.dodged)||0);
   merged.fell=Math.max(Number(remote.fell)||0,Number(local.fell)||0);
   merged.web3=local.web3||remote.web3||null;
+  merged.storyPrologueSeen=!!(remote.storyPrologueSeen||local.storyPrologueSeen);
   replacePlayerState(merged);
 }
 delete P.xp;
@@ -139,81 +142,58 @@ const MUSIC_QUEUES={
   afrobeat:{label:'Naija Afrobeats Mix 2026',videos:['bGgjIvWj2I0']},
   'lagos':{label:"Lagos · Soundtrack",videos:["rhrCG0Vtx3g"]},
   'abuja':{label:"Abuja · Contemporary Afrobeats",videos:["XCjU9qbfv1U"]},
-  'ph':{label:"Port Harcourt · Niger Delta / Ijaw",videos:["xodanM9AfrI"]},
-  'benin':{label:"Benin City · Edo / Delta grooves",videos:["qcBFntpoW4M"]},
+  'ph':{label:"Port Harcourt · Niger Delta / Ijaw regional groove",videos:["qcBFntpoW4M"]},
+  'benin':{label:"Benin City · Shallipopi — Na So (Edo street Afrobeats)",videos:["xodanM9AfrI"]},
   'calabar':{label:"Calabar · Efik / Ibibio",videos:["qbefFtgUVTY"]},
   'jos':{label:"Jos · Plateau / regional Naija",videos:["MsZhYgo9MoA"]},
-  'ibadan':{label:"Ibadan · Yoruba / Fuji",videos:["RFPqZKpsl90"]},
-  'enugu':{label:"Enugu · Igbo highlife / Afrobeat",videos:["q49JaeHIuF4"]},
-  'kano':{label:"Kano · Hausa / Arewa",videos:["6euD2iXZAlg"]},
-  'kaduna':{label:"Kaduna · Hausa / Arewa",videos:["w69hlGyNEYI"]},
-  'maiduguri':{label:"Maiduguri · Kanuri / Hausa",videos:["N3xkWjh7UNM"]},
+  'ibadan':{label:"Ibadan · Lil Kesh — Shoki",videos:["f34zcceVu7U"]},
+  'enugu':{label:"Enugu · Jeriq ft. Flavour — Oluoma (Igbo)",videos:["zm6DEw45Nrc"]},
+  'kano':{label:"Kano · Ado Gwanja — Yan Yunwa (Hausa)",videos:["ddXZE34DFbQ"]},
+  'kaduna':{label:"Kaduna · Ali Jita — Gimbiyar Mata (Hausa)",videos:["hQ2f_HzZ-7k"]},
+  'maiduguri':{label:"Maiduguri · Nazifi Asnanic — Ban San Tsoro Ba (Hausa)",videos:["xNzj4zTJ6qE"]},
   'owerri':{label:"Owerri · Igbo highlife / Afrobeat",videos:["Ra1yHDcJygY"]},
-  'aba':{label:"Aba · Igbo highlife / Afrobeat",videos:["Uyr1c0pkpas"]},
+  'aba':{label:"Abia · Igbo-language Afrobeats",videos:["Uyr1c0pkpas"]},
   'umuahia':{label:"Umuahia · Igbo highlife / Afrobeat",videos:["W41TT8g3MnQ"]},
-  'awka':{label:"Awka · Igbo highlife / Afrobeat",videos:["9aEEIyw34Xw"]},
-  'onitsha':{label:"Onitsha · Igbo highlife / Afrobeat",videos:["nMXLMe4_x68"]},
+  'awka':{label:"Anambra · Anyidons — Igbo (Ofeke) (Igbo highlife)",videos:["X7puJxUZxa8"]},
+  'onitsha':{label:"Abakaliki · Umu Obiligbo ft. Zoro — Oga Police (Igbo highlife)",videos:["VyawBZXLot8"]},
   'asaba':{label:"Asaba · Anioma / Delta",videos:["l-_FcHIS4Yo"]},
   'uyo':{label:"Uyo · Efik / Ibibio",videos:["ulmVmlNoSL8"]},
   'ikot-ekpene':{label:"Ikot Ekpene · Efik / Ibibio",videos:["kc4PfiRWpog"]},
-  'yenagoa':{label:"Yenagoa · Niger Delta / Ijaw",videos:["k6eE3c70hgg"]},
+  'yenagoa':{label:"Bayelsa · Ijaw / Niger Delta Afrobeats",videos:["k6eE3c70hgg"]},
   'warri':{label:"Warri · Urhobo / Itsekiri",videos:["DqUd72pK15Y"]},
   'makurdi':{label:"Makurdi · Tiv / Middle Belt",videos:["VmakV_meVY0"]},
-  'ilorin':{label:"Ilorin · Yoruba / Fuji",videos:["ZyXvPdVt474"]},
-  'akure':{label:"Akure · Yoruba / Fuji",videos:["bcs_jFdPQn4"]},
-  'ado-ekiti':{label:"Ado-Ekiti · Yoruba / Fuji",videos:["zzhKmRovdMY"]},
-  'osogbo':{label:"Osogbo · Yoruba / Apala & Fuji",videos:["yUUsKekKQLM"]},
-  'abeokuta':{label:"Abeokuta · Yoruba / Fuji",videos:["_hKuvfH1j_w"]},
-  'lokoja':{label:"Lokoja · Igala / Confluence",videos:["ddXZE34DFbQ"]},
-  'lafia':{label:"Lafia · Hausa / Arewa",videos:["aGhY4twLRM"]},
-  'bauchi':{label:"Bauchi · Hausa / Arewa",videos:["jwxbXMCHj5c"]},
-  'gombe':{label:"Gombe · Hausa / Arewa",videos:["KIkN66oFBns"]},
-  'damaturu':{label:"Damaturu · Kanuri / Hausa",videos:["TxRI1o4UCzM"]},
-  'jalingo':{label:"Jalingo · Fulfulde / North-East",videos:["qseIbxXwlmg"]},
+  'ilorin':{label:"Ilorin · CDQ — Flex",videos:["fC-AD3TXceg"]},
+  'akure':{label:"Akure · Chinko Ekun ft. MohBad — Jafafa",videos:["BS7UkTH7c3U"]},
+  'ado-ekiti':{label:"Ado-Ekiti · DJ Tunez & Terry Apala — Apala Disco",videos:["7kfk_paAGoA"]},
+  'osogbo':{label:"Osogbo · FOLA & BahdBoi OML — Alone",videos:["qHgPzF4SpxY"]},
+  'abeokuta':{label:"Abeokuta · Muyeez & Seyi Vibez — Instagram",videos:["-zoC0Qdbidc"]},
+  'lokoja':{label:"Kogi · Igala / Confluence regional music",videos:["6euD2iXZAlg"]},
+  'lafia':{label:"Nasarawa · Middle Belt regional Afrobeats",videos:["aGhY4twLRM"]},
+  'bauchi':{label:"Bauchi · Hamisu Breaker — So Gaskiya Ne (Hausa)",videos:["NKuN9xiayYg"]},
+  'gombe':{label:"Gombe · Umar M Shareef — So Da So (Hausa)",videos:["thOfu2Xktyw"]},
+  'damaturu':{label:"Yobe · Kanuri / Hausa Afrobeats",videos:["TxRI1o4UCzM"]},
+  'jalingo':{label:"Taraba · Fulfulde / North-East Afrobeats",videos:["qseIbxXwlmg"]},
   'yola':{label:"Yola · Fulfulde / North-East",videos:["cv5chGtfVTg"]},
-  'sokoto':{label:"Sokoto · Hausa / Arewa",videos:["1tn8vcSPe70"]},
+  'sokoto':{label:"Sokoto · Nura M Inuwa — Salma (Hausa)",videos:["v0usXXHFmMk"]},
   'katsina':{label:"Katsina · Hausa / Arewa",videos:["i1uEVNMSalo"]},
-  'birnin-kebbi':{label:"Birnin Kebbi · Hausa / Arewa",videos:["UuumEqJKQ9I"]},
+  'birnin-kebbi':{label:"Kebbi · Hausa-language Afrobeats",videos:["UuumEqJKQ9I"]},
   'minna':{label:"Minna · Nupe / Arewa",videos:["WQFDWM-6ytA"]},
-  'dutse':{label:"Dutse · Hausa / Arewa",videos:["ULjXLxJa74w"]},
-  'gusau':{label:"Gusau · Hausa / Arewa",videos:["hCR54DuQoBM"]},
+  'dutse':{label:"Jigawa · Hausa-language Afrobeats",videos:["ULjXLxJa74w"]},
+  'gusau':{label:"Zamfara · Hausa-language Afrobeats",videos:["hCR54DuQoBM"]},
   'kafanchan':{label:"Kafanchan · Southern Kaduna",videos:["dkPClcO4Whw"]},
   'damboa':{label:"Damboa · Kanuri / Hausa",videos:["hLJcQH_2Onk"]}
 };
 const CITY_MUSIC={
   lagos:'lagos', abuja:'abuja', ph:'ph', benin:'benin', calabar:'calabar',
   jos:'jos', ibadan:'ibadan', enugu:'enugu', kano:'kano', kaduna:'kaduna', maiduguri:'maiduguri',
-  'owerri':'owerri',
-  'aba':'aba',
-  'umuahia':'umuahia',
-  'awka':'awka',
-  'onitsha':'onitsha',
-  'asaba':'asaba',
-  'uyo':'uyo',
-  'ikot-ekpene':'ikot-ekpene',
-  'yenagoa':'yenagoa',
-  'warri':'warri',
-  'makurdi':'makurdi',
-  'ilorin':'ilorin',
-  'akure':'akure',
-  'ado-ekiti':'ado-ekiti',
-  'osogbo':'osogbo',
-  'abeokuta':'abeokuta',
-  'lokoja':'lokoja',
-  'lafia':'lafia',
-  'bauchi':'bauchi',
-  'gombe':'gombe',
-  'damaturu':'damaturu',
-  'jalingo':'jalingo',
-  'yola':'yola',
-  'sokoto':'sokoto',
-  'katsina':'katsina',
-  'birnin-kebbi':'birnin-kebbi',
-  'minna':'minna',
-  'dutse':'dutse',
-  'gusau':'gusau',
-  'kafanchan':'kafanchan',
-  'damboa':'damboa'
+  owerri:'owerri', ilorin:'ilorin', sokoto:'sokoto', abeokuta:'abeokuta', asaba:'asaba',
+  uyo:'uyo', katsina:'katsina', makurdi:'makurdi', akure:'akure', bauchi:'bauchi',
+  gombe:'gombe', yola:'yola', minna:'minna',
+  /* Active mission-registry slugs that previously fell through to the generic queue. */
+  anambra:'awka', abakaliki:'onitsha', abia:'aba', bayelsa:'yenagoa',
+  jigawa:'dutse', kebbi:'birnin-kebbi', kogi:'lokoja', nasarawa:'lafia',
+  osun:'osogbo', taraba:'jalingo', yobe:'damaturu', zamfara:'gusau',
+  adoekiti:'ado-ekiti', kitcity:'abuja'
 };
 const DEFAULT_PLAYLIST='PLtZ6yiYzu2i3UoRZM3wmw2xpBRM9zYrwP';
 const YT=(function(){
@@ -464,7 +444,7 @@ const tube=(rt,rb,h,c)=>{ const g=new THREE.CylinderGeometry(rt,rb,h,10); g.tran
 const boxm=(w,h,d,c)=>new THREE.Mesh(new THREE.BoxGeometry(w,h,d),M(c));
 let logoMat=null;
 const KITCITY_LOGO_URL='https://i.postimg.cc/qqbdTXky/file-00000000958881f4a776df689a235dec.png';
-function getLogoMat(){if(logoMat)return logoMat;const loader=new THREE.TextureLoader();loader.setCrossOrigin('anonymous');const texture=loader.load(KITCITY_LOGO_URL);texture.colorSpace=THREE.SRGBColorSpace;logoMat=new THREE.MeshBasicMaterial({map:texture,transparent:true,side:THREE.DoubleSide});return logoMat;}
+function getLogoMat(){if(logoMat)return logoMat;const loader=new THREE.TextureLoader();loader.setCrossOrigin('anonymous');const texture=loader.load(KITCITY_LOGO_URL);texture.encoding=THREE.sRGBEncoding;logoMat=new THREE.MeshBasicMaterial({map:texture,transparent:true,side:THREE.DoubleSide});return logoMat;}
 const ANK=[];
 function ankaraMat(i){
   i=((i%4)+4)%4; if(ANK[i]) return ANK[i];
@@ -571,14 +551,42 @@ CITY_LOOKS.ibadan=CITY_LOOKS.lagos; CITY_LOOKS.benin=CITY_LOOKS.ph; CITY_LOOKS.c
 CITY_LOOKS.kaduna=CITY_LOOKS.kano.concat(CITY_LOOKS.abuja); CITY_LOOKS.jos=CITY_LOOKS.abuja.concat(CITY_LOOKS.kano); CITY_LOOKS.maiduguri=CITY_LOOKS.kano;
 let LOOKSC=LOOKS;
 const LK={
-  mama:{top:BRAND,bottom:'#E4572E',female:true,style:'wrapper',hair:'gele',hat:'#F6B21A',skin:'#6b3f26',detail:true},
-  suya:{top:'#f2f2f2',bottom:'#f2f2f2',style:'kaftan',hair:'cap',hat:'#ffffff',skin:'#5a3421',detail:true},
-  guy:{top:'#6a3fb5',bottom:INK,hair:'cap',hat:INK,shades:true,skin:'#8d5a3b',detail:true},
-  trader:{top:'#C7457E',bottom:'#E7D27A',female:true,style:'wrapper',hair:'gele',hat:'#2D6FB3',skin:'#7a4a2e',detail:true},
-  man:{top:'#2D6FB3',bottom:'#2a2d3a',hair:'short',skin:'#6b3f26',detail:true},
-  elder:{top:'#ffffff',bottom:'#ffffff',style:'kaftan',hair:'cap',hat:'#0B7A43',skin:'#5a3421',detail:true},
-  woman:{top:'#0897A8',bottom:'#2a2d3a',female:true,hair:'bun',skin:'#7a4a2e',detail:true},
-  clerk:{top:'#e9e9e9',bottom:'#2a2d3a',hair:'short',skin:'#8d5a3b',detail:true}
+  /* Named character looks: gender and silhouette are explicit, not inferred from dialogue. */
+  mama:{top:BRAND,bottom:'#E4572E',female:true,style:'wrapper',hair:'gele',hat:'#F6B21A',hairColor:'#17110F',skin:'#6b3f26',detail:true},
+  suya:{top:'#f2f2f2',bottom:'#f2f2f2',style:'kaftan',hair:'cap',hat:'#ffffff',hairColor:'#17110F',skin:'#5a3421',detail:true},
+  guy:{top:'#6a3fb5',bottom:INK,hair:'cap',hat:INK,hairColor:'#17110F',shades:true,skin:'#8d5a3b',detail:true},
+  trader:{top:'#C7457E',bottom:'#E7D27A',female:true,style:'wrapper',hair:'gele',hat:'#2D6FB3',hairColor:'#17110F',skin:'#7a4a2e',detail:true},
+  man:{top:'#2D6FB3',bottom:'#2a2d3a',hair:'short',hairColor:'#17110F',skin:'#6b3f26',detail:true},
+  elder:{top:'#ffffff',bottom:'#ffffff',style:'kaftan',hair:'cap',hat:'#0B7A43',hairColor:'#17110F',skin:'#5a3421',detail:true},
+  woman:{top:'#0897A8',bottom:'#2a2d3a',female:true,style:'wrapper',hair:'bun',hairColor:'#17110F',skin:'#7a4a2e',detail:true},
+  clerk:{top:'#e9e9e9',bottom:'#2a2d3a',hair:'short',hairColor:'#17110F',skin:'#8d5a3b',detail:true},
+  softstorm:{top:BRAND,bottom:'#E4572E',female:true,style:'wrapper',hair:'gele',hat:'#F6B21A',hairColor:'#17110F',skin:'#6b3f26',detail:true,logo:true},
+  abdul:{top:'#F2F2F2',bottom:'#1E232A',style:'kaftan',hair:'cap',hat:'#FFFFFF',hairColor:'#17110F',skin:'#5a3421',detail:true},
+  josephNnadi:{top:'#6A3FB5',bottom:'#181A20',hair:'cap',hat:'#171717',hairColor:'#17110F',shades:true,skin:'#8d5a3b',detail:true,backpack:true},
+  larai:{top:'#2D6FB3',bottom:'#E7D27A',female:true,style:'wrapper',hair:'gele',hat:'#C7457E',hairColor:'#17110F',skin:'#7a4a2e',detail:true},
+  unique:{top:'#1F4F82',bottom:'#E4572E',female:true,style:'wrapper',hair:'bun',hairColor:'#17110F',skin:'#8d5a3b',detail:true,logo:true},
+  smrtHuntr:{top:'#6A3FB5',bottom:'#22252B',hair:'afro',hairColor:'#17110F',skin:'#8d5a3b',detail:true,backpack:true},
+  goodness:{top:'#C7457E',bottom:'#E7D27A',female:true,style:'wrapper',hair:'bun',hairColor:'#17110F',skin:'#6b3f26',detail:true},
+  semi:{top:'#E4572E',bottom:'#2A2D3A',female:true,style:'wrapper',hair:'gele',hat:'#F6B21A',hairColor:'#17110F',skin:'#7a4a2e',detail:true},
+  blockqueen:{top:'#5A3A22',bottom:'#C7457E',female:true,style:'wrapper',hair:'gele',hat:'#0B7A43',hairColor:'#17110F',skin:'#5a3421',detail:true},
+  christol:{top:'#2D6FB3',bottom:'#20232A',hair:'short',hairColor:'#17110F',skin:'#8d5a3b',detail:true,logo:true},
+  laloba:{top:'#C7457E',bottom:'#E7D27A',female:true,style:'wrapper',hair:'gele',hat:'#E4572E',hairColor:'#17110F',skin:'#7a4a2e',detail:true},
+  kenny:{top:'#0B7A43',bottom:'#20232A',hair:'fila',hat:'#F6B21A',hairColor:'#17110F',skin:'#6b3f26',detail:true},
+  leemah:{top:'#0897A8',bottom:'#20232A',hair:'short',hairColor:'#17110F',skin:'#8d5a3b',detail:true,backpack:true},
+  cybersage:{top:'#6A3FB5',bottom:'#20232A',hair:'afro',hairColor:'#17110F',skin:'#5a3421',detail:true,backpack:true},
+  kodavic:{top:'#2D6FB3',bottom:'#20232A',hair:'fila',hat:'#0B7A43',hairColor:'#17110F',skin:'#8d5a3b',detail:true},
+  toza:{top:'#E4572E',bottom:'#20232A',hair:'short',hairColor:'#17110F',skin:'#7a4a2e',detail:true,backpack:true},
+  craftore:{top:'#0B7A43',bottom:'#20232A',hair:'cap',hat:'#FFFFFF',hairColor:'#17110F',skin:'#6b3f26',detail:true,logo:true},
+  oxnight:{top:'#1F4F82',bottom:'#181A20',hair:'afro',hairColor:'#17110F',skin:'#6b3f26',detail:true},
+  moon:{top:'#6A3FB5',bottom:'#20232A',hair:'fila',hat:'#F6B21A',hairColor:'#17110F',skin:'#7a4a2e',detail:true},
+  cryptonian:{top:'#0B7A43',bottom:'#20232A',hair:'cap',hat:'#0B7A43',hairColor:'#17110F',skin:'#5a3421',detail:true,shades:true},
+  joeSef:{top:'#2D6FB3',bottom:'#20232A',hair:'short',hairColor:'#17110F',skin:'#8d5a3b',detail:true,backpack:true},
+  theDon:{top:'#5A3A22',bottom:'#FFFFFF',style:'kaftan',hair:'turban',hat:'#0B7A43',hairColor:'#17110F',skin:'#5a3421',detail:true},
+  praise:{top:'#C7457E',bottom:'#20232A',hair:'short',hairColor:'#17110F',skin:'#8d5a3b',detail:true,logo:true},
+  bigSam:{top:'#E4572E',bottom:'#20232A',hair:'afro',hairColor:'#17110F',skin:'#6b3f26',detail:true},
+  lunaX:{top:'#0897A8',bottom:'#20232A',hair:'cap',hat:'#0897A8',hairColor:'#17110F',skin:'#7a4a2e',detail:true,shades:true},
+  reina:{top:'#2D6FB3',bottom:'#E7D27A',female:true,style:'wrapper',hair:'bun',hairColor:'#17110F',skin:'#8d5a3b',detail:true,backpack:true},
+  cclya:{top:'#0B7A43',bottom:'#C7457E',female:true,style:'wrapper',hair:'gele',hat:'#F6B21A',hairColor:'#17110F',skin:'#6b3f26',detail:true}
 };
 
 /* =====================  labels  ===================== */
@@ -598,15 +606,96 @@ function label(text,bg,fg,H0){
 /* =====================  world  ===================== */
 const R=70;
 const colliders=[],buildings=[];
+let localRoadSegments=[];
 const SPAWN={x:9.5,z:-9.5};
 const SPOTS={
   a:{x:10,z:-30,f:-1}, b:{x:-10,z:-105,f:1}, c:{x:80,z:-35,f:-1}, d:{x:60,z:-105,f:1},
   e:{x:-80,z:-35,f:1}, f:{x:-60,z:-105,f:-1}, g:{x:10,z:-175,f:-1}, h:{x:-10,z:-175,f:1},
   i:{x:150,z:-35,f:-1}, j:{x:130,z:-175,f:1}, k:{x:-150,z:-35,f:1}, l:{x:-130,z:-175,f:-1},
-  m:{x:80,z:35,f:-1}, n:{x:-80,z:105,f:1}, o:{x:10,z:175,f:-1}, x1:{x:60,z:-105,f:1}
+  m:{x:80,z:35,f:-1}, n:{x:-80,z:105,f:1}, o:{x:10,z:175,f:-1}, story:{x:125,z:-185,f:1}, x1:{x:60,z:-105,f:1},
+  lvA:{x:-170,z:-175,f:-1}, lvB:{x:170,z:-175,f:1}, lvC:{x:-170,z:175,f:-1}, lvD:{x:170,z:175,f:1}, lvE:{x:140,z:190,f:-1}, lvF:{x:-190,z:0,f:1}, lvG:{x:190,z:0,f:-1}
 };
-const special=Object.keys(SPOTS).map(k=>SPOTS[k]).concat([SPAWN]);
+// Mission locations are semantic anchors, not street-grid coordinates. Keep the
+// current world coordinates as the compatibility fallback while each city gets
+// its own road graph. This lets the road generator evolve without silently
+// moving story characters, clues, or mission objectives.
+const MISSION_ANCHORS=Object.freeze(Object.keys(SPOTS).reduce((out,key)=>{
+  out[key]=Object.freeze({x:SPOTS[key].x,z:SPOTS[key].z,f:SPOTS[key].f}); return out;
+},{}));
+function resolveMissionSpot(key){
+  const spot=MISSION_ANCHORS[key];
+  return spot?{x:spot.x,z:spot.z,f:spot.f}:undefined;
+}
+const special=Object.keys(MISSION_ANCHORS).map(resolveMissionSpot).concat([SPAWN]);
 const nearSpecial=(x,z,d)=>special.some(s=>Math.hypot(s.x-x,s.z-z)<d);
+function secondaryRoadAxis(C,i,j){
+  const seed=C.seed||0,form=C.form||'mixed';
+  const n=Math.abs(i*7+j*11+seed),mix=Math.abs(i*13-j*5+seed);
+  const cross=((i*3+j+seed)%2===0)?'x':'z';
+  // Distinct local-road patterns: dense organic networks, compact old quarters,
+  // formal planned districts, linear industrial corridors and terrain-led towns.
+  if(form==='historic'||form==='sahel'||form==='heritage'||form==='colonial-coast')
+    return n%5===0?null:((i+j+seed)%2===0?'x':'z');
+  if(form==='dense-market'||form==='southeast-market'||form==='organic-sprawl'||form==='southwest-sprawl')
+    return n%4===0?null:cross;
+  if(form==='dense-coastal')
+    return n%3===0?null:((i+j+seed)%2===0?'x':'z');
+  if(form==='delta-port'||form==='oil-port')
+    return n%3===0?null:(form==='delta-port'?'x':'z');
+  if(form==='rail-crossroads')
+    return n%3===0?null:((i+seed)%2===0?'x':'z');
+  if(form==='hillside'||form==='green-hills'||form==='rock-city')
+    return n%2===0?null:((j+seed)%2===0?'x':'z');
+  if(form==='creek-town'||form==='river-town'||form==='planned-river'||form==='confluence')
+    return n%4===0?null:((mix%3===0)?cross:((seed%2===0)?'x':'z'));
+  if(form==='planned'||form==='planned-tropical')
+    return n%4===0?((i+j)%2===0?'x':'z'):null;
+  if(form==='plateau'||form==='savanna-capital'||form==='regional-capital')
+    return n%3===0?null:((i+j+seed)%2===0?'x':'z');
+  return n%3===0?cross:null;
+}
+function buildSecondaryRoadSegments(C){
+  const out=[],form=C.form||'mixed';
+  let width=6.5;
+  if(['historic','sahel','heritage','colonial-coast'].includes(form))width=5.5;
+  else if(['planned','planned-tropical','planned-river','regional-capital','savanna-capital'].includes(form))width=9;
+  else if(['delta-port','oil-port','rail-crossroads'].includes(form))width=8;
+  else if(['dense-market','southeast-market'].includes(form))width=5.8;
+  else if(['hillside','green-hills','rock-city'].includes(form))width=5.6;
+  else if(['dense-coastal','organic-sprawl','southwest-sprawl'].includes(form))width=6.8;
+  for(let i=-3;i<=2;i++)for(let j=-3;j<=2;j++){
+    const axis=secondaryRoadAxis(C,i,j);if(!axis)continue;
+    const cx=i*R+35,cz=j*R+35;
+    let blocked=false;
+    for(let d=-35;d<=35;d+=7){
+      const x=axis==='x'?cx+d:cx,z=axis==='z'?cz+d:cz;
+      if(nearSpecial(x,z,10)){blocked=true;break;}
+    }
+    if(blocked)continue;
+    out.push({i,j,axis,cx,cz,width});
+  }
+  return out;
+}
+function nearLocalStreet(C,x,z,margin=0){
+  for(const r of localRoadSegments){
+    if(r.axis==='x'&&Math.abs(z-r.cz)<=r.width/2+margin&&x>=r.cx-35-margin&&x<=r.cx+35+margin)return true;
+    if(r.axis==='z'&&Math.abs(x-r.cx)<=r.width/2+margin&&z>=r.cz-35-margin&&z<=r.cz+35+margin)return true;
+  }
+  return false;
+}
+/* Pick a genuinely off-road evidence location after the active city's roads exist.
+   Arterials sit on the R grid; local streets are checked against their real segments. */
+function resolveRecordCenterSpot(){
+  const base={x:140,z:190};
+  let best=null,bestScore=Infinity;
+  for(let x=90;x<=220;x+=5)for(let z=90;z<=230;z+=5){
+    const arterialGap=Math.min(Math.abs(x-Math.round(x/R)*R),Math.abs(z-Math.round(z/R)*R));
+    if(arterialGap<14||nearLocalStreet(CITIES[curCity],x,z,7))continue;
+    const score=Math.hypot(x-base.x,z-base.z);
+    if(score<bestScore){best={x,z,f:-1};bestScore=score;}
+  }
+  return best||{x:155,z:185,f:-1};
+}
 
 const CITIES={
   lagos:{name:'Lagos',tag:'The hustle capital',lon:3.4,lat:6.5,seed:11,sky:0xF2B87A,fog:[95,250],ground:'#2B2C31',slab:'#B9B3A6',
@@ -947,6 +1036,82 @@ Object.keys(NEWC).forEach(k=>{
   const o=NEWC[k],base={h:[10,30],fog:[95,250],bridges:[],bump:10,pud:8,oka:5,pal:{danfo:['#F6B21A','#1B1C20'],keke:['#F6B21A','#1B1C20'],sedan:['#E9E4DA','#2b2b30','#8a8d93','#C8402A','#2D6FB3'],stripe:null}};
   const c=Object.assign({},base,o); c.signs=CITIES.lagos.signs.slice(0,9).concat(o.more||[]); CITIES[k]=c;
 });
+/* =====================  Nigerian city identity profiles  ===================== */
+/* Research-led visual differences: terrain, street rhythm, rooflines, density and
+   civic landmarks are deliberately local. Shared engine, distinct urban forms. */
+const CITY_IDENTITY={
+  lagos:{form:'dense-coastal',road:'arterial',styles:[['flat',.34],['zinc',.24],['glass',.22],['admin',.12],['banco',.08]],height:[10,46],market:3,ground:'#30383B',slab:'#AEBBC0',dirt:'#88745E',paint:['#D5D9D3','#C4D6D8','#D7BCA1','#9DB9C5','#E1D7C5','#A8B9A9'],feature:'waterfront'},
+  abuja:{form:'planned',road:'boulevard',styles:[['glass',.34],['admin',.3],['flat',.3],['zinc',.06]],height:[18,62],market:6,ground:'#3B4247',slab:'#D0D5D5',dirt:'#9B9A8A',paint:['#E6E9E8','#CFDDE5','#BBCBD2','#E8E0D2','#AFC4D1','#D8DFD8'],feature:'roundabout'},
+  kano:{form:'historic',road:'gate',styles:[['banco',.62],['flat',.16],['zinc',.17],['admin',.05]],height:[7,23],market:2,ground:'#493E32',slab:'#C8B18E',dirt:'#C4A071',paint:['#D7B78C','#C9A77B','#E4CBA5','#B78D62','#D9C39E','#A98963'],feature:'city-gate'},
+  ibadan:{form:'organic-sprawl',road:'mixed',styles:[['zinc',.42],['flat',.3],['banco',.12],['admin',.1],['glass',.06]],height:[7,34],market:3,ground:'#393B38',slab:'#B9B6A8',dirt:'#9A7454',paint:['#C9A98A','#B9805D','#D7C2A2','#A6B1A0','#D2B56F','#B9A38C'],feature:'hills'},
+  ph:{form:'delta-port',road:'industrial',styles:[['flat',.36],['zinc',.22],['glass',.12],['admin',.12],['banco',.18]],height:[8,38],market:4,ground:'#303C3D',slab:'#AAB9B7',dirt:'#6D6957',paint:['#AFC5BE','#92B0A9','#C3C9BB','#9CB3C3','#D5C5A7','#A7B9B0'],feature:'waterfront'},
+  kaduna:{form:'rail-crossroads',road:'arterial',styles:[['flat',.32],['admin',.22],['banco',.2],['zinc',.2],['glass',.06]],height:[8,38],market:4,ground:'#3C403D',slab:'#C2C3B9',dirt:'#B29A73',paint:['#D7C9AC','#C8B78F','#E2D7BC','#AEBFC3','#C8A77E','#B4B9A8'],feature:'rail'},
+  enugu:{form:'hillside',road:'mixed',styles:[['flat',.4],['zinc',.28],['admin',.16],['glass',.08],['banco',.08]],height:[8,38],market:4,ground:'#353D39',slab:'#B6C2B7',dirt:'#8C745D',paint:['#AFC5B0','#CAD8B9','#D8C7A8','#A3B9C8','#D4C58C','#B7B7A7'],feature:'hills'},
+  benin:{form:'heritage',road:'ceremonial',styles:[['flat',.34],['zinc',.24],['admin',.16],['banco',.16],['glass',.1]],height:[8,36],market:3,ground:'#393633',slab:'#C2B5A4',dirt:'#A66A47',paint:['#C9825E','#B86F4C','#D9A781','#9D6049','#DCC29E','#9BAF98'],feature:'heritage-wall'},
+  calabar:{form:'colonial-coast',road:'promenade',styles:[['flat',.34],['admin',.24],['zinc',.2],['glass',.14],['banco',.08]],height:[8,34],market:3,ground:'#33403D',slab:'#C0C9C0',dirt:'#766C56',paint:['#E0B8A2','#A8CFC1','#E8D48E','#C6B7D8','#A4C2D8','#DFA6A2'],feature:'waterfront'},
+  jos:{form:'plateau',road:'contour',styles:[['zinc',.3],['flat',.3],['admin',.18],['banco',.14],['glass',.08]],height:[7,32],market:3,ground:'#454A4B',slab:'#C3C7C3',dirt:'#92785F',paint:['#D6D1C4','#BBC9B8','#C9B99F','#A9BAC8','#DFCAA6','#9BAF9D'],feature:'rocky-outcrops'},
+  maiduguri:{form:'sahel',road:'open',styles:[['banco',.46],['flat',.28],['zinc',.22],['admin',.04]],height:[6,24],market:3,ground:'#514537',slab:'#D1BB94',dirt:'#C8A16E',paint:['#D8BE91','#CBA878','#E5D2AA','#B98E5F','#D6B889','#A98B62'],feature:'city-gate'},
+  owerri:{form:'southeast-market',road:'mixed',styles:[['flat',.35],['zinc',.28],['glass',.14],['admin',.13],['banco',.1]],height:[8,34],market:4,ground:'#344039',slab:'#BCC5B8',dirt:'#887459',paint:['#C6D4BE','#B4C9C6','#D9C5A3','#AFC1D4','#D3B88B','#A8B6A0'],feature:'civic-plaza'},
+  aba:{form:'dense-market',road:'market',styles:[['flat',.32],['zinc',.34],['admin',.12],['glass',.1],['banco',.12]],height:[7,30],market:2,ground:'#3C3935',slab:'#B9B6AC',dirt:'#97765B',paint:['#C8D1C7','#B9C9D1','#D7B89A','#A7B7C5','#D8C78D','#B8A99A'],feature:'market'},
+  umuahia:{form:'regional-capital',road:'arterial',styles:[['flat',.38],['zinc',.28],['admin',.18],['glass',.08],['banco',.08]],height:[8,32],market:4,ground:'#39403A',slab:'#BEC5B8',dirt:'#8E795B',paint:['#D4D3BE','#B9CBB9','#D8C5A3','#A9BFC9','#CBB78E','#B5B6A1'],feature:'civic-plaza'},
+  awka:{form:'hillside',road:'mixed',styles:[['flat',.34],['zinc',.26],['admin',.18],['glass',.12],['banco',.1]],height:[8,34],market:4,ground:'#374039',slab:'#BCC5B8',dirt:'#8B7457',paint:['#CAD6C0','#B7C9C6','#D6C3A4','#AABDD0','#C8B58A','#AEB8A7'],feature:'hills'},
+  onitsha:{form:'dense-market',road:'market',styles:[['flat',.34],['zinc',.3],['glass',.16],['admin',.12],['banco',.08]],height:[8,40],market:2,ground:'#3C3D3B',slab:'#B8C0BB',dirt:'#907A5F',paint:['#D0D8D2','#B8CDD2','#D7C0A1','#A9B8CA','#D5C48E','#B6B6A9'],feature:'market'},
+  asaba:{form:'planned-river',road:'boulevard',styles:[['flat',.38],['admin',.24],['glass',.18],['zinc',.14],['banco',.06]],height:[10,42],market:5,ground:'#34403E',slab:'#C3CBC5',dirt:'#8C7A5E',paint:['#C8D8D0','#B7CED1','#D9C9AA','#AEC2D1','#D9D4C2','#A7B9AB'],feature:'waterfront'},
+  uyo:{form:'planned-tropical',road:'boulevard',styles:[['flat',.36],['admin',.24],['glass',.18],['zinc',.14],['banco',.08]],height:[10,42],market:5,ground:'#34413B',slab:'#C5CDC2',dirt:'#8C7A5A',paint:['#C6D8C2','#B4D0CA','#DCC9A6','#B2C4D7','#D6D9C8','#A9BBAA'],feature:'civic-plaza'},
+  yenagoa:{form:'creek-town',road:'promenade',styles:[['flat',.34],['zinc',.26],['glass',.12],['admin',.12],['banco',.16]],height:[7,32],market:4,ground:'#303D39',slab:'#B4C3B9',dirt:'#77684E',paint:['#AFC6B0','#9FBDB7','#D0C39E','#A4BCC7','#C8B28D','#9EADA0'],feature:'waterfront'},
+  warri:{form:'oil-port',road:'industrial',styles:[['flat',.32],['zinc',.3],['admin',.16],['glass',.12],['banco',.1]],height:[7,36],market:3,ground:'#363D3A',slab:'#B8C2BA',dirt:'#837154',paint:['#B8C9BE','#A7BFC4','#D0BE9F','#A8B8C9','#D1C08D','#A6B2A5'],feature:'waterfront'},
+  makurdi:{form:'river-town',road:'mixed',styles:[['flat',.36],['zinc',.24],['admin',.14],['glass',.1],['banco',.16]],height:[7,32],market:4,ground:'#3A4038',slab:'#C0C4B5',dirt:'#927B59',paint:['#C8D0B6','#B5C6C0','#D7C5A0','#AFC0CF','#D0B98A','#ADB9A0'],feature:'waterfront'},
+  ilorin:{form:'north-south-mix',road:'arterial',styles:[['flat',.32],['banco',.24],['zinc',.2],['admin',.14],['glass',.1]],height:[8,34],market:3,ground:'#41403A',slab:'#C4BBA9',dirt:'#B1936A',paint:['#D4C3A0','#C7B18C','#E2D1AC','#AEBFC6','#D0B68A','#B7B29A'],feature:'civic-plaza'},
+  akure:{form:'southwest-sprawl',road:'mixed',styles:[['flat',.34],['zinc',.28],['banco',.14],['admin',.14],['glass',.1]],height:[7,34],market:4,ground:'#3B4039',slab:'#BEC5B7',dirt:'#97785A',paint:['#C9D0B8','#B8C9C3','#D8C4A0','#AABBCB','#D4B889','#B1B9A4'],feature:'rocky-outcrops'},
+  'ado-ekiti':{form:'hillside',road:'mixed',styles:[['flat',.32],['zinc',.28],['banco',.16],['admin',.14],['glass',.1]],height:[7,32],market:4,ground:'#394039',slab:'#BFC6B7',dirt:'#927657',paint:['#CAD4BA','#B8C9C2','#D7C4A0','#AABDD0','#D1B889','#AFB9A3'],feature:'hills'},
+  osogbo:{form:'heritage',road:'ceremonial',styles:[['flat',.3],['zinc',.24],['banco',.22],['admin',.14],['glass',.1]],height:[7,30],market:3,ground:'#3A3D37',slab:'#C0C3B4',dirt:'#997755',paint:['#D0C39D','#C2B08A','#E0D0A9','#B1BCA0','#C9B78C','#A9B7A1'],feature:'heritage-wall'},
+  abeokuta:{form:'rock-city',road:'contour',styles:[['flat',.32],['zinc',.25],['banco',.18],['admin',.15],['glass',.1]],height:[7,34],market:3,ground:'#45413B',slab:'#C4B7A3',dirt:'#A47753',paint:['#D4B69A','#C4A082','#E1C9A7','#A8B9AC','#D4B58A','#B7A58F'],feature:'rocky-outcrops'},
+  lokoja:{form:'confluence',road:'promenade',styles:[['flat',.32],['zinc',.24],['admin',.16],['glass',.12],['banco',.16]],height:[7,34],market:4,ground:'#3B413B',slab:'#BEC4B8',dirt:'#947D5C',paint:['#C7D0B8','#B5C9C5','#D7C4A0','#A7BCCB','#D1B78A','#AFB8A3'],feature:'waterfront'},
+  lafia:{form:'savanna-capital',road:'open',styles:[['flat',.32],['banco',.26],['zinc',.22],['admin',.12],['glass',.08]],height:[7,30],market:4,ground:'#454139',slab:'#C9BDA5',dirt:'#B49A70',paint:['#D8C7A2','#C7B28B','#E3D2AD','#B8C4B6','#D3B88A','#AFA083'],feature:'civic-plaza'},
+  bauchi:{form:'sahel',road:'open',styles:[['banco',.38],['flat',.28],['zinc',.2],['admin',.1],['glass',.04]],height:[7,28],market:3,ground:'#494239',slab:'#CBB997',dirt:'#C1A071',paint:['#D8C49C','#C9AE83','#E3D2AA','#B7A17D','#D7BC8D','#A99C7D'],feature:'city-gate'},
+  gombe:{form:'savanna-capital',road:'open',styles:[['banco',.34],['flat',.3],['zinc',.2],['admin',.1],['glass',.06]],height:[7,30],market:3,ground:'#484138',slab:'#C9B997',dirt:'#C09B6A',paint:['#D9C49B','#C9AE81','#E4D2A9','#B7A07A','#D7BC8B','#AC9B78'],feature:'city-gate'},
+  damaturu:{form:'sahel',road:'open',styles:[['banco',.46],['flat',.28],['zinc',.22],['admin',.04]],height:[6,24],market:3,ground:'#4C4337',slab:'#D0BB94',dirt:'#C7A16D',paint:['#DCC398','#CBA979','#E5D2A9','#B98E5F','#D6B887','#A98A61'],feature:'city-gate'},
+  jalingo:{form:'green-hills',road:'contour',styles:[['flat',.32],['zinc',.24],['banco',.18],['admin',.14],['glass',.12]],height:[7,32],market:4,ground:'#3B4035',slab:'#C0C6B6',dirt:'#967954',paint:['#C9D1B3','#B6C7B7','#D6C5A1','#AABED0','#D2BA8D','#AAB7A0'],feature:'hills'},
+  yola:{form:'river-town',road:'mixed',styles:[['flat',.32],['banco',.24],['zinc',.2],['admin',.14],['glass',.1]],height:[7,32],market:4,ground:'#3F4139',slab:'#C5C1B0',dirt:'#A58A61',paint:['#D4C49D','#C4AE85','#E1D1A8','#B4C4B8','#D1B78A','#AEB49A'],feature:'waterfront'},
+  sokoto:{form:'historic',road:'gate',styles:[['banco',.58],['flat',.18],['zinc',.18],['admin',.06]],height:[7,24],market:2,ground:'#494035',slab:'#CDB995',dirt:'#C5A171',paint:['#D8BC90','#C9A779','#E4CEA5','#B88D61','#D9C39B','#A98A61'],feature:'city-gate'},
+  katsina:{form:'historic',road:'gate',styles:[['banco',.56],['flat',.2],['zinc',.18],['admin',.06]],height:[7,24],market:2,ground:'#494035',slab:'#CBB692',dirt:'#C4A071',paint:['#D8BC91','#C9A87B','#E4CDA4','#B98E62','#D9C39A','#A88A62'],feature:'city-gate'},
+  'birnin-kebbi':{form:'savanna-capital',road:'open',styles:[['banco',.4],['flat',.28],['zinc',.22],['admin',.1]],height:[7,28],market:3,ground:'#474036',slab:'#C9B795',dirt:'#C09A69',paint:['#D8C39B','#C9AD82','#E3D1A9','#B7A07B','#D6BB8A','#A99A77'],feature:'civic-plaza'},
+  minna:{form:'rail-crossroads',road:'arterial',styles:[['flat',.34],['banco',.22],['zinc',.22],['admin',.14],['glass',.08]],height:[8,34],market:4,ground:'#3D403B',slab:'#C1C4B7',dirt:'#A08A65',paint:['#D2C7A8','#C2B18E','#DED0AB','#B5C3B7','#CBB58A','#AAB3A0'],feature:'rocky-outcrops'},
+  dutse:{form:'historic',road:'gate',styles:[['banco',.5],['flat',.24],['zinc',.2],['admin',.06]],height:[7,25],market:3,ground:'#494136',slab:'#CBB794',dirt:'#C29B6A',paint:['#D8BC91','#C9A87B','#E3CCA3','#B88D62','#D7C19A','#A98A62'],feature:'city-gate'},
+  gusau:{form:'savanna-capital',road:'open',styles:[['banco',.4],['flat',.28],['zinc',.22],['admin',.1]],height:[7,28],market:3,ground:'#484037',slab:'#C9B694',dirt:'#C19A68',paint:['#D8C29A','#C8AC81','#E2D0A7','#B69F79','#D5BA89','#A99975'],feature:'city-gate'},
+  kafanchan:{form:'rail-crossroads',road:'arterial',styles:[['flat',.32],['zinc',.26],['banco',.2],['admin',.14],['glass',.08]],height:[7,30],market:4,ground:'#414039',slab:'#C4C2B6',dirt:'#A38A63',paint:['#D3C5A5','#C1B08A','#DFD0AA','#B4C2B7','#CBB58A','#ADB4A0'],feature:'rail'},
+  damboa:{form:'sahel',road:'open',styles:[['banco',.5],['flat',.25],['zinc',.22],['admin',.03]],height:[6,22],market:3,ground:'#4A4136',slab:'#D0BB94',dirt:'#C7A16E',paint:['#DCC398','#CBA979','#E5D2A9','#B98E5F','#D6B887','#A98A61'],feature:'city-gate'},
+  abakaliki:{form:'southeast-market',road:'market',styles:[['flat',.32],['zinc',.26],['banco',.18],['admin',.14],['glass',.1]],height:[7,30],market:3,ground:'#3B4037',slab:'#BEC5B8',dirt:'#987A58',paint:['#C9D2B5','#B8C9B6','#D7C4A0','#A8BDC8','#D2B88B','#AEB79F'],feature:'market'},
+  bayelsa:{form:'creek-town',road:'promenade',styles:[['flat',.34],['zinc',.26],['glass',.12],['admin',.12],['banco',.16]],height:[7,30],market:4,ground:'#303D39',slab:'#B4C3B9',dirt:'#77684E',paint:['#AFC6B0','#9FBDB7','#D0C39E','#A4BCC7','#C8B28D','#9EADA0'],feature:'waterfront'},
+  jigawa:{form:'historic',road:'gate',styles:[['banco',.52],['flat',.22],['zinc',.2],['admin',.06]],height:[7,24],market:3,ground:'#494136',slab:'#CBB794',dirt:'#C29B6A',paint:['#D8BC91','#C9A87B','#E3CCA3','#B88D62','#D7C19A','#A98A62'],feature:'city-gate'},
+  kebbi:{form:'savanna-capital',road:'open',styles:[['banco',.42],['flat',.28],['zinc',.2],['admin',.1]],height:[7,28],market:3,ground:'#474036',slab:'#C9B795',dirt:'#C09A69',paint:['#D8C39B','#C9AD82','#E3D1A9','#B7A07B','#D6BB8A','#A99A77'],feature:'civic-plaza'},
+  kogi:{form:'confluence',road:'promenade',styles:[['flat',.32],['zinc',.24],['admin',.16],['glass',.12],['banco',.16]],height:[7,34],market:4,ground:'#3B413B',slab:'#BEC4B8',dirt:'#947D5C',paint:['#C7D0B8','#B5C9C5','#D7C4A0','#A7BCCB','#D1B78A','#AFB8A3'],feature:'waterfront'},
+  nasarawa:{form:'savanna-capital',road:'open',styles:[['flat',.34],['banco',.24],['zinc',.2],['admin',.14],['glass',.08]],height:[7,30],market:4,ground:'#454139',slab:'#C9BDA5',dirt:'#B49A70',paint:['#D8C7A2','#C7B28B','#E3D2AD','#B8C4B6','#D3B88A','#AFA083'],feature:'civic-plaza'},
+  taraba:{form:'green-hills',road:'contour',styles:[['flat',.32],['zinc',.24],['banco',.18],['admin',.14],['glass',.12]],height:[7,32],market:4,ground:'#3B4035',slab:'#C0C6B6',dirt:'#967954',paint:['#C9D1B3','#B6C7B7','#D6C5A1','#AABED0','#D2BA8D','#AAB7A0'],feature:'hills'},
+  yobe:{form:'sahel',road:'open',styles:[['banco',.46],['flat',.28],['zinc',.22],['admin',.04]],height:[6,24],market:3,ground:'#4C4337',slab:'#D0BB94',dirt:'#C7A16D',paint:['#DCC398','#CBA979','#E5D2A9','#B98E5F','#D6B887','#A98A61'],feature:'city-gate'},
+  zamfara:{form:'historic',road:'gate',styles:[['banco',.48],['flat',.28],['zinc',.18],['admin',.06]],height:[7,26],market:3,ground:'#494136',slab:'#CBB794',dirt:'#C29B6A',paint:['#D8BC91','#C9A87B','#E3CCA3','#B88D62','#D7C19A','#A98A62'],feature:'city-gate'}
+};
+// State/metro aliases used by mission data share their own tuned identity.
+Object.assign(CITY_IDENTITY,{
+  anambra:{form:'dense-market',road:'market',styles:[['flat',.32],['zinc',.3],['glass',.16],['admin',.12],['banco',.1]],height:[8,38],market:2,ground:'#3B3D39',slab:'#B8C0BB',dirt:'#907A5F',paint:['#CDD8D0','#B8CDD2','#D7C0A1','#A9B8CA','#D5C48E','#B6B6A9'],feature:'market'},
+  adoekiti:CITY_IDENTITY['ado-ekiti'],
+  abia:CITY_IDENTITY.umuahia,
+  osun:CITY_IDENTITY.osogbo
+});
+function applyCityIdentityProfiles(){
+  Object.keys(CITIES).forEach(key=>{
+    if(key==='kitcity') return;
+    const C=CITIES[key],p=CITY_IDENTITY[key];
+    if(!p) return;
+    C.form=p.form; C.roadStyle=p.road; C.styles=p.styles.map(v=>v.slice());
+    C.h=p.height.slice(); C.market=p.market;
+    C.ground=p.ground; C.slab=p.slab; C.dirt=p.dirt; C.paint=p.paint.slice();
+    C.cityFeature=p.feature;
+  });
+}
+applyCityIdentityProfiles();
+/* =====================  End Nigerian city identity profiles  ===================== */
+
 /* =====================  KitCity LOOK: real-city grading, skies, weathering  ===================== */
 var GR=null,LKT={},LKC={roof:'#9a958a'},LKS={sx:-40,sy:60,sz:30,col:0xFFD59A,dir:[-.5,.7,.4]},ATMO=null,SKY=null,LS=1;
 const LOOK_BASE={h:'#E3C9A0',z:'#6F94B5',sun:'#FFD9A0',sI:.95,hS:'#F4E4C8',hG:'#5A4636',hI:.6,off:[-45,55,32],exp:1.05,sat:1.0,con:1.08,fade:.02,lift:[0,.01,.025],gain:[1.04,1,.94],vig:.3,grain:.03,bloom:.4,veil:['#E8C896',.1],cl:.4,cc:'#F6EBDD',fog:[55,210],dust:.1,mil:.3,rust:.3,lat:.2,dash:'#D9A62A',fx:null,roof:'#9a958a',zinc:['#8a4a2c','#7c4b34','#6b4630','#9a5a38','#7d7266','#5e5b55'],ground:'#2A2A2C',slab:'#A39C8E',dirt:'#8E5638',leaf:'#35603a'};
@@ -1079,9 +1244,46 @@ function applyLook(key,C){
     b.textContent='LOOK v2 \u2022 '+key+' \u2022 grade '+(GR?'ON':'OFF (fallback)'); b.style.opacity=1; clearTimeout(b._t); b._t=setTimeout(()=>{b.style.opacity=0;},6000); }catch(e){}
 }
 function roadDecals(C,blocks){
-  const L=LKC,dc=L.lat>.3?'#9a5a38':(L.dust>.2?'#cdb48a':'#8a7e6a'),its=[]; const geo=new THREE.PlaneGeometry(56,2.8); geo.rotateX(-Math.PI/2);
+  const L=LKC,dc=C.roadStyle==='boulevard'?'#D9DDE0':C.roadStyle==='promenade'?'#A9C7C5':C.roadStyle==='gate'?'#B99B70':C.roadStyle==='market'?'#C4B8A3':L.lat>.3?'#9a5a38':(L.dust>.2?'#cdb48a':'#8a7e6a'),its=[];
+  const geo=new THREE.PlaneGeometry(56,C.roadStyle==='boulevard'?3.4:2.8); geo.rotateX(-Math.PI/2);
   blocks.forEach(b=>{ const o=30.4; its.push({x:b.cx,y:.047,z:b.cz-o},{x:b.cx,y:.047,z:b.cz+o,ry:Math.PI},{x:b.cx-o,y:.047,z:b.cz,ry:Math.PI/2},{x:b.cx+o,y:.047,z:b.cz,ry:-Math.PI/2}); });
   instanced(geo,new THREE.MeshLambertMaterial({color:dc,map:LKT.edge,transparent:true,opacity:.35+L.dust*.6+L.lat*.3,depthWrite:false}),its,cityGroup);
+  // A restrained, low-profile median gives planned capitals a different road rhythm
+  // without blocking traffic or changing the mission navigation grid.
+  if(C.roadStyle==='boulevard'||C.roadStyle==='ceremonial'){
+    const med=[]; for(let k=-2;k<=2;k++){ med.push({x:k*R,y:.09,z:0,sx:1.15,sy:.18,sz:520}); med.push({x:0,y:.09,z:k*R,sx:520,sy:.18,sz:1.15}); }
+    instanced(new THREE.BoxGeometry(1,1,1),new THREE.MeshLambertMaterial({color:C.roadStyle==='boulevard'?'#B7C2C6':'#B8A68F'}),med,cityGroup);
+    const studs=[]; for(let k=-3;k<=3;k++){ for(let n=-3;n<=3;n++){ if(Math.abs(n)%2===0) studs.push({x:k*R,y:.22,z:n*R+18},{x:n*R+18,y:.22,z:k*R}); } }
+    instanced(new THREE.BoxGeometry(.55,.18,.55),new THREE.MeshBasicMaterial({color:C.roadStyle==='boulevard'?'#F2F3F1':'#D8C79E'}),studs,cityGroup);
+  }
+  // Road paint is authored by street type rather than copied unchanged between cities.
+  const style=C.roadStyle||'mixed',marks=[];
+  const addMark=(x,z,ry=0)=>marks.push({x,y:.085,z,ry});
+  for(let k=-3;k<=3;k++)for(let i=-3;i<=2;i++){
+    const x=i*R+35,z=k*R;
+    if(style==='industrial'){
+      // Port and industrial corridors use a double yellow centre line.
+      for(const off of [-.62,.62]){const m=boxMark(x,z+off,0);marks.push(m);}
+      const vx=k*R,vz=i*R+35;for(const off of [-.62,.62])marks.push(boxMark(vx+off,vz,Math.PI/2));
+    }else if(style==='boulevard'||style==='ceremonial'){
+      // Formal avenues have lane guides flanking the median.
+      for(const off of [-2.1,2.1]){marks.push(boxMark(x,z+off,0));marks.push(boxMark(k*R+off,i*R+35,Math.PI/2));}
+    }else{
+      const stride=style==='open'||style==='gate'?3:style==='market'?1:2;
+      for(let q=0;q<5;q++){
+        if((q+i+k)%stride!==0)continue;
+        const px=i*R+8+q*10,pz=k*R;
+        addMark(px,pz,0);addMark(k*R,i*R+8+q*10,Math.PI/2);
+      }
+    }
+  }
+  function boxMark(x,z,ry){return {x,y:.085,z,ry};}
+  if(marks.length){
+    const g=new THREE.PlaneGeometry(style==='industrial'||style==='boulevard'||style==='ceremonial'?56:7,.22);g.rotateX(-Math.PI/2);
+    const laneColor=style==='industrial'?'#E9BE35':style==='market'?'#C9C6B9':style==='gate'||style==='open'?'#D2B56D':'#E5E8E7';
+    const laneMat=new THREE.MeshBasicMaterial({color:laneColor,transparent:true,opacity:style==='market'?.58:.9,depthWrite:false});
+    instanced(g,laneMat,marks,cityGroup);
+  }
 }
 function atmoSet(type){
   if(ATMO){ scene.remove(ATMO.o); ATMO.o.geometry.dispose(); ATMO=null; } if(!type) return;
@@ -1322,7 +1524,8 @@ function mergeStatic(group){
   out.forEach(m=>group.add(m));
 }
 function addBuilding(x,z,w,d,style,color,cx,cz,ox,oz){
-  let h; if(style==='zinc') h=rr(6,9); else if(style==='banco') h=rr(7,13); else if(style==='glass') h=rr(30,46); else if(style==='admin') h=rr(12,18); else h=rr(14,30);
+  const profile=CITIES[curCity]||{},range=profile.h||[8,30];
+  let h; if(style==='zinc') h=rr(Math.max(5,range[0]*.65),Math.max(9,range[0]*1.15)); else if(style==='banco') h=rr(Math.max(6,range[0]*.7),Math.max(13,range[1]*.62)); else if(style==='glass') h=rr(Math.max(24,range[1]*.65),Math.max(32,range[1])); else if(style==='admin') h=rr(Math.max(10,range[0]*1.1),Math.max(18,range[1]*.72)); else h=rr(Math.max(10,range[0]),Math.max(22,range[1]*.78));
   const mats=[],vv=Math.floor(RN()*3),tex=FACT[style][vv],th=FAC_TH[style];
   const geo=new THREE.BoxGeometry(w,h,d),uv=geo.attributes.uv,rxd=Math.max(1,Math.round(d/10)),rxw=Math.max(1,Math.round(w/10)),ry=Math.max(1,Math.round(h/th));
   for(let i=0;i<uv.count;i++){ const f=Math.floor(i/4),rx=(f===0||f===1)?rxd:rxw; if(f===2||f===3) uv.setXY(i,uv.getX(i)*rxw,uv.getY(i)*rxd); else uv.setXY(i,uv.getX(i)*rx,uv.getY(i)*ry); }
@@ -1532,9 +1735,25 @@ function addCar(axis,k,dir,C){ const road=k*R,kind=pickKind(C),v=makeVehicle(kin
   for(let tries=0;tries<36;tries++){const candidate=rr(-225,225),box=vehicleBox(c,candidate);if(cars.every(o=>!boxesOverlap(box,vehicleBox(o)))){c.pos=candidate;break;}if(tries===35)c.pos=rr(-225,225);}
   trafficGroup.add(v.m);placeCar(c);cars.push(c);
 }
+function addLocalRoadCar(road,C){
+  const kind=pickKind(C),v=makeVehicle(kind,C),dir=RN()<.5?1:-1;
+  const offset=(RN()<.5?-1:1)*Math.min(1.25,Math.max(0,road.width/2-2.7));
+  const lane=road.axis==='x'?road.cz+offset:road.cx+offset;
+  const center=road.axis==='x'?road.cx:road.cz;
+  const c={m:v.m,axis:road.axis,dir,lane,pos:center+rr(-18,18),speed:rr(v.sp[0]*.45,v.sp[1]*.55),hl:v.hl,hw:v.hw,kind,localRoad:true,localCenter:center,localMin:-25,localMax:25};
+  const box=vehicleBox(c,c.pos);
+  if(cars.some(o=>boxesOverlap(box,vehicleBox(o),1.2)))return;
+  trafficGroup.add(v.m);placeCar(c);cars.push(c);
+}
 function updateCars(dt){ for(const c of cars){let sp=c.speed;
   for(const o of cars){if(o===c||o.axis!==c.axis||o.lane!==c.lane||o.dir!==c.dir)continue;const gap=(o.pos-c.pos)*c.dir,free=gap-c.hl-o.hl;if(gap>0&&free<8)sp=Math.min(sp,free<3?0:o.speed*.9);}
-  let next=c.pos+c.dir*sp*dt;if(next*c.dir>240)next=-240*c.dir;const box=vehicleBox(c,next);for(const o of cars){if(o!==c&&boxesOverlap(box,vehicleBox(o),.45)){sp=0;next=c.pos;break;}}c.pos=next;placeCar(c);}
+  let next=c.pos+c.dir*sp*dt;
+  if(c.localRoad){
+    const rel=next-c.localCenter;
+    if(rel<c.localMin){next=c.localCenter+c.localMin;c.dir=1;}
+    else if(rel>c.localMax){next=c.localCenter+c.localMax;c.dir=-1;}
+  } else if(next*c.dir>240)next=-240*c.dir;
+  const box=vehicleBox(c,next);for(const o of cars){if(o!==c&&boxesOverlap(box,vehicleBox(o),.45)){sp=0;next=c.pos;break;}}c.pos=next;placeCar(c);}
 }
 /* ---- Nigerian street life: furniture, shops, bridges, landmarks, barks ---- */
 let ringTaken=[],hawkers=[];
@@ -1753,7 +1972,7 @@ function streetDetails(C,blocks){
 }
 function buildBackdrop(key){
   clearGroup(backGroup);
-  const mk=(geo,c,x,y,z,sx,sy,sz,flat)=>{ const m=new THREE.Mesh(geo,new THREE.MeshLambertMaterial({color:c,flatShading:!!flat})); m.position.set(x,y,z); m.scale.set(sx,sy,sz); backGroup.add(m); return m; };
+  const mk=(geo,c,x,y,z,sx,sy,sz,flat)=>{ const material=new THREE.MeshLambertMaterial({color:c}); material.flatShading=!!flat; const m=new THREE.Mesh(geo,material); m.position.set(x,y,z); m.scale.set(sx,sy,sz); backGroup.add(m); return m; };
   const ico=new THREE.IcosahedronGeometry(1,1),box=new THREE.BoxGeometry(1,1,1);
   const water=(w,d,x,z,c)=>{ const m=new THREE.Mesh(new THREE.PlaneGeometry(w,d),new THREE.MeshLambertMaterial({color:c})); m.rotation.x=-Math.PI/2; m.position.set(x,.01,z); backGroup.add(m); };
   if(key==='lagos'){
@@ -1812,6 +2031,10 @@ function locName(x,z){
   const C=CITIES[curCity],kx=Math.round(x/R),kz=Math.round(z/R);
   let road=null;
   if(Math.abs(x-kx*R)<9&&Math.abs(kx)<=3) road=C.nsRoads[kx+3]; else if(Math.abs(z-kz*R)<9&&Math.abs(kz)<=3) road=C.ewRoads[kz+3];
+  if(!road&&nearLocalStreet(C,x,z,1)){
+    const names={'historic':'Old Quarter Lane','sahel':'Compound Lane','dense-market':'Market Lane','organic-sprawl':'Community Street','dense-coastal':'Coastal Access Road','delta-port':'Port Access Road','oil-port':'Industrial Access Road','planned':'District Avenue','planned-tropical':'Garden District Road','planned-river':'Riverside Access Road'};
+    road=names[C.form]||'Local Street';
+  }
   const di=Math.max(0,Math.min(2,Math.floor((x+210)/140))),dj=Math.max(0,Math.min(2,Math.floor((z+210)/140)));
   return (road?road+', ':'')+C.districts[dj*3+di];
 }
@@ -1932,10 +2155,44 @@ function buildKitCity(C){
   mergeStatic(cityGroup); flagShadows(cityGroup); flagShadows(trafficGroup); freeze(cityGroup);
   setupBarks(C); Snd.setCity('kitcity');
 }
+function addCityIdentityFeature(C){
+  const feature=C.cityFeature;if(!feature)return;
+  const mat=c=>lam(c),box=(w,h,d,c,x,y,z)=>{const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat(c));m.position.set(x,y,z);cityGroup.add(m);return m;};
+  const cyl=(r1,r2,h,c,x,y,z,n=16)=>{const m=new THREE.Mesh(new THREE.CylinderGeometry(r1,r2,h,n),mat(c));m.position.set(x,y,z);cityGroup.add(m);return m;};
+  // Keep signature landmarks at the edge of the playable district so they read
+  // in the skyline without covering mission characters or street traffic.
+  if(feature==='waterfront'){
+    const water=new THREE.Mesh(new THREE.PlaneGeometry(620,76),new THREE.MeshLambertMaterial({color:'#3F8290',transparent:true,opacity:.78}));
+    water.rotation.x=-Math.PI/2;water.position.set(0,-.015,255);cityGroup.add(water);
+    for(let q=0;q<8;q++){const x=-225+q*64;box(13,.5,5,'#B7B7A7',x,.18,213);box(1.2,3,1.2,'#7C827D',x-5,1.5,213);box(1.2,3,1.2,'#7C827D',x+5,1.5,213);}
+    for(let q=0;q<7;q++){const x=-210+q*66;box(22,.8,7,'#A89A80',x,.35,225);box(1.2,5,1.2,'#6E7777',x-8,2.5,225);box(1.2,5,1.2,'#6E7777',x+8,2.5,225);}
+  } else if(feature==='roundabout'){
+    cyl(18,18,.35,'#C4CBCD',0,.12,-210,32);cyl(13,13,.45,'#A9B9B5',0,.35,-210,32);cyl(7,7,1.4,'#B6C2C3',0,1,-210,24);
+    cyl(2.4,2.4,7,'#6D7F89',0,5,-210,12);cyl(3.4,3.4,.45,'#D4D9D7',0,8.6,-210,16);
+  } else if(feature==='city-gate'){
+    const c=feature==='city-gate'?'#C6A77B':'#B9A88C';
+    box(34,2.2,3,c,0,12,-220);box(3,13,4,c,-15.5,6.5,-220);box(3,13,4,c,15.5,6.5,-220);
+    box(7,8,2,'#7E684F',0,5.8,-218.3);box(38,.8,5,'#D7C39F',0,14,-220);
+  } else if(feature==='heritage-wall'){
+    for(let q=0;q<9;q++){const x=-216+q*54;box(3,7,2.5,'#A55F40',x,3.5,218);if(q<8)box(51,3,2.5,'#B36D4B',x+27,2,218);}
+  } else if(feature==='rocky-outcrops'||feature==='hills'){
+    const colors=feature==='rocky-outcrops'?['#7B776D','#8B8578','#A29A89']:['#60775D','#71856A','#8B9272'];
+    for(let q=0;q<9;q++){const x=-235+q*58,z=feature==='rocky-outcrops'?225+(q%2)*9:236+(q%3)*5;const r=feature==='rocky-outcrops'?rr(8,15):rr(11,21);
+      const m=new THREE.Mesh(new THREE.DodecahedronGeometry(r,0),mat(pk(colors)));m.position.set(x,r*.58,z);m.scale.y=feature==='hills'?rr(.65,1.25):rr(.45,.8);cityGroup.add(m);}
+  } else if(feature==='rail'){
+    for(let q=0;q<2;q++){const z=206+q*5;box(520,.16,.35,'#55595B',0,.2,z);box(520,.12,.35,'#55595B',0,.2,z+1.6);for(let x=-250;x<=250;x+=9)box(2,.16,4.4,'#776C5C',x,.12,z+.8);}
+    box(48,8,12,'#C6C4B7',-150,4,194);box(52,1.2,15,'#717C80',-150,8.5,194);
+  } else if(feature==='market'){
+    for(let q=0;q<8;q++){const x=-210+q*60;box(30,1.2,18,'#8E7256',x,.6,218);box(30,.35,18,['#C96B46','#2D6FB3','#B5A04B','#397A56'][q%4],x,3.2,218);for(let p=-1;p<=1;p++)box(.5,4,.5,'#6B5B49',x+p*12,2,218);}
+  } else if(feature==='civic-plaza'){
+    box(58,.4,28,'#C7C8BD',0,.18,218);for(let q=-2;q<=2;q++){box(1,.3,24,'#A7B2AF',q*10,.42,218);}
+    cyl(5,6,1,'#B7C4C3',0,.7,218,20);cyl(2.5,3,.7,'#8DA4A4',0,1.55,218,20);
+  }
+}
 function buildCity(key){
   const C=CITIES[key]; curCity=key;
   clearGroup(cityGroup); clearGroup(trafficGroup); texs.forEach(t=>t.dispose()); texs=[];
-  colliders.length=0; buildings.length=0; cars=[]; walkers=[]; hawkers=[]; ringTaken=[];
+  colliders.length=0; buildings.length=0; cars=[]; walkers=[]; hawkers=[]; ringTaken=[]; localRoadSegments=[];
   RN=mulberry(C.seed); dxReset(); LOOKSC=CITY_LOOKS[key]||LOOKS;
   applyLook(key,C);
   if(key==='kitcity'){ buildKitCity(C); return; }
@@ -1947,23 +2204,153 @@ function buildCity(key){
     const v=new THREE.Mesh(dashGeo,dashMat); v.rotation.set(-Math.PI/2,0,Math.PI/2); v.position.set(k*R,0.04,i*R+35); cityGroup.add(v);
   }
   const blocks=[];
+  const placeBuilding=(x,z,w,d,style,color,cx,cz,ox,oz)=>{if(nearSpecial(x,z,18)||nearLocalStreet(C,x,z,Math.max(w,d)/2+1.5))return;addBuilding(x,z,w,d,style,color,cx,cz,ox,oz);};
+  localRoadSegments=buildSecondaryRoadSegments(C);
+  const localRoadMat=lam(C.ground,{map:LKT.asph});
   for(let i=-3;i<=2;i++)for(let j=-3;j<=2;j++){
     const cx=i*R+35,cz=j*R+35; blocks.push({cx,cz});
     const vg=new THREE.Mesh(vergeGeo,dirtMat); vg.rotation.x=-Math.PI/2; vg.position.set(cx,.03,cz); cityGroup.add(vg);
     const slab=new THREE.Mesh(slabGeo,paveMat); slab.position.set(cx,0.05,cz); cityGroup.add(slab);
+    // Local streets cut through selected blocks and join the existing arterial network.
+    for(const road of localRoadSegments){
+      if(road.i!==i||road.j!==j)continue;
+      const geo=road.axis==='x'?new THREE.BoxGeometry(70.5,.045,road.width):new THREE.BoxGeometry(road.width,.045,70.5);
+      const mesh=new THREE.Mesh(geo,localRoadMat);mesh.position.set(cx,.112,cz);mesh.userData.nomerge=true;cityGroup.add(mesh);
+      // Low raised footpaths stop short of arterial junctions so they don't
+      // create a curb across the existing traffic lanes.
+      const footGeo=road.axis==='x'?new THREE.BoxGeometry(58,.035,.8):new THREE.BoxGeometry(.8,.035,58);
+      for(const side of [-1,1]){
+        const foot=new THREE.Mesh(footGeo,paveMat);foot.position.set(cx+(road.axis==='z'?side*(road.width/2+.55):0),.125,cz+(road.axis==='x'?side*(road.width/2+.55):0));cityGroup.add(foot);
+      }
+      const roadStyle=C.roadStyle||'mixed';
+      // Markings follow the local street's character instead of repeating one
+      // generic dashed line through every Nigerian city.
+      if(roadStyle==='industrial'){
+        const yellow=new THREE.MeshBasicMaterial({color:'#E9BE35',transparent:true,opacity:.92,depthWrite:false});
+        for(const side of [-1,1]){
+          const geo=road.axis==='x'?new THREE.BoxGeometry(70,.018,.1):new THREE.BoxGeometry(.1,.018,70);
+          const mark=new THREE.Mesh(geo,yellow);
+          mark.position.set(cx+(road.axis==='x'?0:side*.62),.145,cz+(road.axis==='z'?0:side*.62));cityGroup.add(mark);
+        }
+      }else if(roadStyle==='boulevard'||roadStyle==='ceremonial'){
+        const white=new THREE.MeshBasicMaterial({color:'#F0F0E9',transparent:true,opacity:.82,depthWrite:false});
+        const edge=new THREE.MeshBasicMaterial({color:'#C9D1D0',transparent:true,opacity:.6,depthWrite:false});
+        const midGeo=road.axis==='x'?new THREE.BoxGeometry(4,.018,.13):new THREE.BoxGeometry(.13,.018,4);
+        for(let q=-2;q<=2;q++){
+          const mark=new THREE.Mesh(midGeo,white);
+          mark.position.set(cx+(road.axis==='x'?q*12:0),.145,cz+(road.axis==='z'?q*12:0));cityGroup.add(mark);
+        }
+        for(const side of [-1,1]){
+          const edgeGeo=road.axis==='x'?new THREE.BoxGeometry(70,.012,.08):new THREE.BoxGeometry(.08,.012,70);
+          const line=new THREE.Mesh(edgeGeo,edge);
+          line.position.set(cx+(road.axis==='x'?0:side*(road.width/2-.35)),.143,cz+(road.axis==='z'?0:side*(road.width/2-.35)));cityGroup.add(line);
+        }
+      }else if(roadStyle==='market'||roadStyle==='gate'||roadStyle==='open'){
+        // Older market and quarter lanes use worn edge stones, not modern
+        // highway markings; small stone studs sit outside the wheel path.
+        const stoneMat=new THREE.MeshLambertMaterial({color:roadStyle==='market'?'#B8B1A2':'#C5AD86'});
+        for(const side of [-1,1])for(let q=-2;q<=2;q++){
+          const stone=new THREE.Mesh(new THREE.BoxGeometry(.38,.07,.38),stoneMat);
+          stone.position.set(cx+(road.axis==='x'?q*13:side*(road.width/2+.22)),.17,cz+(road.axis==='z'?q*13:side*(road.width/2+.22)));cityGroup.add(stone);
+        }
+      }else{
+        const worn=new THREE.MeshBasicMaterial({color:'#D8D7CC',transparent:true,opacity:.48,depthWrite:false});
+        for(let q=-2;q<=2;q++){
+          if((q+road.i+road.j)%2!==0)continue;
+          const dashGeo=road.axis==='x'?new THREE.BoxGeometry(2.5,.014,.09):new THREE.BoxGeometry(.09,.014,2.5);
+          const dash=new THREE.Mesh(dashGeo,worn);
+          dash.position.set(cx+(road.axis==='x'?q*14:0),.143,cz+(road.axis==='z'?q*14:0));cityGroup.add(dash);
+        }
+      }
+    }
     const lmk=(C.lm||[]).find(l=>l[1]===cx&&l[2]===cz);
     if(lmk) landmark(lmk[0],cx,cz);
-    else if((((i+j)%C.market)+C.market)%C.market===0) addMarket(cx,cz);
-    else for(const ox of [-11,11])for(const oz of [-11,11]) addBuilding(cx+ox+rr(-1,1),cz+oz+rr(-1,1),rr(14,20),rr(14,20),pickStyle(C),pk(C.paint),cx,cz,ox,oz);
+    // The block plan follows the city, not one universal four-building stamp.
+    else if(i===0&&j===-1) { /* preserve the opening story plaza */ }
+    else if((((i+j)%C.market)+C.market)%C.market===0&&!nearLocalStreet(C,cx,cz,18)) addMarket(cx,cz);
+    else if(C.form==='historic'||C.form==='sahel'){
+      // Compact compound clusters and narrow irregular lanes, characteristic of
+      // historic northern settlements; keep the existing mission corridors clear.
+      const count=C.form==='historic'?6:5;
+      for(let q=0;q<count;q++){
+        const bx=cx+rr(-21,21),bz=cz+rr(-21,21),w=rr(7,13),d=rr(8,15);
+        placeBuilding(bx,bz,w,d,pickStyle(C),pk(C.paint),cx,cz,bx-cx,bz-cz);
+      }
+    } else if(C.form==='planned'||C.form==='planned-tropical'||C.form==='planned-river'){
+      // Planned-capital blocks: fewer, larger footprints with open space between them.
+      const spots=[[-15,-13],[15,13],[15,-15]];
+      const count=C.form==='planned'?3:2;
+      for(let q=0;q<count;q++){
+        const ox=spots[q][0],oz=spots[q][1],bx=cx+ox,bz=cz+oz;
+        placeBuilding(bx,bz,rr(17,23),rr(15,22),pickStyle(C),pk(C.paint),cx,cz,ox,oz);
+      }
+    } else if(C.form==='dense-market'||C.form==='dense-coastal'||C.form==='organic-sprawl'){
+      const count=C.form==='dense-market'?6:5;
+      for(let q=0;q<count;q++){
+        const bx=cx+rr(-21,21),bz=cz+rr(-21,21),w=rr(8,17),d=rr(8,17);
+        placeBuilding(bx,bz,w,d,pickStyle(C),pk(C.paint),cx,cz,bx-cx,bz-cz);
+      }
+    } else if(C.form==='delta-port'||C.form==='oil-port'){
+      for(const [ox,oz] of [[-15,-14],[15,14]]){
+        const bx=cx+ox,bz=cz+oz;
+        placeBuilding(bx,bz,rr(18,25),rr(11,17),pickStyle(C),pk(C.paint),cx,cz,ox,oz);
+      }
+    } else if(C.form==='hillside'||C.form==='green-hills'||C.form==='rock-city'){
+      // Hillside and rocky cities use staggered terraces with open slope breaks,
+      // rather than a flat four-building stamp.
+      for(let q=0;q<4;q++){
+        const ox=-19+q*12,oz=(q%2===0?-15:12)+rr(-2,2);
+        if((i+j+q)%4===0)continue;
+        placeBuilding(cx+ox,cz+oz,rr(8,13),rr(10,17),pickStyle(C),pk(C.paint),cx,cz,ox,oz);
+      }
+    } else if(C.form==='rail-crossroads'){
+      // Long workshops and depots run parallel to the rail/industrial axis.
+      for(let q=0;q<3;q++){
+        const ox=-18+q*18,oz=(q%2===0?-12:13);
+        placeBuilding(cx+ox,cz+oz,rr(13,19),rr(7,10),pickStyle(C),pk(C.paint),cx,cz,ox,oz);
+      }
+      if((i+j)%2===0)placeBuilding(cx+rr(-5,5),cz+rr(-3,3),rr(8,12),rr(8,12),pickStyle(C),pk(C.paint),cx,cz,0,0);
+    } else if(C.form==='heritage'||C.form==='colonial-coast'){
+      // Perimeter buildings leave a recognisable shared courtyard in each block.
+      for(const [ox,oz,w,d] of [[-17,-17,15,9],[17,-17,15,9],[-17,17,15,9],[17,17,15,9]]){
+        placeBuilding(cx+ox+rr(-2,2),cz+oz+rr(-2,2),w,d,pickStyle(C),pk(C.paint),cx,cz,ox,oz);
+      }
+    } else if(C.form==='creek-town'||C.form==='river-town'){
+      // River and creek settlements favour narrow linear footprints and gaps.
+      for(let q=0;q<5;q++){
+        const ox=-20+q*10,oz=(q%2===0?-13:13)+rr(-2,2);
+        placeBuilding(cx+ox,cz+oz,rr(6,9),rr(11,16),pickStyle(C),pk(C.paint),cx,cz,ox,oz);
+      }
+    } else if(C.form==='southeast-market'||C.form==='southwest-sprawl'){
+      // Dense shopfront strips and irregular compound additions break up the grid.
+      for(let q=0;q<5;q++){
+        const ox=-21+q*10.5,oz=(q%2===0?-15:14)+rr(-3,3);
+        const w=C.form==='southeast-market'?rr(6,9):rr(8,13),d=rr(8,13);
+        placeBuilding(cx+ox,cz+oz,w,d,pickStyle(C),pk(C.paint),cx,cz,ox,oz);
+      }
+      if(C.form==='southwest-sprawl'&&(i*j)%2===0){
+        const ox=rr(-7,7),oz=rr(-5,5);
+        placeBuilding(cx+ox,cz+oz,rr(7,11),rr(7,12),pickStyle(C),pk(C.paint),cx,cz,ox,oz);
+      }
+    } else {
+      // Regional towns mix modest footprints with a little variation in spacing.
+      for(const [ox,oz] of [[-15,-14],[15,-15],[-14,15],[15,14]]){
+        const jx=rr(-3,3),jz=rr(-3,3);
+        placeBuilding(cx+ox+jx,cz+oz+jz,rr(9,17),rr(9,17),pickStyle(C),pk(C.paint),cx,cz,ox+jx,oz+jz);
+      }
+    }
     // Roadside/block-edge tree placement removed: keep streets and road verges clear.
   }
-  streetDetails(C,blocks); roadDecals(C,blocks);
+  streetDetails(C,blocks); roadDecals(C,blocks); addCityIdentityFeature(C);
   dxFlush(C);
   cityCols=colliders.length;
   for(let k=-3;k<=3;k++)for(const axis of ['x','z'])for(const dir of [1,-1]){
     const n=(k===0||k===-1)?8:(RN()<.45?5:4);
     for(let q=0;q<n;q++) addCar(axis,k,dir,C);
   }
+  // A small amount of slow, bounded traffic enters selected local streets.
+  // These vehicles reverse at segment ends; they never wrap across the map.
+  for(const road of localRoadSegments) if(RN()<.42) addLocalRoadCar(road,C);
   const spotWalk=()=>{
     for(let t=0;t<40;t++){
       const b=pk(blocks),side=Math.floor(RN()*4); let ax,az,dx,dz;
@@ -1985,6 +2372,24 @@ function buildCity(key){
     const a=mkW(sp.x,sp.z,sp.dx*sg,sp.dz*sg,spd,{type:'pair',rem:rem}),b=mkW(sp.x+sp.dz*1.1,sp.z+sp.dx*1.1,sp.dx*sg,sp.dz*sg,spd,{type:'pair',rem:rem,ph:a.ph+.6});
     a.partner=b; b.partner=a;
   }
+  // Local-street pedestrians use the new footpaths and reverse at the ends
+  // of their own street segment, rather than wandering across block interiors.
+  let localWalkers=0;
+  for(const road of localRoadSegments){
+    if(localWalkers>=24) break;
+    for(const side of [-1,1]){
+      if(localWalkers>=24) break;
+      const along=rr(-18,18),sg=RN()<.5?1:-1;
+      const offset=road.width/2+.95;
+      const x=road.axis==='x'?road.cx+along:road.cx+side*offset;
+      const z=road.axis==='x'?road.cz+side*offset:road.cz+along;
+      if(nearSpecial(x,z,12)) continue;
+      const dx=road.axis==='x'?sg:0,dz=road.axis==='z'?sg:0;
+      const w=mkW(x,z,dx,dz,rr(1.5,2.4),{type:'street',rem:rr(10,24)});
+      w.streetBounds={axis:road.axis,min:-29,max:29,center:road.axis==='x'?road.cx:road.cz};
+      localWalkers++;
+    }
+  }
   let made=0,tr=0;
   while(made<32&&tr++<420){
     const i=Math.floor(rr(-3,4)),j=Math.floor(rr(-3,4)),o=RN()<.5?10.5:-10.5; let A,B,axis,coord,cc;
@@ -2004,6 +2409,11 @@ function stripeTex(a,b){
   for(let i=0;i<8;i++){ g.fillStyle=i%2?b:a; g.fillRect(i*8,0,8,8); }
   const t=new THREE.Texture(c); t.needsUpdate=true; return t;
 }
+function addNpcHighlight(actor){
+  const ring=new THREE.Mesh(new THREE.RingGeometry(1.15,1.48,32),new THREE.MeshBasicMaterial({color:0x00E5FF,transparent:true,opacity:.78,depthWrite:false,depthTest:false,side:THREE.DoubleSide}));
+  ring.rotation.x=-Math.PI/2; ring.position.y=.035; ring.renderOrder=12; ring.userData.npcHighlight=true; actor.add(ring);
+  return actor;
+}
 function buildStall(def,spot){
   const o=def.stall,x=spot.x,z=spot.z,face=spot.f;
   const KS=1.35;
@@ -2017,7 +2427,12 @@ function buildStall(def,spot){
   colliders.push({x0:x-3.2,x1:x+3.2,z0:z-3.7,z1:z+3.7});
   const sp=label(tr(def.sign||def.name),def.signBg,def.signFg); sp.position.set(x,8.4,z); missionGroup.add(sp);
   if(o.sub){ const s2=label(tr(o.sub),'#ffffff',INK,1.25); s2.position.set(x,6.4,z); missionGroup.add(s2); }
-  const att=buildPerson(def.look); att.position.set(x+1.6*face,.05,z+4.9*face); att.rotation.y=face>0?Math.PI/2:-Math.PI/2; missionGroup.add(att);
+  const att=addNpcHighlight(buildPerson(def.look)); att.userData.storyCharacter=def.name; att.userData.storyRole=def.role;
+  if(G&&G.m&&G.m.id==='m0'&&(def.name==='Softstorm'||def.name==='IamAbdul')){
+    /* Stage the opening pair together in front of their separate stalls for the comic scene. */
+    const soft=def.name==='Softstorm'; att.position.set(soft?15:19,.05,-22.5); att.rotation.y=soft?Math.PI/2:-Math.PI/2;
+  }else{ att.position.set(x+1.6*face,.05,z+4.9*face); att.rotation.y=face>0?Math.PI/2:-Math.PI/2; }
+  missionGroup.add(att);
   if(o.grill){
     const gx=x+2.3*face;
     const grill=new THREE.Mesh(new THREE.BoxGeometry(1.6,.4,4),lam('#222')); grill.position.set(gx,1.75,z); missionGroup.add(grill);
@@ -2027,10 +2442,29 @@ function buildStall(def,spot){
     }
   }
 }
+function placeStoryClue(def,spot){
+  const g=new THREE.Group(); g.position.set(spot.x,0,spot.z);
+  const wood=lam('#45352A'),paper=lam('#F4F5F0'),cyan=lam(BRAND),dark=lam('#17212A');
+  for(const x of [-1.35,1.35]){
+    const post=new THREE.Mesh(new THREE.BoxGeometry(.13,3.9,.13),wood); post.position.set(x,1.95,0); g.add(post);
+  }
+  const board=new THREE.Mesh(new THREE.BoxGeometry(3.15,3.55,.16),wood); board.position.set(0,3.45,0); g.add(board);
+  const sheet=new THREE.Mesh(new THREE.BoxGeometry(2.72,3.1,.08),paper); sheet.position.set(0,3.48,.13); g.add(sheet);
+  const mark=new THREE.Mesh(new THREE.BoxGeometry(.68,.68,.08),cyan); mark.position.set(-.76,4.45,.2); g.add(mark);
+  const barA=new THREE.Mesh(new THREE.BoxGeometry(1.35,.1,.06),dark); barA.position.set(.42,4.55,.2); g.add(barA);
+  const barB=new THREE.Mesh(new THREE.BoxGeometry(1.75,.08,.06),dark); barB.position.set(.18,4.25,.2); g.add(barB);
+  for(let row=0;row<4;row++){
+    const line=new THREE.Mesh(new THREE.BoxGeometry(2.1-row*.18,.055,.05),dark);
+    line.position.set(0,3.72-row*.27,.2); g.add(line);
+  }
+  missionGroup.add(g);
+  const sign=label(tr(def.sign||def.title),BRAND,'#071827',1.25); sign.position.set(spot.x,6.6,spot.z); missionGroup.add(sign);
+  return {x:spot.x,z:spot.z,r:6.5,clue:true};
+}
 function placeNPC(def,spot){
   if(def.stall) buildStall(def,spot);
   else {
-    const p=buildPerson(def.look); p.position.set(spot.x,.05,spot.z); p.rotation.y=spot.f>0?Math.PI/2:-Math.PI/2; missionGroup.add(p);
+    const p=addNpcHighlight(buildPerson(def.look)); p.userData.storyCharacter=def.name; p.userData.storyRole=def.role; p.position.set(spot.x,.05,spot.z); p.rotation.y=spot.f>0?Math.PI/2:-Math.PI/2; missionGroup.add(p);
     const sp=label(tr(def.sign||def.name),def.signBg,def.signFg); sp.position.set(spot.x,6,spot.z); missionGroup.add(sp);
     colliders.push({x0:spot.x-1,x1:spot.x+1,z0:spot.z-1,z1:spot.z+1});
   }
@@ -2062,6 +2496,34 @@ const S={phase:'title',modal:false};
 let G=null,ents=[],goal=null,nearEnt=null;
 let hubTab='missions',hubCity='lagos',resetArm=false;
 const SUYA_ADDR='0x'+hex(20);
+// Dedicated cinematic actors: the regular Softstorm/IamAbdul NPC definitions are stalls,
+ // so searching missionGroup alone cannot ever produce two visible people in the opening scene.
+const storyCastGroup=new THREE.Group();
+storyCastGroup.name='KitCity opening story cast';
+scene.add(storyCastGroup);
+const storySoftstorm=addNpcHighlight(buildPerson(LK.softstorm));
+storySoftstorm.userData.storyCharacter='Softstorm';
+storySoftstorm.userData.storyRole='The one with the card';
+storySoftstorm.position.set(75,.05,-100);
+storySoftstorm.rotation.y=Math.PI/2;
+storyCastGroup.add(storySoftstorm);
+const storyAbdul=addNpcHighlight(buildPerson(LK.abdul));
+storyAbdul.userData.storyCharacter='IamAbdul';
+storyAbdul.userData.storyRole='The one who heard it first';
+storyAbdul.position.set(79,.05,-100);
+storyAbdul.rotation.y=-Math.PI/2;
+storyCastGroup.add(storyAbdul);
+storyCastGroup.visible=false;
+const storyDirector=createStorySceneDirector({camera,player,getCharacter(name){
+  const staged=name==='Softstorm'?storySoftstorm:name==='IamAbdul'?storyAbdul:null;
+  if(storyCastGroup.visible&&staged) return staged;
+  let found=null;missionGroup.traverse(o=>{if(!found&&o.userData&&o.userData.storyCharacter===name) found=o;});return found;
+},getCharacters(){
+  const actors=[];
+  missionGroup.traverse(object=>{if(object.userData&&object.userData.storyCharacter&&object.isGroup) actors.push(object);});
+  if(storyCastGroup.visible) actors.push(storySoftstorm,storyAbdul);
+  return actors;
+},animateCharacter:animatePerson,setModal(value){S.modal=value;Snd.duck(value);}});
 
 /* =====================  sheet UI  ===================== */
 const modalEl=$('#modal'),sheetEl=$('#sheet'),talkBtn=$('#talkBtn');
@@ -2105,7 +2567,7 @@ function talk(def,html,btns){
   html=tx(personalize(html,G&&G.m,def));
   if(!S.modal||chat.npc!==def.name) chat={npc:def.name,log:[]};
   const npcName=String(def.name||'Local resident');
-  const playerLabel=playerName().toUpperCase();
+  const playerLabel='You';
   const prev=chat.log.slice(-3).map(m=>'<div class="b '+(m.me?'me':'npc old')+'"><small class="speaker-tag">'+(m.me?playerLabel:npcName.toUpperCase())+'</small>'+m.html+'</div>').join('');
   const pl=plain(html);
   chat.log.push({html:pl.slice(0,80)+(pl.length>80?'\u2026':'')});
@@ -2152,39 +2614,46 @@ function updateHUD(){
     $('#mTitle').textContent=tr(personalize('Mission '+G.m.n+': '+G.m.title,null));
     $('#steps').innerHTML=G.m.steps.map((s,i)=>'<li class="'+(G.i>i?'done':(G.i===i?'now':''))+'">'+personalize(tr(s.label),G.m,s.npc)+'</li>').join('');
   }
+  const health=$('#health');
+  if(health){
+    const hearts=G?Math.max(0,Math.min(3,Number(G.hearts)||0)):3;
+    health.setAttribute('aria-label','Player health: '+hearts+' of 3 hearts');
+    health.innerHTML=[0,1,2].map(i=>'<span class="heart'+(i<hearts?' full':' empty')+'" aria-hidden="true">♥</span>').join('');
+    health.classList.toggle('critical',hearts===1);
+  }
   $('#wallet').innerHTML=P.wallet?('<b>'+P.usdc.toFixed(2)+' USDC</b>'+(P.ngn>0?fmtN(P.ngn)+' token':short(P.wallet))):tr('No wallet yet');
 }
 
 /* =====================  missions  ===================== */
 const NPC=(name,role,color,look,stall,sign)=>({name,role,color,look,stall,sign});
-const MAMA=NPC('Softstorm','KitCity wallet kiosk','#0897A8',LK.mama,{body:'#0897A8',a:'#ffffff',b:BRAND,sub:'KitCity wallet'});
-const SUYA=NPC('IamAbdul','Best suya on the street',EMBER,LK.suya,{body:'#8E2F1B',a:'#ffffff',b:EMBER,grill:true});
-const GUY=NPC('Joseph Nnadi','Says he is your friend','#6a3fb5',LK.guy,null,'Free USDC giveaway!'); GUY.signBg='#6a3fb5'; GUY.signFg='#ffffff';
-const ALHAJA=NPC('Larai','Bureau de Change','#2D6FB3',LK.trader,{body:'#2D6FB3',a:'#ffffff',b:'#2D6FB3',sub:'Bureau de Change'});
-const CLERK=NPC('Unique','Swap counter','#1f4f82',LK.clerk,{body:'#1f4f82',a:'#ffffff',b:YELLOW,sub:'Swap counter'});
-const BRIGHT=NPC('Smrt huntr','Shows you a text message','#6a3fb5',LK.guy,null,'Check this text'); BRIGHT.signBg='#6a3fb5'; BRIGHT.signFg='#ffffff';
-const HASSAN=NPC('Goodness','Messaged you online','#C7457E',LK.man,null,'New DM'); HASSAN.signBg='#C7457E'; HASSAN.signFg='#ffffff';
-const CHIOMA=NPC('Semi','Shows you a post','#E4572E',LK.woman,null,'Airdrop alert'); CHIOMA.signBg='#E4572E'; CHIOMA.signFg='#ffffff';
-const KEEPER=NPC('Blockqueen','Guardian of secrets','#5a3a22',LK.elder,{body:'#5a3a22',a:'#ffffff',b:GREEN,sub:'Recovery vault'});
-const NOTARY=NPC('Christol','Checks your memory','#2D6FB3',LK.clerk,{body:'#2D6FB3',a:'#ffffff',b:YELLOW,sub:'Notary'});
-const MUSA=NPC('Laloba','Market trader','#C7457E',LK.woman,{body:'#C7457E',a:'#ffffff',b:'#E7D27A',sub:'Fresh yam'});
-const REG=NPC('Kenny','Passport registry','#0B7A43',LK.woman,{body:'#0B7A43',a:'#ffffff',b:BRAND,sub:'KitCity Passport'});
-const MINT=NPC('Leemah','Passport mint','#0897A8',LK.clerk,{body:'#0897A8',a:'#ffffff',b:BRAND,sub:'Free mint'});
-const CHAIR=NPC('Cybersage','Community leader','#6a3fb5',LK.trader,{body:'#6a3fb5',a:'#ffffff',b:BRAND,sub:'Community'});
-const HALL=NPC('Kodavic','Counts the votes','#2D6FB3',LK.clerk,{body:'#1f4f82',a:'#ffffff',b:BRAND,sub:'Town hall'});
-const ADA=NPC('Toza','P2P trader','#E4572E',LK.woman,{body:'#E4572E',a:'#ffffff',b:YELLOW,sub:'P2P desk'});
-const TOLA=NPC('Craftore','Bank agent','#0B7A43',LK.clerk,{body:'#0B7A43',a:'#ffffff',b:'#ffffff',sub:'Bank agent'});
+const MAMA=NPC('Softstorm','KitCity wallet kiosk','#0897A8',LK.softstorm,{body:'#0897A8',a:'#ffffff',b:BRAND,sub:'KitCity wallet'});
+const SUYA=NPC('IamAbdul','Best suya on the street',EMBER,LK.abdul,{body:'#8E2F1B',a:'#ffffff',b:EMBER,grill:true});
+const GUY=NPC('Joseph Nnadi','Says he is your friend','#6a3fb5',LK.josephNnadi,null,'Free USDC giveaway!'); GUY.signBg='#6a3fb5'; GUY.signFg='#ffffff';
+const ALHAJA=NPC('Larai','Bureau de Change','#2D6FB3',LK.larai,{body:'#2D6FB3',a:'#ffffff',b:'#2D6FB3',sub:'Bureau de Change'});
+const CLERK=NPC('Unique','Swap counter','#1f4f82',LK.unique,{body:'#1f4f82',a:'#ffffff',b:YELLOW,sub:'Swap counter'});
+const BRIGHT=NPC('Smrt huntr','Shows you a text message','#6a3fb5',LK.smrtHuntr,null,'Check this text'); BRIGHT.signBg='#6a3fb5'; BRIGHT.signFg='#ffffff';
+const HASSAN=NPC('Goodness','Messaged you online','#C7457E',LK.goodness,null,'New DM'); HASSAN.signBg='#C7457E'; HASSAN.signFg='#ffffff';
+const CHIOMA=NPC('Semi','Shows you a post','#E4572E',LK.semi,null,'Airdrop alert'); CHIOMA.signBg='#E4572E'; CHIOMA.signFg='#ffffff';
+const KEEPER=NPC('Blockqueen','Guardian of secrets','#5a3a22',LK.blockqueen,{body:'#5a3a22',a:'#ffffff',b:GREEN,sub:'Recovery vault'});
+const NOTARY=NPC('Christol','Checks your memory','#2D6FB3',LK.christol,{body:'#2D6FB3',a:'#ffffff',b:YELLOW,sub:'Notary'});
+const MUSA=NPC('Laloba','Market trader','#C7457E',LK.laloba,{body:'#C7457E',a:'#ffffff',b:'#E7D27A',sub:'Fresh yam'});
+const REG=NPC('Kenny','Passport registry','#0B7A43',LK.kenny,{body:'#0B7A43',a:'#ffffff',b:BRAND,sub:'KitCity Passport'});
+const MINT=NPC('Leemah','Passport mint','#0897A8',LK.leemah,{body:'#0897A8',a:'#ffffff',b:BRAND,sub:'Free mint'});
+const CHAIR=NPC('Cybersage','Community leader','#6a3fb5',LK.cybersage,{body:'#6a3fb5',a:'#ffffff',b:BRAND,sub:'Community'});
+const HALL=NPC('Kodavic','Counts the votes','#2D6FB3',LK.kodavic,{body:'#1f4f82',a:'#ffffff',b:BRAND,sub:'Town hall'});
+const ADA=NPC('Toza','P2P trader','#E4572E',LK.toza,{body:'#E4572E',a:'#ffffff',b:YELLOW,sub:'P2P desk'});
+const TOLA=NPC('Craftore','Bank agent','#0B7A43',LK.craftore,{body:'#0B7A43',a:'#ffffff',b:'#ffffff',sub:'Bank agent'});
 
 /* ---- extra mission characters ---- */
 const mkSign=(name,role,color,look,sign)=>{ const n=NPC(name,role,color,look,null,sign); n.signBg=color; n.signFg='#ffffff'; return n; };
-const OXNIGHT=mkSign('OxNight','Knows the street rules','#1f4f82',LK.man,'Share or keep?');
-const MOON=mkSign('Moon','Rate watcher','#6a3fb5',LK.woman,'Check the quote');
-const CRYPT=mkSign('The cryptonian','Scam veteran','#0B7A43',LK.guy,'Spot the red flag');
-const NNADI=mkSign('Joe_Sef','Backup advisor','#2D6FB3',LK.clerk,'Where to keep it');
-const DON=mkSign('The don','Careful sender','#5a3a22',LK.elder,'Test first');
-const PRAISE=mkSign('Praise','Signature checker','#C7457E',LK.trader,'Read before signing');
-const BIGSAM=mkSign('BigSam','Community organiser','#E4572E',LK.man,'Read the proposal');
-const LUNAX=mkSign('LunaX','Trusted trader','#0897A8',LK.woman,'Name must match');
+const OXNIGHT=mkSign('OxNight','Knows the street rules','#1f4f82',LK.oxnight,'Share or keep?');
+const MOON=mkSign('Moon','Rate watcher','#6a3fb5',LK.moon,'Check the quote');
+const CRYPT=mkSign('The cryptonian','Scam veteran','#0B7A43',LK.cryptonian,'Spot the red flag');
+const NNADI=mkSign('Joe_Sef','Backup advisor','#2D6FB3',LK.joeSef,'Where to keep it');
+const DON=mkSign('The don','Careful sender','#5a3a22',LK.theDon,'Test first');
+const PRAISE=mkSign('Praise','Signature checker','#C7457E',LK.praise,'Read before signing');
+const BIGSAM=mkSign('BigSam','Community organiser','#E4572E',LK.bigSam,'Read the proposal');
+const LUNAX=mkSign('LunaX','Trusted trader','#0897A8',LK.lunaX,'Name must match');
 
 /* One answer earns USDC; an incorrect answer deducts USDC. */
 function askStep(o){
@@ -2319,7 +2788,39 @@ function pickStep(o){
     }})));
 }
 const MISSIONS=[
-{id:'m1',n:1,city:'lagos',title:'Your first wallet',goal:'Create a wallet, receive USDC and make your first payment.',
+{id:'m0',n:1,city:'lagos',title:'Just Another Day',goal:'Two strangers, one unfamiliar name, and a clue that refuses to make sense.',
+ steps:[
+  {label:'Ask Softstorm about the T3Kit card',spot:'a',npc:MAMA,run(){
+    talk(MAMA,'<p>You noticed the card, didn’t you? I didn’t put it there. Someone left it beside the counter.</p><p><b>T3Kit.</b> I’ve seen that name in places that should have nothing in common.</p>',[
+      {t:'What is T3Kit?',f:()=>talk(MAMA,'<p>If I knew the full story, I wouldn’t be collecting clues. I heard IamAbdul mention the same name earlier.</p><p>Ask him what he heard. And keep your eyes open.</p>',[{t:'I’ll talk to IamAbdul',f:finishStep}])},
+      {t:'I’ll ask IamAbdul',f:finishStep}
+    ]);
+  }},
+  {label:'Ask IamAbdul what he heard',spot:'story',npc:SUYA,run(){
+    talk(SUYA,'<p>That symbol? I saw it on an old meetup poster. Same mark, different place.</p><p>Softstorm thinks it connects people learning, building, and finding opportunities. Neither of us knows how the pieces fit.</p>',[
+      {t:'Where was the poster?',f:()=>talk(SUYA,'<p>Near the noticeboard down the street. Check the poster, then look for the same mark elsewhere. Bring what you find back to Softstorm.</p><p class="note">You have a lead. Now prove the clues connect.</p>',[{t:'Start investigating',f:finishStep}])}
+    ]);
+  }},
+  {kind:'clue',label:'Inspect the old meetup poster',spot:'b',title:'Old meetup poster',sign:'OLD MEETUP POSTER',run(){
+    openSheet('<div class="who"><span class="av" style="background:'+BRAND+';color:'+INK+'">01</span><div><b>Old Meetup Poster</b><small>Evidence · Community event</small></div></div><p>The paper is sun-faded, but the cyan mark is clear. The event brought together builders, researchers, and community organisers — not just traders.</p><div class="kv"><span>Clue found</span><b>T3Kit symbol</b></div><p class="note">Someone connected to this name was bringing different Web3 roles into the same room.</p>',[{t:'Save clue · 01',f:()=>{if(G)G.evidence.poster=true;closeSheet();finishStep();}}]);
+  }},
+  {kind:'clue',label:'Check the laptop sticker',spot:'c',title:'Laptop sticker',sign:'CHECK THE STICKER',run(){
+    openSheet('<div class="who"><span class="av" style="background:'+BRAND+';color:'+INK+'">02</span><div><b>Laptop Sticker</b><small>Evidence · Builder workspace</small></div></div><p>A laptop near the repair desk carries the same cyan mark. Beside it, a handwritten note reads: <b>Learn. Build. Participate. Earn. Contribute.</b></p><div class="kv"><span>Clue found</span><b>Five-part message</b></div><p class="note">This looks less like one product and more like a connected ecosystem.</p>',[{t:'Save clue · 02',f:()=>{if(G)G.evidence.sticker=true;closeSheet();finishStep();}}]);
+  }},
+  {kind:'clue',label:'Read the community noticeboard',spot:'e',title:'Community noticeboard',sign:'READ THE NOTICEBOARD',run(){
+    openSheet('<div class="who"><span class="av" style="background:'+BRAND+';color:'+INK+'">03</span><div><b>Community Noticeboard</b><small>Evidence · Local opportunity</small></div></div><p>Three notices share the same mark: a beginner workshop, an open-source contribution call, and a product testing session. Different activities. One recurring symbol.</p><div class="kv"><span>Clue found</span><b>Three paths · One mark</b></div><p class="note">The pattern is getting harder to ignore. Take your evidence back to Softstorm.</p>',[{t:'Save clue · 03',f:()=>{if(G)G.evidence.noticeboard=true;closeSheet();finishStep();}}]);
+  }},
+  {label:'Return to Softstorm with your findings',spot:'a',npc:MAMA,run(){
+    const count=G&&G.evidence?['poster','sticker','noticeboard'].filter(k=>G.evidence[k]).length:0;
+    talk(MAMA,'<p>You found '+count+' clues. Same symbol, different places — a community event, a builder’s workspace, and opportunities for people with different skills.</p><p><b>What do you think that tells us?</b></p>',[
+      {t:'T3Kit may connect different people and paths',f:()=>talk(MAMA,'<p>That’s the strongest lead so far. Don’t assume it is only a token or one app. Follow what people are building, who it helps, and how the pieces connect.</p><p>Keep the card. You’ll need it.</p>',[{t:'Keep the T3Kit card',f:finishStep}])},
+      {t:'It is probably just a logo',f:()=>talk(MAMA,'<p>Maybe — but three unrelated places carrying the same mark is worth investigating. Keep looking at what sits behind it, not just the logo.</p>',[{t:'Keep investigating',f:finishStep}])}
+    ]);
+  }}
+ ],
+ extras:[{id:'iamabdul-story',spot:resolveMissionSpot('story'),npc:SUYA,run(){talk(SUYA,'<p>You heard us talking about T3Kit? I only know the name keeps turning up. Ask me after you speak with Softstorm.</p>',[{t:'I’ll come back',f:closeSheet}]);}}]
+},
+{id:'m1',n:2,city:'lagos',title:'Your first wallet',goal:'Create a wallet, receive USDC and make your first payment.',
  steps:[
   {label:'Open your wallet and claim USDC',spot:'a',npc:MAMA,run(){
     if(P.wallet){
@@ -2337,9 +2838,9 @@ const MISSIONS=[
         talk(SUYA,'<h3>Payment confirmed</h3><div class="kv"><span>Receipt</span><b class="mono">'+short(h)+'</b></div><div class="kv"><span>Balance</span><b>'+P.usdc.toFixed(2)+' USDC</b></div><p>IamAbdul hands you a hot stick. Your receipt is permanent and public, so anyone can check that you paid.</p>',[{t:'Continue',f:finishStep}]); }});
   }}
  ],
- extras:[{id:'guy',spot:SPOTS.x1,npc:GUY,run:giveawayGuy}]
+ extras:[{id:'guy',spot:resolveMissionSpot('x1'),npc:GUY,run:giveawayGuy}]
 },
-{id:'m2',n:2,city:'lagos',title:'Bureau de Change',goal:'Learn rates, fees and slippage by swapping USDC for a naira token.',
+{id:'m2',n:3,city:'lagos',title:'Bureau de Change',goal:'Learn rates, fees and slippage by swapping USDC for a naira token.',
  steps:[
   {label:'Ask Larai for today\u2019s rate',spot:'e',npc:ALHAJA,run(){
     talk(ALHAJA,'<p>A Bureau de Change swaps one money for another. On KitCity you can swap USDC for a naira token. Three words to know:</p><ul class="pts"><li><b>Rate:</b> how many naira you get for 1 USDC. It moves through the day.</li><li><b>Fee:</b> the part the service keeps.</li><li><b>Slippage:</b> how far the price can move before your swap is cancelled.</li></ul>',
@@ -2362,7 +2863,7 @@ const MISSIONS=[
   }}
  ]
 },
-{id:'m3',n:3,city:'minna',title:'Spot the scam',goal:'Recognise phishing, fake support and fake airdrops before they cost you.',
+{id:'m3',n:4,city:'minna',title:'Spot the scam',goal:'Recognise phishing, fake support and fake airdrops before they cost you.',
  steps:[
   scamStep({label:'Read the security text',spot:'c',npc:BRIGHT,from:'KitCity Security',msg:'URGENT: Your wallet will be locked in 1 hour. Verify now at kitcity-verify.net and enter your 12-word recovery phrase.',
     opts:[['Enter my recovery phrase to keep my wallet',0],['Ignore the link and open the official app myself',1],['Reply and ask them to hold my wallet',0]],
@@ -2379,7 +2880,7 @@ const MISSIONS=[
   STEP_CRYPT
  ]
 },
-{id:'m4',n:4,city:'minna',title:'Back up your wallet',goal:'Learn what a recovery phrase is and how to keep it safe.',
+{id:'m4',n:5,city:'minna',title:'Back up your wallet',goal:'Learn what a recovery phrase is and how to keep it safe.',
  steps:[
   {label:'Get your recovery phrase',spot:'h',npc:KEEPER,run(){
     if(!G.words) G.words=shuffle(WORDS).slice(0,12);
@@ -2408,7 +2909,7 @@ const MISSIONS=[
   }}
  ]
 },
-{id:'m5',n:5,city:'kano',title:'Pay a friend, safely',goal:'Check addresses properly and send a small test first.',
+{id:'m5',n:6,city:'kano',title:'Pay a friend, safely',goal:'Check addresses properly and send a small test first.',
  steps:[
   {label:'Get Laloba\u2019s address at the motor park',spot:'i',npc:MUSA,run(){
     if(!G.addr) G.addr='0x'+hex(20);
@@ -2447,7 +2948,7 @@ const MISSIONS=[
   }}
  ]
 },
-{id:'m6',n:6,city:'kano',title:'Mint your KitCity Passport',goal:'Understand signing messages and why unlimited approvals are risky.',
+{id:'m6',n:7,city:'kano',title:'Mint your KitCity Passport',goal:'Understand signing messages and why unlimited approvals are risky.',
  steps:[
   {label:'Sign in at the registry',spot:'f',npc:REG,run(){
     talk(REG,'<h3>Sign-in request</h3><div class="msg"><small>Message to sign</small>KitCity wants you to sign in. This message cannot move your money. Fee: \u20A60.</div><p>Signing a message proves this wallet is yours. It is different from sending a transaction. Always read what you sign.</p>',[
@@ -2465,7 +2966,7 @@ const MISSIONS=[
   }}
  ]
 },
-{id:'m7',n:7,city:'ph',title:'Vote in the community',goal:'Learn how community votes work and how to read a proposal.',
+{id:'m7',n:8,city:'ph',title:'Vote in the community',goal:'Learn how community votes work and how to read a proposal.',
  steps:[
   {label:'Meet the Chairlady',spot:'g',npc:CHAIR,run(){
     talk(CHAIR,'<p>Many communities now decide things together by vote. Members hold a pass, like your Passport, and each vote is a signed message.</p><ul class="pts"><li>Anyone can read the proposal before voting.</li><li>Voting is usually free because it is a signature, not a payment.</li><li>Ask who benefits and who can change the result.</li></ul>',[{t:'Take me to the town hall',f:finishStep}]);
@@ -2484,7 +2985,7 @@ const MISSIONS=[
   }}
  ]
 },
-{id:'m8',n:8,city:'ph',title:'Cash out safely',goal:'Sell USDC for naira with a peer, and never release before you are paid.',
+{id:'m8',n:9,city:'ph',title:'Cash out safely',goal:'Sell USDC for naira with a peer, and never release before you are paid.',
  steps:[
   {label:'Post your sell offer',spot:'l',npc:ADA,run(){
     talk(ADA,'<p>Peer-to-peer means you trade with another person. The platform holds your USDC in escrow while they pay your bank. You release only after you see the money.</p><div class="kv"><span>You sell</span><b>1.00 USDC</b></div><div class="kv"><span>Price</span><b>'+fmtN(1480)+'</b></div>',[
@@ -2510,7 +3011,7 @@ const MISSIONS=[
  ]
 },
 /* ---- Ibadan ---- */
-{id:'m9',n:9,city:'ibadan',title:'Receive your first payment',goal:'Give the right address, match the network, and send a real payment on it.',
+{id:'m9',n:10,city:'ibadan',title:'Receive your first payment',goal:'Give the right address, match the network, and send a real payment on it.',
  steps:[
   taskStep({label:'Give Christol your receiving address',spot:'a',npc:mkSign('Christol','Startup founder','#6a3fb5',LK.woman,'Client'),mono:1,
     intro:'Christol is ready to send 50 USDC for your logo. She needs something to send it to.',q:'What do you give her?',
@@ -2522,7 +3023,7 @@ const MISSIONS=[
     opts:[['Base',1],['Ethereum',0],['Solana',0]],
     wrong:'Your USDC is on Base. Money sent on another network does not reach your wallet, and it can be lost.',
     say:'Christol confirms Base in her app. Good. The network must match on both sides.'}),
-  taskStep({label:'Pay your design tool on Base',spot:'k',npc:mkSign('Reina','Design tools','#2D6FB3',LK.clerk,'Subscriptions'),
+  taskStep({label:'Pay your design tool on Base',spot:'k',npc:mkSign('Reina','Design tools','#2D6FB3',LK.reina,'Subscriptions'),
     intro:'Your design tool takes USDC. Choose where to pay from.',q:'Which network do you pay on?',
     opts:[['Base',1],['Ethereum',0]],
     wrong:'Your USDC balance is on Base. Paying from Ethereum would fail, because you hold nothing there.',
@@ -2530,7 +3031,7 @@ const MISSIONS=[
         rows:x=>[['Pay to','Tool Desk',0],['Amount','1.00 USDC'],['Network',x],['Network fee','Small, paid to the network']]},
     say:'Your payment is on the public network. Anyone can look it up with its transaction ID.'})
  ]},
-{id:'m10',n:10,city:'ibadan',title:'Prove a bounty deliverable',goal:'Submit a verifiable work reference, match it to the bounty requirements, and confirm the payout record.',
+{id:'m10',n:11,city:'ibadan',title:'Prove a bounty deliverable',goal:'Submit a verifiable work reference, match it to the bounty requirements, and confirm the payout record.',
  steps:[
   taskStep({label:'Read the bounty requirements',spot:'e',npc:mkSign('Tolu','Bounty reviewer','#2D6FB3',LK.man,'Bounty board'),
     intro:'A community bounty asks for a translation with a specific format and deadline.',q:'What should you do before accepting?',
@@ -2545,7 +3046,7 @@ const MISSIONS=[
     opts:[['The recorded amount, recipient and transaction status',1],['Only the congratulatory message',0]],
     wrong:'A message is not proof of payment. Verify the recorded amount and status.',say:'You verified the bounty payout rather than relying on a notification.'})
  ]},
-{id:'m11',n:11,city:'kaduna',title:'Get paid in a stablecoin',goal:'Choose the stable pay option, sell USDC on the right network, and keep savings safe.',
+{id:'m11',n:12,city:'kaduna',title:'Get paid in a stablecoin',goal:'Choose the stable pay option, sell USDC on the right network, and keep savings safe.',
  steps:[
   taskStep({label:'Choose your pay with Larai',spot:'c',npc:mkSign('Larai','Remote employer','#2D6FB3',LK.man,'Remote job'),
     intro:'Larai offers pay in USDC, or in a token that jumps around in price all week.',q:'Which do you take for a monthly salary?',
@@ -2559,7 +3060,7 @@ const MISSIONS=[
     tx:{title:'Deposit to exchange',amt:2,btn:'Send 2 USDC',done:'Deposit sent',note:'Naira is credited after the exchange sees the deposit.',
         rows:x=>[['To','Ola Exchange deposit',0],['Amount','2.00 USDC'],['Network',x]]},
     say:'The exchange credits your naira once the deposit is confirmed.'}),
-  taskStep({label:'Move 1 USDC to savings',spot:'k',npc:mkSign('Cclya','Savings app','#0B7A43',LK.clerk,'Savings'),
+  taskStep({label:'Move 1 USDC to savings',spot:'k',npc:mkSign('Cclya','Savings app','#0B7A43',LK.cclya,'Savings'),
     intro:'Your savings wallet is your own address. Choose where the 1 USDC goes.',q:'Which address do you send to?',
     opts:[['My own savings address',1],['An address a stranger sent you on social media',0]],
     wrong:'Never move savings to an address that someone messaged you. Only send to a wallet you control.',
@@ -2567,7 +3068,7 @@ const MISSIONS=[
         rows:x=>[['To','My savings address',0],['Amount','1.00 USDC'],['Network','Base']]},
     say:'Your savings are kept in USDC, in a wallet only you hold.'})
  ]},
-{id:'m12',n:12,city:'kaduna',title:'Check a token before buying',goal:'Verify a token’s official contract, network and market details before deciding whether to buy.',
+{id:'m12',n:13,city:'kaduna',title:'Check a token before buying',goal:'Verify a token’s official contract, network and market details before deciding whether to buy.',
  steps:[
   taskStep({label:'Find the official token contract',spot:'d',npc:mkSign('Sadiq','Market analyst','#C7457E',LK.man,'Token desk'),
     intro:'A new token is trending in the group chat. Before buying, compare the contract address with the project’s official website.',q:'Which source should you trust first?',
@@ -2585,7 +3086,7 @@ const MISSIONS=[
     wrong:'A displayed price does not guarantee you can sell. Review liquidity and the trading conditions first.',
     say:'You checked whether the market can support an exit before risking funds.'})
  ]},
-{id:'m13',n:13,city:'enugu',title:'Pay the supplier on-chain',goal:'Pay a supplier on the right network, then prove the payment with its transaction ID.',
+{id:'m13',n:14,city:'enugu',title:'Pay the supplier on-chain',goal:'Pay a supplier on the right network, then prove the payment with its transaction ID.',
  steps:[
   taskStep({label:'Choose the route with Joe_Sef',spot:'c',npc:mkSign('Joe_Sef','Trader sourcing abroad','#2D6FB3',LK.man,'Import'),
     intro:'Your supplier abroad accepts USDC. A bank wire takes days. A USDC transfer settles on a public network in minutes.',q:'Which route do you use?',
@@ -2605,7 +3106,7 @@ const MISSIONS=[
     wrong:'Sending again can pay the supplier twice. Check the transaction you already sent.',
     say:'The explorer shows the amount, the recipient and the status. The supplier confirms it.'})
  ]},
-{id:'m14',n:14,city:'enugu',title:'Mint your access pass',goal:'Set the tip address with its network, then mint an access pass that proves a fan’s access.',
+{id:'m14',n:15,city:'enugu',title:'Mint your access pass',goal:'Set the tip address with its network, then mint an access pass that proves a fan’s access.',
  steps:[
   taskStep({label:'Set your tip address with Chiamaka',spot:'i',npc:mkSign('Chiamaka','Music producer','#E4572E',LK.woman,'Creator'),
     intro:'Fans will tip you directly. The tip page must show the address and the network.',q:'What do you put on the page?',
@@ -2625,7 +3126,7 @@ const MISSIONS=[
     wrong:'Screenshots can be edited. The pass is only real if the public record shows it in their wallet.',
     say:'The record shows the pass in their wallet. They get their sample pack.'})
  ]},
-{id:'m15',n:15,city:'benin',title:'Mint a provenance certificate',goal:'Check the issuer, mint the certificate, and show the buyer the contract.',
+{id:'m15',n:16,city:'benin',title:'Mint a provenance certificate',goal:'Check the issuer, mint the certificate, and show the buyer the contract.',
  steps:[
   taskStep({label:'Check the issuer with LunaX',spot:'b',npc:mkSign('LunaX','Bronze craftsman','#8E2F1B',LK.man,'Craft shop'),
     intro:'Before you mint, the certificate must come from LunaX’s registered address.',q:'What do you check?',
@@ -2645,7 +3146,7 @@ const MISSIONS=[
     wrong:'Screenshots can be faked. The contract address lets her check the record herself.',
     say:'Ngozi checks the history on the explorer and buys with confidence.'})
  ]},
-{id:'m16',n:16,city:'benin',title:'Sell a token, keep the net',goal:'Read the token terms, work out the net after the network fee, and transfer the token.',
+{id:'m16',n:17,city:'benin',title:'Sell a token, keep the net',goal:'Read the token terms, work out the net after the network fee, and transfer the token.',
  steps:[
   taskStep({label:'Read the terms with the curator',spot:'g',npc:mkSign('Ekhoi Nwafor','Gallery curator','#8E2F1B',LK.man,'Gallery'),
     intro:'Your token links to a bronze carving. The terms say what the token gives you.',q:'What do you check first?',
@@ -2665,7 +3166,7 @@ const MISSIONS=[
         rows:x=>[['Item','Bronze certificate token'],['Price','1.00 USDC'],['Network',x],['Network fee','Paid to the network']]},
     say:'The token is now in the buyer’s wallet. The record is public.'})
  ]},
-{id:'m17',n:17,city:'calabar',title:'Confirm before you serve',goal:'Serve only after the payment shows in your wallet, and help a customer on the wrong network.',
+{id:'m17',n:18,city:'calabar',title:'Confirm before you serve',goal:'Serve only after the payment shows in your wallet, and help a customer on the wrong network.',
  steps:[
   taskStep({label:'Take a payment with Moon',spot:'a',npc:mkSign('Moon','Carnival food seller','#0B7A43',LK.mama,'Stall'),
     intro:'A customer says they have paid in USDC. They show you a screen.',q:'When do you hand over the food?',
@@ -2685,7 +3186,7 @@ const MISSIONS=[
     wrong:'Sending again can double his loss. Find where the first transfer actually went.',
     say:'The explorer shows where it went. You help him move it to the right network.'})
  ]},
-{id:'m18',n:18,city:'calabar',title:'Print your own QR',goal:'Print a QR code that points to your own address, and wait for the payment to show in your wallet.',
+{id:'m18',n:19,city:'calabar',title:'Print your own QR',goal:'Print a QR code that points to your own address, and wait for the payment to show in your wallet.',
  steps:[
   taskStep({label:'Set the restaurant QR with Mama Ifiok',spot:'i',npc:mkSign('Mama Ifiok','Restaurant owner','#E4572E',LK.mama,'Restaurant'),
     intro:'A QR code holds a wallet address. Customers scan it and send to that address.',q:'Whose address goes in the code?',
@@ -2705,7 +3206,7 @@ const MISSIONS=[
     wrong:'Wait. A payment is real when it lands in your wallet.',
     say:'The payment lands in your wallet. You serve the food.'})
  ]},
-{id:'m19',n:19,city:'jos',title:'Sign in without spending',goal:'Sign a login message safely, and share only the credential that is needed.',
+{id:'m19',n:20,city:'jos',title:'Sign in without spending',goal:'Sign a login message safely, and share only the credential that is needed.',
  steps:[
   taskStep({label:'Sign in to the identity app',spot:'a',npc:mkSign('Caleb','Identity guide','#2D6FB3',LK.woman,'Identity'),
     intro:'The app asks you to sign a message to log in. Your wallet shows the request.',q:'Which request do you approve?',
@@ -2725,7 +3226,7 @@ const MISSIONS=[
         rows:x=>[['Item','Course credential'],['Amount','1.00 USDC'],['Network',x]]},
     say:'It sits in your wallet. You decide who gets to see it.'})
  ]},
-{id:'m20',n:20,city:'jos',title:'Get paid for a writing role',goal:'Send your public address and network, agree the paid trial, and confirm the first payment on the explorer.',
+{id:'m20',n:21,city:'jos',title:'Get paid for a writing role',goal:'Send your public address and network, agree the paid trial, and confirm the first payment on the explorer.',
  steps:[
   taskStep({label:'Send your details to Chinwe',spot:'e',npc:mkSign('Chinwe Recruit','Recruiter','#1f4f82',LK.woman,'Recruiting'),
     intro:'They pay in USDC and ask for where to send it.',q:'What do you send?',
@@ -2743,7 +3244,7 @@ const MISSIONS=[
     wrong:'Messages are not proof. The block explorer shows the payment on the public record.',
     say:'The payment is on the record, with the amount and your address.'})
  ]},
-{id:'m21',n:21,city:'maiduguri',title:'Lock the deposit in escrow',goal:'Lock a guest deposit in escrow, approve only the exact amount, and release it at check-in.',
+{id:'m21',n:22,city:'maiduguri',title:'Lock the deposit in escrow',goal:'Lock a guest deposit in escrow, approve only the exact amount, and release it at check-in.',
  steps:[
   taskStep({label:'Set up the deposit with Craftore',spot:'a',npc:mkSign('Craftore','Guesthouse owner','#7a4a2e',LK.elder,'Guesthouse'),
     intro:'The guest pays a deposit. It must not go straight to a personal wallet.',q:'Where does the deposit go?',
@@ -2763,7 +3264,7 @@ const MISSIONS=[
         rows:x=>[['To','Escrow contract',1],['Amount','2.00 USDC'],['Network',x]]},
     say:'The deposit now sits in the contract, visible on the public record.'})
  ]},
-{id:'m22',n:22,city:'maiduguri',title:'Record your milestone',goal:'Record a milestone that links to finished public work, pay for the course, and check the receipt.',
+{id:'m22',n:23,city:'maiduguri',title:'Record your milestone',goal:'Record a milestone that links to finished public work, pay for the course, and check the receipt.',
  steps:[
   taskStep({label:'Record your milestone with Musa',spot:'g',npc:mkSign('Musa Abubakar','Skills coach','#0B7A43',LK.man,'Skills'),
     intro:'You can record a milestone on the network, with a date.',q:'What does the record link to?',
@@ -2787,7 +3288,7 @@ const MISSIONS=[
  ]},
 
 /* ---- Onitsha ---- */
-{id:'m23',n:23,city:'anambra',title:'Price your shop in USDC',goal:'Put a USDC price on your shelf card, restock on Base, and accept a payment only once it lands in your wallet.',
+{id:'m23',n:24,city:'anambra',title:'Price your shop in USDC',goal:'Put a USDC price on your shelf card, restock on Base, and accept a payment only once it lands in your wallet.',
  steps:[
   taskStep({label:'Set the shelf price with Obi',spot:'a',npc:mkSign('Toza','Phone and gadget shop','#0B7A43',LK.man,'Shop prices'),
     intro:'Overseas customers want to pay in USDC. Your shelf card only shows naira.',q:'What goes on the card?',
@@ -2807,7 +3308,7 @@ const MISSIONS=[
     wrong:'A screen is not a payment. Only your wallet shows what you received.',
     say:'The payment is in your wallet. Goods handed over.'})
  ]},
-{id:'m24',n:24,city:'anambra',title:'Pay your association dues',goal:'Check the dues address on the published notice, then pay dues on the right network.',
+{id:'m24',n:25,city:'anambra',title:'Pay your association dues',goal:'Check the dues address on the published notice, then pay dues on the right network.',
  steps:[
   taskStep({label:'Check the dues address with Chief Emeka',spot:'e',npc:mkSign('Chief Emeka','Association chairman','#7a4a2e',LK.elder,'Association'),
     intro:'Someone in the group chat posts a new dues address. The association also publishes one.',q:'Which address do you use?',
@@ -2827,7 +3328,7 @@ const MISSIONS=[
     wrong:'Messages are not records. The public ledger shows your payment directly.',
     say:'Your payment is listed with the date and amount.'})
  ]},
-{id:'m25',n:25,city:'owerri',title:'Batch the palm oil',goal:'Record each batch with its farm and producer, publish it on Base, and quote a price that the record supports.',
+{id:'m25',n:26,city:'owerri',title:'Batch the palm oil',goal:'Record each batch with its farm and producer, publish it on Base, and quote a price that the record supports.',
  steps:[
   taskStep({label:'Label the batch with Dark',spot:'b',npc:mkSign('Dark','Palm oil producer','#F6B21A',LK.woman,'Palm oil'),
     intro:'Buyers abroad ask where each batch came from.',q:'What do you record?',
@@ -2847,7 +3348,7 @@ const MISSIONS=[
     wrong:'Traceable batches are worth more. Quote the premium and send the record.',
     say:'Lara checks the link and agrees the premium.'})
  ]},
-{id:'m26',n:26,city:'owerri',title:'Take a paid seat',goal:'Set your workshop fee with a refund rule, book the hall on Base, and confirm each student’s payment before the seat is given.',
+{id:'m26',n:27,city:'owerri',title:'Take a paid seat',goal:'Set your workshop fee with a refund rule, book the hall on Base, and confirm each student’s payment before the seat is given.',
  steps:[
   taskStep({label:'Set the fee with Prof. Nnamdi',spot:'g',npc:mkSign('Prof. Nnamdi','Community educator','#0B7A43',LK.man,'Workshop'),
     intro:'Your workshop is three hours for twenty people.',q:'How do you set the fee?',
@@ -2867,7 +3368,7 @@ const MISSIONS=[
     wrong:'Check first. A seat given before payment is a seat you may not get paid for.',
     say:'The payment arrives. Ngozi has her seat.'})
  ]},
-{id:'m27',n:27,city:'ilorin',title:'Set a realistic savings target',goal:'Choose a measurable savings goal, set a practical timeline, and plan contributions without relying on guaranteed returns.',
+{id:'m27',n:28,city:'ilorin',title:'Set a realistic savings target',goal:'Choose a measurable savings goal, set a practical timeline, and plan contributions without relying on guaranteed returns.',
  steps:[
   taskStep({label:'Define the savings target',spot:'d',npc:mkSign('Leemah','Savings coach','#0B7A43',LK.elder,'Savings plan'),
     intro:'You want to save for a future expense, but the target is still vague.',q:'How do you make the goal useful?',
@@ -2882,7 +3383,7 @@ const MISSIONS=[
     opts:[['Set a contribution you can afford and do not assume investment returns are guaranteed',1],['Count on a token price doubling before the deadline',0]],
     wrong:'Price gains are uncertain. Build the plan around contributions you can actually make.',say:'Your savings target has a contribution plan that does not depend on promised gains.'})
  ]},
-{id:'m28',n:28,city:'ilorin',title:'Fund one milestone at a time',goal:'Back a project in milestones, and check each report before the next payment.',
+{id:'m28',n:29,city:'ilorin',title:'Fund one milestone at a time',goal:'Back a project in milestones, and check each report before the next payment.',
  steps:[
   taskStep({label:'Agree the funding with Hajia Rahmat',spot:'f',npc:mkSign('Hajia Rahmat','Project founder','#C7457E',LK.woman,'Project'),
     intro:'The reading room needs funds for furniture, books and the roof.',q:'How is the money released?',
@@ -2902,7 +3403,7 @@ const MISSIONS=[
     wrong:'Look at the receipts first. Milestone payments depend on the work being done.',
     say:'The receipts match. The next milestone is released.'})
  ]},
-{id:'m29',n:29,city:'sokoto',title:'License your pattern',goal:'Write the licence terms, confirm the deposit is held, and set a royalty on each sale.',
+{id:'m29',n:30,city:'sokoto',title:'License your pattern',goal:'Write the licence terms, confirm the deposit is held, and set a royalty on each sale.',
  steps:[
   taskStep({label:'Set the licence with Love',spot:'a',npc:mkSign('Love','Textile designer','#2D6FB3',LK.woman,'Designs'),
     intro:'An overseas studio wants to use your dye patterns on fabric.',q:'What goes in the licence?',
@@ -2920,7 +3421,7 @@ const MISSIONS=[
     wrong:'A one-off fee ends your income at the first sale. Choose the royalty.',
     say:'Your pattern earns on every sale. The report shows it.'})
  ]},
-{id:'m30',n:30,city:'sokoto',title:'Verify a digital land record',goal:'Check the issuer, parcel reference and change history before relying on a digital land record.',
+{id:'m30',n:31,city:'sokoto',title:'Verify a digital land record',goal:'Check the issuer, parcel reference and change history before relying on a digital land record.',
  steps:[
   taskStep({label:'Check who issued the record',spot:'g',npc:mkSign('Aunty Ronke','Community records officer','#0B7A43',LK.woman,'Land registry'),
     intro:'A buyer brings a digital record for a plot of land. A file or token alone does not prove the claim is genuine.',q:'What do you verify first?',
@@ -2938,7 +3439,7 @@ const MISSIONS=[
     wrong:'An old copy can miss later changes. Check the current status and the full available history.',
     say:'You checked the latest entry and its history instead of relying on a single document.'})
  ]},
-{id:'m31',n:31,city:'abeokuta',title:'Book tours in USDC',goal:'Set up a booking link that shows both prices and the network, and confirm a deposit in your wallet.',
+{id:'m31',n:32,city:'abeokuta',title:'Book tours in USDC',goal:'Set up a booking link that shows both prices and the network, and confirm a deposit in your wallet.',
  steps:[
   taskStep({label:'Set the booking link with K',spot:'b',npc:mkSign('K','Licensed tour guide','#E4572E',LK.man,'Tours'),
     intro:'Visitors want to book the rock before they arrive.',q:'What does the booking link show?',
@@ -2958,7 +3459,7 @@ const MISSIONS=[
     wrong:'A screenshot is not a deposit. Check your wallet first.',
     say:'The deposit is in your wallet. Kemi’s tour is confirmed.'})
  ]},
-{id:'m32',n:32,city:'abeokuta',title:'Set up the community fund',goal:'Create a fund that needs two of three approvals, put money in, and approve only the agreed amount.',
+{id:'m32',n:33,city:'abeokuta',title:'Set up the community fund',goal:'Create a fund that needs two of three approvals, put money in, and approve only the agreed amount.',
  steps:[
   taskStep({label:'Set up the fund with Mama Yetunde',spot:'h',npc:mkSign('Mama Yetunde','Community organiser','#C7457E',LK.trader,'Community fund'),
     intro:'The street wants a shared fund for lights and repairs.',q:'How is the fund controlled?',
@@ -2978,7 +3479,7 @@ const MISSIONS=[
     wrong:'Unlimited spending lets the fund be emptied at any time. Approve only the agreed cost.',
     say:'The approval covers the agreed cost only.'})
  ]},
-{id:'m33',n:33,city:'asaba',title:'Get paid on each milestone',goal:'Agree USDC on Base for each milestone, confirm payment on the explorer, and log the transaction ID.',
+{id:'m33',n:34,city:'asaba',title:'Get paid on each milestone',goal:'Agree USDC on Base for each milestone, confirm payment on the explorer, and log the transaction ID.',
  steps:[
   taskStep({label:'Agree the payment with Engr. Ekpo',spot:'a',npc:mkSign('Abdul','Contractor client','#1f4f82',LK.man,'Contract'),
     intro:'Your client pays on each milestone. Bank delays have cost you cash before.',q:'How does the payment work?',
@@ -2996,7 +3497,7 @@ const MISSIONS=[
     wrong:'Screenshots are easy to lose or fake. Save the transaction ID with the sign-off.',
     say:'The payment is logged and linked to the milestone.'})
  ]},
-{id:'m34',n:34,city:'asaba',title:'Take a digital gig',goal:'Confirm the gig terms in writing, share a permitted sample, and pay for a skills course on Base.',
+{id:'m34',n:35,city:'asaba',title:'Take a digital gig',goal:'Confirm the gig terms in writing, share a permitted sample, and pay for a skills course on Base.',
  steps:[
   taskStep({label:'Confirm terms with Tamuno',spot:'g',npc:mkSign('Tamuno','Digital services recruiter','#2D6FB3',LK.man,'Gigs'),
     intro:'An overseas team needs bookkeeping help, paid in USDC every two weeks.',q:'What do you agree first?',
@@ -3016,7 +3517,7 @@ const MISSIONS=[
         rows:x=>[['Item','Skills course'],['Amount','1.00 USDC'],['Network',x]]},
     say:'You are enrolled. Keep the receipt.'})
  ]},
-{id:'m35',n:35,city:'uyo',title:'Open your pre-orders',goal:'Put a date, a price and a refund rule on the order page, and buy the fabric on Base.',
+{id:'m35',n:36,city:'uyo',title:'Open your pre-orders',goal:'Put a date, a price and a refund rule on the order page, and buy the fabric on Base.',
  steps:[
   taskStep({label:'Set up pre-orders with Ime',spot:'b',npc:mkSign('Akimitsu','Fashion designer','#C7457E',LK.woman,'Fashion'),
     intro:'You want to make 100 pieces. Pre-orders pay for the fabric before you cut.',q:'What goes on the order page?',
@@ -3036,7 +3537,7 @@ const MISSIONS=[
     wrong:'Silence and more orders make the delay worse. Tell buyers now.',
     say:'Buyers hear early. Most stay with you.'})
  ]},
-{id:'m36',n:36,city:'uyo',title:'Split royalties, in writing',goal:'Write each share in a published split, confirm your royalty on the record, and answer a partner from the record.',
+{id:'m36',n:37,city:'uyo',title:'Split royalties, in writing',goal:'Write each share in a published split, confirm your royalty on the record, and answer a partner from the record.',
  steps:[
   taskStep({label:'Write the split with Ekaette',spot:'e',npc:mkSign('Ekaette','Music producer','#0B7A43',LK.woman,'Music'),
     intro:'Your song is used in a video, and several people share the royalties.',q:'How is the split recorded?',
@@ -3056,7 +3557,7 @@ const MISSIONS=[
  ]},
 
 /* ---- Katsina ---- */
-{id:'m37',n:37,city:'katsina',title:'List your herd at the market board',goal:'List your herd on the market board, pay the listing fee on Base, and confirm the buyer’s deposit on the explorer.',
+{id:'m37',n:38,city:'katsina',title:'List your herd at the market board',goal:'List your herd on the market board, pay the listing fee on Base, and confirm the buyer’s deposit on the explorer.',
  steps:[
   taskStep({label:'Post the herd at the cattle market',spot:'a',npc:mkSign('Princess','Market association','#8E2F1B',LK.man,'Market board'),
     intro:'The market board is public. Buyers and sellers both check it before they agree a price.',q:'What do you list?',
@@ -3076,7 +3577,7 @@ const MISSIONS=[
     wrong:'A message is not a deposit. The explorer shows what really arrived.',
     say:'The explorer confirms the deposit. The herd is held for Garba.'})
  ]},
-{id:'m38',n:38,city:'katsina',title:'Herd health on the record',goal:'Have your vet sign the vaccination record, sign it as the owner, and pay the vet on Base.',
+{id:'m38',n:39,city:'katsina',title:'Herd health on the record',goal:'Have your vet sign the vaccination record, sign it as the owner, and pay the vet on Base.',
  steps:[
   taskStep({label:'Call the vet to the farm',spot:'d',npc:mkSign('Dr Sule','Veterinary officer','#0B7A43',LK.man,'Vet'),
     intro:'Dr Sule vaccinates the herd. The record should be signed by him and by you.',q:'What do you ask for?',
@@ -3096,7 +3597,7 @@ const MISSIONS=[
         rows:x=>[['To','Dr Sule',1],['Amount','1.00 USDC'],['Network',x]]},
     say:'The vet is paid. The record is complete.'})
  ]},
-{id:'m39',n:39,city:'makurdi',title:'Payroll for the yam barn',goal:'Set up a payroll contract for your workers, approve only the monthly amount, and run the first payroll on Base.',
+{id:'m39',n:40,city:'makurdi',title:'Payroll for the yam barn',goal:'Set up a payroll contract for your workers, approve only the monthly amount, and run the first payroll on Base.',
  steps:[
   taskStep({label:'Choose how to pay the workers',spot:'h',npc:mkSign('Racheal','Yam barn owner','#E4572E',LK.man,'Yam barn'),
     intro:'Eight workers need paying every month. You want a record for each pay day.',q:'How do you pay them?',
@@ -3116,7 +3617,7 @@ const MISSIONS=[
         rows:x=>[['Workers','8'],['Total','3.00 USDC'],['Network',x]]},
     say:'Every worker’s pay is on the public record for the season.'})
  ]},
-{id:'m40',n:40,city:'makurdi',title:'Shared storage for the farms',goal:'Join a storage group, sign its agreement, and pay your share of the storage on Base.',
+{id:'m40',n:41,city:'makurdi',title:'Shared storage for the farms',goal:'Join a storage group, sign its agreement, and pay your share of the storage on Base.',
  steps:[
   taskStep({label:'Join the storage group on the farm',spot:'k',npc:mkSign('Mama Ngu','Farm group leader','#C7457E',LK.mama,'Farm group'),
     intro:'Five farms share one grain store. Each farm pays a share of the running costs.',q:'What do you check before joining?',
@@ -3136,7 +3637,7 @@ const MISSIONS=[
         rows:x=>[['To','Grain store group',1],['Amount','2.00 USDC'],['Network',x]]},
     say:'Your grain has a place in the store for the season.'})
  ]},
-{id:'m43',n:41,city:'asaba',title:'Document a supplier dispute',goal:'Build a clear evidence trail for a disputed delivery and record both sides’ response before the issue is closed.',
+{id:'m43',n:42,city:'asaba',title:'Document a supplier dispute',goal:'Build a clear evidence trail for a disputed delivery and record both sides’ response before the issue is closed.',
  steps:[
   taskStep({label:'Record what was agreed',spot:'d',npc:mkSign('Joe','Trade desk','#6a3fb5',LK.clerk,'Dispute desk'),
     intro:'A supplier says the delivery matched the order, but the buyer disagrees.',q:'What should the record start with?',
@@ -3151,7 +3652,7 @@ const MISSIONS=[
     opts:[['Record the remedy, both parties’ acknowledgement and completion status',1],['Delete the disagreement without noting the remedy',0]],
     wrong:'A clear close-out shows what was agreed and whether it was completed.',say:'The final record captures the remedy and both sides’ acknowledgement.'})
  ]},
-{id:'m44',n:42,city:'asaba',title:'Invoice an overseas client',goal:'Prepare an invoice with clear scope, currency, due date and payment instructions, then reconcile the payment record.',
+{id:'m44',n:43,city:'asaba',title:'Invoice an overseas client',goal:'Prepare an invoice with clear scope, currency, due date and payment instructions, then reconcile the payment record.',
  steps:[
   taskStep({label:'Write a complete invoice',spot:'d',npc:mkSign('Mike','Overseas client','#C7457E',LK.woman,'Client desk'),
     intro:'You completed a design job for an overseas client.',q:'What should the invoice include?',
@@ -3166,7 +3667,7 @@ const MISSIONS=[
     opts:[['The amount and reference match the payment record',1],['A message that says “sent” with no record',0]],
     wrong:'A payment message alone does not reconcile an invoice.',say:'The payment record matches the amount due.'})
  ]},
-{id:'m45',n:43,city:'akure',title:'Give to the church fund, verified',goal:'Check the church fund address on the published notice, sign a pledge, and give on Base.',
+{id:'m45',n:44,city:'akure',title:'Give to the church fund, verified',goal:'Check the church fund address on the published notice, sign a pledge, and give on Base.',
  steps:[
   taskStep({label:'Check the building fund with Bamidele',spot:'m',npc:mkSign('Bamidele','Church treasurer','#7a4a2e',LK.elder,'Church'),
     intro:'The church is raising funds for a new roof. The address is on the notice board.',q:'Which address do you give to?',
@@ -3186,7 +3687,7 @@ const MISSIONS=[
         rows:x=>[['To','Church roof fund',1],['Amount','1.00 USDC'],['Network',x]]},
     say:'Your gift is on the public record, and the fund will publish its receipts.'})
  ]},
-{id:'m46',n:44,city:'akure',title:'A concert ticket you own',goal:'Buy the official ticket, check it is minted from the official contract, and show proof at the gate.',
+{id:'m46',n:45,city:'akure',title:'A concert ticket you own',goal:'Buy the official ticket, check it is minted from the official contract, and show proof at the gate.',
  steps:[
   taskStep({label:'Choose the ticket with the promoter',spot:'a',npc:mkSign('Promoter Dayo','Concert promoter','#E4572E',LK.man,'Tickets'),
     intro:'Tickets for the concert are sold as tokens, so the seat is yours on the record.',q:'Where do you buy?',
@@ -3206,7 +3707,7 @@ const MISSIONS=[
     wrong:'Screenshots can be copied. Show the ticket from your wallet.',
     say:'You are through the gate.'})
  ]},
-{id:'m47',n:45,city:'bauchi',title:'Inspect a roof-material delivery',goal:'Check a contractor’s material list, record quantities received, and flag a short delivery before approving the invoice.',
+{id:'m47',n:46,city:'bauchi',title:'Inspect a roof-material delivery',goal:'Check a contractor’s material list, record quantities received, and flag a short delivery before approving the invoice.',
  steps:[
   taskStep({label:'Compare the delivery with the order',spot:'d',npc:mkSign('Isaac','Mosque building committee','#0B7A43',LK.elder,'Roof project'),
     intro:'Roof sheets and timber arrive for a community building project.',q:'What do you compare first?',
@@ -3221,7 +3722,7 @@ const MISSIONS=[
     opts:[['Hold approval until the invoice reflects the verified delivery',1],['Approve the full invoice despite the shortage',0]],
     wrong:'Approval should match the agreed terms and the quantity actually received.',say:'The committee has a clear record before approving payment.'})
  ]},
-{id:'m48',n:46,city:'bauchi',title:'Pay stall rent by approval',goal:'Approve the exact monthly rent, check the landlord’s address on the published lease, and pay on Base.',
+{id:'m48',n:47,city:'bauchi',title:'Pay stall rent by approval',goal:'Approve the exact monthly rent, check the landlord’s address on the published lease, and pay on Base.',
  steps:[
   taskStep({label:'Check the lease with Hajiya Zainab',spot:'g',npc:mkSign('Hajiya Zainab','Market landlord','#C7457E',LK.trader,'Stall lease'),
     intro:'Your stall lease is signed. The landlord’s payment address is written in it.',q:'Which address do you pay to?',
@@ -3241,7 +3742,7 @@ const MISSIONS=[
         rows:x=>[['To','Hajiya Zainab (lease address)',1],['Amount','2.00 USDC'],['Network',x]]},
     say:'Rent is paid. The receipt goes with your lease.'})
  ]},
-{id:'m53',n:47,city:'adoekiti',title:'Honey contract, signed at the cooperative',goal:'Sign the honey contract at the cooperative, check the lab certificate’s address, and release payment on delivery.',
+{id:'m53',n:48,city:'adoekiti',title:'Honey contract, signed at the cooperative',goal:'Sign the honey contract at the cooperative, check the lab certificate’s address, and release payment on delivery.',
  steps:[
   taskStep({label:'Sign the honey contract',spot:'g',npc:mkSign('Toheeb','Honey buyer','#F6B21A',LK.man,'Honey'),
     intro:'The cooperative office holds the signing. The contract covers grade, quantity and price.',q:'What do you check before signing?',
@@ -3261,7 +3762,7 @@ const MISSIONS=[
         rows:x=>[['Contract','Honey escrow',1],['Release','On delivery'],['Network',x]]},
     say:'The honey is paid for, and the record shows the grade.'})
  ]},
-{id:'m54',n:48,city:'adoekiti',title:'Guide certificate, checked on the registry',goal:'Check your guide certificate on the registry, sign the trail waiver, and pay the park entry on Base.',
+{id:'m54',n:49,city:'adoekiti',title:'Guide certificate, checked on the registry',goal:'Check your guide certificate on the registry, sign the trail waiver, and pay the park entry on Base.',
  steps:[
   taskStep({label:'Check your certificate on the registry',spot:'j',npc:mkSign('Ayo Ogunleye','Trail guide trainer','#0B7A43',LK.man,'Guides'),
     intro:'Hikers check that your guide certificate is real before they book.',q:'Where do you check it?',
@@ -3281,7 +3782,7 @@ const MISSIONS=[
         rows:x=>[['To','Park gate',1],['Amount','1.00 USDC'],['Network',x]]},
     say:'Your entry is on the record. The climb can start.'})
  ]},
-{id:'m55',n:49,city:'gombe',title:'Weekly order on the chef’s tab',goal:'Open the chef’s weekly order, approve only the delivery amount, and pay on delivery on Base.',
+{id:'m55',n:50,city:'gombe',title:'Weekly order on the chef’s tab',goal:'Open the chef’s weekly order, approve only the delivery amount, and pay on delivery on Base.',
  steps:[
   taskStep({label:'Open the weekly order with Mike',spot:'m',npc:mkSign('Mike','Restaurant chef','#6a3fb5',LK.man,'Chef'),
     intro:'The restaurant orders tomatoes every week. The order is on a shared list.',q:'What goes on the order?',
@@ -3301,7 +3802,7 @@ const MISSIONS=[
         rows:x=>[['To','Tomato farm',1],['Amount','2.00 USDC'],['Network',x]]},
     say:'The delivery is paid. The order is closed on the record.'})
  ]},
-{id:'m56',n:50,city:'gombe',title:'Share your farm record with the bank',goal:'Sign to share your farm record with the bank, and check the loan amount before you accept the disbursement.',
+{id:'m56',n:51,city:'gombe',title:'Share your farm record with the bank',goal:'Sign to share your farm record with the bank, and check the loan amount before you accept the disbursement.',
  steps:[
   taskStep({label:'Share your farm record at the bank',spot:'a',npc:mkSign('Lami Bako','Agricultural lender','#1f4f82',LK.woman,'Lender'),
     intro:'The bank wants to see your farm records. You decide what to share.',q:'What do you share?',
@@ -3321,7 +3822,7 @@ const MISSIONS=[
         rows:x=>[['From','Agricultural lender',1],['Amount','8.00 USDC'],['Network',x]]},
     say:'The loan is in your wallet. Repayments follow the agreed schedule.'})
  ]},
-{id:'m57',n:51,city:'yola',title:'Join the groundnut co-op at the market',goal:'Check the co-op register address, sign your membership, and pay the fee on Base.',
+{id:'m57',n:52,city:'yola',title:'Join the groundnut co-op at the market',goal:'Check the co-op register address, sign your membership, and pay the fee on Base.',
  steps:[
   taskStep({label:'Check the co-op register',spot:'d',npc:mkSign('Joshua','Co-op secretary','#0B7A43',LK.man,'Co-op'),
     intro:'The co-op keeps its member register public. Check the address on the register before paying.',q:'Which address do you check?',
@@ -3341,7 +3842,7 @@ const MISSIONS=[
         rows:x=>[['To','Co-op register address',1],['Amount','1.00 USDC'],['Network',x]]},
     say:'Your membership is active and on the public register.'})
  ]},
-{id:'m58',n:52,city:'yola',title:'Approve wedding-photo delivery',goal:'Agree the wedding photo selection, verify the delivered files, and record client approval before closing the job.',
+{id:'m58',n:53,city:'yola',title:'Approve wedding-photo delivery',goal:'Agree the wedding photo selection, verify the delivered files, and record client approval before closing the job.',
  steps:[
   taskStep({label:'Agree the photo selection',spot:'d',npc:mkSign('Hajiya Kande','Wedding client','#C7457E',LK.woman,'Photo delivery'),
     intro:'The photographer and couple need to agree on the final album.',q:'What should the delivery brief specify?',
@@ -3356,7 +3857,7 @@ const MISSIONS=[
     opts:[['Record the specific edits and confirm approval after they are completed',1],['Close the job without acknowledging the requested changes',0]],
     wrong:'Specific revisions create a clear path to acceptance.',say:'The approval record states what remains and when the job is complete.'})
  ]},
-{id:'m59',n:53,city:'abakaliki',title:'Group buy at the rice depot',goal:'Sign the group order, pay your share on Base, and check the depot’s delivery record.',
+{id:'m59',n:54,city:'abakaliki',title:'Group buy at the rice depot',goal:'Sign the group order, pay your share on Base, and check the depot’s delivery record.',
  steps:[
   taskStep({label:'Sign the group order at the depot',spot:'j',npc:mkSign('Egbuna','Rice depot','#1f4f82',LK.man,'Depot'),
     intro:'Five millers order rice together. The order lists each share.',q:'What do you sign?',
@@ -3376,7 +3877,7 @@ const MISSIONS=[
     wrong:'Check each share, not just the total. That is how the group stays fair.',
     say:'Every share matches the delivery record.'})
  ]},
-{id:'m60',n:54,city:'abakaliki',title:'Resolve a pending transfer safely',goal:'Investigate a pending transfer without exposing private keys or sending the payment a second time.',
+{id:'m60',n:55,city:'abakaliki',title:'Resolve a pending transfer safely',goal:'Investigate a pending transfer without exposing private keys or sending the payment a second time.',
  steps:[
   taskStep({label:'Find the transaction status',spot:'m',npc:mkSign('Mmesoma Okafor','Network support desk','#C7457E',LK.woman,'Help desk'),
     intro:'A customer says a transfer is still pending. The balance has not changed yet, and they are worried.',q:'What should you check first?',
@@ -3394,7 +3895,7 @@ const MISSIONS=[
     wrong:'An unsolicited unlock fee can be a scam. Follow the network status and official support guidance.',
     say:'You avoided a duplicate payment and an unofficial fee while the original transfer is pending.'})
  ]},
-{id:'m61',n:55,city:'abia',title:'Overseas repair order on the courier',goal:'Accept the repair order by signature, pay the courier on Base, and confirm the parcel was received.',
+{id:'m61',n:56,city:'abia',title:'Overseas repair order on the courier',goal:'Accept the repair order by signature, pay the courier on Base, and confirm the parcel was received.',
  steps:[
   taskStep({label:'Accept the repair order',spot:'a',npc:mkSign('Amaka','Overseas client','#6a3fb5',LK.man,'Client'),
     intro:'A client sends shoes for repair from overseas. Accepting the order is a signature.',q:'What do you sign?',
@@ -3414,7 +3915,7 @@ const MISSIONS=[
     wrong:'An open order keeps disputes alive. Mark it received once it arrives.',
     say:'The order is closed, and the record shows it.'})
  ]},
-{id:'m62',n:56,city:'abia',title:'Workshop rent, booked on a shared calendar',goal:'Sign the shared rent agreement, pay your share on Base, and swap a booking by signature.',
+{id:'m62',n:57,city:'abia',title:'Workshop rent, booked on a shared calendar',goal:'Sign the shared rent agreement, pay your share on Base, and swap a booking by signature.',
  steps:[
   taskStep({label:'Sign the shared rent agreement',spot:'d',npc:mkSign('Mama Uche','Workshop owner','#7a4a2e',LK.mama,'Workshop'),
     intro:'Three artisans share the workshop. The agreement sets each share of the rent.',q:'What do you sign?',
@@ -3434,7 +3935,7 @@ const MISSIONS=[
     wrong:'A swap is a signed change to the calendar, not a payment. Sign the swap only.',
     say:'The calendar is updated with both signatures.'})
  ]},
-{id:'m63',n:57,city:'bayelsa',title:'Trace a fish catch to its landing',goal:'Record the landing location, catch time and handling checks so a buyer can trace the fish batch to its source.',
+{id:'m63',n:58,city:'bayelsa',title:'Trace a fish catch to its landing',goal:'Record the landing location, catch time and handling checks so a buyer can trace the fish batch to its source.',
  steps:[
   taskStep({label:'Record the landing details',spot:'d',npc:mkSign('Aunty Kemi','Fish seller','#2D6FB3',LK.man,'Landing site'),
     intro:'A buyer asks where a batch of fish was caught and landed.',q:'What should the first record include?',
@@ -3449,7 +3950,7 @@ const MISSIONS=[
     opts:[['The batch reference and its relevant source and handling record',1],['Private records for every other customer',0]],
     wrong:'Share only the records relevant to this batch.',say:'The buyer can trace the fish to its source and handling checks.'})
  ]},
-{id:'m64',n:58,city:'bayelsa',title:'Manage the ferry boarding manifest',goal:'Match passenger bookings to the departure manifest, handle a changed booking, and reconcile the final passenger count.',
+{id:'m64',n:59,city:'bayelsa',title:'Manage the ferry boarding manifest',goal:'Match passenger bookings to the departure manifest, handle a changed booking, and reconcile the final passenger count.',
  steps:[
   taskStep({label:'Match bookings to the manifest',spot:'d',npc:mkSign('Timi Opu','Ferry operator','#2D6FB3',LK.clerk,'Boarding desk'),
     intro:'The ferry crew needs a reliable list of passengers for the crossing.',q:'What do you check?',
@@ -3464,7 +3965,7 @@ const MISSIONS=[
     opts:[['The boarded count matches the checked manifest and safety limit',1],['Depart with an unexplained mismatch',0]],
     wrong:'The crew needs a reconciled count within the safe passenger limit.',say:'The final manifest matches the boarding count.'})
  ]},
-{id:'m65',n:59,city:'jigawa',title:'Book the shared pump on the log',goal:'Book your turn on the shared pump, approve the group fund for your share, and pay your running cost on Base.',
+{id:'m65',n:60,city:'jigawa',title:'Book the shared pump on the log',goal:'Book your turn on the shared pump, approve the group fund for your share, and pay your running cost on Base.',
  steps:[
   taskStep({label:'Book your turn at the pump',spot:'a',npc:mkSign('Sadiq Bello','Farm group leader','#0B7A43',LK.man,'Pump log'),
     intro:'The pump runs on a shared booking log. Each farm books its hours before it runs.',q:'What do you book?',
@@ -3484,7 +3985,7 @@ const MISSIONS=[
         rows:x=>[['To','Pump fund',1],['Amount','1.00 USDC'],['Network',x]]},
     say:'Your hours and cost are both on the shared record.'})
  ]},
-{id:'m66',n:60,city:'jigawa',title:'List your grain at the market board',goal:'Check the market price feed, list your grain with a signed listing, and confirm the buyer’s payment on the explorer.',
+{id:'m66',n:61,city:'jigawa',title:'List your grain at the market board',goal:'Check the market price feed, list your grain with a signed listing, and confirm the buyer’s payment on the explorer.',
  steps:[
   taskStep({label:'Check the market price feed',spot:'d',npc:mkSign('Malam Musa','Market information','#2D6FB3',LK.man,'Prices'),
     intro:'The market publishes prices at its board and online. Check the feed before you list.',q:'Which feed do you use?',
@@ -3502,7 +4003,7 @@ const MISSIONS=[
     wrong:'Messages do not move the truck. The explorer shows the payment.',
     say:'The payment is in your wallet. The truck can leave.'})
  ]},
-{id:'m67',n:61,city:'kebbi',title:'Consent before the field survey',goal:'Sign the consent form, submit the survey on the research registry, and check the survey fee arrives.',
+{id:'m67',n:62,city:'kebbi',title:'Consent before the field survey',goal:'Sign the consent form, submit the survey on the research registry, and check the survey fee arrives.',
  steps:[
   taskStep({label:'Sign the consent form with Nneka Okafor',spot:'g',npc:mkSign('Nneka Okafor','Agricultural research','#0B7A43',LK.woman,'Research'),
     intro:'The survey asks about your farm. Before the first question, you choose what you agree to share.',q:'What do you sign?',
@@ -3520,7 +4021,7 @@ const MISSIONS=[
     wrong:'The explorer shows the fee. A message only says it was sent.',
     say:'The fee is in your wallet.'})
  ]},
-{id:'m68',n:62,city:'kebbi',title:'Sign off the pond harvest',goal:'Vote on the harvest sign-off, pay the feed on Base, and check the harvest record for your share.',
+{id:'m68',n:63,city:'kebbi',title:'Sign off the pond harvest',goal:'Vote on the harvest sign-off, pay the feed on Base, and check the harvest record for your share.',
  steps:[
   taskStep({label:'Vote on the harvest sign-off',spot:'j',npc:mkSign('Mallam Sadiq','Pond manager','#2D6FB3',LK.man,'Pond'),
     intro:'The harvest is weighed. Members vote to sign off the record.',q:'What do you vote?',
@@ -3540,7 +4041,7 @@ const MISSIONS=[
     wrong:'Check your own share. A large total can hide a short share.',
     say:'Your share matches the record.'})
  ]},
-{id:'m69',n:63,city:'kogi',title:'Sign the apprenticeship offer',goal:'Check the plant’s published address, sign your apprenticeship offer, and pay your safety course on Base.',
+{id:'m69',n:64,city:'kogi',title:'Sign the apprenticeship offer',goal:'Check the plant’s published address, sign your apprenticeship offer, and pay your safety course on Base.',
  steps:[
   taskStep({label:'Check the plant’s address',spot:'m',npc:mkSign('Femi Alade','Training officer','#1f4f82',LK.man,'Training'),
     intro:'The apprenticeship is posted on the plant’s site. Check the plant’s address before you sign.',q:'Which address do you check?',
@@ -3560,7 +4061,7 @@ const MISSIONS=[
         rows:x=>[['Item','Plant safety course'],['Amount','1.00 USDC'],['Network',x]]},
     say:'You are enrolled. Keep the receipt.'})
  ]},
-{id:'m70',n:64,city:'kogi',title:'Loan repayment, approved in advance',goal:'Sign the loan terms, approve only the next instalment, and repay on time on Base.',
+{id:'m70',n:65,city:'kogi',title:'Loan repayment, approved in advance',goal:'Sign the loan terms, approve only the next instalment, and repay on time on Base.',
  steps:[
   taskStep({label:'Sign the loan terms with Mrs Ojo',spot:'a',npc:mkSign('Mrs Ojo','Community lender','#0B7A43',LK.woman,'Lender'),
     intro:'The loan is 8 USDC over four months. The terms are written on a signed record.',q:'What do you check before signing?',
@@ -3580,7 +4081,7 @@ const MISSIONS=[
         rows:x=>[['To','Loan desk',1],['Amount','2.00 USDC'],['Network',x]]},
     say:'Your repayment is on the record. The schedule is on track.'})
  ]},
-{id:'m71',n:65,city:'nasarawa',title:'Weekly egg round, approved for the week',goal:'Sign this week’s delivery list, approve only the weekly total, and pay for the crates on Base.',
+{id:'m71',n:66,city:'nasarawa',title:'Weekly egg round, approved for the week',goal:'Sign this week’s delivery list, approve only the weekly total, and pay for the crates on Base.',
  steps:[
   taskStep({label:'Sign the weekly delivery list',spot:'d',npc:mkSign('Aisha Danladi','Poultry seller','#C7457E',LK.mama,'Eggs'),
     intro:'Your round has regular customers. The weekly list is signed so customers can check it.',q:'What do you sign?',
@@ -3600,7 +4101,7 @@ const MISSIONS=[
         rows:x=>[['To','Crate seller',1],['Amount','1.00 USDC'],['Network',x]]},
     say:'The crates are paid for. The round can start.'})
  ]},
-{id:'m72',n:66,city:'nasarawa',title:'Post the water tariff and test',goal:'Sign the posted tariff on the kiosk record, pay for the water test on Base, and check the test certificate.',
+{id:'m72',n:67,city:'nasarawa',title:'Post the water tariff and test',goal:'Sign the posted tariff on the kiosk record, pay for the water test on Base, and check the test certificate.',
  steps:[
   taskStep({label:'Sign the posted tariff',spot:'g',npc:mkSign('Engr. Dauda','Water kiosk operator','#2D6FB3',LK.man,'Water kiosk'),
     intro:'The kiosk tariff is posted on the community record. Sign it to make it official.',q:'What do you sign?',
@@ -3620,7 +4121,7 @@ const MISSIONS=[
     wrong:'A stamp can be copied. Check the lab’s address and the date against its record.',
     say:'The certificate is genuine. It goes up at the kiosk.'})
  ]},
-{id:'m73',n:67,city:'osun',title:'Check a festival vendor’s food-safety record',goal:'Verify a vendor’s food-handling checklist, record a temperature check, and flag an issue before the stall opens.',
+{id:'m73',n:68,city:'osun',title:'Check a festival vendor’s food-safety record',goal:'Verify a vendor’s food-handling checklist, record a temperature check, and flag an issue before the stall opens.',
  steps:[
   taskStep({label:'Review the vendor checklist',spot:'d',npc:mkSign('Sani Musa','Event safety team','#2D6FB3',LK.clerk,'Food safety'),
     intro:'A food stall is preparing to open at a busy festival.',q:'What do you review first?',
@@ -3635,7 +4136,7 @@ const MISSIONS=[
     opts:[['Record the issue, prevent unsafe food from being served and recheck after correction',1],['Ignore it so the stall can open on time',0]],
     wrong:'Protect customers first, then document the correction and recheck.',say:'The issue has a documented corrective action before service.'})
  ]},
-{id:'m74',n:68,city:'osun',title:'Publish a craft with the maker’s consent',goal:'Get the maker’s consent, publish the craft entry on Base, and remove a piece when a maker asks.',
+{id:'m74',n:69,city:'osun',title:'Publish a craft with the maker’s consent',goal:'Get the maker’s consent, publish the craft entry on Base, and remove a piece when a maker asks.',
  steps:[
   taskStep({label:'Get the maker’s consent',spot:'m',npc:mkSign('Maker Funmi','Weaver','#C7457E',LK.woman,'Maker'),
     intro:'Before a craft goes in the archive, the maker signs her consent.',q:'What does the consent say?',
@@ -3655,7 +4156,7 @@ const MISSIONS=[
     wrong:'The maker decides what is shared. Sign the removal.',
     say:'The pattern is removed. The record shows the request.'})
  ]},
-{id:'m75',n:69,city:'taraba',title:'Sell cocoa on a graded board',goal:'Check the published grade, sign the sale at that grade, and confirm payment on the explorer.',
+{id:'m75',n:70,city:'taraba',title:'Sell cocoa on a graded board',goal:'Check the published grade, sign the sale at that grade, and confirm payment on the explorer.',
  steps:[
   taskStep({label:'Check the published grade',spot:'a',npc:mkSign('Nura Abubakar','Cocoa cooperative','#7a4a2e',LK.man,'Cocoa'),
     intro:'Your batch is graded by the cooperative. The grade is on its published board.',q:'What do you check?',
@@ -3673,7 +4174,7 @@ const MISSIONS=[
     wrong:'Messages are not escrow. The explorer shows the amount held.',
     say:'The amount is held in escrow for weighing.'})
  ]},
-{id:'m76',n:70,city:'taraba',title:'Log a sighting on the park record',goal:'Sign the park data policy, log your sighting with time and place, and pay the research permit on Base.',
+{id:'m76',n:71,city:'taraba',title:'Log a sighting on the park record',goal:'Sign the park data policy, log your sighting with time and place, and pay the research permit on Base.',
  steps:[
   taskStep({label:'Sign the park data policy',spot:'d',npc:mkSign('Dr Iliya','Park researcher','#0B7A43',LK.man,'Park research'),
     intro:'Field data is shared under a policy. You sign before your first survey.',q:'What do you sign?',
@@ -3693,7 +4194,7 @@ const MISSIONS=[
         rows:x=>[['To','Park permit office',1],['Amount','1.00 USDC'],['Network',x]]},
     say:'The permit is paid and recorded.'})
  ]},
-{id:'m77',n:71,city:'yobe',title:'Sell a seedling with a lot certificate',goal:'Mint a lot certificate for the seedling batch on Base, and check a buyer’s lot record before you guarantee it.',
+{id:'m77',n:72,city:'yobe',title:'Sell a seedling with a lot certificate',goal:'Mint a lot certificate for the seedling batch on Base, and check a buyer’s lot record before you guarantee it.',
  steps:[
   taskStep({label:'Name the variety with Zainab Lawal',spot:'g',npc:mkSign('Zainab Lawal','Date grower','#7a4a2e',LK.elder,'Nursery'),
     intro:'Each seedling batch has a variety and a lot number. Buyers want both.',q:'What goes on the lot label?',
@@ -3713,7 +4214,7 @@ const MISSIONS=[
     wrong:'His word is not a record. The lot certificate shows what was sold and when.',
     say:'His earlier lot is on record. You can guarantee the new batch with confidence.'})
  ]},
-{id:'m78',n:72,city:'yobe',title:'Document a cold-chain power outage',goal:'Record a cold-store outage, track the affected batch and temperature history, and document the corrective action before release.',
+{id:'m78',n:73,city:'yobe',title:'Document a cold-chain power outage',goal:'Record a cold-store outage, track the affected batch and temperature history, and document the corrective action before release.',
  steps:[
   taskStep({label:'Log the outage window',spot:'d',npc:mkSign('Zainab Gambo','Produce storage','#2D6FB3',LK.clerk,'Cold chain'),
     intro:'Power fails overnight at a cold store holding produce for several farms.',q:'What do you record first?',
@@ -3728,7 +4229,7 @@ const MISSIONS=[
     opts:[['Record the inspection result and release or hold decision for each batch',1],['Delete the outage note after power returns',0]],
     wrong:'The record should show how each batch was assessed and what happened next.',say:'The incident trail records the checks and final disposition.'})
  ]},
-{id:'m79',n:73,city:'zamfara',title:'Prepare a livestock movement record',goal:'Document the origin, animal count, destination and required health documents before livestock are moved between markets.',
+{id:'m79',n:74,city:'zamfara',title:'Prepare a livestock movement record',goal:'Document the origin, animal count, destination and required health documents before livestock are moved between markets.',
  steps:[
   taskStep({label:'Record the origin and destination',spot:'d',npc:mkSign('Chisom Okeke','Movement desk','#2D6FB3',LK.clerk,'Animal movement'),
     intro:'A livestock owner is preparing to move a group of animals to another market.',q:'What belongs in the movement record?',
@@ -3743,7 +4244,7 @@ const MISSIONS=[
     opts:[['Confirm the arrival count and record any discrepancy',1],['Reuse the departure count without checking',0]],
     wrong:'A final count helps identify losses or mistakes during transit.',say:'The movement record reflects the actual arrival count.'})
  ]},
-{id:'m80',n:74,city:'zamfara',title:'Weigh-in, sign, and a fair payout',goal:'Sign the weigh-in for your milk deliveries, check the weekly payout against the record, and raise a gap before you accept.',
+{id:'m80',n:75,city:'zamfara',title:'Weigh-in, sign, and a fair payout',goal:'Sign the weigh-in for your milk deliveries, check the weekly payout against the record, and raise a gap before you accept.',
  steps:[
   taskStep({label:'Sign your weigh-in',spot:'a',npc:mkSign('Hajiya Rakiya','Milk cooperative chair','#C7457E',LK.woman,'Milk co-op'),
     intro:'Each morning’s milk is weighed and recorded. You sign the weigh-in for your deliveries.',q:'What do you sign?',
@@ -3761,7 +4262,7 @@ const MISSIONS=[
     wrong:'Accepting a short payout in silence lets gaps repeat. Raise it on the record first.',
     say:'The co-op reviews the three mornings and corrects the payout.'})
  ]},
-{id:'m81',n:75,city:'kitcity',title:'The Final Gate: Enter the T3Kit Hub',goal:'Prove you can protect your wallet, verify on-chain activity, question unsafe permissions, and choose how you will contribute to Web3 before entering KitCity.',steps:[
+{id:'m81',n:76,city:'kitcity',title:'The Final Gate: Enter the T3Kit Hub',goal:'Prove you can protect your wallet, verify on-chain activity, question unsafe permissions, and choose how you will contribute to Web3 before entering KitCity.',steps:[
  taskStep({label:'Protect your keys',spot:'a',npc:mkSign('Amina Okoro','T3Kit security guide','#1A7897',LK.clerk,'Wallet safety'),
   intro:'The city gates only open for people who understand the first rule of self-custody. A visitor asks you to send your recovery phrase so they can “activate” your wallet.',
   q:'What is the safe response?',
@@ -3853,6 +4354,19 @@ for(const mission of MISSIONS){
 /* Assign the supplied community names across mission NPCs in city progression order.
    Keep Laloba in Kano; use regional names for every NPC after the supplied list. */
 const orderedNPCObjects=allNPCObjects.slice();
+/* Renaming an NPC must also update its visual profile. Otherwise a male name can
+   inherit the female model (or vice versa) from the unrelated NPC it replaced. */
+const COMMUNITY_LOOKS_BY_NAME={
+  'softstorm':LK.softstorm,'iamabdul':LK.abdul,'joseph':LK.josephNnadi,
+  'larai':LK.larai,'unique':LK.unique,'smrt huntr':LK.smrtHuntr,
+  'goodness':LK.goodness,'semi':LK.semi,'blockqueen':LK.blockqueen,
+  'christol':LK.christol,'laloba':LK.laloba,'bigsam':LK.bigSam,
+  'lunax':LK.lunaX,'oxnight':LK.oxnight,'moon':LK.moon,
+  'the cryptonian':LK.cryptonian,'joseph nnadi':LK.josephNnadi,
+  'the don':LK.theDon,'praise':LK.praise,'toza':LK.toza,
+  'craftore':LK.craftore,'kodavic':LK.kodavic,'cybersage':LK.cybersage,
+  'reina':LK.reina,'cclya':LK.cclya,'leemah':LK.leemah,'kenny':LK.kenny
+};
 for(const npc of orderedNPCObjects) if(!npc.originalName) npc.originalName=npc.name;
 let priorityNameIndex=0;
 const usedNPCNameKeys=new Set();
@@ -3861,6 +4375,8 @@ for(const npc of orderedNPCObjects){
   if(priorityNameIndex>=PRIORITY_COMMUNITY_NAMES.length) break;
   const nextName=PRIORITY_COMMUNITY_NAMES[priorityNameIndex++];
   npc.name=nextName;
+  const canonicalLook=COMMUNITY_LOOKS_BY_NAME[nextName.trim().toLowerCase()];
+  if(canonicalLook) npc.look=canonicalLook;
   priorityAssignedNPCs.add(npc);
   usedNPCNameKeys.add(nextName.toLowerCase());
 }
@@ -3895,7 +4411,141 @@ function buildMissionNameAliases(mission){
   ambiguous.forEach(name=>delete candidates[name]);
   return candidates;
 }
-const cityMissions=city=>MISSIONS.filter(m=>m.city===city);
+
+/* =====================  KITCITY: THE LOST VALUE story arc  ===================== */
+/* These NPCs are created after the existing community-name assignment so their
+   approved story names remain stable and do not rename unrelated mission NPCs. */
+const lostValueNpcCache=new Map();
+const lostValueColors=['#00AFC2','#E4572E','#2D6FB3','#7A3B8F','#0B7A43','#B85C38','#4656A8'];
+const LOST_VALUE_NAMED_LOOKS={
+  'softstorm':LK.softstorm,'iamabdul':LK.abdul,
+  'joseph':LK.josephNnadi,'joseph nnadi':LK.josephNnadi,'larai':LK.larai,'unique':LK.unique,
+  'smrt huntr':LK.smrtHuntr,'goodness':LK.goodness,'semi':LK.semi,'blockqueen':LK.blockqueen,
+  'christol':LK.christol,'laloba':LK.laloba,'bigsam':LK.bigSam,'lunax':LK.lunaX,
+  'oxnight':LK.oxnight,'moon':LK.moon,'the cryptonian':LK.cryptonian,'the don':LK.theDon,
+  'praise':LK.praise,'toza':LK.toza,'craftore':LK.craftore,'kodavic':LK.kodavic,
+  'cybersage':LK.cybersage,'reina':LK.reina,'cclya':LK.cclya,'leemah':LK.leemah,'kenny':LK.kenny
+};
+const LOST_VALUE_GENERIC_LOOKS={
+  'local trader':LK.trader,'customer':LK.man,'student':LK.guy,
+  'user 1':LK.man,'user 2':LK.clerk,'user 3':LK.suya,'business owner':LK.elder
+};
+function lostValueNpc(name){
+  if(lostValueNpcCache.has(name)) return lostValueNpcCache.get(name);
+  const index=lostValueNpcCache.size;
+  const key=String(name||'').trim().toLowerCase();
+  const namedLook=LOST_VALUE_NAMED_LOOKS[key]||null;
+  const genericLook=LOST_VALUE_GENERIC_LOOKS[key]||LK.man;
+  const look=namedLook||Object.assign({},genericLook,{top:lostValueColors[index%lostValueColors.length]});
+  const def=NPC(name,'The Lost Value story',lostValueColors[index%lostValueColors.length],look,null,name);
+  lostValueNpcCache.set(name,def);
+  return def;
+}
+function lostValueEscape(value){
+  return String(value==null?'':value).replace(/[&<>"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));
+}
+const lostValueMissions=LOST_VALUE_STORY.map(story=>{
+  const cast=story.cast.map((name,index)=>({name,npc:lostValueNpc(name),spot:['lvA','lvB','lvC','lvD','lvF','lvG'][index%6]}));
+  const castByName=Object.fromEntries(cast.map(entry=>[entry.name,entry]));
+  const splitAfter=Number.isInteger(story.splitAfter)?Math.max(0,Math.min(story.dialogue.length,story.splitAfter)):story.dialogue.length;
+  const openingLines=story.dialogue.slice(0,splitAfter),closingLines=story.dialogue.slice(splitAfter),interludeLines=story.interludeDialogue||[];
+  const firstCastSpeaker=lines=>lines.map(([speaker])=>castByName[speaker]).find(Boolean);
+  const openingLead=firstCastSpeaker(openingLines)||cast[0];
+  const interludeLead=firstCastSpeaker(interludeLines)||openingLead;
+  const closingLead=firstCastSpeaker(closingLines)||interludeLead;
+  const choiceButtons=story.choices.map(choice=>({label:choice.label,onSelect:()=>{
+    if(G) G.storyChoice=choice.label;
+    if(story.id==='lost-value-14') Store.set(storageKey+'_lost_value_focus',choice.label);
+  }}));
+  const conversationStep=(label,lines,actor,allowChoices,ending='record')=>({kind:'conversation',label,spot:actor.spot,npc:actor.npc,run(){
+    const panels=[{
+      shot:'character',speaker:actor.name,kicker:story.state.toUpperCase()+' · THE LOST VALUE',
+      caption:story.title.toUpperCase(),next:'next'
+    }];
+    lines.forEach(([speaker,text])=>panels.push({
+      shot:speaker==='PLAYER'?'player':'character',speaker,text,next:'next'
+    }));
+    if(allowChoices&&choiceButtons.length){
+      panels.push({
+        shot:'player',kicker:'YOUR MOVE',
+        caption:story.id==='lost-value-14'?'What should a better ecosystem protect first?':'',
+        choices:choiceButtons,continueAfterChoice:ending==='report'
+      });
+    }
+    if(ending==='record'){
+      panels.push({
+        shot:'wide',kicker:'NEXT OBJECTIVE',
+        caption:'Now head to the Record Center and inspect '+story.evidenceTitle+'. Follow the compass arrow.',
+        finish:true
+      });
+    }else if(ending==='report'){
+      panels.push({
+        shot:'wide',kicker:'REPORT COMPLETE',
+        caption:'You have returned to report what you found. The evidence is now part of the record.',
+        finish:true
+      });
+    }else if(!allowChoices||!choiceButtons.length){
+      panels[panels.length-1].finish=true;
+    }
+    storyDirector.playPanels(panels,finishStep);
+  }});
+  const clue={
+    kind:'clue',label:story.task,spot:'lvE',title:story.evidenceTitle,sign:story.evidenceTitle.toUpperCase(),
+    run(){
+      openSheet('<section class="record-center-card"><div class="record-center-top"><span class="record-center-mark">KITCITY / FIELD ARCHIVE</span><span class="record-center-index">'+String(story.n).padStart(2,'0')+' / 15</span></div><div class="record-center-heading"><span class="record-center-icon">✳</span><div><small>RECORD CENTER · '+lostValueEscape(story.state)+'</small><h3>'+lostValueEscape(story.evidenceTitle)+'</h3></div></div><div class="record-center-copy">'+lostValueEscape(story.evidenceBody)+'</div><div class="record-center-task"><span>YOUR OBJECTIVE</span><b>'+lostValueEscape(story.task)+'</b></div></section>',
+        [{t:'Record evidence',f:()=>{
+          if(G) G.evidence[story.id]=true;
+          closeSheet();
+          finishStep();
+          if(closingLines.length){
+            openSheet('<section class="record-center-card"><div class="record-center-top"><span class="record-center-mark">KITCITY / FIELD REPORT</span><span class="record-center-index">'+String(story.n).padStart(2,'0')+' / 15</span></div><div class="record-center-heading"><span class="record-center-icon">✓</span><div><small>EVIDENCE RECORDED</small><h3>Report your findings</h3></div></div><div class="record-center-copy">The record has been inspected. Return to '+lostValueEscape(closingLead.name)+' and report what you found. Follow the compass arrow.</div></section>',
+              [{t:'Return to '+lostValueEscape(closingLead.name),f:closeSheet}]);
+          }
+        }}]);
+    }
+  };
+  // One conversation leads to the audit; the report conversation is deliberately
+  // held until the player has inspected the record and chosen to return.
+  const preAuditLines=openingLines.concat(interludeLines);
+  // Every evidence trip ends with a real report exchange. Some story entries have
+  // no split closing dialogue, so generate a short contextual response for those.
+  const reportLines=closingLines.length?closingLines:[
+    [closingLead.name,'You checked '+story.evidenceTitle+' and brought back a useful lead. What stood out to you?'],
+    ['PLAYER','The evidence points to this: '+story.evidenceBody],
+    [closingLead.name,'That gives us something concrete to work with. I have added your finding to the case. Good work bringing back evidence instead of guesses.']
+  ];
+  const steps=[conversationStep('Speak with '+openingLead.name,preAuditLines,openingLead,false,'record')];
+  steps.push(clue);
+  steps.push(conversationStep('Return and report to '+closingLead.name,reportLines,closingLead,true,'report'));
+  return {
+    id:story.id,n:story.n,city:story.city,title:story.title,goal:story.goal,
+    storyState:story.state,storyValue:story.value,storyReward:story.reward,storyFinale:!!story.finale,
+    cast:cast.map(({npc,spot})=>({npc,spot})),steps,extras:[]
+  };
+});
+/* Keep the existing Lagos prologue first. The approved 15-state story arc follows
+   it, and the existing Web3 learning missions remain intact after the arc. */
+MISSIONS[0].n=0;
+MISSIONS.slice(1).forEach(m=>{m.n+=LOST_VALUE_STORY.length-1;});
+MISSIONS.splice(1,0,...lostValueMissions);
+lostValueMissions.forEach(m=>{MBY[m.id]=m;});
+cityOrder.length=0; cityOrder.push(...new Set(MISSIONS.map(m=>m.city)));
+
+const cityMissions=city=>{
+  const seenIds=new Set(),seenContent=new Set(),out=[];
+  for(const m of MISSIONS){
+    if(m.city!==city||seenIds.has(m.id)) continue;
+    const key=String(m.title||'').normalize('NFKC').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
+    const contentKey=key;
+    if(seenContent.has(contentKey)) continue;
+    seenIds.add(m.id); seenContent.add(contentKey); out.push(m);
+  }
+  return out;
+};
+/* The state mission pages show only the active Lost Value story arc.
+   Legacy learning missions remain in the registry for progression compatibility,
+   but are deliberately excluded from the current mission-card UI. */
+const currentCityMissions=city=>cityMissions(city).filter(m=>String(m.id||'').startsWith('lost-value-'));
 const isCityComplete=city=>{const ms=cityMissions(city);return ms.length>0&&ms.every(m=>!!P.done[m.id]);};
 const isCityUnlocked=city=>{const ms=cityMissions(city);return ms.length>0&&isUnlocked(ms[0]);};
 /* =====================  mission flow  ===================== */
@@ -3914,7 +4564,21 @@ function bannerSprite(text,sub){
 function loadStep(){
   clearGroup(missionGroup); colliders.length=cityCols; smoke=[]; ents=[]; goal=null;
   const m=G.m,st=m.steps[G.i];
-  const e=placeNPC(st.npc,SPOTS[st.spot]); e.talk=()=>st.run(); e.active=()=>true; ents.push(e); goal=e;
+  // Keep the complete Lost Value cast clustered around the current objective so
+  // every actor can remain visible in the mobile conversation framing.
+  const isLostValueMission=String(m.id||'').startsWith('lost-value-');
+  const stageCenter=resolveMissionSpot(st.spot)||SPAWN;
+  const castOffsets=[{x:-4,z:-2},{x:4,z:-2},{x:-4,z:2},{x:4,z:2},{x:0,z:-4},{x:0,z:4}];
+  // The Record Center is a player-only verification destination. Do not
+  // spawn any story cast around it while the player is inspecting evidence.
+  if(st.kind!=='clue' && Array.isArray(m.cast)) m.cast.forEach((entry,index)=>{
+    if(entry.npc===st.npc) return;
+    const assignedSpot=isLostValueMission
+      ? {x:stageCenter.x+castOffsets[index%castOffsets.length].x,z:stageCenter.z+castOffsets[index%castOffsets.length].z,f:stageCenter.f||1}
+      : resolveMissionSpot(entry.spot);
+    if(assignedSpot) placeNPC(entry.npc,assignedSpot);
+  });
+  const e=st.kind==='clue'?placeStoryClue(st,resolveRecordCenterSpot()):placeNPC(st.npc,resolveMissionSpot(st.spot)); e.talk=()=>st.run(); e.active=()=>true; ents.push(e); goal=e;
   for(const ex of (m.extras||[])){
     if(G.used[ex.id]) continue;
     const e2=placeNPC(ex.npc,ex.spot); e2.ex=ex; e2.talk=()=>ex.run(e2); e2.active=()=>!G.used[ex.id]; ents.push(e2);
@@ -3927,16 +4591,46 @@ function startMission(id){
   $('#loadTxt').textContent=L('Loading '+CITIES[m.city].name+'\u2026','We dey load '+CITIES[m.city].name+'\u2026'); $('#loading').classList.remove('hidden');
   setTimeout(()=>{
     if(curCity!==m.city) buildCity(m.city); else setupBarks(CITIES[curCity]);
-    G={m,i:0,correct:0,wrong:0,used:{},words:null,addr:null,slip:null,nameAliases:buildMissionNameAliases(m)};
+    G={m,i:0,correct:0,wrong:0,hearts:3,used:{},evidence:{},words:null,addr:null,slip:null,nameAliases:buildMissionNameAliases(m)};
     $('#hub').classList.add('hidden'); $('#hub').setAttribute('aria-hidden','true'); $('#title').classList.add('hidden'); $('#hud').classList.remove('hidden');
     S.phase='play'; closeSheet(); Snd.setMode('play'); lastLoc=''; resetPlayer(); loadStep();
     $('#loading').classList.add('hidden');
-    briefing();
+    if(m.id==='m0'){
+      // The prologue is a real walk-up encounter, not a cutscene that teleports
+      // the player into a scene beside spawn. Keep its destination inside the
+      // playable city bounds so the compass can guide the player there.
+      clearGroup(missionGroup); colliders.length=cityCols; smoke=[]; ents=[];
+      storySoftstorm.position.set(75,.05,-100);
+      storyAbdul.position.set(79,.05,-100);
+      storySoftstorm.rotation.y=Math.PI/2;
+      storyAbdul.rotation.y=-Math.PI/2;
+      storyCastGroup.visible=true;
+      const openingGoal={
+        x:77,z:-100,r:8,hidden:false,
+        active:()=>!!G&&!G.openingTriggered,
+        talk:()=>{
+          if(!G||G.openingTriggered) return;
+          G.openingTriggered=true;
+          storyDirector.playOpening(()=>{
+            storyCastGroup.visible=false;
+            P.storyPrologueSeen=true; P.done.m0=true;
+            if(G) G.used['iamabdul-story']=true;
+            goal=null;
+            save(); updateHUD();
+            openSheet('<section class="lost-value-finale"><p>MISSION UNLOCKED</p><h3>THE FIRST PROMISE</h3><p>Lagos State</p></section>',[
+              {t:'Start The First Promise',f:()=>startMission('lost-value-01')},
+              {t:'Back to hub',g:1,f:exitToHub}
+            ]);
+          });
+        }
+      };
+      goal=openingGoal; ents.push(openingGoal);
+    }else briefing();
   },60);
 }
 function briefing(){
-  const m=G.m,C=CITIES[m.city];
-  openSheet('<div class="who"><span class="av" style="background:'+INK+'">'+m.n+'</span><div><b>'+personalize('Mission '+m.n+': '+m.title,null)+'</b><small>'+C.name+', '+C.tag+'</small></div></div><p>'+personalize(m.goal,null)+'</p><p class="web3-focus">WEB3 SKILL · '+web3Focus(m)+'</p><ul class="pts">'+m.steps.map(s=>'<li>'+personalize(tr(s.label),m,s.npc)+'</li>').join('')+'</ul>'+(m.n===1?'<p class="note">Move with the left stick or WASD. Hold Run or Shift to run. Tap Talk or press E to speak. Follow the arrow.</p>':'<p class="note">Follow the arrow to the next person. Watch for traffic.</p>'),
+  const m=G.m,C=CITIES[m.city],firstStep=m.steps[0];
+  openSheet('<section class="mission-brief-card mission-brief-compact"><div class="mission-brief-top"><span>MISSION '+String(m.n).padStart(2,'0')+'</span><span>'+C.name+'</span></div><h3>'+personalize(m.title,null)+'</h3><p class="mission-brief-summary">'+personalize(m.goal,null)+'</p><div class="mission-brief-next"><small>FIRST MOVE</small><b>'+personalize(tr(firstStep.label),m,firstStep.npc)+'</b></div><p class="mission-brief-tip">'+(m.n===1?'Follow the arrow. Talk with the person you find.':'Follow the arrow and watch for traffic.')+'</p></section>',
     [{t:'Start mission',f:closeSheet},{t:'Back to hub',g:1,f:exitToHub}]);
 }
 function finishStep(){
@@ -3952,13 +4646,15 @@ function completeMission(){
   P.done[m.id]=true;save();updateHUD();Snd.sfx('done');
   const idx=MISSIONS.indexOf(m),next=MISSIONS[idx+1],cityComplete=isCityComplete(m.city);
   clearGroup(missionGroup);colliders.length=cityCols;smoke=[];ents=[];goal=null;beacon.visible=false;
-  hubCity=next?next.city:m.city;
+  hubCity=m.storyFinale?m.city:(next?next.city:m.city);
   const btns=[];
   if(cityComplete)btns.push({t:'Collect city badge',f:()=>showCityBadge(m.city,()=>next?startMission(next.id):exitToHub())});
-  if(next)btns.push({t:next.city!==m.city?'Continue to '+CITIES[next.city].name:'Next: '+next.title,f:()=>startMission(next.id)});
-  btns.push({t:'Back to hub',g:1,f:exitToHub});
+  if(next&&!m.storyFinale)btns.push({t:next.city!==m.city?'Continue to '+CITIES[next.city].name:'Next: '+next.title,f:()=>startMission(next.id)});
+  btns.push({t:m.storyFinale?'Return to the KitCity map':'Back to hub',g:1,f:exitToHub});
   openSheet('<div class="who"><span class="av" style="background:'+INK+'">'+m.n+'</span><div><h3 style="margin:0">Mission '+m.n+' complete</h3><small>'+CITIES[m.city].name+' · '+personalize(m.title,null)+'</small></div></div>'+
     (first?'<div class="kv"><span>Mission reward</span><b>+'+missionReward.toFixed(2)+' USDC</b></div><p class="note">'+(wrong===0?'Clean run reward collected.':'Completed with '+wrong+' wrong answer'+(wrong===1?'':'s')+'. Correct answers and mistakes have already adjusted your USDC balance.')+'</p>':'<p class="note">Replay complete. The first-clear reward has already been collected.</p>')+
+    (m.storyReward?'<div class="story-value-reward"><small>VALUE RECOVERED</small><h3>'+personalize(m.storyValue||'',null)+'</h3><p>'+personalize(m.storyReward,null)+'</p></div>':'')+
+    (m.storyFinale?'<section class="lost-value-finale"><p><b>15 OF 36 STATES INVESTIGATED</b></p><p>21 STATES REMAIN</p><p>THE WORK IS NOT FINISHED</p><hr><h2>KITCITY</h2><h3>THE LOST VALUE</h3><p>36 STATES. ONE LOST VALUE.</p><p>THE DESTINATION IS STILL UNKNOWN.</p><div class="coming-soon">KITCITY — COMING SOON</div><p>ARC 1 COMPLETE</p><p>THE JOURNEY CONTINUES.</p></section>':'')+
     (m.city==='kitcity'?'<p><b>Welcome to the T3Kit Hub. The journey through Nigeria was your preparation; KitCity is the destination.</b></p>':'')+
     (cityComplete?'<p><b>All missions in '+CITIES[m.city].name+' are complete. Your city badge is available.</b></p>':'')+
     '<div class="kv"><span>Practice balance</span><b>'+P.usdc.toFixed(2)+' USDC</b></div>',btns);
@@ -3968,7 +4664,7 @@ function showCityBadge(city,after){
  openSheet('<div class="badge">'+badgeSVG('★',true,96)+'<div><h3 style="margin-top:0">'+name+' Pathfinder</h3><small>City journey completed</small></div></div><p>You completed both missions and earned the '+name+' city badge.</p>',[{t:'Continue journey',f:()=>{closeSheet();if(after)after();}}]);
 }
 function certificate(){
-  const totalMissions=MISSIONS.length;
+  const totalMissions=MISSIONS.length-1;
   const msg=encodeURIComponent(L('I finished all '+totalMissions+' KitCity missions and learned how to use a crypto wallet safely. Can you survive Naija with your wallet?','I don finish all '+totalMissions+' KitCity missions and I don learn how to use crypto wallet safely. You fit survive Naija with your wallet?'));
   openSheet('<div class="badge">'+badgeSVG('\u2605',true,96)+'<div><h3 style="margin-top:0">KitCity Graduate</h3><small>All '+totalMissions+' missions complete</small></div></div><p>You completed the full KitCity mission journey across all cities. Your practice balance is <b>'+P.usdc.toFixed(2)+' USDC</b>.</p>',
     [{t:'Back to hub',f:exitToHub}]);
@@ -4071,26 +4767,9 @@ function mapSVG(){
     '<div class="map-legend"><span><i class="map-dot unlocked"></i>Unlocked</span><span><i class="map-dot completed"></i>Completed</span><span><i class="map-dot locked"></i>Locked</span><span class="map-legend-note">Tap a labelled city to explore</span></div></section>';
 }
 
-function web3Focus(m){
-  const corpus=[m.title,m.goal,...(m.steps||[]).map(step=>step.label||'')].join(' ').toLowerCase();
-  const rules=[
-    [/scam|phish|fraud|fake support|red flag|airdrop|approval|permission/,'Scam detection & wallet safety'],
-    [/wallet|recovery phrase|backup|seed phrase|private key|self.custody/,'Wallet security & self-custody'],
-    [/vote|proposal|governance|community decision|dao|passport/,'Web3 identity & community governance'],
-    [/swap|slippage|exchange|rate|cash out|escrow|peer.to.peer|p2p|trade|liquidity|token/,'Crypto markets, swaps & DeFi'],
-    [/bounty|deliverable|creator|design|freelance|client|invoice|work reference|payment/,'Web3 work & verifiable payments'],
-    [/farm|herd|crop|produce|supply|lot record|certificate|traceability|livestock/,'Tokenized real-world assets & traceability'],
-    [/nft|mint|collectible|digital item|ownership|certificate/,'Digital ownership & on-chain records'],
-    [/save|savings|budget|target|interest|yield/,'Digital finance & on-chain savings'],
-    [/address|network|transaction|blockchain|explorer|receipt|usdc|payment|qr/,'Blockchain payments & verification']
-  ];
-  for(const [pattern,label] of rules) if(pattern.test(corpus)) return label;
-  return 'Web3 skills for everyday Nigerian life';
-}
 function missionCard(m){
   const un=isUnlocked(m),dn=!!P.done[m.id];
-  const focus=web3Focus(m);
-  return '<div class="card'+(un?'':' lock')+(m.city==='kitcity'?' final-destination':'')+'"><div class="ch">'+badgeSVG(m.n,false,46)+'<div><b>'+personalize('Mission '+m.n+': '+m.title,null)+'</b><small>'+personalize(m.goal,null)+'</small><span class="web3-focus">WEB3 FOCUS · '+focus+'</span></div></div><div class="cf"><span>'+(dn?'Completed':'Up to +0.50 USDC')+'</span>'+(un?'<button class="btn brand" data-a="play" data-v="'+m.id+'" type="button">'+(dn?'Replay':'Play')+'</button>':'<span>Finish mission '+(m.n-1)+' first</span>')+'</div></div>';
+  return '<article class="card mission-card'+(un?'':' lock')+(m.city==='kitcity'?' final-destination':'')+'" data-mission-id="'+String(m.id).replace(/"/g,'&quot;')+'" data-city="'+String(m.city).replace(/"/g,'&quot;')+'"><div class="ch">'+badgeSVG(m.id==='m0'?1:m.n,false,46)+'<div><b>'+personalize(m.id==='m0'?'PROLOGUE: '+m.title:'Mission '+m.n+': '+m.title,null)+'</b><small>'+personalize(m.goal,null)+'</small></div></div><div class="cf"><span>'+(dn?'Completed':'Up to +0.50 USDC')+'</span>'+(un?'<button class="btn brand" data-a="play" data-v="'+m.id+'" type="button">'+(dn?'Replay':'Play')+'</button>':'<span>Finish mission '+(m.n-1)+' first</span>')+'</div></article>';
 }
 function renderHub(){
   $('#hubTop').innerHTML=tx('<span class="wm"><img class="header-logo" src="https://i.postimg.cc/qqbdTXky/file-00000000958881f4a776df689a235dec.png" alt="KitCity" /></span><div class="lvl"><b>Practice wallet</b><div class="balance-line"><strong>'+P.usdc.toFixed(2)+' USDC</strong><small>'+Object.keys(P.done).filter(k=>P.done[k]).length+' missions completed</small></div></div>');
@@ -4100,14 +4779,15 @@ function renderHub(){
   let h='';
   if(hubTab==='missions'){
     const C=CITIES[hubCity];
-    h+=mapSVG()+'<div class="map-selected"><div><span>SELECTED CITY</span><b>'+C.name+'</b><small>'+C.tag+'</small></div><strong>'+cityMissions(hubCity).filter(m=>P.done[m.id]).length+' / '+cityMissions(hubCity).length+' missions</strong></div>';
+    h+=mapSVG()+'<div class="map-selected"><div><span>SELECTED CITY</span><b>'+C.name+'</b><small>'+C.tag+'</small></div><strong>'+currentCityMissions(hubCity).filter(m=>P.done[m.id]).length+' / '+currentCityMissions(hubCity).length+' missions</strong></div>';
     if(hubCity==='kitcity') h+='<section class="destination-card"><span class="destination-kicker">THE FINAL DESTINATION</span><h2>T3Kit Hub</h2><p>Every city prepared you for this. KitCity is the Web3 World: a premium campus for learning, building, verification, creators, open finance and community contribution.</p><div class="destination-pillars"><span>LEARN</span><span>BUILD</span><span>VERIFY</span><span>CONTRIBUTE</span></div></section>';
     h+='<div class="chips">'+cityOrder.map(k=>'<button class="chip'+(k===hubCity?' on':'')+'" data-a="city" data-v="'+k+'" type="button" '+(isCityUnlocked(k)?'':'disabled')+'>'+CITIES[k].name+(isCityUnlocked(k)?'':' · Locked')+'</button>').join('')+'</div>';
-    h+=cityMissions(hubCity).map(m=>missionCard(m)).join('');
+    h+='<section id="currentMissionCards" class="current-mission-cards">'+currentCityMissions(hubCity).map(m=>missionCard(m)).join('')+'</section>';
+    if(!currentCityMissions(hubCity).length) h+='<section class="current-missions-empty"><span class="current-missions-kicker">THE LOST VALUE</span><h3>No active story mission here yet</h3><p>This city remains on the KitCity map. Its current story mission will appear here when it is part of the active arc.</p></section>';
   } else if(hubTab==='cityhub'){
     hubTab='missions';
     const C=CITIES[hubCity];
-    h+=mapSVG()+'<div class="map-selected"><div><span>SELECTED CITY</span><b>'+C.name+'</b><small>'+C.tag+'</small></div><strong>'+cityMissions(hubCity).filter(m=>P.done[m.id]).length+' / '+cityMissions(hubCity).length+' missions</strong></div>'+cityMissions(hubCity).map(m=>missionCard(m)).join('');
+    h+=mapSVG()+'<div class="map-selected"><div><span>SELECTED CITY</span><b>'+C.name+'</b><small>'+C.tag+'</small></div><strong>'+currentCityMissions(hubCity).filter(m=>P.done[m.id]).length+' / '+currentCityMissions(hubCity).length+' missions</strong></div><section id="currentMissionCards" class="current-mission-cards">'+currentCityMissions(hubCity).map(m=>missionCard(m)).join('')+'</section>'+(currentCityMissions(hubCity).length?'':'<section class="current-missions-empty"><span class="current-missions-kicker">THE LOST VALUE</span><h3>No active story mission here yet</h3><p>This city remains on the KitCity map. Its current story mission will appear here when it is part of the active arc.</p></section>');
   } else if(hubTab==='passport'){
     const allMissions=MISSIONS;
     const done=allMissions.filter(m=>P.done[m.id]).length,all=done===allMissions.length;
@@ -4127,6 +4807,31 @@ function renderHub(){
     h+='<p class="soft">Prototype: wallets, balances and payments are simulated. Rates are samples. Nothing here is financial advice.</p>';
   }
   $('#hubBody').innerHTML=tx(h);
+  const hubBody=$('#hubBody');
+  if(hubTab==='missions'||hubTab==='cityhub'){
+    const active=currentCityMissions(hubCity);
+    const activeIds=new Set(active.map(activeMission=>String(activeMission.id)));
+    const seenIds=new Set(),seenContent=new Set();
+    hubBody.querySelectorAll('.mission-card').forEach(card=>{
+      const id=card.dataset.missionId||'';
+      const matchedMission=active.find(candidateMission=>String(candidateMission.id)===id);
+      const title=matchedMission?String(matchedMission.title||'').normalize('NFKC').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim():'';
+      const contentKey=title;
+      if(!activeIds.has(id)||card.dataset.city!==hubCity||seenIds.has(id)||seenContent.has(contentKey)){
+        card.remove(); return;
+      }
+      seenIds.add(id); seenContent.add(contentKey);
+    });
+    /* This tab has one allowed card type: a current Lost Value mission card.
+       Remove generic/legacy cards and descriptions unconditionally so old UI cannot
+       leak back in from stale markup or language re-rendering. */
+    hubBody.querySelectorAll('[data-legacy-mission],.legacy-mission-card,.old-mission-card,.mission-card-old,[data-legacy-description],.legacy-mission-description,.old-mission-description,.mission-description-old').forEach(node=>node.remove());
+    hubBody.querySelectorAll('.card:not(.mission-card),article:not(.mission-card)').forEach(node=>node.remove());
+    hubBody.querySelectorAll('.mission-card').forEach(card=>{
+      const id=card.dataset.missionId||'';
+      if(!card.closest('#currentMissionCards')||!activeIds.has(id)||card.dataset.city!==hubCity) card.remove();
+    });
+  }
 }
 $('#hub').addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.closest('.map g[data-a="city"]')){e.preventDefault();e.target.dispatchEvent(new MouseEvent('click',{bubbles:true}));}});
 $('#hub').addEventListener('click',async e=>{
@@ -4163,7 +4868,7 @@ $('#hub').addEventListener('click',async e=>{
   else if(a==='snd'){ P[v]=!P[v]; save(); Snd.set(v,P[v]); Snd.sfx('click'); renderHub(); }
   else if(a==='reset'){
     if(!resetArm){ resetArm=true; renderHub(); return; }
-    Store.del(KEY); Object.assign(P,{wallet:null,usdc:0,ngn:0,done:{},dodged:0,fell:0,scores:{},web3:null}); save(); resetArm=false; hubCity='lagos'; hubTab='missions'; renderHub(); toast('Progress erased');
+    Store.del(KEY); Object.assign(P,{wallet:null,usdc:0,ngn:0,done:{},dodged:0,fell:0,scores:{},web3:null,storyPrologueSeen:false}); save(); resetArm=false; hubCity='lagos'; hubTab='missions'; renderHub(); toast('Progress erased');
   }
 });
 const playerNameInput=$('#playerName');
@@ -4311,11 +5016,15 @@ async function resumeAuthenticatedUser(user){
   }
 }
 function beginGame(){
+  const title=$('#title'),hub=$('#hub'),hud=$('#hud');
+  // React can dispose a Strict Mode effect while an async guest/auth flow is pending.
+  // Ignore a stale initializer instead of throwing when its markup is no longer mounted.
+  if(!title||!hub||!hud){ console.warn('KitCity: skipped a stale game initializer because its page markup is no longer mounted.'); return; }
   Snd.unlock(); Snd.setMode('hub'); Snd.sfx('click');
-  $('#title').classList.add('hidden');
-  $('#hub').classList.remove('hidden');
-  $('#hub').setAttribute('aria-hidden','false');
-  $('#hud').classList.add('hidden');
+  title.classList.add('hidden');
+  hub.classList.remove('hidden');
+  hub.setAttribute('aria-hidden','false');
+  hud.classList.add('hidden');
   S.phase='hub'; G=null;
   const nextCity=cityOrder.find(city=>!isCityComplete(city));
   if(nextCity) hubCity=nextCity;
@@ -4338,8 +5047,8 @@ if(firebaseConfigured){
   }).catch(()=>updateAuthButton());
 }else updateAuthButton();
 function applyLang(){
-  document.documentElement.lang=P.lang==='pcm'?'pcm':'en';
-  document.querySelectorAll('[data-t]').forEach(el=>{ if(!el.dataset.en) el.dataset.en=el.textContent; el.textContent=(P.lang==='pcm'&&el.dataset.pcm)?el.dataset.pcm:tr(el.dataset.en); });
+  document.documentElement.lang=({en:'en',pcm:'pcm',ha:'ha',yo:'yo',ig:'ig'})[P.lang]||'en';
+  document.querySelectorAll('[data-t]').forEach(el=>{ if(!el.dataset.en) el.dataset.en=el.textContent; const translated=el.dataset[P.lang]; el.textContent=translated||tr(el.dataset.en); });
   document.querySelectorAll('[data-lang]').forEach(b=>b.classList.toggle('on',b.dataset.lang===P.lang));
   updateAuthButton();
   if(G) updateHUD();
@@ -4396,48 +5105,68 @@ function resolve(p,r){
 let hitCd=0,shake=0,fallTimer=0,fallLean=1;
 const HAZARD_LINES={
   en:[
-    'Yeeh! I don die! Oga driver, who give you licence?',
-    'Ah-ah! You dey drive or you dey play FIFA with my body?',
-    'Driver! Na road you dey use or you dey settle family beef?',
-    'Jesus take the wheel! This driver don turn me to speed bump!',
-    'Omo! My ancestors just saw the car and logged out.',
-    'Oga, you see human being and press accelerator? Outstanding madness.',
-    'I just came to learn crypto, not to become road crypto dust!',
-    'Abeg! Who dash this driver steering wheel? Collect am back!',
-    'This one no be driving, na live-action demolition!',
-    'I don see my village people. Dem dey inside this motor!',
-    'Yeeh! My insurance company just block my number!',
-    'Oga driver, you dey dodge pothole or you dey dodge sense?',
-    'My body get 206 bones, but your driving wan reduce the number!',
-    'Who give you licence, your mechanic or your prayer warrior?',
-    'I never even cash out my USDC, you wan cash out my soul!',
-    'Driver, calm down! Na me be passenger, no be your debt!',
-    'If na audition for Fast and Furious, you don fail medicals!',
-    'Ah! My spirit don press emergency exit!',
-    'You see road user, you think say na bonus level?',
-    'Abeg park! Even Google Maps don abandon us!'
+    'AH! I was minding my business! Why has my body entered a group project?',
+    'Driver! You saw me and said, “Let’s test the brakes with a person”?!',
+    'My ancestors just stood up, looked at this, and sat back down.',
+    'Omo! My knees have submitted their resignation letter!',
+    'I came outside with confidence. Now my confidence is in intensive care.',
+    'Who gave you that steering wheel, a lucky dip?',
+    'Even your horn is shouting, “Please stop embarrassing us!”',
+    'This is not Need for Speed. I am not downloadable content!',
+    'My body just experienced an unexpected software update!',
+    'Oga! You drive like your phone is on 1% and the charger is across town!',
+    'I saw my whole life flash before me. The editing was terrible!',
+    'Please, I am a human being, not a speed bump with dreams!',
+    'My knees have opened a complaint ticket. Response time: never!',
+    'You pressed accelerator like somebody owed you money!',
+    'Ah! My soul has left a one-star review!',
+    'Driver, even your seat belt is trying to escape!',
+    'I need a moment. My dignity is still rolling down the road!',
+    'That was not a near miss. That was a full relationship with danger!',
+    'My body said “reconnecting…” and my spirit went offline!',
+    'Congratulations! You have unlocked the achievement: Unnecessary Drama!',
+    'I am walking, not auditioning to become road decoration!',
+    'Please park. Your driving has too many plot twists!',
+    'My bones just held an emergency meeting without inviting me!',
+    'I want to speak to the manager of this vehicle!',
+    'I dodged the car, but my peace of mind got hit!',
+    'Even a shopping trolley has better steering discipline!',
+    'I have forgiven you. My knees are still considering the matter!',
+    'That car came with confidence and left me with questions!',
+    'I need water, a chair, and a new understanding of friendship!',
+    'Somebody tell my legs the danger has passed. They are buffering!'
   ],
   pcm:[
-    'Yeeh! I don die! Oga driver, who give you licence?',
-    'Ah-ah! You dey drive or you dey play FIFA with my body?',
-    'Driver! Na road you dey use settle family beef?',
-    'Jesus take wheel! This driver don turn me to speed bump!',
-    'Omo! My ancestors don log out since dem see this motor.',
-    'Oga, you see human being come press accelerator? Madness!',
-    'I come learn crypto, no be to become road dust!',
-    'Abeg, who dash this driver steering? Collect am back!',
-    'This one no be driving, na live-action demolition!',
-    'My village people dey inside this motor, I don confirm am!',
-    'Yeeh! My insurance people don block my number!',
-    'Oga rider, you dey avoid pothole or you dey avoid sense?',
-    'My bones no be suya stick, abeg drive with sense!',
-    'I never cash out my USDC, you wan cash out my soul!',
-    'Na me be passenger, no be your enemy for road!',
-    'If na Fast and Furious audition, you don fail medical!',
-    'Even Google Maps don abandon us, driver!',
-    'Ah! My spirit don press emergency exit!',
-    'You see human being, you think say na bonus level?',
-    'Abeg park! Your steering dey write obituary!'
+    'Ah! I dey my lane! Why my body don join una group project?',
+    'Oga driver! You see me come say make we test brake with human being?!',
+    'My ancestors stand up, look this thing, then sit down again!',
+    'Omo! My knees don submit resignation letter!',
+    'I comot with confidence. Now my confidence dey emergency ward!',
+    'Who give you steering? Na lucky dip you win am?',
+    'Even your horn dey shout, “Abeg stop this embarrassment!”',
+    'This no be Need for Speed. I no be downloadable content!',
+    'My body just collect surprise software update!',
+    'Oga, you dey drive like your phone don reach 1%!',
+    'My whole life flash before me. The editing no good at all!',
+    'Abeg, I be human being, no be speed bump with ambition!',
+    'My knees don open complaint ticket. Nobody dey answer am!',
+    'You press accelerator like person wey dem owe money!',
+    'Ah! My soul don drop one-star review!',
+    'Even your seat belt wan escape from this journey!',
+    'Give me small time. My dignity still dey roll for road!',
+    'This no be near miss. Na full relationship with danger!',
+    'My body say “reconnecting…” and my spirit go offline!',
+    'Congratulations! You unlock achievement: Unnecessary Drama!',
+    'I dey waka, I no audition to become road decoration!',
+    'Abeg park. Your driving get too many plot twists!',
+    'My bones don hold emergency meeting without inviting me!',
+    'I wan speak to the manager of this motor!',
+    'I dodge the car, but my peace of mind collect hit!',
+    'Even wheelbarrow get better steering discipline!',
+    'I don forgive you. My knees still dey consider the matter!',
+    'That motor come with confidence, leave me with questions!',
+    'I need water, chair, and new understanding of friendship!',
+    'Somebody tell my legs say danger don pass. Dem still dey buffer!'
   ]
 };
 function carHit(dt){ if(hitCd>0)hitCd=Math.max(0,hitCd-dt);
@@ -4448,14 +5177,15 @@ function carHit(dt){ if(hitCd>0)hitCd=Math.max(0,hitCd-dt);
       if(c.axis==='x')p.z=cz+(p.z>=cz?1:-1)*(hz+3.5);else p.x=cx+(p.x>=cx?1:-1)*(hx+3.5);
       hitCd=2.2;fallTimer=1.5;fallLean=(p.x-cx)>=0?1:-1;shake=1.2;
       const missionToRestart=G?G.m.id:null;
-      const penalty=Math.min(.50,P.usdc);
-      P.usdc=Math.round((P.usdc-penalty)*100)/100;save();updateHUD();Snd.sfx('bump');
+      if(G) G.hearts=Math.max(0,(Number(G.hearts)||0)-1);
+      P.fell=(Number(P.fell)||0)+1; save(); updateHUD(); Snd.sfx('bump');
       resolve(p,1);resolve(p,1);
       const shout=pick(HAZARD_LINES[P.lang==='pcm'?'pcm':'en']);
-      const hitMessage=shout+' '+(penalty>0?'(−'+penalty.toFixed(2)+' USDC)':'(no USDC left to deduct)');
-      if(P.usdc<=1e-9&&missionToRestart){
-        toast(hitMessage+' No USDC left — mission restarting!',{bubble:true,duration:8500});
-        startMission(missionToRestart);
+      const heartsLeft=G?G.hearts:3;
+      const hitMessage=shout+'  '+heartsLeft+'/3 hearts remaining.';
+      if(heartsLeft===0&&missionToRestart){
+        toast(hitMessage+' No hearts left — restarting mission!',{bubble:true,duration:8500});
+        setTimeout(()=>{ if(G&&G.m.id===missionToRestart) startMission(missionToRestart); },1900);
       } else {
         toast(hitMessage,{bubble:true,duration:8500});
       }
@@ -4538,6 +5268,11 @@ function updateWalkers(dt,time){
     }
     w.rem-=w.sp*dt; if(w.rem<=0){ w.dir.multiplyScalar(-1); w.rem=rand(18,40); }
     p.x+=w.dir.x*w.sp*dt; p.z+=w.dir.z*w.sp*dt;
+    if(w.streetBounds){
+      const b=w.streetBounds,coord=b.axis==='x'?p.x-b.center:p.z-b.center;
+      if(coord<b.min){ if(b.axis==='x')p.x=b.center+b.min;else p.z=b.center+b.min;w.dir.multiplyScalar(-1); }
+      else if(coord>b.max){ if(b.axis==='x')p.x=b.center+b.max;else p.z=b.center+b.max;w.dir.multiplyScalar(-1); }
+    }
     g.rotation.y=Math.atan2(w.dir.x,w.dir.z); w.ph+=dt*w.sp*2.4;
     if(w.near){ animatePerson(g,w.ph,1,0); if(w.type==='pair'&&((time*.4+w.ph*.3)%5)<1.8) gesture(g,time+w.ph,.8); }
     if(!w.near||w.type!=='walk'||w.cd>0) continue;
@@ -4606,18 +5341,25 @@ function update(dt,time){
     const d=Math.hypot(player.position.x-e.x,player.position.z-e.z);
     if(d<e.r&&d<best){ best=d; nearEnt=e; }
   }
-  talkBtn.classList.toggle('hidden',!(nearEnt&&!S.modal));
+  const currentStoryStep=G&&G.m&&Array.isArray(G.m.steps)?G.m.steps[G.i]:null;
+  const autoStartConversation=!!((G&&G.m.id==='m0'&&!G.openingTriggered)||(G&&String(G.m.id||'').startsWith('lost-value-')&&currentStoryStep&&currentStoryStep.kind==='conversation'&&!S.modal));
+  talkBtn.classList.toggle('hidden',autoStartConversation||!(nearEnt&&!S.modal));
+  if(autoStartConversation&&goal&&Math.hypot(player.position.x-goal.x,player.position.z-goal.z)<goal.r) goal.talk();
   const compass=$('#compass');
   if(goal){
     compass.classList.remove('hidden');
     beacon.visible=true; beacon.position.set(goal.x,0,goal.z);
     beacon.getObjectByName('ring').scale.setScalar(1+.18*Math.sin(time*4));
     const dx=goal.x-player.position.x,dz=goal.z-player.position.z,d=Math.round(Math.hypot(dx,dz));
-    $('#arrow').style.transform='rotate('+Math.atan2(dx,-dz)+'rad)';
+    const bearing=Math.atan2(dx,-dz);
+    const arrow=$('#arrow');
+    arrow.style.transformOrigin='50% 50%';
+    arrow.style.transform='rotate('+bearing+'rad)';
     if(d!==lastDist){ lastDist=d; $('#dist').textContent=d<9?tr('Here'):Math.round(d/2)+' m'; }
   } else { beacon.visible=false; compass.classList.add('hidden'); }
   { updateBarks(dt);
     locT-=dt; if(locT<=0){ locT=.3; const n=locName(player.position.x,player.position.z); if(n!==lastLoc){ lastLoc=n; $('#loc').textContent=n; } } }
+  if(storyDirector.active){ storyDirector.update(dt,time); fadeBuildings(dt,true); return; }
   camTarget.set(player.position.x,0,player.position.z);
   camDesired.set(camTarget.x,35,camTarget.z+20);
   camera.position.lerp(camDesired,1-Math.pow(.0004,dt));
