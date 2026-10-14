@@ -377,29 +377,119 @@ const Snd=(function(){
 })();
 window.addEventListener('pointerdown',()=>Snd.unlock());
 
-/* =====================  language: English / Naija Pidgin  ===================== */
-const L=(en,pcm)=>P.lang==='pcm'?pcm:en;
-const PCM={
-/*PCM_BEGIN*/
-/*PCM_END*/
+/* ===================== Full-game localization ===================== */
+/* Every rendered text surface uses this dictionary: landing, menus, mission
+   cards, objectives, dialogue HTML, settings, status messages and story scenes.
+   Keep English as the source key and add all five locale values together. */
+const L=(en,pcm)=>P.lang==='pcm'?pcm:tr(en);
+const LOCALIZED={
+'Mission':['Mission','Mission','Iṣẹ́ apinfunni','Ozi ọrụ'],
+'Settings':['Settings','Settings','Ètò','Ntọala'],
+'Activity':['Activity','Activity','Ìṣe','Omume'],
+'Sign in':['Sign in','Sign in','Wọlé','Banye'],
+'Create account':['Create account','Create account','Ṣẹ̀dá àkọọ́lẹ̀','Mepụta akaụntụ'],
+'Sign out':['Sign out','Sign out','Jáde','Pụọ'],
+'Enter KitCity':['Enter KitCity','Enter KitCity','Wọlé sí KitCity','Banye na KitCity'],
+'Restoring your session…':['Restoring your session…','Restoring your session…','A ń tún ìgbàwọlé rẹ ṣe…','A na-eweghachi nnọkọ gị…'],
+'English':['English','English','Èdè Gẹ̀ẹ́sì','Bekee'],
+'Naija Pidgin':['Naija Pidgin','Naija Pidgin','Èdè Pidgin Nàìjíríà','Pidgin Naịjiria'],
+'Hausa':['Hausa','Hausa','Èdè Hausa','Asụsụ Hausa'],
+'Yoruba':['Yoruba','Yoruba','Èdè Yorùbá','Asụsụ Yoruba'],
+'Igbo':['Igbo','Igbo','Èdè Ìgbò','Asụsụ Igbo'],
+'Choose language':['Choose language','Choose language','Yan èdè','Họrọ asụsụ'],
+'Choose how the game talks to you.':['Choose how the game talks to you.','Zaɓi yaren da wasan zai yi maka magana.','Yan bí eré ṣe máa ń bá ọ sọ̀rọ̀.','Họrọ asụsụ egwuregwu ga-eji agwa gị okwu.'],
+'Run':['Run','Run','Sáré','Gbaa ọsọ'],
+'Talk':['Talk','Talk','Bá sọ̀rọ̀','Kwuo okwu'],
+'Here':['Here','Here','Níbí','Ebe a'],
+'No wallet yet':['No wallet yet','No wallet yet','Kò sí wallet síbẹ̀','Enweghị wallet ugbu a'],
+'Practice wallet':['Practice wallet','Practice wallet','Wallet ìdánrawò','Wallet omume'],
+'missions completed':['missions completed','missions completed','àwọn iṣẹ́ apinfunni ti parí','ọrụ emechara'],
+'Mission badges':['Mission badges','Mission badges','Àmì iṣẹ́ apinfunni','Baajị ọrụ'],
+'Journey progress':['Journey progress','Journey progress','Ìlọsíwájú ìrìnàjò','Ọganihu njem'],
+'Missions complete':['Missions complete','Missions complete','Àwọn iṣẹ́ apinfunni tí a parí','Ọrụ emechara'],
+'City journeys complete':['City journeys complete','City journeys complete','Àwọn ìrìnàjò ìlú tí a parí','Njem obodo emechara'],
+'Wallet':['Wallet','Wallet','Wallet','Wallet'],
+'No active story mission here yet':['No active story mission here yet','No active story mission here yet','Kò sí iṣẹ́ ìtàn tó ń ṣiṣẹ́ níbí síbẹ̀','Enweghị ozi akụkọ na-arụ ọrụ ebe a ugbu a'],
+'This city remains on the KitCity map. Its current story mission will appear here when it is part of the active arc.':['This city remains on the KitCity map. Its current story mission will appear here when it is part of the active arc.','This city remains on the KitCity map. Its current story mission will appear here when it is part of the active arc.','Ìlú yìí ṣì wà lórí maapu KitCity. Iṣẹ́ ìtàn rẹ yóò hàn níbí nígbà tó bá di apá ìrìnàjò tó ń lọ.','Obodo a ka dị na maapụ KitCity. Ozi akụkọ ya ga-apụta ebe a mgbe ọ bụ akụkụ njem na-aga n’ihu.'],
+'SELECTED CITY':['SELECTED CITY','SELECTED CITY','ÌLÚ TÍ A YÀN','OBODO AHỌỌRỌ'],
+'missions':['missions','missions','àwọn iṣẹ́ apinfunni','ọrụ'],
+'Mission complete':['Mission complete','Mission complete','Iṣẹ́ apinfunni parí','Emechala ozi'],
+'MISSION COMPLETE':['MISSION COMPLETE','MISSION COMPLETE','IṢẸ́ APINFUNNI PARÍ','EMECHALA OZI'],
+'FIRST MOVE':['FIRST MOVE','FIRST MOVE','ÌGBÉSẸ̀ ÀKỌ́KỌ́','NZỌỤKWỤ MBỤ'],
+'Follow the arrow. Talk with the person you find.':['Follow the arrow. Talk with the person you find.','Follow the arrow. Talk with the person you find.','Tẹ̀lé ọfà náà. Bá ẹni tó o bá rí sọ̀rọ̀.','Soro akụ ahụ. Gwa onye ị hụrụ okwu.'],
+'Follow the arrow and watch for traffic.':['Follow the arrow and watch for traffic.','Follow the arrow and watch for traffic.','Tẹ̀lé ọfà náà, kí o sì ṣọ́ra fún ọkọ̀.','Soro akụ ahụ ma lezie anya n’ụgbọala.'],
+'How to play':['How to play','How to play','Bí a ṣe ń ṣeré','Otu esi egwu'],
+'Move with the left stick or WASD. Hold Run or Shift to run. Tap Talk or press E near a glowing person. The arrow points to your goal. Avoid traffic.':['Move with the left stick or WASD. Hold Run or Shift to run. Tap Talk or press E near a glowing person. The arrow points to your goal. Avoid traffic.','Move with the left stick or WASD. Hold Run or Shift to run. Tap Talk or press E near a glowing person. The arrow points to your goal. Avoid traffic.','Lo ọ̀pá òsì tàbí WASD láti rìn. Di Run tàbí Shift mú láti sáré. Fọwọ́ kan Talk tàbí tẹ E lẹ́gbẹ̀ẹ́ ẹni tó ń tàn. Ọfà náà ń tọ́ka sí ibi-afẹ́ rẹ. Ṣọ́ra fún ọkọ̀.','Jiri mkpisi aka ekpe ma ọ bụ WASD gaa. Jide Run ma ọ bụ Shift ka ị gba ọsọ. Pịa Talk ma ọ bụ E nso onye na-enwu. Akụ ahụ na-egosi ebe ị na-aga. Zere ụgbọala.'],
+'About the streets':['About the streets','About the streets','Nípa àwọn òpópónà','Banyere okporo ụzọ'],
+'Street and district names are inspired by real places in each city. The layout is a stylised grid, not a survey map.':['Street and district names are inspired by real places in each city. The layout is a stylised grid, not a survey map.','Street and district names are inspired by real places in each city. The layout is a stylised grid, not a survey map.','Àwọn orúkọ òpópónà àti agbègbè dá lórí àwọn ibi gidi ní ìlú kọ̀ọ̀kan. Ètò ọ̀nà jẹ́ àwòrán eré, kì í ṣe maapu ìwádìí.','Aha okporo ụzọ na mpaghara sitere n’ebe dị adị n’obodo ọ bụla. Nhazi ahụ bụ nke egwuregwu, ọ bụghị maapụ nyocha.'],
+'Graphics':['Graphics','Graphics','Àwòrán','Eserese'],
+'High':['High','High','Gíga','Elu'],
+'Low':['Low','Low','Kéré','Ala'],
+'Music':['Music','Music','Orin','Egwu'],
+'Playlist':['Playlist','Playlist','Àkójọ orin','Ndepụta egwu'],
+'Sound effects':['Sound effects','Sound effects','Ìró àfikún','Ụda mmetụta'],
+'Turn off':['Turn off','Turn off','Pa á','Gbanyụọ'],
+'Turn on':['Turn on','Turn on','Tan án','Gbanye'],
+'Reset progress':['Reset progress','Reset progress','Tún ìlọsíwájú bẹ̀rẹ̀','Tọgharịa ọganihu'],
+'Erases badges, mission progress and your practice wallet on this device.':['Erases badges, mission progress and your practice wallet on this device.','Erases badges, mission progress and your practice wallet on this device.','Yóò pa àwọn àmì, ìlọsíwájú iṣẹ́ àti wallet ìdánrawò rẹ rẹ́ lórí ẹ̀rọ yìí.','Ọ ga-ehichapụ baajị, ọganihu ọrụ na wallet omume gị na ngwaọrụ a.'],
+'Tap again to confirm':['Tap again to confirm','Tap again to confirm','Fọwọ́ kan lẹ́ẹ̀kan sí i láti jẹ́rìí','Pịa ọzọ iji kwenye'],
+'Yes, erase everything':['Yes, erase everything','Yes, erase everything','Bẹ́ẹ̀ni, pa gbogbo rẹ rẹ́','Ee, hichapụ ihe niile'],
+'Reset':['Reset','Reset','Tún bẹ̀rẹ̀','Tọgharịa'],
+'Prototype: wallets, balances and payments are simulated. Rates are samples. Nothing here is financial advice.':['Prototype: wallets, balances and payments are simulated. Rates are samples. Nothing here is financial advice.','Prototype: wallets, balances and payments are simulated. Rates are samples. Nothing here is financial advice.','Àpẹẹrẹ eré ni èyí: wallet, owó tó wà àti ìsanwó jẹ́ àfarawé. Àwọn oṣùwọ̀n jẹ́ àpẹẹrẹ. Èyí kì í ṣe ìmọ̀ràn ìnáwó.','Nke a bụ nnwale: wallet, ego na ịkwụ ụgwọ bụ ihe e mere ka ọ dị adị. Ọnụọgụ bụ ihe atụ. Nke a abụghị ndụmọdụ ego.'],
+'The First Promise':['The First Promise','The First Promise','Ìlérí Àkọ́kọ́','Nkwa Mbụ'],
+'The Price of Trust':['The Price of Trust','The Price of Trust','Iye Ìgbẹ́kẹ̀lé','Ọnụ Ahịa Ntụkwasị Obi'],
+'The Empty Promise':['The Empty Promise','The Empty Promise','Ìlérí Òfìfo','Nkwa Efù'],
+'The People Who Built It':['The People Who Built It','The People Who Built It','Àwọn Tó Kọ́ Ọ́','Ndị Wulitere Ya'],
+'Who Owns the Work?':['Who Owns the Work?','Who Owns the Work?','Ta Ni Ó Ní Iṣẹ́ Náà?','Onye Nwere Ọrụ Ahụ?'],
+'The Exit':['The Exit','The Exit','Ọ̀nà Àbáyọ','Ụzọ Ọpụpụ'],
+'The Community That Disappeared':['The Community That Disappeared','The Community That Disappeared','Àwùjọ Tó Sọnù','Obodo Ndị Furu Efù'],
+'The Numbers Game':['The Numbers Game','The Numbers Game','Eré Àwọn Nọ́mbà','Egwuregwu Ọnụọgụ'],
+'The Open Door':['The Open Door','The Open Door','Ilẹ̀kùn Tí Ó Ṣí','Ọnụ Ụzọ Meghere Emepe'],
+'Building for Nobody':['Building for Nobody','Building for Nobody','Kíkọ́ Fún Ẹnikẹ́ni Kò Sí','Iwulite Maka Onye Ọ Bụla'],
+'The People Left Behind':['The People Left Behind','The People Left Behind','Àwọn Tí A Fi Sẹ́yìn','Ndị A Hapụrụ'],
+'The Rules for Everyone':['The Rules for Everyone','The Rules for Everyone','Òfin Fún Gbogbo Ènìyàn','Iwu Maka Onye Ọ Bụla'],
+'The Cost of Starting Over':['The Cost of Starting Over','The Cost of Starting Over','Iye Bíbẹ̀rẹ̀ Lẹ́ẹ̀kan Sí I','Ọnụ Ahịa Ịmalite Ọzọ'],
+'The Things Worth Keeping':['The Things Worth Keeping','The Things Worth Keeping','Àwọn Ohun Tó Yẹ Kí A Pa Mọ́','Ihe Ndị Kwesịrị Ịchekwa'],
+'The Lost Value':['The Lost Value','The Lost Value','Iye Tó Sọnù','Uru Furu Efù'],
+'The Original Promise':['The Original Promise','The Original Promise','Ìlérí Àkọ́kọ́','Nkwa Mbụ'],
+'Project Promise Record':['Project Promise Record','Project Promise Record','Àkọsílẹ̀ Ìlérí Iṣẹ́','Ndekọ Nkwa Ọrụ'],
+'Product Demo Review':['Product Demo Review','Product Demo Review','Àyẹ̀wò Àfihàn Ọjà','Nyocha Ngosi Ngwaahịa'],
+'Contribution Record':['Contribution Record','Contribution Record','Àkọsílẹ̀ Ìkópa','Ndekọ Ntinye Aka'],
+'Ownership and Access Audit':['Ownership and Access Audit','Ownership and Access Audit','Àyẹ̀wò Ohun-ìní àti Ìwọlé','Nyocha Nwe na Ịnweta'],
+'Public Claims and Transaction Record':['Public Claims and Transaction Record','Public Claims and Transaction Record','Àwọn Ìsọfúnni Gbangba àti Àkọsílẹ̀ Ìṣòwò','Nkwupụta Ọha na Ndekọ Azụmahịa'],
+'Archived Community Proposals':['Archived Community Proposals','Archived Community Proposals','Àwọn Àbá Àwùjọ Tí A Fipamọ́','Atụmatụ Obodo Echekwara'],
+'Project Metrics Review':['Project Metrics Review','Project Metrics Review','Àyẹ̀wò Ìwọ̀n Iṣẹ́','Nyocha Ọnụọgụ Ọrụ'],
+'First-Time User Transaction':['First-Time User Transaction','First-Time User Transaction','Ìṣòwò Olùlò Tuntun','Azụmahịa Onye Ọrụ Mbụ'],
+'User Needs Record':['User Needs Record','User Needs Record','Àkọsílẹ̀ Àìní Olùlò','Ndekọ Mkpa Onye Ọrụ'],
+'Local Business Needs':['Local Business Needs','Local Business Needs','Àìní Iṣòwò Agbègbè','Mkpa Azụmahịa Mpaghara'],
+'Governance Decision Record':['Governance Decision Record','Governance Decision Record','Àkọsílẹ̀ Ìpinnu Ìṣàkóso','Ndekọ Mkpebi Ọchịchị'],
+'Public Progress Record':['Public Progress Record','Public Progress Record','Àkọsílẹ̀ Ìlọsíwájú Gbangba','Ndekọ Ọganihu Ọha'],
+'The Evidence Wall':['The Evidence Wall','The Evidence Wall','Odi Ẹ̀rí','Mgbidi Ihe Akaebe']
 };
-const RULES=[
-/*RULES_BEGIN*/
-/*RULES_END*/
-];
+const PCM={
+'Every city teaches you something new.':'Every city dey teach you something new.',
+'Learn web3 before it costs you.':'Learn Web3 before e cost you.',
+'Sign in':'Sign in','Create account':'Create account','Settings':'Settings','Mission':'Mission','Activity':'Activity',
+'Run':'Run','Talk':'Talk','Here':'For here','No wallet yet':'No wallet yet',
+'Follow the arrow and watch for traffic.':'Follow the arrow and watch out for motor.',
+'Follow the arrow. Talk with the person you find.':'Follow the arrow. Talk to the person wey you see.',
+'How to play':'How to play','About the streets':'About the streets'
+};
 function tr(t){
-  if(P.lang!=='pcm'||!t) return t;
-  const m=t.match(/^(\s*)([\s\S]*?)(\s*)$/),core=m[2];
+  if(!t) return t;
+  const m=String(t).match(/^(\s*)([\s\S]*?)(\s*)$/),core=m[2];
   if(!core||!/[A-Za-z]/.test(core)) return t;
-  /*MISS*/
-  let out=PCM[core];
-  if(out===undefined){ for(let i=0;i<RULES.length;i++){ const mm=core.match(RULES[i][0]); if(mm){ out=RULES[i][1].apply(null,mm); break; } } }
+  if(P.lang==='en') return t;
+  let out;
+  if(P.lang==='pcm') out=PCM[core];
+  else { const row=LOCALIZED[core]; if(row) out=row[({pcm:0,ha:1,yo:2,ig:3})[P.lang]??0]; }
   return out===undefined?t:m[1]+out+m[3];
 }
 function tx(html){
-  if(P.lang!=='pcm'||!html) return html;
-  return html.replace(/(^|>)([^<>]+)(?=<|$)/g,(m,a,t)=>a+tr(t));
+  if(!html) return html;
+  return String(html).replace(/(^|>)([^<>]+)(?=<|$)/g,(m,a,t)=>a+tr(t)+t.slice(tr(t).length));
 }
+window.KitCityTranslate=tr;
 
 /* =====================  renderer / scene  ===================== */
 const renderer=new THREE.WebGLRenderer({canvas:$('#gl'),antialias:true,powerPreference:'high-performance'});
