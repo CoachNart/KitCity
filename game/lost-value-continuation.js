@@ -21,7 +21,7 @@ export const LOST_VALUE_CONTINUATION = [
   {
     id:'lost-value-17', n:17, state:'Ondo State', city:'akure', title:'The Copy Nobody Asked For',
     goal:'Help a small team test a useful feature with real users before spending its limited budget.',
-    value:'VALIDATION', cast:['Tessa','PLAYER'], splitAfter:3,
+    value:'VALIDATION', cast:['Tessa'], splitAfter:3,
     dialogue:[
       ['Tessa','We copied a popular app because everyone said it was the next big thing. Nobody used ours.'],
       ['PLAYER','Did you ask people what they actually needed?'],
@@ -35,7 +35,7 @@ export const LOST_VALUE_CONTINUATION = [
   {
     id:'lost-value-18', n:18, state:'Kwara State', city:'ilorin', title:'The Deal That Needed Both Sides',
     goal:'Resolve a collaboration dispute by making responsibilities and approval steps visible to everyone involved.',
-    value:'COLLABORATION', cast:['Mira','PLAYER'], splitAfter:3,
+    value:'COLLABORATION', cast:['Mira'], splitAfter:3,
     dialogue:[
       ['Mira','The designer says the work is finished. The developer says the files cannot be used.'],
       ['PLAYER','What did each side agree to deliver?'],
@@ -49,7 +49,7 @@ export const LOST_VALUE_CONTINUATION = [
   {
     id:'lost-value-19', n:19, state:'Imo State', city:'owerri', title:'The First Real Customer',
     goal:'Help a creator turn a promising demo into a small paid service with clear terms and a real customer.',
-    value:'DELIVERY', cast:['Nkem','PLAYER'], splitAfter:3,
+    value:'DELIVERY', cast:['Nkem'], splitAfter:3,
     dialogue:[
       ['Nkem','My portfolio gets likes, but nobody has paid me for the service yet.'],
       ['PLAYER','What can you deliver this week that solves one clear problem?'],
@@ -63,7 +63,7 @@ export const LOST_VALUE_CONTINUATION = [
   {
     id:'lost-value-20', n:20, state:'Rivers State', city:'ph', title:'When Success Becomes the Problem',
     goal:'Help a growing service deal with missed requests by fixing its operations before chasing more users.',
-    value:'SUSTAINABILITY', cast:['Boma','PLAYER'], splitAfter:3,
+    value:'SUSTAINABILITY', cast:['Boma'], splitAfter:3,
     dialogue:[
       ['Boma','We finally have customers. Now every order is late and support messages are piling up.'],
       ['PLAYER','What changed when the business grew?'],
@@ -77,7 +77,7 @@ export const LOST_VALUE_CONTINUATION = [
   {
     id:'lost-value-21', n:21, state:'Bayelsa State', city:'bayelsa', title:'The Record Beneath the Water',
     goal:'Reconstruct a disputed community payment using records from both sides without treating a digital record as the whole truth.',
-    value:'RECONCILIATION', cast:['Timi','PLAYER'], splitAfter:3,
+    value:'RECONCILIATION', cast:['Timi'], splitAfter:3,
     dialogue:[
       ['Timi','The group says the supplier was paid. The supplier says the money never arrived.'],
       ['PLAYER','Do we have the transaction reference and the delivery record?'],
@@ -91,7 +91,7 @@ export const LOST_VALUE_CONTINUATION = [
   {
     id:'lost-value-22', n:22, state:'Akwa Ibom State', city:'uyo', title:'More Than a Wallet',
     goal:'Help a beginner find a realistic Web3 work path and identify an opportunity that demands an unsafe upfront fee.',
-    value:'CAREERS', cast:['Ini','PLAYER'], splitAfter:3,
+    value:'CAREERS', cast:['Ini'], splitAfter:3,
     dialogue:[
       ['Ini','Every advert says “Web3 job,” but some ask me to pay before they even explain the work.'],
       ['PLAYER','What skill do you want to build first?'],
@@ -105,7 +105,7 @@ export const LOST_VALUE_CONTINUATION = [
   {
     id:'lost-value-23', n:23, state:'Ebonyi State', city:'abakaliki', title:'The Door With No Instructions',
     goal:'Improve a confusing first-use flow so a beginner can understand the next action and its consequences.',
-    value:'ONBOARDING', cast:['Mmesoma','PLAYER'], splitAfter:3,
+    value:'ONBOARDING', cast:['Mmesoma'], splitAfter:3,
     dialogue:[
       ['Mmesoma','People sign up, see five unfamiliar buttons, and leave.'],
       ['PLAYER','What does a first-time user need to do first?'],
@@ -119,7 +119,7 @@ export const LOST_VALUE_CONTINUATION = [
   {
     id:'lost-value-24', n:24, state:'Benue State', city:'makurdi', title:'The Work Nobody Saw',
     goal:'Recover missing contributor credit and establish a fair way to record future work.',
-    value:'CREDIT', cast:['Terna','PLAYER'], splitAfter:3,
+    value:'CREDIT', cast:['Terna'], splitAfter:3,
     dialogue:[
       ['Terna','The product works, but the people who tested and documented it are nowhere in the record.'],
       ['PLAYER','Can we prove who did what?'],
@@ -133,7 +133,7 @@ export const LOST_VALUE_CONTINUATION = [
   {
     id:'lost-value-25', n:25, state:'Taraba State', city:'jalingo', title:'The Permission Nobody Read',
     goal:'Help a user inspect an application permission and reduce unnecessary access before connecting an account.',
-    value:'PERMISSIONS', cast:['Amina','PLAYER'], splitAfter:3,
+    value:'PERMISSIONS', cast:['Amina'], splitAfter:3,
     dialogue:[
       ['Amina','This app says it needs access to everything before I can try one small feature.'],
       ['PLAYER','What does the permission actually allow it to do?'],
@@ -147,7 +147,7 @@ export const LOST_VALUE_CONTINUATION = [
   {
     id:'lost-value-26', n:26, state:'Adamawa State', city:'yola', title:'Everything Depends on Something',
     goal:'Recover a project after a key service fails by mapping dependencies and preparing a simple fallback.',
-    value:'RESILIENCE', cast:['Joshua','PLAYER'], splitAfter:3,
+    value:'RESILIENCE', cast:['Joshua'], splitAfter:3,
     dialogue:[
       ['Joshua','The service stopped when one provider went offline. We cannot even tell users when it will return.'],
       ['PLAYER','What depends on that provider?'],
@@ -161,7 +161,7 @@ export const LOST_VALUE_CONTINUATION = [
   {
     id:'lost-value-27', n:27, state:'Gombe State', city:'gombe', title:'The Person Holding Everything Together',
     goal:'Prevent a community project from collapsing by making maintenance work visible and sustainable.',
-    value:'MAINTENANCE', cast:['Lami','PLAYER'], splitAfter:3,
+    value:'MAINTENANCE', cast:['Lami'], splitAfter:3,
     dialogue:[
       ['Lami','The launch team has moved on. One volunteer is still answering every question and fixing every issue.'],
       ['PLAYER','What happens if that person needs a break?'],
@@ -175,7 +175,7 @@ export const LOST_VALUE_CONTINUATION = [
   {
     id:'lost-value-28', n:28, state:'Yobe State', city:'damaturu', title:'The Internet Is Not Always There',
     goal:'Make an essential task usable on a slow or interrupted connection without hiding transaction status.',
-    value:'ACCESSIBILITY', cast:['Zainab','PLAYER'], splitAfter:3,
+    value:'ACCESSIBILITY', cast:['Zainab'], splitAfter:3,
     dialogue:[
       ['Zainab','The page keeps loading. People here cannot rely on a strong connection all day.'],
       ['PLAYER','Which part must work first?'],
@@ -189,7 +189,7 @@ export const LOST_VALUE_CONTINUATION = [
   {
     id:'lost-value-29', n:29, state:'Borno State', city:'maiduguri', title:'The Data That Wasn’t Theirs',
     goal:'Resolve a data-sharing dispute by checking consent, purpose, and what information is truly necessary.',
-    value:'CONSENT', cast:['Hauwa','PLAYER'], splitAfter:3,
+    value:'CONSENT', cast:['Hauwa'], splitAfter:3,
     dialogue:[
       ['Hauwa','The team shared our members’ details with a partner. Nobody asked us.'],
       ['PLAYER','What did the members agree to share?'],
@@ -203,7 +203,7 @@ export const LOST_VALUE_CONTINUATION = [
   {
     id:'lost-value-30', n:30, state:'Jigawa State', city:'jigawa', title:'The Record That Looked Perfect',
     goal:'Investigate a flawless digital record against physical evidence before approving a real-world outcome.',
-    value:'VERIFICATION', cast:['Sadiq','PLAYER'], splitAfter:3,
+    value:'VERIFICATION', cast:['Sadiq'], splitAfter:3,
     dialogue:[
       ['Sadiq','The register says every delivery arrived. Two farmers say their supplies never came.'],
       ['PLAYER','What can we compare with the register?'],
@@ -217,7 +217,7 @@ export const LOST_VALUE_CONTINUATION = [
   {
     id:'lost-value-31', n:31, state:'Katsina State', city:'katsina', title:'The Missing Piece',
     goal:'Investigate an incomplete allegation fairly without treating missing evidence as proof of guilt.',
-    value:'FAIR INVESTIGATION', cast:['Hauwa','PLAYER'], splitAfter:3,
+    value:'FAIR INVESTIGATION', cast:['Hauwa'], splitAfter:3,
     dialogue:[
       ['Hauwa','The report says someone took the funds, but the transaction history is incomplete.'],
       ['PLAYER','What do we know, and what is still missing?'],
@@ -231,7 +231,7 @@ export const LOST_VALUE_CONTINUATION = [
   {
     id:'lost-value-32', n:32, state:'Kaduna State', city:'kaduna', title:'Who Gets to Change the Rules?',
     goal:'Clarify who has authority to change a digital community’s rules and how urgent changes can be challenged.',
-    value:'GOVERNANCE', cast:['Cybersage','PLAYER'], splitAfter:3,
+    value:'GOVERNANCE', cast:['Cybersage'], splitAfter:3,
     dialogue:[
       ['Cybersage','The team changed the rules overnight. The community only found out afterward.'],
       ['PLAYER','Who was allowed to make that change?'],
@@ -245,7 +245,7 @@ export const LOST_VALUE_CONTINUATION = [
   {
     id:'lost-value-33', n:33, state:'Sokoto State', city:'sokoto', title:'Open to Everyone. Trusted by Whom?',
     goal:'Help a new community earn participation through clear expectations, respectful moderation, and verifiable work.',
-    value:'BELONGING', cast:['Abdul','PLAYER'], splitAfter:3,
+    value:'BELONGING', cast:['Abdul'], splitAfter:3,
     dialogue:[
       ['Abdul','New people join, ask one question, and leave. They say nobody takes them seriously.'],
       ['PLAYER','What happens when someone new needs help?'],
@@ -259,7 +259,7 @@ export const LOST_VALUE_CONTINUATION = [
   {
     id:'lost-value-34', n:34, state:'Kebbi State', city:'birnin-kebbi', title:'The Fund Everyone Could See',
     goal:'Help a transparent community fund explain its decision process without exposing private applicant information.',
-    value:'FAIR FUNDING', cast:['Sani','PLAYER'], splitAfter:3,
+    value:'FAIR FUNDING', cast:['Sani'], splitAfter:3,
     dialogue:[
       ['Sani','Everyone can see the fund balance. People still say the grants are handed to friends.'],
       ['PLAYER','Can the public see how each application was assessed?'],
@@ -273,7 +273,7 @@ export const LOST_VALUE_CONTINUATION = [
   {
     id:'lost-value-35', n:35, state:'Zamfara State', city:'gusau', title:'The Promise of a Shortcut',
     goal:'Help a job seeker verify a paid opportunity and reject a fake recruitment fee without dismissing legitimate training costs.',
-    value:'DUE DILIGENCE', cast:['Musa','PLAYER'], splitAfter:3,
+    value:'DUE DILIGENCE', cast:['Musa'], splitAfter:3,
     dialogue:[
       ['Musa','They say I have the job if I pay a registration fee today. The salary sounds too good to be true.'],
       ['PLAYER','Can we verify the employer and the role through an independent channel?'],
@@ -287,7 +287,7 @@ export const LOST_VALUE_CONTINUATION = [
   {
     id:'lost-value-36', n:36, state:'Nasarawa State', city:'lafia', title:'Build It Small Enough to Work',
     goal:'Turn the evidence gathered across the journey into a tiny prototype that solves one real problem.',
-    value:'PROTOTYPING', cast:['Softstorm','PLAYER'], splitAfter:3,
+    value:'PROTOTYPING', cast:['Softstorm'], splitAfter:3,
     dialogue:[
       ['Softstorm','We have seen broken promises, useful ideas, unfair systems, and people trying to start again.'],
       ['PLAYER','We cannot fix all of it with one big launch.'],
@@ -316,7 +316,7 @@ export const LOST_VALUE_CONTINUATION = [
   {
     id:'lost-value-38', n:38, state:'KitCity', city:'kitcity', title:'What We Build Next',
     goal:'Close the investigation by giving the player agency to choose a practical direction for their next chapter.',
-    value:'PLAYER AGENCY', cast:['Softstorm','IamAbdul','Kenny','PLAYER'], splitAfter:4,
+    value:'PLAYER AGENCY', cast:['Softstorm','IamAbdul','Kenny'], splitAfter:4,
     dialogue:[
       ['Kenny','We have no final boss to defeat. The work is still here after the story ends.'],
       ['IamAbdul','You have seen how people create, lose, repair, and share value. What will you do with what you learned?'],
