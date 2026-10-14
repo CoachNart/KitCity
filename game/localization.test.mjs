@@ -39,7 +39,7 @@ test('major app headings translate even when rendered in uppercase', () => {
   };
   for (const [language, expected] of Object.entries(headings)) {
     assert.equal(translateText('THE FIRST PROMISE', language), expected);
-    assert.notEqual(translateText('CITY MAP', language), 'CITY MAP');
+    assert.notEqual(translateText('SELECTED CITY', language), 'SELECTED CITY');
     assert.notEqual(translateText('MISSION UNLOCKED', language), 'MISSION UNLOCKED');
   }
 });
