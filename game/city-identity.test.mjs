@@ -26,15 +26,20 @@ test('city road archetypes use multiple widths and block footprints', () => {
   assert.ok(widths.length >= 15, 'Expected a broad set of road archetypes');
   assert.ok(new Set(widths).size >= 7, 'Road widths should vary by city form');
   assert.ok(new Set(blockWidths).size >= 7, 'Block sizes should vary by city form');
+  const blockWidthsAgain = [...designs.matchAll(/blockW:(\d+)/g)].map(match => Number(match[1]));
+  assert.ok(widths.every((width, index) => width + blockWidthsAgain[index] === 70), 'Block width and arterial width must preserve the 70m navigation grid');
 });
 
 test('all expanded city records have a city-specific skyline signature', () => {
   const extras = section('const EXTRA_CITIES=', '\nEXTRA_CITIES.forEach');
   const extraKeys = [...extras.matchAll(/\["([^"]+)"/g)].map(match => match[1]);
+  const legacyCityRecords = section('const NEWC={', '\n};\nObject.keys(NEWC)');
+  const legacyKeys = [...legacyCityRecords.matchAll(/^\s*['"]?([a-z][a-z0-9-]*)['"]?\s*:\s*\{/gm)].map(match => match[1]);
   const signatures = section('const CITY_SIGNATURES={', '\n};\nfunction addCitySignature');
   const signatureKeys = new Set([...signatures.matchAll(/["']?([a-z][a-z0-9-]*)["']?:'[^']+'/g)].map(match => match[1]));
-  const missing = extraKeys.filter(key => !signatureKeys.has(key));
-  assert.deepEqual(missing, [], 'Every expanded city needs a distinct signature profile');
+  const missing = [...new Set([...extraKeys, ...legacyKeys])].filter(key => !signatureKeys.has(key));
+  assert.deepEqual(missing, [], 'Every city and metro alias needs a distinct signature profile');
+  assert.ok(engine.includes("'ikot-ekpene':{form:'southwest-sprawl'"), 'Ikot Ekpene must have its own city-form profile');
 });
 
 test('city building and skyline renderers use the new profiles', () => {
