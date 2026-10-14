@@ -1215,7 +1215,19 @@ function applyLook(key,C){
 function roadDecals(C,blocks){
   const L=LKC,dc=C.roadStyle==='boulevard'?'#D9DDE0':C.roadStyle==='promenade'?'#A9C7C5':C.roadStyle==='gate'?'#B99B70':C.roadStyle==='market'?'#C4B8A3':L.lat>.3?'#9a5a38':(L.dust>.2?'#cdb48a':'#8a7e6a'),its=[];
   const geo=new THREE.PlaneGeometry(56,C.roadStyle==='boulevard'?3.4:2.8); geo.rotateX(-Math.PI/2);
-  blocks.forEach(b=>{ const o=30.4; its.push({x:b.cx,y:.047,z:b.cz-o},{x:b.cx,y:.047,z:b.cz+o,ry:Math.PI},{x:b.cx-o,y:.047,z:b.cz,ry:Math.PI/2},{x:b.cx+o,y:.047,z:b.cz,ry:-Math.PI/2}); });
+  // Road-edge wear follows each city's street grammar. Formal avenues keep
+  // continuous edges; market/old-quarter lanes are interrupted; river and hill
+  // cities show edges only where the local road graph actually opens a block.
+  blocks.forEach((b,index)=>{
+    const form=C.form||'mixed',style=C.roadStyle||'mixed';
+    const sparse=['historic','sahel','heritage','colonial-coast','dense-market','southeast-market'].includes(form);
+    const broken=['hillside','green-hills','rock-city','creek-town','river-town','confluence','delta-port','oil-port'].includes(form);
+    if(sparse&&index%3!==0)return;
+    if(broken&&index%2!==0)return;
+    const o=style==='boulevard'||style==='ceremonial'?30.4:style==='industrial'?29.4:30.4;
+    its.push({x:b.cx,y:.047,z:b.cz-o},{x:b.cx,y:.047,z:b.cz+o,ry:Math.PI});
+    if(!broken||index%4===0)its.push({x:b.cx-o,y:.047,z:b.cz,ry:Math.PI/2},{x:b.cx+o,y:.047,z:b.cz,ry:-Math.PI/2});
+  });
   instanced(geo,new THREE.MeshLambertMaterial({color:dc,map:LKT.edge,transparent:true,opacity:.35+L.dust*.6+L.lat*.3,depthWrite:false}),its,cityGroup);
   // A restrained, low-profile median gives planned capitals a different road rhythm
   // without blocking traffic or changing the mission navigation grid.
@@ -2168,18 +2180,31 @@ function buildCity(key){
   const outer=new THREE.Mesh(uvScale(new THREE.PlaneGeometry(1400,1400),100,100),lam(C.dirt,{map:LKT.dirt})); outer.rotation.x=-Math.PI/2; outer.position.y=-.04; cityGroup.add(outer);
   const ground=new THREE.Mesh(uvScale(new THREE.PlaneGeometry(520,520),20,20),lam(C.ground,{map:LKT.asph})); ground.rotation.x=-Math.PI/2; cityGroup.add(ground);
   const dirtMat=lam(C.dirt,{map:LKT.dirt}),paveMat=lam(C.slab,{map:LKT.pave}),slabGeo=uvScale(new THREE.BoxGeometry(56,0.1,56),14,14),vergeGeo=uvScale(new THREE.PlaneGeometry(59,59),10,10);
-  for(let k=-3;k<=3;k++)for(let i=-3;i<=2;i++){
-    const h=new THREE.Mesh(dashGeo,dashMat); h.rotation.x=-Math.PI/2; h.position.set(i*R+35,0.04,k*R); cityGroup.add(h);
-    const v=new THREE.Mesh(dashGeo,dashMat); v.rotation.set(-Math.PI/2,0,Math.PI/2); v.position.set(k*R,0.04,i*R+35); cityGroup.add(v);
-  }
+  // Do not paint the old universal dashed cross-grid across every city.
+  // Lane markings are now generated from the city's road profile and local
+  // street graph below, so narrow market lanes and hillside routes stay legible.
   const blocks=[];
   const placeBuilding=(x,z,w,d,style,color,cx,cz,ox,oz)=>{if(nearSpecial(x,z,18)||nearLocalStreet(C,x,z,Math.max(w,d)/2+1.5))return;addBuilding(x,z,w,d,style,color,cx,cz,ox,oz);};
   localRoadSegments=buildSecondaryRoadSegments(C);
   const localRoadMat=lam(C.ground,{map:LKT.asph});
   for(let i=-3;i<=2;i++)for(let j=-3;j<=2;j++){
     const cx=i*R+35,cz=j*R+35; blocks.push({cx,cz});
-    const vg=new THREE.Mesh(vergeGeo,dirtMat); vg.rotation.x=-Math.PI/2; vg.position.set(cx,.03,cz); cityGroup.add(vg);
-    const slab=new THREE.Mesh(slabGeo,paveMat); slab.position.set(cx,0.05,cz); cityGroup.add(slab);
+    const form=C.form||'mixed';
+    const formal=['planned','planned-tropical','planned-river','regional-capital','savanna-capital'].includes(form);
+    const industrial=['delta-port','oil-port','rail-crossroads'].includes(form);
+    const market=['historic','sahel','heritage','dense-market','southeast-market','organic-sprawl','southwest-sprawl'].includes(form);
+    // Stop laying identical 56m square paving tiles over every settlement.
+    // Formal capitals get regular hardscape; markets/old quarters keep smaller
+    // irregular ground patches; ports get broad service yards; hills/creek towns
+    // rely on the terrain material and their profile-specific local roads.
+    if(formal){
+      const vg=new THREE.Mesh(vergeGeo,dirtMat); vg.rotation.x=-Math.PI/2; vg.position.set(cx,.03,cz); cityGroup.add(vg);
+      const slab=new THREE.Mesh(slabGeo,paveMat); slab.position.set(cx,0.05,cz); cityGroup.add(slab);
+    }else if(industrial&&((i+j)%2===0)){
+      const yard=new THREE.Mesh(uvScale(new THREE.PlaneGeometry(42,38),8,8),paveMat); yard.rotation.x=-Math.PI/2; yard.position.set(cx,.035,cz); cityGroup.add(yard);
+    }else if(market&&((i*3+j*5+(C.seed||0))%3===0)){
+      const patch=new THREE.Mesh(uvScale(new THREE.PlaneGeometry(34,31),6,6),dirtMat); patch.rotation.x=-Math.PI/2; patch.rotation.y=(C.seed%4)*Math.PI/8; patch.position.set(cx,.025,cz); cityGroup.add(patch);
+    }
     // Local streets cut through selected blocks and join the existing arterial network.
     for(const road of localRoadSegments){
       if(road.i!==i||road.j!==j)continue;
