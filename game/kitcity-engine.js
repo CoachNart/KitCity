@@ -2271,7 +2271,7 @@ const CITY_SIGNATURES={
   jalingo:'hill',yola:'river',sokoto:'minaret',katsina:'gate','birnin-kebbi':'river',
   minna:'rail',dutse:'gate',gusau:'gate',kafanchan:'rail',damboa:'gate',
   abakaliki:'market',bayelsa:'stilt',jigawa:'gate',kebbi:'river',kogi:'confluence',
-  nasarawa:'civic',taraba:'hill',yobe:'gate',zamfara:'gate',anambra:'market'
+  nasarawa:'civic',taraba:'hill',yobe:'gate',zamfara:'gate',anambra:'market',adoekiti:'hill',abia:'civic',osun:'heritage'
 };
 function addCitySignature(C){
   const kind=CITY_SIGNATURES[curCity]||'civic',palette=C.paint||['#C8B99D','#A8B8AA','#D8C8A8'];
