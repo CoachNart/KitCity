@@ -1293,14 +1293,28 @@ const NORMALIZED = Object.fromEntries(
     new Map(Object.entries(entries).map(([source, translated]) => [source.trim(), translated])),
   ]),
 );
+const NORMALIZED_FOLDED = Object.fromEntries(
+  Object.entries(NORMALIZED).map(([language, entries]) => [
+    language,
+    new Map([...entries.entries()].map(([source, translated]) => [source.toLocaleLowerCase(), translated])),
+  ]),
+);
 
 export function translateText(value, language = 'en') {
   const original = String(value ?? '');
   if (!original || language === 'en' || !NORMALIZED[language]) return original;
   const match = original.match(/^(\s*)([\s\S]*?)(\s*)$/);
   if (!match) return original;
-  const translated = NORMALIZED[language].get(match[2]);
-  return translated === undefined ? original : match[1] + translated + match[3];
+  const source = match[2];
+  let translated = NORMALIZED[language].get(source);
+  if (translated === undefined) translated = NORMALIZED_FOLDED[language].get(source.toLocaleLowerCase());
+  if (translated === undefined) return original;
+  // Headings are often uppercased at render time (for cinematic cards and
+  // mission markers). Match that presentation without duplicating every key.
+  if (source && source === source.toLocaleUpperCase() && /[A-Z]/i.test(source)) {
+    translated = translated.toLocaleUpperCase();
+  }
+  return match[1] + translated + match[3];
 }
 
 /**
