@@ -4617,7 +4617,10 @@ function startMission(id){
         });
       }else{
         storyCastGroup.visible=false;
-        briefing();
+        openSheet('<section class="lost-value-finale"><p>PROLOGUE COMPLETE</p><h3>THE FIRST PROMISE</h3><p>Lagos State</p></section>',[
+          {t:'Start The First Promise',f:()=>startMission('lost-value-01')},
+          {t:'Back to hub',g:1,f:exitToHub}
+        ]);
       }
     }else briefing();
   },60);
