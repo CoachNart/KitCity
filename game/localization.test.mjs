@@ -30,6 +30,20 @@ test('reviewed UI phrases translate for each supported language', () => {
   }
 });
 
+test('major app headings translate even when rendered in uppercase', () => {
+  const headings = {
+    pcm: 'DI FIRST PROMISE',
+    ha: 'ALKAWARI NA FARKO',
+    yo: 'ÌLÉRÍ ÀKỌ́KỌ́',
+    ig: 'NKWA MBỤ',
+  };
+  for (const [language, expected] of Object.entries(headings)) {
+    assert.equal(translateText('THE FIRST PROMISE', language), expected);
+    assert.notEqual(translateText('CITY MAP', language), 'CITY MAP');
+    assert.notEqual(translateText('MISSION UNLOCKED', language), 'MISSION UNLOCKED');
+  }
+});
+
 test('translation preserves whitespace and leaves unknown phrases safe', () => {
   assert.equal(translateText('  Settings  ', 'ha'), '  Saituna  ');
   assert.equal(translateText('A newly added mission line', 'yo'), 'A newly added mission line');
