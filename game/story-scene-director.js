@@ -51,6 +51,7 @@ export function createStorySceneDirector({ camera, player, getCharacter, getChar
   let reduceMotion = false;
   let lastAdvanceAt = 0;
   let autoAdvanceAt = 0;
+  let speechBubbleTimer = 0;
 
   function ensureOverlay() {
     if (overlay) return;
@@ -142,18 +143,24 @@ export function createStorySceneDirector({ camera, player, getCharacter, getChar
     let target = hero || new camera.position.constructor(0, 0, 0);
     let position;
     const mobilePortrait = window.matchMedia('(max-width: 699px) and (orientation: portrait)').matches;
-    if (key === 'wide' || key === 'clue' || key === 'conversation') {
-      if (soft && abdul) target = soft.clone().add(abdul).multiplyScalar(.5);
-      else target = soft || abdul || target;
+    if (key === 'wide' || key === 'clue' || key === 'conversation' || key === 'character') {
+      // The opening scene is staged as one three-person conversation, not separate
+      // shots that strand the player away from the two NPCs.
+      const points = [hero, soft, abdul].filter(Boolean);
+      if (points.length) {
+        target = points.reduce((sum, point) => sum.add(point), new camera.position.constructor(0, 0, 0)).multiplyScalar(1 / points.length);
+      } else target = soft || abdul || hero || target;
       // Keep the full pair visible on portrait phones: the narrow screen needs
       // a wider establishing shot, not a close-up that crops either character.
       const height = key === 'clue'
         ? (mobilePortrait ? 11.5 : 11)
-        : key === 'conversation' ? (mobilePortrait ? 11 : 5.8)
+        : key === 'conversation' ? (mobilePortrait ? 10 : 6.5)
+        : key === 'character' ? (mobilePortrait ? 12 : 8)
         : (mobilePortrait ? 12 : 17);
       const distance = key === 'clue'
         ? (mobilePortrait ? 36 : 20)
-        : key === 'conversation' ? (mobilePortrait ? 39 : 13.5)
+        : key === 'conversation' ? (mobilePortrait ? 35 : 16)
+        : key === 'character' ? (mobilePortrait ? 38 : 19)
         : (mobilePortrait ? 42 : 28);
       position = target.clone().add(new camera.position.constructor(0, height, distance));
     } else if (key === 'abdul') {
@@ -162,28 +169,6 @@ export function createStorySceneDirector({ camera, player, getCharacter, getChar
     } else if (key === 'softstorm') {
       target = soft || abdul || target;
       position = target.clone().add(new camera.position.constructor(mobilePortrait ? -11 : -8, mobilePortrait ? 6 : 4.5, mobilePortrait ? 15 : 8));
-    } else if (key === 'character') {
-      const castPoints = genericScene && typeof getCharacters === 'function'
-        ? getCharacters().map(worldPosition).filter(Boolean)
-        : [];
-      if (castPoints.length) {
-        const minX = Math.min(...castPoints.map(point => point.x));
-        const maxX = Math.max(...castPoints.map(point => point.x));
-        const minZ = Math.min(...castPoints.map(point => point.z));
-        const maxZ = Math.max(...castPoints.map(point => point.z));
-        target = new camera.position.constructor((minX + maxX) / 2, 0, (minZ + maxZ) / 2);
-        const spanX = maxX - minX, spanZ = maxZ - minZ;
-        // Pull the camera back enough to keep every staged character readable
-        // on a narrow phone screen; tight framing made the cast fill the screen.
-        const distance = mobilePortrait
-          ? Math.max(38, spanX * 2.5 + 24, spanZ * 2.5 + 24)
-          : Math.max(24, spanX * 1.65 + 16, spanZ * 1.65 + 16);
-        const height = mobilePortrait ? Math.max(10, distance * .25) : Math.max(7, distance * .22);
-        position = target.clone().add(new camera.position.constructor(0, height, distance));
-      } else {
-        target = worldPosition(speaker && getCharacter(speaker)) || hero || soft || abdul || target;
-        position = target.clone().add(new camera.position.constructor(mobilePortrait ? 7 : 4, mobilePortrait ? 6 : 3.5, mobilePortrait ? 23 : 9));
-      }
     } else {
       target = hero || soft || abdul || target;
       position = target.clone().add(new camera.position.constructor(7, 4, 8));
@@ -202,7 +187,9 @@ export function createStorySceneDirector({ camera, player, getCharacter, getChar
     overlay.querySelector('.comic-dialogue').classList.toggle('hidden', !panel.choices);
     const bubbleOn = !!(panel.speaker && panel.text && !panel.choices);
     overlay.classList.toggle('has-bubble', bubbleOn || (genericScene && !panel.choices));
+    clearTimeout(speechBubbleTimer);
     speechBubble.classList.toggle('hidden', !bubbleOn);
+    if (bubbleOn) speechBubbleTimer = setTimeout(() => speechBubble.classList.add('hidden'), 4800);
     speechSpeaker.textContent = bubbleOn ? localized(panel.speaker === 'PLAYER' ? 'You' : panel.speaker.toUpperCase()) : '';
     speechText.textContent = bubbleOn ? localized(panel.text) : '';
     kickerEl.textContent = localized(panel.kicker || (panel.speaker ? (genericScene ? 'THE LOST VALUE · A CONVERSATION' : 'LAGOS · A CONVERSATION') : ''));
@@ -264,6 +251,8 @@ export function createStorySceneDirector({ camera, player, getCharacter, getChar
   function finish() {
     if (!active) return;
     active = false;
+    clearTimeout(speechBubbleTimer);
+    if (speechBubble) speechBubble.classList.add('hidden');
     document.body.classList.remove('kitcity-story-active');
     document.documentElement.classList.remove('kitcity-story-active');
     if (overlay) overlay.classList.add('hidden');
