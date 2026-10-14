@@ -5,12 +5,12 @@ const logo = 'https://i.postimg.cc/qqbdTXky/file-00000000958881f4a776df689a235de
 
 export const metadata: Metadata = {
   title: 'KitCity — The Lost Value',
-  description: 'Explore Lagos in KitCity: The Lost Value, a story-driven Nigerian open-world adventure filled with characters, choices, discoveries, and missions.',
+  description: 'Explore Nigeria in KitCity: The Lost Value, a story-driven open-world adventure across Nigerian cities, filled with memorable characters, meaningful choices, discoveries, and missions.',
   applicationName: 'KitCity',
-  keywords: ['KitCity', 'The Lost Value', 'Nigerian game', 'open-world adventure', 'story-driven game', 'Lagos game'],
+  keywords: ['KitCity', 'The Lost Value', 'Nigerian game', 'Nigeria adventure game', 'open-world adventure', 'story-driven game', 'Nigerian cities'],
   openGraph: {
     title: 'KitCity — The Lost Value',
-    description: 'Explore Lagos, meet its people, uncover clues, and follow the story in a Nigerian open-world adventure.',
+    description: 'Explore Nigerian cities, meet their people, uncover clues, and follow the story in a Nigeria-wide open-world adventure.',
     siteName: 'KitCity — The Lost Value',
     type: 'website',
     locale: 'en_NG',
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary',
     title: 'KitCity — The Lost Value',
-    description: 'A story-driven Nigerian open-world adventure set in Lagos.',
+    description: 'A story-driven Nigerian open-world adventure spanning Nigerian cities.',
     images: [{ url: logo, alt: 'KitCity — The Lost Value' }],
   },
   manifest: '/manifest.webmanifest',
