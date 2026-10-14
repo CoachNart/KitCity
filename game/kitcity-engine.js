@@ -4535,8 +4535,7 @@ const lostValueMissions=LOST_VALUE_STORY.map(story=>{
     cast:cast.map(({npc,spot})=>({npc,spot})),steps,extras:[]
   };
 });
-/* The active journey is the Lagos prologue followed by the approved 15-state
-   Lost Value story. Legacy lesson definitions must not enter current progression,
+/* The active journey is the Lagos prologue followed by the connected Lost Value story across all states and the FCT. Legacy lesson definitions must not enter current progression,
    badges, city counts, or mission lookup. */
 MISSIONS[0].n=0;
 MISSIONS.slice(1).forEach(m=>{m.n+=LOST_VALUE_STORY.length-1;});
@@ -4654,8 +4653,8 @@ function completeMission(){
   openSheet('<div class="who"><span class="av" style="background:'+INK+'">'+m.n+'</span><div><h3 style="margin:0">Mission '+m.n+' complete</h3><small>'+CITIES[m.city].name+' · '+personalize(m.title,null)+'</small></div></div>'+
     (first?'<div class="kv"><span>Mission reward</span><b>+'+missionReward.toFixed(2)+' USDC</b></div><p class="note">'+(wrong===0?'Clean run reward collected.':'Completed with '+wrong+' wrong answer'+(wrong===1?'':'s')+'. Correct answers and mistakes have already adjusted your USDC balance.')+'</p>':'<p class="note">Replay complete. The first-clear reward has already been collected.</p>')+
     (m.storyReward?'<div class="story-value-reward"><small>VALUE RECOVERED</small><h3>'+personalize(m.storyValue||'',null)+'</h3><p>'+personalize(m.storyReward,null)+'</p></div>':'')+
-    (m.storyFinale?'<section class="lost-value-finale"><p><b>15 OF 36 STATES INVESTIGATED</b></p><p>21 STATES REMAIN</p><p>THE WORK IS NOT FINISHED</p><hr><h2>KITCITY</h2><h3>THE LOST VALUE</h3><p>36 STATES. ONE LOST VALUE.</p><p>THE DESTINATION IS STILL UNKNOWN.</p><div class="coming-soon">KITCITY — COMING SOON</div><p>ARC 1 COMPLETE</p><p>THE JOURNEY CONTINUES.</p></section>':'')+
-    (m.city==='kitcity'?'<p><b>Welcome to the T3Kit Hub. The journey through Nigeria was your preparation; KitCity is the destination.</b></p>':'')+
+    (m.storyFinale?'<section class="lost-value-finale"><p><b>36 STATES + THE FCT</b></p><p>THE INVESTIGATION IS COMPLETE</p><p>THE WORK CONTINUES THROUGH WHAT YOU CHOOSE TO BUILD.</p><hr><h2>KITCITY</h2><h3>THE LOST VALUE</h3><p>YOU HAVE THE EVIDENCE. THE NEXT CHAPTER IS YOURS.</p><p>BUILD · CREATE · RESEARCH · CONTRIBUTE · WORK</p></section>':'')+
+    (m.city==='kitcity'&&!m.storyFinale?'<p><b>Your next chapter begins here.</b></p>':'')+
     (cityComplete?'<p><b>All missions in '+CITIES[m.city].name+' are complete. Your city badge is available.</b></p>':'')+
     '<div class="kv"><span>Practice balance</span><b>'+P.usdc.toFixed(2)+' USDC</b></div>',btns);
 }
@@ -4667,7 +4666,7 @@ function showCityBadge(city,after){
 function certificate(){
   const totalMissions=currentMissions.length;
   const msg=encodeURIComponent(L('I completed KitCity’s current story journey and helped investigate The Lost Value across Nigeria. Can you uncover what happened?','I don complete KitCity current story journey and help investigate The Lost Value across Nigeria. You fit uncover wetin happen?'));
-  openSheet('<div class="badge">'+badgeSVG('\u2605',true,96)+'<div><h3 style="margin-top:0">KitCity Graduate</h3><small>All '+totalMissions+' current missions complete</small></div></div><p>You completed KitCity’s current story journey across 15 states. Your practice balance is <b>'+P.usdc.toFixed(2)+' USDC</b>.</p>',
+  openSheet('<div class="badge">'+badgeSVG('\u2605',true,96)+'<div><h3 style="margin-top:0">KitCity Graduate</h3><small>All '+totalMissions+' current missions complete</small></div></div><p>You completed KitCity’s current story journey across Nigeria and the FCT. Your practice balance is <b>'+P.usdc.toFixed(2)+' USDC</b>.</p>',
     [{t:'Back to hub',f:exitToHub}]);
   sheetEl.insertAdjacentHTML('beforeend',tx('<div class="row"><a class="btn" href="https://wa.me/?text='+msg+'" target="_blank" rel="noopener">Share on WhatsApp</a></div>'));
 }
