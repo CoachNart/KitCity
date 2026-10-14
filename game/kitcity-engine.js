@@ -4523,29 +4523,17 @@ const lostValueMissions=LOST_VALUE_STORY.map(story=>{
     cast:cast.map(({npc,spot})=>({npc,spot})),steps,extras:[]
   };
 });
-/* Keep the existing Lagos prologue first. The approved 15-state story arc follows
-   it, and the existing Web3 learning missions remain intact after the arc. */
+/* The active journey is the Lagos prologue followed by the approved 15-state
+   Lost Value story. Legacy lesson definitions must not enter current progression,
+   badges, city counts, or mission lookup. */
 MISSIONS[0].n=0;
 MISSIONS.slice(1).forEach(m=>{m.n+=LOST_VALUE_STORY.length-1;});
 MISSIONS.splice(1,0,...lostValueMissions);
 lostValueMissions.forEach(m=>{MBY[m.id]=m;});
 const currentMissions=[MISSIONS[0],...lostValueMissions];
+MISSIONS.splice(0,MISSIONS.length,...currentMissions);
+Object.keys(MBY).forEach(id=>{if(!currentMissions.some(m=>m.id===id)) delete MBY[id];});
 cityOrder.length=0; cityOrder.push(...new Set(currentMissions.map(m=>m.city)));
-
-const cityMissions=city=>{
-  const seenIds=new Set(),seenContent=new Set(),out=[];
-  for(const m of MISSIONS){
-    if(m.city!==city||seenIds.has(m.id)) continue;
-    const key=String(m.title||'').normalize('NFKC').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
-    const contentKey=key;
-    if(seenContent.has(contentKey)) continue;
-    seenIds.add(m.id); seenContent.add(contentKey); out.push(m);
-  }
-  return out;
-};
-/* The state mission pages show only the active Lost Value story arc.
-   Legacy learning missions remain in the registry for progression compatibility,
-   but are deliberately excluded from the current mission-card UI. */
 const currentCityMissions=city=>currentMissions.filter(m=>m.city===city);
 const isCityComplete=city=>{const ms=currentCityMissions(city);return ms.length>0&&ms.every(m=>!!P.done[m.id]);};
 const isCityUnlocked=city=>{const ms=currentCityMissions(city);return ms.length>0&&isUnlocked(ms[0]);};
