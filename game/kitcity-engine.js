@@ -52,6 +52,8 @@ const DEFAULT_PLAYER={wallet:null,usdc:0,ngn:0,done:{},dodged:0,fell:0,low:false
 let activeUid=Store.get('kitcity_active_uid',null);
 let storageKey=activeUid?KEY+'_user_'+activeUid:KEY;
 const P=Object.assign({},DEFAULT_PLAYER,Store.get(storageKey,{}));
+// Older saves may contain a language that this build no longer supports.
+if(!['en','pcm'].includes(P.lang)) P.lang='en';
 if(!P.done||typeof P.done!=='object') P.done={};
 let cloudSyncReady=false;
 function progressSnapshot(){ return {wallet:P.wallet,usdc:P.usdc,ngn:P.ngn,done:P.done,dodged:P.dodged,fell:P.fell,low:P.low,music:P.music,sfx:P.sfx,lang:P.lang,pl:P.pl,name:P.name,scores:P.scores,web3:P.web3,storyPrologueSeen:!!P.storyPrologueSeen}; }
@@ -5059,7 +5061,8 @@ if(firebaseConfigured){
   }).catch(()=>updateAuthButton());
 }else updateAuthButton();
 function applyLang(){
-  document.documentElement.lang=({en:'en',pcm:'pcm',ha:'ha',yo:'yo',ig:'ig'})[P.lang]||'en';
+  if(!['en','pcm'].includes(P.lang)) P.lang='en';
+  document.documentElement.lang=P.lang==='pcm'?'en-NG':'en';
   document.querySelectorAll('[data-t]').forEach(el=>{ if(!el.dataset.en) el.dataset.en=el.textContent; const translated=el.dataset[P.lang]; el.textContent=translated||tr(el.dataset.en); });
   document.querySelectorAll('[data-lang]').forEach(b=>b.classList.toggle('on',b.dataset.lang===P.lang));
   translateDOM(document,P.lang);
