@@ -4504,13 +4504,13 @@ const lostValueMissions=LOST_VALUE_STORY.map(story=>{
   const clue={
     kind:'clue',label:story.task,spot:'lvE',title:story.evidenceTitle,sign:story.evidenceTitle.toUpperCase(),
     run(){
-      openSheet('<section class="record-center-card"><div class="record-center-top"><span class="record-center-mark">KITCITY / FIELD ARCHIVE</span><span class="record-center-index">'+String(story.n).padStart(2,'0')+' / 15</span></div><div class="record-center-heading"><span class="record-center-icon">✳</span><div><small>RECORD CENTER · '+lostValueEscape(story.state)+'</small><h3>'+lostValueEscape(story.evidenceTitle)+'</h3></div></div><div class="record-center-copy">'+lostValueEscape(story.evidenceBody)+'</div><div class="record-center-task"><span>YOUR OBJECTIVE</span><b>'+lostValueEscape(story.task)+'</b></div></section>',
+      openSheet('<section class="record-center-card"><div class="record-center-top"><span class="record-center-mark">KITCITY / FIELD ARCHIVE</span><span class="record-center-index">'+String(story.n).padStart(2,'0')+' / '+String(LOST_VALUE_STORY.length).padStart(2,'0')+'</span></div><div class="record-center-heading"><span class="record-center-icon">✳</span><div><small>RECORD CENTER · '+lostValueEscape(story.state)+'</small><h3>'+lostValueEscape(story.evidenceTitle)+'</h3></div></div><div class="record-center-copy">'+lostValueEscape(story.evidenceBody)+'</div><div class="record-center-task"><span>YOUR OBJECTIVE</span><b>'+lostValueEscape(story.task)+'</b></div></section>',
         [{t:'Record evidence',f:()=>{
           if(G) G.evidence[story.id]=true;
           closeSheet();
           finishStep();
           if(closingLines.length){
-            openSheet('<section class="record-center-card"><div class="record-center-top"><span class="record-center-mark">KITCITY / FIELD REPORT</span><span class="record-center-index">'+String(story.n).padStart(2,'0')+' / 15</span></div><div class="record-center-heading"><span class="record-center-icon">✓</span><div><small>EVIDENCE RECORDED</small><h3>Report your findings</h3></div></div><div class="record-center-copy">The record has been inspected. Return to '+lostValueEscape(closingLead.name)+' and report what you found. Follow the compass arrow.</div></section>',
+            openSheet('<section class="record-center-card"><div class="record-center-top"><span class="record-center-mark">KITCITY / FIELD REPORT</span><span class="record-center-index">'+String(story.n).padStart(2,'0')+' / '+String(LOST_VALUE_STORY.length).padStart(2,'0')+'</span></div><div class="record-center-heading"><span class="record-center-icon">✓</span><div><small>EVIDENCE RECORDED</small><h3>Report your findings</h3></div></div><div class="record-center-copy">The record has been inspected. Return to '+lostValueEscape(closingLead.name)+' and report what you found. Follow the compass arrow.</div></section>',
               [{t:'Return to '+lostValueEscape(closingLead.name),f:closeSheet}]);
           }
         }}]);
