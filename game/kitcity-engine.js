@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { translateText, translateHTML, SUPPORTED_LANGUAGES } from './localization';
 import { createStorySceneDirector } from './story-scene-director';
 import { LOST_VALUE_STORY } from './lost-value-story';
 import {
@@ -377,29 +378,10 @@ const Snd=(function(){
 })();
 window.addEventListener('pointerdown',()=>Snd.unlock());
 
-/* =====================  language: English / Naija Pidgin  ===================== */
-const L=(en,pcm)=>P.lang==='pcm'?pcm:en;
-const PCM={
-/*PCM_BEGIN*/
-/*PCM_END*/
-};
-const RULES=[
-/*RULES_BEGIN*/
-/*RULES_END*/
-];
-function tr(t){
-  if(P.lang!=='pcm'||!t) return t;
-  const m=t.match(/^(\s*)([\s\S]*?)(\s*)$/),core=m[2];
-  if(!core||!/[A-Za-z]/.test(core)) return t;
-  /*MISS*/
-  let out=PCM[core];
-  if(out===undefined){ for(let i=0;i<RULES.length;i++){ const mm=core.match(RULES[i][0]); if(mm){ out=RULES[i][1].apply(null,mm); break; } } }
-  return out===undefined?t:m[1]+out+m[3];
-}
-function tx(html){
-  if(P.lang!=='pcm'||!html) return html;
-  return html.replace(/(^|>)([^<>]+)(?=<|$)/g,(m,a,t)=>a+tr(t));
-}
+/* =====================  localization (isolated phrasebook)  ===================== */
+const L=(en,pcm)=>P.lang==='pcm'&&pcm?pcm:translateText(en,P.lang);
+function tr(value){ return translateText(value,P.lang); }
+function tx(html){ return translateHTML(String(html==null?'':html),P.lang); }
 
 /* =====================  renderer / scene  ===================== */
 const renderer=new THREE.WebGLRenderer({canvas:$('#gl'),antialias:true,powerPreference:'high-performance'});
