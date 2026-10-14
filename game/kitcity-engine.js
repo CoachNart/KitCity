@@ -514,6 +514,19 @@ const LOCALIZED={
 'Place the recovered evidence on the archive wall and choose the value the next stage should emphasise.':['Put the evidence on the archive wall and choose the value wey the next stage go focus on.','Sanya hujjojin da aka samo a bangon ajiya ka zaɓi ƙimar da mataki na gaba zai fi mayar da hankali a kai.','Gbé ẹ̀rí tí a rí padà sí odi àkójọ, kí o sì yan iye tí ìpele tó ń bọ̀ yóò tẹnu mọ́.','Debe ihe akaebe ahụ na mgbidi ebe nchekwa ma họrọ uru nke ọkwa na-abịa ga-elekwasị anya na ya.'],
 'Close the first playable arc, connect the evidence, and establish the larger journey through the remaining states.':['Close the first playable story, connect the evidence and set up the bigger journey through the remaining states.','Rufe labarin farko da ake iya kunnawa, haɗa hujjoji, sannan ka shirya babbar tafiya ta sauran jihohi.','Parí ìtàn àkọ́kọ́ tí a lè ṣeré, so ẹ̀rí pọ̀, kí o sì ṣètò ìrìnàjò tó gbooro káàkiri àwọn ìpínlẹ̀ tó kù.','Mechie akụkọ mbụ a pụrụ igwu egwu, jikọta ihe akaebe, ma guzobe njem ka ukwuu gafee steeti ndị fọdụrụ.'],
 'Place the final evidence on the archive wall and review the connections between the 15 missions.':['Put the final evidence on the archive wall and review how the 15 missions connect.','Sanya hujjar ƙarshe a bangon ajiya ka duba alaƙar ayyuka 15 ɗin.','Gbé ẹ̀rí ìkẹyìn sí odi àkójọ, kí o sì ṣàyẹ̀wò bí iṣẹ́ mẹ́ẹ̀ẹ́dógún náà ṣe so pọ̀.','Debe ihe akaebe ikpeazụ na mgbidi nchekwa ma nyochaa njikọ dị n’etiti ọrụ iri na ise.'],
+'Play':['Play','Play','Ṣeré','Kpọọ egwu'],
+'Replay':['Replay','Replay','Tún ṣeré','Kpọọ ọzọ'],
+'Completed':['Completed','Completed','Parí','Emechara'],
+'Up to +0.50 USDC':['Up to +0.50 USDC','Up to +0.50 USDC','Títí dé +0.50 USDC','Ruo +0.50 USDC'],
+'ACHIEVEMENT EARNED':['ACHIEVEMENT EARNED','ACHIEVEMENT EARNED','A TI GBA ÀṢEYỌRÍ','ENWEWO NZỌRỌ'],
+'NOT EARNED YET':['NOT EARNED YET','NOT EARNED YET','A KÒ TÍÌ GBA A','ENWEBEGHỊ YA'],
+'Share on WhatsApp':['Share on WhatsApp','Share on WhatsApp','Pín lórí WhatsApp','Kekọrịta na WhatsApp'],
+'Use playlist':['Use playlist','Use playlist','Lo àkójọ orin','Jiri ndepụta egwu'],
+'Skip song':['Skip song','Skip song','Fo orin','Mafee egwu'],
+'Install':['Install','Install','Fi sí ẹ̀rọ','Wụnye'],
+'Take KitCity with you':['Take KitCity with you','Take KitCity with you','Mú KitCity lọ pẹ̀lú rẹ','Were KitCity soro gị'],
+'Preparing your city':['Preparing your city','Preparing your city','A ń pèsè ìlú rẹ','Na-akwadebe obodo gị'],
+'Loading city…':['Loading city…','Loading city…','A ń ṣí ìlú…','Na-ebunye obodo…'],
 'The Evidence Wall':['The Evidence Wall','The Evidence Wall','Odi Ẹ̀rí','Mgbidi Ihe Akaebe']
 };
 const PCM={
@@ -527,13 +540,18 @@ const PCM={
 };
 function tr(t){
   if(!t) return t;
-  const m=String(t).match(/^(\s*)([\s\S]*?)(\s*)$/),core=m[2];
-  if(!core||!/[A-Za-z]/.test(core)) return t;
-  if(P.lang==='en') return t;
-  let out;
-  if(P.lang==='pcm') out=PCM[core];
-  else { const row=LOCALIZED[core]; if(row) out=row[({pcm:0,ha:1,yo:2,ig:3})[P.lang]??0]; }
-  return out===undefined?t:m[1]+out+m[3];
+  const m=String(t).match(/^(\\s*)([\\s\\S]*?)(\\s*)$/),core=m[2];
+  if(!core||!/[A-Za-z]/.test(core)||P.lang==='en') return t;
+  const index=({pcm:0,ha:1,yo:2,ig:3})[P.lang];
+  let out=P.lang==='pcm'?PCM[core]:(LOCALIZED[core]&&LOCALIZED[core][index]);
+  if(out===undefined){
+    out=core;
+    const keys=Object.keys(LOCALIZED).sort((x,y)=>y.length-x.length);
+    for(const key of keys){ if(!key||!out.includes(key)) continue; const row=LOCALIZED[key]; const value=row&&row[index]; if(value&&value!==key) out=out.split(key).join(value); }
+    if(P.lang==='pcm') for(const key of Object.keys(PCM).sort((x,y)=>y.length-x.length)){ if(out.includes(key)) out=out.split(key).join(PCM[key]); }
+    if(out===core) return t;
+  }
+  return m[1]+out+m[3];
 }
 function tx(html){
   if(!html) return html;
