@@ -244,7 +244,7 @@ const CATALOG = {
     "Understand signing messages and why unlimited approvals are risky.": "Understand signing messages and why unlimited approvals are risky.",
     "Learn how community votes work and how to read a proposal.": "Learn how community votes work and how to read a proposal.",
     "Sell USDC for naira with a peer, and never release before you are paid.": "Sell USDC for naira with a peer, and never release before you are paid.",
-    "Receive your first payment": "Receive your first payment",
+    "Receive your first payment": "Collect your first payment",
     "Give the right address, match the network, and send a real payment on it.": "Give the right address, match the network, and send a real payment on it.",
     "Prove a bounty deliverable": "Prove a bounty deliverable",
     "Submit a verifiable work reference, match it to the bounty requirements, and confirm the payout record.": "Submit a verifiable work reference, match it to the bounty requirements, and confirm the payout record.",
