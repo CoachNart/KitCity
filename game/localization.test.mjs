@@ -71,6 +71,23 @@ test('all story mission titles, goals, objectives, and evidence records have cat
   }
 });
 
+test('account UI and core mission titles have reviewed translations', () => {
+  const phrases = [
+    'EMAIL ADDRESS',
+    'PASSWORD',
+    'PLAYER USERNAME',
+    'The First Promise',
+    'The Price of Trust',
+    'The Lost Value',
+    'Receive your first payment',
+  ];
+  for (const language of ['pcm', 'ha', 'yo', 'ig']) {
+    for (const phrase of phrases) {
+      assert.notEqual(translateText(phrase, language), phrase, language + ': ' + phrase);
+    }
+  }
+});
+
 test('HTML translation changes text nodes only and keeps markup intact', () => {
   assert.equal(translateHTML('<button>Settings</button>', 'ha'), '<button>Saituna</button>');
   assert.equal(
