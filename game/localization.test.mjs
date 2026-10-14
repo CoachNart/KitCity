@@ -37,6 +37,15 @@ test('translation preserves whitespace and leaves unknown phrases safe', () => {
   assert.equal(translateText('Settings', 'unsupported'), 'Settings');
 });
 
+test('opening cinematic dialogue is translated for all four non-English languages', () => {
+  const source = 'So this T3Kit thing connects all these people?';
+  const line = 'Another day. Another transaction. Another promise of something better.';
+  for (const language of ['pcm', 'ha', 'yo', 'ig']) {
+    assert.notEqual(translateText(source, language), source, language);
+    assert.notEqual(translateText(line, language), line, language);
+  }
+});
+
 test('HTML translation changes text nodes only and keeps markup intact', () => {
   assert.equal(translateHTML('<button>Settings</button>', 'ha'), '<button>Saituna</button>');
   assert.equal(
