@@ -1,23 +1,28 @@
 const SPEAKER_LABELS = {
-  Softstorm: 'THE ONE WITH THE CARD',
-  IamAbdul: 'THE ONE WHO HEARD IT FIRST',
+  Softstorm: 'THE ONE WHO BUILDS',
+  IamAbdul: 'THE ONE ASKING QUESTIONS',
 };
 
 const OPENING_PANELS = [
-  { shot: 'wide', kicker: 'LAGOS · 3:42 PM', caption: 'Another day. Another transaction. Another promise of something better.', next: 'next' },
-  { shot: 'conversation', speaker: 'IamAbdul', text: 'So this T3Kit thing connects all these people?', next: 'next' },
-  { shot: 'conversation', speaker: 'Softstorm', text: 'That’s what I’m trying to figure out. The same name keeps showing up in places that should have nothing in common.', next: 'next' },
-  { shot: 'conversation', speaker: 'IamAbdul', text: 'Then why does nobody explain what it is?', next: 'next' },
-  { shot: 'player', kicker: 'YOUR THOUGHTS', caption: 'T3Kit? You’ve heard the name for the first time today. But something about the way they’re talking makes you want to know more.', next: 'next' },
-  { shot: 'wide', kicker: 'YOUR MOVE', caption: 'What do you do?', choices: [
-    { label: 'Walk over and ask them', target: 6 },
-    { label: 'Stay back and listen a little longer', target: 7 },
+  { shot: 'wide', kicker: 'LAGOS · 3:42 PM', caption: 'The city is full of people chasing opportunities. But what makes an opportunity worth believing in?', next: 'next' },
+  { shot: 'conversation', speaker: 'IamAbdul', text: 'Everybody is talking about Web3. Tokens, projects, new platforms. But what are people actually building with all this?', next: 'next' },
+  { shot: 'softstorm', speaker: 'Softstorm', text: 'There’s real potential here. People can learn new skills, build products, find work, create together, and solve problems that matter.', next: 'next' },
+  { shot: 'abdul', speaker: 'IamAbdul', text: 'Then why does the conversation always come back to hype and price?', next: 'next' },
+  { shot: 'player', kicker: 'YOUR THOUGHTS', caption: 'You’ve heard the promises too. You want to see what this world can actually offer—and what happens when people forget why they started.', next: 'next' },
+  { shot: 'wide', kicker: 'YOUR MOVE', caption: 'Softstorm and IamAbdul are still talking. What do you do?', choices: [
+    { label: 'Walk over and join the conversation', target: 6 },
+    { label: 'Listen a little longer before speaking', target: 7 },
   ] },
-  { shot: 'softstorm', speaker: 'Softstorm', text: 'You heard us, abi? Fair enough. We’re trying to understand something ourselves. If you want answers, start with the people connected to it.', next: 'next' },
-  { shot: 'abdul', speaker: 'IamAbdul', text: 'I saw that symbol on an old meetup poster too. Same mark. Different place. That can’t be a coincidence.', next: 'next' },
-  { shot: 'clue', kicker: 'CLUE ACQUIRED: THE T3KIT MARK', caption: 'One name. Two people. No clear answers.', card: true, finish: true },
+  { shot: 'character', speaker: 'PLAYER', text: 'Sorry, I caught part of that. I’m curious too—what does building something useful in Web3 actually look like?', next: 8 },
+  { shot: 'abdul', speaker: 'IamAbdul', text: 'I was wondering the same thing. Everybody has a pitch. I want to see what people can really do with it.', next: 8 },
+  { shot: 'softstorm', speaker: 'Softstorm', text: 'That’s a fair question. 3Kit is an ecosystem designed to give people different ways into Web3: learning, exploring career paths, building, creating, and using tools that can make trading easier to understand.', next: 'next' },
+  { shot: 'abdul', speaker: 'IamAbdul', text: 'And KitaKage is the gaming side of that ecosystem, right? A place to explore and discover how these ideas connect to real people and real choices.', next: 'next' },
+  { shot: 'character', speaker: 'PLAYER', text: 'Then why call this story The Lost Value?', next: 'next' },
+  { shot: 'softstorm', speaker: 'Softstorm', text: 'Because value was never just a token price. It was what people could learn, what they could create, the problems they could solve, and the opportunities they could open for others.', next: 'next' },
+  { shot: 'abdul', speaker: 'IamAbdul', text: 'We can have more projects, more money, and more attention—and still lose sight of what made any of it worthwhile.', next: 'next' },
+  { shot: 'wide', kicker: 'THE LOST VALUE', caption: 'Learn. Build. Create. Contribute. The journey begins with one question: are we making something valuable for people, or have we become distracted by everything around it?', next: 'next' },
+  { shot: 'clue', kicker: 'PROLOGUE COMPLETE', caption: 'Your first lead is waiting in Lagos. Find out what people were promised—and what they actually received.', card: true, finish: true },
 ];
-
 function escapeHtml(value) {
   return String(value == null ? '' : value).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
 }
@@ -59,7 +64,7 @@ export function createStorySceneDirector({ camera, player, getCharacter, getChar
       <div class="comic-scene-top"><span class="comic-brand">KITCITY <i>·</i> THE LOST VALUE</span><button type="button" class="comic-skip">SKIP SCENE ↗</button></div>
       <div class="comic-scene-frame">
         <div class="comic-frame-stamp">ISSUE 001</div>
-        <div class="comic-card-symbol" aria-hidden="true"><span> T3 </span><b>KIT</b></div>
+        <div class="comic-card-symbol" aria-hidden="true"><span>3</span><b>KIT</b></div>
         <div class="comic-caption"><small class="comic-kicker"></small><p class="comic-caption-text"></p></div>
       </div>
       <div class="comic-speech-bubble hidden" aria-live="polite"><small class="comic-speech-speaker"></small><p class="comic-speech-text"></p></div>
@@ -258,6 +263,7 @@ export function createStorySceneDirector({ camera, player, getCharacter, getChar
       return;
     }
     if (panel && panel.next === 'next') show(panelIndex + 1);
+    else if (panel && Number.isInteger(panel.next)) show(panel.next);
   }
 
   function finish() {
