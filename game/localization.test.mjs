@@ -85,15 +85,15 @@ test('all story mission titles, goals, objectives, and evidence records have cat
   }
 });
 
-test('first four story missions translate every dialogue line and player choice', async () => {
+test('first six story missions translate every dialogue line and player choice', async () => {
   const source = await readFile(new URL('./lost-value-story.js', import.meta.url), 'utf8');
-  const missionBlocks = [...source.matchAll(/dialogue:\s*\[([\s\S]*?)\n\s*\],/g)].slice(0, 4);
-  assert.equal(missionBlocks.length, 4, 'first four mission dialogue blocks must be found');
+  const missionBlocks = [...source.matchAll(/dialogue:\s*\[([\s\S]*?)\n\s*\],/g)].slice(0, 6);
+  assert.equal(missionBlocks.length, 6, 'first six mission dialogue blocks must be found');
   const phrases = missionBlocks.flatMap(block =>
     [...block[1].matchAll(/\[['"](?:\\.|[^'"])*['"],\s*'((?:\\.|[^'\\])*)'\]/g)]
       .map(match => match[1].replace(/\\'/g, "'"))
   );
-  assert.ok(phrases.length >= 25, 'expected all dialogue lines from the first four missions');
+  assert.ok(phrases.length >= 25, 'expected all dialogue lines from the first six missions');
   for (const language of ['pcm', 'ha', 'yo', 'ig']) {
     const report = auditLocalization(phrases, language);
     assert.deepEqual(report.missing, [], language + ' has untranslated dialogue in the first four missions');
