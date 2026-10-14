@@ -7,7 +7,7 @@ export const LOST_VALUE_CONTINUATION = [
   {
     id:'lost-value-16', n:16, state:'Ogun State', city:'abeokuta', title:'The Builder Who Walked Away',
     goal:'Discover why a capable builder left a promising project and recover the agreement that was never made clear.',
-    value:'FAIR AGREEMENTS', cast:['Tessa','PLAYER'], splitAfter:3,
+    value:'FAIR AGREEMENTS', cast:['Tessa'], splitAfter:3,
     dialogue:[
       ['Tessa','I left the team before launch. They called me disloyal.'],
       ['PLAYER','What made you walk away?'],
@@ -301,7 +301,7 @@ export const LOST_VALUE_CONTINUATION = [
   {
     id:'lost-value-37', n:37, state:'Federal Capital Territory', city:'abuja', title:'The Room Where Everything Meets',
     goal:'Bring the evidence together in a cross-community review and choose the next action based on what people need.',
-    value:'COORDINATION', cast:['Softstorm','IamAbdul','Kenny','PLAYER'], splitAfter:4,
+    value:'COORDINATION', cast:['Softstorm','IamAbdul','Kenny'], splitAfter:4,
     dialogue:[
       ['IamAbdul','We came here expecting to find one missing project and one person to blame.'],
       ['Kenny','Instead, we found different problems that kept repeating because the work never connected.'],
