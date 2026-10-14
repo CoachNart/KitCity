@@ -63,7 +63,6 @@ export function createStorySceneDirector({ camera, player, getCharacter, getChar
       <div class="comic-scene-top"><span class="comic-brand">KITCITY <i>·</i> THE LOST VALUE</span><button type="button" class="comic-skip">SKIP SCENE ↗</button></div>
       <div class="comic-scene-frame">
         <div class="comic-frame-stamp">ISSUE 001</div>
-        <div class="comic-card-symbol" aria-hidden="true"><span>3</span><b>KIT</b></div>
         <div class="comic-caption"><small class="comic-kicker"></small><p class="comic-caption-text"></p></div>
       </div>
       <div class="comic-speech-bubble hidden" aria-live="polite"><small class="comic-speech-speaker"></small><p class="comic-speech-text"></p></div>
