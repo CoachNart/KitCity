@@ -1,11 +1,17 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {
+import { readFile } from 'node:fs/promises';
+
+// Load the production module as ESM without changing the app's package type or
+// relying on experimental Node flags that differ between local and Vercel builds.
+const moduleSource = await readFile(new URL('./localization.js', import.meta.url), 'utf8');
+const moduleUrl = 'data:text/javascript;base64,' + Buffer.from(moduleSource).toString('base64');
+const {
   SUPPORTED_LANGUAGES,
   translateText,
   translateHTML,
   auditLocalization,
-} from './localization.js';
+} = await import(moduleUrl);
 
 test('all supported language codes are present', () => {
   assert.deepEqual(Object.keys(SUPPORTED_LANGUAGES), ['en', 'pcm', 'ha', 'yo', 'ig']);
