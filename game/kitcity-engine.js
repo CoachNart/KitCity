@@ -4296,7 +4296,7 @@ const MBY={}; MISSIONS.forEach(m=>{ MBY[m.id]=m; });
 const loc=(name,role,color,look,sub)=>NPC(name,role,color,look,{body:color,a:'#ffffff',b:YELLOW,sub:sub});
 const BADGES=['Wallet Starter','Swap Smart','Scam Spotter','Key Keeper','Safe Sender','Passport Holder','Community Voice','Cash-out Pro','Fare Payer','Club Skeptic','Gas Watcher','Escrow Trader','Off-ramp Pro','Depeg Calm','Mint Checker','Pump Spotter','Buffer Keeper','Pool Wise','Hardware Holder','Multisig Team','Wallet Splitter','Record Keeper','Phone Buyer','Phish Doubter','School Donor','Review Reader','Remit Careful','Lost Phone Calm','Invoice Checker','Crowdfund Skeptic','Gate Watcher','Ledger Clear','Oil Money Smart','Creek Careful','Tailor Shield','Bank Alert Calm','Loan Sense','Herd Wise','Flyer Doubter','Relief Guard','Gift Pool Wise','Clearance Check','Lucky Draw Skeptic','Cocoa Careful','Gold Audit','Tour Verifier','Lease Check','Supply Watch','Scholar Shield','Fee Guard','Rent Shield','Franchise Check','Loan Sense','Course Skeptic','Input Verified','Bureau Wise','PIN Guard','Bulk Buyer Check','Partner Guard','Recharge Safe','Abia Shoe Check','Land Title Check','Net Co-op','Produce Guard','Pump Verifier','Travel Licence','Seed Scheme Sense','Pond Skeptic','Job Fee Guard','Bond Checker','Permit Honest','Feed Invoice','Ticket Honest','Grove Trust','Cocoa Terms','Park Permit','Solar Limit','Export Office','Gold Licence','Cattle Terms','Genesis Access'];
 /* Progress is tracked by completed missions and practice USDC. */
-const isUnlocked=m=>{ const k=MISSIONS.indexOf(m); return k===0||!!P.done[MISSIONS[k-1].id]; };
+const isUnlocked=m=>{ const id=String(m&&m.id||''); if(id.startsWith('lost-value-')){ const list=currentCityMissions(m.city); const index=list.findIndex(item=>item.id===m.id); if(index<0) return false; if(index>0) return !!P.done[list[index-1].id]; const cityIndex=cityOrder.indexOf(m.city); return cityIndex<=0||cityOrder.slice(0,cityIndex).every(isCityComplete); } const k=MISSIONS.indexOf(m); return k===0||!!P.done[MISSIONS[k-1].id]; };
 
 
 const cityOrder=[...new Set(MISSIONS.map(m=>m.city))];
@@ -4546,8 +4546,8 @@ const cityMissions=city=>{
    Legacy learning missions remain in the registry for progression compatibility,
    but are deliberately excluded from the current mission-card UI. */
 const currentCityMissions=city=>cityMissions(city).filter(m=>String(m.id||'').startsWith('lost-value-'));
-const isCityComplete=city=>{const ms=cityMissions(city);return ms.length>0&&ms.every(m=>!!P.done[m.id]);};
-const isCityUnlocked=city=>{const ms=cityMissions(city);return ms.length>0&&isUnlocked(ms[0]);};
+const isCityComplete=city=>{const ms=currentCityMissions(city);return ms.length>0&&ms.every(m=>!!P.done[m.id]);};
+const isCityUnlocked=city=>{const ms=currentCityMissions(city);return ms.length>0&&isUnlocked(ms[0]);};
 /* =====================  mission flow  ===================== */
 function hideEnt(e){ e.hidden=true; loadStep(); }
 function resetPlayer(){
@@ -4849,6 +4849,7 @@ $('#hub').addEventListener('click',async e=>{
       }
       await signOutCurrentUser();
       cloudSyncReady=false;
+      restoredSessionReady=false;
       $('#hub').classList.add('hidden');
       $('#hub').setAttribute('aria-hidden','true');
       $('#title').classList.remove('hidden');
@@ -4878,9 +4879,11 @@ const playerPasswordInput=$('#playerPassword');
 const shareLocationInput=$('#shareLocation');
 let authMode='signin';
 let authBusy=false;
+let restoredSessionReady=false;
 if(playerNameInput){ playerNameInput.value=P.name||''; }
 function updateAuthButton(){
   const signedIn=!!getCurrentAuthUser();
+  if(signInPageButton) signInPageButton.textContent=signedIn?(restoredSessionReady?'Enter KitCity':'Restoring your session…'):'Sign in';
   const startButton=$('#startBtn');
   if(startButton) startButton.textContent=signedIn?'Continue to KitCity':(authMode==='signup'?'Create account & enter KitCity':'Sign in & enter KitCity');
   const passwordLabel=document.querySelector('label[for="playerPassword"]');
@@ -4895,7 +4898,7 @@ function setAuthMode(mode){
 }
 document.querySelectorAll('[data-auth-mode]').forEach(b=>b.addEventListener('click',()=>setAuthMode(b.dataset.authMode)));
 const signInPageButton=$('#signInPageBtn');
-if(signInPageButton) signInPageButton.addEventListener('click',()=>{ window.location.href='/auth'; });
+if(signInPageButton) signInPageButton.addEventListener('click',()=>{ if(getCurrentAuthUser()){ if(restoredSessionReady) beginGame(); return; } window.location.href='/auth'; });
 const authOpenButton=$('#authOpenBtn');
 const authBackButton=$('#authBackBtn');
 if(authOpenButton) authOpenButton.addEventListener('click',()=>{
@@ -4978,7 +4981,8 @@ async function submitPlayerName(){
     cloudSyncReady=true;
     save();
     if(playerNameError) playerNameError.textContent='';
-    beginGame();
+    restoredSessionReady=true;
+    updateAuthButton();
   }catch(error){
     if(playerNameError) playerNameError.textContent=authErrorMessage(error);
   }finally{
@@ -5006,7 +5010,8 @@ async function resumeAuthenticatedUser(user){
     cloudSyncReady=true;
     save();
     if(playerNameError) playerNameError.textContent='';
-    beginGame();
+    restoredSessionReady=true;
+    updateAuthButton();
   }catch(error){
     if(playerNameError) playerNameError.textContent='Could not restore your saved session. '+authErrorMessage(error);
   }finally{
