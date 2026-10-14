@@ -143,7 +143,7 @@ export function createStorySceneDirector({ camera, player, getCharacter, getChar
     let target = hero || new camera.position.constructor(0, 0, 0);
     let position;
     const mobilePortrait = window.matchMedia('(max-width: 699px) and (orientation: portrait)').matches;
-    if (key === 'wide' || key === 'clue' || key === 'conversation' || key === 'character') {
+    if (key === 'wide' || key === 'clue' || key === 'conversation' || (key === 'character' && !genericScene)) {
       // The opening scene is staged as one three-person conversation, not separate
       // shots that strand the player away from the two NPCs.
       const points = [hero, soft, abdul].filter(Boolean);
@@ -169,6 +169,24 @@ export function createStorySceneDirector({ camera, player, getCharacter, getChar
     } else if (key === 'softstorm') {
       target = soft || abdul || target;
       position = target.clone().add(new camera.position.constructor(mobilePortrait ? -11 : -8, mobilePortrait ? 6 : 4.5, mobilePortrait ? 15 : 8));
+    } else if (key === 'character') {
+      const castPoints = typeof getCharacters === 'function' ? getCharacters().map(worldPosition).filter(Boolean) : [];
+      if (castPoints.length) {
+        const minX = Math.min(...castPoints.map(point => point.x));
+        const maxX = Math.max(...castPoints.map(point => point.x));
+        const minZ = Math.min(...castPoints.map(point => point.z));
+        const maxZ = Math.max(...castPoints.map(point => point.z));
+        target = new camera.position.constructor((minX + maxX) / 2, 0, (minZ + maxZ) / 2);
+        const spanX = maxX - minX, spanZ = maxZ - minZ;
+        const distance = mobilePortrait
+          ? Math.max(38, spanX * 2.5 + 24, spanZ * 2.5 + 24)
+          : Math.max(24, spanX * 1.65 + 16, spanZ * 1.65 + 16);
+        const height = mobilePortrait ? Math.max(10, distance * .25) : Math.max(7, distance * .22);
+        position = target.clone().add(new camera.position.constructor(0, height, distance));
+      } else {
+        target = worldPosition(speaker && getCharacter(speaker)) || hero || soft || abdul || target;
+        position = target.clone().add(new camera.position.constructor(mobilePortrait ? 7 : 4, mobilePortrait ? 6 : 3.5, mobilePortrait ? 23 : 9));
+      }
     } else {
       target = hero || soft || abdul || target;
       position = target.clone().add(new camera.position.constructor(7, 4, 8));
