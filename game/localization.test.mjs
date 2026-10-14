@@ -71,6 +71,21 @@ test('all story mission titles, goals, objectives, and evidence records have cat
   }
 });
 
+test('first two story missions translate every dialogue line and player choice', async () => {
+  const source = await readFile(new URL('./lost-value-story.js', import.meta.url), 'utf8');
+  const missionBlocks = [...source.matchAll(/dialogue:\s*\[([\s\S]*?)\n\s*\],/g)].slice(0, 2);
+  assert.equal(missionBlocks.length, 2, 'first two mission dialogue blocks must be found');
+  const phrases = missionBlocks.flatMap(block =>
+    [...block[1].matchAll(/\[['"](?:\\.|[^'"])*['"],\s*'((?:\\.|[^'\\])*)'\]/g)]
+      .map(match => match[1].replace(/\\'/g, "'"))
+  );
+  assert.ok(phrases.length >= 25, 'expected all dialogue lines from the first two missions');
+  for (const language of ['pcm', 'ha', 'yo', 'ig']) {
+    const report = auditLocalization(phrases, language);
+    assert.deepEqual(report.missing, [], language + ' has untranslated dialogue in the first two missions');
+  }
+});
+
 test('account UI and core mission titles have reviewed translations', () => {
   const phrases = [
     'EMAIL ADDRESS',
