@@ -51,7 +51,7 @@ test('unsupported or legacy language codes safely fall back to English copy', ()
 });
 
 test('Pidgin covers all story mission titles, goals, tasks and evidence copy', async () => {
-  const source = await readFile(new URL('./lost-value-story.js', import.meta.url), 'utf8');
+  const source = (await Promise.all(['./lost-value-story.js', './lost-value-continuation.js'].map(path => readFile(new URL(path, import.meta.url), 'utf8')))).join('\n');
   const phrases = [...source.matchAll(/\b(title|goal|task|evidenceTitle|evidenceBody):\s*'((?:\\.|[^'\\])*)'/g)]
     .map(match => match[2].replace(/\\'/g, "'").trim()).filter(Boolean);
   assert.ok(phrases.length >= 75, 'expected mission metadata for the full story registry');
@@ -60,7 +60,7 @@ test('Pidgin covers all story mission titles, goals, tasks and evidence copy', a
 });
 
 test('Pidgin covers every dialogue line in the full story registry', async () => {
-  const source = await readFile(new URL('./lost-value-story.js', import.meta.url), 'utf8');
+  const source = (await Promise.all(['./lost-value-story.js', './lost-value-continuation.js'].map(path => readFile(new URL(path, import.meta.url), 'utf8')))).join('\n');
   const blocks = [...source.matchAll(/dialogue:\s*\[([\s\S]*?)\n\s*\],/g)];
   assert.ok(blocks.length >= 15, 'expected dialogue blocks across the complete story registry');
   const phrases = blocks.flatMap(block =>
