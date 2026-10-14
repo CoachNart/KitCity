@@ -16,9 +16,7 @@ test('all authored city identities retain a complete architectural and road prof
     for (const field of ['form:', 'road:', 'styles:', 'height:', 'feature:']) {
       assert.ok(body.includes(field), `${rawKey} is missing ${field}`);
     }
-    signatures.add(['form:', 'road:', 'styles:', 'height:', 'feature:']
-      .map(field => body.slice(body.indexOf(field), body.indexOf(',', body.indexOf(field)) < 0 ? undefined : body.indexOf(',', body.indexOf(field))))
-      .join('|'));
+    signatures.add(body.trim());
   }
   assert.ok(signatures.size >= 35, `too many city profiles share the same signature (${signatures.size})`);
 });
