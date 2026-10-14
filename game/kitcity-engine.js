@@ -2567,7 +2567,7 @@ function talk(def,html,btns){
   html=tx(personalize(html,G&&G.m,def));
   if(!S.modal||chat.npc!==def.name) chat={npc:def.name,log:[]};
   const npcName=String(def.name||'Local resident');
-  const playerLabel='YOU';
+  const playerLabel='You';
   const prev=chat.log.slice(-3).map(m=>'<div class="b '+(m.me?'me':'npc old')+'"><small class="speaker-tag">'+(m.me?playerLabel:npcName.toUpperCase())+'</small>'+m.html+'</div>').join('');
   const pl=plain(html);
   chat.log.push({html:pl.slice(0,80)+(pl.length>80?'\u2026':'')});
