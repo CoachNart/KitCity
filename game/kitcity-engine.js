@@ -1980,9 +1980,43 @@ function buildBackdrop(key){
   } else if(key==='benin'||key==='maiduguri'){
     mk(ico,CITIES[key].leaf,-290,3,40,30,6,40);
   } else {
-    mk(ico,'#9c8a74',-285,12,150,46,34,40,true); mk(ico,'#8e7d68',275,10,-70,36,26,32,true);
+    const C=CITIES[key]||{},form=C.form||'regional-capital',palette=C.paint||['#C9BDA5','#B9C5B5','#D4C5A6'];
+    // The horizon is authored by urban morphology, not a universal pair of hills.
+    if(['planned','planned-tropical','planned-river','regional-capital','savanna-capital'].includes(form)){
+      for(let i=0;i<13;i++){const x=-300+i*50,h=rr(14,42),w=rr(14,30);mk(box,palette[i%palette.length],x,h/2,rr(260,315),w,h,rr(14,24));if(i%3===0)mk(box,'#D4D8D2',x,h+4,rr(260,315),w*.6,2,rr(15,25));}
+    }else if(['historic','sahel'].includes(form)){
+      for(let i=0;i<10;i++){const x=-300+i*65,h=rr(7,18);mk(ico,C.dirt||'#B99B70',x,h,rr(270,320),rr(28,50),h,rr(20,38),true);}
+    }else if(['dense-market','southeast-market','southwest-sprawl','organic-sprawl','dense-coastal'].includes(form)){
+      for(let i=0;i<18;i++){const x=-315+i*36,h=rr(8,30),w=rr(13,25);mk(box,palette[i%palette.length],x,h/2,rr(270,315),w,h,rr(12,20));if(i%4===0)mk(box,'#B6A58C',x,h+1.2,rr(270,315),w*.65,1.2,rr(10,16));}
+    }else if(['delta-port','oil-port','rail-crossroads'].includes(form)){
+      for(let i=0;i<5;i++){const x=-210+i*100;mk(new THREE.CylinderGeometry(7,8,rr(16,28),16),i%2?'#7C8986':'#8D9692',x,10,285,1,1,1);mk(box,'#4D5757',x,22,285,2,7,2);}
+      for(let i=0;i<8;i++)mk(box,'#6C7774',-260+i*72,rr(5,10),305,rr(18,30),rr(10,20),rr(12,18));
+    }else if(['hillside','green-hills','rock-city','plateau'].includes(form)){
+      for(let i=0;i<12;i++){const x=-320+i*58,h=rr(18,55);mk(ico,form==='rock-city'?'#8D8170':(C.leaf||'#71856A'),x,h*.55,rr(270,325),rr(18,34),h,rr(22,40),true);}
+    }else if(['creek-town','river-town','confluence'].includes(form)){
+      water(1400,300,0,475,form==='confluence'?'#477D83':'#4F817B');
+      for(let i=0;i<14;i++){const x=-300+i*45,z=rr(270,320);mk(box,'#7A654B',x,1.2,z,rr(9,16),2.4,rr(8,14));if(i%2===0)mk(box,'#B9A37D',x,4,z,rr(8,14),.6,rr(8,12));}
+    }else{
+      for(let i=0;i<9;i++){const x=-280+i*70,h=rr(10,25);mk(ico,C.dirt||'#9C8A74',x,h,rr(270,320),rr(24,42),h,rr(20,34),true);}
+    }
   }
-  for(let i=0;i<60;i++){ const a=rr(0,6.28),r=rr(262,330),x=Math.cos(a)*r,z=Math.sin(a)*r; if((key==='lagos'||key==='calabar')&&z>255) continue; if(key==='ph'&&x>255) continue; mk(ico,CITIES[key].leaf,x,2,z,rr(2,3.5),rr(1.6,2.6),rr(2,3.5)); }
+  const C=CITIES[key]||{},form=C.form||'regional-capital';
+  const treeCount=(
+    ['historic','sahel'].includes(form)?8:
+    ['oil-port','delta-port','rail-crossroads'].includes(form)?14:
+    ['dense-market','southeast-market'].includes(form)?20:
+    ['planned','planned-tropical','planned-river'].includes(form)?24:
+    ['creek-town','river-town','confluence'].includes(form)?42:
+    ['hillside','green-hills','rock-city','plateau'].includes(form)?48:
+    ['dense-coastal','colonial-coast'].includes(form)?34:28
+  );
+  for(let i=0;i<treeCount;i++){
+    const a=rr(0,6.28),r=rr(264,330),x=Math.cos(a)*r,z=Math.sin(a)*r;
+    if((key==='lagos'||key==='calabar')&&z>255)continue;
+    if(key==='ph'&&x>255)continue;
+    const size=rr(2,3.5),leaf=C.leaf||'#54764B';
+    mk(ico,leaf,x,2,z,size,rr(1.4,2.8),size*(C.palm&&C.palm>.65?1.4:1),true);
+  }
 }
 /* ---- street chatter (barks) and location names ---- */
 let barkPool={},barkActive=[],barkT=3,locT=0,lastLoc='';
@@ -2172,6 +2206,66 @@ function addCityIdentityFeature(C){
     cyl(5,6,1,'#B7C4C3',0,.7,218,20);cyl(2.5,3,.7,'#8DA4A4',0,1.55,218,20);
   }
 }
+/* City-specific skyline silhouettes. These are decorative landmark anchors and
+ * deliberately stay outside mission routes, so they change identity without
+ * moving player/NPC/objective coordinates. */
+const CITY_SIGNATURES={
+  lagos:'bridge',abuja:'monument',kano:'gate',ph:'oil',ibadan:'tower',kaduna:'rail',
+  enugu:'coal',benin:'heritage',calabar:'festival',jos:'rocks',maiduguri:'gate',
+  owerri:'civic',aba:'market',umuahia:'civic',awka:'hill',onitsha:'bridge',asaba:'bridge',
+  uyo:'tower','ikot-ekpene':'palm',yenagoa:'stilt',warri:'oil',makurdi:'river',
+  ilorin:'minaret',akure:'rocks','ado-ekiti':'hill',osogbo:'heritage',abeokuta:'rocks',
+  lokoja:'confluence',lafia:'civic',bauchi:'gate',gombe:'tower',damaturu:'gate',
+  jalingo:'hill',yola:'river',sokoto:'minaret',katsina:'gate','birnin-kebbi':'river',
+  minna:'rail',dutse:'gate',gusau:'gate',kafanchan:'rail',damboa:'gate',
+  abakaliki:'market',bayelsa:'stilt',jigawa:'gate',kebbi:'river',kogi:'confluence',
+  nasarawa:'civic',taraba:'hill',yobe:'gate',zamfara:'gate',anambra:'market'
+};
+function addCitySignature(C){
+  const kind=CITY_SIGNATURES[curCity]||'civic',palette=C.paint||['#C8B99D','#A8B8AA','#D8C8A8'];
+  const primary=palette[0]||'#C8B99D',secondary=palette[1]||'#A8B8AA',accent=palette[2]||'#D8C8A8';
+  const box=(w,h,d,color,x,y,z)=>{const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),lam(color));m.position.set(x,y,z);cityGroup.add(m);return m;};
+  const cyl=(r1,r2,h,color,x,y,z,n=16)=>{const m=new THREE.Mesh(new THREE.CylinderGeometry(r1,r2,h,n),lam(color));m.position.set(x,y,z);cityGroup.add(m);return m;};
+  const z=246;
+  if(kind==='bridge'){
+    box(66,1.5,5,secondary,0,5,z);for(let x=-27;x<=27;x+=18){box(2,11,2,primary,x,0,z);box(1.2,4,1.2,accent,x,8,z);}
+    for(let x=-24;x<=24;x+=8)box(.45,4,.45,accent,x,7.3,z);
+  }else if(kind==='monument'){
+    cyl(18,22,2,secondary,0,1,z,20);cyl(8,10,17,primary,0,10,z,12);cyl(2.2,3,10,accent,0,23,z,12);cyl(4,4,1.2,secondary,0,29,z,16);
+  }else if(kind==='gate'){
+    box(44,2.6,4,primary,0,16,z);box(5,17,5,secondary,-19,8.5,z);box(5,17,5,secondary,19,8.5,z);box(12,10,1.5,accent,0,6,z+2);
+  }else if(kind==='oil'){
+    for(let i=0;i<3;i++){const x=-23+i*23;cyl(7,7,12+i%2*5,i%2?secondary:primary,x,6,z);cyl(7,7,1,accent,x,12+i%2*5,z);}
+    box(2,29,2,secondary,27,14,z);box(14,2,2,accent,27,24,z);box(2,8,2,primary,21,19,z);
+  }else if(kind==='rail'){
+    for(let i=0;i<3;i++){box(60,.5,.5,secondary,0,.4,z-4+i*4);for(let x=-27;x<=27;x+=6)box(1,.35,5,accent,x,.2,z-2);}
+    box(40,10,13,primary,0,5,z+8);box(42,1,15,secondary,0,10.5,z+8);
+  }else if(kind==='market'){
+    for(let i=0;i<7;i++){const x=-27+i*9;box(7,1,10,secondary,x,.5,z);box(7,.8,10,palette[i%palette.length],x,4,z);box(.5,5,.5,primary,x-3,2.5,z-4);box(.5,5,.5,primary,x+3,2.5,z-4);}
+  }else if(kind==='heritage'){
+    for(let i=0;i<7;i++){const x=-30+i*10;box(3,10,3,primary,x,5,z);if(i<6)box(8,4,2,secondary,x+5,3,z);}
+    box(62,1,3,accent,0,10,z);
+  }else if(kind==='rocks'||kind==='coal'||kind==='hill'){
+    for(let i=0;i<7;i++){const x=-30+i*10,r=kind==='rocks'?rr(7,13):rr(8,15);const m=new THREE.Mesh(new THREE.DodecahedronGeometry(r,0),lam(kind==='coal'?'#55534E':palette[i%palette.length]));m.position.set(x,r*.6,z+rr(-3,5));m.scale.y=kind==='hill'?1.25:.7;cityGroup.add(m);}
+    if(kind==='coal'){box(5,17,5,'#514C46',-10,8,z-4);box(3,7,3,'#77716A',-10,20,z-4);}
+  }else if(kind==='civic'||kind==='tower'||kind==='minaret'){
+    box(36,1.5,24,secondary,0,.8,z);box(18,13,14,primary,0,7,z);
+    if(kind==='minaret'){cyl(2.2,3,28,accent,0,21,z,10);cyl(4,4,1.2,secondary,0,35,z,12);}
+    else if(kind==='tower'){box(6,20,6,accent,0,23,z);cyl(5,5,1,secondary,0,34,z,16);}
+    else {cyl(7,7,8,accent,0,18,z,16);const dome=new THREE.Mesh(new THREE.SphereGeometry(6,16,8,0,Math.PI*2,0,Math.PI/2),lam(secondary));dome.position.set(0,22,z);cityGroup.add(dome);}
+  }else if(kind==='festival'){
+    for(let i=0;i<5;i++){const x=-24+i*12;box(1.5,18,1.5,palette[i%palette.length],x,9,z);box(11,1.5,1.5,palette[(i+1)%palette.length],x+5,17,z);}
+  }else if(kind==='stilt'){
+    box(60,1.5,22,secondary,0,1,z);for(let x=-25;x<=25;x+=10)for(let zz of [-7,7])box(.7,8,.7,primary,x,-3,z+zz);
+    for(let i=0;i<4;i++){const x=-22+i*15;box(12,6,10,palette[i%palette.length],x,6,z);box(14,1.2,12,accent,x,10,z);}
+  }else if(kind==='river'||kind==='confluence'){
+    const water=new THREE.Mesh(new THREE.PlaneGeometry(82,18),new THREE.MeshLambertMaterial({color:kind==='confluence'?'#477D83':'#4F817B',transparent:true,opacity:.9}));water.rotation.x=-Math.PI/2;water.position.set(0,.08,z+6);cityGroup.add(water);
+    for(let i=0;i<3;i++){const x=-20+i*20;box(10,.5,2,secondary,x,.6,z+2);box(1.5,1.5,1.5,accent,x-3,1.2,z+2);}
+    if(kind==='confluence'){box(24,1.2,5,primary,-19,1,z-2);box(24,1.2,5,primary,19,1,z+13);}
+  }else if(kind==='palm'){
+    for(let i=0;i<4;i++){const x=-24+i*16;const trunk=cyl(.8,1.2,17,secondary,x,8,z,8);trunk.rotation.z=(i%2?.15:-.15);for(let j=0;j<5;j++){const leaf=new THREE.Mesh(new THREE.ConeGeometry(1.3,10,5),lam(primary));leaf.position.set(x+Math.cos(j*1.25)*3,17,z+Math.sin(j*1.25)*3);leaf.rotation.z=Math.PI/2;cityGroup.add(leaf);}}
+  }
+}
 function buildCity(key){
   const C=CITIES[key]; curCity=key;
   clearGroup(cityGroup); clearGroup(trafficGroup); texs.forEach(t=>t.dispose()); texs=[];
@@ -2319,7 +2413,7 @@ undefined
     }
     // Roadside/block-edge tree placement removed: keep streets and road verges clear.
   }
-  streetDetails(C,blocks); roadDecals(C,blocks); addCityIdentityFeature(C);
+  streetDetails(C,blocks); roadDecals(C,blocks); addCityIdentityFeature(C); addCitySignature(C);
   dxFlush(C);
   cityCols=colliders.length;
   for(let k=-3;k<=3;k++)for(const axis of ['x','z'])for(const dir of [1,-1]){
