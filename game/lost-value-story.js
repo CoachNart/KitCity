@@ -380,8 +380,7 @@ export const LOST_VALUE_STORY = [
     choices:[],
     task:'Place the final evidence on the archive wall and review the connections between the 15 missions.',
     evidenceTitle:'The Lost Value', evidenceBody:'Ownership without control. Community without contribution. Access without understanding. Growth without usefulness. Trust without accountability. Promises without delivery.',
-    reward:'You have discovered what was lost. Now you must discover what it takes to restore it.',
-    finale:true
-  }
+    reward:'You have discovered what was lost. Now you must discover what it takes to restore it.'
+  },
   ...LOST_VALUE_CONTINUATION,
 ];
