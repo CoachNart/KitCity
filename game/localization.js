@@ -409,11 +409,11 @@ export function translateDOM(root, language = 'en') {
     }
     return before;
   };
-  if (root.nodeType === 1) visitElement(root);
-  else if (root.nodeType === 9) {
-    const walker = doc.createTreeWalker(root, 1);
+  if (root.nodeType === 1 || root.nodeType === 9) {
+    if (root.nodeType === 1) translateElementAttributes(root, language);
+    const elementWalker = doc.createTreeWalker(root, 1);
     let element;
-    while ((element = walker.nextNode())) translateElementAttributes(element, language);
+    while ((element = elementWalker.nextNode())) translateElementAttributes(element, language);
     const textWalker = doc.createTreeWalker(root, 4);
     let node;
     while ((node = textWalker.nextNode())) {
