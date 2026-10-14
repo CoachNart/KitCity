@@ -19,7 +19,6 @@ const OPENING_PANELS = [
   { shot: 'abdul', speaker: 'IamAbdul', text: 'Maybe the real problem no be the technology itself. Maybe na how people dey use am.', next: 'next' },
   { shot: 'softstorm', speaker: 'Softstorm', text: 'Technology can create possibilities, but it cannot replace good judgement. If we chase only hype and quick money, we can miss what makes it useful.', next: 'next' },
   { shot: 'character', speaker: 'PLAYER', text: 'Then I want to see for myself—the good, the bad, the risks, and the real opportunities.', next: 'next' },
-  { shot: 'wide', kicker: 'THE LOST VALUE', caption: 'Learn. Build. Create. Contribute. Your journey begins with one question: are we making something valuable for people, or have we lost sight of what matters?', next: 'next' },
   { shot: 'clue', kicker: 'THE JOURNEY BEGINS', caption: 'Lagos is full of people with problems to solve and ideas to explore. Step into the city, meet its people, and discover Web3 through the choices you make.', card: true, finish: true },
 ];
 function escapeHtml(value) {
@@ -255,8 +254,10 @@ export function createStorySceneDirector({ camera, player, getCharacter, getChar
       speechBubbleTimer = setTimeout(() => {
         if (!active || panelIndex !== shownIndex) return;
         speechBubble.classList.add('hidden');
-        const nextPanel = activePanels[shownIndex + 1];
-        if (nextPanel && nextPanel.speaker && nextPanel.text && !nextPanel.choices) show(shownIndex + 1);
+        // Move from the final spoken line straight to its next story beat,
+        // including the closing card. Otherwise the bubble disappears and leaves
+        // the player stuck on the previous panel until they tap the screen.
+        if (activePanels[shownIndex + 1]) show(shownIndex + 1);
       }, readTime);
     }
   }
