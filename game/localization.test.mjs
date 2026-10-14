@@ -13,6 +13,20 @@ test('only English and Naija Pidgin are available', () => {
   assert.equal(SUPPORTED_LANGUAGES.pcm, 'Naija Pidgin');
 });
 
+test('landing UI exposes only English and Pidgin language controls', async () => {
+  const page = await readFile(new URL('../app/page.tsx', import.meta.url), 'utf8');
+  const buttons = [...page.matchAll(/data-lang=\\\\?"(en|pcm|ha|yo|ig)\\\\?"/g)].map(match => match[1]);
+  assert.deepEqual(buttons, ['en', 'pcm']);
+  assert.doesNotMatch(page, /data-(?:ha|yo|ig)=/);
+  assert.doesNotMatch(page, />HAUSA<|>YORÙBÁ<|>IGBO</);
+});
+
+test('engine removes stale unsupported language buttons from old markup', async () => {
+  const engine = await readFile(new URL('./kitcity-engine.js', import.meta.url), 'utf8');
+  assert.match(engine, /if\(!\['en','pcm'\]\.includes\(b\.dataset\.lang\)\) b\.remove\(\)/);
+  assert.match(engine, /if\(!b\|\|!\['en','pcm'\]\.includes\(b\.dataset\.lang\)\) return/);
+});
+
 test('Pidgin translates core controls and major headings', () => {
   assert.equal(translateText('Choose how the game talks to you.', 'pcm'), 'Choose how the game go dey talk to you.');
   assert.notEqual(translateText('THE FIRST PROMISE', 'pcm'), 'THE FIRST PROMISE');
