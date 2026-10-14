@@ -15,8 +15,8 @@ const OPENING_PANELS = [
   ] },
   { shot: 'character', speaker: 'PLAYER', text: 'Sorry, I caught part of that. I’m curious too—what does building something useful in Web3 actually look like?', next: 8 },
   { shot: 'abdul', speaker: 'IamAbdul', text: 'I was wondering the same thing. Everybody has a pitch. I want to see what people can really do with it.', next: 8 },
-  { shot: 'softstorm', speaker: 'Softstorm', text: 'That’s a fair question. 3Kit is an ecosystem designed to give people different ways into Web3: learning, exploring career paths, building, creating, and using tools that can make trading easier to understand.', next: 'next' },
-  { shot: 'abdul', speaker: 'IamAbdul', text: 'And KitaKage is the gaming side of that ecosystem, right? A place to explore and discover how these ideas connect to real people and real choices.', next: 'next' },
+  { shot: 'softstorm', speaker: 'Softstorm', text: 'That’s a fair question. T3kit is an ecosystem with different ways into Web3: KitLab helps people learn, while the wider ecosystem supports career paths, building, creating, and tools that make trading easier to understand.', next: 'next' },
+  { shot: 'abdul', speaker: 'IamAbdul', text: 'And KitArcade is the gaming side, right? A place to explore, meet people, and discover how these ideas connect to real life.', next: 'next' },
   { shot: 'character', speaker: 'PLAYER', text: 'Then why call this story The Lost Value?', next: 'next' },
   { shot: 'softstorm', speaker: 'Softstorm', text: 'Because value was never just a token price. It was what people could learn, what they could create, the problems they could solve, and the opportunities they could open for others.', next: 'next' },
   { shot: 'abdul', speaker: 'IamAbdul', text: 'We can have more projects, more money, and more attention—and still lose sight of what made any of it worthwhile.', next: 'next' },
@@ -233,14 +233,9 @@ export function createStorySceneDirector({ camera, player, getCharacter, getChar
     nextBtn.textContent = localized(panel.finish ? (genericScene ? 'RETURN TO MISSION →' : 'ENTER THE STORY →') : 'TAP TO CONTINUE →');
     cameraGoal = shotFor(panel.shot, panel.speaker);
     startedAt = performance.now();
-    // Cinematic panels advance on their own; dialogue stays up long enough to read.
-    const textLength = (panel.text || panel.caption || '').length;
-    const holdMs = panel.choices ? 0
-      : panel.finish ? 3600
-      : panel.speaker ? Math.min(7200, Math.max(3000, 1900 + textLength * 42))
-      : panel.shot === 'wide' ? 2600
-      : Math.min(5200, Math.max(3000, 2100 + textLength * 34));
-    autoAdvanceAt = holdMs ? startedAt + holdMs : 0;
+    // Keep every story/caption card on screen until the player continues.
+    // This is especially important on mobile, where reading speed varies.
+    autoAdvanceAt = 0;
     frame.classList.remove('panel-enter');
     void frame.offsetWidth;
     frame.classList.add('panel-enter');
@@ -373,11 +368,7 @@ export function createStorySceneDirector({ camera, player, getCharacter, getChar
         if (listener.head) listener.head.rotation.y = Math.sin(time * 1.3 + .7) * .09;
       }
     }
-    // Non-choice panels continue after their reading beat; choices intentionally pause.
-    if (autoAdvanceAt && performance.now() >= autoAdvanceAt) {
-      autoAdvanceAt = 0;
-      advance();
-    }
+    // Panels are deliberately player-paced; no card disappears automatically.
     const hero = player;
     if (!genericScene && hero && panelIndex === 4 && animateCharacter) animateCharacter(hero, time * 1.4, .04, 0);
     overlay.style.setProperty('--panel-beat', String((performance.now() - startedAt) / 1000));
