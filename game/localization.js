@@ -76,6 +76,7 @@ const CATALOG = {
     "What do you do?": "Wetin you go do?",
     "Walk over and ask them": "Go meet them ask question",
     "Stay back and listen a little longer": "Stay back listen small more",
+    "YOUR THOUGHTS": "WETIN DEY YOUR MIND",
     "YOUR MOVE": "NA YOUR TURN",
     "NEXT OBJECTIVE": "NEXT THING TO DO",
     "REPORT COMPLETE": "REPORT DON COMPLETE",
