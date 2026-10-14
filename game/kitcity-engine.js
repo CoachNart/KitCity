@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { translateText, translateHTML, SUPPORTED_LANGUAGES } from './localization';
+import { translateText, translateHTML, translateDOM, observeLocalization, SUPPORTED_LANGUAGES } from './localization';
 import { createStorySceneDirector } from './story-scene-director';
 import { LOST_VALUE_STORY } from './lost-value-story';
 import {
@@ -382,6 +382,10 @@ window.addEventListener('pointerdown',()=>Snd.unlock());
 const L=(en,pcm)=>P.lang==='pcm'&&pcm?pcm:translateText(en,P.lang);
 function tr(value){ return translateText(value,P.lang); }
 function tx(html){ return translateHTML(String(html==null?'':html),P.lang); }
+// Observe rendered UI so newly-created mission cards, dialogue choices, sheets,
+// notifications and auth messages receive the selected language as they appear.
+// The observer only translates exact catalog entries and preserves original text.
+const localizationObserver=observeLocalization(document,()=>P.lang);
 
 /* Translate only stable, known UI labels. Keep original text per text node so
    switching languages repeatedly never translates a translation. Dynamic
@@ -5058,7 +5062,7 @@ function applyLang(){
   document.documentElement.lang=({en:'en',pcm:'pcm',ha:'ha',yo:'yo',ig:'ig'})[P.lang]||'en';
   document.querySelectorAll('[data-t]').forEach(el=>{ if(!el.dataset.en) el.dataset.en=el.textContent; const translated=el.dataset[P.lang]; el.textContent=translated||tr(el.dataset.en); });
   document.querySelectorAll('[data-lang]').forEach(b=>b.classList.toggle('on',b.dataset.lang===P.lang));
-  translateStaticUI();
+  translateDOM(document,P.lang);
   updateAuthButton();
   if(G) updateHUD();
   renderHub();
