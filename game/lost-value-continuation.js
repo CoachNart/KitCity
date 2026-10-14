@@ -9,9 +9,9 @@ export const LOST_VALUE_CONTINUATION = [
     goal:'Discover why a capable builder left a promising project and recover the agreement that was never made clear.',
     value:'FAIR AGREEMENTS', cast:['Tessa'], splitAfter:3,
     dialogue:[
-      ['Tessa','I left the team before launch. They called me disloyal.'],
-      ['PLAYER','What made you walk away?'],
-      ['Tessa','They kept changing what counted as my work, my credit, and my payment. Nothing was written down.'],
+      ['Tessa','Your Kogi archive lists a release that never credited its builder. That was my project.'],
+      ['PLAYER','Why did you leave before launch?'],
+      ['Tessa','They kept changing what counted as my work, my credit, and my payment. Nothing was written down. They called me disloyal when I asked for clarity.'],
       ['PLAYER','Then let’s recover the messages and build a clear delivery agreement before anybody starts again.']
     ],
     choices:[], task:'Find the original work messages and assemble a clear scope, credit, payment, and change record.',
