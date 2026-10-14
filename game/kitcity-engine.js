@@ -4613,11 +4613,9 @@ function startMission(id){
         if(G) G.used['iamabdul-story']=true;
         goal=null;
         save(); updateHUD();
-        openSheet('<section class="lost-value-finale"><p>PROLOGUE COMPLETE</p><h3>THE FIRST PROMISE</h3><p>Lagos State</p></section>',[
-          {t:'Start The First Promise',f:()=>startMission('lost-value-01')},
-          {t:'Replay Prologue',f:()=>startMission('m0')},
-          {t:'Back to hub',g:1,f:exitToHub}
-        ]);
+        // Continue directly to the single mission briefing card. The old
+        // PROLOGUE COMPLETE sheet duplicated the briefing's Start mission card.
+        startMission('lost-value-01');
       });
     }else{
       $('#mission').classList.remove('prologue-hidden'); $('#mission').style.display='';
