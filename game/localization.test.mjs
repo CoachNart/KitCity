@@ -18,6 +18,9 @@ test('Pidgin translates core controls and major headings', () => {
   assert.notEqual(translateText('THE FIRST PROMISE', 'pcm'), 'THE FIRST PROMISE');
   assert.notEqual(translateText('MISSION UNLOCKED', 'pcm'), 'MISSION UNLOCKED');
   assert.notEqual(translateText('YOUR THOUGHTS', 'pcm'), 'YOUR THOUGHTS');
+  assert.equal(translateText('MISSIONS COMPLETED', 'pcm'), 'MISSIONS DON COMPLETE');
+  assert.equal(translateText('Address copied', 'pcm'), 'Address don copy');
+  assert.equal(translateText('Share on WhatsApp', 'pcm'), 'Share am for WhatsApp');
   assert.equal(translateText('Settings', 'en'), 'Settings');
 });
 
