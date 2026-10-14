@@ -69,6 +69,43 @@ const CATALOG = {
     'Correct answer · +0.10 USDC': 'Correct answer · +0.10 USDC',
     'Wrong answer · −0.10 USDC': 'Wrong answer · −0.10 USDC',
     'Here': 'Here',
+    "No wallet yet": "You never get wallet yet",
+    "Practice top-up added": "Practice money don add",
+    "Street smart": "Street smart",
+    "Back on your feet. Watch the traffic.": "You don stand again. Watch traffic.",
+    "Finish the previous city journey first": "Finish the last city journey first",
+    "Step complete": "You don finish this step",
+    "Progress erased": "Progress don clear",
+    "Playlist loaded": "Playlist don load",
+    "Default playlist": "Default playlist",
+    "Could not sign out. Please try again.": "We no fit sign you out. Abeg try again.",
+    "What do you do?": "Wetin you go do?",
+    "Walk over and ask them": "Go meet them ask question",
+    "Stay back and listen a little longer": "Stay back listen small more",
+    "YOUR MOVE": "NA YOUR TURN",
+    "NEXT OBJECTIVE": "NEXT THING TO DO",
+    "REPORT COMPLETE": "REPORT DON COMPLETE",
+    "YOUR OBJECTIVE": "WETIN YOU NEED DO",
+    "Record evidence": "Save the evidence",
+    "Report your findings": "Report wetin you find",
+    "Evidence recorded": "Evidence don save",
+    "You have returned to report what you found. The evidence is now part of the record.": "You don come back report wetin you find. The evidence don enter the record.",
+    "The record has been inspected. Return to the contact and report what you found. Follow the compass arrow.": "You don check the record. Go back meet the contact report wetin you find. Follow the arrow.",
+    "You": "You",
+    "Create account & enter KitCity": "Create account & enter KitCity",
+    "Sign in & enter KitCity": "Sign in & enter KitCity",
+    "Continue to KitCity": "Continue to KitCity",
+    "Securing your account…": "We dey secure your account…",
+    "Restoring your KitCity session…": "We dey restore your KitCity session…",
+    "Could not restore your saved session.": "We no fit restore your saved session.",
+    "Use 3–20 letters, numbers, or underscores for your gamer ID.": "Use 3–20 letters, numbers, or underscores for your gamer ID.",
+    "Enter your email and password to continue.": "Enter your email and password to continue.",
+    "Your password must contain at least 8 characters.": "Your password must get at least 8 characters.",
+    "That is not a YouTube playlist link": "This no be YouTube playlist link",
+    "Reset progress": "Clear progress",
+    "Yes, erase everything": "Yes, clear everything",
+    "About the streets": "About the streets",
+    "Every city dey teach you something new.": "Every city go teach you something new.",
   },
   ha: {
     'Settings': 'Saituna',
@@ -111,6 +148,35 @@ const CATALOG = {
     'On': 'A kunne',
     'Off': 'A kashe',
     'Here': 'Nan',
+    "No wallet yet": "Babu walat tukuna",
+    "Practice top-up added": "An ƙara kuɗin gwaji",
+    "Back on your feet. Watch the traffic.": "Ka tashi. Ka kula da ababen hawa.",
+    "Finish the previous city journey first": "Ka fara kammala tafiyar birnin da ya gabata",
+    "Step complete": "An kammala matakin",
+    "Progress erased": "An goge ci gaba",
+    "Playlist loaded": "An loda jerin waƙoƙi",
+    "Default playlist": "Jerin waƙoƙi na asali",
+    "Could not sign out. Please try again.": "Ba a iya fita ba. Sake gwadawa.",
+    "What do you do?": "Me za ka yi?",
+    "Walk over and ask them": "Je ka tambaye su",
+    "Stay back and listen a little longer": "Ka tsaya ka ƙara sauraro",
+    "YOUR MOVE": "MATSAKIN KA",
+    "NEXT OBJECTIVE": "MANUFA TA GABA",
+    "REPORT COMPLETE": "AN KAMMALA RAHOTO",
+    "YOUR OBJECTIVE": "MANUFARKA",
+    "Record evidence": "Ajiye hujja",
+    "Report your findings": "Bayar da rahoton abin da ka gano",
+    "Evidence recorded": "An ajiye hujja",
+    "You have returned to report what you found. The evidence is now part of the record.": "Ka dawo don bayar da rahoton abin da ka gano. Yanzu hujjar tana cikin bayanan.",
+    "You": "Kai",
+    "Create account & enter KitCity": "Ƙirƙiri asusu ka shiga KitCity",
+    "Sign in & enter KitCity": "Shiga KitCity",
+    "Continue to KitCity": "Ci gaba zuwa KitCity",
+    "Securing your account…": "Ana kare asusunka…",
+    "Restoring your KitCity session…": "Ana dawo da zaman KitCity ɗinka…",
+    "That is not a YouTube playlist link": "Wannan ba hanyar jerin waƙoƙin YouTube ba ce",
+    "Reset progress": "Sake saita ci gaba",
+    "Yes, erase everything": "Eh, goge komai",
   },
   yo: {
     'Settings': 'Ètò',
@@ -153,6 +219,35 @@ const CATALOG = {
     'On': 'Ń ṣiṣẹ́',
     'Off': 'Kò ṣiṣẹ́',
     'Here': 'Níhìn-ín',
+    "No wallet yet": "O kò tíì ní àpò owó",
+    "Practice top-up added": "A ti fi owó ìdánwò kún un",
+    "Back on your feet. Watch the traffic.": "O ti dìde. Ṣọ́ra fún ọkọ̀ ojú ọ̀nà.",
+    "Finish the previous city journey first": "Parí ìrìn-àjò ìlú tó ṣáájú kọ́kọ́",
+    "Step complete": "Igbésẹ̀ ti parí",
+    "Progress erased": "A ti pa ìlọsíwájú rẹ́",
+    "Playlist loaded": "A ti ṣí àkójọ orin",
+    "Default playlist": "Àkójọ orin àkọ́kọ́",
+    "Could not sign out. Please try again.": "A kò lè jáde. Jọ̀wọ́ tún gbìyànjú.",
+    "What do you do?": "Kí ni o máa ṣe?",
+    "Walk over and ask them": "Lọ bá wọn sọ̀rọ̀",
+    "Stay back and listen a little longer": "Dúró sí ẹ̀yìn kí o tún gbọ́ díẹ̀ sí i",
+    "YOUR MOVE": "ÌGBÉSẸ̀ RẸ",
+    "NEXT OBJECTIVE": "OHUN TÍ O YẸ KÍ O ṢE TÓ KAN",
+    "REPORT COMPLETE": "ÌRÒYÌN TI PARÍ",
+    "YOUR OBJECTIVE": "OHUN TÍ O YẸ KÍ O ṢE",
+    "Record evidence": "Fi ẹ̀rí pamọ́",
+    "Report your findings": "Jabọ ohun tí o rí",
+    "Evidence recorded": "A ti fi ẹ̀rí pamọ́",
+    "You have returned to report what you found. The evidence is now part of the record.": "O ti padà láti sọ ohun tí o rí. Ẹ̀rí náà ti di apá kan ìwé àkọsílẹ̀.",
+    "You": "Ìwọ",
+    "Create account & enter KitCity": "Ṣẹ̀dá àkáǹtì kí o sì wọ KitCity",
+    "Sign in & enter KitCity": "Wọlé sí KitCity",
+    "Continue to KitCity": "Tẹ̀ síwájú sí KitCity",
+    "Securing your account…": "A ń dáàbò bo àkáǹtì rẹ…",
+    "Restoring your KitCity session…": "A ń dá ìgbàwọlé KitCity rẹ padà…",
+    "That is not a YouTube playlist link": "Èyí kì í ṣe ìjápọ̀ àkójọ orin YouTube",
+    "Reset progress": "Tún ìlọsíwájú bẹ̀rẹ̀",
+    "Yes, erase everything": "Bẹ́ẹ̀ ni, pa gbogbo rẹ́ rẹ́",
   },
   ig: {
     'Settings': 'Ntọala',
@@ -195,6 +290,35 @@ const CATALOG = {
     'On': 'Gbanwuru',
     'Off': 'Gbanyụọ',
     'Here': 'Ebe a',
+    "No wallet yet": "Enweghị obere akpa ego",
+    "Practice top-up added": "Agbakwunyere ego nnwale",
+    "Back on your feet. Watch the traffic.": "I biliela ọzọ. Lezie anya n’okporo ụzọ.",
+    "Finish the previous city journey first": "Buru ụzọ mechaa njem obodo gara aga",
+    "Step complete": "Emechaala nzọụkwụ a",
+    "Progress erased": "Ehichapụrụ ọganihu",
+    "Playlist loaded": "Ebugola ndepụta egwu",
+    "Default playlist": "Ndepụta egwu ndabara",
+    "Could not sign out. Please try again.": "Enweghị ike ịpụ. Biko nwaa ọzọ.",
+    "What do you do?": "Gịnị ka ị ga-eme?",
+    "Walk over and ask them": "Gakwuru ha jụọ ha",
+    "Stay back and listen a little longer": "Nọrọ ebe ahụ gee ntị ntakịrị ọzọ",
+    "YOUR MOVE": "Ọ BỤRỤ GỊ",
+    "NEXT OBJECTIVE": "IHE Ị GA-eme ỌZỌ",
+    "REPORT COMPLETE": "EDECHALA AKỤKỌ",
+    "YOUR OBJECTIVE": "IHE Ị GA-eme",
+    "Record evidence": "Debe ihe akaebe",
+    "Report your findings": "Kọọ ihe ị chọpụtara",
+    "Evidence recorded": "Edekọla ihe akaebe",
+    "You have returned to report what you found. The evidence is now part of the record.": "Ị lọghachila ịkọ ihe ị chọpụtara. Ihe akaebe ahụ abụrụla akụkụ nke ndekọ.",
+    "You": "Gị",
+    "Create account & enter KitCity": "Mepụta akaụntụ ma banye KitCity",
+    "Sign in & enter KitCity": "Banye na KitCity",
+    "Continue to KitCity": "Gaa n’ihu na KitCity",
+    "Securing your account…": "A na-echekwa akaụntụ gị…",
+    "Restoring your KitCity session…": "A na-eweghachi nnọkọ KitCity gị…",
+    "That is not a YouTube playlist link": "Nke a abụghị njikọ ndepụta egwu YouTube",
+    "Reset progress": "Malite ọganihu ọzọ",
+    "Yes, erase everything": "Ee, hichapụ ihe niile",
   },
 };
 
@@ -221,4 +345,125 @@ export function translateText(value, language = 'en') {
 export function translateHTML(html, language = 'en') {
   if (!html || language === 'en' || !NORMALIZED[language]) return html;
   return html.replace(/(^|>)([^<>]+)(?=<|$)/g, (whole, prefix, text) => prefix + translateText(text, language));
+}
+
+
+/*
+ * Translate only known text, never markup or game state. Original text is kept
+ * per node/attribute so switching languages is reversible and does not stack
+ * translations. Unknown copy remains intact until a reviewed translation is
+ * added to CATALOG.
+ */
+const nodeSources = new WeakMap();
+const attributeSources = new WeakMap();
+const TRANSLATABLE_ATTRIBUTES = ['aria-label', 'title', 'placeholder', 'alt'];
+const SKIP_TEXT_TAGS = new Set(['SCRIPT', 'STYLE', 'NOSCRIPT', 'CODE', 'PRE', 'TEXTAREA', 'OPTION']);
+
+function translateTextNode(node, language) {
+  if (!node || node.nodeType !== 3 || !node.parentElement) return;
+  if (node.parentElement.closest('[data-no-translate],script,style,noscript,code,pre,textarea,[contenteditable="true"]')) return;
+  const current = node.nodeValue || '';
+  if (!current.trim()) return;
+  const prior = nodeSources.get(node);
+  const source = prior && current === prior.rendered ? prior.source : current;
+  const rendered = translateText(source, language);
+  if (current !== rendered) node.nodeValue = rendered;
+  nodeSources.set(node, { source, rendered });
+}
+
+function translateElementAttributes(element, language) {
+  if (!element || element.nodeType !== 1 || element.closest('[data-no-translate]')) return;
+  const names = TRANSLATABLE_ATTRIBUTES.slice();
+  if (element.matches('button,input[type="button"],input[type="submit"],input[type="reset"]')) names.push('value');
+  for (const name of names) {
+    if (!element.hasAttribute(name)) continue;
+    const current = element.getAttribute(name) || '';
+    if (!current.trim()) continue;
+    let perElement = attributeSources.get(element);
+    if (!perElement) { perElement = new Map(); attributeSources.set(element, perElement); }
+    const prior = perElement.get(name);
+    const source = prior && current === prior.rendered ? prior.source : current;
+    const rendered = translateText(source, language);
+    if (current !== rendered) element.setAttribute(name, rendered);
+    perElement.set(name, { source, rendered });
+  }
+}
+
+export function translateDOM(root, language = 'en') {
+  if (!root) return { translated: 0, unchanged: 0 };
+  const doc = root.ownerDocument || (root.nodeType === 9 ? root : null);
+  if (!doc || typeof doc.createTreeWalker !== 'function') return { translated: 0, unchanged: 0 };
+  let translated = 0, unchanged = 0;
+  const visitElement = element => {
+    const before = element.textContent;
+    translateElementAttributes(element, language);
+    const walker = doc.createTreeWalker(element, 4);
+    const nodes = [];
+    let node;
+    while ((node = walker.nextNode())) nodes.push(node);
+    for (const textNode of nodes) {
+      const oldValue = textNode.nodeValue;
+      translateTextNode(textNode, language);
+      if (textNode.nodeValue !== oldValue) translated++;
+      else unchanged++;
+    }
+    return before;
+  };
+  if (root.nodeType === 1) visitElement(root);
+  else if (root.nodeType === 9) {
+    const walker = doc.createTreeWalker(root, 1);
+    let element;
+    while ((element = walker.nextNode())) translateElementAttributes(element, language);
+    const textWalker = doc.createTreeWalker(root, 4);
+    let node;
+    while ((node = textWalker.nextNode())) {
+      const oldValue = node.nodeValue;
+      translateTextNode(node, language);
+      if (node.nodeValue !== oldValue) translated++;
+      else unchanged++;
+    }
+  }
+  return { translated, unchanged };
+}
+
+export function observeLocalization(root, getLanguage) {
+  if (!root || typeof MutationObserver === 'undefined') return { disconnect() {} };
+  const languageNow = () => {
+    try { return typeof getLanguage === 'function' ? getLanguage() : 'en'; }
+    catch (_) { return 'en'; }
+  };
+  const apply = node => {
+    if (!node) return;
+    if (node.nodeType === 3) translateTextNode(node, languageNow());
+    else if (node.nodeType === 1) translateDOM(node, languageNow());
+  };
+  const observer = new MutationObserver(records => {
+    for (const record of records) {
+      if (record.type === 'characterData') apply(record.target);
+      if (record.type === 'attributes') translateElementAttributes(record.target, languageNow());
+      if (record.type === 'childList') record.addedNodes.forEach(apply);
+    }
+  });
+  observer.observe(root, {
+    subtree: true,
+    childList: true,
+    characterData: true,
+    attributes: true,
+    attributeFilter: TRANSLATABLE_ATTRIBUTES.concat(['value'])
+  });
+  translateDOM(root, languageNow());
+  return observer;
+}
+
+/** Returns a phrase-level report; unknown phrases are intentionally not guessed. */
+export function auditLocalization(phrases, language) {
+  const list = Array.from(phrases || [], value => String(value ?? '').trim()).filter(Boolean);
+  const translated = list.filter(value => language === 'en' || (NORMALIZED[language] && NORMALIZED[language].has(value)));
+  return {
+    language,
+    total: list.length,
+    translated: translated.length,
+    missing: list.filter(value => language !== 'en' && (!NORMALIZED[language] || !NORMALIZED[language].has(value))),
+    percent: list.length ? Math.round((translated.length / list.length) * 100) : 100
+  };
 }
