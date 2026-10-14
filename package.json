@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "test:localization": "node --experimental-default-type=module --test game/localization.test.mjs",
+    "test:localization": "node --test game/localization.test.mjs",
     "prebuild": "npm run test:localization"
   },
   "dependencies": {
