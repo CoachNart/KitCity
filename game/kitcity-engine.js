@@ -5063,10 +5063,31 @@ if(firebaseConfigured){
 function applyLang(){
   if(!['en','pcm'].includes(P.lang)) P.lang='en';
   document.documentElement.lang=P.lang;
-  // Remove stale language controls left by older cached markup/builds.
-  document.querySelectorAll('[data-lang]').forEach(b=>{
-    if(!['en','pcm'].includes(b.dataset.lang)) b.remove();
-    else b.classList.toggle('on',b.dataset.lang===P.lang);
+
+  // Keep the language UI strictly to English and Naija Pidgin, including
+  // stale controls restored from cached markup or older saved UI fragments.
+  const supportedLanguages=new Set(['en','pcm']);
+  document.querySelectorAll('[data-lang]').forEach(button=>{
+    const code=String(button.dataset.lang||'').trim().toLowerCase();
+    if(!supportedLanguages.has(code)) button.remove();
+    else button.classList.toggle('on',code===P.lang);
+  });
+  document.querySelectorAll('[data-a="lang"]').forEach(button=>{
+    const code=String(button.dataset.v||'').trim().toLowerCase();
+    if(!supportedLanguages.has(code)) button.remove();
+  });
+  document.querySelectorAll('select[name*="lang" i],select[id*="lang" i]').forEach(select=>{
+    [...select.options].forEach(option=>{
+      const code=String(option.value||'').trim().toLowerCase();
+      if(!supportedLanguages.has(code)) option.remove();
+    });
+    if(!supportedLanguages.has(String(select.value||'').trim().toLowerCase())) {
+      select.value='en';
+    }
+  });
+  document.querySelectorAll('[data-language-code], [data-locale]').forEach(element=>{
+    const code=String(element.dataset.languageCode||element.dataset.locale||'').trim().toLowerCase();
+    if(code && !supportedLanguages.has(code) && element.matches('button,[role="option"],option')) element.remove();
   });
   document.querySelectorAll('[data-t]').forEach(el=>{
     if(!el.dataset.en) el.dataset.en=el.textContent;
