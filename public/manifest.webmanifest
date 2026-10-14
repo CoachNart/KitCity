@@ -1,14 +1,14 @@
 {
-  "name": "KitCity",
+  "name": "KitCity — The Lost Value",
   "short_name": "KitCity",
-  "description": "A realistic Nigerian city game that teaches Web3 through missions.",
+  "description": "A story-driven Nigerian open-world adventure set in Lagos, filled with characters, choices, discoveries, and missions.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "orientation": "any",
   "background_color": "#1B1C20",
   "theme_color": "#10C8DC",
-  "categories": ["games", "education"],
+  "categories": ["games", "adventure"],
   "icons": [
     {"src":"https://i.postimg.cc/qqbdTXky/file-00000000958881f4a776df689a235dec.png","sizes":"192x192","type":"image/png","purpose":"any maskable"},
     {"src":"https://i.postimg.cc/qqbdTXky/file-00000000958881f4a776df689a235dec.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}
