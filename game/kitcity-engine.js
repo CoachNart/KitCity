@@ -1533,6 +1533,32 @@ function addBuilding(x,z,w,d,style,color,cx,cz,ox,oz){
     for(let t=-d/2+2.8;t<d/2-2;t+=2.4) for(const sx of [-1,1]) DX.merlon.push({x:x+sx*(w/2-.4),y:h+.5,z:z+t,sx:.8,sy:1,sz:1});
   }
   else if(style==='admin'){ xb(w+2,.6,d+2,'#e9e6df',x,h+.3,z); const fx=x+w/2-1,fz=z+d/2-1; DX.pole.push({x:fx,y:h+5.6,z:fz,sx:.2,sy:10,sz:.2}); DX.flag.push({x:fx+.1,y:h+9.6,z:fz,ry:rr(0,6)}); }
+
+  // Small silhouette details make the architecture read differently at street
+  // level, rather than relying on palette swaps alone.
+  const form=profile.form||'mixed';
+  if((form==='colonial-coast'||form==='heritage')&&style!=='glass'&&RN()<.58){
+    const porchD=Math.min(3.2,d*.24),front=z+d/2+porchD/2;
+    xb(w*.82,.38,porchD,color,x,h*.48,front);
+    for(const px of [x-w*.34,x+w*.34])xb(.28,h*.46,.28,'#E7DED0',px,h*.23,front);
+    xb(w*.86,.32,porchD+.35,'#8F6B52',x,h*.48+1.3,front);
+  }else if((form==='dense-market'||form==='southeast-market')&&RN()<.7){
+    const awning=pk(CITIES[curCity].signs||['#C8402A','#E7D27A','#0B7A43']);
+    xb(w*.78,.32,Math.min(2.4,d*.2),awning,x,h*.48+1.1,z+d/2+1.05);
+    if(RN()<.55)for(const px of [x-w*.3,x,x+w*.3])xb(.12,1.6,.12,'#49433D',px,h*.48+.15,z+d/2+1.05);
+  }else if((form==='delta-port'||form==='oil-port'||form==='rail-crossroads')&&RN()<.68){
+    const ventColor=form==='oil-port'?'#6B7779':'#879398';
+    for(const px of [x-w*.25,x+w*.25])xb(.9,rr(1.8,3.4),.9,ventColor,px,h+1.1,z-d*.18);
+    if(form==='oil-port'&&RN()<.5)xb(w*.42,.3,.42,'#E9BE35',x,h+2,z+d*.2);
+  }else if((form==='hillside'||form==='green-hills'||form==='rock-city'||form==='plateau')&&style!=='glass'&&RN()<.6){
+    xb(w+1,.65,d+1,'#857E70',x,.36,z);
+    if(RN()<.45)xb(w*.55,.28,d*.22,'#C7C2B5',x,h*.52,z+d*.28);
+  }else if((form==='historic'||form==='sahel')&&style!=='glass'&&style!=='zinc'&&RN()<.52){
+    const parapet='#B9A17E';
+    for(const px of [x-w*.34,x,x+w*.34])xb(.7,1.1,.7,parapet,px,h+.55,z+d*.34);
+    xb(w*.84,.28,.7,parapet,x,h+.98,z+d*.34);
+  }
+
   const box={x0:x-w/2,x1:x+w/2,z0:z-d/2,z1:z+d/2,y1:h+4};
   colliders.push({x0:box.x0,x1:box.x1,z0:box.z0,z1:box.z1});
   if(style!=='glass'&&RN()<.8){
