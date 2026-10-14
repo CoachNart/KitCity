@@ -4586,7 +4586,7 @@ function loadStep(){
   }
   updateHUD();
 }
-function startMission(id){
+function startMission(id, options={}){
   const m=MBY[id];
   if(!m||!isUnlocked(m)){ toast('Finish the previous city journey first'); renderHub(); return; }
   $('#loadTxt').textContent=L('Loading '+CITIES[m.city].name+'\u2026','We dey load '+CITIES[m.city].name+'\u2026'); $('#loading').classList.remove('hidden');
@@ -4615,8 +4615,12 @@ function startMission(id){
         save(); updateHUD();
         // Continue directly to the single mission briefing card. The old
         // PROLOGUE COMPLETE sheet duplicated the briefing's Start mission card.
-        startMission('lost-value-01');
+        startMission('lost-value-01',{skipBriefing:true});
       });
+    }else if(options.skipBriefing){
+      // The prologue has already introduced the story. Enter the first objective
+      // directly instead of showing the legacy mission/T3Kit briefing card again.
+      closeSheet();
     }else{
       $('#mission').classList.remove('prologue-hidden'); $('#mission').style.display='';
       briefing();
