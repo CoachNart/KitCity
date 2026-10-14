@@ -18,8 +18,6 @@ const OPENING_PANELS = [
   { shot: 'clue', kicker: 'CLUE ACQUIRED: THE T3KIT MARK', caption: 'One name. Two people. No clear answers.', card: true, finish: true },
 ];
 
-function localizeText(value) { return window.KitCityTranslate ? window.KitCityTranslate(value) : value; }
-
 function escapeHtml(value) {
   return String(value == null ? '' : value).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
 }
@@ -196,12 +194,12 @@ export function createStorySceneDirector({ camera, player, getCharacter, getChar
     const bubbleOn = !!(panel.speaker && panel.text && !panel.choices);
     overlay.classList.toggle('has-bubble', bubbleOn || (genericScene && !panel.choices));
     speechBubble.classList.toggle('hidden', !bubbleOn);
-    speechSpeaker.textContent = bubbleOn ? (panel.speaker === 'PLAYER' ? localizeText('You') : localizeText(panel.speaker.toUpperCase())) : '';
-    speechText.textContent = bubbleOn ? localizeText(panel.text) : '';
-    kickerEl.textContent = localizeText(panel.kicker || (panel.speaker ? (genericScene ? 'THE LOST VALUE · A CONVERSATION' : 'LAGOS · A CONVERSATION') : ''));
-    captionEl.textContent = localizeText(panel.caption || '');
-    speakerEl.textContent = panel.speaker ? (panel.speaker === 'PLAYER' ? localizeText('You') : localizeText(genericScene ? panel.speaker.toUpperCase() : (SPEAKER_LABELS[panel.speaker] || panel.speaker.toUpperCase()))) : '';
-    dialogueEl.textContent = localizeText(panel.text || '');
+    speechSpeaker.textContent = bubbleOn ? (panel.speaker === 'PLAYER' ? 'You' : panel.speaker.toUpperCase()) : '';
+    speechText.textContent = bubbleOn ? panel.text : '';
+    kickerEl.textContent = panel.kicker || (panel.speaker ? (genericScene ? 'THE LOST VALUE · A CONVERSATION' : 'LAGOS · A CONVERSATION') : '');
+    captionEl.textContent = panel.caption || '';
+    speakerEl.textContent = panel.speaker ? (panel.speaker === 'PLAYER' ? 'You' : (genericScene ? panel.speaker.toUpperCase() : (SPEAKER_LABELS[panel.speaker] || panel.speaker.toUpperCase()))) : '';
+    dialogueEl.textContent = panel.text || '';
     counterEl.textContent = String(panelIndex + 1).padStart(2, '0') + ' / ' + String(activePanels.length).padStart(2, '0');
     overlay.querySelector('.comic-frame-stamp').textContent = genericScene ? 'THE LOST VALUE · ' + String(panelIndex + 1).padStart(2, '0') : 'ISSUE 001';
     choicesEl.innerHTML = '';
@@ -210,7 +208,7 @@ export function createStorySceneDirector({ camera, player, getCharacter, getChar
         const button = document.createElement('button');
         button.type = 'button';
         button.className = 'comic-choice';
-        button.textContent = localizeText(choice.label);
+        button.textContent = choice.label;
         button.addEventListener('click', () => {
           if (typeof choice.onSelect === 'function') {
             choice.onSelect();
@@ -223,7 +221,7 @@ export function createStorySceneDirector({ camera, player, getCharacter, getChar
     }
     choicesEl.classList.toggle('hidden', !panel.choices);
     nextBtn.classList.toggle('hidden', !!panel.choices);
-    nextBtn.textContent = localizeText(panel.finish ? (genericScene ? 'RETURN TO MISSION →' : 'ENTER THE STORY →') : 'TAP TO CONTINUE →');
+    nextBtn.textContent = panel.finish ? (genericScene ? 'RETURN TO MISSION →' : 'ENTER THE STORY →') : 'TAP TO CONTINUE →';
     cameraGoal = shotFor(panel.shot, panel.speaker);
     startedAt = performance.now();
     // Cinematic panels advance on their own; dialogue stays up long enough to read.
