@@ -2169,10 +2169,43 @@ function addCityIdentityFeature(C){
   // Keep signature landmarks at the edge of the playable district so they read
   // in the skyline without covering mission characters or street traffic.
   if(feature==='waterfront'){
-    const water=new THREE.Mesh(new THREE.PlaneGeometry(620,76),new THREE.MeshLambertMaterial({color:'#3F8290',transparent:true,opacity:.78}));
-    water.rotation.x=-Math.PI/2;water.position.set(0,-.015,255);cityGroup.add(water);
-    for(let q=0;q<8;q++){const x=-225+q*64;box(13,.5,5,'#B7B7A7',x,.18,213);box(1.2,3,1.2,'#7C827D',x-5,1.5,213);box(1.2,3,1.2,'#7C827D',x+5,1.5,213);}
-    for(let q=0;q<7;q++){const x=-210+q*66;box(22,.8,7,'#A89A80',x,.35,225);box(1.2,5,1.2,'#6E7777',x-8,2.5,225);box(1.2,5,1.2,'#6E7777',x+8,2.5,225);}
+    const form=C.form||'',seed=C.seed||1;
+    if(form==='confluence'){
+      // Lokoja/Kogi: two rivers visibly meet at an angled confluence.
+      const niger=new THREE.Mesh(new THREE.PlaneGeometry(620,58),new THREE.MeshLambertMaterial({color:'#367F98',transparent:true,opacity:.82}));
+      niger.rotation.x=-Math.PI/2;niger.position.set(0,-.018,244);cityGroup.add(niger);
+      const benue=new THREE.Mesh(new THREE.PlaneGeometry(420,46),new THREE.MeshLambertMaterial({color:'#579A9A',transparent:true,opacity:.82}));
+      benue.rotation.set(-Math.PI/2,0,-.24);benue.position.set(80,-.012,214);cityGroup.add(benue);
+      for(let q=0;q<6;q++){const x=-205+q*78;box(18,.6,5,'#B7B8AD',x,.2,205);box(1.1,4,1.1,'#68777B',x-7,2,205);box(1.1,4,1.1,'#68777B',x+7,2,205);}
+      box(180,1.2,8,'#8B9697',35,2,196);for(let q=-4;q<=4;q++)box(1,3,1,'#D4D0C2',35+q*19,3.8,196);
+    }else if(form==='creek-town'){
+      // Bayelsa/Yenagoa: creek channels, mangrove banks and raised stilt homes.
+      const creek=new THREE.Mesh(new THREE.PlaneGeometry(620,38),new THREE.MeshLambertMaterial({color:'#326F69',transparent:true,opacity:.84}));
+      creek.rotation.x=-Math.PI/2;creek.rotation.y=.12;creek.position.set(0,-.018,246);cityGroup.add(creek);
+      for(let q=0;q<9;q++){
+        const x=-228+q*57,z=213+(q%3)*11,col=['#8E9E82','#B4A47B','#9BAE9D'][q%3];
+        box(13,.7,10,col,x,4,z);box(15,.7,12,'#6F5940',x,7.2,z);
+        for(const dx of [-5,5])for(const dz of [-3,3])box(.45,6,.45,'#6D5944',x+dx,2.8,z+dz);
+        box(1.1,1.2,1.1,'#A9B6A8',x,8.1,z);
+      }
+      for(let q=0;q<10;q++){const x=-240+q*53;box(2.5,1.2,2.5,'#536B4E',x,1.2,225+(q%2)*12);}
+    }else if(form==='delta-port'||form==='oil-port'){
+      // Niger Delta port cities: working quay, pipe runs and tank silhouettes.
+      const basin=new THREE.Mesh(new THREE.PlaneGeometry(620,66),new THREE.MeshLambertMaterial({color:'#3D7779',transparent:true,opacity:.8}));
+      basin.rotation.x=-Math.PI/2;basin.position.set(0,-.018,252);cityGroup.add(basin);
+      for(let q=0;q<5;q++){
+        const x=-190+q*95;
+        box(30,.9,12,'#8D9997',x,.45,211);box(22,7,8,'#747F80',x,4.4,210);
+        cyl(5,5,10,'#A7B0AD',x-8,5.2,203,18);cyl(4,4,8,'#7C898A',x+8,4.3,203,18);
+        box(2,14,2,'#D2B36C',x+14,7,215);box(18,1.4,2,'#C2B58B',x+6,11,215);
+      }
+    }else{
+      // Lagos and coastal promenades: piers, bollards and long quays.
+      const water=new THREE.Mesh(new THREE.PlaneGeometry(620,76),new THREE.MeshLambertMaterial({color:'#3F8290',transparent:true,opacity:.78}));
+      water.rotation.x=-Math.PI/2;water.position.set(0,-.015,255);cityGroup.add(water);
+      for(let q=0;q<8;q++){const x=-225+q*64;box(13,.5,5,'#B7B7A7',x,.18,213);box(1.2,3,1.2,'#7C827D',x-5,1.5,213);box(1.2,3,1.2,'#7C827D',x+5,1.5,213);}
+      for(let q=0;q<7;q++){const x=-210+q*66;box(22,.8,7,'#A89A80',x,.35,225);box(1.2,5,1.2,'#6E7777',x-8,2.5,225);box(1.2,5,1.2,'#6E7777',x+8,2.5,225);}
+    }
   } else if(feature==='roundabout'){
     cyl(18,18,.35,'#C4CBCD',0,.12,-210,32);cyl(13,13,.45,'#A9B9B5',0,.35,-210,32);cyl(7,7,1.4,'#B6C2C3',0,1,-210,24);
     cyl(2.4,2.4,7,'#6D7F89',0,5,-210,12);cyl(3.4,3.4,.45,'#D4D9D7',0,8.6,-210,16);
