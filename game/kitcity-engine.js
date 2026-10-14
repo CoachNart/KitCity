@@ -628,6 +628,28 @@ function resolveMissionSpot(key){
 }
 const special=Object.keys(MISSION_ANCHORS).map(resolveMissionSpot).concat([SPAWN]);
 const nearSpecial=(x,z,d)=>special.some(s=>Math.hypot(s.x-x,s.z-z)<d);
+function mainRoadActive(C,axis,k){
+  const form=C.form||'mixed',style=C.roadStyle||'mixed',seed=Math.abs(C.seed||1);
+  const primary=k===0||k===-1;
+  if(style==='boulevard'||style==='ceremonial')return true;
+  if(style==='industrial'){
+    const freightAxis=(seed%2===0)?'x':'z';
+    return axis===freightAxis||primary||Math.abs(k+seed)%3===0;
+  }
+  if(['historic','sahel','heritage','colonial-coast','dense-market','southeast-market'].includes(form)||style==='market'||style==='gate'){
+    return primary||Math.abs(k*7+seed)%4===0;
+  }
+  if(['hillside','green-hills','rock-city','plateau'].includes(form)){
+    return primary||Math.abs(k*3+seed)%3===0;
+  }
+  if(['creek-town','river-town','confluence','delta-port','oil-port'].includes(form)){
+    return primary||Math.abs(k+seed)%3===0;
+  }
+  if(['dense-coastal','organic-sprawl','southwest-sprawl'].includes(form)){
+    return primary||Math.abs(k*5+seed)%3!==1;
+  }
+  return primary||Math.abs(k*5+seed)%3!==1;
+}
 function secondaryRoadAxis(C,i,j){
   const seed=C.seed||0,form=C.form||'mixed';
   const n=Math.abs(i*7+j*11+seed),mix=Math.abs(i*13-j*5+seed);
@@ -1224,9 +1246,12 @@ function roadDecals(C,blocks){
     const broken=['hillside','green-hills','rock-city','creek-town','river-town','confluence','delta-port','oil-port'].includes(form);
     if(sparse&&index%3!==0)return;
     if(broken&&index%2!==0)return;
+    const i=Math.round((b.cx-35)/R),j=Math.round((b.cz-35)/R);
     const o=style==='boulevard'||style==='ceremonial'?30.4:style==='industrial'?29.4:30.4;
-    its.push({x:b.cx,y:.047,z:b.cz-o},{x:b.cx,y:.047,z:b.cz+o,ry:Math.PI});
-    if(!broken||index%4===0)its.push({x:b.cx-o,y:.047,z:b.cz,ry:Math.PI/2},{x:b.cx+o,y:.047,z:b.cz,ry:-Math.PI/2});
+    if(mainRoadActive(C,'x',j))its.push({x:b.cx,y:.047,z:b.cz-o});
+    if(mainRoadActive(C,'x',j+1))its.push({x:b.cx,y:.047,z:b.cz+o,ry:Math.PI});
+    if(mainRoadActive(C,'z',i))its.push({x:b.cx-o,y:.047,z:b.cz,ry:Math.PI/2});
+    if(mainRoadActive(C,'z',i+1)&&(!broken||index%4===0))its.push({x:b.cx+o,y:.047,z:b.cz,ry:-Math.PI/2});
   });
   instanced(geo,new THREE.MeshLambertMaterial({color:dc,map:LKT.edge,transparent:true,opacity:.35+L.dust*.6+L.lat*.3,depthWrite:false}),its,cityGroup);
   // A restrained, low-profile median gives planned capitals a different road rhythm
@@ -1241,21 +1266,18 @@ function roadDecals(C,blocks){
   const style=C.roadStyle||'mixed',marks=[];
   const addMark=(x,z,ry=0)=>marks.push({x,y:.085,z,ry});
   for(let k=-3;k<=3;k++)for(let i=-3;i<=2;i++){
-    const x=i*R+35,z=k*R;
+    const x=i*R+35,z=k*R,hasX=mainRoadActive(C,'x',k),hasZ=mainRoadActive(C,'z',k);
     if(style==='industrial'){
-      // Port and industrial corridors use a double yellow centre line.
-      for(const off of [-.62,.62]){const m=boxMark(x,z+off,0);marks.push(m);}
-      const vx=k*R,vz=i*R+35;for(const off of [-.62,.62])marks.push(boxMark(vx+off,vz,Math.PI/2));
+      // Freight corridors use double yellow only on roads that exist in this city's graph.
+      if(hasX)for(const off of [-.62,.62])marks.push(boxMark(x,z+off,0));
+      const vx=k*R,vz=i*R+35;if(hasZ)for(const off of [-.62,.62])marks.push(boxMark(vx+off,vz,Math.PI/2));
     }else if(style==='boulevard'||style==='ceremonial'){
-      // Formal avenues have lane guides flanking the median.
-      for(const off of [-2.1,2.1]){marks.push(boxMark(x,z+off,0));marks.push(boxMark(k*R+off,i*R+35,Math.PI/2));}
+      if(hasX)for(const off of [-2.1,2.1])marks.push(boxMark(x,z+off,0));
+      if(hasZ)for(const off of [-2.1,2.1])marks.push(boxMark(k*R+off,i*R+35,Math.PI/2));
     }else{
       const stride=style==='open'||style==='gate'?3:style==='market'?1:2;
-      for(let q=0;q<5;q++){
-        if((q+i+k)%stride!==0)continue;
-        const px=i*R+8+q*10,pz=k*R;
-        addMark(px,pz,0);addMark(k*R,i*R+8+q*10,Math.PI/2);
-      }
+      if(hasX)for(let q=0;q<5;q++){if((q+i+k)%stride===0)addMark(i*R+8+q*10,z,0);}
+      if(hasZ)for(let q=0;q<5;q++){if((q+i+k)%stride===0)addMark(k*R,i*R+8+q*10,Math.PI/2);}
     }
   }
   function boxMark(x,z,ry){return {x,y:.085,z,ry};}
@@ -2037,7 +2059,8 @@ function updateBarks(dt){
 function locName(x,z){
   const C=CITIES[curCity],kx=Math.round(x/R),kz=Math.round(z/R);
   let road=null;
-  if(Math.abs(x-kx*R)<9&&Math.abs(kx)<=3) road=C.nsRoads[kx+3]; else if(Math.abs(z-kz*R)<9&&Math.abs(kz)<=3) road=C.ewRoads[kz+3];
+  if(Math.abs(x-kx*R)<9&&Math.abs(kx)<=3&&mainRoadActive(C,'z',kx)) road=C.nsRoads[kx+3];
+  else if(Math.abs(z-kz*R)<9&&Math.abs(kz)<=3&&mainRoadActive(C,'x',kz)) road=C.ewRoads[kz+3];
   if(!road&&nearLocalStreet(C,x,z,1)){
     const names={'historic':'Old Quarter Lane','sahel':'Compound Lane','dense-market':'Market Lane','organic-sprawl':'Community Street','dense-coastal':'Coastal Access Road','delta-port':'Port Access Road','oil-port':'Industrial Access Road','planned':'District Avenue','planned-tropical':'Garden District Road','planned-river':'Riverside Access Road'};
     road=names[C.form]||'Local Street';
@@ -2398,7 +2421,9 @@ function buildCity(key){
   dxFlush(C);
   cityCols=colliders.length;
   for(let k=-3;k<=3;k++)for(const axis of ['x','z'])for(const dir of [1,-1]){
-    const n=(k===0||k===-1)?8:(RN()<.45?5:4);
+    if(!mainRoadActive(C,axis,k))continue;
+    const primary=k===0||k===-1;
+    const n=primary?8:(C.roadStyle==='boulevard'||C.roadStyle==='industrial'?6:(C.roadStyle==='market'||C.roadStyle==='gate'||C.roadStyle==='open'?2:(RN()<.45?5:4)));
     for(let q=0;q<n;q++) addCar(axis,k,dir,C);
   }
   // A small amount of slow, bounded traffic enters selected local streets.
