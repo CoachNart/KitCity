@@ -4507,9 +4507,16 @@ const lostValueMissions=LOST_VALUE_STORY.map(story=>{
   // One conversation leads to the audit; the report conversation is deliberately
   // held until the player has inspected the record and chosen to return.
   const preAuditLines=openingLines.concat(interludeLines);
+  // Every evidence trip ends with a real report exchange. Some story entries have
+  // no split closing dialogue, so generate a short contextual response for those.
+  const reportLines=closingLines.length?closingLines:[
+    [closingLead.name,'You checked '+story.evidenceTitle+' and brought back a useful lead. What stood out to you?'],
+    ['PLAYER','The evidence points to this: '+story.evidenceBody],
+    [closingLead.name,'That gives us something concrete to work with. I have added your finding to the case. Good work bringing back evidence instead of guesses.']
+  ];
   const steps=[conversationStep('Speak with '+openingLead.name,preAuditLines,openingLead,false,'record')];
   steps.push(clue);
-  if(closingLines.length) steps.push(conversationStep('Return and report to '+closingLead.name,closingLines,closingLead,true,'report'));
+  steps.push(conversationStep('Return and report to '+closingLead.name,reportLines,closingLead,true,'report'));
   return {
     id:story.id,n:story.n,city:story.city,title:story.title,goal:story.goal,
     storyState:story.state,storyValue:story.value,storyReward:story.reward,storyFinale:!!story.finale,
@@ -5113,48 +5120,68 @@ function resolve(p,r){
 let hitCd=0,shake=0,fallTimer=0,fallLean=1;
 const HAZARD_LINES={
   en:[
-    'Yeeh! I don die! Oga driver, who give you licence?',
-    'Ah-ah! You dey drive or you dey play FIFA with my body?',
-    'Driver! Na road you dey use or you dey settle family beef?',
-    'Jesus take the wheel! This driver don turn me to speed bump!',
-    'Omo! My ancestors just saw the car and logged out.',
-    'Oga, you see human being and press accelerator? Outstanding madness.',
-    'I just came to learn crypto, not to become road crypto dust!',
-    'Abeg! Who dash this driver steering wheel? Collect am back!',
-    'This one no be driving, na live-action demolition!',
-    'I don see my village people. Dem dey inside this motor!',
-    'Yeeh! My insurance company just block my number!',
-    'Oga driver, you dey dodge pothole or you dey dodge sense?',
-    'My body get 206 bones, but your driving wan reduce the number!',
-    'Who give you licence, your mechanic or your prayer warrior?',
-    'I never even cash out my USDC, you wan cash out my soul!',
-    'Driver, calm down! Na me be passenger, no be your debt!',
-    'If na audition for Fast and Furious, you don fail medicals!',
-    'Ah! My spirit don press emergency exit!',
-    'You see road user, you think say na bonus level?',
-    'Abeg park! Even Google Maps don abandon us!'
+    'AH! I was minding my business! Why has my body entered a group project?',
+    'Driver! You saw me and said, “Let’s test the brakes with a person”?!',
+    'My ancestors just stood up, looked at this, and sat back down.',
+    'Omo! My knees have submitted their resignation letter!',
+    'I came outside with confidence. Now my confidence is in intensive care.',
+    'Who gave you that steering wheel, a lucky dip?',
+    'Even your horn is shouting, “Please stop embarrassing us!”',
+    'This is not Need for Speed. I am not downloadable content!',
+    'My body just experienced an unexpected software update!',
+    'Oga! You drive like your phone is on 1% and the charger is across town!',
+    'I saw my whole life flash before me. The editing was terrible!',
+    'Please, I am a human being, not a speed bump with dreams!',
+    'My knees have opened a complaint ticket. Response time: never!',
+    'You pressed accelerator like somebody owed you money!',
+    'Ah! My soul has left a one-star review!',
+    'Driver, even your seat belt is trying to escape!',
+    'I need a moment. My dignity is still rolling down the road!',
+    'That was not a near miss. That was a full relationship with danger!',
+    'My body said “reconnecting…” and my spirit went offline!',
+    'Congratulations! You have unlocked the achievement: Unnecessary Drama!',
+    'I am walking, not auditioning to become road decoration!',
+    'Please park. Your driving has too many plot twists!',
+    'My bones just held an emergency meeting without inviting me!',
+    'I want to speak to the manager of this vehicle!',
+    'I dodged the car, but my peace of mind got hit!',
+    'Even a shopping trolley has better steering discipline!',
+    'I have forgiven you. My knees are still considering the matter!',
+    'That car came with confidence and left me with questions!',
+    'I need water, a chair, and a new understanding of friendship!',
+    'Somebody tell my legs the danger has passed. They are buffering!'
   ],
   pcm:[
-    'Yeeh! I don die! Oga driver, who give you licence?',
-    'Ah-ah! You dey drive or you dey play FIFA with my body?',
-    'Driver! Na road you dey use settle family beef?',
-    'Jesus take wheel! This driver don turn me to speed bump!',
-    'Omo! My ancestors don log out since dem see this motor.',
-    'Oga, you see human being come press accelerator? Madness!',
-    'I come learn crypto, no be to become road dust!',
-    'Abeg, who dash this driver steering? Collect am back!',
-    'This one no be driving, na live-action demolition!',
-    'My village people dey inside this motor, I don confirm am!',
-    'Yeeh! My insurance people don block my number!',
-    'Oga rider, you dey avoid pothole or you dey avoid sense?',
-    'My bones no be suya stick, abeg drive with sense!',
-    'I never cash out my USDC, you wan cash out my soul!',
-    'Na me be passenger, no be your enemy for road!',
-    'If na Fast and Furious audition, you don fail medical!',
-    'Even Google Maps don abandon us, driver!',
-    'Ah! My spirit don press emergency exit!',
-    'You see human being, you think say na bonus level?',
-    'Abeg park! Your steering dey write obituary!'
+    'Ah! I dey my lane! Why my body don join una group project?',
+    'Oga driver! You see me come say make we test brake with human being?!',
+    'My ancestors stand up, look this thing, then sit down again!',
+    'Omo! My knees don submit resignation letter!',
+    'I comot with confidence. Now my confidence dey emergency ward!',
+    'Who give you steering? Na lucky dip you win am?',
+    'Even your horn dey shout, “Abeg stop this embarrassment!”',
+    'This no be Need for Speed. I no be downloadable content!',
+    'My body just collect surprise software update!',
+    'Oga, you dey drive like your phone don reach 1%!',
+    'My whole life flash before me. The editing no good at all!',
+    'Abeg, I be human being, no be speed bump with ambition!',
+    'My knees don open complaint ticket. Nobody dey answer am!',
+    'You press accelerator like person wey dem owe money!',
+    'Ah! My soul don drop one-star review!',
+    'Even your seat belt wan escape from this journey!',
+    'Give me small time. My dignity still dey roll for road!',
+    'This no be near miss. Na full relationship with danger!',
+    'My body say “reconnecting…” and my spirit go offline!',
+    'Congratulations! You unlock achievement: Unnecessary Drama!',
+    'I dey waka, I no audition to become road decoration!',
+    'Abeg park. Your driving get too many plot twists!',
+    'My bones don hold emergency meeting without inviting me!',
+    'I wan speak to the manager of this motor!',
+    'I dodge the car, but my peace of mind collect hit!',
+    'Even wheelbarrow get better steering discipline!',
+    'I don forgive you. My knees still dey consider the matter!',
+    'That motor come with confidence, leave me with questions!',
+    'I need water, chair, and new understanding of friendship!',
+    'Somebody tell my legs say danger don pass. Dem still dey buffer!'
   ]
 };
 function carHit(dt){ if(hitCd>0)hitCd=Math.max(0,hitCd-dt);
