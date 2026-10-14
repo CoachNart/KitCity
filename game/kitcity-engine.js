@@ -383,6 +383,27 @@ const L=(en,pcm)=>P.lang==='pcm'&&pcm?pcm:translateText(en,P.lang);
 function tr(value){ return translateText(value,P.lang); }
 function tx(html){ return translateHTML(String(html==null?'':html),P.lang); }
 
+/* Translate only stable, known UI labels. Keep original text per text node so
+   switching languages repeatedly never translates a translation. Dynamic
+   mission/dialogue markup is translated by tx() at render time instead. */
+const staticTranslationNodes=new WeakMap();
+function translateStaticUI(){
+  const roots=document.querySelectorAll('#title button, #hud button, #hud h2, #hud h3, #side button, #controls button');
+  roots.forEach(root=>{
+    if(root.matches('[data-lang]')||root.closest('.mission-card,#steps,#toast')) return;
+    const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);
+    let node;
+    while((node=walker.nextNode())){
+      if(!node.nodeValue||!node.nodeValue.trim()) continue;
+      const prior=staticTranslationNodes.get(node);
+      const source=prior&&node.nodeValue===prior.rendered?prior.source:node.nodeValue;
+      const rendered=translateText(source,P.lang);
+      if(node.nodeValue!==rendered) node.nodeValue=rendered;
+      staticTranslationNodes.set(node,{source,rendered});
+    }
+  });
+}
+
 /* =====================  renderer / scene  ===================== */
 const renderer=new THREE.WebGLRenderer({canvas:$('#gl'),antialias:true,powerPreference:'high-performance'});
 function setPR(){ renderer.setPixelRatio(P.low?1:Math.min(window.devicePixelRatio||1,1.75)); }
@@ -5037,6 +5058,7 @@ function applyLang(){
   document.documentElement.lang=({en:'en',pcm:'pcm',ha:'ha',yo:'yo',ig:'ig'})[P.lang]||'en';
   document.querySelectorAll('[data-t]').forEach(el=>{ if(!el.dataset.en) el.dataset.en=el.textContent; const translated=el.dataset[P.lang]; el.textContent=translated||tr(el.dataset.en); });
   document.querySelectorAll('[data-lang]').forEach(b=>b.classList.toggle('on',b.dataset.lang===P.lang));
+  translateStaticUI();
   updateAuthButton();
   if(G) updateHUD();
   renderHub();
