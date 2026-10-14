@@ -1124,6 +1124,7 @@ const CITY_IDENTITY={
 };
 // State/metro aliases used by mission data share their own tuned identity.
 Object.assign(CITY_IDENTITY,{
+  'ikot-ekpene':{form:'southwest-sprawl',road:'market',styles:[['flat',.3],['zinc',.28],['banco',.2],['admin',.12],['glass',.1]],height:[7,30],market:3,ground:'#354039',slab:'#BCC7B9',dirt:'#887355',paint:['#C8D6BE','#B5C9C2','#D8C4A0','#AABDD0','#D1B98C','#AAB6A0'],feature:'market'},
   anambra:{form:'dense-market',road:'market',styles:[['flat',.32],['zinc',.3],['glass',.16],['admin',.12],['banco',.1]],height:[8,38],market:2,ground:'#3B3D39',slab:'#B8C0BB',dirt:'#907A5F',paint:['#CDD8D0','#B8CDD2','#D7C0A1','#A9B8CA','#D5C48E','#B6B6A9'],feature:'market'},
   adoekiti:CITY_IDENTITY['ado-ekiti'],
   abia:CITY_IDENTITY.umuahia,
