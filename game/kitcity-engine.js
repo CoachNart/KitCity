@@ -685,13 +685,7 @@ function buildSecondaryRoadSegments(C){
   }
   return out;
 }
-function nearLocalStreet(C,x,z,margin=0){
-  for(const r of localRoadSegments){
-    if(r.axis==='x'&&Math.abs(z-r.cz)<=r.width/2+margin&&x>=r.cx-35-margin&&x<=r.cx+35+margin)return true;
-    if(r.axis==='z'&&Math.abs(x-r.cx)<=r.width/2+margin&&z>=r.cz-35-margin&&z<=r.cz+35+margin)return true;
-  }
-  return false;
-}
+undefined
 /* Pick a genuinely off-road evidence location after the active city's roads exist.
    Arterials sit on the R grid; local streets are checked against their real segments. */
 function resolveRecordCenterSpot(){
@@ -1252,10 +1246,7 @@ function applyLook(key,C){
   try{ let b=document.getElementById('lkBadge'); if(!b){ b=document.createElement('div'); b.id='lkBadge'; b.style.cssText='position:fixed;left:8px;bottom:8px;z-index:99999;font:700 11px monospace;background:#000c;color:#fff;padding:5px 8px;border-radius:6px;pointer-events:none;transition:opacity 1s'; document.body.appendChild(b); }
     b.textContent='LOOK v2 \u2022 '+key+' \u2022 grade '+(GR?'ON':'OFF (fallback)'); b.style.opacity=1; clearTimeout(b._t); b._t=setTimeout(()=>{b.style.opacity=0;},6000); }catch(e){}
 }
-function roadDecals(C,blocks){
-  const L=LKC,dc=C.roadStyle==='boulevard'?'#D9DDE0':C.roadStyle==='promenade'?'#A9C7C5':C.roadStyle==='gate'?'#B99B70':C.roadStyle==='market'?'#C4B8A3':L.lat>.3?'#9a5a38':(L.dust>.2?'#cdb48a':'#8a7e6a'),its=[];
-  const geo=new THREE.PlaneGeometry(56,C.roadStyle==='boulevard'?3.4:2.8); geo.rotateX(-Math.PI/2);
-  blocks.forEach(b=>{ const o=30.4; its.push({x:b.cx,y:.047,z:b.cz-o},{x:b.cx,y:.047,z:b.cz+o,ry:Math.PI},{x:b.cx-o,y:.047,z:b.cz,ry:Math.PI/2},{x:b.cx+o,y:.047,z:b.cz,ry:-Math.PI/2}); });
+undefined
   instanced(geo,new THREE.MeshLambertMaterial({color:dc,map:LKT.edge,transparent:true,opacity:.35+L.dust*.6+L.lat*.3,depthWrite:false}),its,cityGroup);
   // A restrained, low-profile median gives planned capitals a different road rhythm
   // without blocking traffic or changing the mission navigation grid.
@@ -1288,7 +1279,7 @@ function roadDecals(C,blocks){
   }
   function boxMark(x,z,ry){return {x,y:.085,z,ry};}
   if(marks.length){
-    const g=new THREE.PlaneGeometry(style==='industrial'||style==='boulevard'||style==='ceremonial'?56:7,.22);g.rotateX(-Math.PI/2);
+    undefined
     const laneColor=style==='industrial'?'#E9BE35':style==='market'?'#C9C6B9':style==='gate'||style==='open'?'#D2B56D':'#E5E8E7';
     const laneMat=new THREE.MeshBasicMaterial({color:laneColor,transparent:true,opacity:style==='market'?.58:.9,depthWrite:false});
     instanced(g,laneMat,marks,cityGroup);
@@ -1886,24 +1877,7 @@ function streetDetails0(C,blocks){
   ringTaken=[]; hawkers=[];
   (C.bridges||[]).forEach(b=>footbridge(b[0],b[1]));
   if(C.flare) landmark('flare',C.flare[0],C.flare[1]);
-  const poles=[],arms=[],wires=[],lampsOn=[],lampsOff=[],zebra=[],holes=[],drains=[];
-  for(const b of blocks){
-    const cx=b.cx,cz=b.cz;
-    for(const sx of [-1,1]){
-      for(const sz of [-1,1]){
-        const px=cx+sx*27.4,pz=cz+sz*14;
-        if(nearSpecial(px,pz,10)||!ringFree(px,pz,2)) continue;
-        ringTaken.push({x:px,z:pz,r:1.5});
-        poles.push({x:px,y:0,z:pz}); arms.push({x:px-sx*1.1,y:13.7,z:pz,sx:2.4,sy:.25,sz:.25});
-        (RN()<.65?lampsOn:lampsOff).push({x:px-sx*2.1,y:13.5,z:pz});
-      }
-      wires.push({x:cx+sx*27.4,y:13.2,z:cz,sx:.07,sy:.07,sz:28},{x:cx+sx*27.4,y:12.4,z:cz,sx:.07,sy:.07,sz:28});
-    }
-    drains.push({x:cx,y:.08,z:cz-28.6,sx:56,sy:.16,sz:1.1},{x:cx,y:.08,z:cz+28.6,sx:56,sy:.16,sz:1.1},{x:cx-28.6,y:.08,z:cz,sx:1.1,sy:.16,sz:56},{x:cx+28.6,y:.08,z:cz,sx:1.1,sy:.16,sz:56});
-  }
-  for(let i=-3;i<=3;i++)for(let j=-3;j<=3;j++){
-    zebra.push({x:i*R+10.5,y:.06,z:j*R},{x:i*R-10.5,y:.06,z:j*R},{x:i*R,y:.06,z:j*R+10.5,ry:Math.PI/2},{x:i*R,y:.06,z:j*R-10.5,ry:Math.PI/2});
-  }
+undefined
   for(let q=0;q<70;q++){
     const k=Math.floor(rr(-3,4)),alongX=RN()<.5,t=rr(-200,200),off=rr(-5,5),mo=((t%R)+R)%R;
     if(mo<10||mo>R-10) continue;
@@ -2207,17 +2181,12 @@ function buildCity(key){
   if(key==='kitcity'){ buildKitCity(C); return; }
   const outer=new THREE.Mesh(uvScale(new THREE.PlaneGeometry(1400,1400),100,100),lam(C.dirt,{map:LKT.dirt})); outer.rotation.x=-Math.PI/2; outer.position.y=-.04; cityGroup.add(outer);
   const ground=new THREE.Mesh(uvScale(new THREE.PlaneGeometry(520,520),20,20),lam(C.ground,{map:LKT.asph})); ground.rotation.x=-Math.PI/2; cityGroup.add(ground);
-  const dirtMat=lam(C.dirt,{map:LKT.dirt}),paveMat=lam(C.slab,{map:LKT.pave}),slabGeo=uvScale(new THREE.BoxGeometry(56,0.1,56),14,14),vergeGeo=uvScale(new THREE.PlaneGeometry(59,59),10,10);
-  for(let k=-3;k<=3;k++)for(let i=-3;i<=2;i++){
-    const h=new THREE.Mesh(dashGeo,dashMat); h.rotation.x=-Math.PI/2; h.position.set(i*R+35,0.04,k*R); cityGroup.add(h);
-    const v=new THREE.Mesh(dashGeo,dashMat); v.rotation.set(-Math.PI/2,0,Math.PI/2); v.position.set(k*R,0.04,i*R+35); cityGroup.add(v);
-  }
-  const blocks=[];
+undefined
   const placeBuilding=(x,z,w,d,style,color,cx,cz,ox,oz)=>{if(nearSpecial(x,z,18)||nearLocalStreet(C,x,z,Math.max(w,d)/2+1.5))return;addBuilding(x,z,w,d,style,color,cx,cz,ox,oz);};
   localRoadSegments=buildSecondaryRoadSegments(C);
   const localRoadMat=lam(C.ground,{map:LKT.asph});
   for(let i=-3;i<=2;i++)for(let j=-3;j<=2;j++){
-    const cx=i*R+35,cz=j*R+35; blocks.push({cx,cz});
+undefined
     const vg=new THREE.Mesh(vergeGeo,dirtMat); vg.rotation.x=-Math.PI/2; vg.position.set(cx,.03,cz); cityGroup.add(vg);
     const slab=new THREE.Mesh(slabGeo,paveMat); slab.position.set(cx,0.05,cz); cityGroup.add(slab);
     // Local streets cut through selected blocks and join the existing arterial network.
