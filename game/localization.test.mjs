@@ -46,6 +46,19 @@ test('opening cinematic dialogue is translated for all four non-English language
   }
 });
 
+test('mission objectives and evidence records are catalogued in every supported language', () => {
+  const phrases = [
+    'The First Promise',
+    'Inspect the original promise noticeboard and return to Softstorm.',
+    'Thousands of future users. Major partnerships. Guaranteed community rewards. Verified work: insufficient evidence.',
+  ];
+  for (const language of ['pcm', 'ha', 'yo', 'ig']) {
+    for (const phrase of phrases) {
+      assert.notEqual(translateText(phrase, language), phrase, language + ': ' + phrase);
+    }
+  }
+});
+
 test('HTML translation changes text nodes only and keeps markup intact', () => {
   assert.equal(translateHTML('<button>Settings</button>', 'ha'), '<button>Saituna</button>');
   assert.equal(
