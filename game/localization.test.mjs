@@ -61,7 +61,7 @@ test('mission objectives and evidence records are catalogued in every supported 
 
 test('all story mission titles, goals, objectives, and evidence records have catalog entries', async () => {
   const storySource = await readFile(new URL('./lost-value-story.js', import.meta.url), 'utf8');
-  const phrases = [...storySource.matchAll(/\\b(title|goal|task|evidenceTitle|evidenceBody):\\s*'([^']*)'/g)]
+  const phrases = [...storySource.matchAll(/\b(title|goal|task|evidenceTitle|evidenceBody):\s*'([^']*)'/g)]
     .map(match => match[2].trim())
     .filter(Boolean);
   assert.equal(phrases.length, 75, 'expected all 15 story records and their five player-facing fields');
