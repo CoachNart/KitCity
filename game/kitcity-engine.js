@@ -4594,35 +4594,31 @@ function startMission(id){
     S.phase='play'; closeSheet(); Snd.setMode('play'); lastLoc=''; resetPlayer(); loadStep();
     $('#loading').classList.add('hidden');
     if(m.id==='m0'){
-      // The prologue is a real walk-up encounter, not a cutscene that teleports
-      // the player into a scene beside spawn. Keep its destination inside the
-      // playable city bounds so the compass can guide the player there.
-      clearGroup(missionGroup); colliders.length=cityCols; smoke=[]; ents=[];
+      // The prologue is a cinematic introduction, not a walk-up mission.
+      // Start it as soon as Lagos finishes loading; the player never has to
+      // find the cast or press the interaction button to understand the story.
+      clearGroup(missionGroup); colliders.length=cityCols; smoke=[]; ents=[]; goal=null;
       storySoftstorm.position.set(75,.05,-100);
       storyAbdul.position.set(79,.05,-100);
       storySoftstorm.rotation.y=Math.PI/2;
       storyAbdul.rotation.y=-Math.PI/2;
       storyCastGroup.visible=true;
-      const openingGoal={
-        x:77,z:-100,r:8,hidden:false,
-        active:()=>!!G&&!G.openingTriggered,
-        talk:()=>{
-          if(!G||G.openingTriggered) return;
-          G.openingTriggered=true;
-          storyDirector.playOpening(()=>{
-            storyCastGroup.visible=false;
-            P.storyPrologueSeen=true; P.done.m0=true;
-            if(G) G.used['iamabdul-story']=true;
-            goal=null;
-            save(); updateHUD();
-            openSheet('<section class="lost-value-finale"><p>MISSION UNLOCKED</p><h3>THE FIRST PROMISE</h3><p>Lagos State</p></section>',[
-              {t:'Start The First Promise',f:()=>startMission('lost-value-01')},
-              {t:'Back to hub',g:1,f:exitToHub}
-            ]);
-          });
-        }
-      };
-      goal=openingGoal; ents.push(openingGoal);
+      if(!P.storyPrologueSeen){
+        storyDirector.playOpening(()=>{
+          storyCastGroup.visible=false;
+          P.storyPrologueSeen=true; P.done.m0=true;
+          if(G) G.used['iamabdul-story']=true;
+          goal=null;
+          save(); updateHUD();
+          openSheet('<section class="lost-value-finale"><p>MISSION UNLOCKED</p><h3>THE FIRST PROMISE</h3><p>Lagos State</p></section>',[
+            {t:'Start The First Promise',f:()=>startMission('lost-value-01')},
+            {t:'Back to hub',g:1,f:exitToHub}
+          ]);
+        });
+      }else{
+        storyCastGroup.visible=false;
+        briefing();
+      }
     }else briefing();
   },60);
 }
