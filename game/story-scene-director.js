@@ -1,5 +1,3 @@
-import { translateText } from './localization';
-
 const SPEAKER_LABELS = {
   Softstorm: 'THE ONE WITH THE CARD',
   IamAbdul: 'THE ONE WHO HEARD IT FIRST',
@@ -25,7 +23,8 @@ function escapeHtml(value) {
 }
 
 export function createStorySceneDirector({ camera, player, getCharacter, getCharacters, animateCharacter, setModal, getLanguage }) {
-  const localized = value => translateText(value, typeof getLanguage === 'function' ? getLanguage() : 'en');
+  // Keep source copy intact here; the shared DOM localization observer translates it once and retains the source for language switching.
+  const localized = value => String(value == null ? '' : value);
   let active = false;
   let activePanels = OPENING_PANELS;
   let genericScene = false;
