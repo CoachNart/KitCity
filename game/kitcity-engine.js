@@ -464,6 +464,26 @@ const LOCALIZED={
 'Local Business Needs':['Local Business Needs','Local Business Needs','Àìní Iṣòwò Agbègbè','Mkpa Azụmahịa Mpaghara'],
 'Governance Decision Record':['Governance Decision Record','Governance Decision Record','Àkọsílẹ̀ Ìpinnu Ìṣàkóso','Ndekọ Mkpebi Ọchịchị'],
 'Public Progress Record':['Public Progress Record','Public Progress Record','Àkọsílẹ̀ Ìlọsíwájú Gbangba','Ndekọ Ọganihu Ọha'],
+'Every city teaches you something new.':['Gbogbo ìlú ń kọ́ ọ ní ohun tuntun.','Every city dey teach you something new.','Ìlú kọ̀ọ̀kan ń kọ́ ọ ní ohun tuntun.','Obodo ọ bụla na-akụziri gị ihe ọhụrụ.'],
+'Learn web3 before it costs you.':['Koyi Web3 kafin ya jawo maka asara.','Learn Web3 before e cost you.','Kọ́ Web3 kí ó tó fa ìṣòro fún ọ.','Mụta Web3 tupu ọ kpatara gị nsogbu.'],
+'Every city teaches you something new.':['Gbogbo ìlú ń kọ́ ọ ní ohun tuntun.','Every city dey teach you something new.','Ìlú kọ̀ọ̀kan ń kọ́ ọ ní ohun tuntun.','Obodo ọ bụla na-akụziri gị ihe ọhụrụ.'],
+'EMAIL ADDRESS':['EMAIL ADDRESS','EMAIL ADDRESS','ÀDÍRẸ́Ẹ̀SÌ Í-MẸ́Ẹ̀LÌ','ADỊRỊESỊ EMAIL'],
+'PASSWORD':['PASSWORD','PASSWORD','Ọ̀RỌ̀ aṣínà','PASWORD'],
+'PLAYER USERNAME':['PLAYER USERNAME','PLAYER USERNAME','ORÚKỌ OLÙṢERÉ','AHA ONYE EGWU'],
+'Choose language':['Choose language','Choose language','Yan èdè','Họrọ asụsụ'],
+'THE ONE WITH THE CARD':['THE ONE WITH THE CARD','THE ONE WITH THE CARD','ẸNI TÓ Ń GBÉ KÁÀDÌ','ONYE NWE KAADỊ'],
+'THE ONE WHO HEARD IT FIRST':['THE ONE WHO HEARD IT FIRST','THE ONE WHO HEARD IT FIRST','ẸNI TÓ KỌ́KỌ́ GBỌ́ Ọ́','ONYE NỌRỌ NỤ YA MBU'],
+'Another day. Another transaction. Another promise of something better.':['Wata rana. Wata ma’amala. Wani alkawarin alheri.','Another day. Another transaction. Another promise of something better.','Ọjọ́ míì. Ìṣòwò míì. Ìlérí míì pé ohun rere ń bọ̀.','Ụbọchị ọzọ. Azụmahịa ọzọ. Nkwa ọzọ nke ihe ka mma.'],
+'So this T3Kit thing connects all these people?':['Don haka wannan T3Kit yana haɗa mutanen nan ne?','So this T3Kit thing connects all these people?','Ṣé ohun T3Kit yìí ló so gbogbo àwọn ènìyàn wọ̀nyí pọ̀?','Ya ihe T3Kit a na-ejikọta ndị a niile?'],
+'Then why does nobody explain what it is?':['To me ya sa babu wanda ya bayyana abin da yake?','Then why does nobody explain what it is?','Nígbà náà, kí ló dé tí ẹnikẹ́ni kò fi ṣàlàyé ohun tó jẹ́?','Gịnị mere na onye ọ bụla anaghị akọwa ihe ọ bụ?'],
+'What do you do?':['Me za ka yi?','What do you do?','Kí lo máa ṣe?','Gịnị ka ị ga-eme?'],
+'Walk over and ask them':['Je ka tambaye su','Walk over and ask them','Lọ bá wọn sọ̀rọ̀ kí o sì béèrè','Gakwuru ha jụọ ha'],
+'Stay back and listen a little longer':['Zauna ka saurara kaɗan','Stay back and listen a little longer','Dúró sí ẹ̀yìn kí o tẹ́tí sí i díẹ̀ sí i','Nọrọ n’azụ gee ntị ntakịrị'],
+'TAP TO CONTINUE →':['TAP TO CONTINUE →','TAP TO CONTINUE →','FỌ́WỌ́ KAN LÁTI TẸ̀ SÍWÁJÚ →','PỊA KA ỊGA N’IHU →'],
+'ENTER THE STORY →':['ENTER THE STORY →','ENTER THE STORY →','WỌLÉ SÍ ÌTÀN NÁÀ →','BANYE N’AKỤKỌ AHỤ →'],
+'RETURN TO MISSION →':['RETURN TO MISSION →','RETURN TO MISSION →','PADÀ SÍ IṢẸ́ APINFUNNI →','LAGHACHI N’ỌRỤ →'],
+'SKIP SCENE ↗':['SKIP SCENE ↗','SKIP SCENE ↗','FÒ ÌPÍN YÌÍ ↗','MABAA NGALABA A ↗'],
+'NEXT PANEL →':['NEXT PANEL →','NEXT PANEL →','ÀWÒRÁN TÓ KÙ →','PANEL ỌZỌ →'],
 'The Evidence Wall':['The Evidence Wall','The Evidence Wall','Odi Ẹ̀rí','Mgbidi Ihe Akaebe']
 };
 const PCM={
@@ -5145,6 +5165,10 @@ function applyLang(){
   document.documentElement.lang=({en:'en',pcm:'pcm',ha:'ha',yo:'yo',ig:'ig'})[P.lang]||'en';
   document.querySelectorAll('[data-t]').forEach(el=>{ if(!el.dataset.en) el.dataset.en=el.textContent; const translated=el.dataset[P.lang]; el.textContent=translated||tr(el.dataset.en); });
   document.querySelectorAll('[data-lang]').forEach(b=>b.classList.toggle('on',b.dataset.lang===P.lang));
+  const navLabels={missions:'Mission',settings:'Settings',passport:'Activity'};
+  document.querySelectorAll('#nav [data-a="tab"]').forEach(b=>{const key=navLabels[b.dataset.v];if(key)b.textContent=tr(key);});
+  const run=$('#runBtn'),talk=$('#talkBtn'); if(run)run.textContent=tr('Run'); if(talk)talk.textContent=tr('Talk');
+  const title=$('#mTitle'); if(title&&G)title.textContent=tr(personalize('Mission '+G.m.n+': '+G.m.title,null));
   updateAuthButton();
   if(G) updateHUD();
   renderHub();
