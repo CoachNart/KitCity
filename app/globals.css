@@ -924,7 +924,6 @@ html.kitcity-story-active #modal{
 #hubBody .card,#hubBody .map-card,#hubBody .current-missions-empty{min-width:0;overflow-wrap:anywhere}
 #hubBody .card .row .btn{min-width:0}
 #nav{max-width:1180px;margin-inline:auto}
-#mission{width:min(26vw,300px);max-width:300px}
 @media(min-width:900px){
   #title{padding:clamp(24px,4vh,54px) clamp(28px,5vw,88px);overflow-y:auto}
   #title .wrap{
