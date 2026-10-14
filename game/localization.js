@@ -205,7 +205,7 @@ const NORMALIZED = Object.fromEntries(
   ]),
 );
 
-export function translateText(value: unknown, language = 'en'): string {
+export function translateText(value, language = 'en') {
   const original = String(value ?? '');
   if (!original || language === 'en' || !NORMALIZED[language]) return original;
   const match = original.match(/^(\s*)([\s\S]*?)(\s*)$/);
@@ -218,7 +218,7 @@ export function translateText(value: unknown, language = 'en'): string {
  * Translate only text between HTML tags. Markup, attributes, IDs, URLs,
  * mission keys and embedded game data are left untouched.
  */
-export function translateHTML(html: string, language = 'en'): string {
+export function translateHTML(html, language = 'en') {
   if (!html || language === 'en' || !NORMALIZED[language]) return html;
   return html.replace(/(^|>)([^<>]+)(?=<|$)/g, (whole, prefix, text) => prefix + translateText(text, language));
 }
