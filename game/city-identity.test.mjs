@@ -32,7 +32,7 @@ test('all expanded city records have a city-specific skyline signature', () => {
   const extras = section('const EXTRA_CITIES=', '\nEXTRA_CITIES.forEach');
   const extraKeys = [...extras.matchAll(/\["([^"]+)"/g)].map(match => match[1]);
   const signatures = section('const CITY_SIGNATURES={', '\n};\nfunction addCitySignature');
-  const signatureKeys = new Set([...signatures.matchAll(/[\"']?([a-z][a-z0-9-]*)[\"']?:'[^']+'/gg)].map(match => match[1]));
+  const signatureKeys = new Set([...signatures.matchAll(/["']?([a-z][a-z0-9-]*)["']?:'[^']+'/g)].map(match => match[1]));
   const missing = extraKeys.filter(key => !signatureKeys.has(key));
   assert.deepEqual(missing, [], 'Every expanded city needs a distinct signature profile');
 });
