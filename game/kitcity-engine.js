@@ -2619,9 +2619,12 @@ function badgeSVG(n,on,size){
 
 /* =====================  HUD  ===================== */
 function updateHUD(){
+  const prologueActive=!!(G&&G.m&&G.m.id==='m0');
+  const missionPanel=$('#mission');
+  if(missionPanel) missionPanel.classList.toggle('prologue-hidden',prologueActive);
   if(G){
-    $('#mTitle').textContent=tr(personalize('Mission '+G.m.n+': '+G.m.title,null));
-    $('#steps').innerHTML=G.m.steps.map((s,i)=>'<li class="'+(G.i>i?'done':(G.i===i?'now':''))+'">'+personalize(tr(s.label),G.m,s.npc)+'</li>').join('');
+    $('#mTitle').textContent=prologueActive?'':tr(personalize('Mission '+G.m.n+': '+G.m.title,null));
+    $('#steps').innerHTML=prologueActive?'':G.m.steps.map((s,i)=>'<li class="'+(G.i>i?'done':(G.i===i?'now':''))+'">'+personalize(tr(s.label),G.m,s.npc)+'</li>').join('');
   }
   const health=$('#health');
   if(health){
@@ -4594,37 +4597,31 @@ function startMission(id){
     S.phase='play'; closeSheet(); Snd.setMode('play'); lastLoc=''; resetPlayer(); loadStep();
     $('#loading').classList.add('hidden');
     if(m.id==='m0'){
-      // The prologue is a cinematic introduction, not a walk-up mission.
-      // Start it as soon as Lagos finishes loading; the player never has to
-      // find the cast or press the interaction button to understand the story.
+      // The prologue is a standalone cinematic: no objective, walk-up prompt,
+      // mission title card, or objective checklist. Always play it on launch/replay.
       clearGroup(missionGroup); colliders.length=cityCols; smoke=[]; ents=[]; goal=null;
+      $('#mission').classList.add('prologue-hidden');
       storySoftstorm.position.set(75,.05,-100);
       storyAbdul.position.set(79,.05,-100);
       storySoftstorm.rotation.y=Math.PI/2;
       storyAbdul.rotation.y=-Math.PI/2;
       storyCastGroup.visible=true;
-      if(!P.storyPrologueSeen){
-        storyDirector.playOpening(()=>{
-          storyCastGroup.visible=false;
-          P.storyPrologueSeen=true; P.done.m0=true;
-          if(G) G.used['iamabdul-story']=true;
-          goal=null;
-          save(); updateHUD();
-          openSheet('<section class="lost-value-finale"><p>MISSION UNLOCKED</p><h3>THE FIRST PROMISE</h3><p>Lagos State</p></section>',[
-            {t:'Start The First Promise',f:()=>startMission('lost-value-01')},
-            {t:'Replay Prologue',f:()=>startMission('m0')},
-            {t:'Back to hub',g:1,f:exitToHub}
-          ]);
-        });
-      }else{
+      storyDirector.playOpening(()=>{
         storyCastGroup.visible=false;
+        P.storyPrologueSeen=true; P.done.m0=true;
+        if(G) G.used['iamabdul-story']=true;
+        goal=null;
+        save(); updateHUD();
         openSheet('<section class="lost-value-finale"><p>PROLOGUE COMPLETE</p><h3>THE FIRST PROMISE</h3><p>Lagos State</p></section>',[
           {t:'Start The First Promise',f:()=>startMission('lost-value-01')},
           {t:'Replay Prologue',f:()=>startMission('m0')},
           {t:'Back to hub',g:1,f:exitToHub}
         ]);
-      }
-    }else briefing();
+      });
+    }else{
+      $('#mission').classList.remove('prologue-hidden');
+      briefing();
+    }
   },60);
 }
 function briefing(){
@@ -4672,6 +4669,7 @@ function certificate(){
 }
 function exitToHub(){
   closeSheet(); S.phase='hub'; Snd.setMode('hub'); G=null;
+  $('#mission').classList.remove('prologue-hidden');
   clearGroup(missionGroup); colliders.length=cityCols; smoke=[]; ents=[]; goal=null; beacon.visible=false;
   $('#hud').classList.add('hidden'); $('#title').classList.add('hidden');
   $('#hub').classList.remove('hidden'); $('#hub').setAttribute('aria-hidden','false');
