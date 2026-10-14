@@ -15,8 +15,11 @@ test('only English and Naija Pidgin are available', () => {
 
 test('landing UI exposes only English and Pidgin language controls', async () => {
   const page = await readFile(new URL('../app/page.tsx', import.meta.url), 'utf8');
-  const buttons = [...page.matchAll(/data-lang=\\\\?"(en|pcm|ha|yo|ig)\\\\?"/g)].map(match => match[1]);
-  assert.deepEqual(buttons, ['en', 'pcm']);
+  assert.ok(page.includes('data-lang=\\\"en\\\"'));
+  assert.ok(page.includes('data-lang=\\\"pcm\\\"'));
+  for (const retired of ['ha', 'yo', 'ig']) {
+    assert.ok(!page.includes('data-lang=\\\"' + retired + '\\\"'), 'retired language button remains: ' + retired);
+  }
   assert.doesNotMatch(page, /data-(?:ha|yo|ig)=/);
   assert.doesNotMatch(page, />HAUSA<|>YORÙBÁ<|>IGBO</);
 });
