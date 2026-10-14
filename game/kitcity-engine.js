@@ -4612,6 +4612,7 @@ function startMission(id){
           save(); updateHUD();
           openSheet('<section class="lost-value-finale"><p>MISSION UNLOCKED</p><h3>THE FIRST PROMISE</h3><p>Lagos State</p></section>',[
             {t:'Start The First Promise',f:()=>startMission('lost-value-01')},
+            {t:'Replay Prologue',f:()=>startMission('m0')},
             {t:'Back to hub',g:1,f:exitToHub}
           ]);
         });
@@ -4619,6 +4620,7 @@ function startMission(id){
         storyCastGroup.visible=false;
         openSheet('<section class="lost-value-finale"><p>PROLOGUE COMPLETE</p><h3>THE FIRST PROMISE</h3><p>Lagos State</p></section>',[
           {t:'Start The First Promise',f:()=>startMission('lost-value-01')},
+          {t:'Replay Prologue',f:()=>startMission('m0')},
           {t:'Back to hub',g:1,f:exitToHub}
         ]);
       }
