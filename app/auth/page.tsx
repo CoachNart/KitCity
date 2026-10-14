@@ -76,7 +76,7 @@ export default function AuthPage() {
         location: null,
       });
       localStorage.setItem('kitcity_player_name', accountUsername);
-      window.location.href = '/?enter=1';
+      window.location.href = '/';
     } catch (error) {
       setMessage(errorMessage(error));
     } finally {
