@@ -4601,10 +4601,11 @@ function startMission(id){
       // mission title card, or objective checklist. Always play it on launch/replay.
       clearGroup(missionGroup); colliders.length=cityCols; smoke=[]; ents=[]; goal=null;
       $('#mission').classList.add('prologue-hidden'); $('#mission').style.display='none';
-      storySoftstorm.position.set(75,.05,-100);
-      storyAbdul.position.set(79,.05,-100);
-      storySoftstorm.rotation.y=Math.PI/2;
-      storyAbdul.rotation.y=-Math.PI/2;
+      const sceneX=player.position.x, sceneZ=player.position.z;
+      storySoftstorm.position.set(sceneX-3,.05,sceneZ-2);
+      storyAbdul.position.set(sceneX+3,.05,sceneZ-2);
+      storySoftstorm.rotation.y=Math.atan2(player.position.x-storySoftstorm.position.x,player.position.z-storySoftstorm.position.z);
+      storyAbdul.rotation.y=Math.atan2(player.position.x-storyAbdul.position.x,player.position.z-storyAbdul.position.z);
       storyCastGroup.visible=true;
       storyDirector.playOpening(()=>{
         storyCastGroup.visible=false;
