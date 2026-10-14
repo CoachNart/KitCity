@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "test:localization": "node --test game/localization.test.mjs",
-    "prebuild": "npm run test:localization"
+    "prebuild": "npm run test:localization && npm run test:worlds",
+    "test:worlds": "node --test game/city-identity.test.mjs"
   },
   "dependencies": {
     "next": "16.3.8",
