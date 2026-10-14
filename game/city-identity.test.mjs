@@ -48,6 +48,7 @@ test('city building and skyline renderers use the new profiles', () => {
   assert.ok(engine.includes('addCityIdentityFeature(C); addCitySignature(C)'));
   assert.ok(engine.includes('Regional horizons differ in silhouette and density'));
   assert.ok(engine.includes('const crossingStride=design.crossingStride||3'));
+  assert.ok(!engine.includes('const h=new THREE.Mesh(dashGeo,dashMat); h.rotation.x=-Math.PI/2; h.position.set(i*R+35,0.04,k*R)'), 'The old universal road-dash overlay must stay removed');
 });
 
 test('mission navigation anchors remain fixed during visual redesign', () => {
