@@ -377,187 +377,29 @@ const Snd=(function(){
 })();
 window.addEventListener('pointerdown',()=>Snd.unlock());
 
-/* ===================== Full-game localization ===================== */
-/* Every rendered text surface uses this dictionary: landing, menus, mission
-   cards, objectives, dialogue HTML, settings, status messages and story scenes.
-   Keep English as the source key and add all five locale values together. */
-const L=(en,pcm)=>P.lang==='pcm'?pcm:tr(en);
-const LOCALIZED={
-'Mission':['Mission','Mission','Iṣẹ́ apinfunni','Ozi ọrụ'],
-'Settings':['Settings','Settings','Ètò','Ntọala'],
-'Activity':['Activity','Activity','Ìṣe','Omume'],
-'Sign in':['Sign in','Sign in','Wọlé','Banye'],
-'Create account':['Create account','Create account','Ṣẹ̀dá àkọọ́lẹ̀','Mepụta akaụntụ'],
-'Sign out':['Sign out','Sign out','Jáde','Pụọ'],
-'Enter KitCity':['Enter KitCity','Enter KitCity','Wọlé sí KitCity','Banye na KitCity'],
-'Restoring your session…':['Restoring your session…','Restoring your session…','A ń tún ìgbàwọlé rẹ ṣe…','A na-eweghachi nnọkọ gị…'],
-'English':['English','English','Èdè Gẹ̀ẹ́sì','Bekee'],
-'Naija Pidgin':['Naija Pidgin','Naija Pidgin','Èdè Pidgin Nàìjíríà','Pidgin Naịjiria'],
-'Hausa':['Hausa','Hausa','Èdè Hausa','Asụsụ Hausa'],
-'Yoruba':['Yoruba','Yoruba','Èdè Yorùbá','Asụsụ Yoruba'],
-'Igbo':['Igbo','Igbo','Èdè Ìgbò','Asụsụ Igbo'],
-'Choose language':['Choose language','Choose language','Yan èdè','Họrọ asụsụ'],
-'Choose how the game talks to you.':['Choose how the game talks to you.','Zaɓi yaren da wasan zai yi maka magana.','Yan bí eré ṣe máa ń bá ọ sọ̀rọ̀.','Họrọ asụsụ egwuregwu ga-eji agwa gị okwu.'],
-'Run':['Run','Run','Sáré','Gbaa ọsọ'],
-'Talk':['Talk','Talk','Bá sọ̀rọ̀','Kwuo okwu'],
-'Here':['Here','Here','Níbí','Ebe a'],
-'No wallet yet':['No wallet yet','No wallet yet','Kò sí wallet síbẹ̀','Enweghị wallet ugbu a'],
-'Practice wallet':['Practice wallet','Practice wallet','Wallet ìdánrawò','Wallet omume'],
-'missions completed':['missions completed','missions completed','àwọn iṣẹ́ apinfunni ti parí','ọrụ emechara'],
-'Mission badges':['Mission badges','Mission badges','Àmì iṣẹ́ apinfunni','Baajị ọrụ'],
-'Journey progress':['Journey progress','Journey progress','Ìlọsíwájú ìrìnàjò','Ọganihu njem'],
-'Missions complete':['Missions complete','Missions complete','Àwọn iṣẹ́ apinfunni tí a parí','Ọrụ emechara'],
-'City journeys complete':['City journeys complete','City journeys complete','Àwọn ìrìnàjò ìlú tí a parí','Njem obodo emechara'],
-'Wallet':['Wallet','Wallet','Wallet','Wallet'],
-'No active story mission here yet':['No active story mission here yet','No active story mission here yet','Kò sí iṣẹ́ ìtàn tó ń ṣiṣẹ́ níbí síbẹ̀','Enweghị ozi akụkọ na-arụ ọrụ ebe a ugbu a'],
-'This city remains on the KitCity map. Its current story mission will appear here when it is part of the active arc.':['This city remains on the KitCity map. Its current story mission will appear here when it is part of the active arc.','This city remains on the KitCity map. Its current story mission will appear here when it is part of the active arc.','Ìlú yìí ṣì wà lórí maapu KitCity. Iṣẹ́ ìtàn rẹ yóò hàn níbí nígbà tó bá di apá ìrìnàjò tó ń lọ.','Obodo a ka dị na maapụ KitCity. Ozi akụkọ ya ga-apụta ebe a mgbe ọ bụ akụkụ njem na-aga n’ihu.'],
-'SELECTED CITY':['SELECTED CITY','SELECTED CITY','ÌLÚ TÍ A YÀN','OBODO AHỌỌRỌ'],
-'missions':['missions','missions','àwọn iṣẹ́ apinfunni','ọrụ'],
-'Mission complete':['Mission complete','Mission complete','Iṣẹ́ apinfunni parí','Emechala ozi'],
-'MISSION COMPLETE':['MISSION COMPLETE','MISSION COMPLETE','IṢẸ́ APINFUNNI PARÍ','EMECHALA OZI'],
-'FIRST MOVE':['FIRST MOVE','FIRST MOVE','ÌGBÉSẸ̀ ÀKỌ́KỌ́','NZỌỤKWỤ MBỤ'],
-'Follow the arrow. Talk with the person you find.':['Follow the arrow. Talk with the person you find.','Follow the arrow. Talk with the person you find.','Tẹ̀lé ọfà náà. Bá ẹni tó o bá rí sọ̀rọ̀.','Soro akụ ahụ. Gwa onye ị hụrụ okwu.'],
-'Follow the arrow and watch for traffic.':['Follow the arrow and watch for traffic.','Follow the arrow and watch for traffic.','Tẹ̀lé ọfà náà, kí o sì ṣọ́ra fún ọkọ̀.','Soro akụ ahụ ma lezie anya n’ụgbọala.'],
-'How to play':['How to play','How to play','Bí a ṣe ń ṣeré','Otu esi egwu'],
-'Move with the left stick or WASD. Hold Run or Shift to run. Tap Talk or press E near a glowing person. The arrow points to your goal. Avoid traffic.':['Move with the left stick or WASD. Hold Run or Shift to run. Tap Talk or press E near a glowing person. The arrow points to your goal. Avoid traffic.','Move with the left stick or WASD. Hold Run or Shift to run. Tap Talk or press E near a glowing person. The arrow points to your goal. Avoid traffic.','Lo ọ̀pá òsì tàbí WASD láti rìn. Di Run tàbí Shift mú láti sáré. Fọwọ́ kan Talk tàbí tẹ E lẹ́gbẹ̀ẹ́ ẹni tó ń tàn. Ọfà náà ń tọ́ka sí ibi-afẹ́ rẹ. Ṣọ́ra fún ọkọ̀.','Jiri mkpisi aka ekpe ma ọ bụ WASD gaa. Jide Run ma ọ bụ Shift ka ị gba ọsọ. Pịa Talk ma ọ bụ E nso onye na-enwu. Akụ ahụ na-egosi ebe ị na-aga. Zere ụgbọala.'],
-'About the streets':['About the streets','About the streets','Nípa àwọn òpópónà','Banyere okporo ụzọ'],
-'Street and district names are inspired by real places in each city. The layout is a stylised grid, not a survey map.':['Street and district names are inspired by real places in each city. The layout is a stylised grid, not a survey map.','Street and district names are inspired by real places in each city. The layout is a stylised grid, not a survey map.','Àwọn orúkọ òpópónà àti agbègbè dá lórí àwọn ibi gidi ní ìlú kọ̀ọ̀kan. Ètò ọ̀nà jẹ́ àwòrán eré, kì í ṣe maapu ìwádìí.','Aha okporo ụzọ na mpaghara sitere n’ebe dị adị n’obodo ọ bụla. Nhazi ahụ bụ nke egwuregwu, ọ bụghị maapụ nyocha.'],
-'Graphics':['Graphics','Graphics','Àwòrán','Eserese'],
-'High':['High','High','Gíga','Elu'],
-'Low':['Low','Low','Kéré','Ala'],
-'Music':['Music','Music','Orin','Egwu'],
-'Playlist':['Playlist','Playlist','Àkójọ orin','Ndepụta egwu'],
-'Sound effects':['Sound effects','Sound effects','Ìró àfikún','Ụda mmetụta'],
-'Turn off':['Turn off','Turn off','Pa á','Gbanyụọ'],
-'Turn on':['Turn on','Turn on','Tan án','Gbanye'],
-'Reset progress':['Reset progress','Reset progress','Tún ìlọsíwájú bẹ̀rẹ̀','Tọgharịa ọganihu'],
-'Erases badges, mission progress and your practice wallet on this device.':['Erases badges, mission progress and your practice wallet on this device.','Erases badges, mission progress and your practice wallet on this device.','Yóò pa àwọn àmì, ìlọsíwájú iṣẹ́ àti wallet ìdánrawò rẹ rẹ́ lórí ẹ̀rọ yìí.','Ọ ga-ehichapụ baajị, ọganihu ọrụ na wallet omume gị na ngwaọrụ a.'],
-'Tap again to confirm':['Tap again to confirm','Tap again to confirm','Fọwọ́ kan lẹ́ẹ̀kan sí i láti jẹ́rìí','Pịa ọzọ iji kwenye'],
-'Yes, erase everything':['Yes, erase everything','Yes, erase everything','Bẹ́ẹ̀ni, pa gbogbo rẹ rẹ́','Ee, hichapụ ihe niile'],
-'Reset':['Reset','Reset','Tún bẹ̀rẹ̀','Tọgharịa'],
-'Prototype: wallets, balances and payments are simulated. Rates are samples. Nothing here is financial advice.':['Prototype: wallets, balances and payments are simulated. Rates are samples. Nothing here is financial advice.','Prototype: wallets, balances and payments are simulated. Rates are samples. Nothing here is financial advice.','Àpẹẹrẹ eré ni èyí: wallet, owó tó wà àti ìsanwó jẹ́ àfarawé. Àwọn oṣùwọ̀n jẹ́ àpẹẹrẹ. Èyí kì í ṣe ìmọ̀ràn ìnáwó.','Nke a bụ nnwale: wallet, ego na ịkwụ ụgwọ bụ ihe e mere ka ọ dị adị. Ọnụọgụ bụ ihe atụ. Nke a abụghị ndụmọdụ ego.'],
-'The First Promise':['The First Promise','The First Promise','Ìlérí Àkọ́kọ́','Nkwa Mbụ'],
-'The Price of Trust':['The Price of Trust','The Price of Trust','Iye Ìgbẹ́kẹ̀lé','Ọnụ Ahịa Ntụkwasị Obi'],
-'The Empty Promise':['The Empty Promise','The Empty Promise','Ìlérí Òfìfo','Nkwa Efù'],
-'The People Who Built It':['The People Who Built It','The People Who Built It','Àwọn Tó Kọ́ Ọ́','Ndị Wulitere Ya'],
-'Who Owns the Work?':['Who Owns the Work?','Who Owns the Work?','Ta Ni Ó Ní Iṣẹ́ Náà?','Onye Nwere Ọrụ Ahụ?'],
-'The Exit':['The Exit','The Exit','Ọ̀nà Àbáyọ','Ụzọ Ọpụpụ'],
-'The Community That Disappeared':['The Community That Disappeared','The Community That Disappeared','Àwùjọ Tó Sọnù','Obodo Ndị Furu Efù'],
-'The Numbers Game':['The Numbers Game','The Numbers Game','Eré Àwọn Nọ́mbà','Egwuregwu Ọnụọgụ'],
-'The Open Door':['The Open Door','The Open Door','Ilẹ̀kùn Tí Ó Ṣí','Ọnụ Ụzọ Meghere Emepe'],
-'Building for Nobody':['Building for Nobody','Building for Nobody','Kíkọ́ Fún Ẹnikẹ́ni Kò Sí','Iwulite Maka Onye Ọ Bụla'],
-'The People Left Behind':['The People Left Behind','The People Left Behind','Àwọn Tí A Fi Sẹ́yìn','Ndị A Hapụrụ'],
-'The Rules for Everyone':['The Rules for Everyone','The Rules for Everyone','Òfin Fún Gbogbo Ènìyàn','Iwu Maka Onye Ọ Bụla'],
-'The Cost of Starting Over':['The Cost of Starting Over','The Cost of Starting Over','Iye Bíbẹ̀rẹ̀ Lẹ́ẹ̀kan Sí I','Ọnụ Ahịa Ịmalite Ọzọ'],
-'The Things Worth Keeping':['The Things Worth Keeping','The Things Worth Keeping','Àwọn Ohun Tó Yẹ Kí A Pa Mọ́','Ihe Ndị Kwesịrị Ịchekwa'],
-'The Lost Value':['The Lost Value','The Lost Value','Iye Tó Sọnù','Uru Furu Efù'],
-'The Original Promise':['The Original Promise','The Original Promise','Ìlérí Àkọ́kọ́','Nkwa Mbụ'],
-'Project Promise Record':['Project Promise Record','Project Promise Record','Àkọsílẹ̀ Ìlérí Iṣẹ́','Ndekọ Nkwa Ọrụ'],
-'Product Demo Review':['Product Demo Review','Product Demo Review','Àyẹ̀wò Àfihàn Ọjà','Nyocha Ngosi Ngwaahịa'],
-'Contribution Record':['Contribution Record','Contribution Record','Àkọsílẹ̀ Ìkópa','Ndekọ Ntinye Aka'],
-'Ownership and Access Audit':['Ownership and Access Audit','Ownership and Access Audit','Àyẹ̀wò Ohun-ìní àti Ìwọlé','Nyocha Nwe na Ịnweta'],
-'Public Claims and Transaction Record':['Public Claims and Transaction Record','Public Claims and Transaction Record','Àwọn Ìsọfúnni Gbangba àti Àkọsílẹ̀ Ìṣòwò','Nkwupụta Ọha na Ndekọ Azụmahịa'],
-'Archived Community Proposals':['Archived Community Proposals','Archived Community Proposals','Àwọn Àbá Àwùjọ Tí A Fipamọ́','Atụmatụ Obodo Echekwara'],
-'Project Metrics Review':['Project Metrics Review','Project Metrics Review','Àyẹ̀wò Ìwọ̀n Iṣẹ́','Nyocha Ọnụọgụ Ọrụ'],
-'First-Time User Transaction':['First-Time User Transaction','First-Time User Transaction','Ìṣòwò Olùlò Tuntun','Azụmahịa Onye Ọrụ Mbụ'],
-'User Needs Record':['User Needs Record','User Needs Record','Àkọsílẹ̀ Àìní Olùlò','Ndekọ Mkpa Onye Ọrụ'],
-'Local Business Needs':['Local Business Needs','Local Business Needs','Àìní Iṣòwò Agbègbè','Mkpa Azụmahịa Mpaghara'],
-'Governance Decision Record':['Governance Decision Record','Governance Decision Record','Àkọsílẹ̀ Ìpinnu Ìṣàkóso','Ndekọ Mkpebi Ọchịchị'],
-'Public Progress Record':['Public Progress Record','Public Progress Record','Àkọsílẹ̀ Ìlọsíwájú Gbangba','Ndekọ Ọganihu Ọha'],
-'Every city teaches you something new.':['Every city dey teach you something new.','Gbogbo ìlú ń kọ́ ọ ní ohun tuntun.','Ìlú kọ̀ọ̀kan ń kọ́ ọ ní ohun tuntun.','Obodo ọ bụla na-akụziri gị ihe ọhụrụ.'],
-'Learn web3 before it costs you.':['Koyi Web3 kafin ya jawo maka asara.','Learn Web3 before e cost you.','Kọ́ Web3 kí ó tó fa ìṣòro fún ọ.','Mụta Web3 tupu ọ kpatara gị nsogbu.'],
-'Every city teaches you something new.':['Gbogbo ìlú ń kọ́ ọ ní ohun tuntun.','Every city dey teach you something new.','Ìlú kọ̀ọ̀kan ń kọ́ ọ ní ohun tuntun.','Obodo ọ bụla na-akụziri gị ihe ọhụrụ.'],
-'EMAIL ADDRESS':['EMAIL ADDRESS','EMAIL ADDRESS','ÀDÍRẸ́Ẹ̀SÌ Í-MẸ́Ẹ̀LÌ','ADỊRỊESỊ EMAIL'],
-'PASSWORD':['PASSWORD','PASSWORD','Ọ̀RỌ̀ aṣínà','PASWORD'],
-'PLAYER USERNAME':['PLAYER USERNAME','PLAYER USERNAME','ORÚKỌ OLÙṢERÉ','AHA ONYE EGWU'],
-'Choose language':['Choose language','Choose language','Yan èdè','Họrọ asụsụ'],
-'THE ONE WITH THE CARD':['THE ONE WITH THE CARD','THE ONE WITH THE CARD','ẸNI TÓ Ń GBÉ KÁÀDÌ','ONYE NWE KAADỊ'],
-'THE ONE WHO HEARD IT FIRST':['THE ONE WHO HEARD IT FIRST','THE ONE WHO HEARD IT FIRST','ẸNI TÓ KỌ́KỌ́ GBỌ́ Ọ́','ONYE NỌRỌ NỤ YA MBU'],
-'Another day. Another transaction. Another promise of something better.':['Another day, another transaction, another promise of something better.','Wata rana. Wata ma’amala. Wani alkawarin alheri.','Ọjọ́ míì. Ìṣòwò míì. Ìlérí míì pé ohun rere ń bọ̀.','Ụbọchị ọzọ. Azụmahịa ọzọ. Nkwa ọzọ nke ihe ka mma.'],
-'So this T3Kit thing connects all these people?':['So this T3Kit thing dey connect all these people?','Don haka wannan T3Kit yana haɗa mutanen nan ne?','Ṣé ohun T3Kit yìí ló so gbogbo àwọn ènìyàn wọ̀nyí pọ̀?','Ya ihe T3Kit a na-ejikọta ndị a niile?'],
-'Then why does nobody explain what it is?':['Then why nobody dey explain wetin e be?','To me ya sa babu wanda ya bayyana abin da yake?','Nígbà náà, kí ló dé tí ẹnikẹ́ni kò fi ṣàlàyé ohun tó jẹ́?','Gịnị mere na onye ọ bụla anaghị akọwa ihe ọ bụ?'],
-'What do you do?':['Wetin you go do?','Me za ka yi?','Kí lo máa ṣe?','Gịnị ka ị ga-eme?'],
-'Walk over and ask them':['Go meet them and ask','Je ka tambaye su','Lọ bá wọn sọ̀rọ̀ kí o sì béèrè','Gakwuru ha jụọ ha'],
-'Stay back and listen a little longer':['Stay small, listen small more','Zauna ka saurara kaɗan','Dúró sí ẹ̀yìn kí o tẹ́tí sí i díẹ̀ sí i','Nọrọ n’azụ gee ntị ntakịrị'],
-'TAP TO CONTINUE →':['TAP TO CONTINUE →','TAP TO CONTINUE →','FỌ́WỌ́ KAN LÁTI TẸ̀ SÍWÁJÚ →','PỊA KA ỊGA N’IHU →'],
-'ENTER THE STORY →':['ENTER THE STORY →','ENTER THE STORY →','WỌLÉ SÍ ÌTÀN NÁÀ →','BANYE N’AKỤKỌ AHỤ →'],
-'RETURN TO MISSION →':['RETURN TO MISSION →','RETURN TO MISSION →','PADÀ SÍ IṢẸ́ APINFUNNI →','LAGHACHI N’ỌRỤ →'],
-'SKIP SCENE ↗':['SKIP SCENE ↗','SKIP SCENE ↗','FÒ ÌPÍN YÌÍ ↗','MABAA NGALABA A ↗'],
-'NEXT PANEL →':['NEXT PANEL →','NEXT PANEL →','ÀWÒRÁN TÓ KÙ →','PANEL ỌZỌ →'],
-'Introduce the original promise of Web3 through a real problem, rather than a lecture.':['Show the original Web3 promise through real-life matter, no be classroom talk.','Gabatar da ainihin alkawarin Web3 ta hanyar matsala ta gaske, ba lacca ba.','Fi ìlérí àkọ́kọ́ Web3 hàn nípasẹ̀ ìṣòro gidi, kì í ṣe ìdánilẹ́kọ̀ọ́.','Gosi nkwa mbụ Web3 site na nsogbu dị adị, ọ bụghị nkuzi klas.'],
-'Inspect the original promise noticeboard and return to Softstorm.':['Check the original promise board and go back to Softstorm.','Duba allon alkawarin farko, sannan ka koma wurin Softstorm.','Ṣàyẹ̀wò pátákó ìlérí àkọ́kọ́, kí o sì padà sí Softstorm.','Lelee bọọdụ nkwa mbụ ma laghachi na Softstorm.'],
-'Show how trust can be exploited when people rely on reputation instead of evidence.':['Show how people fit use trust take do anyhow when nobody check evidence.','Nuna yadda ake iya amfani da amana ba daidai ba idan mutane sun dogara da suna maimakon hujja.','Ṣàfihàn bí a ṣe lè lo ìgbẹ́kẹ̀lé ní ọ̀nà búburú tí ènìyàn bá gbẹ́kẹ̀ lé orúkọ dípò ẹ̀rí.','Gosi otú e si emegbu ntụkwasị obi mgbe ndị mmadụ tụkwasịrị aha obi karịa ihe akaebe.'],
-'Review the project page and identify the missing delivery evidence.':['Check the project page and find the proof say dem deliver wetin dem promise.','Duba shafin aikin ka gano hujjar isar da abin da aka yi alkawari da ta ɓace.','Ṣàyẹ̀wò ojú-ìwé iṣẹ́ náà kí o sì mọ ẹ̀rí ìmúṣẹ tí kò sí.','Lelee ibe ọrụ ahụ ma chọpụta ihe akaebe nnyefe na-efu.'],
-'Explore the difference between speculation and real utility.':['Know the difference between guess-work for money and real usefulness.','Bincika bambanci tsakanin hasashe da amfani na gaske.','Ṣàwárí ìyàtọ̀ láàárín ìrònú èrè àti ìwúlò gidi.','Chọpụta ọdịiche dị n’etiti ịkọ nkọ na uru bara uru n’eziokwu.'],
-'Test the demo and record which promised features actually work.':['Test the demo and write down the features wey really work.','Gwada demo ɗin ka rubuta fasalolin da suke aiki da gaske.','Dán àfihàn náà wò, kí o sì kọ àwọn ẹ̀yà tó ń ṣiṣẹ́ gan-an sílẹ̀.','Nwalee ngosi ahụ ma dee atụmatụ ndị na-arụ ọrụ n’eziokwu.'],
-'Reveal how contributors can create value without receiving recognition, ownership, or fair rewards.':['Show how people fit build value but no get credit, ownership or fair reward.','Nuna yadda masu ba da gudummawa ke ƙirƙirar ƙima ba tare da yabo, mallaka ko lada mai adalci ba.','Ṣàfihàn bí àwọn olùkópa ṣe lè dá iye sílẹ̀ láìgba ìdánimọ̀, ohun-ìní tàbí èrè tó tọ́.','Gosi otu ndị nyere aka si kee uru n’enweghị nkwanye ugwu, nwe, ma ọ bụ ụgwọ ziri ezi.'],
-'Review the contribution record and submit a public report naming the original contributors.':['Check the contribution record and publish who really do the work.','Duba bayanan gudummawa ka wallafa sunayen waɗanda suka yi aikin tun farko.','Ṣàyẹ̀wò àkọsílẹ̀ ìkópa, kí o sì tẹ ìròyìn gbangba jáde tó mẹ́nuba àwọn olùkópa àkọ́kọ́.','Lelee ndekọ ntinye aka ma bipụta akụkọ ọha nke kpọrọ ndị nyere aka na mbụ aha.'],
-'Distinguish between owning a token, controlling a system, and having meaningful ownership.':['Know the difference between holding token, controlling the system and truly owning something.','Bambanta mallakar token, sarrafa tsarin, da mallaka ta gaske.','Ya ìyàtọ̀ láàárín níní token, ṣíṣàkóso ètò, àti níní ohun-ìní ní tòótọ́.','Mata ọdịiche n’etiti inwe token, ịchịkwa sistemụ, na inwe ihe n’ezie.'],
-'Inspect the project permissions and identify a promised right the community never received.':['Check the project permissions and find the right wey dem promise community but never give.','Duba izinin aikin ka gano haƙƙin da aka yi wa al’umma alkawari amma ba a ba su ba.','Ṣàyẹ̀wò àṣẹ iṣẹ́ náà kí o sì mọ ẹ̀tọ́ tí a ṣèlérí fún àwùjọ tí wọn kò rí gbà.','Lelee ikike ọrụ ahụ ma chọpụta ikike e kwere obodo nkwa ma ha enwetaghị ya.'],
-'Explore extractive behaviour and the consequences of treating communities as sources of money.':['See wetin happen when project use community only to collect money.','Bincika halin cin moriyar mutane da sakamakon ɗaukar al’umma a matsayin tushen kuɗi.','Ṣàyẹ̀wò ìwà fífi àwùjọ ṣe orísun owó àti àbájáde rẹ̀.','Chọpụta ihe na-eme mgbe a na-ele obodo anya naanị dịka isi ego.'],
-'Compare public statements with the verified transaction history and record the evidence.':['Compare wetin dem talk publicly with confirmed transactions and record the proof.','Kwatanta sanarwar jama’a da tarihin ma’amaloli da aka tabbatar, sannan ka rubuta hujjar.','Fi àwọn ọ̀rọ̀ gbangba wé ìtàn ìṣòwò tí a fìdí rẹ̀ múlẹ̀, kí o sì kọ ẹ̀rí sílẹ̀.','Tụnyere nkwupụta ọha na akụkọ azụmahịa akwadoro ma dekọọ ihe akaebe.'],
-'Show how communities become disposable when engagement matters more than people.':['Show how community dey get abandoned when project care more about engagement than people.','Nuna yadda ake watsi da al’umma idan hulɗa ta fi mutane muhimmanci.','Ṣàfihàn bí a ṣe ń kọ àwùjọ sílẹ̀ nígbà tí ìfarakanra bá ṣe pàtàkì ju ènìyàn lọ.','Gosi otu a si ahapụ obodo mgbe itinye aka dị mkpa karịa ndị mmadụ.'],
-'Recover archived proposals, identify three unfinished ideas, and select one realistic proposal to complete.':['Find old proposals, pick three ideas wey never finish, then choose one wey fit complete.','Nemo tsoffin shawarwari, gano ra’ayoyi uku da ba a kammala ba, sannan ka zaɓi ɗaya mai yiwuwa.','Tọ́ àwọn àbá àtijọ́ jáde, yan èrò mẹ́ta tí kò tíì parí, kí o sì yan ọ̀kan tó ṣeé parí.','Chọta atụmatụ ochie, mata echiche atọ emechabeghị, họrọ otu nke a pụrụ imecha.'],
-'Show how activity metrics can hide the absence of meaningful progress.':['Show how big numbers fit hide the fact say nothing useful happen.','Nuna yadda ƙididdiga za su iya ɓoye rashin ci gaba mai ma’ana.','Ṣàfihàn bí nọ́mbà ìṣe ṣe lè bo àìsí ìlọsíwájú tó ní ìtumọ̀ mọ́lẹ̀.','Gosi otu ọnụọgụ ọrụ si zoo enweghị ọganihu bara uru.'],
-'Review the dashboard and select a measure that reflects actual product use.':['Check the dashboard and pick the number wey show how people really use the product.','Duba dashboard ɗin ka zaɓi ma’aunin da ke nuna ainihin amfani da samfurin.','Ṣàyẹ̀wò dashboard kí o sì yan ìwọ̀n tó ṣàfihàn bí a ṣe ń lo ọjà náà gan-an.','Lelee dashboard ma họrọ ihe atụ na-egosi ojiji ngwaahịa n’ezie.'],
-'Explore the original promise of access and how complicated systems can exclude the people they claim to serve.':['Explore the promise of access and how complicated systems fit push people away.','Bincika alkawarin samun dama da yadda tsarin da ya rikitar zai iya hana mutane shiga.','Ṣàwárí ìlérí ìwọlé àti bí ètò tó díjú ṣe lè yọ àwọn ènìyàn tí ó yẹ kó ṣe ìrànlọ́wọ́ fún kúrò.','Chọpụta nkwa ịnweta na otu sistemụ mgbagwoju anya si ewepụ ndị e kwuru na a na-ejere ozi.'],
-'Complete a transaction walkthrough and identify the action, cost, and risk.':['Follow one transaction from start to finish and identify the action, cost and risk.','Kammala gwajin ma’amala ka gano mataki, kuɗi da haɗari.','Parí ìtọ́sọ́nà ìṣòwò kan, kí o sì mọ ìgbésẹ̀, iye owó àti ewu rẹ̀.','Soro usoro azụmahịa ruo na njedebe ma mata ihe a na-eme, ọnụ ahịa na ihe egwu.'],
-'Reveal what happens when projects prioritise trends over actual human problems.':['Show wetin happen when project chase trend instead of solve real people problems.','Nuna abin da ke faruwa idan ayyuka suka fifita salo maimakon matsalolin mutane na gaske.','Ṣàfihàn ohun tó ń ṣẹlẹ̀ tí iṣẹ́ bá lépa aṣa dípò yíyanjú ìṣòro ènìyàn gidi.','Gosi ihe na-eme mgbe ọrụ na-ebute ihe na-ewu ewu ụzọ karịa nsogbu mmadụ n’ezie.'],
-'Interview potential users and match one practical feature to a real problem.':['Talk to possible users and match one useful feature to a real problem.','Yi hira da masu amfani masu yiwuwa ka haɗa fasali mai amfani da matsala ta gaske.','Bá àwọn olùlò tó ṣeé ṣe sọ̀rọ̀, kí o sì so ẹ̀yà tó wúlò kan pọ̀ mọ́ ìṣòro gidi.','Gwa ndị nwere ike iji ya okwu ma jikọta otu atụmatụ bara uru na nsogbu n’ezie.'],
-'Connect Web3’s promises to practical opportunities beyond trading and speculation.':['Connect Web3 promises to real opportunities beyond trading and guessing prices.','Haɗa alkawuran Web3 da damammaki na zahiri fiye da ciniki da hasashe.','So àwọn ìlérí Web3 pọ̀ mọ́ àǹfààní gidi tó kọjá ìṣòwò àti ìrònú èrè.','Jikọta nkwa Web3 na ohere bara uru karịa ịzụ ahịa na ịkọ nkọ.'],
-'Record the business owner’s needs and propose a practical feature with a clear user benefit.':['Write down what the business owner needs and suggest a useful feature.','Rubuta buƙatun mai kasuwanci ka ba da shawarar fasali mai amfani.','Kọ àìní oníṣòwò sílẹ̀, kí o sì dábàá ẹ̀yà tó wúlò fún olùlò.','Dee mkpa onye nwe azụmahịa ma tụọ atụmatụ bara uru.'],
-'Explore transparency, fair rules, and the danger of systems where powerful insiders are exempt from accountability.':['Explore open information, fair rules and what happen when powerful people no answer for their actions.','Bincika gaskiya, ƙa’idoji na adalci, da haɗarin tsarin da manyan mutane ba sa ɗaukar alhaki.','Ṣàwárí ìṣípayá, òfin tó tọ́, àti ewu ètò tí àwọn alágbára kò ti í jíyìn fún ìṣe wọn.','Chọpụta nghọta, iwu ziri ezi, na ihe egwu sistemụ ebe ndị dị ike anaghị aza ajụjụ.'],
-'Compare the community vote with the administrative action and publish a clear summary of the process.':['Compare the community vote with the admin action and publish a clear summary.','Kwatanta ƙuri’ar al’umma da matakin gudanarwa, sannan ka wallafa taƙaitaccen bayani.','Fi ìdìbò àwùjọ wé ìgbésẹ̀ alákòóso, kí o sì tẹ àkótán tó ṣe kedere jáde.','Tụnyere votu obodo na ihe onye nchịkwa mere ma bipụta nchịkọta doro anya.'],
-'Show the long-term damage caused when people lose trust in an entire ecosystem because of repeated failures.':['Show the long-term damage when repeated failures make people lose trust in the whole ecosystem.','Nuna illar dogon lokaci idan gazawa akai-akai ta sa mutane rasa amincewa da tsarin gaba ɗaya.','Ṣàfihàn ìpalára pípẹ́ tí ìkùnà léraléra ń fa tí ènìyàn bá pàdánù ìgbẹ́kẹ̀lé nínú gbogbo ètò.','Gosi mmebi ogologo oge mgbe ọdịda ugboro ugboro mere ka ndị mmadụ tụfuo ntụkwasị obi n’usoro niile.'],
-'Test the product and publish a transparent update explaining what is complete and unfinished.':['Test the product and publish a clear update about wetin finish and wetin remain.','Gwada samfurin ka wallafa bayani na gaskiya kan abin da aka kammala da wanda bai kammala ba.','Dán ọjà náà wò, kí o sì tẹ ìròyìn tó ṣe kedere jáde nípa ohun tó parí àti ohun tó kù.','Nwalee ngwaahịa ahụ ma bipụta mmelite doro anya gbasara ihe e mechara na ihe fọdụrụ.'],
-'Bring together the values discovered across the previous missions and make the player consider what should be rebuilt.':['Bring together wetin you learn from the earlier missions and decide wetin deserve rebuilding.','Haɗa ƙimomin da aka gano a ayyukan baya ka yi tunanin abin da ya kamata a sake ginawa.','Kó àwọn iye tí o rí nínú iṣẹ́ àtẹ̀yìnwá jọ, kí o sì ronú ohun tó yẹ kí a tún kọ́.','Chịkọta ụkpụrụ ndị a chọpụtara n’ọrụ ndị gara aga ma tụlee ihe kwesịrị iwughachi.'],
-'Place the recovered evidence on the archive wall and choose the value the next stage should emphasise.':['Put the evidence on the archive wall and choose the value wey the next stage go focus on.','Sanya hujjojin da aka samo a bangon ajiya ka zaɓi ƙimar da mataki na gaba zai fi mayar da hankali a kai.','Gbé ẹ̀rí tí a rí padà sí odi àkójọ, kí o sì yan iye tí ìpele tó ń bọ̀ yóò tẹnu mọ́.','Debe ihe akaebe ahụ na mgbidi ebe nchekwa ma họrọ uru nke ọkwa na-abịa ga-elekwasị anya na ya.'],
-'Close the first playable arc, connect the evidence, and establish the larger journey through the remaining states.':['Close the first playable story, connect the evidence and set up the bigger journey through the remaining states.','Rufe labarin farko da ake iya kunnawa, haɗa hujjoji, sannan ka shirya babbar tafiya ta sauran jihohi.','Parí ìtàn àkọ́kọ́ tí a lè ṣeré, so ẹ̀rí pọ̀, kí o sì ṣètò ìrìnàjò tó gbooro káàkiri àwọn ìpínlẹ̀ tó kù.','Mechie akụkọ mbụ a pụrụ igwu egwu, jikọta ihe akaebe, ma guzobe njem ka ukwuu gafee steeti ndị fọdụrụ.'],
-'Place the final evidence on the archive wall and review the connections between the 15 missions.':['Put the final evidence on the archive wall and review how the 15 missions connect.','Sanya hujjar ƙarshe a bangon ajiya ka duba alaƙar ayyuka 15 ɗin.','Gbé ẹ̀rí ìkẹyìn sí odi àkójọ, kí o sì ṣàyẹ̀wò bí iṣẹ́ mẹ́ẹ̀ẹ́dógún náà ṣe so pọ̀.','Debe ihe akaebe ikpeazụ na mgbidi nchekwa ma nyochaa njikọ dị n’etiti ọrụ iri na ise.'],
-'Play':['Play','Play','Ṣeré','Kpọọ egwu'],
-'Replay':['Replay','Replay','Tún ṣeré','Kpọọ ọzọ'],
-'Completed':['Completed','Completed','Parí','Emechara'],
-'Up to +0.50 USDC':['Up to +0.50 USDC','Up to +0.50 USDC','Títí dé +0.50 USDC','Ruo +0.50 USDC'],
-'ACHIEVEMENT EARNED':['ACHIEVEMENT EARNED','ACHIEVEMENT EARNED','A TI GBA ÀṢEYỌRÍ','ENWEWO NZỌRỌ'],
-'NOT EARNED YET':['NOT EARNED YET','NOT EARNED YET','A KÒ TÍÌ GBA A','ENWEBEGHỊ YA'],
-'Share on WhatsApp':['Share on WhatsApp','Share on WhatsApp','Pín lórí WhatsApp','Kekọrịta na WhatsApp'],
-'Use playlist':['Use playlist','Use playlist','Lo àkójọ orin','Jiri ndepụta egwu'],
-'Skip song':['Skip song','Skip song','Fo orin','Mafee egwu'],
-'Install':['Install','Install','Fi sí ẹ̀rọ','Wụnye'],
-'Take KitCity with you':['Take KitCity with you','Take KitCity with you','Mú KitCity lọ pẹ̀lú rẹ','Were KitCity soro gị'],
-'Preparing your city':['Preparing your city','Preparing your city','A ń pèsè ìlú rẹ','Na-akwadebe obodo gị'],
-'Loading city…':['Loading city…','Loading city…','A ń ṣí ìlú…','Na-ebunye obodo…'],
-'The Evidence Wall':['The Evidence Wall','The Evidence Wall','Odi Ẹ̀rí','Mgbidi Ihe Akaebe']
-};
+/* =====================  language: English / Naija Pidgin  ===================== */
+const L=(en,pcm)=>P.lang==='pcm'?pcm:en;
 const PCM={
-'Every city teaches you something new.':'Every city dey teach you something new.',
-'Learn web3 before it costs you.':'Learn Web3 before e cost you.',
-'Sign in':'Sign in','Create account':'Create account','Settings':'Settings','Mission':'Mission','Activity':'Activity',
-'Run':'Run','Talk':'Talk','Here':'For here','No wallet yet':'No wallet yet',
-'Follow the arrow and watch for traffic.':'Follow the arrow and watch out for motor.',
-'Follow the arrow. Talk with the person you find.':'Follow the arrow. Talk to the person wey you see.',
-'How to play':'How to play','About the streets':'About the streets'
+/*PCM_BEGIN*/
+/*PCM_END*/
 };
+const RULES=[
+/*RULES_BEGIN*/
+/*RULES_END*/
+];
 function tr(t){
-  if(!t) return t;
-  const m=String(t).match(/^(\\s*)([\\s\\S]*?)(\\s*)$/),core=m[2];
-  if(!core||!/[A-Za-z]/.test(core)||P.lang==='en') return t;
-  const index=({pcm:0,ha:1,yo:2,ig:3})[P.lang];
-  let out=P.lang==='pcm'?PCM[core]:(LOCALIZED[core]&&LOCALIZED[core][index]);
-  if(out===undefined){
-    out=core;
-    const keys=Object.keys(LOCALIZED).sort((x,y)=>y.length-x.length);
-    for(const key of keys){ if(!key||!out.includes(key)) continue; const row=LOCALIZED[key]; const value=row&&row[index]; if(value&&value!==key) out=out.split(key).join(value); }
-    if(P.lang==='pcm') for(const key of Object.keys(PCM).sort((x,y)=>y.length-x.length)){ if(out.includes(key)) out=out.split(key).join(PCM[key]); }
-    if(out===core) return t;
-  }
-  return m[1]+out+m[3];
+  if(P.lang!=='pcm'||!t) return t;
+  const m=t.match(/^(\s*)([\s\S]*?)(\s*)$/),core=m[2];
+  if(!core||!/[A-Za-z]/.test(core)) return t;
+  /*MISS*/
+  let out=PCM[core];
+  if(out===undefined){ for(let i=0;i<RULES.length;i++){ const mm=core.match(RULES[i][0]); if(mm){ out=RULES[i][1].apply(null,mm); break; } } }
+  return out===undefined?t:m[1]+out+m[3];
 }
 function tx(html){
-  if(!html) return html;
-  return String(html).replace(/(^|>)([^<>]+)(?=<|$)/g,(m,a,t)=>a+tr(t));
+  if(P.lang!=='pcm'||!html) return html;
+  return html.replace(/(^|>)([^<>]+)(?=<|$)/g,(m,a,t)=>a+tr(t));
 }
-window.KitCityTranslate=tr;
 
 /* =====================  renderer / scene  ===================== */
 const renderer=new THREE.WebGLRenderer({canvas:$('#gl'),antialias:true,powerPreference:'high-performance'});
@@ -4955,7 +4797,7 @@ function renderHub(){
     h+='<div class="h2">Wallet</div>'+(P.wallet?'<div class="stat"><span>Address</span><b style="font-family:ui-monospace,Menlo,monospace;font-size:13px">'+short(P.wallet)+'</b></div><div class="stat"><span>USDC</span><b>'+P.usdc.toFixed(2)+'</b></div><div class="stat"><span>Naira token</span><b>'+fmtN(P.ngn)+'</b></div>':'<p class="soft">No wallet yet. Finish mission 1 to open one.</p>');
     if(all) h+='<div class="row"><button class="btn brand" data-a="cert" type="button">View certificate</button></div>';
   } else {
-    h+='<div class="h2">'+tr('Settings')+'</div><div class="card"><div class="ch"><div><b>'+tr('Choose language')+'</b><small>'+tr('Choose how the game talks to you.')+'</small></div></div><div class="row">'+[['en','English'],['pcm','Naija Pidgin'],['ha','Hausa'],['yo','Yoruba'],['ig','Igbo']].map(([code,label])=>'<button class="btn '+(P.lang===code?'brand':'line')+'" data-a="lang" data-v="'+code+'" type="button">'+tr(label)+'</button>').join('')+'</div></div>';
+    h+='<div class="h2">Settings</div><div class="card"><div class="ch"><div><b>Language</b><small>Choose how the game talks to you.</small></div></div><div class="row"><button class="btn '+(P.lang==='en'?'brand':'line')+'" data-a="lang" data-v="en" type="button">English</button><button class="btn '+(P.lang==='pcm'?'brand':'line')+'" data-a="lang" data-v="pcm" type="button">Naija Pidgin</button></div></div>';
     h+='<div class="card"><div class="ch"><div><b>Graphics</b><small>High has real sun shadows and cinematic lighting. Low uses fewer pixels and no shadows, so it runs better on older phones.</small></div></div><div class="cf"><span>'+(P.low?'Low':'High')+'</span><button class="btn line" data-a="quality" type="button">Switch to '+(P.low?'High':'Low')+'</button></div></div>';
     const tg=(k,t,d)=>'<div class="card"><div class="ch"><div><b>'+t+'</b><small>'+d+'</small></div></div><div class="cf"><span>'+(P[k]?'On':'Off')+'</span><button class="btn line" data-a="snd" data-v="'+k+'" type="button">Turn '+(P[k]?'off':'on')+'</button></div></div>';
     h+=tg('music','Music','City-based Nigerian music from YouTube. Needs internet.')+'<div class="card"><div class="ch"><div><b>Playlist</b><small>Paste any public YouTube playlist link to use your own songs.</small></div></div><input id="plIn" type="url" inputmode="url" placeholder="https://www.youtube.com/playlist?list=..." value="'+(P.pl||'').replace(/"/g,'&quot;')+'" style="width:100%;margin-top:10px;padding:11px;border-radius:6px;border:2px solid rgba(255,255,255,.35);background:#1B1C20;color:#fff;font:14px system-ui"><div class="row"><button class="btn brand" data-a="plset" type="button">Use playlist</button><button class="btn line" data-a="plnext" type="button">Skip song</button><button class="btn line" data-a="pldef" type="button">Default</button></div></div>'+tg('sfx','Sound effects','Footsteps, chimes and voices.');
@@ -5213,10 +5055,6 @@ function applyLang(){
   document.documentElement.lang=({en:'en',pcm:'pcm',ha:'ha',yo:'yo',ig:'ig'})[P.lang]||'en';
   document.querySelectorAll('[data-t]').forEach(el=>{ if(!el.dataset.en) el.dataset.en=el.textContent; const translated=el.dataset[P.lang]; el.textContent=translated||tr(el.dataset.en); });
   document.querySelectorAll('[data-lang]').forEach(b=>b.classList.toggle('on',b.dataset.lang===P.lang));
-  const navLabels={missions:'Mission',settings:'Settings',passport:'Activity'};
-  document.querySelectorAll('#nav [data-a="tab"]').forEach(b=>{const key=navLabels[b.dataset.v];if(key)b.textContent=tr(key);});
-  const run=$('#runBtn'),talk=$('#talkBtn'); if(run)run.textContent=tr('Run'); if(talk)talk.textContent=tr('Talk');
-  const title=$('#mTitle'); if(title&&G)title.textContent=tr(personalize('Mission '+G.m.n+': '+G.m.title,null));
   updateAuthButton();
   if(G) updateHUD();
   renderHub();
