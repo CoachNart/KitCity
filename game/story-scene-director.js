@@ -4,24 +4,23 @@ const SPEAKER_LABELS = {
 };
 
 const OPENING_PANELS = [
-  { shot: 'wide', kicker: 'LAGOS · 3:42 PM', caption: 'The city is full of people chasing opportunities. But what makes an opportunity worth believing in?', next: 'next' },
-  { shot: 'conversation', speaker: 'IamAbdul', text: 'Everybody is talking about Web3. Tokens, projects, new platforms. But what are people actually building with all this?', next: 'next' },
-  { shot: 'softstorm', speaker: 'Softstorm', text: 'There’s real potential here. People can learn new skills, build products, find work, create together, and solve problems that matter.', next: 'next' },
-  { shot: 'abdul', speaker: 'IamAbdul', text: 'Then why does the conversation always come back to hype and price?', next: 'next' },
-  { shot: 'player', kicker: 'YOUR THOUGHTS', caption: 'You’ve heard the promises too. You want to see what this world can actually offer—and what happens when people forget why they started.', next: 'next' },
-  { shot: 'wide', kicker: 'YOUR MOVE', caption: 'Softstorm and IamAbdul are still talking. What do you do?', choices: [
-    { label: 'Walk over and join the conversation', target: 6 },
-    { label: 'Listen a little longer before speaking', target: 7 },
-  ] },
-  { shot: 'character', speaker: 'PLAYER', text: 'Sorry, I caught part of that. I’m curious too—what does building something useful in Web3 actually look like?', next: 8 },
-  { shot: 'abdul', speaker: 'IamAbdul', text: 'I was wondering the same thing. Everybody has a pitch. I want to see what people can really do with it.', next: 8 },
-  { shot: 'softstorm', speaker: 'Softstorm', text: 'That’s a fair question. T3kit is an ecosystem with different ways into Web3: KitLab helps people learn, while the wider ecosystem supports career paths, building, creating, and tools that make trading easier to understand.', next: 'next' },
-  { shot: 'abdul', speaker: 'IamAbdul', text: 'And KitArcade is the gaming side, right? A place to explore, meet people, and discover how these ideas connect to real life.', next: 'next' },
-  { shot: 'character', speaker: 'PLAYER', text: 'Then why call this story The Lost Value?', next: 'next' },
-  { shot: 'softstorm', speaker: 'Softstorm', text: 'Because value was never just a token price. It was what people could learn, what they could create, the problems they could solve, and the opportunities they could open for others.', next: 'next' },
-  { shot: 'abdul', speaker: 'IamAbdul', text: 'We can have more projects, more money, and more attention—and still lose sight of what made any of it worthwhile.', next: 'next' },
-  { shot: 'wide', kicker: 'THE LOST VALUE', caption: 'Learn. Build. Create. Contribute. The journey begins with one question: are we making something valuable for people, or have we become distracted by everything around it?', next: 'next' },
-  { shot: 'clue', kicker: 'PROLOGUE COMPLETE', caption: 'Your first lead is waiting in Lagos. Find out what people were promised—and what they actually received.', card: true, finish: true },
+  { shot: 'wide', kicker: 'LAGOS · A BUSY AFTERNOON', caption: 'Lagos is moving at its usual pace. Everywhere, people are looking for work, building businesses, and searching for their next opportunity.', next: 'next' },
+  { shot: 'conversation', speaker: 'IamAbdul', text: 'Everybody dey talk about Web3 these days. New tokens, new apps, new opportunities. But wetin people really dey do with am?', next: 'next' },
+  { shot: 'softstorm', speaker: 'Softstorm', text: 'Web3 is bigger than tokens. It can change how people build, own digital things, work together, and take part in online communities.', next: 'next' },
+  { shot: 'abdul', speaker: 'IamAbdul', text: 'So person fit build something useful online without waiting for one big company to give them permission?', next: 'next' },
+  { shot: 'softstorm', speaker: 'Softstorm', text: 'In some systems, yes. People can build apps, contribute to open communities, create digital assets, and work with others. But every project is different.', next: 'next' },
+  { shot: 'abdul', speaker: 'IamAbdul', text: 'E sound interesting. But I don see people lose money too. Everybody dey promise opportunity.', next: 'next' },
+  { shot: 'character', speaker: 'PLAYER', text: 'I have been hearing about Web3 too. I want to understand how it actually works, not just what people promise.', next: 'next' },
+  { shot: 'softstorm', speaker: 'Softstorm', text: 'Then start with the basics. Understand wallets, digital ownership, transactions, and the permissions you give an application. Never connect blindly.', next: 'next' },
+  { shot: 'abdul', speaker: 'IamAbdul', text: 'Apart from trading, wetin person fit actually do for Web3?', next: 'next' },
+  { shot: 'softstorm', speaker: 'Softstorm', text: 'Build software. Design products. Create content. Research projects. Support communities. There are different paths, but none comes with guaranteed money or success.', next: 'next' },
+  { shot: 'character', speaker: 'PLAYER', text: 'So person fit start from zero, learn skills, practise, and find their own path?', next: 'next' },
+  { shot: 'softstorm', speaker: 'Softstorm', text: 'Exactly. Learn how things work, ask questions, practise safely, and judge opportunities by what they actually do—not by the hype around them.', next: 'next' },
+  { shot: 'abdul', speaker: 'IamAbdul', text: 'Maybe the real problem no be the technology itself. Maybe na how people dey use am.', next: 'next' },
+  { shot: 'softstorm', speaker: 'Softstorm', text: 'Technology can create possibilities, but it cannot replace good judgement. If we chase only hype and quick money, we can miss what makes it useful.', next: 'next' },
+  { shot: 'character', speaker: 'PLAYER', text: 'Then I want to see for myself—the good, the bad, the risks, and the real opportunities.', next: 'next' },
+  { shot: 'wide', kicker: 'THE LOST VALUE', caption: 'Learn. Build. Create. Contribute. Your journey begins with one question: are we making something valuable for people, or have we lost sight of what matters?', next: 'next' },
+  { shot: 'clue', kicker: 'THE JOURNEY BEGINS', caption: 'Lagos is full of people with problems to solve and ideas to explore. Step into the city, meet its people, and discover Web3 through the choices you make.', card: true, finish: true },
 ];
 function escapeHtml(value) {
   return String(value == null ? '' : value).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
