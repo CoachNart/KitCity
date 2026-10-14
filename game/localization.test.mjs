@@ -24,10 +24,13 @@ test('landing UI exposes only English and Pidgin language controls', async () =>
   assert.doesNotMatch(page, />HAUSA<|>YORÙBÁ<|>IGBO</);
 });
 
-test('engine removes stale unsupported language buttons from old markup', async () => {
+test('engine removes retired language buttons, settings controls and dropdown options', async () => {
   const engine = await readFile(new URL('./kitcity-engine.js', import.meta.url), 'utf8');
-  assert.match(engine, /if\(!\['en','pcm'\]\.includes\(b\.dataset\.lang\)\) b\.remove\(\)/);
+  assert.match(engine, /document\.querySelectorAll\('\[data-lang\]'\)/);
+  assert.match(engine, /document\.querySelectorAll\('\[data-a="lang"\]'\)/);
+  assert.match(engine, /select\[name\*="lang" i\],select\[id\*="lang" i\]/);
   assert.match(engine, /if\(!b\|\|!\['en','pcm'\]\.includes\(b\.dataset\.lang\)\) return/);
+  assert.match(engine, /new Set\(\['en','pcm'\]\)/);
 });
 
 test('Pidgin translates core controls and major headings', () => {
