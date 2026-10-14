@@ -4620,6 +4620,7 @@ function startMission(id, options={}){
     }else if(options.skipBriefing){
       // The prologue has already introduced the story. Enter the first objective
       // directly instead of showing the legacy mission/T3Kit briefing card again.
+      $('#mission').classList.remove('prologue-hidden'); $('#mission').style.display='';
       closeSheet();
     }else{
       $('#mission').classList.remove('prologue-hidden'); $('#mission').style.display='';
