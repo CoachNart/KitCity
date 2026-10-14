@@ -40,6 +40,14 @@ test('street layouts are profile-driven rather than one universal painted grid',
   assert.ok(!source.includes('for(let k=-3;k<=3;k++)for(let i=-3;i<=2;i++){\n    const h=new THREE.Mesh(dashGeo,dashMat)'), 'universal dashed cross-grid is removed');
 });
 
+test('waterfront cities use different signature landmark families', () => {
+  assert.ok(source.includes("if(form==='confluence')"), 'river confluence landmark exists');
+  assert.ok(source.includes("else if(form==='creek-town')"), 'creek-town landmark exists');
+  assert.ok(source.includes("else if(form==='delta-port'||form==='oil-port')"), 'industrial port landmark exists');
+  assert.ok(source.includes('stilt homes'), 'creek-town landmarks include raised homes');
+  assert.ok(source.includes('pipe runs and tank silhouettes'), 'port landmarks include industrial structures');
+});
+
 test('city-specific architecture details exist beyond palette changes', () => {
   for (const form of ['colonial-coast', 'heritage', 'dense-market', 'southeast-market', 'delta-port', 'oil-port', 'rail-crossroads', 'hillside', 'green-hills', 'rock-city', 'historic', 'sahel']) {
     assert.ok(source.includes(`form==='${form}'`) || source.includes(`form===' ${form}'`), `architecture rule for ${form} exists`);
