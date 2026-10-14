@@ -194,11 +194,11 @@ export function createStorySceneDirector({ camera, player, getCharacter, getChar
     const bubbleOn = !!(panel.speaker && panel.text && !panel.choices);
     overlay.classList.toggle('has-bubble', bubbleOn || (genericScene && !panel.choices));
     speechBubble.classList.toggle('hidden', !bubbleOn);
-    speechSpeaker.textContent = bubbleOn ? panel.speaker.toUpperCase() : '';
+    speechSpeaker.textContent = bubbleOn ? (panel.speaker === 'PLAYER' ? 'YOU' : panel.speaker.toUpperCase()) : '';
     speechText.textContent = bubbleOn ? panel.text : '';
     kickerEl.textContent = panel.kicker || (panel.speaker ? (genericScene ? 'THE LOST VALUE · A CONVERSATION' : 'LAGOS · A CONVERSATION') : '');
     captionEl.textContent = panel.caption || '';
-    speakerEl.textContent = panel.speaker ? (genericScene ? panel.speaker.toUpperCase() : (SPEAKER_LABELS[panel.speaker] || panel.speaker.toUpperCase())) : '';
+    speakerEl.textContent = panel.speaker ? (panel.speaker === 'PLAYER' ? 'YOU' : (genericScene ? panel.speaker.toUpperCase() : (SPEAKER_LABELS[panel.speaker] || panel.speaker.toUpperCase()))) : '';
     dialogueEl.textContent = panel.text || '';
     counterEl.textContent = String(panelIndex + 1).padStart(2, '0') + ' / ' + String(activePanels.length).padStart(2, '0');
     overlay.querySelector('.comic-frame-stamp').textContent = genericScene ? 'THE LOST VALUE · ' + String(panelIndex + 1).padStart(2, '0') : 'ISSUE 001';
