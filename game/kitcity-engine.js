@@ -2567,7 +2567,7 @@ function talk(def,html,btns){
   html=tx(personalize(html,G&&G.m,def));
   if(!S.modal||chat.npc!==def.name) chat={npc:def.name,log:[]};
   const npcName=String(def.name||'Local resident');
-  const playerLabel=playerName().toUpperCase();
+  const playerLabel='YOU';
   const prev=chat.log.slice(-3).map(m=>'<div class="b '+(m.me?'me':'npc old')+'"><small class="speaker-tag">'+(m.me?playerLabel:npcName.toUpperCase())+'</small>'+m.html+'</div>').join('');
   const pl=plain(html);
   chat.log.push({html:pl.slice(0,80)+(pl.length>80?'\u2026':'')});
@@ -4871,7 +4871,6 @@ $('#hub').addEventListener('click',async e=>{
     Store.del(KEY); Object.assign(P,{wallet:null,usdc:0,ngn:0,done:{},dodged:0,fell:0,scores:{},web3:null,storyPrologueSeen:false}); save(); resetArm=false; hubCity='lagos'; hubTab='missions'; renderHub(); toast('Progress erased');
   }
 });
-const LOCAL_GUEST_TEST=process.env.NODE_ENV==='development'&&window.location.hostname==='localhost';
 const playerNameInput=$('#playerName');
 const playerNameError=$('#playerNameError');
 const playerEmailInput=$('#playerEmail');
@@ -4938,16 +4937,6 @@ function authErrorMessage(error){
 }
 async function submitPlayerName(){
   if(authBusy) return;
-  if(LOCAL_GUEST_TEST&&!firebaseConfigured){
-    const candidate=(playerNameInput&&playerNameInput.value||'KitTester01').trim();
-    if(!/^[A-Za-z0-9_]{3,20}$/.test(candidate)){
-      if(playerNameError) playerNameError.textContent='Use 3–20 letters, numbers, or underscores for your gamer ID.';
-      return;
-    }
-    P.name=candidate; cloudSyncReady=false; activeUid=null; storageKey=KEY;
-    Store.set('kitcity_player_name',candidate); Store.set('kitcity_local_guest_test',true);
-    save(); beginGame(); return;
-  }
   if(!firebaseConfigured){
     if(playerNameError) playerNameError.textContent='Firebase is not configured yet. Add the NEXT_PUBLIC_FIREBASE_* settings in Vercel and deploy the Firestore rules before signing in.';
     return;
@@ -5057,13 +5046,9 @@ if(firebaseConfigured){
     if(user) void resumeAuthenticatedUser(user);
   }).catch(()=>updateAuthButton());
 }else updateAuthButton();
-if(LOCAL_GUEST_TEST&&!firebaseConfigured){
-  if(playerNameInput) playerNameInput.value='KitTester01';
-  setTimeout(()=>{ void submitPlayerName(); },0);
-}
 function applyLang(){
-  document.documentElement.lang=P.lang==='pcm'?'pcm':'en';
-  document.querySelectorAll('[data-t]').forEach(el=>{ if(!el.dataset.en) el.dataset.en=el.textContent; el.textContent=(P.lang==='pcm'&&el.dataset.pcm)?el.dataset.pcm:tr(el.dataset.en); });
+  document.documentElement.lang=({en:'en',pcm:'pcm',ha:'ha',yo:'yo',ig:'ig'})[P.lang]||'en';
+  document.querySelectorAll('[data-t]').forEach(el=>{ if(!el.dataset.en) el.dataset.en=el.textContent; const translated=el.dataset[P.lang]; el.textContent=translated||tr(el.dataset.en); });
   document.querySelectorAll('[data-lang]').forEach(b=>b.classList.toggle('on',b.dataset.lang===P.lang));
   updateAuthButton();
   if(G) updateHUD();
