@@ -2621,7 +2621,7 @@ function badgeSVG(n,on,size){
 function updateHUD(){
   const prologueActive=!!(G&&G.m&&G.m.id==='m0');
   const missionPanel=$('#mission');
-  if(missionPanel) missionPanel.classList.toggle('prologue-hidden',prologueActive);
+  if(missionPanel){ missionPanel.classList.toggle('prologue-hidden',prologueActive); missionPanel.style.display=prologueActive?'none':''; }
   if(G){
     $('#mTitle').textContent=prologueActive?'':tr(personalize('Mission '+G.m.n+': '+G.m.title,null));
     $('#steps').innerHTML=prologueActive?'':G.m.steps.map((s,i)=>'<li class="'+(G.i>i?'done':(G.i===i?'now':''))+'">'+personalize(tr(s.label),G.m,s.npc)+'</li>').join('');
@@ -4600,7 +4600,7 @@ function startMission(id){
       // The prologue is a standalone cinematic: no objective, walk-up prompt,
       // mission title card, or objective checklist. Always play it on launch/replay.
       clearGroup(missionGroup); colliders.length=cityCols; smoke=[]; ents=[]; goal=null;
-      $('#mission').classList.add('prologue-hidden');
+      $('#mission').classList.add('prologue-hidden'); $('#mission').style.display='none';
       storySoftstorm.position.set(75,.05,-100);
       storyAbdul.position.set(79,.05,-100);
       storySoftstorm.rotation.y=Math.PI/2;
@@ -4619,7 +4619,7 @@ function startMission(id){
         ]);
       });
     }else{
-      $('#mission').classList.remove('prologue-hidden');
+      $('#mission').classList.remove('prologue-hidden'); $('#mission').style.display='';
       briefing();
     }
   },60);
@@ -4669,7 +4669,7 @@ function certificate(){
 }
 function exitToHub(){
   closeSheet(); S.phase='hub'; Snd.setMode('hub'); G=null;
-  $('#mission').classList.remove('prologue-hidden');
+  $('#mission').classList.remove('prologue-hidden'); $('#mission').style.display='';
   clearGroup(missionGroup); colliders.length=cityCols; smoke=[]; ents=[]; goal=null; beacon.visible=false;
   $('#hud').classList.add('hidden'); $('#title').classList.add('hidden');
   $('#hub').classList.remove('hidden'); $('#hub').setAttribute('aria-hidden','false');
