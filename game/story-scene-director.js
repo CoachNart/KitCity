@@ -206,7 +206,6 @@ export function createStorySceneDirector({ camera, player, getCharacter, getChar
     overlay.classList.toggle('has-bubble', bubbleOn || (genericScene && !panel.choices));
     clearTimeout(speechBubbleTimer);
     speechBubble.classList.toggle('hidden', !bubbleOn);
-    if (bubbleOn) speechBubbleTimer = setTimeout(() => speechBubble.classList.add('hidden'), 4800);
     speechSpeaker.textContent = bubbleOn ? localized(panel.speaker === 'PLAYER' ? 'You' : panel.speaker.toUpperCase()) : '';
     speechText.textContent = bubbleOn ? localized(panel.text) : '';
     kickerEl.textContent = localized(panel.kicker || (panel.speaker ? (genericScene ? 'THE LOST VALUE · A CONVERSATION' : 'LAGOS · A CONVERSATION') : ''));
@@ -246,6 +245,20 @@ export function createStorySceneDirector({ camera, player, getCharacter, getChar
     overlay.querySelector('.comic-dialogue').classList.remove('dialogue-enter');
     void overlay.querySelector('.comic-dialogue').offsetWidth;
     overlay.querySelector('.comic-dialogue').classList.add('dialogue-enter');
+
+    // Dialogue bubbles are short-lived, but the conversation must continue:
+    // advance to the next panel after the current bubble has had time to be read.
+    // A panel-index guard prevents an old timer from hiding or advancing a newer bubble.
+    if (bubbleOn) {
+      const shownIndex = panelIndex;
+      const readTime = Math.min(8500, Math.max(5200, String(panel.text || '').length * 55));
+      speechBubbleTimer = setTimeout(() => {
+        if (!active || panelIndex !== shownIndex) return;
+        speechBubble.classList.add('hidden');
+        const nextPanel = activePanels[shownIndex + 1];
+        if (nextPanel && nextPanel.speaker && nextPanel.text && !nextPanel.choices) show(shownIndex + 1);
+      }, readTime);
+    }
   }
 
   function requestAdvance() {
