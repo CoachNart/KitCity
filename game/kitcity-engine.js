@@ -5062,7 +5062,7 @@ if(firebaseConfigured){
 }else updateAuthButton();
 function applyLang(){
   if(!['en','pcm'].includes(P.lang)) P.lang='en';
-  document.documentElement.lang=P.lang==='pcm'?'en-NG':'en';
+  document.documentElement.lang=P.lang;
   document.querySelectorAll('[data-t]').forEach(el=>{ if(!el.dataset.en) el.dataset.en=el.textContent; const translated=el.dataset[P.lang]; el.textContent=translated||tr(el.dataset.en); });
   document.querySelectorAll('[data-lang]').forEach(b=>b.classList.toggle('on',b.dataset.lang===P.lang));
   translateDOM(document,P.lang);
