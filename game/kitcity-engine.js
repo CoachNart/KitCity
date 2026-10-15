@@ -93,6 +93,7 @@ function mergeCloudProgress(remote){
   merged.fell=Math.max(Number(remote.fell)||0,Number(local.fell)||0);
   merged.web3=local.web3||remote.web3||null;
   merged.storyPrologueSeen=!!(remote.storyPrologueSeen||local.storyPrologueSeen);
+  merged.inProgress=local.inProgress||remote.inProgress||null;
   replacePlayerState(merged);
 }
 delete P.xp;
