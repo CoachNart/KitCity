@@ -48,7 +48,7 @@ const Store=(function(){
   };
 })();
 const KEY='kitnaija_v1';
-const DEFAULT_PLAYER={wallet:null,usdc:0,ngn:0,done:{},dodged:0,fell:0,low:false,music:true,sfx:true,lang:'en',pl:'',name:'',scores:{},web3:null,storyPrologueSeen:false};
+const DEFAULT_PLAYER={wallet:null,usdc:0,ngn:0,done:{},dodged:0,fell:0,low:false,music:true,sfx:true,lang:'en',pl:'',name:'',scores:{},web3:null,storyPrologueSeen:false,inProgress:null};
 let activeUid=Store.get('kitcity_active_uid',null);
 let storageKey=activeUid?KEY+'_user_'+activeUid:KEY;
 const P=Object.assign({},DEFAULT_PLAYER,Store.get(storageKey,{}));
@@ -56,7 +56,7 @@ const P=Object.assign({},DEFAULT_PLAYER,Store.get(storageKey,{}));
 if(!['en','pcm'].includes(P.lang)) P.lang='en';
 if(!P.done||typeof P.done!=='object') P.done={};
 let cloudSyncReady=false;
-function progressSnapshot(){ return {wallet:P.wallet,usdc:P.usdc,ngn:P.ngn,done:P.done,dodged:P.dodged,fell:P.fell,low:P.low,music:P.music,sfx:P.sfx,lang:P.lang,pl:P.pl,name:P.name,scores:P.scores,web3:P.web3,storyPrologueSeen:!!P.storyPrologueSeen}; }
+function progressSnapshot(){ return {wallet:P.wallet,usdc:P.usdc,ngn:P.ngn,done:P.done,dodged:P.dodged,fell:P.fell,low:P.low,music:P.music,sfx:P.sfx,lang:P.lang,pl:P.pl,name:P.name,scores:P.scores,web3:P.web3,storyPrologueSeen:!!P.storyPrologueSeen,inProgress:P.inProgress||null}; }
 function save(){
   const snapshot=progressSnapshot();
   Store.set(storageKey,snapshot);
@@ -4562,9 +4562,26 @@ function bannerSprite(text,sub){
  g.fillStyle='#9deef5';g.font='700 24px Arial';g.fillText(sub.toUpperCase(),c.width/2,132,700);
  const t=new THREE.CanvasTexture(c);t.needsUpdate=true;const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:t,transparent:true,depthTest:true}));sp.scale.set(12,3,1);return sp;
 }
+function checkpointMission(){
+  if(!G||!G.m||!Array.isArray(G.m.steps)||!G.m.steps.length) return;
+  P.inProgress={
+    missionId:G.m.id,
+    stepIndex:Math.max(0,Math.min(G.i,G.m.steps.length-1)),
+    correct:Number(G.correct)||0,
+    wrong:Number(G.wrong)||0,
+    hearts:Number(G.hearts)||3,
+    used:Object.assign({},G.used||{}),
+    evidence:Object.assign({},G.evidence||{}),
+    words:Array.isArray(G.words)?G.words.slice():null,
+    addr:typeof G.addr==='string'?G.addr:null,
+    slip:G.slip&&typeof G.slip==='object'?G.slip:null
+  };
+  save();
+}
 function loadStep(){
   clearGroup(missionGroup); colliders.length=cityCols; smoke=[]; ents=[]; goal=null;
   const m=G.m,st=m.steps[G.i];
+  checkpointMission();
   // Keep the complete Lost Value cast clustered around the current objective so
   // every actor can remain visible in the mobile conversation framing.
   const isLostValueMission=String(m.id||'').startsWith('lost-value-');
@@ -4589,10 +4606,11 @@ function loadStep(){
 function startMission(id, options={}){
   const m=MBY[id];
   if(!m||!isUnlocked(m)){ toast('Finish the previous city journey first'); renderHub(); return; }
+  const checkpoint=!options.restart&&P.inProgress&&P.inProgress.missionId===id?P.inProgress:null;
   $('#loadTxt').textContent=L('Loading '+CITIES[m.city].name+'\u2026','We dey load '+CITIES[m.city].name+'\u2026'); $('#loading').classList.remove('hidden');
   setTimeout(()=>{
     if(curCity!==m.city) buildCity(m.city); else setupBarks(CITIES[curCity]);
-    G={m,i:0,correct:0,wrong:0,hearts:3,used:{},evidence:{},words:null,addr:null,slip:null,nameAliases:buildMissionNameAliases(m)};
+    G={m,i:checkpoint?Math.max(0,Math.min(Number(checkpoint.stepIndex)||0,m.steps.length-1)):0,correct:checkpoint?(Number(checkpoint.correct)||0):0,wrong:checkpoint?(Number(checkpoint.wrong)||0):0,hearts:checkpoint?(Number(checkpoint.hearts)||3):3,used:checkpoint&&checkpoint.used&&typeof checkpoint.used==='object'?Object.assign({},checkpoint.used):{},evidence:checkpoint&&checkpoint.evidence&&typeof checkpoint.evidence==='object'?Object.assign({},checkpoint.evidence):{},words:checkpoint&&Array.isArray(checkpoint.words)?checkpoint.words.slice():null,addr:checkpoint&&typeof checkpoint.addr==='string'?checkpoint.addr:null,slip:checkpoint&&checkpoint.slip&&typeof checkpoint.slip==='object'?checkpoint.slip:null,nameAliases:buildMissionNameAliases(m)};
     $('#hub').classList.add('hidden'); $('#hub').setAttribute('aria-hidden','true'); $('#title').classList.add('hidden'); $('#hud').classList.remove('hidden');
     S.phase='play'; closeSheet(); Snd.setMode('play'); lastLoc=''; resetPlayer(options.spawnAtEntrance?{x:8,z:-178}:SPAWN); loadStep();
     $('#loading').classList.add('hidden');
@@ -4643,7 +4661,7 @@ function completeMission(){
   const m=G.m,first=!P.done[m.id],wrong=G.wrong||0;
   const missionReward=first?(m.city==='kitcity'?2.5:(wrong===0?MISSION_CLEAR_REWARD:MISSION_RETRY_REWARD)):0;
   if(missionReward) P.usdc=Math.round((P.usdc+missionReward)*100)/100;
-  P.done[m.id]=true;save();updateHUD();Snd.sfx('done');
+  P.done[m.id]=true;P.inProgress=null;save();updateHUD();Snd.sfx('done');
   const idx=MISSIONS.indexOf(m),next=MISSIONS[idx+1],cityComplete=isCityComplete(m.city);
   clearGroup(missionGroup);colliders.length=cityCols;smoke=[];ents=[];goal=null;beacon.visible=false;
   hubCity=m.storyFinale?m.city:(next?next.city:m.city);
