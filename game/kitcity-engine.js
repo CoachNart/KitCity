@@ -1202,12 +1202,38 @@ function lkRoofZ(L){ const c=cv(64,64),g=c.getContext('2d'),R=mulberry(57); g.fi
   for(let i=0;i<10;i++){ g.fillStyle='rgba(110,50,20,'+(.1+R()*.2*L.rust*2)+')'; g.fillRect(R()*64,R()*64,3+R()*12,3+R()*10); }
   g.fillStyle='rgba(0,0,0,.35)'; for(let x=4;x<64;x+=10) g.fillRect(x,6,2,2);
   if(L.dust>0){ g.fillStyle='rgba(222,196,152,'+(L.dust*.45)+')'; g.fillRect(0,0,64,64); } return c; }
-function lkAsph(L){ const c=cv(256,256),g=c.getContext('2d'),R=mulberry(311); g.fillStyle='#e2e2e2'; g.fillRect(0,0,256,256); speckle(g,256,256,2800,.5,['#b0b0b0','#fafafa','#8d8d8d','#d0d0d0']);
-  for(let i=0;i<7;i++){ g.fillStyle='rgba(50,50,50,'+(.1+R()*.14)+')'; g.fillRect(R()*200,R()*200,30+R()*60,20+R()*44); }
-  g.strokeStyle='rgba(25,25,25,.5)'; for(let i=0;i<8;i++){ let x=R()*256,y=R()*256; g.beginPath(); g.moveTo(x,y); for(let k=0;k<6;k++){ x+=(R()-.5)*40; y+=(R()-.5)*40; g.lineTo(x,y); } g.stroke(); }
-  for(let i=0;i<5;i++){ g.fillStyle='rgba(15,15,15,.28)'; g.beginPath(); g.ellipse(R()*256,R()*256,6+R()*10,4+R()*7,R()*3,0,7); g.fill(); }
-  if(L.fx==='rain'||L.mil>.8){ g.fillStyle='rgba(20,28,34,.3)'; g.fillRect(0,0,256,256); }
-  if(L.dust>0||L.lat>.3){ g.fillStyle=L.lat>.3&&L.dust<.3?'rgba(160,96,60,.22)':'rgba(214,186,140,'+(.12+L.dust*.35)+')'; g.fillRect(0,0,256,256); speckle(g,256,256,900,.4,['#d8b98a','#c49a64']); } return c; }
+function lkAsph(L){
+  // Each city gets a recognisably different road surface, not one shared grey tile.
+  const c=cv(256,256),g=c.getContext('2d');
+  const seedText=String(L.cityKey||'city')+'|'+String(L.roadStyle||'mixed')+'|'+String(L.form||'mixed');
+  let seed=0; for(let i=0;i<seedText.length;i++) seed=(seed*31+seedText.charCodeAt(i))>>>0;
+  const R=mulberry(seed||311),base=L.roadBase||L.ground||'#383838';
+  g.fillStyle=base;g.fillRect(0,0,256,256);
+  const palette=L.roadPalette||['#202020','#777777','#a0a0a0'];
+  speckle(g,256,256,3600,.42,palette);
+  const style=L.roadStyle||'mixed';
+  if(style==='industrial'){
+    // Oil-port roads: darker repaired asphalt with amber oil stains and seams.
+    for(let i=0;i<9;i++){g.fillStyle='rgba(18,24,24,'+(.12+R()*.2)+')';g.fillRect(R()*240,R()*240,12+R()*55,3+R()*10);}
+    g.strokeStyle='rgba(218,166,43,.16)';g.lineWidth=1;
+    for(let i=0;i<7;i++){const y=R()*256;g.beginPath();g.moveTo(0,y);g.lineTo(256,y+(R()-.5)*14);g.stroke();}
+  }else if(style==='boulevard'||style==='ceremonial'){
+    // Planned avenues: smoother, cool-toned asphalt and occasional fine aggregate.
+    g.fillStyle='rgba(205,215,218,.12)';g.fillRect(0,0,256,256);speckle(g,256,256,900,.22,['#aeb9bd','#d4d9d8']);
+  }else if(style==='gate'||style==='market'||style==='promenade'||style==='open'){
+    // Historic/market lanes: dusty earth, worn patches, and no painted grid.
+    g.fillStyle='rgba(177,133,78,.2)';g.fillRect(0,0,256,256);
+    for(let i=0;i<15;i++){g.fillStyle='rgba(65,48,32,'+(.06+R()*.12)+')';g.beginPath();g.ellipse(R()*256,R()*256,5+R()*24,3+R()*12,R()*3,0,Math.PI*2);g.fill();}
+  }else{
+    // Dense coastal/regional streets: patched dark asphalt with fine cracks.
+    for(let i=0;i<10;i++){g.fillStyle='rgba(16,20,20,'+(.08+R()*.12)+')';g.fillRect(R()*250,R()*250,4+R()*32,2+R()*8);}
+    g.strokeStyle='rgba(18,20,20,.24)';g.lineWidth=1;
+    for(let i=0;i<6;i++){let x=R()*256,y=R()*256;g.beginPath();g.moveTo(x,y);for(let k=0;k<5;k++){x+=(R()-.5)*28;y+=(R()-.5)*28;g.lineTo(x,y);}g.stroke();}
+  }
+  if(L.fx==='rain'||L.mil>.8){g.fillStyle='rgba(20,28,34,.24)';g.fillRect(0,0,256,256);}
+  if(L.dust>0||L.lat>.3){g.fillStyle=L.lat>.3&&L.dust<.3?'rgba(160,96,60,.16)':'rgba(214,186,140,'+(.08+L.dust*.25)+')';g.fillRect(0,0,256,256);speckle(g,256,256,650,.3,['#d8b98a','#c49a64']);}
+  return c;
+}
 function lkDirt(L){ const c=cv(128,128),g=c.getContext('2d'); g.fillStyle='#f0f0f0'; g.fillRect(0,0,128,128); speckle(g,128,128,1600,.55,['#c0c0c0','#ffffff','#a0a0a0','#dedede','#b89a78']); return c; }
 function lkPave(L){ const c=cv(128,128),g=c.getContext('2d'),R=mulberry(5); g.fillStyle='#ececec'; g.fillRect(0,0,128,128); g.strokeStyle='rgba(60,60,60,.4)'; g.lineWidth=2;
   for(let y=0;y<128;y+=32){ g.beginPath(); g.moveTo(0,y); g.lineTo(128,y); g.stroke(); for(let x=((y/32)%2)*16;x<128;x+=32){ g.beginPath(); g.moveTo(x,y); g.lineTo(x,y+32); g.stroke(); } }
@@ -1220,6 +1246,11 @@ function applyLook(key,C){
   // letting legacy LOOK presets overwrite the city geometry/material palette.
   const L=Object.assign({},LOOK_BASE,LOOK[key]||{});
   Object.assign(L,{
+    cityKey:key,
+    form:C.form||'mixed',
+    roadStyle:C.roadStyle||'mixed',
+    roadBase:C.ground||'#383838',
+    roadPalette:key==='kano'?['#3b2d21','#6d5540','#a48761']:key==='abuja'?['#27323a','#65747c','#aeb9bd']:key==='ph'?['#202d2e','#4e6260','#879b91']:['#202426','#525958','#85877e'],
     paint:C.paint,
     ground:C.ground,
     slab:C.slab,
@@ -2373,12 +2404,15 @@ function buildCity(key){
           stone.position.set(cx+(road.axis==='x'?q*13:side*(road.width/2+.22)),.17,cz+(road.axis==='z'?q*13:side*(road.width/2+.22)));cityGroup.add(stone);
         }
       }else{
-        const worn=new THREE.MeshBasicMaterial({color:'#D8D7CC',transparent:true,opacity:.48,depthWrite:false});
-        for(let q=-2;q<=2;q++){
-          if((q+road.i+road.j)%2!==0)continue;
-          const dashGeo=road.axis==='x'?new THREE.BoxGeometry(2.5,.014,.09):new THREE.BoxGeometry(.09,.014,2.5);
-          const dash=new THREE.Mesh(dashGeo,worn);
-          dash.position.set(cx+(road.axis==='x'?q*14:0),.143,cz+(road.axis==='z'?q*14:0));cityGroup.add(dash);
+        // Organic and dense neighbourhood roads are unpainted: avoid the same
+        // repeated pale dash/grid pattern appearing on every city's streets.
+        if(roadStyle==='arterial'){
+          const worn=new THREE.MeshBasicMaterial({color:C.dirt||'#8A7E6A',transparent:true,opacity:.18,depthWrite:false});
+          for(let q=-2;q<=2;q+=2){
+            const dashGeo=road.axis==='x'?new THREE.BoxGeometry(1.5,.01,.07):new THREE.BoxGeometry(.07,.01,1.5);
+            const dash=new THREE.Mesh(dashGeo,worn);
+            dash.position.set(cx+(road.axis==='x'?q*18:0),.14,cz+(road.axis==='z'?q*18:0));cityGroup.add(dash);
+          }
         }
       }
     }
