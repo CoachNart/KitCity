@@ -1258,7 +1258,8 @@ function addRegionalConnectors(C){
       : form==='creek-town'||form==='river-town'||form==='confluence'
         ? [[-160,95,-30,20,.18],[15,-125,155,-45,-.2]]
         : [[-150,-115,-20,-25,.17],[20,65,150,120,-.18]];
-  for(const [x1,z1,x2,z2,angle] of routes){
+  for(const [x1,z1,x2,z2] of routes){
+    const angle=Math.atan2(-(z2-z1),x2-x1);
     const len=Math.hypot(x2-x1,z2-z1),mx=(x1+x2)/2,mz=(z1+z2)/2;
     const road=new THREE.Mesh(new THREE.BoxGeometry(len,.055,width),asphalt);
     road.position.set(mx,.12,mz);road.rotation.y=angle;road.userData.nomerge=true;cityGroup.add(road);
