@@ -4642,9 +4642,6 @@ const isCityUnlocked=city=>{
   const firstIndex=active.findIndex(story=>story.city===city);
   // Cities outside the active story arc stay locked rather than appearing playable.
   if(firstIndex<0) return false;
-  const previousCityIndex=active.slice(0,firstIndex).map(story=>story.city).lastIndexOf(
-    active.slice(0,firstIndex).map(story=>story.city).filter((name,index,array)=>name!==city).at(-1)
-  );
   const previousStory=active[firstIndex-1];
   if(!previousStory) return true;
   // A city unlocks only after every active story mission in the preceding city is complete.
