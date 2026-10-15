@@ -4634,8 +4634,7 @@ const cityMissions=city=>{
 const currentCityMissions=city=>cityMissions(city).filter(m=>String(m.id||'').startsWith('lost-value-'));
 const isCityComplete=city=>{
   const active=cityMissions(city).filter(m=>String(m.id||'').startsWith('lost-value-'));
-  const ms=active.length?active:cityMissions(city);
-  return ms.length>0&&ms.every(m=>!!P.done[m.id]);
+  return active.length>0&&active.every(m=>!!P.done[m.id]);
 };
 const isCityUnlocked=city=>{
   const active=LOST_VALUE_STORY;
@@ -4844,8 +4843,9 @@ function mapSVG(){
   let pins='';
   for(const k of cityOrder){
     const c=CITIES[k],p=mapXY(c.lon,c.lat),open=isCityUnlocked(k),sel=k===hubCity;
-    const done=cityMissions(k).filter(m=>P.done[m.id]).length,total=cityMissions(k).length;
-    const color=k==='kitcity'?'#F4C76B':done===total?'#72E0B0':open?'#53DDF0':'#718093';
+    const activeMissions=currentCityMissions(k);
+    const done=activeMissions.filter(m=>P.done[m.id]).length,total=activeMissions.length;
+    const color=k==='kitcity'?'#F4C76B':(total>0&&done===total)?'#72E0B0':open?'#53DDF0':'#718093';
     const off=MAP_OFFSETS[k]||(p.x>280?[-8,-8]:[8,-7]);
     const showLabel=sel||MAP_LABELS.has(k);
     const lx=p.x+off[0],ly=p.y+off[1],anchor=off[0]<0?'end':'start';
