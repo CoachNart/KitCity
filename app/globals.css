@@ -1009,3 +1009,103 @@ html.kitcity-story-active #modal{
   #modal{padding-top:8px;padding-bottom:8px}
   #sheet{max-height:94dvh;padding:14px 18px}
 }
+
+
+/* Compact landscape layout for phones: keep navigation fixed and reduce oversized cards. */
+@media (orientation: landscape) and (max-height: 520px) and (max-width: 1000px) {
+  html, body { min-height: 100%; }
+  #title {
+    padding: calc(8px + env(safe-area-inset-top)) 14px calc(8px + env(safe-area-inset-bottom));
+    overflow-y: auto;
+  }
+  #title .wrap {
+    width: min(100%, 920px);
+    max-width: 920px;
+    margin: 0 auto;
+    gap: 8px;
+  }
+  #title .brand-lockup { margin: 0; }
+  #title .brand-logo { width: 64px; max-height: 42px; }
+  #title .band {
+    width: 100%;
+    margin: 0;
+    padding: 10px 14px;
+    border-top-width: 3px;
+    border-bottom-width: 3px;
+    box-shadow: 0 -2px 0 var(--brand), 0 2px 0 var(--brand), 0 -4px 0 #fff, 0 4px 0 #fff;
+    transform: none;
+  }
+  #title h1 { font-size: clamp(28px, 5vw, 42px); line-height: 1; }
+  #title .band p { margin-top: 4px; font-size: clamp(12px, 1.8vw, 16px); line-height: 1.2; }
+  #title .cta { display: flex; justify-content: center; gap: 8px; }
+  #title .cta .btn, #title .btn { min-height: 36px; padding: 7px 16px; font-size: 14px; }
+  #title .player-entry { width: min(100%, 440px); margin: 0 auto; padding: 8px 10px; }
+  #title .player-entry label { margin-bottom: 4px; font-size: 10px; }
+  #title .player-entry input { min-height: 36px; padding: 7px 10px; font-size: 16px; }
+  #title .line, #title .credit { font-size: 11px; line-height: 1.25; margin: 0; }
+  .langs { gap: 4px; }
+  .langs button { min-height: 24px; padding: 4px 8px; font-size: 9px; }
+
+  #hub:not(.hidden) { height: 100dvh; min-height: 0; overflow: hidden; }
+  #hubTop {
+    min-height: 0;
+    padding: calc(5px + env(safe-area-inset-top)) 12px 5px;
+    gap: 8px;
+  }
+  #hubTop .header-logo { width: 27px; height: 27px; border-radius: 7px; }
+  #hubTop .lvl { font-size: 10px; line-height: 1.15; }
+  #hubTop .lvl b { font-size: 11px; }
+  #hubTop .bar { margin-top: 3px; }
+  #hubBody {
+    min-height: 0;
+    padding: 7px 12px calc(8px + env(safe-area-inset-bottom));
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+  #nav {
+    min-height: 0;
+    gap: 5px;
+    padding: 4px 10px calc(4px + env(safe-area-inset-bottom));
+  }
+  #nav button { min-height: 38px; padding: 4px 3px; font-size: 11px; line-height: 1.1; }
+  #nav button::before { width: 14px; height: 2px; margin-bottom: 3px; }
+  .h2 { margin: 10px 0 6px; font-size: 16px; }
+  .soft { margin: 5px 0; font-size: 11px; line-height: 1.35; }
+  .card { margin: 6px 0; padding: 9px; border-radius: 11px; }
+  .ch { gap: 8px; }
+  .ch b { font-size: 13px; line-height: 1.2; }
+  .ch small { margin-top: 2px; font-size: 10px; line-height: 1.3; }
+  .cf { margin-top: 6px; gap: 6px; font-size: 10px; }
+  .btn { min-height: 34px; padding: 7px 11px; font-size: 12px; }
+  .btn.brand, .btn.line { min-height: 34px; padding: 6px 12px; }
+  .grid2 { gap: 7px; }
+  .bd { padding: 8px 6px; font-size: 11px; }
+  .bd b { margin-top: 3px; font-size: 11px; }
+  .stat { padding: 6px 0; font-size: 11px; }
+  .map-card { margin: 3px 0 8px; padding: 9px; border-radius: 12px; }
+  .map-card-head { gap: 7px; }
+  .map-card-head h2 { margin-top: 2px; font-size: 16px; }
+  .map-card-head>b { padding: 4px 7px; font-size: 9px; }
+  .map { max-height: 105px; }
+  .map-legend { gap: 5px; font-size: 9px; }
+  .map-selected { margin-top: 6px; }
+  #modal { padding: 6px 10px calc(6px + env(safe-area-inset-bottom)); align-items: center; }
+  #sheet { width: min(96vw, 760px); max-width: 760px; max-height: 92dvh; padding: 10px 13px; border-radius: 12px; }
+  #sheet h3 { margin: 6px 0 3px; font-size: 17px; line-height: 1.15; }
+  #sheet p { margin: 5px 0; }
+  #sheet .chat { gap: 5px; margin: 5px 0 2px; }
+  #sheet .b { padding: 7px 9px; font-size: 12px; line-height: 1.3; }
+  #sheet .who { gap: 7px; }
+  #sheet .av { width: 32px; height: 32px; font-size: 14px; }
+  #sheet .mission-brief-card, #sheet .record-center-card { padding: 10px; border-radius: 10px; }
+  #sheet .mission-brief-top, #sheet .record-center-top { padding-bottom: 7px; font-size: 9px; }
+  #sheet .mission-brief-who { gap: 8px; padding: 8px 0; }
+  #sheet .mission-brief-who .av { width: 34px; height: 34px; border-radius: 9px; font-size: 15px; }
+  #sheet .mission-brief-who b { font-size: 14px; }
+  #sheet .mission-brief-who small { font-size: 10px; }
+  #sheet .mission-brief-goal { padding: 8px; margin-bottom: 8px; }
+  #sheet .mission-brief-steps .pts li { font-size: 11px; line-height: 1.3; }
+  #sheet .row { gap: 6px; }
+  #sheet .row .btn { min-height: 34px; padding: 6px 10px; font-size: 12px; }
+  #hud>* { transform-origin: top left; }
+}
