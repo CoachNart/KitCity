@@ -1316,8 +1316,15 @@ function roadDecals(C,blocks){
   // cities show edges only where the local road graph actually opens a block.
   blocks.forEach((b,index)=>{
     const form=C.form||'mixed',style=C.roadStyle||'mixed';
+    const formal=['planned','planned-tropical','planned-river','regional-capital','savanna-capital'].includes(form)
+      ||style==='boulevard'||style==='ceremonial';
+    const industrial=['delta-port','oil-port','rail-crossroads'].includes(form)||style==='industrial';
     const sparse=['historic','sahel','heritage','colonial-coast','dense-market','southeast-market'].includes(form);
     const broken=['hillside','green-hills','rock-city','creek-town','river-town','confluence','delta-port','oil-port'].includes(form);
+    // Do not stamp the same pale edge grid onto every city. Edge paint is reserved
+    // for planned avenues and freight roads; organic, historic, hill and river
+    // settlements rely on their own asphalt/earth surface and local street shapes.
+    if(!formal&&!industrial)return;
     if(sparse&&index%3!==0)return;
     if(broken&&index%2!==0)return;
     const i=Math.round((b.cx-35)/R),j=Math.round((b.cz-35)/R);
@@ -1348,17 +1355,34 @@ function roadDecals(C,blocks){
     }else if(style==='boulevard'||style==='ceremonial'){
       if(hasX)for(const off of [-2.1,2.1])marks.push(boxMark(x,z+off,0));
       if(hasZ)for(const off of [-2.1,2.1])marks.push(boxMark(k*R+off,i*R+35,Math.PI/2));
-    }else{
-      const stride=style==='open'||style==='gate'?3:style==='market'?1:2;
-      if(hasX)for(let q=0;q<5;q++){if((q+i+k)%stride===0)addMark(i*R+8+q*10,z,0);}
-      if(hasZ)for(let q=0;q<5;q++){if((q+i+k)%stride===0)addMark(k*R,i*R+8+q*10,Math.PI/2);}
+    }else if(style==='arterial'){
+      // City-specific worn centre dashes, using the city's own paint palette.
+      const dashColors=(C.paint&&C.paint.length)?C.paint:['#B9B1A0','#A9B8B2','#C5A77D'];
+      const dashColor=dashColors[(Math.abs((C.seed||1)+i*3+k*5))%dashColors.length];
+      if(hasX&&((i+k+Math.abs(C.seed||0))%2===0))for(let q=0;q<3;q++)addMark(i*R+12+q*15,z,0);
+      if(hasZ&&((i-k+Math.abs(C.seed||0))%2===0))for(let q=0;q<3;q++)addMark(k*R,i*R+12+q*15,Math.PI/2);
+      marks.forEach(m=>{m._color=dashColor;});
+    }else if(style==='promenade'){
+      // Creek and waterfront streets use short muted shoulder markers, not a white grid.
+      if(hasX&&((i+k+(C.seed||0))%3===0))addMark(i*R+16,z,0);
+      if(hasZ&&((i-k+(C.seed||0))%3===0))addMark(k*R,i*R+16,Math.PI/2);
+    }else if(style==='contour'||style==='mixed'){
+      // Unpainted local streets are intentional for organic, hill and regional towns.
+      // The road texture carries the identity; do not add the repeated white dash grid.
+    }else if(style==='open'||style==='gate'||style==='market'){
+      // Historic and dry-region lanes use occasional earth-toned worn markers only.
+      if((i*7+k*11+(C.seed||0))%4===0){
+        if(hasX)addMark(i*R+18,z,0);
+        if(hasZ)addMark(k*R,i*R+18,Math.PI/2);
+      }
     }
   }
   function boxMark(x,z,ry){return {x,y:.085,z,ry};}
   if(marks.length){
     const g=new THREE.PlaneGeometry(style==='industrial'||style==='boulevard'||style==='ceremonial'?56:7,.22);g.rotateX(-Math.PI/2);
-    const laneColor=style==='industrial'?'#E9BE35':style==='market'?'#C9C6B9':style==='gate'||style==='open'?'#D2B56D':'#E5E8E7';
-    const laneMat=new THREE.MeshBasicMaterial({color:laneColor,transparent:true,opacity:style==='market'?.58:.9,depthWrite:false});
+    const seed=Math.abs(C.seed||1);
+    const laneColor=style==='industrial'?'#E9BE35':style==='market'?'#9E8B6D':style==='gate'||style==='open'?'#BFA16F':style==='promenade'?'#8BAEA5':style==='arterial'?((C.paint&&C.paint.length)?C.paint[seed%C.paint.length]:'#B9B1A0'):'#E5E8E7';
+    const laneMat=new THREE.MeshBasicMaterial({color:laneColor,transparent:true,opacity:style==='market'?.38:style==='open'||style==='gate'?.42:style==='promenade'?.38:.72,depthWrite:false});
     instanced(g,laneMat,marks,cityGroup);
   }
 }
