@@ -258,10 +258,11 @@ export function createStorySceneDirector({ camera, player, getCharacter, getChar
         // the player stuck on the previous panel until they tap the screen.
         if (activePanels[shownIndex + 1]) show(shownIndex + 1);
       }, readTime);
-    } else if (genericScene && !panel.speaker && !panel.choices && !panel.finish && activePanels[panelIndex + 1]) {
-      // Mission conversations begin with a short establishing/caption panel.
-      // Auto-advance this beat so the first NPC speech bubble appears without
-      // requiring a tap. Keep choice and finish panels player-controlled.
+    } else if (genericScene && !bubbleOn && !panel.choices && !panel.finish && activePanels[panelIndex + 1]) {
+      // Mission conversations begin with an establishing panel that may already
+      // name the lead speaker but has no spoken text yet. Auto-advance any such
+      // non-dialogue beat so the first real speech bubble appears without a tap.
+      // Keep choice and finish panels player-controlled.
       const shownIndex = panelIndex;
       speechBubbleTimer = setTimeout(() => {
         if (!active || panelIndex !== shownIndex) return;
