@@ -4684,7 +4684,7 @@ function journeyHUD(title,subtitle,progress){
   }
   el.style.display='block';
   const controls=journeyState&&journeyState.phase==='drive';
-  if(controls&&el.dataset.carBound&&el.querySelector('[data-journey-title]')){
+  if(controls&&el.dataset.carBound&&el.querySelector('[data-car="accelerator"]')){
     el.querySelector('[data-journey-title]').textContent=title;
     el.querySelector('[data-journey-subtitle]').textContent=subtitle;
     el.querySelector('[data-journey-progress]').style.width=Math.max(0,Math.min(100,progress*100))+'%';
@@ -4695,7 +4695,7 @@ function journeyHUD(title,subtitle,progress){
     el.dataset.carBound='1';
     const setHold=(name,on)=>{if(!journeyState)return;if(name==='left'||name==='right')journeyState.steer=on?(name==='left'?-1:1):0;if(name==='accelerator')journeyState.throttle=on;if(name==='brake')journeyState.braking=on;};
     el.addEventListener('pointerdown',e=>{const b=e.target.closest('[data-car]');if(!b)return;const a=b.dataset.car;if(a==='horn')return;if(['left','right','accelerator','brake'].includes(a)){e.preventDefault();setHold(a,true);}});
-    ['pointerup','pointercancel','pointerleave'].forEach(ev=>el.addEventListener(ev,e=>{const b=e.target.closest('[data-car]');if(b)setHold(b.dataset.car,false);}));
+    ['pointerup','pointercancel'].forEach(ev=>document.addEventListener(ev,()=>{if(journeyState){journeyState.steer=0;journeyState.throttle=false;journeyState.braking=false;}}));
     el.addEventListener('click',e=>{const b=e.target.closest('[data-car="horn"]');if(b)honkCar();});
   }
 }
