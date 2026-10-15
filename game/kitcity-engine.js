@@ -631,20 +631,28 @@ const nearSpecial=(x,z,d)=>special.some(s=>Math.hypot(s.x-x,s.z-z)<d);
 function mainRoadActive(C,axis,k){
   const form=C.form||'mixed',style=C.roadStyle||'mixed',seed=Math.abs(C.seed||1);
   const primary=k===0||k===-1;
+  // Preserve the signature arterial structure of formal capitals.
   if(style==='boulevard'||style==='ceremonial')return true;
-  if(style==='industrial'){
+  // Ports and industrial towns get one dominant freight spine plus sparse feeders,
+  // instead of the same dense cross-city grid used by every other settlement.
+  if(style==='industrial'||['delta-port','oil-port','rail-crossroads'].includes(form)){
     const freightAxis=(seed%2===0)?'x':'z';
-    return axis===freightAxis||primary||Math.abs(k+seed)%3===0;
+    return axis===freightAxis||primary||Math.abs(k+seed)%4===0;
   }
+  // Old northern and historic market centres keep only a few main corridors;
+  // their compact, irregular lanes are supplied by the local-road graph.
   if(['historic','sahel','heritage','colonial-coast','dense-market','southeast-market'].includes(form)||style==='market'||style==='gate'){
-    return primary||Math.abs(k*7+seed)%4===0;
+    return primary||Math.abs(k*7+seed)%5===0;
   }
-  if(['hillside','green-hills','rock-city','plateau'].includes(form)){
-    return primary||Math.abs(k*3+seed)%3===0;
+  // Plateau/hillside cities use separated valley routes rather than a full grid.
+  if(['hillside','green-hills','rock-city','plateau'].includes(form)||style==='contour'){
+    return primary||Math.abs(k*3+seed)%4===0;
   }
-  if(['creek-town','river-town','confluence','delta-port','oil-port'].includes(form)){
-    return primary||Math.abs(k+seed)%3===0;
+  // River and creek settlements follow sparse corridors; do not stamp a complete grid.
+  if(['creek-town','river-town','confluence'].includes(form)||style==='promenade'){
+    return primary||Math.abs(k+seed)%4===0;
   }
+  // Dense coastal and organic cities retain more cross-streets but with deliberate gaps.
   if(['dense-coastal','organic-sprawl','southwest-sprawl'].includes(form)){
     return primary||Math.abs(k*5+seed)%3!==1;
   }
@@ -1233,6 +1241,40 @@ function applyLook(key,C){
   atmoSet(L.fx);
   try{ let b=document.getElementById('lkBadge'); if(!b){ b=document.createElement('div'); b.id='lkBadge'; b.style.cssText='position:fixed;left:8px;bottom:8px;z-index:99999;font:700 11px monospace;background:#000c;color:#fff;padding:5px 8px;border-radius:6px;pointer-events:none;transition:opacity 1s'; document.body.appendChild(b); }
     b.textContent='LOOK v2 \u2022 '+key+' \u2022 grade '+(GR?'ON':'OFF (fallback)'); b.style.opacity=1; clearTimeout(b._t); b._t=setTimeout(()=>{b.style.opacity=0;},6000); }catch(e){}
+}
+function addRegionalConnectors(C){
+  const form=C.form||'mixed';
+  const diagonalForms=['historic','sahel','heritage','colonial-coast','organic-sprawl','southwest-sprawl','hillside','green-hills','rock-city','plateau','creek-town','river-town','confluence','delta-port','oil-port','rail-crossroads','southeast-market','dense-market'];
+  if(!diagonalForms.includes(form))return;
+  const width=['historic','sahel','heritage','colonial-coast','dense-market','southeast-market'].includes(form)?4.8:
+    ['delta-port','oil-port','rail-crossroads'].includes(form)?7.5:5.8;
+  const asphalt=lam(C.ground,{map:LKT.asph});
+  const edgeMat=new THREE.MeshLambertMaterial({color:C.slab||'#B8B8B0'});
+  const markMat=new THREE.MeshBasicMaterial({color:['historic','sahel'].includes(form)?'#C8A979':'#D8D8CF',transparent:true,opacity:.68,depthWrite:false});
+  const routes=form==='delta-port'||form==='oil-port'
+    ? [[-150,-105,95,45,.22],[-45,105,150,-25,-.16]]
+    : form==='hillside'||form==='green-hills'||form==='rock-city'||form==='plateau'
+      ? [[-150,-130,-25,-65,.28],[15,70,145,145,-.24]]
+      : form==='creek-town'||form==='river-town'||form==='confluence'
+        ? [[-160,95,-30,20,.18],[15,-125,155,-45,-.2]]
+        : [[-150,-115,-20,-25,.17],[20,65,150,120,-.18]];
+  for(const [x1,z1,x2,z2,angle] of routes){
+    const len=Math.hypot(x2-x1,z2-z1),mx=(x1+x2)/2,mz=(z1+z2)/2;
+    const road=new THREE.Mesh(new THREE.BoxGeometry(len,.055,width),asphalt);
+    road.position.set(mx,.12,mz);road.rotation.y=angle;road.userData.nomerge=true;cityGroup.add(road);
+    for(const side of [-1,1]){
+      const edge=new THREE.Mesh(new THREE.BoxGeometry(len,.025,.42),edgeMat);
+      edge.position.set(mx,.145,mz);edge.rotation.y=angle;edge.position.x+=Math.cos(angle+Math.PI/2)*side*(width/2+.15);edge.position.z-=Math.sin(angle+Math.PI/2)*side*(width/2+.15);cityGroup.add(edge);
+    }
+    if(!['historic','sahel','dense-market','southeast-market'].includes(form)){
+      const dashCount=Math.max(3,Math.floor(len/18));
+      for(let q=0;q<dashCount;q++){
+        const d=new THREE.Mesh(new THREE.BoxGeometry(3,.018,.1),markMat);
+        const t=(q+.5)/dashCount;
+        d.position.set(x1+(x2-x1)*t,.16,z1+(z2-z1)*t);d.rotation.y=angle;cityGroup.add(d);
+      }
+    }
+  }
 }
 function roadDecals(C,blocks){
   const L=LKC,dc=C.roadStyle==='boulevard'?'#D9DDE0':C.roadStyle==='promenade'?'#A9C7C5':C.roadStyle==='gate'?'#B99B70':C.roadStyle==='market'?'#C4B8A3':L.lat>.3?'#9a5a38':(L.dust>.2?'#cdb48a':'#8a7e6a'),its=[];
@@ -2418,6 +2460,10 @@ function buildCity(key){
     // Roadside/block-edge tree placement removed: keep streets and road verges clear.
   }
   streetDetails(C,blocks); roadDecals(C,blocks); addCityIdentityFeature(C);
+  // Add a small set of angled connector roads to non-grid city types. These
+  // break the repeated rectangular-road silhouette while keeping mission anchors
+  // and the shared movement/collision system stable.
+  addRegionalConnectors(C);
   dxFlush(C);
   cityCols=colliders.length;
   for(let k=-3;k<=3;k++)for(const axis of ['x','z'])for(const dir of [1,-1]){
