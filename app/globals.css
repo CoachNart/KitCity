@@ -1111,22 +1111,37 @@ html.kitcity-story-active #modal{
 }
 
 
-/* Vehicle controls reuse the gameplay control area; no separate control card. */
-.car-controls{position:fixed!important;left:50%;bottom:calc(14px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:12;display:flex;align-items:center;justify-content:center;gap:clamp(5px,1.5vw,10px);width:max-content;max-width:calc(100vw - 20px);padding:0;background:transparent;border:0;box-shadow:none;pointer-events:auto}
+/* Compact vehicle controls: steering stays left; brake, accelerator and horn stay right.
+   The controls are transparent overlays, not a separate card. */
+.car-controls{position:fixed!important;inset:0;left:0;bottom:0;transform:none;z-index:12;display:block;width:100%;max-width:none;padding:0;background:transparent;border:0;box-shadow:none;pointer-events:none}
 .car-controls.hidden{display:none!important}
-.car-controls button{display:grid;place-items:center;min-width:42px;height:42px;padding:0 10px;border:1px solid rgba(255,255,255,.36);border-radius:13px;background:rgba(9,20,29,.78);color:#fff;font:900 12px/1 system-ui,sans-serif;letter-spacing:.02em;box-shadow:0 3px 10px rgba(0,0,0,.22);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);touch-action:none;user-select:none;-webkit-user-select:none}
+.car-control-cluster{position:absolute;bottom:calc(14px + env(safe-area-inset-bottom));display:flex;align-items:flex-end;gap:clamp(5px,1.3vw,10px);pointer-events:auto}
+.car-steering{left:calc(12px + env(safe-area-inset-left))}
+.car-driving-actions{right:calc(12px + env(safe-area-inset-right))}
+.car-controls button{display:grid;place-items:center;min-width:44px;height:44px;padding:0 10px;border:1px solid rgba(255,255,255,.36);border-radius:13px;background:rgba(9,20,29,.78);color:#fff;font:900 12px/1 system-ui,sans-serif;letter-spacing:.02em;box-shadow:0 3px 10px rgba(0,0,0,.22);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);touch-action:none;user-select:none;-webkit-user-select:none}
 .car-controls button:active{transform:scale(.96);filter:brightness(1.2)}
-.car-controls .car-brake{border-color:rgba(255,107,107,.8);color:#ffb6b6;min-width:58px}
-.car-controls .car-accelerate{height:48px;min-width:112px;padding:0 15px;background:#D9A441;border-color:#f5d58b;color:#17202a;font-size:12px}
-.car-controls .car-horn{min-width:48px;color:#f4cf6d;border-color:rgba(244,207,109,.7)}
+.car-controls .car-brake{border-color:rgba(255,107,107,.8);color:#ffb6b6;min-width:56px}
+.car-controls .car-accelerate{height:50px;min-width:104px;padding:0 12px;background:#D9A441;border-color:#f5d58b;color:#17202a;font-size:11px}
+.car-controls .car-horn{min-width:44px;color:#f4cf6d;border-color:rgba(244,207,109,.7)}
 #hud.car-driving #joy,#hud.car-driving #runBtn,#hud.car-driving #talkBtn{display:none!important}
 #hud.car-driving #mission{max-width:min(42vw,190px);padding:7px 9px}
 #hud.car-driving #steps{font-size:10px;gap:2px}
 #hud.car-driving #steps li::before{width:9px;height:9px}
 @media (orientation:landscape) and (max-height:520px){
-  .car-controls{bottom:calc(7px + env(safe-area-inset-bottom));gap:5px}
+  .car-control-cluster{bottom:calc(7px + env(safe-area-inset-bottom));gap:5px}
+  .car-steering{left:calc(8px + env(safe-area-inset-left))}
+  .car-driving-actions{right:calc(8px + env(safe-area-inset-right))}
   .car-controls button{height:36px;min-width:36px;border-radius:10px;padding:0 7px;font-size:10px}
-  .car-controls .car-accelerate{height:40px;min-width:100px;font-size:10px}
-  .car-controls .car-brake{min-width:50px}
-  .car-controls .car-horn{min-width:42px}
+  .car-controls .car-accelerate{height:40px;min-width:88px;font-size:10px}
+  .car-controls .car-brake{min-width:46px}
+  .car-controls .car-horn{min-width:36px}
+}
+@media (max-width:420px) and (orientation:portrait){
+  .car-control-cluster{gap:5px}
+  .car-steering{left:calc(7px + env(safe-area-inset-left))}
+  .car-driving-actions{right:calc(7px + env(safe-area-inset-right))}
+  .car-controls button{min-width:38px;height:42px;padding:0 6px;font-size:10px}
+  .car-controls .car-accelerate{min-width:84px;height:46px;font-size:10px}
+  .car-controls .car-brake{min-width:42px}
+  .car-controls .car-horn{min-width:36px}
 }
