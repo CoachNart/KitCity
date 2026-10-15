@@ -5570,7 +5570,6 @@ function update(dt,time){
     journeyState.elapsed+=dt;
     const inp=inputVec();
     if(inp.x)journeyState.steerTarget=inp.x<0?-1:1;
-    else if(!document.querySelector('#carControls [data-car-control]:active'))journeyState.steerTarget=0;
     journeyState.steer+=(journeyState.steerTarget-journeyState.steer)*Math.min(1,dt*4.5);
     const acceleration=journeyState.throttle?25:0;
     if(acceleration)journeyState.speed=Math.min(48,journeyState.speed+acceleration*dt);
