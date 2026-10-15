@@ -4793,16 +4793,35 @@ function makeJourneyRoad(startX,startZ,C){
   marker.position.set(stopX,6,stopZ-5);marker.scale.set(12,3,1);journeyRoad.add(marker);
   journeyBusStop={x:stopX,z:stopZ};
   scene.add(journeyRoad);
-  // Opposing traffic passes in the other lane; each vehicle loops ahead on the highway.
+  // Road traffic is deliberately dense enough to be visible throughout the trip.
+  // Vehicles travel toward the player in the opposing lane and continuously recycle.
   journeyTrafficGroup=new THREE.Group();scene.add(journeyTrafficGroup);
   const palette=C||CITIES.lagos;
-  for(let i=0;i<6;i++){
-    const kind=i%4===0?'danfo':(i%3===0?'truck':'suv');
-    const v=makeVehicle(kind,palette),z=startZ-rr(110+i*190,230+i*190);
-    const car={m:v.m,z,speed:rr(13,22),dir:1,lane:startX-3.4,hl:v.hl,hw:v.hw};
+  const trafficKinds=['danfo','sedan','suv','truck','keke','danfo','sedan','okada','suv','truck','danfo','sedan'];
+  for(let i=0;i<trafficKinds.length;i++){
+    const kind=trafficKinds[i];
+    const v=makeVehicle(kind,palette);
+    const z=startZ-rr(65+i*105,145+i*105);
+    const car={m:v.m,z,speed:rr(10,25),dir:1,lane:startX-3.4,hl:v.hl,hw:v.hw};
     car.m.position.set(car.lane,.04,z);car.m.rotation.y=-Math.PI/2;
     journeyTrafficGroup.add(car.m);journeyTraffic.push(car);
   }
+  // A destination terminal makes the stopping point unmistakable from a distance.
+  const stopXLocal=stopX+7.1;
+  const terminal=new THREE.Group();terminal.position.set(stopXLocal,0,stopZ);journeyRoad.add(terminal);
+  const terminalBox=(w,h,d,color,x,y,z)=>{
+    const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),new THREE.MeshStandardMaterial({color,roughness:.78}));
+    mesh.position.set(x,y,z);terminal.add(mesh);return mesh;
+  };
+  terminalBox(9.2,.35,5.8,0x123744,0,4.15,0);
+  terminalBox(9.8,.2,6.4,0x11b9c8,0,4.42,0);
+  for(const x of [-4,4])for(const z of [-2.4,2.4])terminalBox(.22,4,.22,0xd4dce0,x,2,z);
+  terminalBox(6.4,.22,1.1,0xf4c34d,0,1.25,-2.55);
+  terminalBox(6.8,.18,.18,0xf4c34d,0,2.9,-2.6);
+  const terminalSign=bannerSprite((C&&C.name?C.name:'CITY').toUpperCase()+' TRANSIT','INTER-STATE BUS TERMINAL');
+  terminalSign.position.set(0,5.45,-2.95);terminalSign.scale.set(7.6,1.8,1);terminal.add(terminalSign);
+  terminalBox(2.8,.28,1.1,0x7e9da4,-1.7,.75,.15);
+  terminalBox(2.8,.28,1.1,0x7e9da4,1.7,.75,.15);
 }
 let journeySwipeStart=null;
 function hideJourneyHUD(){const el=document.getElementById('kitcityJourneyHUD');if(el)el.style.display='none';}
@@ -4827,20 +4846,39 @@ function beginCarDrive(){
   faceTo(player,journeyCar.position.x,journeyCar.position.z);S.phase='pickup';S.modal=false;
   journeyHUD('GETTING IN','You are entering the driver seat…',0);
 }
+function cinematicFadeSwap(onMidpoint){
+  let overlay=document.getElementById('kitcityTravelFade');
+  if(!overlay){
+    overlay=document.createElement('div');overlay.id='kitcityTravelFade';
+    overlay.style.cssText='position:fixed;inset:0;z-index:100000;background:#05090d;opacity:0;pointer-events:none;transition:opacity .48s ease';
+    document.body.appendChild(overlay);
+  }
+  overlay.style.transition='none';overlay.style.opacity='0';void overlay.offsetWidth;
+  overlay.style.transition='opacity .48s ease';overlay.style.opacity='1';
+  setTimeout(()=>{
+    try{onMidpoint();}finally{
+      setTimeout(()=>{overlay.style.opacity='0';setTimeout(()=>{if(overlay.parentNode)overlay.parentNode.removeChild(overlay);},520);},180);
+    }
+  },500);
+}
 function finishCarJourney(){
-  if(!journeyState||!journeyState.nextMission)return;
+  if(!journeyState||!journeyState.nextMission||journeyState.phase==='transitioning')return;
   setCarControls(false);
+  journeyState.phase='transitioning';S.phase='arrival-transition';S.modal=false;
   const target=journeyState.nextMission,C=CITIES[target.city]||{name:target.city};
-  if(journeyRoad){scene.remove(journeyRoad);journeyRoad.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material)o.material.dispose();});journeyRoad=null;}
-  clearJourneyTraffic();
-  buildCity(target.city);
-  removeJourneyLot();
-  if(journeyCar){journeyCar.position.set(JOURNEY_ARRIVAL.x-5,.06,JOURNEY_ARRIVAL.z);journeyCar.rotation.y=Math.PI/2;}
-  makeJourneyLot(JOURNEY_ARRIVAL.x-5,JOURNEY_ARRIVAL.z);
-  player.visible=true;player.position.set(JOURNEY_ARRIVAL.x-10,.05,JOURNEY_ARRIVAL.z+1.5);faceTo(player,JOURNEY_ARRIVAL.x-5,JOURNEY_ARRIVAL.z);
-  journeySign=bannerSprite((target.state||C.name)+' STATE','WELCOME TO '+C.name.toUpperCase());journeySign.position.set(0,7,-204);scene.add(journeySign);
-  journeyState.phase='exiting';journeyState.elapsed=0;S.phase='arrival';S.modal=false;
-  journeyHUD('ARRIVED IN '+C.name.toUpperCase(),'Parking at the entrance · stepping out of the car…',1);
+  journeyHUD('ARRIVING IN '+C.name.toUpperCase(),'Pulling into the state transit terminal…',1);
+  cinematicFadeSwap(()=>{
+    if(journeyRoad){scene.remove(journeyRoad);journeyRoad.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material){if(Array.isArray(o.material))o.material.forEach(m=>m.dispose());else o.material.dispose();}});journeyRoad=null;}
+    clearJourneyTraffic();
+    buildCity(target.city);
+    removeJourneyLot();
+    if(journeyCar){journeyCar.position.set(JOURNEY_ARRIVAL.x-5,.06,JOURNEY_ARRIVAL.z);journeyCar.rotation.y=Math.PI/2;}
+    makeJourneyLot(JOURNEY_ARRIVAL.x-5,JOURNEY_ARRIVAL.z);
+    player.visible=true;player.position.set(JOURNEY_ARRIVAL.x-10,.05,JOURNEY_ARRIVAL.z+1.5);faceTo(player,JOURNEY_ARRIVAL.x-5,JOURNEY_ARRIVAL.z);
+    journeySign=bannerSprite((target.state||C.name)+' STATE','WELCOME TO '+C.name.toUpperCase());journeySign.position.set(0,7,-204);scene.add(journeySign);
+    journeyState.phase='exiting';journeyState.elapsed=0;S.phase='arrival';S.modal=false;
+    journeyHUD('ARRIVED IN '+C.name.toUpperCase(),'Parking at the entrance · stepping out of the car…',1);
+  });
 }
 function leaveCityEntrance(){
   setCarControls(false);
