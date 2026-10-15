@@ -159,17 +159,24 @@ export async function authenticateEmailPassword(input: {
     }
     try {
       const profile = await createOrUpdateProfile(user, input.username, input.deviceId, input.location);
-      return { user, profile };
-    } catch (error) {
-      // Keep the Auth account if Firestore is temporarily unreachable. The player can
-      // sign in again later to finish profile creation once the connection recovers.
-      throw error;
+      return { user, profile, profileError: null as unknown };
+    } catch (profileError) {
+      // Firebase Authentication has already created the account. Do not strand the
+      // player on the sign-up page just because Firestore profile setup is temporarily
+      // unavailable; the game can still save locally and retry profile sync later.
+      return { user, profile: null, profileError };
     }
   }
 
   user = (await signInWithEmailAndPassword(auth, email, input.password)).user;
-  const profile = await createOrUpdateProfile(user, input.username, input.deviceId, input.location);
-  return { user, profile };
+  try {
+    const profile = await createOrUpdateProfile(user, input.username, input.deviceId, input.location);
+    return { user, profile, profileError: null as unknown };
+  } catch (profileError) {
+    // A valid Auth session must not be mistaken for a failed sign-in when only the
+    // profile database is unavailable or its rules need attention.
+    return { user, profile: null, profileError };
+  }
 }
 
 export async function getOrCreateUserProfile(
