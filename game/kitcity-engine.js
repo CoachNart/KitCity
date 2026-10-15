@@ -5117,7 +5117,26 @@ if(playerNameInput){
 }
 if(playerEmailInput) playerEmailInput.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); submitPlayerName(); } });
 if(playerPasswordInput) playerPasswordInput.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); submitPlayerName(); } });
-if(firebaseConfigured){
+// Explicit local-only visual-test bypass. It is impossible to activate on a
+// deployed hostname, and it never creates Firebase users or writes cloud data.
+const localAuthTestMode =
+  (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') &&
+  new URLSearchParams(window.location.search).get('localTest') === '1';
+
+if(localAuthTestMode){
+  let testName = 'CityTester';
+  try{
+    const saved = window.localStorage.getItem('kitcity_local_test_name');
+    if(saved && /^[A-Za-z0-9_]{3,20}$/.test(saved)) testName = saved;
+    else window.localStorage.setItem('kitcity_local_test_name', testName);
+  }catch(e){}
+  P.name = testName;
+  activateUserProgress('local-test-' + testName.toLowerCase());
+  cloudSyncReady = false;
+  save();
+  beginGame();
+  toast('LOCAL TEST MODE — progress stays on this device; Firebase is bypassed.');
+}else if(firebaseConfigured){
   waitForAuthState().then(user=>{
     if(user&&playerEmailInput) playerEmailInput.value=user.email||'';
     updateAuthButton();
