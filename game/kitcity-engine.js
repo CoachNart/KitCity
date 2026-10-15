@@ -4375,13 +4375,9 @@ const loc=(name,role,color,look,sub)=>NPC(name,role,color,look,{body:color,a:'#f
 const BADGES=['Wallet Starter','Swap Smart','Scam Spotter','Key Keeper','Safe Sender','Passport Holder','Community Voice','Cash-out Pro','Fare Payer','Club Skeptic','Gas Watcher','Escrow Trader','Off-ramp Pro','Depeg Calm','Mint Checker','Pump Spotter','Buffer Keeper','Pool Wise','Hardware Holder','Multisig Team','Wallet Splitter','Record Keeper','Phone Buyer','Phish Doubter','School Donor','Review Reader','Remit Careful','Lost Phone Calm','Invoice Checker','Crowdfund Skeptic','Gate Watcher','Ledger Clear','Oil Money Smart','Creek Careful','Tailor Shield','Bank Alert Calm','Loan Sense','Herd Wise','Flyer Doubter','Relief Guard','Gift Pool Wise','Clearance Check','Lucky Draw Skeptic','Cocoa Careful','Gold Audit','Tour Verifier','Lease Check','Supply Watch','Scholar Shield','Fee Guard','Rent Shield','Franchise Check','Loan Sense','Course Skeptic','Input Verified','Bureau Wise','PIN Guard','Bulk Buyer Check','Partner Guard','Recharge Safe','Abia Shoe Check','Land Title Check','Net Co-op','Produce Guard','Pump Verifier','Travel Licence','Seed Scheme Sense','Pond Skeptic','Job Fee Guard','Bond Checker','Permit Honest','Feed Invoice','Ticket Honest','Grove Trust','Cocoa Terms','Park Permit','Solar Limit','Export Office','Gold Licence','Cattle Terms','Genesis Access'];
 /* Progress is tracked by completed missions and practice USDC. */
 const isUnlocked=m=>{
-  if(!m) return false;
-  // The active Lost Value story has its own progression. Its first mission must
-  // be playable from the city screen; the hidden legacy prologue must not gate it.
-  const storyIndex=LOST_VALUE_STORY.findIndex(story=>story.id===m.id);
-  if(storyIndex>=0) return storyIndex===0||!!P.done[LOST_VALUE_STORY[storyIndex-1].id];
-  const k=MISSIONS.indexOf(m);
-  return k===0||!!P.done[MISSIONS[k-1].id];
+  // Preview mode: every defined mission is immediately playable. Completion
+  // remains tracked separately and does not gate access to another mission.
+  return !!m;
 };
 
 
@@ -4637,16 +4633,8 @@ const isCityComplete=city=>{
   return active.length>0&&active.every(m=>!!P.done[m.id]);
 };
 const isCityUnlocked=city=>{
-  const active=LOST_VALUE_STORY;
-  const firstIndex=active.findIndex(story=>story.city===city);
-  // Cities outside the active story arc stay locked rather than appearing playable.
-  if(firstIndex<0) return false;
-  const previousStory=active[firstIndex-1];
-  if(!previousStory) return true;
-  // A city unlocks only after every active story mission in the preceding city is complete.
-  const previousCity=previousStory.city;
-  const previousCityStories=active.filter(story=>story.city===previousCity);
-  return previousCityStories.length>0&&previousCityStories.every(story=>!!P.done[story.id]);
+  // Preview mode: any city with missions in the active story can be entered.
+  return LOST_VALUE_STORY.some(story=>story.city===city);
 };
 /* =====================  mission flow  ===================== */
 function hideEnt(e){ e.hidden=true; loadStep(); }
