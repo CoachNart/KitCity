@@ -16,6 +16,14 @@ export default function AuthPage() {
     switch (value?.code) {
       case 'auth/configuration-not-found':
         return 'Firebase Authentication is not initialized for this project, or the web config points to a different project. In Firebase Console, open kitcity-efd96, set up Authentication, and enable Email/Password.';
+      case 'auth/unauthorized-domain':
+        return 'This website domain is not authorized in Firebase Authentication settings.';
+      case 'auth/network-request-failed':
+      case 'unavailable':
+        return 'Connection failed. Check your internet connection and try again.';
+      case 'permission-denied':
+      case 'firestore/permission-denied':
+        return 'Authentication succeeded, but the profile database denied access. Try again later; your local game progress remains available.';
       case 'auth/email-already-in-use':
         return 'An account already uses this email. Choose Sign in instead.';
       case 'auth/invalid-credential':
