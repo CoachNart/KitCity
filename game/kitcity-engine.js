@@ -4827,7 +4827,7 @@ $('#pauseBtn').addEventListener('click',()=>{
   if(S.phase!=='play'||S.modal) return;
   openSheet('<h3>Paused</h3><p class="note">'+personalize('Mission '+G.m.n+': '+G.m.title,null)+'</p>',[
     {t:'Resume',f:closeSheet},
-    {t:'Restart mission',g:1,f:()=>startMission(G.m.id)},
+    {t:'Restart mission',g:1,f:()=>startMission(G.m.id,{restart:true})},
     {t:'Back to hub',g:1,f:exitToHub}
   ]);
 });
@@ -4914,8 +4914,8 @@ function mapSVG(){
 }
 
 function missionCard(m){
-  const un=isUnlocked(m),dn=!!P.done[m.id];
-  return '<article class="card mission-card'+(un?'':' lock')+(m.city==='kitcity'?' final-destination':'')+'" data-mission-id="'+String(m.id).replace(/"/g,'&quot;')+'" data-city="'+String(m.city).replace(/"/g,'&quot;')+'"><div class="ch">'+badgeSVG(m.id==='m0'?1:m.n,!!P.done[m.id],46)+'<div><b>'+personalize(m.id==='m0'?'PROLOGUE: '+m.title:'Mission '+m.n+': '+m.title,null)+'</b><small>'+personalize(m.goal,null)+'</small></div></div><div class="cf"><span>'+(dn?'Completed':'Up to +0.50 USDC')+'</span>'+(un?'<button class="btn brand" data-a="play" data-v="'+m.id+'" type="button">'+(dn?'Replay':'Play')+'</button>':'<span>'+(m.id==='lost-value-01'?'Complete the prologue first':'Finish mission '+(m.n-1)+' first')+'</span>')+'</div></article>';
+  const un=isUnlocked(m),dn=!!P.done[m.id],resume=!!(P.inProgress&&P.inProgress.missionId===m.id);
+  return '<article class="card mission-card'+(un?'':' lock')+(m.city==='kitcity'?' final-destination':'')+'" data-mission-id="'+String(m.id).replace(/"/g,'&quot;')+'" data-city="'+String(m.city).replace(/"/g,'&quot;')+'"><div class="ch">'+badgeSVG(m.id==='m0'?1:m.n,!!P.done[m.id],46)+'<div><b>'+personalize(m.id==='m0'?'PROLOGUE: '+m.title:'Mission '+m.n+': '+m.title,null)+'</b><small>'+personalize(m.goal,null)+'</small></div></div><div class="cf"><span>'+(resume?'In progress · step '+((Number(P.inProgress.stepIndex)||0)+1):dn?'Completed':'Up to +0.50 USDC')+'</span>'+(un?'<button class="btn brand" data-a="play" data-v="'+m.id+'" type="button">'+(resume?'Resume':dn?'Replay':'Play')+'</button>':'<span>'+(m.id==='lost-value-01'?'Complete the prologue first':'Finish mission '+(m.n-1)+' first')+'</span>')+'</div></article>';
 }
 function renderHub(){
   $('#hubTop').innerHTML=tx('<span class="wm"><img class="header-logo" src="https://i.postimg.cc/qqbdTXky/file-00000000958881f4a776df689a235dec.png" alt="KitCity" /></span><div class="lvl"><b>Practice wallet</b><div class="balance-line"><strong>'+P.usdc.toFixed(2)+' USDC</strong><small>'+currentMissions.filter(m=>P.done[m.id]).length+' of '+currentMissions.length+' current missions completed</small></div></div>');
