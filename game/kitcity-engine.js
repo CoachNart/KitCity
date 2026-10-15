@@ -4550,9 +4550,10 @@ const isCityComplete=city=>{const ms=currentCityMissions(city);return ms.length>
 const isCityUnlocked=city=>{const ms=currentCityMissions(city);return ms.length>0&&isUnlocked(ms[0]);};
 /* =====================  mission flow  ===================== */
 function hideEnt(e){ e.hidden=true; loadStep(); }
-function resetPlayer(){
-  player.position.set(SPAWN.x,.05,SPAWN.z); faceAng=0; player.rotation.y=0; player.rotation.z=0; fallTimer=0; hitCd=0;
-  camera.position.set(SPAWN.x,35,SPAWN.z+20);
+function resetPlayer(spawn=SPAWN){
+  const at=spawn||SPAWN;
+  player.position.set(at.x,.05,at.z); faceAng=0; player.rotation.y=0; player.rotation.z=0; fallTimer=0; hitCd=0; player.visible=true;
+  camera.position.set(at.x,35,at.z+20);
 }
 function bannerSprite(text,sub){
  const c=document.createElement('canvas'); c.width=768; c.height=192; const g=c.getContext("2d");
@@ -4593,7 +4594,7 @@ function startMission(id, options={}){
     if(curCity!==m.city) buildCity(m.city); else setupBarks(CITIES[curCity]);
     G={m,i:0,correct:0,wrong:0,hearts:3,used:{},evidence:{},words:null,addr:null,slip:null,nameAliases:buildMissionNameAliases(m)};
     $('#hub').classList.add('hidden'); $('#hub').setAttribute('aria-hidden','true'); $('#title').classList.add('hidden'); $('#hud').classList.remove('hidden');
-    S.phase='play'; closeSheet(); Snd.setMode('play'); lastLoc=''; resetPlayer(); loadStep();
+    S.phase='play'; closeSheet(); Snd.setMode('play'); lastLoc=''; resetPlayer(options.spawnAtEntrance?{x:8,z:-178}:SPAWN); loadStep();
     $('#loading').classList.add('hidden');
     if(m.id==='m0'){
       // The prologue is a standalone cinematic: no objective, walk-up prompt,
@@ -4647,8 +4648,14 @@ function completeMission(){
   clearGroup(missionGroup);colliders.length=cityCols;smoke=[];ents=[];goal=null;beacon.visible=false;
   hubCity=m.storyFinale?m.city:(next?next.city:m.city);
   const btns=[];
-  if(cityComplete)btns.push({t:'Collect city badge',f:()=>showCityBadge(m.city,()=>next?startMission(next.id):exitToHub())});
-  if(next&&!m.storyFinale)btns.push({t:next.city!==m.city?'Continue to '+CITIES[next.city].name:'Next: '+next.title,f:()=>startMission(next.id)});
+  const continueAfterBadge=()=>{
+    if(next&&!m.storyFinale){
+      if(next.city!==m.city) startCarPickupJourney(m.city,next);
+      else startMission(next.id);
+    }else exitToHub();
+  };
+  if(cityComplete)btns.push({t:next&&!m.storyFinale&&next.city!==m.city?'Collect badge & travel':'Collect city badge',f:()=>showCityBadge(m.city,continueAfterBadge)});
+  else if(next&&!m.storyFinale)btns.push({t:next.city!==m.city?'Travel to '+CITIES[next.city].name:'Next: '+next.title,f:()=>next.city!==m.city?startCarPickupJourney(m.city,next):startMission(next.id)});
   btns.push({t:m.storyFinale?'Return to the KitCity map':'Back to hub',g:1,f:exitToHub});
   openSheet('<div class="who"><span class="av" style="background:'+INK+'">'+m.n+'</span><div><h3 style="margin:0">Mission '+m.n+' complete</h3><small>'+CITIES[m.city].name+' · '+personalize(m.title,null)+'</small></div></div>'+
     (first?'<div class="kv"><span>Mission reward</span><b>+'+missionReward.toFixed(2)+' USDC</b></div><p class="note">'+(wrong===0?'Clean run reward collected.':'Completed with '+wrong+' wrong answer'+(wrong===1?'':'s')+'. Correct answers and mistakes have already adjusted your USDC balance.')+'</p>':'<p class="note">Replay complete. The first-clear reward has already been collected.</p>')+
@@ -4663,6 +4670,66 @@ function showCityBadge(city,after){
  const missionCount=currentCityMissions(city).length;
  openSheet('<div class="badge">'+badgeSVG('★',true,96)+'<div><h3 style="margin-top:0">'+name+' Pathfinder</h3><small>City journey completed</small></div></div><p>You completed '+missionCount+' active mission'+(missionCount===1?'':'s')+' and earned the '+name+' city badge.</p>',[{t:'Continue journey',f:()=>{closeSheet();if(after)after();}}]);
 }
+
+/* Guided inter-city car journey. The car uses the existing vehicle models;
+   the drive is short and steerable, then the player exits at the next city gate. */
+let journeyState=null,journeyCar=null,journeySign=null;
+const JOURNEY_ARRIVAL={x:8,z:-178};
+function journeyHUD(title,subtitle,progress){
+  let el=document.getElementById('kitcityJourneyHUD');
+  if(!el){
+    el=document.createElement('div');el.id='kitcityJourneyHUD';
+    el.style.cssText='position:fixed;top:calc(env(safe-area-inset-top,0px) + 12px);left:50%;transform:translateX(-50%);z-index:9998;width:min(92vw,430px);box-sizing:border-box;padding:11px 14px;border:1px solid #10C8DC;border-radius:14px;background:rgba(8,17,25,.9);color:#fff;font:700 12px/1.35 system-ui,sans-serif;letter-spacing:.04em;box-shadow:0 8px 28px #0007;pointer-events:none;display:none';
+    document.body.appendChild(el);
+  }
+  el.style.display='block';
+  el.innerHTML='<div style="font-size:10px;color:#10C8DC;letter-spacing:.16em;margin-bottom:3px">KITCITY ROAD JOURNEY</div><div style="font-size:15px;font-weight:900">'+title+'</div><div style="opacity:.82;margin-top:3px">'+subtitle+'</div><div style="height:4px;border-radius:9px;background:#ffffff20;margin-top:9px;overflow:hidden"><div style="height:100%;width:'+Math.max(0,Math.min(100,progress*100))+'%;background:#10C8DC;border-radius:9px"></div></div>';
+}
+function hideJourneyHUD(){
+  const el=document.getElementById('kitcityJourneyHUD');if(el)el.style.display='none';
+}
+function startCarPickupJourney(fromCity,nextMission){
+  if(!nextMission){exitToHub();return;}
+  if(journeyCar){scene.remove(journeyCar);journeyCar=null;}
+  if(journeySign){scene.remove(journeySign);journeySign=null;}
+  const C=CITIES[fromCity]||CITIES.lagos,v=makeVehicle('suv',C);
+  journeyCar=v.m;journeyCar.position.set(0,0,-8);journeyCar.rotation.y=Math.PI/2;scene.add(journeyCar);
+  journeyState={fromCity,toCity:nextMission.city,nextMission,phase:'pickup',elapsed:0,x:0,z:-8};
+  player.visible=true;S.phase='pickup';S.modal=false;Snd.setMode('play');
+  const target=CITIES[nextMission.city]||{name:nextMission.city};
+  journeyHUD('YOUR RIDE IS READY','Next stop: '+(nextMission.state||target.name)+' · '+target.name,0);
+  openSheet('<section class="mission-brief-card mission-brief-compact"><div class="mission-brief-top"><span>CITY BADGE SECURED</span><span>ROAD TRIP</span></div><h3>Your ride is ready.</h3><p class="mission-brief-summary">Your badge is issued. Pick up your car and follow the guided road to <b>'+(nextMission.state||target.name)+'</b>. You can steer during the trip; the route will guide you to the city entrance.</p><div class="mission-brief-next"><small>NEXT STOP</small><b>'+target.name+'</b></div></section>',[
+    {t:'Get in & drive',f:beginCarDrive}
+  ]);
+}
+function beginCarDrive(){
+  if(!journeyState||!journeyCar)return;
+  closeSheet();player.visible=false;
+  journeyState.phase='drive';journeyState.elapsed=0;journeyState.x=0;journeyState.z=-12;
+  journeyCar.position.set(journeyState.x,0,journeyState.z);journeyCar.rotation.y=Math.PI/2;
+  S.phase='travel';S.modal=false;
+  const target=CITIES[journeyState.toCity]||{name:journeyState.toCity};
+  journeyHUD('DRIVING TO '+target.name.toUpperCase(),'Steer left or right with your movement controls. The route is guided.',0);
+}
+function finishCarJourney(){
+  if(!journeyState||!journeyState.nextMission)return;
+  const target=journeyState.nextMission,C=CITIES[target.city]||{name:target.city};
+  buildCity(target.city);
+  if(journeyCar){journeyCar.position.set(-5,0,JOURNEY_ARRIVAL.z+1);journeyCar.rotation.y=Math.PI/2;}
+  player.visible=true;player.position.set(JOURNEY_ARRIVAL.x-4,.05,JOURNEY_ARRIVAL.z);faceAng=0;player.rotation.y=0;
+  journeySign=bannerSprite((target.state||C.name)+' STATE','WELCOME TO '+C.name.toUpperCase());
+  journeySign.position.set(0,7,-204);scene.add(journeySign);
+  journeyState.phase='arrival';journeyState.elapsed=0;S.phase='arrival';S.modal=false;
+  journeyHUD('ARRIVED IN '+C.name.toUpperCase(),'You have stepped out at the city entrance. Your next mission is ready.',1);
+}
+function leaveCityEntrance(){
+  if(journeyCar){scene.remove(journeyCar);journeyCar=null;}
+  if(journeySign){scene.remove(journeySign);journeySign=null;}
+  const next=journeyState&&journeyState.nextMission;
+  journeyState=null;hideJourneyHUD();
+  if(next)startMission(next.id,{spawnAtEntrance:true});
+  else exitToHub();
+}
 function certificate(){
   const totalMissions=currentMissions.length;
   const msg=encodeURIComponent(L('I completed KitCity’s current story journey and helped investigate The Lost Value across Nigeria. Can you uncover what happened?','I don complete KitCity current story journey and help investigate The Lost Value across Nigeria. You fit uncover wetin happen?'));
@@ -4671,7 +4738,11 @@ function certificate(){
   sheetEl.insertAdjacentHTML('beforeend',tx('<div class="row"><a class="btn" href="https://wa.me/?text='+msg+'" target="_blank" rel="noopener">Share on WhatsApp</a></div>'));
 }
 function exitToHub(){
-  closeSheet(); S.phase='hub'; Snd.setMode('hub'); G=null;
+  closeSheet();
+  if(journeyCar){scene.remove(journeyCar);journeyCar=null;}
+  if(journeySign){scene.remove(journeySign);journeySign=null;}
+  journeyState=null;hideJourneyHUD();player.visible=true;
+  S.phase='hub'; Snd.setMode('hub'); G=null;
   $('#mission').classList.remove('prologue-hidden'); $('#mission').style.display='';
   clearGroup(missionGroup); colliders.length=cityCols; smoke=[]; ents=[]; goal=null; beacon.visible=false;
   $('#hud').classList.add('hidden'); $('#title').classList.add('hidden');
@@ -5349,6 +5420,35 @@ function update(dt,time){
   for(const s of smoke){
     const ph=(time*.35+s.m.userData.ph)%1;
     s.m.position.set(s.x+s.m.userData.ox,2.2+ph*4.6,s.z+s.m.userData.oz); s.m.scale.setScalar(.8+ph*2); s.m.material.opacity=.5*(1-ph);
+  }
+  if(S.phase==='pickup'&&journeyState&&journeyCar){
+    camera.position.set(journeyCar.position.x+12,8,journeyCar.position.z+18);
+    camera.lookAt(journeyCar.position.x,2,journeyCar.position.z);
+    fadeBuildings(dt,false);
+    return;
+  }
+  if(S.phase==='travel'&&journeyState&&journeyCar){
+    const inp=inputVec();
+    journeyState.elapsed+=dt;
+    journeyState.x=Math.max(-4.5,Math.min(4.5,journeyState.x+inp.x*8*dt));
+    journeyState.z-=(28-inp.z*7)*dt;
+    journeyState.progress=Math.max(0,Math.min(1,(-journeyState.z-12)/(180-12)));
+    journeyCar.position.set(journeyState.x,0,journeyState.z);
+    journeyCar.rotation.y=Math.PI/2+inp.x*.08;
+    const target=CITIES[journeyState.toCity]||{name:journeyState.toCity};
+    journeyHUD('DRIVING TO '+target.name.toUpperCase(),'Follow the road · '+Math.round(journeyState.progress*100)+'% complete',journeyState.progress);
+    camera.position.set(journeyState.x,9.5,journeyState.z+19);
+    camera.lookAt(journeyState.x,2.1,journeyState.z-12);
+    if(journeyState.z<=-180)finishCarJourney();
+    return;
+  }
+  if(S.phase==='arrival'&&journeyState){
+    journeyState.elapsed+=dt;
+    camera.position.set(player.position.x+10,8.5,player.position.z+16);
+    camera.lookAt(player.position.x,2,player.position.z-4);
+    fadeBuildings(dt,false);
+    if(journeyState.elapsed>=2.4)leaveCityEntrance();
+    return;
   }
   if(S.phase!=='play'){
     const a=time*.1;
