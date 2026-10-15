@@ -4679,25 +4679,38 @@ function journeyHUD(title,subtitle,progress){
   let el=document.getElementById('kitcityJourneyHUD');
   if(!el){
     el=document.createElement('div');el.id='kitcityJourneyHUD';
-    el.style.cssText='position:fixed;top:calc(env(safe-area-inset-top,0px) + 10px);left:50%;transform:translateX(-50%);z-index:9998;width:min(94vw,460px);box-sizing:border-box;padding:10px 12px;border:1px solid #10C8DC;border-radius:14px;background:rgba(8,17,25,.94);color:#fff;font:700 12px/1.35 system-ui,sans-serif;box-shadow:0 8px 28px #0007;pointer-events:none;display:none';
+    el.style.cssText='position:fixed;top:calc(env(safe-area-inset-top,0px) + 10px);left:50%;transform:translateX(-50%);z-index:9998;width:min(90vw,360px);box-sizing:border-box;padding:8px 12px;border:1px solid rgba(16,200,220,.7);border-radius:12px;background:rgba(8,17,25,.78);color:#fff;font:700 11px/1.3 system-ui,sans-serif;box-shadow:0 5px 18px #0005;pointer-events:none;display:none;backdrop-filter:blur(8px)';
     document.body.appendChild(el);
   }
   el.style.display='block';
-  const controls=journeyState&&journeyState.phase==='drive';
-  if(controls&&el.dataset.carBound&&el.querySelector('[data-car="accelerator"]')){
-    el.querySelector('[data-journey-title]').textContent=title;
-    el.querySelector('[data-journey-subtitle]').textContent=subtitle;
-    el.querySelector('[data-journey-progress]').style.width=Math.max(0,Math.min(100,progress*100))+'%';
-    return;
-  }
-  el.innerHTML='<div style="font-size:10px;color:#10C8DC;letter-spacing:.16em;margin-bottom:3px">KITCITY ROAD JOURNEY</div><div data-journey-title style="font-size:15px;font-weight:900">'+title+'</div><div data-journey-subtitle style="opacity:.84;margin-top:3px">'+subtitle+'</div><div style="height:4px;border-radius:9px;background:#ffffff20;margin-top:8px;overflow:hidden"><div data-journey-progress style="height:100%;width:'+Math.max(0,Math.min(100,progress*100))+'%;background:#10C8DC;border-radius:9px"></div></div>'+(controls?'<div style="display:flex;justify-content:space-between;gap:5px;margin-top:9px;pointer-events:auto"><button data-car="left" style="flex:1;padding:10px 4px;border:1px solid #10C8DC;border-radius:10px;background:#102632;color:white;font-weight:900;touch-action:none">◀ LEFT</button><button data-car="horn" style="flex:.85;padding:10px 4px;border:1px solid #f4c34e;border-radius:10px;background:#342b15;color:#f4c34e;font-weight:900">HORN</button><button data-car="right" style="flex:1;padding:10px 4px;border:1px solid #10C8DC;border-radius:10px;background:#102632;color:white;font-weight:900;touch-action:none">RIGHT ▶</button></div><div style="display:flex;gap:7px;margin-top:7px;pointer-events:auto"><button data-car="brake" style="flex:1;padding:12px 5px;border:1px solid #ff6b6b;border-radius:10px;background:#3a171b;color:white;font-weight:900;touch-action:none">BRAKE</button><button data-car="accelerator" style="flex:1.5;padding:12px 5px;border:1px solid #2dd4a0;border-radius:10px;background:#073b31;color:white;font-weight:900;touch-action:none">ACCELERATE</button></div><div style="font-size:10px;opacity:.72;margin-top:6px">Hold accelerator to move · hold brake to slow · swipe left/right to steer</div>':'');
-  if(controls&&!el.dataset.carBound){
-    el.dataset.carBound='1';
-    const setHold=(name,on)=>{if(!journeyState)return;if(name==='left'||name==='right')journeyState.steer=on?(name==='left'?-1:1):0;if(name==='accelerator')journeyState.throttle=on;if(name==='brake')journeyState.braking=on;};
-    el.addEventListener('pointerdown',e=>{const b=e.target.closest('[data-car]');if(!b)return;const a=b.dataset.car;if(a==='horn')return;if(['left','right','accelerator','brake'].includes(a)){e.preventDefault();setHold(a,true);}});
-    ['pointerup','pointercancel'].forEach(ev=>document.addEventListener(ev,()=>{if(journeyState){journeyState.steer=0;journeyState.throttle=false;journeyState.braking=false;}}));
-    el.addEventListener('click',e=>{const b=e.target.closest('[data-car="horn"]');if(b)honkCar();});
-  }
+  el.innerHTML='<div style="font-size:9px;color:#10C8DC;letter-spacing:.14em;margin-bottom:2px">KITCITY ROAD JOURNEY</div><div data-journey-title style="font-size:13px;font-weight:900">'+title+'</div><div data-journey-subtitle style="opacity:.84;margin-top:2px">'+subtitle+'</div><div style="height:3px;border-radius:9px;background:#ffffff20;margin-top:6px;overflow:hidden"><div data-journey-progress style="height:100%;width:'+Math.max(0,Math.min(100,progress*100))+'%;background:#10C8DC;border-radius:9px"></div></div>';
+}
+function bindJourneyControls(){
+  const el=document.getElementById('carControls');
+  if(!el||el.dataset.bound)return;
+  el.dataset.bound='1';
+  const setHold=(name,on)=>{
+    if(!journeyState)return;
+    if(name==='left'||name==='right')journeyState.steer=on?(name==='left'?-1:1):0;
+    if(name==='accelerator')journeyState.throttle=on;
+    if(name==='brake')journeyState.braking=on;
+  };
+  el.addEventListener('pointerdown',e=>{
+    const b=e.target.closest('[data-car-control]');if(!b)return;
+    const action=b.dataset.carControl;
+    if(action==='horn')return;
+    if(['left','right','accelerator','brake'].includes(action)){e.preventDefault();setHold(action,true);try{b.setPointerCapture(e.pointerId);}catch(_){}}
+  });
+  const stop=()=>{if(journeyState){journeyState.steer=0;journeyState.throttle=false;journeyState.braking=false;}};
+  ['pointerup','pointercancel','lostpointercapture'].forEach(ev=>el.addEventListener(ev,stop));
+  el.addEventListener('click',e=>{if(e.target.closest('[data-car-control="horn"]'))honkCar();});
+}
+function setCarControls(active){
+  const el=document.getElementById('carControls'),hud=document.getElementById('hud');
+  if(el)el.classList.toggle('hidden',!active);
+  if(hud)hud.classList.toggle('car-driving',!!active);
+  if(!active&&journeyState){journeyState.steer=0;journeyState.throttle=false;journeyState.braking=false;}
+  if(active)bindJourneyControls();
 }
 function honkCar(){
   try{const A=window.AudioContext||window.webkitAudioContext;if(!A)return;const c=new A(),o=c.createOscillator(),g=c.createGain();o.type='square';o.frequency.setValueAtTime(390,c.currentTime);o.frequency.setValueAtTime(320,c.currentTime+.16);g.gain.setValueAtTime(.0001,c.currentTime);g.gain.exponentialRampToValueAtTime(.16,c.currentTime+.025);g.gain.setTargetAtTime(.0001,c.currentTime+.3,.06);o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+.48);o.onended=()=>c.close();}catch(e){}
@@ -4740,7 +4753,7 @@ function startCarPickupJourney(fromCity,nextMission){
   makeJourneyLot(carX,carZ);
   journeyCar=v.m;journeyCar.position.set(carX,0.06,carZ);journeyCar.rotation.y=Math.PI/2;scene.add(journeyCar);
   player.visible=true;player.position.set(carX-5,.05,carZ+1.5);faceTo(player,carX,carZ);
-  journeyState={fromCity,toCity:nextMission.city,nextMission,phase:'pickup',elapsed:0,x:carX,routeX:carX,steerOffset:0,z:carZ-3,startZ:carZ-3,speed:0,progress:0,steer:0,throttle:false,braking:false};
+  journeyState={fromCity,toCity:nextMission.city,nextMission,phase:'pickup',elapsed:0,x:carX,routeX:carX,steerOffset:0,z:carZ-3,startZ:carZ-3,speed:0,progress:0,steer:0,throttle:false,braking:false};setCarControls(false);
   S.phase='pickup';S.modal=false;Snd.setMode('play');
   const target=CITIES[nextMission.city]||{name:nextMission.city};
   journeyHUD('YOUR RIDE IS READY','Next stop: '+(nextMission.state||target.name)+' · '+target.name,0);
@@ -4754,6 +4767,7 @@ function beginCarDrive(){
 }
 function finishCarJourney(){
   if(!journeyState||!journeyState.nextMission)return;
+  setCarControls(false);
   const target=journeyState.nextMission,C=CITIES[target.city]||{name:target.city};
   if(journeyRoad){scene.remove(journeyRoad);journeyRoad.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material)o.material.dispose();});journeyRoad=null;}
   buildCity(target.city);
@@ -4766,6 +4780,7 @@ function finishCarJourney(){
   journeyHUD('ARRIVED IN '+C.name.toUpperCase(),'Parking at the entrance · stepping out of the car…',1);
 }
 function leaveCityEntrance(){
+  setCarControls(false);
   if(journeyCar){scene.remove(journeyCar);journeyCar=null;}if(journeySign){scene.remove(journeySign);journeySign=null;}
   removeJourneyLot();
   const next=journeyState&&journeyState.nextMission;journeyState=null;hideJourneyHUD();
@@ -5469,7 +5484,7 @@ function update(dt,time){
     if(journeyState.phase==='entering'){
       animatePerson(player,journeyState.elapsed*2,.25,0);
       if(journeyState.elapsed>=1.5){
-        player.visible=false;journeyState.phase='drive';journeyState.elapsed=0;journeyState.speed=0;
+        player.visible=false;journeyState.phase='drive';journeyState.elapsed=0;journeyState.speed=0;setCarControls(true);
         journeyState.z=journeyState.startZ;journeyState.steerOffset=0;makeJourneyRoad(journeyState.routeX,journeyState.startZ);
         S.phase='travel';journeyHUD('DRIVING TO '+(CITIES[journeyState.toCity]?.name||journeyState.toCity).toUpperCase(),'Tap and hold ACCELERATE to move.',0);
       }else journeyHUD('GETTING IN','Opening the door and taking the driver seat…',0);
