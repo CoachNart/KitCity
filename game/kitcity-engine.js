@@ -5077,6 +5077,10 @@ async function approximateLocation(){
 }
 function authErrorMessage(error){
   const code=error&&error.code||'';
+  if(code==='auth/configuration-not-found') return 'Firebase Authentication is not initialized for this project. Enable Email/Password in Firebase Console.';
+  if(code==='auth/unauthorized-domain') return 'This website domain is not authorized in Firebase Authentication settings.';
+  if(code==='auth/network-request-failed'||code==='unavailable') return 'Network connection failed. Check your connection and try again.';
+  if(code==='permission-denied'||code==='firestore/permission-denied') return 'Sign-in worked, but the game profile database denied access. You can still play; cloud sync will retry later.';
   if(code==='auth/email-already-in-use') return 'An account already uses this email. Sign in instead.';
   if(code==='auth/invalid-credential'||code==='auth/wrong-password'||code==='auth/user-not-found') return 'Email or password is incorrect.';
   if(code==='auth/weak-password') return 'Choose a stronger password with at least 8 characters.';
@@ -5113,16 +5117,20 @@ async function submitPlayerName(){
   try{
     const location=await approximateLocation();
     const deviceId=deviceInstallId();
-    let user=existing,profile;
+    let user=existing,profile=null;
     if(user){
-      profile=await getOrCreateUserProfile(user,candidate,deviceId,location);
+      try{ profile=await getOrCreateUserProfile(user,candidate,deviceId,location); }
+      catch(profileError){ console.warn('KitCity profile sync unavailable; continuing with local progress.',profileError); }
     }else{
       const result=await authenticateEmailPassword({mode:authMode,email,password,username:candidate,deviceId,location});
       user=result.user; profile=result.profile;
+      if(result.profileError) console.warn('KitCity profile sync will retry after sign-in.',result.profileError);
     }
     activateUserProgress(user.uid);
-    const remote=await loadCloudProgress(user.uid);
-    if(remote) mergeCloudProgress(remote);
+    try{
+      const remote=await loadCloudProgress(user.uid);
+      if(remote) mergeCloudProgress(remote);
+    }catch(syncError){ console.warn('KitCity cloud progress could not be loaded; local progress is retained.',syncError); }
     P.name=(profile&&typeof profile.username==='string'&&profile.username)||candidate;
     cloudSyncReady=true;
     save();
@@ -5147,10 +5155,14 @@ async function resumeAuthenticatedUser(user){
     try{ savedName=window.localStorage.getItem('kitcity_player_name')||''; }catch(e){}
     const validName=value=>/^[A-Za-z0-9_]{3,20}$/.test(String(value||''));
     const candidate=validName(savedName)?savedName:(validName(P.name)?P.name:'Player_'+String(user.uid).slice(0,8));
-    const profile=await getOrCreateUserProfile(user,candidate,deviceInstallId(),null);
+    let profile=null;
+    try{ profile=await getOrCreateUserProfile(user,candidate,deviceInstallId(),null); }
+    catch(profileError){ console.warn('KitCity profile restore deferred; continuing with local progress.',profileError); }
     activateUserProgress(user.uid);
-    const remote=await loadCloudProgress(user.uid);
-    if(remote) mergeCloudProgress(remote);
+    try{
+      const remote=await loadCloudProgress(user.uid);
+      if(remote) mergeCloudProgress(remote);
+    }catch(syncError){ console.warn('KitCity cloud progress could not be restored; local progress is retained.',syncError); }
     P.name=(profile&&typeof profile.username==='string'&&profile.username)||candidate;
     try{ window.localStorage.setItem('kitcity_player_name',P.name); }catch(e){}
     cloudSyncReady=true;
