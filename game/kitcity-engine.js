@@ -1361,7 +1361,7 @@ function roadDecals(C,blocks){
       const dashColor=dashColors[(Math.abs((C.seed||1)+i*3+k*5))%dashColors.length];
       if(hasX&&((i+k+Math.abs(C.seed||0))%2===0))for(let q=0;q<3;q++)addMark(i*R+12+q*15,z,0);
       if(hasZ&&((i-k+Math.abs(C.seed||0))%2===0))for(let q=0;q<3;q++)addMark(k*R,i*R+12+q*15,Math.PI/2);
-      marks.forEach(m=>{m._color=dashColor;});
+      // Material colour is selected below from the same city paint palette.
     }else if(style==='promenade'){
       // Creek and waterfront streets use short muted shoulder markers, not a white grid.
       if(hasX&&((i+k+(C.seed||0))%3===0))addMark(i*R+16,z,0);
@@ -1382,7 +1382,7 @@ function roadDecals(C,blocks){
     const g=new THREE.PlaneGeometry(style==='industrial'||style==='boulevard'||style==='ceremonial'?56:7,.22);g.rotateX(-Math.PI/2);
     const seed=Math.abs(C.seed||1);
     const laneColor=style==='industrial'?'#E9BE35':style==='market'?'#9E8B6D':style==='gate'||style==='open'?'#BFA16F':style==='promenade'?'#8BAEA5':style==='arterial'?((C.paint&&C.paint.length)?C.paint[seed%C.paint.length]:'#B9B1A0'):'#E5E8E7';
-    const laneMat=new THREE.MeshBasicMaterial({color:laneColor,transparent:true,opacity:style==='market'?.38:style==='open'||style==='gate'?.42:style==='promenade'?.38:.72,depthWrite:false});
+    const laneMat=new THREE.MeshBasicMaterial({color:laneColor,transparent:true,opacity:style==='market' ? 0.38 : (style==='open'||style==='gate') ? 0.42 : style==='promenade' ? 0.38 : 0.72,depthWrite:false});
     instanced(g,laneMat,marks,cityGroup);
   }
 }
