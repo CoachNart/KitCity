@@ -4684,12 +4684,18 @@ function journeyHUD(title,subtitle,progress){
   }
   el.style.display='block';
   const controls=journeyState&&journeyState.phase==='drive';
-  el.innerHTML='<div style="font-size:10px;color:#10C8DC;letter-spacing:.16em;margin-bottom:3px">KITCITY ROAD JOURNEY</div><div style="font-size:15px;font-weight:900">'+title+'</div><div style="opacity:.84;margin-top:3px">'+subtitle+'</div><div style="height:4px;border-radius:9px;background:#ffffff20;margin-top:8px;overflow:hidden"><div style="height:100%;width:'+Math.max(0,Math.min(100,progress*100))+'%;background:#10C8DC;border-radius:9px"></div></div>'+(controls?'<div style="display:flex;justify-content:space-between;gap:5px;margin-top:9px;pointer-events:auto"><button data-car="left" style="flex:1;padding:10px 4px;border:1px solid #10C8DC;border-radius:10px;background:#102632;color:white;font-weight:900">◀ LEFT</button><button data-car="horn" style="flex:.85;padding:10px 4px;border:1px solid #f4c34e;border-radius:10px;background:#342b15;color:#f4c34e;font-weight:900">HORN</button><button data-car="right" style="flex:1;padding:10px 4px;border:1px solid #10C8DC;border-radius:10px;background:#102632;color:white;font-weight:900">RIGHT ▶</button></div><div style="display:flex;gap:7px;margin-top:7px;pointer-events:auto"><button data-car="brake" style="flex:1;padding:12px 5px;border:1px solid #ff6b6b;border-radius:10px;background:#3a171b;color:white;font-weight:900">BRAKE</button><button data-car="accelerator" style="flex:1.5;padding:12px 5px;border:1px solid #2dd4a0;border-radius:10px;background:#073b31;color:white;font-weight:900">ACCELERATE</button></div><div style="font-size:10px;opacity:.72;margin-top:6px">Hold accelerator to move · hold brake to slow · swipe left/right to steer</div>':'');
+  if(controls&&el.dataset.carBound&&el.querySelector('[data-journey-title]')){
+    el.querySelector('[data-journey-title]').textContent=title;
+    el.querySelector('[data-journey-subtitle]').textContent=subtitle;
+    el.querySelector('[data-journey-progress]').style.width=Math.max(0,Math.min(100,progress*100))+'%';
+    return;
+  }
+  el.innerHTML='<div style="font-size:10px;color:#10C8DC;letter-spacing:.16em;margin-bottom:3px">KITCITY ROAD JOURNEY</div><div data-journey-title style="font-size:15px;font-weight:900">'+title+'</div><div data-journey-subtitle style="opacity:.84;margin-top:3px">'+subtitle+'</div><div style="height:4px;border-radius:9px;background:#ffffff20;margin-top:8px;overflow:hidden"><div data-journey-progress style="height:100%;width:'+Math.max(0,Math.min(100,progress*100))+'%;background:#10C8DC;border-radius:9px"></div></div>'+(controls?'<div style="display:flex;justify-content:space-between;gap:5px;margin-top:9px;pointer-events:auto"><button data-car="left" style="flex:1;padding:10px 4px;border:1px solid #10C8DC;border-radius:10px;background:#102632;color:white;font-weight:900;touch-action:none">◀ LEFT</button><button data-car="horn" style="flex:.85;padding:10px 4px;border:1px solid #f4c34e;border-radius:10px;background:#342b15;color:#f4c34e;font-weight:900">HORN</button><button data-car="right" style="flex:1;padding:10px 4px;border:1px solid #10C8DC;border-radius:10px;background:#102632;color:white;font-weight:900;touch-action:none">RIGHT ▶</button></div><div style="display:flex;gap:7px;margin-top:7px;pointer-events:auto"><button data-car="brake" style="flex:1;padding:12px 5px;border:1px solid #ff6b6b;border-radius:10px;background:#3a171b;color:white;font-weight:900;touch-action:none">BRAKE</button><button data-car="accelerator" style="flex:1.5;padding:12px 5px;border:1px solid #2dd4a0;border-radius:10px;background:#073b31;color:white;font-weight:900;touch-action:none">ACCELERATE</button></div><div style="font-size:10px;opacity:.72;margin-top:6px">Hold accelerator to move · hold brake to slow · swipe left/right to steer</div>':'');
   if(controls&&!el.dataset.carBound){
     el.dataset.carBound='1';
     const setHold=(name,on)=>{if(!journeyState)return;if(name==='left'||name==='right')journeyState.steer=on?(name==='left'?-1:1):0;if(name==='accelerator')journeyState.throttle=on;if(name==='brake')journeyState.braking=on;};
-    el.addEventListener('pointerdown',e=>{const b=e.target.closest('[data-car]');if(!b)return;const a=b.dataset.car;if(a==='horn'){honkCar();return;}if(['left','right','accelerator','brake'].includes(a)){e.preventDefault();b.setPointerCapture&&b.setPointerCapture(e.pointerId);setHold(a,true);}});
-    ['pointerup','pointercancel','lostpointercapture'].forEach(ev=>el.addEventListener(ev,e=>{const b=e.target.closest('[data-car]');if(b)setHold(b.dataset.car,false);}));
+    el.addEventListener('pointerdown',e=>{const b=e.target.closest('[data-car]');if(!b)return;const a=b.dataset.car;if(a==='horn')return;if(['left','right','accelerator','brake'].includes(a)){e.preventDefault();setHold(a,true);}});
+    ['pointerup','pointercancel','pointerleave'].forEach(ev=>el.addEventListener(ev,e=>{const b=e.target.closest('[data-car]');if(b)setHold(b.dataset.car,false);}));
     el.addEventListener('click',e=>{const b=e.target.closest('[data-car="horn"]');if(b)honkCar();});
   }
 }
@@ -4721,6 +4727,9 @@ function makeJourneyRoad(startX,startZ){
   for(let d=12;d<JOURNEY_DISTANCE;d+=24){const m=new THREE.Mesh(new THREE.PlaneGeometry(.32,10),dashMatLocal);m.rotation.x=-Math.PI/2;m.position.set(startX,.05,startZ-d);journeyRoad.add(m);}
   scene.add(journeyRoad);
 }
+let journeySwipeStart=null;
+document.addEventListener('touchstart',e=>{if(S.phase!=='travel'||!e.touches||!e.touches.length||e.target.closest('#kitcityJourneyHUD [data-car]'))return;journeySwipeStart={x:e.touches[0].clientX,y:e.touches[0].clientY};},{passive:true});
+document.addEventListener('touchend',e=>{if(S.phase!=='travel'||!journeyState||!journeySwipeStart||!e.changedTouches||!e.changedTouches.length)return;const t=e.changedTouches[0],dx=t.clientX-journeySwipeStart.x,dy=t.clientY-journeySwipeStart.y;journeySwipeStart=null;if(Math.abs(dx)>35&&Math.abs(dx)>Math.abs(dy)*1.15){journeyState.steerOffset=Math.max(-8,Math.min(8,journeyState.steerOffset+(dx<0?-3.5:3.5)));}},{passive:true});
 function hideJourneyHUD(){const el=document.getElementById('kitcityJourneyHUD');if(el)el.style.display='none';}
 function startCarPickupJourney(fromCity,nextMission){
   if(!nextMission){exitToHub();return;}
