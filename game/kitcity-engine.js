@@ -1519,7 +1519,7 @@ function addFeatureBuildingBanner(x,z,w,d,h,index){
   const backing=new THREE.Mesh(new THREE.BoxGeometry(bw+.65,bh+.65,.34),new THREE.MeshBasicMaterial({color:'#071018'}));
   backing.position.set(px,by,pz);backing.rotation.y=rotation;backing.userData.nomerge=true;cityGroup.add(backing);
   const edge=new THREE.Mesh(new THREE.PlaneGeometry(bw+.34,bh+.34),new THREE.MeshBasicMaterial({color:index===0?'#00d8d0':'#ffc247',side:THREE.DoubleSide}));
-  edge.position.set(px,by,pz+(Math.abs(rotation)===Math.PI?-.19:Math.abs(rotation)===Math.PI/2?(rotation<0?-.19:.19):.19));edge.rotation.y=rotation;edge.userData.nomerge=true;cityGroup.add(edge);
+  edge.position.set(px+Math.sin(rotation)*.19,by,pz+Math.cos(rotation)*.19);edge.rotation.y=rotation;edge.userData.nomerge=true;cityGroup.add(edge);
   const face=new THREE.Mesh(new THREE.PlaneGeometry(bw,bh),featureBannerMaterial(index));
   const nx=Math.sin(rotation),nz=Math.cos(rotation);
   face.position.set(px+nx*.205,by,pz+nz*.205);face.rotation.y=rotation;face.userData.nomerge=true;cityGroup.add(face);
