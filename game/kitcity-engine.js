@@ -1477,6 +1477,53 @@ function facadeCanvas(style,v){
 const FACT={}; ['flat','zinc','banco','glass','admin'].forEach(st=>{ FACT[st]=[0,1,2].map(v=>mkTex(facadeCanvas(st,v))); });
 const FAC_TH={flat:12,zinc:8,banco:10,glass:14,admin:12};
 const GABLE=(function(){ const g=new THREE.CylinderGeometry(1,1,1,3,1,false); g.rotateY(Math.PI/2); g.rotateZ(Math.PI/2); return g; })();
+const FEATURE_BANNER_URLS=[
+  'https://i.postimg.cc/k5c3cM79/IMG-20260921-WA0037.jpg',
+  'https://i.postimg.cc/tCcZpVLP/1786924982.jpg'
+];
+const featureBannerTextures=[];
+function featureBannerTexture(index){
+  if(featureBannerTextures[index]) return featureBannerTextures[index];
+  const canvas=cv(1024,360),ctx=canvas.getContext('2d');
+  ctx.fillStyle=index===0?'#071b2b':'#12231e';ctx.fillRect(0,0,1024,360);
+  ctx.fillStyle=index===0?'#00d8d0':'#f6b21a';ctx.fillRect(0,0,1024,14);ctx.fillRect(0,346,1024,14);
+  ctx.fillStyle='#ffffff';ctx.textAlign='center';ctx.textBaseline='middle';ctx.font='900 64px Arial';ctx.fillText('KITCITY',512,150);
+  ctx.font='bold 30px Arial';ctx.fillText('THE LOST VALUE',512,220);
+  const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;
+  featureBannerTextures[index]=texture;
+  const loader=new THREE.TextureLoader();loader.setCrossOrigin('anonymous');
+  loader.load(FEATURE_BANNER_URLS[index],loaded=>{
+    loaded.colorSpace=THREE.SRGBColorSpace;loaded.anisotropy=4;loaded.needsUpdate=true;
+    featureBannerTextures[index]=loaded;
+    featureBannerMaterials[index].map=loaded;featureBannerMaterials[index].needsUpdate=true;
+  },undefined,()=>{ /* Keep the designed fallback if the hosted image is unavailable. */ });
+  return texture;
+}
+const featureBannerMaterials=[];
+function featureBannerMaterial(index){
+  if(!featureBannerMaterials[index]){
+    featureBannerMaterials[index]=new THREE.MeshBasicMaterial({map:featureBannerTexture(index),side:THREE.DoubleSide,toneMapped:false});
+  }
+  return featureBannerMaterials[index];
+}
+let featuredBannerCount=0;
+function addFeatureBuildingBanner(x,z,w,d,h,index){
+  const faceX=Math.abs(x)>Math.abs(z);
+  let px=x,pz=z,rotation=0,faceWidth=w;
+  if(faceX){
+    const side=x>0?-1:1;px=x+side*(w/2+.12);rotation=side<0?-Math.PI/2:Math.PI/2;faceWidth=d;
+  }else{
+    const side=z>0?-1:1;pz=z+side*(d/2+.12);rotation=side<0?Math.PI:0;faceWidth=w;
+  }
+  const bw=Math.max(8,Math.min(16,faceWidth*.78)),bh=bw*.36,by=Math.min(h-3,Math.max(9,h*.68));
+  const backing=new THREE.Mesh(new THREE.BoxGeometry(bw+.65,bh+.65,.34),new THREE.MeshBasicMaterial({color:'#071018'}));
+  backing.position.set(px,by,pz);backing.rotation.y=rotation;backing.userData.nomerge=true;cityGroup.add(backing);
+  const edge=new THREE.Mesh(new THREE.PlaneGeometry(bw+.34,bh+.34),new THREE.MeshBasicMaterial({color:index===0?'#00d8d0':'#ffc247',side:THREE.DoubleSide}));
+  edge.position.set(px,by,pz+(Math.abs(rotation)===Math.PI?-.19:Math.abs(rotation)===Math.PI/2?(rotation<0?-.19:.19):.19));edge.rotation.y=rotation;edge.userData.nomerge=true;cityGroup.add(edge);
+  const face=new THREE.Mesh(new THREE.PlaneGeometry(bw,bh),featureBannerMaterial(index));
+  const nx=Math.sin(rotation),nz=Math.cos(rotation);
+  face.position.set(px+nx*.205,by,pz+nz*.205);face.rotation.y=rotation;face.userData.nomerge=true;cityGroup.add(face);
+}
 const WALLADS=[['UP NEPA!','#F6B21A','#1B1C20'],['NOT FOR SALE','#ffffff','#C8402A'],['BEWARE OF 419','#ffffff','#0B7A43'],['NO DUMPING','#ffffff','#C8402A'],['POST NO BILLS','#E7D27A','#1B1C20'],['GOD DID','#0B7A43','#ffffff'],['RECHARGE HERE','#F6B21A','#1B1C20'],['RECHARGE HERE','#0B7A43','#ffffff'],['RECHARGE HERE','#C8402A','#ffffff'],['KEEP NIGERIA CLEAN','#ffffff','#0B7A43']];
 const flagTex=(function(){ const c=cv(96,64),g=c.getContext('2d'); g.fillStyle='#008751'; g.fillRect(0,0,96,64); g.fillStyle='#fff'; g.fillRect(32,0,32,64); const t=new THREE.Texture(c); t.needsUpdate=true; return t; })();
 const FLAGMAT=new THREE.MeshBasicMaterial({map:flagTex,side:THREE.DoubleSide});
@@ -1568,6 +1615,11 @@ function addBuilding(x,z,w,d,style,color,cx,cz,ox,oz){
     const ad=RN()<.3,sg=ad?pk(WALLADS):pk(CITIES[curCity].signs),sx=ox<0?-1:1,sz=oz<0?-1:1,sw=Math.min(ad?10:9,w-2),sh=ad?3.4:2.4,sy=style==='zinc'?3.6:(ad?6.5:5);
     if(RN()<.5) signPlane(sg,sw,sh,x+sx*(w/2+.06),sy,z,sx<0?-Math.PI/2:Math.PI/2,mats);
     else signPlane(sg,sw,sh,x,sy,z+sz*(d/2+.06),sz<0?Math.PI:0,mats);
+  }
+  // Two oversized, high-contrast image banners on central buildings per city.
+  if(featuredBannerCount<2&&Math.abs(x)<145&&Math.abs(z)<145&&(style==='glass'||style==='admin')&&w>=12&&d>=8){
+    addFeatureBuildingBanner(x,z,w,d,h,featuredBannerCount);
+    featuredBannerCount++;
   }
   buildings.push({mats,box,o:1});
 }
@@ -2200,7 +2252,7 @@ function addCityIdentityFeature(C){
   }
 }
 function buildCity(key){
-  const C=CITIES[key]; curCity=key;
+  const C=CITIES[key]; curCity=key; featuredBannerCount=0;
   clearGroup(cityGroup); clearGroup(trafficGroup); texs.forEach(t=>t.dispose()); texs=[];
   colliders.length=0; buildings.length=0; cars=[]; walkers=[]; hawkers=[]; ringTaken=[]; localRoadSegments=[];
   RN=mulberry(C.seed); dxReset(); LOOKSC=CITY_LOOKS[key]||LOOKS;
