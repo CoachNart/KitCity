@@ -1617,7 +1617,7 @@ function addBuilding(x,z,w,d,style,color,cx,cz,ox,oz){
     else signPlane(sg,sw,sh,x,sy,z+sz*(d/2+.06),sz<0?Math.PI:0,mats);
   }
   // Two oversized, high-contrast image banners on central buildings per city.
-  if(featuredBannerCount<2&&Math.abs(x)<145&&Math.abs(z)<145&&(style==='glass'||style==='admin')&&w>=12&&d>=8){
+  if(featuredBannerCount<2&&Math.abs(x)<175&&Math.abs(z)<175&&w>=10&&d>=8&&h>=14){
     addFeatureBuildingBanner(x,z,w,d,h,featuredBannerCount);
     featuredBannerCount++;
   }
