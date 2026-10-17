@@ -4745,6 +4745,7 @@ function showCityBadge(city,after){
 /* Cinematic, player-controlled inter-city road trip. */
 let journeyState=null,journeyCar=null,journeySign=null,journeyLot=null,journeyRoad=null,journeyTrafficGroup=null,journeyBusStop=null;
 const journeyTraffic=[];
+const journeyRoadPeople=[];
 const JOURNEY_ARRIVAL={x:8,z:-178};
 const JOURNEY_DISTANCE=1500;
 function journeyHUD(title,subtitle,progress){
@@ -4771,24 +4772,28 @@ function bindJourneyControls(){
     if(name==='accelerator')journeyState.throttle=on;
     if(name==='brake')journeyState.braking=on;
   };
+  const surface=el.querySelector('[data-car-control="steer-surface"]');
+  let swipeId=null,swipeStartX=0;
+  if(surface){
+    surface.addEventListener('pointerdown',e=>{if(e.target.closest('button'))return;swipeId=e.pointerId;swipeStartX=e.clientX;try{surface.setPointerCapture(e.pointerId);}catch(_){}e.preventDefault();});
+    surface.addEventListener('pointermove',e=>{if(e.pointerId!==swipeId||!journeyState)return;journeyState.steerTarget=Math.max(-1,Math.min(1,(e.clientX-swipeStartX)/58));e.preventDefault();});
+    const endSwipe=e=>{if(e.pointerId!==swipeId)return;swipeId=null;if(journeyState)journeyState.steerTarget=0;};
+    surface.addEventListener('pointerup',endSwipe);surface.addEventListener('pointercancel',endSwipe);surface.addEventListener('lostpointercapture',endSwipe);
+  }
   el.addEventListener('pointerdown',e=>{
-    const b=e.target.closest('[data-car-control]');if(!b)return;
-    const action=b.dataset.carControl;
-    if(action==='horn')return;
-    if(['left','right','accelerator','brake'].includes(action)){
-      e.preventDefault();setHold(action,true);
-      try{b.setPointerCapture(e.pointerId);}catch(_){}
-    }
+    const b=e.target.closest('button[data-car-control]');if(!b)return;const action=b.dataset.carControl;
+    if(action==='horn'){e.preventDefault();honkCar();return;}
+    if(['left','right','accelerator','brake'].includes(action)){e.preventDefault();b.classList.add('is-held');setHold(action,true);try{b.setPointerCapture(e.pointerId);}catch(_){}}
   });
   const release=e=>{
-    const b=e&&e.target&&e.target.closest?e.target.closest('[data-car-control]'):null;
-    if(b)setHold(b.dataset.carControl,false);
+    const b=e&&e.target&&e.target.closest?e.target.closest('button[data-car-control]'):null;
+    if(b){b.classList.remove('is-held');setHold(b.dataset.carControl,false);}
   };
   ['pointerup','pointercancel','lostpointercapture'].forEach(ev=>el.addEventListener(ev,e=>{
     if(ev==='pointerup')release(e);
     else if(journeyState){journeyState.steerTarget=0;journeyState.throttle=false;journeyState.braking=false;}
   }));
-  el.addEventListener('click',e=>{if(e.target.closest('[data-car-control="horn"]'))honkCar();});
+  el.addEventListener('click',e=>{if(e.detail===0&&e.target.closest('[data-car-control="horn"]'))honkCar();});
 }
 function setCarControls(active){
   const el=document.getElementById('carControls'),hud=document.getElementById('hud');
@@ -4797,8 +4802,21 @@ function setCarControls(active){
   if(!active&&journeyState){journeyState.steer=0;journeyState.throttle=false;journeyState.braking=false;}
   if(active)bindJourneyControls();
 }
+let carHornContext=null;
 function honkCar(){
-  try{const A=window.AudioContext||window.webkitAudioContext;if(!A)return;const c=new A(),o=c.createOscillator(),g=c.createGain();o.type='square';o.frequency.setValueAtTime(390,c.currentTime);o.frequency.setValueAtTime(320,c.currentTime+.16);g.gain.setValueAtTime(.0001,c.currentTime);g.gain.exponentialRampToValueAtTime(.16,c.currentTime+.025);g.gain.setTargetAtTime(.0001,c.currentTime+.3,.06);o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+.48);o.onended=()=>c.close();}catch(e){}
+  try{
+    const Audio=window.AudioContext||window.webkitAudioContext;if(!Audio)return;
+    if(!carHornContext)carHornContext=new Audio();
+    const c=carHornContext;if(c.state==='suspended')void c.resume();
+    const master=c.createGain(),filter=c.createBiquadFilter();filter.type='lowpass';filter.frequency.value=1250;filter.Q.value=.7;
+    master.gain.setValueAtTime(.0001,c.currentTime);master.gain.exponentialRampToValueAtTime(.22,c.currentTime+.025);master.gain.setValueAtTime(.18,c.currentTime+.12);master.gain.exponentialRampToValueAtTime(.0001,c.currentTime+.62);
+    filter.connect(master);master.connect(c.destination);
+    [[350,'sawtooth',.55],[440,'triangle',.7],[700,'sine',.08]].forEach(([hz,type,level])=>{
+      const osc=c.createOscillator(),gain=c.createGain();osc.type=type;osc.frequency.setValueAtTime(hz,c.currentTime);gain.gain.value=level;
+      osc.connect(gain);gain.connect(filter);osc.start(c.currentTime);osc.stop(c.currentTime+.68);osc.onended=()=>{try{gain.disconnect();}catch(_){}};
+    });
+    setTimeout(()=>{try{master.disconnect();filter.disconnect();}catch(_){}},900);
+  }catch(e){console.warn('Car horn audio unavailable',e);}
 }
 function removeJourneyLot(){
   if(journeyLot){scene.remove(journeyLot);journeyLot.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material){if(Array.isArray(o.material))o.material.forEach(m=>m.dispose());else o.material.dispose();}});journeyLot=null;}
@@ -4817,6 +4835,7 @@ function makeJourneyLot(x,z){
 function clearJourneyTraffic(){
   if(journeyTrafficGroup){scene.remove(journeyTrafficGroup);journeyTrafficGroup=null;}
   journeyTraffic.length=0;
+  journeyRoadPeople.length=0;
   journeyBusStop=null;
 }
 function makeJourneyRoad(startX,startZ,C){
@@ -4829,6 +4848,47 @@ function makeJourneyRoad(startX,startZ,C){
   for(const x of [-14,14]){const m=new THREE.Mesh(new THREE.PlaneGeometry(.45,JOURNEY_DISTANCE+80),shoulderMat);m.rotation.x=-Math.PI/2;m.position.set(startX+x,.045,startZ-JOURNEY_DISTANCE/2);journeyRoad.add(m);}
   for(const x of [-5.5,5.5]){const m=new THREE.Mesh(new THREE.PlaneGeometry(.16,JOURNEY_DISTANCE+80),edgeMat);m.rotation.x=-Math.PI/2;m.position.set(startX+x,.047,startZ-JOURNEY_DISTANCE/2);journeyRoad.add(m);}
   for(let d=12;d<JOURNEY_DISTANCE;d+=24){const m=new THREE.Mesh(new THREE.PlaneGeometry(.32,10),dashMatLocal);m.rotation.x=-Math.PI/2;m.position.set(startX,.05,startZ-d);journeyRoad.add(m);}
+  // Roadside scenery: green verges, Nigerian shops, homes, palms, stalls and hawkers.
+  const greenMat=new THREE.MeshStandardMaterial({color:0x477345,roughness:1}),earthMat=new THREE.MeshStandardMaterial({color:0x8d7955,roughness:1});
+  const wallMats=[0xd8b98a,0xe0c9a0,0xb8c8b2,0xc9a18b,0xd4d0b5,0xa9b6b5].map(color=>new THREE.MeshStandardMaterial({color,roughness:.92}));
+  const roofMats=[0x8c4030,0x565d62,0x7b3429,0x9a6a32].map(color=>new THREE.MeshStandardMaterial({color,roughness:.9}));
+  const windowMat=new THREE.MeshStandardMaterial({color:0x426a78,roughness:.45,metalness:.1}),woodMat=new THREE.MeshStandardMaterial({color:0x704b2c,roughness:1});
+  const canopyMats=[0x16844a,0xd7a52b,0xc64e32,0x2476a5].map(color=>new THREE.MeshStandardMaterial({color,roughness:.9}));
+  const roadsideBox=(w,h,d,mat,x,y,z)=>{const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);m.position.set(x,y,z);journeyRoad.add(m);return m;};
+  for(const side of [-1,1]){
+    const verge=new THREE.Mesh(new THREE.PlaneGeometry(7,JOURNEY_DISTANCE+80),greenMat);verge.rotation.x=-Math.PI/2;verge.position.set(startX+side*17.7,-.005,startZ-JOURNEY_DISTANCE/2);journeyRoad.add(verge);
+    const shoulder=new THREE.Mesh(new THREE.PlaneGeometry(2.2,JOURNEY_DISTANCE+80),earthMat);shoulder.rotation.x=-Math.PI/2;shoulder.position.set(startX+side*15.3,.008,startZ-JOURNEY_DISTANCE/2);journeyRoad.add(shoulder);
+    for(let d=55,idx=0;d<JOURNEY_DISTANCE-40;d+=rr(72,112),idx++){
+      const z=startZ-d,x=startX+side*rr(20,25),shop=idx%3!==1,w=shop?rr(6,10):rr(4,6),h=shop?rr(3.5,6):rr(2.5,4),depth=shop?rr(5,8):rr(4,6);
+      roadsideBox(w,h,depth,wallMats[(idx+(side>0?2:0))%wallMats.length],x,h/2,z);
+      roadsideBox(w+.6,.35,depth+.5,roofMats[(idx+1)%roofMats.length],x,h+.12,z);
+      roadsideBox(w*.17,h*.34,.12,windowMat,x-w*.25,h*.56,z+depth*.36);roadsideBox(w*.17,h*.34,.12,windowMat,x+w*.25,h*.56,z+depth*.36);
+      if(shop){roadsideBox(w*.76,.9,.18,canopyMats[idx%canopyMats.length],x,.95,z+depth*.42);roadsideBox(.14,1.3,.14,woodMat,x-w*.4,.65,z+depth*.43);roadsideBox(.14,1.3,.14,woodMat,x+w*.4,.65,z+depth*.43);}
+      if(idx%2===0){
+        const tx=startX+side*rr(16.5,19.2),tz=z-rr(12,24),trunk=new THREE.Mesh(new THREE.CylinderGeometry(.16,.25,3.6,6),woodMat);trunk.position.set(tx,1.8,tz);journeyRoad.add(trunk);
+        for(let leaf=0;leaf<5;leaf++){const crown=new THREE.Mesh(new THREE.ConeGeometry(1.25,2.5,5),greenMat);crown.position.set(tx+Math.cos(leaf*Math.PI*2/5)*.55,4,tz+Math.sin(leaf*Math.PI*2/5)*.55);crown.rotation.z=Math.cos(leaf*Math.PI*2/5)*.4;crown.rotation.x=Math.sin(leaf*Math.PI*2/5)*.4;journeyRoad.add(crown);}
+      }
+      if(idx%3===0){
+        const sx=startX+side*rr(16.8,19),sz=z-rr(18,30);
+        roadsideBox(2.7,.18,2.1,woodMat,sx,1.2,sz);roadsideBox(.14,2.2,.14,woodMat,sx-1.1,1.1,sz-.75);roadsideBox(.14,2.2,.14,woodMat,sx+1.1,1.1,sz-.75);
+        const canopy=new THREE.Mesh(new THREE.ConeGeometry(1.9,.65,8),canopyMats[(idx+side+8)%canopyMats.length]);canopy.position.set(sx,2.55,sz);canopy.rotation.y=.2;journeyRoad.add(canopy);
+        const personX=sx-side*1.9,personZ=sz+1.3;roadsideBox(.48,.9,.3,canopyMats[(idx+1)%canopyMats.length],personX,1.05,personZ);
+        const head=new THREE.Mesh(new THREE.SphereGeometry(.24,8,6),new THREE.MeshStandardMaterial({color:0x7c5038,roughness:.95}));head.position.set(personX,1.72,personZ);journeyRoad.add(head);
+        roadsideBox(.16,.75,.17,woodMat,personX-.18,.4,personZ);roadsideBox(.16,.75,.17,woodMat,personX+.18,.4,personZ);
+      }
+      // Passing pedestrians walking beside the highway, safely beyond the shoulder.
+      if(idx%2===0){
+        const walker=new THREE.Group(),wx=startX+side*rr(18,21),wz=z-rr(25,48),cloth=canopyMats[(idx+side+12)%canopyMats.length];
+        const torso=new THREE.Mesh(new THREE.BoxGeometry(.52,1,.32),cloth);torso.position.y=1.05;walker.add(torso);
+        const skin=new THREE.MeshStandardMaterial({color:0x80533b,roughness:.95});
+        const headMesh=new THREE.Mesh(new THREE.SphereGeometry(.23,8,6),skin);headMesh.position.y=1.72;walker.add(headMesh);
+        const legMat=new THREE.MeshStandardMaterial({color:0x343b43,roughness:1});
+        for(const lx of [-.16,.16]){const leg=new THREE.Mesh(new THREE.BoxGeometry(.15,.72,.17),legMat);leg.position.set(lx,.36,0);walker.add(leg);}
+        walker.position.set(wx,0,wz);journeyRoad.add(walker);
+        journeyRoadPeople.push({group:walker,z:wz,homeZ:wz,speed:rr(.8,1.5),phase:rr(0,Math.PI*2),side});
+      }
+    }
+  }
   // A visible shoulder bay gives the player a clear place to pull over before arrival.
   const stopZ=startZ-JOURNEY_DISTANCE+95,stopX=startX+8.5;
   const bay=new THREE.Mesh(new THREE.PlaneGeometry(5.8,26),new THREE.MeshBasicMaterial({color:0x244d43,transparent:true,opacity:.88}));
@@ -4845,17 +4905,15 @@ function makeJourneyRoad(startX,startZ,C){
   marker.position.set(stopX,6,stopZ-5);marker.scale.set(12,3,1);journeyRoad.add(marker);
   journeyBusStop={x:stopX,z:stopZ};
   scene.add(journeyRoad);
-  // Road traffic is deliberately dense enough to be visible throughout the trip.
-  // Vehicles travel toward the player in the opposing lane and continuously recycle.
+  // Dense mixed traffic in both directions with stable lane assignments.
   journeyTrafficGroup=new THREE.Group();scene.add(journeyTrafficGroup);
   const palette=C||CITIES.lagos;
-  const trafficKinds=['danfo','sedan','suv','truck','keke','danfo','sedan','okada','suv','truck','danfo','sedan'];
+  const trafficKinds=['danfo','sedan','suv','truck','keke','danfo','sedan','okada','suv','truck','danfo','sedan','police','bicycle','danfo','sedan','keke','suv','truck','okada','danfo','police','sedan','suv'];
   for(let i=0;i<trafficKinds.length;i++){
-    const kind=trafficKinds[i];
-    const v=makeVehicle(kind,palette);
-    const z=startZ-rr(65+i*105,145+i*105);
-    const car={m:v.m,z,speed:rr(10,25),dir:1,lane:startX-3.4,hl:v.hl,hw:v.hw};
-    car.m.position.set(car.lane,.04,z);car.m.rotation.y=-Math.PI/2;
+    const kind=trafficKinds[i],v=makeVehicle(kind,palette),oncoming=i%2===0,slot=Math.floor(i/2);
+    const z=startZ-rr(95+slot*112,185+slot*112),lane=startX+(oncoming?-3.35:3.35);
+    const car={m:v.m,z,speed:rr(oncoming?12:9,oncoming?23:17),dir:oncoming?1:-1,lane,hl:v.hl,hw:v.hw,kind};
+    car.m.position.set(lane,.04,z);car.m.rotation.y=oncoming?-Math.PI/2:Math.PI/2;
     journeyTrafficGroup.add(car.m);journeyTraffic.push(car);
   }
   // A destination terminal makes the stopping point unmistakable from a distance.
@@ -5672,12 +5730,31 @@ function update(dt,time){
     journeyState.progress=Math.max(0,Math.min(1,(journeyState.startZ-journeyState.z)/JOURNEY_DISTANCE));
     journeyCar.position.set(journeyState.x,.06,journeyState.z);
     journeyCar.rotation.y=Math.PI/2+journeyState.steer*.13;
-    // Oncoming traffic advances along its own lane and respawns ahead of the player.
+    // Two-way traffic obeys lane direction. Detect overlaps and brake/nudge clear.
+    let trafficImpact=false;
+    for(const person of journeyRoadPeople){
+      person.z-=person.speed*dt;
+      if(person.z<journeyState.z-140)person.z=journeyState.z-rr(650,1380);
+      person.group.position.z=person.z;
+      const stride=Math.sin(journeyState.elapsed*5+person.phase)*.22;
+      if(person.group.children[2])person.group.children[2].rotation.x=stride;
+      if(person.group.children[3])person.group.children[3].rotation.x=-stride;
+    }
     for(const car of journeyTraffic){
-      car.z+=car.speed*dt;
-      if(car.z>journeyState.z+32)car.z=journeyState.z-rr(420,1150);
+      car.z+=car.dir*car.speed*dt;
+      if(car.dir>0&&car.z>journeyState.z+28)car.z=journeyState.z-rr(480,1200);
+      if(car.dir<0&&car.z<journeyState.z-90)car.z=journeyState.z+rr(430,1100);
+      const lateral=Math.abs(journeyState.x-car.lane),longitudinal=Math.abs(journeyState.z-car.z);
+      const safeX=(car.hw||1.1)+1.25,safeZ=(car.hl||2.2)+2.8;
+      if(lateral<safeX&&longitudinal<safeZ){
+        trafficImpact=true;journeyState.speed=Math.min(journeyState.speed,7);
+        journeyState.steerTarget=car.lane<journeyState.x?1:-1;
+        car.z=journeyState.z+(car.dir>0?-safeZ-3:safeZ+3);
+      }
       car.m.position.set(car.lane,.04,car.z);
     }
+    if(trafficImpact&&!journeyState.trafficImpactCooldown){journeyState.trafficImpactCooldown=.9;journeyHUD('WATCH THE TRAFFIC','Ease off the accelerator and steer back into your lane.',journeyState.progress);}
+    journeyState.trafficImpactCooldown=Math.max(0,(journeyState.trafficImpactCooldown||0)-dt);
     const target=CITIES[journeyState.toCity]||{name:journeyState.toCity};
     const stopDistance=journeyState.z-journeyState.busStopZ;
     const nearStop=stopDistance<150&&stopDistance>-35;
