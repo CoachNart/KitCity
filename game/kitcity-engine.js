@@ -4895,7 +4895,7 @@ function makeJourneyRoad(startX,startZ,C){
   // Dense mixed traffic in both directions with stable lane assignments.
   journeyTrafficGroup=new THREE.Group();scene.add(journeyTrafficGroup);
   const palette=C||CITIES.lagos;
-  const trafficKinds=['danfo','sedan','suv','truck','keke','danfo','sedan','okada','suv','truck','danfo','sedan','bus','pickup','danfo','sedan','keke','suv','truck','okada','danfo','bus','sedan','suv'];
+  const trafficKinds=['danfo','sedan','suv','truck','keke','danfo','sedan','okada','suv','truck','danfo','sedan','police','bicycle','danfo','sedan','keke','suv','truck','okada','danfo','police','sedan','suv'];
   for(let i=0;i<trafficKinds.length;i++){
     const kind=trafficKinds[i],v=makeVehicle(kind,palette),oncoming=i%2===0,slot=Math.floor(i/2);
     const z=startZ-rr(95+slot*112,185+slot*112),lane=startX+(oncoming?-3.35:3.35);
