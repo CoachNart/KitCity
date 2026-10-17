@@ -1123,7 +1123,7 @@ html.kitcity-story-active #modal{
 .car-controls .car-steer-button{width:clamp(48px,12vw,62px);height:clamp(48px,12vw,62px);font-size:18px;color:#dffaff;border-color:rgba(111,223,240,.9)}
 .car-controls .car-accelerate{width:clamp(72px,18vw,88px);height:clamp(72px,18vw,88px);background:linear-gradient(145deg,#f4c95d,#d58a20);border-color:#fff0b2;color:#17202a;font-size:25px;box-shadow:0 5px 0 #8b5512,0 8px 18px rgba(0,0,0,.4)}
 .car-controls .car-brake{width:clamp(54px,13vw,66px);height:clamp(54px,13vw,66px);background:linear-gradient(145deg,#d84b4b,#8e2028);border-color:#ffc1c1;color:#fff;font-size:22px}
-.car-controls .car-horn{width:clamp(48px,12vw,60px);height:clamp(48px,12vw,60px);background:linear-gradient(145deg,#4d8ba3,#21485b);border-color:#b8efff;color:#fff;font-size:22px}
+.car-controls .car-horn{width:clamp(48px,12vw,60px);height:clamp(48px,12vw,60px);background:linear-gradient(145deg,#4d8ba3,#21485b);border-color:#b8efff;color:#fff;font-size:11px;letter-spacing:.03em}
 #hud.car-driving #joy,#hud.car-driving #runBtn,#hud.car-driving #talkBtn{display:none!important}
 #hud.car-driving #mission{max-width:min(42vw,190px);padding:7px 9px}
 #hud.car-driving #steps{font-size:10px;gap:2px}
