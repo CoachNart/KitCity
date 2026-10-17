@@ -4842,6 +4842,36 @@ function makeJourneyRoad(startX,startZ,C){
   for(const x of [-14,14]){const m=new THREE.Mesh(new THREE.PlaneGeometry(.45,JOURNEY_DISTANCE+80),shoulderMat);m.rotation.x=-Math.PI/2;m.position.set(startX+x,.045,startZ-JOURNEY_DISTANCE/2);journeyRoad.add(m);}
   for(const x of [-5.5,5.5]){const m=new THREE.Mesh(new THREE.PlaneGeometry(.16,JOURNEY_DISTANCE+80),edgeMat);m.rotation.x=-Math.PI/2;m.position.set(startX+x,.047,startZ-JOURNEY_DISTANCE/2);journeyRoad.add(m);}
   for(let d=12;d<JOURNEY_DISTANCE;d+=24){const m=new THREE.Mesh(new THREE.PlaneGeometry(.32,10),dashMatLocal);m.rotation.x=-Math.PI/2;m.position.set(startX,.05,startZ-d);journeyRoad.add(m);}
+  // Roadside scenery: green verges, Nigerian shops, homes, palms, stalls and hawkers.
+  const greenMat=new THREE.MeshStandardMaterial({color:0x477345,roughness:1}),earthMat=new THREE.MeshStandardMaterial({color:0x8d7955,roughness:1});
+  const wallMats=[0xd8b98a,0xe0c9a0,0xb8c8b2,0xc9a18b,0xd4d0b5,0xa9b6b5].map(color=>new THREE.MeshStandardMaterial({color,roughness:.92}));
+  const roofMats=[0x8c4030,0x565d62,0x7b3429,0x9a6a32].map(color=>new THREE.MeshStandardMaterial({color,roughness:.9}));
+  const windowMat=new THREE.MeshStandardMaterial({color:0x426a78,roughness:.45,metalness:.1}),woodMat=new THREE.MeshStandardMaterial({color:0x704b2c,roughness:1});
+  const canopyMats=[0x16844a,0xd7a52b,0xc64e32,0x2476a5].map(color=>new THREE.MeshStandardMaterial({color,roughness:.9}));
+  const roadsideBox=(w,h,d,mat,x,y,z)=>{const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);m.position.set(x,y,z);journeyRoad.add(m);return m;};
+  for(const side of [-1,1]){
+    const verge=new THREE.Mesh(new THREE.PlaneGeometry(7,JOURNEY_DISTANCE+80),greenMat);verge.rotation.x=-Math.PI/2;verge.position.set(startX+side*17.7,-.005,startZ-JOURNEY_DISTANCE/2);journeyRoad.add(verge);
+    const shoulder=new THREE.Mesh(new THREE.PlaneGeometry(2.2,JOURNEY_DISTANCE+80),earthMat);shoulder.rotation.x=-Math.PI/2;shoulder.position.set(startX+side*15.3,.008,startZ-JOURNEY_DISTANCE/2);journeyRoad.add(shoulder);
+    for(let d=55,idx=0;d<JOURNEY_DISTANCE-40;d+=rr(72,112),idx++){
+      const z=startZ-d,x=startX+side*rr(20,25),shop=idx%3!==1,w=shop?rr(6,10):rr(4,6),h=shop?rr(3.5,6):rr(2.5,4),depth=shop?rr(5,8):rr(4,6);
+      roadsideBox(w,h,depth,wallMats[(idx+(side>0?2:0))%wallMats.length],x,h/2,z);
+      roadsideBox(w+.6,.35,depth+.5,roofMats[(idx+1)%roofMats.length],x,h+.12,z);
+      roadsideBox(w*.17,h*.34,.12,windowMat,x-w*.25,h*.56,z+depth*.36);roadsideBox(w*.17,h*.34,.12,windowMat,x+w*.25,h*.56,z+depth*.36);
+      if(shop){roadsideBox(w*.76,.9,.18,canopyMats[idx%canopyMats.length],x,.95,z+depth*.42);roadsideBox(.14,1.3,.14,woodMat,x-w*.4,.65,z+depth*.43);roadsideBox(.14,1.3,.14,woodMat,x+w*.4,.65,z+depth*.43);}
+      if(idx%2===0){
+        const tx=startX+side*rr(16.5,19.2),tz=z-rr(12,24),trunk=new THREE.Mesh(new THREE.CylinderGeometry(.16,.25,3.6,6),woodMat);trunk.position.set(tx,1.8,tz);journeyRoad.add(trunk);
+        for(let leaf=0;leaf<5;leaf++){const crown=new THREE.Mesh(new THREE.ConeGeometry(1.25,2.5,5),greenMat);crown.position.set(tx+Math.cos(leaf*Math.PI*2/5)*.55,4,tz+Math.sin(leaf*Math.PI*2/5)*.55);crown.rotation.z=Math.cos(leaf*Math.PI*2/5)*.4;crown.rotation.x=Math.sin(leaf*Math.PI*2/5)*.4;journeyRoad.add(crown);}
+      }
+      if(idx%3===0){
+        const sx=startX+side*rr(16.8,19),sz=z-rr(18,30);
+        roadsideBox(2.7,.18,2.1,woodMat,sx,1.2,sz);roadsideBox(.14,2.2,.14,woodMat,sx-1.1,1.1,sz-.75);roadsideBox(.14,2.2,.14,woodMat,sx+1.1,1.1,sz-.75);
+        const canopy=new THREE.Mesh(new THREE.ConeGeometry(1.9,.65,8),canopyMats[(idx+side+8)%canopyMats.length]);canopy.position.set(sx,2.55,sz);canopy.rotation.y=.2;journeyRoad.add(canopy);
+        const personX=sx-side*1.9,personZ=sz+1.3;roadsideBox(.48,.9,.3,canopyMats[(idx+1)%canopyMats.length],personX,1.05,personZ);
+        const head=new THREE.Mesh(new THREE.SphereGeometry(.24,8,6),new THREE.MeshStandardMaterial({color:0x7c5038,roughness:.95}));head.position.set(personX,1.72,personZ);journeyRoad.add(head);
+        roadsideBox(.16,.75,.17,woodMat,personX-.18,.4,personZ);roadsideBox(.16,.75,.17,woodMat,personX+.18,.4,personZ);
+      }
+    }
+  }
   // A visible shoulder bay gives the player a clear place to pull over before arrival.
   const stopZ=startZ-JOURNEY_DISTANCE+95,stopX=startX+8.5;
   const bay=new THREE.Mesh(new THREE.PlaneGeometry(5.8,26),new THREE.MeshBasicMaterial({color:0x244d43,transparent:true,opacity:.88}));
