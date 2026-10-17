@@ -4745,6 +4745,7 @@ function showCityBadge(city,after){
 /* Cinematic, player-controlled inter-city road trip. */
 let journeyState=null,journeyCar=null,journeySign=null,journeyLot=null,journeyRoad=null,journeyTrafficGroup=null,journeyBusStop=null;
 const journeyTraffic=[];
+const journeyRoadPeople=[];
 const JOURNEY_ARRIVAL={x:8,z:-178};
 const JOURNEY_DISTANCE=1500;
 function journeyHUD(title,subtitle,progress){
@@ -4834,6 +4835,7 @@ function makeJourneyLot(x,z){
 function clearJourneyTraffic(){
   if(journeyTrafficGroup){scene.remove(journeyTrafficGroup);journeyTrafficGroup=null;}
   journeyTraffic.length=0;
+  journeyRoadPeople.length=0;
   journeyBusStop=null;
 }
 function makeJourneyRoad(startX,startZ,C){
@@ -4873,6 +4875,17 @@ function makeJourneyRoad(startX,startZ,C){
         const personX=sx-side*1.9,personZ=sz+1.3;roadsideBox(.48,.9,.3,canopyMats[(idx+1)%canopyMats.length],personX,1.05,personZ);
         const head=new THREE.Mesh(new THREE.SphereGeometry(.24,8,6),new THREE.MeshStandardMaterial({color:0x7c5038,roughness:.95}));head.position.set(personX,1.72,personZ);journeyRoad.add(head);
         roadsideBox(.16,.75,.17,woodMat,personX-.18,.4,personZ);roadsideBox(.16,.75,.17,woodMat,personX+.18,.4,personZ);
+      }
+      // Passing pedestrians walking beside the highway, safely beyond the shoulder.
+      if(idx%2===0){
+        const walker=new THREE.Group(),wx=startX+side*rr(18,21),wz=z-rr(25,48),cloth=canopyMats[(idx+side+12)%canopyMats.length];
+        const torso=new THREE.Mesh(new THREE.BoxGeometry(.52,1,.32),cloth);torso.position.y=1.05;walker.add(torso);
+        const skin=new THREE.MeshStandardMaterial({color:0x80533b,roughness:.95});
+        const headMesh=new THREE.Mesh(new THREE.SphereGeometry(.23,8,6),skin);headMesh.position.y=1.72;walker.add(headMesh);
+        const legMat=new THREE.MeshStandardMaterial({color:0x343b43,roughness:1});
+        for(const lx of [-.16,.16]){const leg=new THREE.Mesh(new THREE.BoxGeometry(.15,.72,.17),legMat);leg.position.set(lx,.36,0);walker.add(leg);}
+        walker.position.set(wx,0,wz);journeyRoad.add(walker);
+        journeyRoadPeople.push({group:walker,z:wz,homeZ:wz,speed:rr(.8,1.5),phase:rr(0,Math.PI*2),side});
       }
     }
   }
@@ -5719,6 +5732,14 @@ function update(dt,time){
     journeyCar.rotation.y=Math.PI/2+journeyState.steer*.13;
     // Two-way traffic obeys lane direction. Detect overlaps and brake/nudge clear.
     let trafficImpact=false;
+    for(const person of journeyRoadPeople){
+      person.z-=person.speed*dt;
+      if(person.z<journeyState.z-140)person.z=journeyState.z-rr(650,1380);
+      person.group.position.z=person.z;
+      const stride=Math.sin(journeyState.elapsed*5+person.phase)*.22;
+      if(person.group.children[2])person.group.children[2].rotation.x=stride;
+      if(person.group.children[3])person.group.children[3].rotation.x=-stride;
+    }
     for(const car of journeyTraffic){
       car.z+=car.dir*car.speed*dt;
       if(car.dir>0&&car.z>journeyState.z+28)car.z=journeyState.z-rr(480,1200);
