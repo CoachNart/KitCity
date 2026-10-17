@@ -4771,24 +4771,28 @@ function bindJourneyControls(){
     if(name==='accelerator')journeyState.throttle=on;
     if(name==='brake')journeyState.braking=on;
   };
+  const surface=el.querySelector('[data-car-control="steer-surface"]');
+  let swipeId=null,swipeStartX=0;
+  if(surface){
+    surface.addEventListener('pointerdown',e=>{if(e.target.closest('button'))return;swipeId=e.pointerId;swipeStartX=e.clientX;try{surface.setPointerCapture(e.pointerId);}catch(_){}e.preventDefault();});
+    surface.addEventListener('pointermove',e=>{if(e.pointerId!==swipeId||!journeyState)return;journeyState.steerTarget=Math.max(-1,Math.min(1,(e.clientX-swipeStartX)/58));e.preventDefault();});
+    const endSwipe=e=>{if(e.pointerId!==swipeId)return;swipeId=null;if(journeyState)journeyState.steerTarget=0;};
+    surface.addEventListener('pointerup',endSwipe);surface.addEventListener('pointercancel',endSwipe);surface.addEventListener('lostpointercapture',endSwipe);
+  }
   el.addEventListener('pointerdown',e=>{
-    const b=e.target.closest('[data-car-control]');if(!b)return;
-    const action=b.dataset.carControl;
-    if(action==='horn')return;
-    if(['left','right','accelerator','brake'].includes(action)){
-      e.preventDefault();setHold(action,true);
-      try{b.setPointerCapture(e.pointerId);}catch(_){}
-    }
+    const b=e.target.closest('button[data-car-control]');if(!b)return;const action=b.dataset.carControl;
+    if(action==='horn'){e.preventDefault();honkCar();return;}
+    if(['left','right','accelerator','brake'].includes(action)){e.preventDefault();b.classList.add('is-held');setHold(action,true);try{b.setPointerCapture(e.pointerId);}catch(_){}}
   });
   const release=e=>{
-    const b=e&&e.target&&e.target.closest?e.target.closest('[data-car-control]'):null;
-    if(b)setHold(b.dataset.carControl,false);
+    const b=e&&e.target&&e.target.closest?e.target.closest('button[data-car-control]'):null;
+    if(b){b.classList.remove('is-held');setHold(b.dataset.carControl,false);}
   };
   ['pointerup','pointercancel','lostpointercapture'].forEach(ev=>el.addEventListener(ev,e=>{
     if(ev==='pointerup')release(e);
     else if(journeyState){journeyState.steerTarget=0;journeyState.throttle=false;journeyState.braking=false;}
   }));
-  el.addEventListener('click',e=>{if(e.target.closest('[data-car-control="horn"]'))honkCar();});
+  el.addEventListener('click',e=>{if(e.detail===0&&e.target.closest('[data-car-control="horn"]'))honkCar();});
 }
 function setCarControls(active){
   const el=document.getElementById('carControls'),hud=document.getElementById('hud');
