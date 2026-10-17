@@ -4797,8 +4797,21 @@ function setCarControls(active){
   if(!active&&journeyState){journeyState.steer=0;journeyState.throttle=false;journeyState.braking=false;}
   if(active)bindJourneyControls();
 }
+let carHornContext=null;
 function honkCar(){
-  try{const A=window.AudioContext||window.webkitAudioContext;if(!A)return;const c=new A(),o=c.createOscillator(),g=c.createGain();o.type='square';o.frequency.setValueAtTime(390,c.currentTime);o.frequency.setValueAtTime(320,c.currentTime+.16);g.gain.setValueAtTime(.0001,c.currentTime);g.gain.exponentialRampToValueAtTime(.16,c.currentTime+.025);g.gain.setTargetAtTime(.0001,c.currentTime+.3,.06);o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+.48);o.onended=()=>c.close();}catch(e){}
+  try{
+    const Audio=window.AudioContext||window.webkitAudioContext;if(!Audio)return;
+    if(!carHornContext)carHornContext=new Audio();
+    const c=carHornContext;if(c.state==='suspended')void c.resume();
+    const master=c.createGain(),filter=c.createBiquadFilter();filter.type='lowpass';filter.frequency.value=1250;filter.Q.value=.7;
+    master.gain.setValueAtTime(.0001,c.currentTime);master.gain.exponentialRampToValueAtTime(.22,c.currentTime+.025);master.gain.setValueAtTime(.18,c.currentTime+.12);master.gain.exponentialRampToValueAtTime(.0001,c.currentTime+.62);
+    filter.connect(master);master.connect(c.destination);
+    [[350,'sawtooth',.55],[440,'triangle',.7],[700,'sine',.08]].forEach(([hz,type,level])=>{
+      const osc=c.createOscillator(),gain=c.createGain();osc.type=type;osc.frequency.setValueAtTime(hz,c.currentTime);gain.gain.value=level;
+      osc.connect(gain);gain.connect(filter);osc.start(c.currentTime);osc.stop(c.currentTime+.68);osc.onended=()=>{try{gain.disconnect();}catch(_){}};
+    });
+    setTimeout(()=>{try{master.disconnect();filter.disconnect();}catch(_){}},900);
+  }catch(e){console.warn('Car horn audio unavailable',e);}
 }
 function removeJourneyLot(){
   if(journeyLot){scene.remove(journeyLot);journeyLot.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material){if(Array.isArray(o.material))o.material.forEach(m=>m.dispose());else o.material.dispose();}});journeyLot=null;}
@@ -4845,17 +4858,15 @@ function makeJourneyRoad(startX,startZ,C){
   marker.position.set(stopX,6,stopZ-5);marker.scale.set(12,3,1);journeyRoad.add(marker);
   journeyBusStop={x:stopX,z:stopZ};
   scene.add(journeyRoad);
-  // Road traffic is deliberately dense enough to be visible throughout the trip.
-  // Vehicles travel toward the player in the opposing lane and continuously recycle.
+  // Dense mixed traffic in both directions with stable lane assignments.
   journeyTrafficGroup=new THREE.Group();scene.add(journeyTrafficGroup);
   const palette=C||CITIES.lagos;
-  const trafficKinds=['danfo','sedan','suv','truck','keke','danfo','sedan','okada','suv','truck','danfo','sedan'];
+  const trafficKinds=['danfo','sedan','suv','truck','keke','danfo','sedan','okada','suv','truck','danfo','sedan','bus','pickup','danfo','sedan','keke','suv','truck','okada','danfo','bus','sedan','suv'];
   for(let i=0;i<trafficKinds.length;i++){
-    const kind=trafficKinds[i];
-    const v=makeVehicle(kind,palette);
-    const z=startZ-rr(65+i*105,145+i*105);
-    const car={m:v.m,z,speed:rr(10,25),dir:1,lane:startX-3.4,hl:v.hl,hw:v.hw};
-    car.m.position.set(car.lane,.04,z);car.m.rotation.y=-Math.PI/2;
+    const kind=trafficKinds[i],v=makeVehicle(kind,palette),oncoming=i%2===0,slot=Math.floor(i/2);
+    const z=startZ-rr(95+slot*112,185+slot*112),lane=startX+(oncoming?-3.35:3.35);
+    const car={m:v.m,z,speed:rr(oncoming?12:9,oncoming?23:17),dir:oncoming?1:-1,lane,hl:v.hl,hw:v.hw,kind};
+    car.m.position.set(lane,.04,z);car.m.rotation.y=oncoming?-Math.PI/2:Math.PI/2;
     journeyTrafficGroup.add(car.m);journeyTraffic.push(car);
   }
   // A destination terminal makes the stopping point unmistakable from a distance.
@@ -5672,12 +5683,23 @@ function update(dt,time){
     journeyState.progress=Math.max(0,Math.min(1,(journeyState.startZ-journeyState.z)/JOURNEY_DISTANCE));
     journeyCar.position.set(journeyState.x,.06,journeyState.z);
     journeyCar.rotation.y=Math.PI/2+journeyState.steer*.13;
-    // Oncoming traffic advances along its own lane and respawns ahead of the player.
+    // Two-way traffic obeys lane direction. Detect overlaps and brake/nudge clear.
+    let trafficImpact=false;
     for(const car of journeyTraffic){
-      car.z+=car.speed*dt;
-      if(car.z>journeyState.z+32)car.z=journeyState.z-rr(420,1150);
+      car.z+=car.dir*car.speed*dt;
+      if(car.dir>0&&car.z>journeyState.z+28)car.z=journeyState.z-rr(480,1200);
+      if(car.dir<0&&car.z<journeyState.z-90)car.z=journeyState.z+rr(430,1100);
+      const lateral=Math.abs(journeyState.x-car.lane),longitudinal=Math.abs(journeyState.z-car.z);
+      const safeX=(car.hw||1.1)+1.25,safeZ=(car.hl||2.2)+2.8;
+      if(lateral<safeX&&longitudinal<safeZ){
+        trafficImpact=true;journeyState.speed=Math.min(journeyState.speed,7);
+        journeyState.steerTarget=car.lane<journeyState.x?1:-1;
+        car.z=journeyState.z+(car.dir>0?-safeZ-3:safeZ+3);
+      }
       car.m.position.set(car.lane,.04,car.z);
     }
+    if(trafficImpact&&!journeyState.trafficImpactCooldown){journeyState.trafficImpactCooldown=.9;journeyHUD('WATCH THE TRAFFIC','Ease off the accelerator and steer back into your lane.',journeyState.progress);}
+    journeyState.trafficImpactCooldown=Math.max(0,(journeyState.trafficImpactCooldown||0)-dt);
     const target=CITIES[journeyState.toCity]||{name:journeyState.toCity};
     const stopDistance=journeyState.z-journeyState.busStopZ;
     const nearStop=stopDistance<150&&stopDistance>-35;
