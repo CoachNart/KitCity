@@ -101,3 +101,13 @@ test('ambient soundtrack fallback cannot dereference a missing queue', () => {
 test('fictional NPC cast does not retain recognizable Nigerian names or cultural labels', () => {
   assert.doesNotMatch(source, /\b(?:Chisom|Chiamaka|Nneka|Nwosu|Okafor|Umeh|Adaeze|Ifeanyi|Nnamdi|Ngozi|Onyekachi|Chukwuemeka|Nwankwo|Ijeoma|Ogechi|Kenechukwu|Nwachukwu|Obinna|Ifeoma|Igbo|Yoruba|Hausa|Biafra|Nollywood|Jollof)\b/i);
 });
+
+
+test('fictional-world mission progression connects cities through player-controlled driving', () => {
+  assert.ok(source.includes('let journeyState=null'), 'the road-trip controller is present');
+  assert.ok(source.includes('function startCarPickupJourney(fromCity,nextMission)'), 'cross-city journey entry point exists');
+  assert.ok(source.includes('function beginCarDrive()'), 'players can enter and drive their car');
+  assert.ok(source.includes('function leaveCityEntrance()'), 'the journey has a city exit transition');
+  assert.ok(source.includes("next.city!==m.city?startCarPickupJourney(m.city,next):startMission(next.id)"), 'cross-city mission transitions launch the driving journey');
+  assert.ok(source.includes("'Collect badge & travel'"), 'city badge flow can continue into the next city');
+});
