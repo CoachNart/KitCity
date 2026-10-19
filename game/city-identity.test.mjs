@@ -77,3 +77,11 @@ test('fictional world uses abstract map coordinates and neutral street data', ()
   assert.ok(source.includes('LEGACY_CURRENCY_FIELD'), 'legacy balances have a migration path');
   assert.doesNotMatch(source, /CITIES\\.(?:lagos|abuja|kano|ibadan|enugu|kaduna|maiduguri|owerri|calabar|jos)\\b/i);
 });
+
+test('transport and fabric implementation use neutral internal names', () => {
+  assert.doesNotMatch(source, /buildDanfo|buildKeke|buildOkada|ankaraMat|\\bANK\\b/i);
+  assert.ok(source.includes('function buildShuttle('), 'minibus transport uses a neutral shuttle name');
+  assert.ok(source.includes('function buildThreeWheeler('), 'three-wheeler transport uses a neutral name');
+  assert.ok(source.includes('function buildMotorbike('), 'motorbike transport uses a neutral name');
+  assert.ok(source.includes('function patternedFabricMat('), 'fabric patterns use a neutral name');
+});
