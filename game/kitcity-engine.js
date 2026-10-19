@@ -1060,6 +1060,15 @@ applyCityIdentityProfiles();
 
 /* =====================  KitCity LOOK: real-city grading, skies, weathering  ===================== */
 var GR=null,LKT={},LKC={roof:'#9a958a'},LKS={sx:-40,sy:60,sz:30,col:0xFFD59A,dir:[-.5,.7,.4]},ATMO=null,SKY=null,LS=1;
+/* Neutral street-level content: preserve each city's architecture, climate, and road geometry. */
+const FICTIONAL_ROADS=['Central Avenue','Northgate Road','Riverstone Way','Market Street','Civic Boulevard','Westline Road','Founders Avenue','Parkside Drive','Harbor Road'];
+const FICTIONAL_DISTRICTS=['Old Quarter','Central District','Northgate','Riverside','Market Quarter','University District','West End','Parkside','Harborfront'];
+const FICTIONAL_SIGNS=[['MARKET & GROCERIES','#0B7A43','#ffffff'],['CITY PHARMACY','#2D6FB3','#ffffff'],['BOOKS & SUPPLIES','#7a3b8f','#ffffff'],['TECH REPAIRS','#10C8DC','#1B1C20'],['FRESH BAKERY','#F6B21A','#1B1C20'],['CORNER CAFE','#E4572E','#ffffff'],['HARDWARE STORE','#1B1C20','#F6B21A'],['COMMUNITY CLINIC','#0B7A43','#ffffff']];
+const FICTIONAL_SHOPS=[['NORTHGATE MARKET','#0B7A43','#ffffff'],['RIVERSTONE CAFE','#E4572E','#ffffff'],['CROSSROADS BOOKS','#2D6FB3','#ffffff'],['BRIGHTLINE REPAIRS','#10C8DC','#1B1C20'],['CITYLINE PHARMACY','#0B7A43','#ffffff'],['CENTRAL GROCER','#F6B21A','#1B1C20'],['HARBOR HARDWARE','#7a3b8f','#ffffff'],['OPENLANE TECH','#1B1C20','#F6B21A']];
+const FICTIONAL_BARKS=['Good morning!','Welcome to the district.','Need directions?','Have a good day!','The market is open.'];
+Object.keys(CITY_X).forEach((key,i)=>{const x=CITY_X[key];x.nsRoads=FICTIONAL_ROADS.slice(i%3).concat(FICTIONAL_ROADS.slice(0,i%3));x.ewRoads=FICTIONAL_ROADS.slice((i+3)%FICTIONAL_ROADS.length).concat(FICTIONAL_ROADS.slice(0,(i+3)%FICTIONAL_ROADS.length));x.districts=FICTIONAL_DISTRICTS.slice(i%3).concat(FICTIONAL_DISTRICTS.slice(0,i%3));x.signs=FICTIONAL_SIGNS;x.barks=FICTIONAL_BARKS;x.barksEn=FICTIONAL_BARKS;x.hawk=['Fresh snacks!','Cold drinks!','Take a look!'];x.conductor=['Downtown! Next stop!','Central District!','Parkside!'];x.conductorEn=x.conductor;});
+Object.keys(CITY_Y).forEach((key,i)=>{const y=CITY_Y[key];y.more=FICTIONAL_SHOPS.slice(i%4).concat(FICTIONAL_SHOPS.slice(0,i%4));y.shopKinds=[['shop',4],['kiosk',2],['container',1],['diner',1],['repair',1]];});
+
 const LOOK_BASE={h:'#E3C9A0',z:'#6F94B5',sun:'#FFD9A0',sI:.95,hS:'#F4E4C8',hG:'#5A4636',hI:.6,off:[-45,55,32],exp:1.05,sat:1.0,con:1.08,fade:.02,lift:[0,.01,.025],gain:[1.04,1,.94],vig:.3,grain:.03,bloom:.4,veil:['#E8C896',.1],cl:.4,cc:'#F6EBDD',fog:[55,210],dust:.1,mil:.3,rust:.3,lat:.2,dash:'#D9A62A',fx:null,roof:'#9a958a',zinc:['#8a4a2c','#7c4b34','#6b4630','#9a5a38','#7d7266','#5e5b55'],ground:'#2A2A2C',slab:'#A39C8E',dirt:'#8E5638',leaf:'#35603a'};
 const LOOK={
  novacity:{paint:['#CDBE9E','#D6D0BF','#B9A57E','#C58F6E','#8FA597','#A3B0B5','#A87B5C','#C9B25A'],mil:.6,rust:.5},
@@ -4461,7 +4470,7 @@ const lostValueMissions=LOST_VALUE_STORY.map(story=>{
   }}));
   const conversationStep=(label,lines,actor,allowChoices,ending='record')=>({kind:'conversation',label,spot:actor.spot,npc:actor.npc,run(){
     const panels=[{
-      shot:'character',speaker:actor.name,kicker:story.state.toUpperCase()+' · THE LOST VALUE',
+      shot:'character',speaker:actor.name,kicker:story.region.toUpperCase()+' · THE LOST VALUE',
       caption:story.title.toUpperCase(),next:'next'
     }];
     lines.forEach(([speaker,text])=>panels.push({
@@ -4494,7 +4503,7 @@ const lostValueMissions=LOST_VALUE_STORY.map(story=>{
   const clue={
     kind:'clue',label:story.task,spot:'lvE',title:story.evidenceTitle,sign:story.evidenceTitle.toUpperCase(),
     run(){
-      openSheet('<section class="record-center-card"><div class="record-center-top"><span class="record-center-mark">KITCITY / FIELD ARCHIVE</span><span class="record-center-index">'+String(story.n).padStart(2,'0')+' / 15</span></div><div class="record-center-heading"><span class="record-center-icon">✳</span><div><small>RECORD CENTER · '+lostValueEscape(story.state)+'</small><h3>'+lostValueEscape(story.evidenceTitle)+'</h3></div></div><div class="record-center-copy">'+lostValueEscape(story.evidenceBody)+'</div><div class="record-center-task"><span>YOUR OBJECTIVE</span><b>'+lostValueEscape(story.task)+'</b></div></section>',
+      openSheet('<section class="record-center-card"><div class="record-center-top"><span class="record-center-mark">KITCITY / FIELD ARCHIVE</span><span class="record-center-index">'+String(story.n).padStart(2,'0')+' / 15</span></div><div class="record-center-heading"><span class="record-center-icon">✳</span><div><small>RECORD CENTER · '+lostValueEscape(story.region)+'</small><h3>'+lostValueEscape(story.evidenceTitle)+'</h3></div></div><div class="record-center-copy">'+lostValueEscape(story.evidenceBody)+'</div><div class="record-center-task"><span>YOUR OBJECTIVE</span><b>'+lostValueEscape(story.task)+'</b></div></section>',
         [{t:'Record evidence',f:()=>{
           if(G) G.evidence[story.id]=true;
           closeSheet();
@@ -4521,7 +4530,7 @@ const lostValueMissions=LOST_VALUE_STORY.map(story=>{
   steps.push(conversationStep('Return and report to '+closingLead.name,reportLines,closingLead,true,'report'));
   return {
     id:story.id,n:story.n,city:story.city,title:story.title,goal:story.goal,
-    storyState:story.state,storyValue:story.value,storyReward:story.reward,storyFinale:!!story.finale,
+    storyState:story.region,storyValue:story.value,storyReward:story.reward,storyFinale:!!story.finale,
     cast:cast.map(({npc,spot})=>({npc,spot})),steps,extras:[]
   };
 });
