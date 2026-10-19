@@ -96,3 +96,8 @@ test('ambient soundtrack fallback cannot dereference a missing queue', () => {
     'currentLabel does not fall back to a removed queue'
   );
 });
+
+
+test('fictional NPC cast does not retain recognizable Nigerian names or cultural labels', () => {
+  assert.doesNotMatch(source, /\b(?:Chisom|Chiamaka|Nneka|Nwosu|Okafor|Umeh|Adaeze|Ifeanyi|Nnamdi|Ngozi|Onyekachi|Chukwuemeka|Nwankwo|Ijeoma|Ogechi|Kenechukwu|Nwachukwu|Obinna|Ifeoma|Igbo|Yoruba|Hausa|Biafra|Nollywood|Jollof)\b/i);
+});
