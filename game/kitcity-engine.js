@@ -2702,7 +2702,7 @@ const STEP_NNADI=askStep({label:'Ask Joe_Sef where to keep your phrase',spot:'e'
   opts:[['On paper, somewhere private and safe',1],['A screenshot in my gallery',0],['In my notes app or a chat with myself',0]],
   good:'Right. Paper cannot be hacked from far away. Keep it private, and consider a second copy in another safe place.',
   bad:'Phones sync to the cloud and get hacked or lost. Anything digital can leak. Paper in a safe place is best.'});
-const STEP_DON=askStep({label:'Hear The Expert on test payments',spot:'b',npc:EXPERT,
+const STEP_EXPERT=askStep({label:'Hear The Expert on test payments',spot:'b',npc:EXPERT,
   intro:'Money sent on a blockchain cannot be pulled back. That is why careful people never send blind.',
   q:'You are about to send money to an address you have not used before. What do you do first?',
   opts:[['Send a small test and check it arrives',1],['Send everything, blockchains are fast',0],['Trust the address because it came in a message',0]],
@@ -2926,7 +2926,7 @@ const MISSIONS=[
     if(!G.addr) G.addr='0x'+hex(20);
     talk(MUSA,'<p>Boss, I am rushing to my stall in the market across town. Take my address, then bring my 1 USDC for the yam there:</p><span class="addr">'+G.addr+'</span><p class="note">Address mistakes cannot be undone. Funds sent to the wrong address are lost.</p>',[{t:'Copy her address',f:()=>{ toast('Address copied'); finishStep(); }}]);
   }},
-  STEP_DON,
+  STEP_EXPERT,
   {label:'Pay Laloba at her market stall',spot:'o',npc:MUSA,run(){
     if(!G.addr) G.addr='0x'+hex(20);
     needFunds(1);
@@ -4383,7 +4383,7 @@ const COMMUNITY_LOOKS_BY_NAME={
   'christol':LK.christol,'laloba':LK.laloba,'bigsam':LK.bigSam,
   'lunax':LK.lunaX,'oxnight':LK.oxnight,'moon':LK.moon,
   'the cryptonian':LK.cryptonian,'joseph nnadi':LK.josephNnadi,
-  'the don':LK.theExpert,'praise':LK.praise,'toza':LK.toza,
+  'the expert':LK.theExpert,'praise':LK.praise,'toza':LK.toza,
   'craftore':LK.craftore,'kodavic':LK.kodavic,'cybersage':LK.cybersage,
   'reina':LK.reina,'cclya':LK.cclya,'leemah':LK.leemah,'kenny':LK.kenny
 };
@@ -4442,7 +4442,7 @@ const LOST_VALUE_NAMED_LOOKS={
   'joseph':LK.josephNnadi,'joseph nnadi':LK.josephNnadi,'larai':LK.larai,'unique':LK.unique,
   'smrt huntr':LK.smrtHuntr,'goodness':LK.goodness,'semi':LK.semi,'blockqueen':LK.blockqueen,
   'christol':LK.christol,'laloba':LK.laloba,'bigsam':LK.bigSam,'lunax':LK.lunaX,
-  'oxnight':LK.oxnight,'moon':LK.moon,'the cryptonian':LK.cryptonian,'the don':LK.theExpert,
+  'oxnight':LK.oxnight,'moon':LK.moon,'the cryptonian':LK.cryptonian,'the expert':LK.theExpert,
   'praise':LK.praise,'toza':LK.toza,'craftore':LK.craftore,'kodavic':LK.kodavic,
   'cybersage':LK.cybersage,'reina':LK.reina,'cclya':LK.cclya,'leemah':LK.leemah,'kenny':LK.kenny
 };
