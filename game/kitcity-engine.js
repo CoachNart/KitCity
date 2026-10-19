@@ -664,7 +664,7 @@ EXTRA_CITIES.forEach(([key,name,lon,lat,seed,sky,ground,language])=>{
 const CITY_X={
   novacity:{styles:[['zinc',.3],['flat',.5],['glass',.1],['admin',.1]],bridges:[[0,-52],[70,-60]],lm:[['theatre',-35,35],['church',35,105]],
     signs:[['PURE WATER','#0B7A43','#ffffff'],['POS & RECHARGE','#E4572E','#ffffff'],['PROVISIONS','#2D6FB3','#ffffff'],['PHARMACY','#0B7A43','#ffffff'],['BARBING SALON','#1B1C20','#F6B21A'],['FRESH BREAD','#F6B21A','#1B1C20'],['TAILOR','#C7457E','#ffffff'],['PHONE REPAIR','#10C8DC','#1B1C20'],['BUKA','#E4572E','#ffffff']],
-    barks:['Hey, how's it going?','How are you?','No shaking!','Customer, come!','Make we dey go!'],barksEn:['Hey boss, what\u2019s up?','How are you?','Easy now!','Customer, come!','Let\u2019s go!'],hawk:['Pure water! Cold!','Gala! Gala!','Zobo, cold zobo!'],conductor:['Oshodi! Oshodi! Enter!','Ojota, Ojota!','Change ready!'],conductorEn:['Oshodi! Oshodi! Get in!','Ojota, Ojota!','Have your change ready!'],
+    barks:['Hey, how are you?','How are you?','No shaking!','Customer, come!','Make we dey go!'],barksEn:['Hey boss, what\u2019s up?','How are you?','Easy now!','Customer, come!','Let\u2019s go!'],hawk:['Pure water! Cold!','Gala! Gala!','Zobo, cold zobo!'],conductor:['Oshodi! Oshodi! Enter!','Ojota, Ojota!','Change ready!'],conductorEn:['Oshodi! Oshodi! Get in!','Ojota, Ojota!','Have your change ready!'],
     nsRoads:['Western Avenue','Ikorodu Road','Awolowo Road','Broad Street','Allen Avenue','Herbert Macaulay Way','Lekki Road'],
     ewRoads:['Marina','Adeniran Ogunsanya St','Ozumba Mbadiwe Ave','Kingsway Road','Ahmadu Bello Way','Eko Bridge Road','Apapa Road'],
     districts:['Ikeja','Ojota','Maryland','Surulere','Yaba','Oshodi','Apapa','Nova City Island','Victoria Island']},
@@ -4702,8 +4702,7 @@ const mapXY=(lon,lat)=>({x:(lon-2.2)*27+9,y:(14.2-lat)*27+7});
 const mapPoints=coords=>coords.map(p=>{const q=mapXY(p[0],p[1]);return q.x.toFixed(1)+','+q.y.toFixed(1);}).join(' ');
 const mapPath=coords=>coords.map((p,i)=>{const q=mapXY(p[0],p[1]);return (i?'L':'M')+q.x.toFixed(1)+' '+q.y.toFixed(1);}).join(' ');
 const escMapText=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-/* the KitCity world outline follows the country's broad real geographic shape; interior strokes
-   are quiet state-region guides, while the Northreach and Meadowfield are shown as waterways. */
+/* Fictional world outline with abstract regions, transit routes, and waterways. */
 const WORLD_SHAPE=[
  [2.8,7.2],[3.3,8.7],[3.15,10.1],[4.0,11.5],[4.8,12.9],[6.2,13.45],
  [7.35,12.85],[8.25,13.2],[9.4,12.45],[10.7,12.65],[12.1,11.75],
