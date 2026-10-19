@@ -1,7 +1,7 @@
 {
   "name": "KitCity",
   "short_name": "KitCity",
-  "description": "A realistic Nigerian city game that teaches Web3 through missions.",
+  "description": "Explore a fictional open world, uncover its stories, and learn Web3 through interactive missions.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
