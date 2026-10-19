@@ -5,7 +5,7 @@
  */
 export const LOST_VALUE_STORY = [
   {
-    id:'lost-value-01', n:1, state:'Lagos State', city:'lagos', title:'The First Promise',
+    id:'lost-value-01', n:1, state:'Nova District', city:'lagos', title:'The First Promise',
     goal:'Introduce the original promise of Web3 through a real problem, rather than a lecture.',
     value:'PURPOSE', cast:['Local Trader','Customer','Softstorm','IamAbdul'], splitAfter:8,
     dialogue:[
@@ -28,7 +28,7 @@ export const LOST_VALUE_STORY = [
     reward:'You cannot restore something you don’t understand.'
   },
   {
-    id:'lost-value-02', n:2, state:'Oyo State', city:'ibadan', title:'The Price of Trust',
+    id:'lost-value-02', n:2, state:'Oakridge District', city:'ibadan', title:'The Price of Trust',
     goal:'Show how trust can be exploited when people rely on reputation instead of evidence.',
     value:'ACCOUNTABILITY', cast:['Joseph','Larai'], splitAfter:8,
     dialogue:[
@@ -55,7 +55,7 @@ export const LOST_VALUE_STORY = [
     reward:'Trust matters. Evidence matters too.'
   },
   {
-    id:'lost-value-03', n:3, state:'Osun State', city:'osun', title:'The Empty Promise',
+    id:'lost-value-03', n:3, state:'Lakeside District', city:'osun', title:'The Empty Promise',
     goal:'Explore the difference between speculation and real utility.',
     value:'UTILITY', cast:['Unique','Smrt huntr'], splitAfter:10,
     dialogue:[
@@ -84,7 +84,7 @@ export const LOST_VALUE_STORY = [
     reward:'A promise can attract attention. Only delivery can justify it.'
   },
   {
-    id:'lost-value-04', n:4, state:'Ekiti State', city:'adoekiti', title:'The People Who Built It',
+    id:'lost-value-04', n:4, state:'Willow District', city:'adoekiti', title:'The People Who Built It',
     goal:'Reveal how contributors can create value without receiving recognition, ownership, or fair rewards.',
     value:'CONTRIBUTION', cast:['Goodness','Semi'], splitAfter:6,
     dialogue:[
@@ -110,7 +110,7 @@ export const LOST_VALUE_STORY = [
     reward:'A healthy ecosystem recognises the people who make it possible.'
   },
   {
-    id:'lost-value-05', n:5, state:'Delta State', city:'asaba', title:'Who Owns the Work?',
+    id:'lost-value-05', n:5, state:'Delta Coast Coast District', city:'asaba', title:'Who Owns the Work?',
     goal:'Distinguish between owning a token, controlling a system, and having meaningful ownership.',
     value:'OWNERSHIP', cast:['Blockqueen','Christol'], splitAfter:5,
     dialogue:[
@@ -132,7 +132,7 @@ export const LOST_VALUE_STORY = [
     reward:'Ownership means more than holding an asset. Understand the rights attached to it.'
   },
   {
-    id:'lost-value-06', n:6, state:'Anambra State', city:'anambra', title:'The Exit',
+    id:'lost-value-06', n:6, state:'Silverton District', city:'anambra', title:'The Exit',
     goal:'Explore extractive behaviour and the consequences of treating communities as sources of money.',
     value:'INTEGRITY', cast:['Laloba','BigSam'], splitAfter:7,
     dialogue:[
@@ -155,7 +155,7 @@ export const LOST_VALUE_STORY = [
     reward:'Taking a profit isn’t the same as misleading the people who trusted you.'
   },
   {
-    id:'lost-value-07', n:7, state:'Enugu State', city:'enugu', title:'The Community That Disappeared',
+    id:'lost-value-07', n:7, state:'Greenhaven District', city:'enugu', title:'The Community That Disappeared',
     goal:'Show how communities become disposable when engagement matters more than people.',
     value:'COMMUNITY', cast:['LunaX','OxNight'], splitAfter:6,
     dialogue:[
@@ -179,7 +179,7 @@ export const LOST_VALUE_STORY = [
     reward:'A crowd is not automatically a community. Shared work gives people something to build together.'
   },
   {
-    id:'lost-value-08', n:8, state:'Plateau State', city:'jos', title:'The Numbers Game',
+    id:'lost-value-08', n:8, state:'Highland District', city:'jos', title:'The Numbers Game',
     goal:'Show how activity metrics can hide the absence of meaningful progress.',
     value:'PROOF', cast:['Moon','The cryptonian'], splitAfter:6,
     dialogue:[
@@ -203,7 +203,7 @@ export const LOST_VALUE_STORY = [
     reward:'Activity is easy to count. Value takes evidence.'
   },
   {
-    id:'lost-value-09', n:9, state:'Kano State', city:'kano', title:'The Open Door',
+    id:'lost-value-09', n:9, state:'Solara District', city:'kano', title:'The Open Door',
     goal:'Explore the original promise of access and how complicated systems can exclude the people they claim to serve.',
     value:'ACCESS', cast:['STUDENT','The don','Joseph Nnadi'], splitAfter:7,
     dialogue:[
@@ -228,7 +228,7 @@ export const LOST_VALUE_STORY = [
     reward:'A door isn’t truly open if people cannot understand how to enter safely.'
   },
   {
-    id:'lost-value-10', n:10, state:'Edo State', city:'benin', title:'Building for Nobody',
+    id:'lost-value-10', n:10, state:'Stonebridge District', city:'benin', title:'Building for Nobody',
     goal:'Reveal what happens when projects prioritise trends over actual human problems.',
     value:'USEFULNESS', cast:['Praise','Toza','USER 1','USER 2','USER 3'], splitAfter:8, evidenceAfterDialogue:true, interludeLabel:'Interview potential users',
     interludeDialogue:[
@@ -258,7 +258,7 @@ export const LOST_VALUE_STORY = [
     reward:'Start with the problem, not the trend.'
   },
   {
-    id:'lost-value-11', n:11, state:'Cross River State', city:'calabar', title:'The People Left Behind',
+    id:'lost-value-11', n:11, state:'Bayhaven District', city:'calabar', title:'The People Left Behind',
     goal:'Connect Web3’s promises to practical opportunities beyond trading and speculation.',
     value:'OPPORTUNITY', cast:['Craftore','Kodavic','BUSINESS OWNER'], splitAfter:6, evidenceAfterDialogue:true, interludeLabel:'Speak with the business owner',
     interludeDialogue:[
@@ -284,7 +284,7 @@ export const LOST_VALUE_STORY = [
     reward:'Technology becomes valuable when it helps people do something they couldn’t do as well before.'
   },
   {
-    id:'lost-value-12', n:12, state:'Bauchi State', city:'bauchi', title:'The Rules for Everyone',
+    id:'lost-value-12', n:12, state:'Drylands District', city:'bauchi', title:'The Rules for Everyone',
     goal:'Explore transparency, fair rules, and the danger of systems where powerful insiders are exempt from accountability.',
     value:'TRANSPARENCY', cast:['Cybersage','Reina'], splitAfter:8,
     dialogue:[
@@ -308,7 +308,7 @@ export const LOST_VALUE_STORY = [
     reward:'Rules mean little when people don’t know who can change them.'
   },
   {
-    id:'lost-value-13', n:13, state:'Abia State', city:'abia', title:'The Cost of Starting Over',
+    id:'lost-value-13', n:13, state:'Riverton District', city:'abia', title:'The Cost of Starting Over',
     goal:'Show the long-term damage caused when people lose trust in an entire ecosystem because of repeated failures.',
     value:'TRUSTWORTHINESS', cast:['Cclya','Leemah'], splitAfter:6,
     dialogue:[
@@ -332,13 +332,13 @@ export const LOST_VALUE_STORY = [
     reward:'Trust isn’t restored by asking for another chance. It’s rebuilt by giving people evidence.'
   },
   {
-    id:'lost-value-14', n:14, state:'Niger State', city:'minna', title:'The Things Worth Keeping',
+    id:'lost-value-14', n:14, state:'Northreach District', city:'minna', title:'The Things Worth Keeping',
     goal:'Bring together the values discovered across the previous missions and make the player consider what should be rebuilt.',
     value:'PURPOSE WITH ACCOUNTABILITY', cast:['Kenny','Softstorm'], splitAfter:5,
     dialogue:[
       ['Kenny','Look at everything we’ve found.'],
       ['Softstorm','People who lost money. Builders who lost control. Communities that disappeared. Products nobody needed. Rules that only worked for the people in charge.'],
-      ['Kenny','Different states. Different problems.'],
+      ['Kenny','Different districts. Different problems.'],
       ['PLAYER','But the same pattern.'],
       ['Kenny','We keep talking about bringing back the old days.'],
       ['Softstorm','The old days weren’t perfect either.'],
@@ -352,11 +352,11 @@ export const LOST_VALUE_STORY = [
     reward:'Rebuilding is not repeating. It’s learning what deserves to survive.'
   },
   {
-    id:'lost-value-15', n:15, state:'Kogi State', city:'kogi', title:'The Lost Value',
-    goal:'Close the first playable arc, connect the evidence, and establish the larger journey through the remaining states.',
+    id:'lost-value-15', n:15, state:'Riverbend District', city:'kogi', title:'The Lost Value',
+    goal:'Close the first playable arc, connect the evidence, and establish the larger journey through the remaining districts.',
     value:'THE LOST VALUE', cast:['Softstorm','IamAbdul','Kenny'], splitAfter:8,
     dialogue:[
-      ['IamAbdul','Fifteen states.'],
+      ['IamAbdul','Fifteen districts.'],
       ['Kenny','Fifteen different places. More problems than we expected.'],
       ['Softstorm','And not one of them can be fixed by launching another token.'],
       ['PLAYER','So what exactly are we trying to recover?'],
