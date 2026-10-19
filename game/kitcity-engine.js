@@ -1576,7 +1576,7 @@ function buildSedan(color,stripe,suv){
   }
   return g;
 }
-const SLOGANS=['GOD DID','NO CONDITION IS PERMANENT','OGA AT THE TOP','BLESSED','JESUS IS LORD','SHEGE','NOVA CITY OR NOTHING','ONE LOVE','HUSTLE & BLESSING','NO FEAR','ALHAMDULILLAH'];
+const SLOGANS=['KEEP MOVING','BUILD WITH PURPOSE','ONE STEP AT A TIME','MAKE IT COUNT','STAY CURIOUS','CREATE SOMETHING USEFUL','BE KIND','THINK CLEARLY','EXPLORE MORE','GOOD THINGS TAKE WORK','PLAY FAIR'];
 const slogMats={};
 function slogMat(t,bg,fg){ const k=t+bg+fg; if(slogMats[k]) return slogMats[k]; const c=document.createElement('canvas'); c.width=512; c.height=48; const g=c.getContext('2d'); g.fillStyle=bg; g.fillRect(0,0,512,48); g.fillStyle=fg; g.font='900 34px "Arial Black",Impact,sans-serif'; g.textAlign='center'; g.textBaseline='middle'; g.fillText(t,256,26,490); const tx=new THREE.Texture(c); tx.needsUpdate=true; return slogMats[k]=new THREE.MeshBasicMaterial({map:tx}); }
 function buildPolice(){
@@ -2506,7 +2506,7 @@ const beacon=new THREE.Group();
 const S={phase:'title',modal:false};
 let G=null,ents=[],goal=null,nearEnt=null;
 let hubTab='missions',hubCity='novacity',resetArm=false;
-const SUYA_ADDR='0x'+hex(20);
+const STREET_VENDOR_ADDR='0x'+hex(20);
 // Dedicated cinematic actors: the regular Softstorm/IamAbdul NPC definitions are stalls,
  // so searching missionGroup alone cannot ever produce two visible people in the opening scene.
 const storyCastGroup=new THREE.Group();
@@ -2844,7 +2844,7 @@ const MISSIONS=[
   STEP_OXNIGHT,
   {label:'Pay IamAbdul 1 USDC',spot:'j',npc:STREET_VENDOR,run(){
     needFunds(1);
-    confirmTx(STREET_VENDOR,{title:'Pay for grill',rows:[['Pay to',short(SUYA_ADDR),1],['Amount','1.00 USDC'],['Network fee',FEE0]],note:'Payments on a blockchain cannot be undone. Always check the address before you pay.',btn:'Pay 1 USDC',
+    confirmTx(STREET_VENDOR,{title:'Pay for grill',rows:[['Pay to',short(STREET_VENDOR_ADDR),1],['Amount','1.00 USDC'],['Network fee',FEE0]],note:'Payments on a blockchain cannot be undone. Always check the address before you pay.',btn:'Pay 1 USDC',
       after:h=>{ P.usdc=Math.max(0,P.usdc-1); save(); updateHUD();
         talk(STREET_VENDOR,'<h3>Payment confirmed</h3><div class="kv"><span>Receipt</span><b class="mono">'+short(h)+'</b></div><div class="kv"><span>Balance</span><b>'+P.usdc.toFixed(2)+' USDC</b></div><p>IamAbdul hands you a hot stick. Your receipt is permanent and public, so anyone can check that you paid.</p>',[{t:'Continue',f:finishStep}]); }});
   }}
@@ -4608,7 +4608,7 @@ function loadStep(){
 function startMission(id){
   const m=MBY[id];
   if(!m||!isUnlocked(m)){ toast('Finish the previous city journey first'); renderHub(); return; }
-  $('#loadTxt').textContent=L('Loading '+CITIES[m.city].name+'\u2026','We dey load '+CITIES[m.city].name+'\u2026'); $('#loading').classList.remove('hidden');
+  $('#loadTxt').textContent='Loading '+CITIES[m.city].name+'\u2026'; $('#loading').classList.remove('hidden');
   setTimeout(()=>{
     if(curCity!==m.city) buildCity(m.city); else setupBarks(CITIES[curCity]);
     G={m,i:0,correct:0,wrong:0,hearts:3,used:{},evidence:{},words:null,addr:null,slip:null,nameAliases:buildMissionNameAliases(m)};
@@ -5131,7 +5131,7 @@ const HAZARD_LINES={
     'Even your horn is shouting, “Please stop embarrassing us!”',
     'This is not Need for Speed. I am not downloadable content!',
     'My body just experienced an unexpected software update!',
-    'Oga! You drive like your phone is on 1% and the charger is across town!',
+    'You drive like your phone is on 1% and the charger is across town!',
     'I saw my whole life flash before me. The editing was terrible!',
     'Please, I am a human being, not a speed bump with dreams!',
     'My knees have opened a complaint ticket. Response time: never!',
