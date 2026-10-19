@@ -469,7 +469,7 @@ html,body{height:100%;overflow:hidden;background:var(--ink);color:var(--ink);fon
   border-radius:14px;
   overflow:hidden;
 }
-.map-state-line{
+.map-region-line{
   fill:none;
   stroke:#C1CDD0;
   stroke-width:.65;
