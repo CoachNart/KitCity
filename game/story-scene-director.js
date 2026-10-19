@@ -4,7 +4,7 @@ const SPEAKER_LABELS = {
 };
 
 const OPENING_PANELS = [
-  { shot: 'wide', kicker: 'LAGOS · 3:42 PM', caption: 'Another day. Another transaction. Another promise of something better.', next: 'next' },
+  { shot: 'wide', kicker: 'NOVA CITY · 3:42 PM', caption: 'Another day. Another transaction. Another promise of something better.', next: 'next' },
   { shot: 'conversation', speaker: 'IamAbdul', text: 'So this T3Kit thing connects all these people?', next: 'next' },
   { shot: 'conversation', speaker: 'Softstorm', text: 'That’s what I’m trying to figure out. The same name keeps showing up in places that should have nothing in common.', next: 'next' },
   { shot: 'conversation', speaker: 'IamAbdul', text: 'Then why does nobody explain what it is?', next: 'next' },
@@ -65,7 +65,7 @@ export function createStorySceneDirector({ camera, player, getCharacter, getChar
         <div class="comic-dialogue-meta"><span class="comic-speaker"></span><span class="comic-counter"></span></div>
         <p class="comic-dialogue-text"></p>
         <div class="comic-choices"></div>
-        <div class="comic-actions"><span class="comic-hint">THE LOST VALUE · LAGOS</span><button type="button" class="comic-next">NEXT PANEL →</button></div>
+        <div class="comic-actions"><span class="comic-hint">THE LOST VALUE · NOVA CITY</span><button type="button" class="comic-next">NEXT PANEL →</button></div>
       </div>`;
     document.body.appendChild(overlay);
     speechBubble = overlay.querySelector('.comic-speech-bubble');
@@ -196,7 +196,7 @@ export function createStorySceneDirector({ camera, player, getCharacter, getChar
     speechBubble.classList.toggle('hidden', !bubbleOn);
     speechSpeaker.textContent = bubbleOn ? (panel.speaker === 'PLAYER' ? 'You' : panel.speaker.toUpperCase()) : '';
     speechText.textContent = bubbleOn ? panel.text : '';
-    kickerEl.textContent = panel.kicker || (panel.speaker ? (genericScene ? 'THE LOST VALUE · A CONVERSATION' : 'LAGOS · A CONVERSATION') : '');
+    kickerEl.textContent = panel.kicker || (panel.speaker ? (genericScene ? 'THE LOST VALUE · A CONVERSATION' : 'NOVA CITY · A CONVERSATION') : '');
     captionEl.textContent = panel.caption || '';
     speakerEl.textContent = panel.speaker ? (panel.speaker === 'PLAYER' ? 'You' : (genericScene ? panel.speaker.toUpperCase() : (SPEAKER_LABELS[panel.speaker] || panel.speaker.toUpperCase()))) : '';
     dialogueEl.textContent = panel.text || '';
