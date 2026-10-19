@@ -505,7 +505,7 @@ const LK={
   moon:{top:'#6A3FB5',bottom:'#20232A',hair:'cap',hat:'#F6B21A',hairColor:'#17110F',skin:'#7a4a2e',detail:true},
   cryptonian:{top:'#0B7A43',bottom:'#20232A',hair:'cap',hat:'#0B7A43',hairColor:'#17110F',skin:'#5a3421',detail:true,shades:true},
   joeSef:{top:'#2D6FB3',bottom:'#20232A',hair:'short',hairColor:'#17110F',skin:'#8d5a3b',detail:true,backpack:true},
-  theDon:{top:'#5A3A22',bottom:'#FFFFFF',style:'longTunic',hair:'turban',hat:'#0B7A43',hairColor:'#17110F',skin:'#5a3421',detail:true},
+  theExpert:{top:'#5A3A22',bottom:'#FFFFFF',style:'longTunic',hair:'turban',hat:'#0B7A43',hairColor:'#17110F',skin:'#5a3421',detail:true},
   praise:{top:'#C7457E',bottom:'#20232A',hair:'short',hairColor:'#17110F',skin:'#8d5a3b',detail:true,logo:true},
   bigSam:{top:'#E4572E',bottom:'#20232A',hair:'afro',hairColor:'#17110F',skin:'#6b3f26',detail:true},
   lunaX:{top:'#0897A8',bottom:'#20232A',hair:'cap',hat:'#0897A8',hairColor:'#17110F',skin:'#7a4a2e',detail:true,shades:true},
@@ -1403,12 +1403,12 @@ function facadeCanvas(style,v){
 const FACT={}; ['flat','zinc','banco','glass','admin'].forEach(st=>{ FACT[st]=[0,1,2].map(v=>mkTex(facadeCanvas(st,v))); });
 const FAC_TH={flat:12,zinc:8,banco:10,glass:14,admin:12};
 const GABLE=(function(){ const g=new THREE.CylinderGeometry(1,1,1,3,1,false); g.rotateY(Math.PI/2); g.rotateZ(Math.PI/2); return g; })();
-const WALLADS=[['UP NEPA!','#F6B21A','#1B1C20'],['NOT FOR SALE','#ffffff','#C8402A'],['BEWARE OF 419','#ffffff','#0B7A43'],['NO DUMPING','#ffffff','#C8402A'],['POST NO BILLS','#E7D27A','#1B1C20'],['GOD DID','#0B7A43','#ffffff'],['RECHARGE HERE','#F6B21A','#1B1C20'],['RECHARGE HERE','#0B7A43','#ffffff'],['RECHARGE HERE','#C8402A','#ffffff'],['KEEP KITCITY WORLD CLEAN','#ffffff','#0B7A43']];
+const WALLADS=[['POWER ON!','#F6B21A','#1B1C20'],['NOT FOR SALE','#ffffff','#C8402A'],['BEWARE OF 419','#ffffff','#0B7A43'],['NO DUMPING','#ffffff','#C8402A'],['POST NO BILLS','#E7D27A','#1B1C20'],['GOD DID','#0B7A43','#ffffff'],['RECHARGE HERE','#F6B21A','#1B1C20'],['RECHARGE HERE','#0B7A43','#ffffff'],['RECHARGE HERE','#C8402A','#ffffff'],['KEEP KITCITY WORLD CLEAN','#ffffff','#0B7A43']];
 const flagTex=(function(){ const c=cv(96,64),g=c.getContext('2d'); g.fillStyle='#008751'; g.fillRect(0,0,96,64); g.fillStyle='#fff'; g.fillRect(32,0,32,64); const t=new THREE.Texture(c); t.needsUpdate=true; return t; })();
 const FLAGMAT=new THREE.MeshBasicMaterial({map:flagTex,side:THREE.DoubleSide});
 const buntTex=(function(){ const c=cv(256,32),g=c.getContext('2d'); g.strokeStyle='#222'; g.lineWidth=2; g.beginPath(); g.moveTo(0,2); g.lineTo(256,2); g.stroke(); for(let i=0;i<8;i++){ g.fillStyle=i%2?'#ffffff':'#008751'; g.beginPath(); g.moveTo(i*32+2,3); g.lineTo(i*32+30,3); g.lineTo(i*32+16,30); g.fill(); } const t=new THREE.Texture(c); t.needsUpdate=true; return t; })();
 const BUNTMAT=new THREE.MeshBasicMaterial({map:buntTex,transparent:true,side:THREE.DoubleSide,alphaTest:.4});
-const ADS=[['GLOBAL PAY','Send money. No wahala.','#0B7A43','#ffffff'],['PEPPER MAX','Make your soup sweet','#C8402A','#fff4d6'],['GOLDEN SPOON RICE','Chop well. Live well.','#F6B21A','#1B1C20'],['KITCITY','Learn wallet. Dodge scam.','#10C8DC','#1B1C20'],['POWER FOR ALL','UP NEPA!','#2D6FB3','#ffffff'],['PURE & COLD','Table water for the family','#10A0C8','#ffffff'],['BEWARE OF 419','Verify before you send','#1B1C20','#F6B21A']];
+const ADS=[['GLOBAL PAY','Move money with confidence.','#0B7A43','#ffffff'],['SPICE HOUSE','Fresh food. Good mood.','#C8402A','#fff4d6'],['GOLDEN SPOON','Eat well. Live well.','#F6B21A','#1B1C20'],['KITCITY','Learn wallet safety.','#10C8DC','#1B1C20'],['POWER FOR ALL','POWER ON!','#2D6FB3','#ffffff']];
 const adMats={};
 function adMat(i){ if(adMats[i]) return adMats[i]; const a=ADS[i%ADS.length],c=cv(512,220),g=c.getContext('2d'); g.fillStyle=a[2]; g.fillRect(0,0,512,220); g.fillStyle='rgba(255,255,255,.14)'; g.beginPath(); g.arc(440,60,90,0,7); g.fill(); g.beginPath(); g.arc(70,200,70,0,7); g.fill();
   g.fillStyle=a[3]; g.textAlign='center'; g.textBaseline='middle'; g.font='900 56px "Arial Black",Impact,sans-serif'; g.fillText(a[0],256,86,480); g.font='bold 30px Arial'; g.fillText(a[1],256,160,480); g.strokeStyle=a[3]; g.lineWidth=6; g.strokeRect(8,8,496,204);
@@ -2661,7 +2661,7 @@ const OXNIGHT=mkSign('OxNight','Knows the street rules','#1f4f82',LK.oxnight,'Sh
 const MOON=mkSign('Moon','Rate watcher','#6a3fb5',LK.moon,'Check the quote');
 const CRYPT=mkSign('The cryptonian','Scam veteran','#0B7A43',LK.cryptonian,'Spot the red flag');
 const NNADI=mkSign('Joe_Sef','Backup advisor','#2D6FB3',LK.joeSef,'Where to keep it');
-const DON=mkSign('The don','Careful sender','#5a3a22',LK.theDon,'Test first');
+const EXPERT=mkSign('The Expert','Careful sender','#5a3a22',LK.theExpert,'Test first');
 const PRAISE=mkSign('Praise','Signature checker','#C7457E',LK.praise,'Read before signing');
 const BIGSAM=mkSign('BigSam','Community organiser','#E4572E',LK.bigSam,'Read the proposal');
 const LUNAX=mkSign('LunaX','Trusted trader','#0897A8',LK.lunaX,'Name must match');
@@ -2702,7 +2702,7 @@ const STEP_NNADI=askStep({label:'Ask Joe_Sef where to keep your phrase',spot:'e'
   opts:[['On paper, somewhere private and safe',1],['A screenshot in my gallery',0],['In my notes app or a chat with myself',0]],
   good:'Right. Paper cannot be hacked from far away. Keep it private, and consider a second copy in another safe place.',
   bad:'Phones sync to the cloud and get hacked or lost. Anything digital can leak. Paper in a safe place is best.'});
-const STEP_DON=askStep({label:'Hear The don on test payments',spot:'b',npc:DON,
+const STEP_DON=askStep({label:'Hear The Expert on test payments',spot:'b',npc:EXPERT,
   intro:'Money sent on a blockchain cannot be pulled back. That is why careful people never send blind.',
   q:'You are about to send money to an address you have not used before. What do you do first?',
   opts:[['Send a small test and check it arrives',1],['Send everything, blockchains are fast',0],['Trust the address because it came in a message',0]],
@@ -4325,7 +4325,7 @@ if(CITIES.kitcity){CITIES.kitcity.lon=8.5;CITIES.kitcity.lat=8.7;}
    First-city missions are assigned first. Laloba is reserved for Solara City. */
 const PRIORITY_COMMUNITY_NAMES=[
   'Softstorm','IamAbdul','Christol','Laloba','Larai','Unique','Semi','Joe_Sef','Smrt huntr','Goodness',
-  'Blockqueen','BigSam','LunaX','OxNight','Moon','The cryptonian','Joseph Nnadi','The don','Praise','Kenny',
+  'Blockqueen','BigSam','LunaX','OxNight','Moon','The cryptonian','Joseph Nnadi','The Expert','Praise','Kenny',
   'Caleb','Craftore','Toza','Kodavic','Cybersage','Reina','Cclya','Duke David','Dark','Leemah',
   'Web3_Esta','Love','Essa','John Jonathan','Kore','White Coach','Debs','K','Oromachi','David',
   'Abdul','Mcbond','Akimitsu','Odion','Princess','Motunrayo','Seun','Blessing','Racheal','Bamidele',
@@ -4383,7 +4383,7 @@ const COMMUNITY_LOOKS_BY_NAME={
   'christol':LK.christol,'laloba':LK.laloba,'bigsam':LK.bigSam,
   'lunax':LK.lunaX,'oxnight':LK.oxnight,'moon':LK.moon,
   'the cryptonian':LK.cryptonian,'joseph nnadi':LK.josephNnadi,
-  'the don':LK.theDon,'praise':LK.praise,'toza':LK.toza,
+  'the don':LK.theExpert,'praise':LK.praise,'toza':LK.toza,
   'craftore':LK.craftore,'kodavic':LK.kodavic,'cybersage':LK.cybersage,
   'reina':LK.reina,'cclya':LK.cclya,'leemah':LK.leemah,'kenny':LK.kenny
 };
@@ -4423,7 +4423,7 @@ function buildMissionNameAliases(mission){
     const current=String(npc.name||'').trim();
     if(!original||!current||original===current) continue;
     /* Never rewrite a name that is already the canonical name of another NPC in this mission.
-       Otherwise a card for Praise or The don can be renamed by an unrelated dialogue alias. */
+       Otherwise a card for Praise or The Expert can be renamed by an unrelated dialogue alias. */
     if(currentNames.has(original.toLowerCase())) continue;
     if(Object.prototype.hasOwnProperty.call(candidates,original)&&candidates[original]!==current) ambiguous.add(original);
     else candidates[original]=current;
@@ -4442,7 +4442,7 @@ const LOST_VALUE_NAMED_LOOKS={
   'joseph':LK.josephNnadi,'joseph nnadi':LK.josephNnadi,'larai':LK.larai,'unique':LK.unique,
   'smrt huntr':LK.smrtHuntr,'goodness':LK.goodness,'semi':LK.semi,'blockqueen':LK.blockqueen,
   'christol':LK.christol,'laloba':LK.laloba,'bigsam':LK.bigSam,'lunax':LK.lunaX,
-  'oxnight':LK.oxnight,'moon':LK.moon,'the cryptonian':LK.cryptonian,'the don':LK.theDon,
+  'oxnight':LK.oxnight,'moon':LK.moon,'the cryptonian':LK.cryptonian,'the don':LK.theExpert,
   'praise':LK.praise,'toza':LK.toza,'craftore':LK.craftore,'kodavic':LK.kodavic,
   'cybersage':LK.cybersage,'reina':LK.reina,'cclya':LK.cclya,'leemah':LK.leemah,'kenny':LK.kenny
 };
@@ -4685,7 +4685,7 @@ function showCityBadge(city,after){
 }
 function certificate(){
   const totalMissions=MISSIONS.length-1;
-  const msg=encodeURIComponent(L('I finished all '+totalMissions+' KitCity missions and learned how to use a crypto wallet safely. Can you survive global with your wallet?','I don finish all '+totalMissions+' KitCity missions and I don learn how to use crypto wallet safely. You fit survive global with your wallet?'));
+  const msg=encodeURIComponent(L('I finished all '+totalMissions+' KitCity missions and learned how to use a crypto wallet safely. Can you explore KitCity with your wallet?','I completed all '+totalMissions+' KitCity missions and learned to use a crypto wallet safely. Can you explore KitCity with your wallet?'));
   openSheet('<div class="badge">'+badgeSVG('\u2605',true,96)+'<div><h3 style="margin-top:0">KitCity Graduate</h3><small>All '+totalMissions+' missions complete</small></div></div><p>You completed the full KitCity mission journey across all cities. Your practice balance is <b>'+P.usdc.toFixed(2)+' USDC</b>.</p>',
     [{t:'Back to hub',f:exitToHub}]);
   sheetEl.insertAdjacentHTML('beforeend',tx('<div class="row"><a class="btn" href="https://wa.me/?text='+msg+'" target="_blank" rel="noopener">Share on WhatsApp</a></div>'));
