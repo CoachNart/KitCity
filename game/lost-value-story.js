@@ -10,7 +10,7 @@ export const LOST_VALUE_STORY = [
     value:'PURPOSE', cast:['Local Trader','Customer','Softstorm','IamAbdul'], splitAfter:8,
     dialogue:[
       ['Local Trader','I did everything they told me to do. Connected my wallet, paid the fee, joined the group. Now the project has disappeared.'],
-      ['Customer','You people always say DYOR after everything don finish.'],
+      ['Customer','You always tell people to do their own research after everything has already gone wrong.'],
       ['PLAYER','What happened to them?'],
       ['Softstorm','Same thing that keeps happening. Somebody promises people an opportunity. People trust the promise. Then everybody starts looking for somebody else to blame.'],
       ['PLAYER','So Web3 is a scam?'],
