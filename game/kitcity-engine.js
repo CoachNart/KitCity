@@ -369,15 +369,15 @@ const boxm=(w,h,d,c)=>new THREE.Mesh(new THREE.BoxGeometry(w,h,d),M(c));
 let logoMat=null;
 const KITCITY_LOGO_URL='https://i.postimg.cc/qqbdTXky/file-00000000958881f4a776df689a235dec.png';
 function getLogoMat(){if(logoMat)return logoMat;const loader=new THREE.TextureLoader();loader.setCrossOrigin('anonymous');const texture=loader.load(KITCITY_LOGO_URL);texture.encoding=THREE.sRGBEncoding;logoMat=new THREE.MeshBasicMaterial({map:texture,transparent:true,side:THREE.DoubleSide});return logoMat;}
-const ANK=[];
-function ankaraMat(i){
-  i=((i%4)+4)%4; if(ANK[i]) return ANK[i];
+const FABRIC_TEXTURES=[];
+function patternedFabricMat(i){
+  i=((i%4)+4)%4; if(FABRIC_TEXTURES[i]) return FABRIC_TEXTURES[i];
   const pal=[['#E4572E','#F6B21A','#0B7A43'],['#2D6FB3','#F6B21A','#ffffff'],['#C7457E','#10C8DC','#F6B21A'],['#6a3fb5','#E7D27A','#E4572E']][i];
   const c=document.createElement('canvas'); c.width=c.height=64; const g=c.getContext('2d');
   g.fillStyle=pal[0]; g.fillRect(0,0,64,64);
   for(let y=0;y<4;y++)for(let x=0;x<4;x++){ g.fillStyle=pal[(x+y)%2?1:2]; g.beginPath(); g.arc(x*16+8,y*16+8,6,0,7); g.fill(); g.fillStyle=pal[0]; g.beginPath(); g.arc(x*16+8,y*16+8,2.5,0,7); g.fill(); }
   const t=new THREE.Texture(c); t.needsUpdate=true; t.wrapS=t.wrapT=THREE.RepeatWrapping; t.repeat.set(2,1);
-  return ANK[i]=new THREE.MeshLambertMaterial({map:t});
+  return FABRIC_TEXTURES[i]=new THREE.MeshLambertMaterial({map:t});
 }
 function buildPerson(o){
   o=o||{};
@@ -402,7 +402,7 @@ function buildPerson(o){
   for(const s of [-1,1]){ const sh=ball(.13,top); sh.position.set(s*sw*.84,.72,0); upper.add(sh); }
   const neck=tube(.085,.09,.16,skin); neck.position.y=.9; upper.add(neck);
   if(style==='longTunic'){ const k=tube(.33,.42,1.3,top); k.scale.z=.72; k.position.y=.78; upper.add(k); }
-  if(style==='wrapSkirt'){ const k=tube(.3,.47,.98,bottom); k.scale.z=.8; k.position.y=.12; upper.add(k); if(o.printFabric!=null){ k.material=ankaraMat(o.printFabric); torso.material=ankaraMat(o.printFabric+1); } }
+  if(style==='wrapSkirt'){ const k=tube(.3,.47,.98,bottom); k.scale.z=.8; k.position.y=.12; upper.add(k); if(o.printFabric!=null){ k.material=patternedFabricMat(o.printFabric); torso.material=patternedFabricMat(o.printFabric+1); } }
   const slv=style==='longTunic'?.4:.26;
   const mkArm=side=>{
     const sh=new THREE.Group(); sh.position.set(side*sw*.9,.7,0); sh.rotation.z=side*.07;
@@ -1585,7 +1585,7 @@ function buildPolice(){
   for(const sd of [-1,1]){ const pl=new THREE.Mesh(new THREE.PlaneGeometry(4,.7),slogMat('POLICE','#1f3357','#ffffff')); pl.position.set(-.3,2.1,sd*2.0); pl.rotation.y=sd>0?0:Math.PI; g.add(pl); }
   return g;
 }
-function buildDanfo(body,stripe){
+function buildShuttle(body,stripe){
   const g=new THREE.Group(),L=9.6,W=3.8;
   { const sl=pk(SLOGANS),dk=stripe==='#F6B21A'; for(const sd of [-1,1]){ const pl=new THREE.Mesh(new THREE.PlaneGeometry(7.6,.6),slogMat(sl,stripe,dk?'#1B1C20':(stripe==='#1B1C20'?'#F6B21A':'#ffffff'))); pl.position.set(-.2,2.05,sd*(W/2+.04)); pl.rotation.y=sd>0?0:Math.PI; g.add(pl); } }
   vbox(g,L,2.3,W,body,0,1.95,0);
@@ -1603,7 +1603,7 @@ function buildDanfo(body,stripe){
   }
   return g;
 }
-function buildKeke(body,roof){
+function buildThreeWheeler(body,roof){
   const g=new THREE.Group();
   vbox(g,4.4,.3,2.5,'#222',-.4,.95,0);
   vbox(g,.3,1.5,2.5,body,-2.4,1.75,0);
@@ -1617,7 +1617,7 @@ function buildKeke(body,roof){
   vwheel(g,.6,.4,2.7,.6,0); vwheel(g,.6,.4,-1.3,.6,1.35); vwheel(g,.6,.4,-1.3,.6,-1.35);
   return g;
 }
-function buildOkada(tank){
+function buildMotorbike(tank){
   const g=new THREE.Group(),shirt=pk(['#E4572E','#2D6FB3','#f2f2f2','#0B7A43','#6a3fb5','#C7457E']),skin=pk(SKINS);
   vwheel(g,.72,.3,1.55,.72,0); vwheel(g,.72,.3,-1.55,.72,0);
   vbox(g,3.1,.28,.3,'#222',0,1.35,0);
@@ -1678,10 +1678,10 @@ function buildTruck(cab,bed){
 function pickKind(C){ if(RN()<.13) return 'bicycle'; let t=0; C.fleet.forEach(f=>{ t+=f[1]; }); let r=RN()*t; for(const f of C.fleet){ r-=f[1]; if(r<=0) return f[0]; } return C.fleet[0][0]; }
 function makeVehicle(kind,C){
   const pl=C.pal;
-  if(kind==='shuttle') return {m:buildDanfo(pl.shuttle[0],pl.shuttle[1]),hl:4.9,hw:1.95,sp:[8,12]};
+  if(kind==='shuttle') return {m:buildShuttle(pl.shuttle[0],pl.shuttle[1]),hl:4.9,hw:1.95,sp:[8,12]};
   if(kind==='police') return {m:buildPolice(),hl:4.8,hw:2,sp:[10,14]};
-  if(kind==='threewheeler') return {m:buildKeke(pl.threewheeler[0],pl.threewheeler[1]),hl:2.8,hw:1.4,sp:[6.5,9.5]};
-  if(kind==='motorbike') return {m:buildOkada(pk(['#C8402A','#2D6FB3','#0B7A43','#F2F2F2','#1B1C20'])),hl:2.2,hw:.9,sp:[11,16]};
+  if(kind==='threewheeler') return {m:buildThreeWheeler(pl.threewheeler[0],pl.threewheeler[1]),hl:2.8,hw:1.4,sp:[6.5,9.5]};
+  if(kind==='motorbike') return {m:buildMotorbike(pk(['#C8402A','#2D6FB3','#0B7A43','#F2F2F2','#1B1C20'])),hl:2.2,hw:.9,sp:[11,16]};
   if(kind==='bicycle') return {m:buildBicycle(),hl:1.8,hw:.8,sp:[5.5,9]};
   if(kind==='truck') return {m:buildTruck(pk(['#C8402A','#2D6FB3','#E9E4DA','#0B7A43']),pk(['#E4572E','#F6B21A','#6b6f78'])),hl:9,hw:2.6,sp:[5,8]};
   if(kind==='suv') return {m:buildSedan(pk(['#2b2b30','#F2F2F2','#8a8d93']),pl.stripe,true),hl:4.8,hw:2,sp:[9,13]};
@@ -1928,7 +1928,7 @@ function streetDetails(C,blocks){
   tries=0; made=0;
   while(made<(C.oka||0)&&tries++<300){
     const b=pk(blocks),side=Math.floor(RN()*4),pt=ringPoint(b,side,rr(-12,12)); if(!ringFree(pt.x,pt.z,4)) continue; ringTaken.push({x:pt.x,z:pt.z,r:3});
-    const og=buildOkada(pk(['#C8402A','#2D6FB3','#0B7A43','#F2F2F2','#1B1C20'])); og.position.set(pt.x,0,pt.z); og.rotation.y=pt.alongX?(RN()<.5?0:Math.PI):Math.PI/2; cityGroup.add(og);
+    const og=buildMotorbike(pk(['#C8402A','#2D6FB3','#0B7A43','#F2F2F2','#1B1C20'])); og.position.set(pt.x,0,pt.z); og.rotation.y=pt.alongX?(RN()<.5?0:Math.PI):Math.PI/2; cityGroup.add(og);
     colliders.push(pt.alongX?{x0:pt.x-2.2,x1:pt.x+2.2,z0:pt.z-.9,z1:pt.z+.9}:{x0:pt.x-.9,x1:pt.x+.9,z0:pt.z-2.2,z1:pt.z+2.2}); made++;
   }
 }
