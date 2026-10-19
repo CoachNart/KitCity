@@ -56,6 +56,7 @@ const legacyStorageKey=activeUid?LEGACY_KEY+'_user_'+activeUid:LEGACY_KEY;
 const migratedLocal=Store.get(legacyStorageKey,{});
 const currentLocal=Store.get(storageKey,{});
 const P=Object.assign({},DEFAULT_PLAYER,migratedLocal||{},currentLocal||{});
+P.lang='en';
 P.credits=Math.max(Number(P.credits)||0,Number(P[LEGACY_CURRENCY_FIELD])||0);
 delete P[LEGACY_CURRENCY_FIELD];
 if(!P.done||typeof P.done!=='object') P.done={};
@@ -147,19 +148,8 @@ function personalize(html,mission,preferredNPC){
 /* =====================  sound (synthesised, no files)  ===================== */
 
 /* =====================  YouTube soundtrack  ===================== */
-const MUSIC_QUEUES={
-  ambient:{label:'KitCity Ambient Mix',videos:['jfKfPfyJRdk']}
-};
-const CITY_MUSIC={
-  novacity:'ambient', meridian:'ambient', harbor:'ambient', stonebridge:'ambient', bayhaven:'ambient',
-  highland:'ambient', oakridge:'ambient', greenhaven:'ambient', solara:'ambient', westgate:'ambient', sunspire:'ambient',
-  maplewood:'ambient', fairview:'ambient', sunvale:'ambient', rockford:'ambient', clearwater:'ambient',
-  seabrook:'ambient', goldcrest:'ambient', meadowfield:'ambient', redcliff:'ambient', drylands:'ambient',
-  kingswell:'ambient', westhaven:'ambient', midvale:'ambient', ridgeport:'ambient', cedarpoint:'ambient',
-  rivermouth:'ambient', deltadistrict:'ambient', hillcrestdistrict:'ambient', bridgewaterdistrict:'ambient', riverbenddistrict:'ambient',
-  northfielddistrict:'ambient', lakesidedistrict:'ambient', pinevaledistrict:'ambient', dusthavendistrict:'ambient', ashforddistrict:'ambient',
-  willowregion:'ambient', kitcity:'ambient'
-};
+const MUSIC_QUEUES={ambient:{label:'KitCity Ambient Mix',videos:['jfKfPfyJRdk']}};
+const CITY_MUSIC={};
 const DEFAULT_PLAYLIST='jfKfPfyJRdk';
 const YT=(function(){
   let player=null,ready=false,failed=false,started=false,wantOn=true,duck=false,loading=false,errCount=0,currentKey='afrobeat';
@@ -344,36 +334,8 @@ window.addEventListener('pointerdown',()=>Snd.unlock());
 
 /* =====================  language: English  ===================== */
 const L=(en)=>en;
-const PCM={
-/*PCM_BEGIN*/
-/*PCM_END*/
-};
-const RULES=[
-/*RULES_BEGIN*/
-/*RULES_END*/
-];
-function tr(t){
-  if(!t) return t;
-  const m=t.match(/^(\s*)([\s\S]*?)(\s*)$/),core=m[2];
-  if(!core||!/[A-Za-z]/.test(core)) return t;
-  /*MISS*/
-  let out=PCM[core];
-  if(out===undefined){ for(let i=0;i<RULES.length;i++){ const mm=core.match(RULES[i][0]); if(mm){ out=RULES[i][1].apply(null,mm); break; } } }
-  return out===undefined?t:m[1]+out+m[3];
-}
+function tr(t){ return t; }
 function tx(html){ return html; }
-
-/* =====================  renderer / scene  ===================== */
-const renderer=new THREE.WebGLRenderer({canvas:$('#gl'),antialias:true,powerPreference:'high-performance'});
-function setPR(){ renderer.setPixelRatio(P.low?1:Math.min(window.devicePixelRatio||1,1.75)); }
-setPR();
-const scene=new THREE.Scene();
-const camera=new THREE.PerspectiveCamera(50,1,0.5,700);
-function resize(){
-  const w=window.innerWidth,h=window.innerHeight;
-  renderer.setSize(w,h,false);
-  camera.aspect=w/h; camera.fov=(w/h<0.8)?64:50; camera.updateProjectionMatrix(); onResizeHook();
-}
 window.addEventListener('resize',resize); resize();
 renderer.toneMapping=THREE.NoToneMapping;
 const hemi=new THREE.HemisphereLight(0xFFF1D6,0x4A3A2A,0.8); scene.add(hemi);
@@ -727,13 +689,13 @@ const CITY_X={
 };
 Object.keys(CITY_X).forEach(k=>Object.assign(CITIES[k],CITY_X[k]));
 const CITY_Y={
-  novacity:{dirt:'#9a5a38',leaf:'#2f7a3f',tree:.3,oka:6,bump:14,pud:18,shopKinds:[['shop',3],['kiosk',3],['container',2],['diner',2],['vulc',1.2],['police',.5]],
+  novacity:{dirt:'#9a5a38',leaf:'#2f7a3f',tree:.3,oka:6,bump:14,pud:18,shopKinds:[['shop',3],['kiosk',3],['container',2],['diner',2],['repair',1.2],['police',.5]],
     more:[["GOD'S TIME ENT.",'#0B7A43','#ffffff'],['MAMA NKECHI BUKA','#E4572E','#ffffff'],['TOKUNBO AUTO PARTS','#1B1C20','#F6B21A'],['ALHAJI & SONS','#2D6FB3','#ffffff'],['DIVINE FAVOUR STORES','#7a3b8f','#ffffff'],['NEW LIFE BUREAU DE CHANGE','#F6B21A','#1B1C20'],['AMAKA HAIR & BEAUTY','#C7457E','#ffffff'],['CYBER CAFE','#10C8DC','#1B1C20'],['GAS REFILL','#C8402A','#ffffff'],['POS 24/7','#0B7A43','#ffffff']]},
   meridian:{dirt:'#a96b45',leaf:'#3d8f45',tree:.6,oka:0,bump:8,pud:4,shopKinds:[['shop',3],['kiosk',1],['container',1],['diner',1],['police',.7]],
     more:[['WUSE PHARMACY','#0B7A43','#ffffff'],['GARKI BOOKS','#2D6FB3','#ffffff'],['GWARINPA CAFE','#7a4a2e','#ffffff'],['POS 24/7','#1B1C20','#F6B21A'],['DIVINE GRACE STORES','#7a3b8f','#ffffff']]},
-  solara:{dirt:'#cfa878',leaf:'#6f8f3e',tree:.85,oka:8,bump:10,pud:0,shopKinds:[['shop',3],['kiosk',2],['diner',2],['container',1],['vulc',1]],
+  solara:{dirt:'#cfa878',leaf:'#6f8f3e',tree:.85,oka:8,bump:10,pud:0,shopKinds:[['shop',3],['kiosk',2],['diner',2],['container',1],['repair',1]],
     more:[['ALHAJI & SONS VENTURES','#0B7A43','#ffffff'],['KASUWAR KURMI','#E4572E','#ffffff'],['GIDAN ABINCI','#2D6FB3','#ffffff'],['SHAGON TUFAFI','#7a3b8f','#ffffff'],['MAI SHAYI','#1B1C20','#F6B21A']]},
-  harbor:{dirt:'#5c4636',leaf:'#1f6b3a',tree:.4,oka:6,bump:12,pud:30,shopKinds:[['shop',3],['kiosk',3],['container',2],['diner',2],['vulc',1.2]],
+  harbor:{dirt:'#5c4636',leaf:'#1f6b3a',tree:.4,oka:6,bump:12,pud:30,shopKinds:[['shop',3],['kiosk',3],['container',2],['diner',2],['repair',1.2]],
     more:[['PEPPER SOUP JOINT','#C8402A','#ffffff'],['DIVINE FAVOUR PROVISIONS','#0B7A43','#ffffff'],['NKECHI POS','#F6B21A','#1B1C20'],['FRESH FISH & SNAIL','#2D6FB3','#ffffff'],['TOKUNBO TYRES','#1B1C20','#F6B21A']]}
 };
 Object.keys(CITY_Y).forEach(k=>{ const y=CITY_Y[k]; Object.assign(CITIES[k],y); CITIES[k].signs=CITIES[k].signs.concat(y.more); });
@@ -754,7 +716,7 @@ const NEWC={
   oakridge:{name:'Oakridge',tag:'The city of rusty rooftops',lon:3.9,lat:7.4,seed:61,sky:0xEBC48F,ground:'#2E2D30',slab:'#BDB5A6',
     paint:['#D9B99B','#C98F6B','#E0C9A6','#B7A58F','#9FB7A5','#E7D27A'],market:3,palm:.5,tree:.5,leaf:'#3a7a3f',dirt:'#9a5a38',
     fleet:[['police',.4],['threewheeler',4],['motorbike',3],['shuttle',3],['sedan',3],['truck',1]],styles:[['zinc',.55],['flat',.3],['admin',.1],['glass',.05]],lm:[['mosque',-35,35],['church',35,105]],
-    shopKinds:[['shop',3],['kiosk',3],['container',2],['diner',2],['vulc',1.2],['police',.4]],oka:5,
+    shopKinds:[['shop',3],['kiosk',3],['container',2],['diner',2],['repair',1.2],['police',.4]],oka:5,
     more:[['MAPO BUKA','#E4572E','#ffffff'],['IYA DODO','#F6B21A','#1B1C20'],['OLUWASEUN VENTURES','#2D6FB3','#ffffff'],['AGBALAGBA POS','#0B7A43','#ffffff']],
     barks:['Hello!','Hello!','How's it going?','Customer, come!'],barksEn:['Good morning!','How are you?','How are you?','Customer, come!'],hawk:['Pure water!','Gala! Gala!','Dodo! Hot dodo!'],conductor:['Dugbe! Dugbe!','Challenge! Enter!'],
     nsRoads:['Ring Road','Oakridge-Ife Expressway','Iwo Road','Mokola Road','Sango Road','Oakridge Road','Challenge Road'],ewRoads:['Dugbe Road','Oba Adebimpe Road','Agodi Gate Road','Bodija Road','Ojoo Road','Eleyele Road','Apata Road'],
@@ -762,7 +724,7 @@ const NEWC={
   westgate:{name:'Westgate',tag:'The railway crossroads',lon:7.4,lat:10.5,seed:73,sky:0xE9C9A0,ground:'#35332F',slab:'#C9BBA0',
     paint:['#E0D3B8','#D2BE98','#C9B38C','#E8DCC0','#B9C4B0','#D8B78F'],market:4,palm:.5,tree:.7,leaf:'#6b8a3e',dirt:'#b88a5a',
     fleet:[['police',.5],['threewheeler',4],['sedan',3],['motorbike',2],['shuttle',2],['truck',2]],styles:[['flat',.35],['zinc',.25],['admin',.2],['banco',.2]],lm:[['mosque',-35,35],['church',35,105]],
-    shopKinds:[['shop',3],['kiosk',2],['diner',2],['container',1],['vulc',1],['police',.4]],oka:4,pud:2,
+    shopKinds:[['shop',3],['kiosk',2],['diner',2],['container',1],['repair',1],['police',.4]],oka:4,pud:2,
     more:[['SHAGON ABINCI','#E4572E','#ffffff'],['MALAM AUDU TEA','#7a4a2e','#ffffff'],['WESTGATE TEXTILES','#7a3b8f','#ffffff'],['ALHAJI & BROTHERS','#0B7A43','#ffffff']],
     barks:['Hello!','Hello!','Hello!','Boss, come!'],barksEn:['Hello!','Welcome!','How are you?','Boss, come!'],hawk:['Hello! Hello!','Suya, grill!'],conductor:['Hello! Hello!','Westgate! Hawa!'],
     nsRoads:['Ahmadu Bello Way','Kachia Road','Independence Way','Waff Road','Constitution Road','Yakubu Gowon Way','Ali Akilu Road'],ewRoads:['Ibrahim Taiwo Road','Goldcrest Road','Rabah Road','Sultan Road','Narayi Road','Meridian City Road','Tafawa Balewa Way'],
@@ -770,7 +732,7 @@ const NEWC={
   greenhaven:{name:'Greenhaven',tag:'The coal city',lon:7.5,lat:6.45,seed:85,sky:0xB9D3C2,fog:[100,260],ground:'#2D2F2F',slab:'#B0B3AA',
     paint:['#A9C4B0','#C9D8B8','#E0C9A6','#9FB7C7','#E7D27A','#C4B79F'],market:4,palm:.7,tree:.6,leaf:'#2f7a45',dirt:'#8f5a3a',bridges:[[0,-52]],
     fleet:[['police',.5],['threewheeler',4],['sedan',3],['shuttle',3],['motorbike',1],['truck',1]],styles:[['flat',.45],['zinc',.3],['admin',.15],['glass',.1]],lm:[['church',-35,35],['mosque',35,105]],
-    shopKinds:[['shop',3],['kiosk',3],['container',2],['diner',2],['vulc',1],['police',.5]],oka:3,pud:10,
+    shopKinds:[['shop',3],['kiosk',3],['container',2],['diner',2],['repair',1],['police',.5]],oka:3,pud:10,
     more:[['OFE ONUGBU SPOT','#0B7A43','#ffffff'],['OGBETE MARKET STORES','#E4572E','#ffffff'],['NNA M VENTURES','#2D6FB3','#ffffff'],['COAL CITY POS','#1B1C20','#F6B21A']],
     barks:['Nna m!','Kedu?','Boss, come!','Customer!'],barksEn:['My brother!','How are you?','Boss, come!','Customer!'],hawk:['Pure water!','Akara! Akara!','Fresh ugba!'],conductor:['Ogbete! Ogbete!','Gariki! Enter!'],
     nsRoads:['Okpara Avenue','Ogui Road','Zik Avenue','Agbani Road','Chime Avenue','Eastport Road','Nsukka Road'],ewRoads:['Greenhaven-Eastport Expressway','Ziks Avenue East','Independence Layout Road','Garden Avenue','New Haven Road','Maplewood Road','Edinburgh Road'],
@@ -778,7 +740,7 @@ const NEWC={
   stonebridge:{name:'Stonebridge',tag:'The ancient kingdom city',lon:5.6,lat:6.3,seed:97,sky:0xD9BE98,ground:'#2F2C2A',slab:'#B8A68E',
     paint:['#C9835F','#B5694A','#D8A47F','#9E5B43','#E0C29E','#8FAE9A'],market:3,palm:.55,tree:.5,leaf:'#2f7040',dirt:'#a0502e',
     fleet:[['police',.4],['threewheeler',4],['motorbike',3],['sedan',3],['shuttle',2],['truck',1]],styles:[['zinc',.4],['flat',.4],['admin',.1],['glass',.1]],lm:[['church',-35,35],['mosque',35,105]],
-    shopKinds:[['shop',3],['kiosk',3],['container',2],['diner',2],['vulc',1.2],['police',.4]],oka:6,pud:12,
+    shopKinds:[['shop',3],['kiosk',3],['container',2],['diner',2],['repair',1.2],['police',.4]],oka:6,pud:12,
     more:[['BENIN BRONZE CRAFTS','#8E2F1B','#ffffff'],['OBA MARKET STORES','#0B7A43','#ffffff'],['MAMA STONEBRIDGE KITCHEN','#E4572E','#ffffff'],['OSAZE POS','#F6B21A','#1B1C20']],
     barks:['Wetin dey?','How far, my guy?','Oya, enter!','Customer!'],barksEn:['What is happening?','How are you, my friend?','Come on, get in!','Customer!'],hawk:['Pure water!','Roasted plantain!'],conductor:['Ring Road! Ring Road!','Ekenwan! Enter!'],
     nsRoads:['Sapele Road','Akpakpava Road','Airport Road','Ring Road','Mission Road','Ikpoba Hill Road','Uselu-Nova City Road'],ewRoads:['Ugbowo Road','Oba Market Road','New Nova City Road','Siluko Road','Ekenwan Road','Upper Mission Road','Aduwawa Road'],
@@ -786,7 +748,7 @@ const NEWC={
   bayhaven:{name:'Bayhaven',tag:'The carnival city',lon:8.3,lat:4.95,seed:109,sky:0xA9C9C6,fog:[80,215],ground:'#2A2D2E',slab:'#B3B8B0',
     paint:['#E7B8A0','#A9D1C2','#F0D58A','#C9B8E0','#9FC0DA','#E8A5A5'],market:3,palm:.85,tree:.5,leaf:'#1f7a3f',dirt:'#6a4a38',
     fleet:[['police',.4],['threewheeler',5],['motorbike',2],['sedan',3],['shuttle',1],['truck',1]],styles:[['zinc',.3],['flat',.4],['admin',.2],['glass',.1]],lm:[['church',-35,35],['theatre',35,105]],
-    shopKinds:[['shop',3],['kiosk',3],['container',2],['diner',3],['vulc',1]],oka:3,pud:20,
+    shopKinds:[['shop',3],['kiosk',3],['container',2],['diner',3],['repair',1]],oka:3,pud:20,
     more:[['AFANG SOUP SPOT','#0B7A43','#ffffff'],['WATT MARKET STORES','#E4572E','#ffffff'],['CARNIVAL TAILORS','#C7457E','#ffffff'],['FRESH FISH','#2D6FB3','#ffffff']],
     barks:['How you dey?','Wetin dey?','Oya, enter!','Customer!'],barksEn:['How are you?','What is happening?','Come on, get in!','Customer!'],hawk:['Pure water!','Fresh fish!','Afang soup!'],conductor:['Marian! Marian!','Watt Market! Enter!'],
     nsRoads:['Mary Slessor Avenue','Marian Road','Bayhaven Road','Ekpo Abasi Street','Murtala Mohammed Highway','Atimbo Road','Ndidem Usang Iso Road'],ewRoads:['Target Road','Ikot Ishie Road','Etta Agbor Road','Goldie Street','Hawkins Street','Ndidem Road','Satellite Town Road'],
@@ -794,7 +756,7 @@ const NEWC={
   highland:{name:'Highland',tag:'The cool plateau city',lon:8.9,lat:9.9,seed:121,sky:0xCFE0EA,fog:[110,280],ground:'#34363A',slab:'#BFC0BA',
     paint:['#D8D0C0','#BFC9B8','#C9B79C','#A9B8C4','#E0C9A6','#9CAF9A'],market:3,palm:.35,tree:.85,leaf:'#3f7a45',dirt:'#9a6a48',
     fleet:[['police',.4],['threewheeler',4],['sedan',3],['shuttle',3],['motorbike',2],['truck',1]],styles:[['flat',.35],['zinc',.4],['admin',.15],['banco',.1]],lm:[['church',-35,35],['mosque',35,105]],
-    shopKinds:[['shop',3],['kiosk',2],['diner',2],['container',1],['vulc',1]],oka:3,pud:6,
+    shopKinds:[['shop',3],['kiosk',2],['diner',2],['container',1],['repair',1]],oka:3,pud:6,
     more:[['IRISH POTATO STORE','#7a4a2e','#ffffff'],['HIGHLAND PHARMACY','#0B7A43','#ffffff'],['TERMINUS POS','#F6B21A','#1B1C20'],['HILL STATION CAFE','#2D6FB3','#ffffff']],
     barks:['Hello!','Hello!','Boss, come!','Customer!'],barksEn:['Hello!','How are you?','Boss, come!','Customer!'],hawk:['Pure water!','Irish potatoes!','Fresh tomatoes!'],conductor:['Terminus! Terminus!','Bukuru! Hawa!'],
     nsRoads:['Drylands Road','Ahmadu Bello Way','Murtala Mohammed Way','Zaria Road','Tafawa Balewa Street','Yakubu Gowon Way','Rayfield Road'],ewRoads:['Church Street','Museum Road','Beach Road','Jenta Road','Hwolshe Road','Bukuru Road','Terminus Road'],
@@ -802,7 +764,7 @@ const NEWC={
   sunspire:{name:'Sunspire',tag:'The city of hospitality',lon:13.1,lat:11.85,seed:133,sky:0xF2CC96,fog:[85,230],ground:'#3A352E',slab:'#CDB894',
     paint:['#E0C79B','#D2AE7C','#EAD9B3','#C49A6A','#DDBE8F','#B88B5C'],market:3,palm:.25,tree:.9,leaf:'#6f8f3e',dirt:'#cfa878',
     fleet:[['police',.5],['threewheeler',6],['motorbike',3],['sedan',2],['truck',2],['shuttle',1]],styles:[['banco',.5],['flat',.3],['zinc',.2]],lm:[['mosque',-35,35]],
-    shopKinds:[['shop',3],['kiosk',2],['diner',2],['container',1],['vulc',1]],oka:5,pud:0,
+    shopKinds:[['shop',3],['kiosk',2],['diner',2],['container',1],['repair',1]],oka:5,pud:0,
     more:[['KASUWAR MONDAY','#E4572E','#ffffff'],['SHAGON TUFAFI','#7a3b8f','#ffffff'],['MAI SHAYI','#1B1C20','#F6B21A'],['GIDAN ABINCI','#2D6FB3','#ffffff']],
     barks:['Hello!','Hello!','Boss, come!','Customer!'],barksEn:['Hello!','How are you?','Boss, come!','Customer!'],hawk:['Hello! Hello!','Suya, grill!','Kunu! Cold kunu!'],conductor:['Monday Market! Hawa!','Baga Road! Hawa!'],
     nsRoads:['Baga Road','Bama Road','Solara City Road','Gombole Road','Customs Road','Duneshire Road','Highland Road'],ewRoads:['Sir Kashim Ibrahim Road','Shehu Laminu Way','Ngomari Road','Bulumkutu Road','Nova City Street','Mohammed Goni Road','Shehu Garbai Way'],
@@ -810,7 +772,7 @@ const NEWC={
   midvale:{name:'Midvale',tag:'Capital of Northreach State',lon:6.55,lat:9.61,seed:271,sky:0xC9DBC6,ground:'#2F302B',slab:'#BFBDA8',
     paint:['#D6C7A4','#B9C6A4','#E2D1AC','#A9B9B0','#CDB58F','#C1CFA8'],market:4,palm:.4,tree:.7,leaf:'#4a7c3a',dirt:'#94643e',
     fleet:[['police',.4],['threewheeler',4],['motorbike',3],['sedan',3],['shuttle',2],['truck',2]],styles:[['flat',.4],['zinc',.3],['admin',.2],['banco',.1]],lm:[['church',-35,35],['mosque',35,105]],
-    shopKinds:[['shop',3],['kiosk',3],['diner',2],['container',2],['vulc',1]],oka:4,pud:6,
+    shopKinds:[['shop',3],['kiosk',3],['diner',2],['container',2],['repair',1]],oka:4,pud:6,
     more:[['MIDVALE POWER STORES','#E4572E','#ffffff'],['BOSSO ROAD PHARMACY','#0B7A43','#ffffff'],['TUNGA MARKET FABRICS','#C7457E','#ffffff'],['MIDVALE POS','#F6B21A','#1B1C20']],
     barks:['Hello!','Hello!','Oga, come!','Customer!'],barksEn:['Hello!','How are you?','Boss, come!','Customer!'],hawk:['Pure water!','Fresh tomatoes!','Suya, grill!'],conductor:['Tunga! Hawa!','Bosso! Hawa!'],
     nsRoads:['Bida Road','Paiko Road','Kontagora Road','Ahmadu Bello Way','Midvale Bypass','Bosso Road','Airport Road'],ewRoads:['Tunga Road','Shiroro Road','Chanchaga Road','Maitumbi Road','Fanfa Road','Gwari Road','Kpakungu Road'],
@@ -818,7 +780,7 @@ const NEWC={
   ridgeport:{name:'Silverton',tag:'The river trade city',lon:6.78,lat:6.14,seed:151,sky:0xD8C7A2,ground:'#2C2E2C',slab:'#BDB6A4',
     paint:['#D6B98E','#B9C7C0','#E3C29A','#A9B5C0','#CFA981','#D9CFA5'],market:6,palm:.6,tree:.4,leaf:'#3a7a40',dirt:'#8f5e3c',
     fleet:[['police',.4],['threewheeler',4],['motorbike',4],['shuttle',3],['sedan',2],['truck',2]],styles:[['flat',.4],['zinc',.3],['glass',.1],['admin',.2]],lm:[['church',-35,35],['mosque',35,105]],
-    shopKinds:[['shop',3],['kiosk',3],['container',2],['diner',2],['vulc',1],['police',.4]],oka:5,pud:14,
+    shopKinds:[['shop',3],['kiosk',3],['container',2],['diner',2],['repair',1],['police',.4]],oka:5,pud:14,
     more:[['EASTPORT MAIN MARKET','#E4572E','#ffffff'],['IYIFE SHOES','#2D6FB3','#ffffff'],['OBI PHONE CENTRE','#0B7A43','#ffffff'],['RIVER ROAD POS','#F6B21A','#1B1C20']],
     barks:['Nna m!','Wetin you want?','Oya, come!','Customer!'],barksEn:['My brother!','What do you want?','Come on!','Customer!'],hawk:['Pure water!','Ice water!','Fresh fish!'],conductor:['Main Market! Enter!','Upper Iweka! Hawa!'],
     nsRoads:['Silverton Road','Old Market Road','Main Market Road','Nkwelle Road','Upper Iweka Road','Ogbunike Road','Northreach Bridge Road'],ewRoads:['Woliwo Road','Ifite Road','Ezi Road','Ogbe Road','Atani Road','Ukpor Road','Chime Road'],
@@ -826,7 +788,7 @@ const NEWC={
   maplewood:{name:'Maplewood',tag:'The heartland of Maplewood',lon:7.03,lat:5.48,seed:163,sky:0xB8D9B0,ground:'#2A3028',slab:'#B7BFAA',
     paint:['#C9D9B0','#A9C4A0','#E4D8B4','#B8C9C0','#D9C7A3','#9FBE9E'],market:4,palm:.8,tree:.8,leaf:'#2b7a3c',dirt:'#7e5a3a',
     fleet:[['police',.4],['threewheeler',3],['sedan',3],['shuttle',3],['motorbike',3],['suv',2]],styles:[['flat',.4],['glass',.2],['admin',.2],['zinc',.2]],lm:[['church',-35,35],['church',35,105]],
-    shopKinds:[['shop',3],['kiosk',2],['diner',2],['container',2],['vulc',1]],oka:3,pud:10,
+    shopKinds:[['shop',3],['kiosk',2],['diner',2],['container',2],['repair',1]],oka:3,pud:10,
     more:[['NEKEDE TRADERS','#E4572E','#ffffff'],['PALM OIL HOUSE','#F6B21A','#1B1C20'],['MAPLEWOOD CLASSICS','#2D6FB3','#ffffff'],['SAINT NEKE CAFE','#0B7A43','#ffffff']],
     barks:['Kedu?','Nna, come!','How you dey?','Customer!'],barksEn:['How are you?','Brother, come!','How are you?','Customer!'],hawk:['Pure water!','Palm wine!','Roasted corn!'],conductor:['Douglas! Hawa!','Wetheral! Enter!'],
     nsRoads:['Douglas Road','Wetheral Road','Ikenegbu Road','Egbu Road','Okigwe Road','Harbor City Road','Riverton Road'],ewRoads:['Works Road','Tetlow Road','Ama Road','Orji Road','Nekede Road','Naze Road','Umuguma Road'],
@@ -834,7 +796,7 @@ const NEWC={
   fairview:{name:'Fairview',tag:'Where north meets south',lon:4.55,lat:8.5,seed:173,sky:0xF0D2A4,ground:'#3A3430',slab:'#CDBA9A',
     paint:['#E2C79A','#C9A77C','#D8B98A','#EAD5A8','#B88F62','#C8B38D'],market:4,palm:.45,tree:.6,leaf:'#5f8a3e',dirt:'#b07a4c',
     fleet:[['police',.4],['threewheeler',5],['motorbike',3],['sedan',3],['shuttle',2],['truck',2]],styles:[['banco',.3],['flat',.3],['zinc',.3],['admin',.1]],lm:[['mosque',-35,35],['church',35,105]],
-    shopKinds:[['shop',3],['kiosk',3],['diner',3],['container',1],['vulc',1]],oka:4,pud:4,
+    shopKinds:[['shop',3],['kiosk',3],['diner',3],['container',1],['repair',1]],oka:4,pud:4,
     more:[['FAIRVIEW RICE STORES','#E4572E','#ffffff'],['MALLAM SHAYI','#7a4a2e','#ffffff'],['OKE-ODE TEXTILES','#7a3b8f','#ffffff'],['GAA AKANBI POS','#0B7A43','#ffffff']],
     barks:['Hello!','Hello!','Boss, come!','Customer!'],barksEn:['Good morning!','How are you?','Boss, come!','Customer!'],hawk:['Hello! Hello!','Kunu! Cold kunu!'],conductor:['Fairview! Hawa!','Offa! Hawa!'],
     nsRoads:['Ibrahim Taiwo Road','Ahmadu Bello Way','Murtala Mohammed Way','Ogbomoso Road','Offa Road','Tanke Road','Post Office Road'],ewRoads:['Unity Road','Basin Road','Oke-Oyi Road','Sobi Road','Zango Road','Fate Road','Adewole Road'],
@@ -842,7 +804,7 @@ const NEWC={
   sunvale:{name:'Sunvale',tag:'The Sultan’s city',lon:5.24,lat:13.06,seed:181,sky:0xF3D3A0,ground:'#3D3528',slab:'#D2B894',
     paint:['#E5CFA2','#D6B98A','#EBDDBE','#C7A374','#DCC29A','#B98D5E'],market:3,palm:.2,tree:.6,leaf:'#6f8f3e',dirt:'#c9a070',
     fleet:[['police',.5],['threewheeler',5],['motorbike',3],['sedan',2],['truck',2],['shuttle',1]],styles:[['banco',.5],['flat',.3],['zinc',.2]],lm:[['mosque',-35,35]],
-    shopKinds:[['shop',3],['kiosk',2],['diner',2],['container',1],['vulc',1]],oka:4,pud:0,
+    shopKinds:[['shop',3],['kiosk',2],['diner',2],['container',1],['repair',1]],oka:4,pud:0,
     more:[['SULTAN DYE HOUSE','#2D6FB3','#ffffff'],['DANDE SHOES','#E4572E','#ffffff'],['SUNVALE DATES','#7a4a2e','#ffffff'],['KARA POS','#0B7A43','#ffffff']],
     barks:['Hello!','Hello!','Boss, come!','Customer!'],barksEn:['Hello!','How are you?','Boss, come!','Customer!'],hawk:['Hello! Hello!','Dates! Sweet dates!'],conductor:['Sultan Road! Hawa!','Hello! Hawa!'],
     nsRoads:['Sultan Abubakar Way','Solara City Road','Ashford Road','Bello Road','Tambuwal Road','Gwadabawa Road','Airport Road'],ewRoads:['Usmanu Danfodiyo Road','Kofar Kaura Road','Mabera Road','Gidan Dere Road','Kasuwar Rake Road','Market Road','Rabah Road'],
@@ -850,7 +812,7 @@ const NEWC={
   rockford:{name:'Rockford',tag:'The rock city',lon:3.35,lat:7.15,seed:191,sky:0xE4CDA6,ground:'#3A3631',slab:'#C9BFAE',
     paint:['#D8C4A0','#C4B08C','#E6D6B6','#B5A387','#CDB895','#A8B49A'],market:4,palm:.5,tree:.7,leaf:'#3f7a3a',dirt:'#9a6a40',
     fleet:[['police',.4],['threewheeler',4],['motorbike',3],['sedan',3],['shuttle',2],['truck',1]],styles:[['flat',.35],['zinc',.35],['admin',.15],['banco',.15]],lm:[['church',-35,35],['mosque',35,105]],
-    shopKinds:[['shop',3],['kiosk',3],['diner',2],['container',2],['vulc',1]],oka:4,pud:6,
+    shopKinds:[['shop',3],['kiosk',3],['diner',2],['container',2],['repair',1]],oka:4,pud:6,
     more:[['KUTO MARKET STORES','#E4572E','#ffffff'],['OLUMO ROCK SOUVENIRS','#7a4a2e','#ffffff'],['EGBA TAILORS','#2D6FB3','#ffffff'],['ROCKFORD POS','#F6B21A','#1B1C20']],
     barks:['Hello!','Hello!','Boss, come!','Customer!'],barksEn:['Good morning!','How are you?','Boss, come!','Customer!'],hawk:['Pure water!','Oranges! Sweet oranges!','Akara!'],conductor:['Kuto! Hawa!','Lafenwa! Enter!'],
     nsRoads:['Lafenwa Road','Oba Adegbola Road','Ibara Road','Kuto Road','Rockford Road','Olumo Road','Ijemo Road'],ewRoads:['Ake Road','Ita-Eko Road','Isabo Road','Panseke Road','Oke-Mosan Road','Ibara Orile Road','Ijeun Road'],
@@ -858,7 +820,7 @@ const NEWC={
   clearwater:{name:'Delta Coast',tag:'The river port city',lon:6.73,lat:6.2,seed:241,sky:0xB8D4D0,ground:'#2D302F',slab:'#B5BBB1',
     paint:['#C2D0BF','#A9C2B6','#D7C7A6','#9DB5BE','#C8B69A','#B1C6A3'],market:4,palm:.7,tree:.6,leaf:'#2b7a40',dirt:'#7a5a3e',bridges:[[0,-52]],
     fleet:[['police',.5],['threewheeler',3],['sedan',3],['shuttle',3],['motorbike',3],['truck',2]],styles:[['flat',.4],['zinc',.25],['glass',.2],['admin',.15]],lm:[['church',-35,35],['church',35,105]],
-    shopKinds:[['shop',3],['kiosk',2],['container',3],['diner',2],['vulc',1]],oka:4,pud:12,
+    shopKinds:[['shop',3],['kiosk',2],['container',3],['diner',2],['repair',1]],oka:4,pud:12,
     more:[['CLEARWATER HARBOUR STORES','#2D6FB3','#ffffff'],['NORTHREACH BRIDGE PHARMACY','#0B7A43','#ffffff'],['DELTA COAST FISH HOUSE','#E4572E','#ffffff'],['CLEARWATER POS','#F6B21A','#1B1C20']],
     barks:['Nna!','Wetin dey?','Oga, come!','Customer!'],barksEn:['My brother!','What is happening?','Boss, come!','Customer!'],hawk:['Pure water!','Fresh fish!','Ice water!'],conductor:['Harbour! Enter!','Okpanam! Hawa!'],
     nsRoads:['Nnebisi Road','Okpanam Road','Harbour Road','Cable Point Road','Ibusa Road','Oko Road','Summit Road'],ewRoads:['Ibusa Road','Okwe Road','Ugbolu Road','Ogbeoma Road','Ogbe Road','Otulu Road','Dukpa Road'],
@@ -866,7 +828,7 @@ const NEWC={
   seabrook:{name:'Seabrook',tag:'The Land of Promise',lon:7.93,lat:5.03,seed:207,sky:0xC9DCC0,ground:'#2E302C',slab:'#C0C4B4',
     paint:['#D5C9AD','#B7C7AD','#E2D2B0','#A9BDB2','#D8BF9A','#C2CFA8'],market:4,palm:.7,tree:.8,leaf:'#2b7a3f',dirt:'#8d6242',
     fleet:[['police',.4],['threewheeler',3],['sedan',4],['suv',3],['shuttle',2],['motorbike',2]],styles:[['flat',.45],['glass',.2],['admin',.2],['zinc',.15]],lm:[['church',-35,35],['church',35,105]],
-    shopKinds:[['shop',3],['kiosk',2],['diner',2],['container',2],['vulc',1]],oka:3,pud:8,
+    shopKinds:[['shop',3],['kiosk',2],['diner',2],['container',2],['repair',1]],oka:3,pud:8,
     more:[['SEABROOK SUPERMARKET','#0B7A43','#ffffff'],['ITAM FABRICS','#C7457E','#ffffff'],['SEABROOK FRESH FISH','#2D6FB3','#ffffff'],['ISONG POS','#F6B21A','#1B1C20']],
     barks:['Good day!','How's it going?','Boss, come!','Customer!'],barksEn:['Good day!','How's it going?','Boss, come!','Customer!'],hawk:['Pure water!','Fresh fish!','Corn! Hot corn!'],conductor:['Ring Road! Enter!','Ekpan! Hawa!'],
     nsRoads:['Ring Road','Abak Road','Ekpan Road','Aka Road','Nwaniba Road','Oron Road','Ibom Plaza Road'],ewRoads:['Udo Udoma Avenue','Brookfield Road','Itam Road','Aniong Road','Ewet Road','Akpan Andem Road','Nsikak Eduok Road'],
@@ -874,7 +836,7 @@ const NEWC={
   goldcrest:{name:'Goldcrest',tag:'The walled city of the north',lon:7.6,lat:12.99,seed:213,sky:0xF1D4A2,ground:'#3B3429',slab:'#D0B98E',
     paint:['#E4CB9E','#D4B386','#EAD7AE','#C49C6C','#DCC08E','#B88C5C'],market:3,palm:.25,tree:.6,leaf:'#6e8e3c',dirt:'#c69b6a',
     fleet:[['police',.5],['threewheeler',5],['motorbike',3],['sedan',2],['truck',2],['shuttle',1]],styles:[['banco',.5],['flat',.3],['zinc',.2]],lm:[['mosque',-35,35],['mosque',35,105]],
-    shopKinds:[['shop',3],['kiosk',2],['diner',2],['container',1],['vulc',1]],oka:4,pud:0,
+    shopKinds:[['shop',3],['kiosk',2],['diner',2],['container',1],['repair',1]],oka:4,pud:0,
     more:[['KASUWAR GOLDCREST','#E4572E','#ffffff'],['MALAM ADAMU TEA','#7a4a2e','#ffffff'],['DAN ILLO TEXTILES','#2D6FB3','#ffffff'],['GOLDCREST POS','#0B7A43','#ffffff']],
     barks:['Hello!','Hello!','Boss, come!','Customer!'],barksEn:['Hello!','How are you?','Boss, come!','Customer!'],hawk:['Hello! Hello!','Kunu! Cold kunu!','Suya, grill!'],conductor:['Hello! Hawa!','Daura Road! Hawa!'],
     nsRoads:['Kofar Kaura Road','Daura Road','Funtua Road','Mani Road','Kankia Road','Zaria Road','Airport Road'],ewRoads:['Kofar Marusa Road','Sabon Gari Road','Ummaru Musa Road','Dutsin-Ma Road','Ilela Road','Yar’adua Road','Barrack Road'],
@@ -882,7 +844,7 @@ const NEWC={
   meadowfield:{name:'Meadowfield',tag:'The food basket on the Meadowfield',lon:8.53,lat:7.73,seed:223,sky:0xC6DDB7,ground:'#2D3029',slab:'#BDBFA8',
     paint:['#D0C49F','#B9C7A4','#E0CFA5','#A8B89A','#CFB48A','#C4D0AA'],market:4,palm:.6,tree:.8,leaf:'#3f7f3a',dirt:'#8b6040',bridges:[[0,-52]],
     fleet:[['police',.4],['threewheeler',4],['motorbike',3],['sedan',3],['shuttle',2],['truck',2]],styles:[['flat',.4],['zinc',.3],['banco',.15],['admin',.15]],lm:[['church',-35,35],['church',35,105]],
-    shopKinds:[['shop',3],['kiosk',3],['diner',2],['container',2],['vulc',1]],oka:4,pud:10,
+    shopKinds:[['shop',3],['kiosk',3],['diner',2],['container',2],['repair',1]],oka:4,pud:10,
     more:[['WURUKUM YAM HOUSE','#E4572E','#ffffff'],['MEADOWFIELD RIVER HOTEL','#2D6FB3','#ffffff'],['TIV FABRICS','#C7457E','#ffffff'],['MEADOWFIELD POS','#F6B21A','#1B1C20']],
     barks:['Good morning!','How's it going?','Boss, come!','Customer!'],barksEn:['Good morning!','How's it going?','Boss, come!','Customer!'],hawk:['Pure water!','Yam! Fresh yam!','Roasted corn!'],conductor:['Wurukum! Hawa!','Modern Market! Enter!'],
     nsRoads:['North Bank Road','Gboko Road','Wurukum Road','Konshisha Road','Ankpa Road','High Level Road','Meadowfield Road'],ewRoads:['Ochi Road','Ogbo Road','Naka Road','Ikpayongo Road','Dan Asabe Road','Agan Road','Nyiaev Road'],
@@ -890,7 +852,7 @@ const NEWC={
   redcliff:{name:'Redcliff',tag:'The glorious city of the rock',lon:5.19,lat:7.25,seed:251,sky:0xD5C6A6,ground:'#332F2B',slab:'#BFB3A0',
     paint:['#D0BC98','#B7A583','#E0CDAA','#A8B59B','#C9AE87','#9BB0A0'],market:4,palm:.65,tree:.8,leaf:'#2f7a3c',dirt:'#8b5e3c',
     fleet:[['police',.4],['threewheeler',4],['sedan',3],['motorbike',3],['shuttle',2],['suv',2]],styles:[['flat',.4],['zinc',.25],['admin',.2],['glass',.15]],lm:[['church',-35,35],['mosque',35,105]],
-    shopKinds:[['shop',3],['kiosk',3],['diner',2],['container',2],['vulc',1]],oka:3,pud:8,
+    shopKinds:[['shop',3],['kiosk',3],['diner',2],['container',2],['repair',1]],oka:3,pud:8,
     more:[['REDCLIFF COCOA HOUSE','#7a4a2e','#ffffff'],['OKE-IJEBU STORES','#E4572E','#ffffff'],['REDCLIFF GOLD BUREAU','#F6B21A','#1B1C20'],['REDCLIFF POS','#0B7A43','#ffffff']],
     barks:['Hello!','Hello!','Boss, come!','Customer!'],barksEn:['Good morning!','How are you?','Boss, come!','Customer!'],hawk:['Pure water!','Cocoa drink!','Roasted corn!'],conductor:['Oja Oba! Hawa!','Ijapo! Enter!'],
     nsRoads:['Oba Adesida Road','Ilesha Road','Redcliff Road','Oyemekun Road','Ijapo Road','Redcliff-Owo Road','Airport Road'],ewRoads:['Oke Ijebu Road','Alagbaka Road','Ilumoba Road','Arakale Road','Oja Oba Road','Ogbese Road','Obanla Road'],
@@ -898,7 +860,7 @@ const NEWC={
   drylands:{name:'Drylands',tag:'The gateway to Yankari',lon:9.84,lat:10.31,seed:263,sky:0xEFD2A4,ground:'#3A3430',slab:'#D0BC9A',
     paint:['#E1CBA0','#CDB48A','#D9C29A','#EFE0BC','#BC9A6E','#C9B88E'],market:3,palm:.3,tree:.7,leaf:'#5e8a3c',dirt:'#b48258',
     fleet:[['police',.5],['threewheeler',5],['sedan',2],['motorbike',3],['truck',2],['shuttle',1]],styles:[['banco',.45],['flat',.3],['zinc',.25]],lm:[['mosque',-35,35]],
-    shopKinds:[['shop',3],['kiosk',2],['diner',2],['container',1],['vulc',1]],oka:4,pud:0,
+    shopKinds:[['shop',3],['kiosk',2],['diner',2],['container',1],['repair',1]],oka:4,pud:0,
     more:[['YANKARI TOURS OFFICE','#2D6FB3','#ffffff'],['DRYLANDS TEA HOUSE','#7a4a2e','#ffffff'],['GWALLAME TEXTILES','#7a3b8f','#ffffff'],['DRYLANDS POS','#0B7A43','#ffffff']],
     barks:['Hello!','Hello!','Boss, come!','Customer!'],barksEn:['Hello!','How are you?','Boss, come!','Customer!'],hawk:['Hello! Hello!','Kunu! Cold kunu!','Suya, grill!'],conductor:['Hello! Hawa!','Yankari! Hawa!'],
     nsRoads:['Sunspire Road','Highland Road','Kingswell Road','Murtala Mohammed Way','Gwallame Road','Azare Road','Airport Road'],ewRoads:['Yelwa Road','Dass Road','Miri Road','Tafawa Balewa Way','Wunti Road','Kofar Wunti Road','Gwallaga Road'],
@@ -906,7 +868,7 @@ const NEWC={
   willowregion:{name:'Willowdale',tag:'The fountain of knowledge',lon:5.22,lat:7.62,seed:293,sky:0xCFD9B8,ground:'#2D302A',slab:'#B9BDA8',
     paint:['#C9D1AE','#B2BE9A','#DCD3B1','#A4B8A6','#CCB58F','#BFCCA4'],market:4,palm:.6,tree:.8,leaf:'#2d7a3e',dirt:'#8a5e3e',
     fleet:[['police',.4],['threewheeler',4],['motorbike',3],['sedan',3],['suv',2],['shuttle',2]],styles:[['flat',.4],['zinc',.25],['admin',.25],['glass',.1]],lm:[['church',-35,35],['church',35,105]],
-    shopKinds:[['shop',3],['kiosk',3],['diner',2],['container',2],['vulc',1]],oka:3,pud:8,
+    shopKinds:[['shop',3],['kiosk',3],['diner',2],['container',2],['repair',1]],oka:3,pud:8,
     more:[['FOUNTAIN BOOKSHOP','#2D6FB3','#ffffff'],['WILLOWDALE HONEY HOUSE','#F6B21A','#1B1C20'],['ADO TAILORS','#C7457E','#ffffff'],['WILLOWDALE POS','#0B7A43','#ffffff']],
     barks:['Hello!','Hello!','Boss, come!','Customer!'],barksEn:['Good morning!','How are you?','Boss, come!','Customer!'],hawk:['Pure water!','Honey! Pure honey!','Roasted corn!'],conductor:['Ajilosun! Hawa!','Oke Ila! Enter!'],
     nsRoads:['Ikere Road','Ilawe Road','Iworoko Road','Ajilosun Road','Oke Ila Road','Ikole Road','Airport Road'],ewRoads:['Erekesan Road','Ilupeju Road','Ogbontoko Road','Ijigbo Road','Okesha Road','Ogbonna Road','Okeoro Road'],
@@ -914,7 +876,7 @@ const NEWC={
   kingswell:{name:'Kingswell',tag:'The Jewel of the East',lon:11.17,lat:10.29,seed:307,sky:0xF0D0A0,ground:'#3B3429',slab:'#D2BB94',
     paint:['#E3C89D','#CFAE7E','#EBD8B2','#BE9A6A','#DAC08A','#B5A07A'],market:3,palm:.3,tree:.7,leaf:'#6a8f3e',dirt:'#c09060',
     fleet:[['police',.5],['threewheeler',5],['motorbike',3],['sedan',2],['truck',2],['shuttle',1]],styles:[['banco',.4],['flat',.35],['zinc',.25]],lm:[['mosque',-35,35],['church',35,105]],
-    shopKinds:[['shop',3],['kiosk',2],['diner',2],['container',1],['vulc',1]],oka:4,pud:0,
+    shopKinds:[['shop',3],['kiosk',2],['diner',2],['container',1],['repair',1]],oka:4,pud:0,
     more:[['KINGSWELL TOMATO HOUSE','#E4572E','#ffffff'],['BOLARI TEXTILES','#7a3b8f','#ffffff'],['KINGSWELL PHARMACY','#0B7A43','#ffffff'],['KINGSWELL POS','#F6B21A','#1B1C20']],
     barks:['Hello!','Hello!','Boss, come!','Customer!'],barksEn:['Hello!','How are you?','Boss, come!','Customer!'],hawk:['Hello! Hello!','Tomatoes!','Kunu!'],conductor:['Bolari! Hawa!','Pantami! Hawa!'],
     nsRoads:['Biu Road','Drylands Road','Pantami Road','Dukku Road','Kumo Road','Airport Road','Ashaka Road'],ewRoads:['Bolari Road','Pantami Road','Jekadafari Road','Tudun Wada Road','Kwadon Road','Bajoga Road','Dadin Kowa Road'],
@@ -922,7 +884,7 @@ const NEWC={
   westhaven:{name:'Westhaven',tag:'The old capital of Westhaven',lon:12.46,lat:9.2,seed:311,sky:0xE8CFA2,ground:'#3A3228',slab:'#CDB995',
     paint:['#DCC498','#C9AB7A','#E8D3A8','#B6956C','#D3B584','#A9B49A'],market:3,palm:.45,tree:.8,leaf:'#4e8a3b',dirt:'#a2704a',bridges:[[0,-52]],
     fleet:[['police',.4],['threewheeler',4],['motorbike',3],['sedan',2],['shuttle',2],['truck',2]],styles:[['flat',.4],['banco',.3],['zinc',.2],['admin',.1]],lm:[['mosque',-35,35],['church',35,105]],
-    shopKinds:[['shop',3],['kiosk',2],['diner',2],['container',1],['vulc',1]],oka:4,pud:6,
+    shopKinds:[['shop',3],['kiosk',2],['diner',2],['container',1],['repair',1]],oka:4,pud:6,
     more:[['WESTHAVEN RIVER STORES','#2D6FB3','#ffffff'],['WESTHAVEN CRAFTS','#7a4a2e','#ffffff'],['JIMETA TELECOM','#E4572E','#ffffff'],['WESTHAVEN POS','#0B7A43','#ffffff']],
     barks:['Hello!','Hello!','Boss, come!','Customer!'],barksEn:['Hello!','How are you?','Boss, come!','Customer!'],hawk:['Hello! Hello!','Groundnuts!','Kunu!'],conductor:['Jimeta! Hawa!','Westhaven! Hawa!'],
     nsRoads:['Jimeta Road','Drylands Road','Numan Road','Airport Road','Ahmadu Bello Way','Kingswell Road','Mubi Road'],ewRoads:['Lamido Road','Jambutu Road','Doubeli Road','Gwadabawa Road','Ngurore Road','Yelwa Road','Yolde Pate Road'],
@@ -930,7 +892,7 @@ const NEWC={
   cedarpoint:{name:'Eastport',tag:'The rice city',lon:8.12,lat:6.32,seed:331,sky:0xC8D8BA,ground:'#2E302C',slab:'#BCC0AC',
     paint:['#CAD3B0','#B6C7A0','#DDD2B0','#A5B8A3','#C9B38C','#BBCBA3'],market:4,palm:.7,tree:.8,leaf:'#2e7a3c',dirt:'#8a6040',
     fleet:[['police',.4],['threewheeler',4],['motorbike',3],['sedan',3],['shuttle',2],['truck',2]],styles:[['flat',.4],['zinc',.3],['admin',.15],['banco',.15]],lm:[['church',-35,35],['church',35,105]],
-    shopKinds:[['shop',3],['kiosk',3],['diner',2],['container',2],['vulc',1]],oka:3,pud:8,
+    shopKinds:[['shop',3],['kiosk',3],['diner',2],['container',2],['repair',1]],oka:3,pud:8,
     more:[['EASTPORT RICE MILL','#E4572E','#ffffff'],['EASTPORT MARKET STORES','#0B7A43','#ffffff'],['NKALAGU STONE HOUSE','#7a4a2e','#ffffff'],['EASTPORT POS','#F6B21A','#1B1C20']],
     barks:['Nna!','Kedu?','Boss, come!','Customer!'],barksEn:['My brother!','How are you?','Boss, come!','Customer!'],hawk:['Pure water!','Rice! Fresh rice!','Roasted corn!'],conductor:['Nkaliki! Hawa!','Market Road! Enter!'],
     nsRoads:['Nkaliki Road','Greenhaven Road','Ogoja Road','Market Road','Eastport Road','Ikwo Road','Airport Road'],ewRoads:['Okposi Road','Ndufu Road','Rice Mill Road','Ezza Road','Presidential Road','Nwofe Road','Ikwo Road East'],
@@ -938,7 +900,7 @@ const NEWC={
   rivermouth:{name:'Riverton',tag:'Capital: Pinecrest',lon:7.49,lat:5.53,seed:341,sky:0xD2C8A4,ground:'#2F2E2B',slab:'#BDB59E',
     paint:['#D8C6A0','#C2AF88','#E3D3AE','#B0A082','#CDBA94','#A9B89A'],market:4,palm:.7,tree:.7,leaf:'#2f7a3c',dirt:'#8a6040',
     fleet:[['police',.4],['threewheeler',3],['motorbike',3],['sedan',3],['shuttle',3],['truck',2]],styles:[['flat',.4],['zinc',.3],['admin',.15],['glass',.15]],lm:[['church',-35,35],['church',35,105]],
-    shopKinds:[['shop',3],['kiosk',3],['diner',2],['container',2],['vulc',1]],oka:4,pud:9,
+    shopKinds:[['shop',3],['kiosk',3],['diner',2],['container',2],['repair',1]],oka:4,pud:9,
     more:[['RIVERTON SHOE HOUSE','#E4572E','#ffffff'],['PINECREST MARKET STORES','#0B7A43','#ffffff'],['RIVERTON FABRICS','#C7457E','#ffffff'],['RIVERTON POS','#F6B21A','#1B1C20']],
     barks:['Nna!','Kedu?','Boss, come!','Customer!'],barksEn:['My brother!','How are you?','Boss, come!','Customer!'],hawk:['Pure water!','Fresh fish!','Ice water!'],conductor:['Pinecrest! Hawa!','Riverton Road! Enter!'],
     nsRoads:['Riverton Road','Ohanze Road','Okigwe Road','Brookfield Road','Pinecrest Ring Road','Ibeku Road','Airport Road'],ewRoads:['Ohanku Road','Ngwa Road','Obingwa Road','Ibeku Road East','Ugwunagbo Road','Nkwoagu Road','Ogbor Road'],
@@ -946,7 +908,7 @@ const NEWC={
   deltadistrict:{name:'Delta Coast Bay',tag:'Capital: Delta Coast Bay',lon:6.27,lat:4.92,seed:353,sky:0xA9C9C0,ground:'#26302B',slab:'#A3AE9E',
     paint:['#B2C2A8','#9FB59A','#C9C09A','#8FA9A0','#BBAA8C','#A7BAA0'],market:4,palm:.85,tree:.8,leaf:'#246a38',dirt:'#5f4a33',bridges:[[0,-52]],
     fleet:[['police',.4],['threewheeler',3],['sedan',3],['shuttle',2],['motorbike',3],['truck',2]],styles:[['flat',.45],['zinc',.3],['glass',.15],['admin',.1]],lm:[['church',-35,35],['church',35,105]],
-    shopKinds:[['shop',3],['kiosk',3],['container',2],['diner',2],['vulc',1]],oka:3,pud:18,
+    shopKinds:[['shop',3],['kiosk',3],['container',2],['diner',2],['repair',1]],oka:3,pud:18,
     more:[['DELTA COAST BAY FISH MARKET','#2D6FB3','#ffffff'],['NORTHREACH DELTA COAST PHARMACY','#0B7A43','#ffffff'],['OGBOINBIRI STORES','#E4572E','#ffffff'],['DELTA COAST BAY POS','#F6B21A','#1B1C20']],
     barks:['How's it going?','Wetin dey?','Oga, come!','Customer!'],barksEn:['How are you?','What is happening?','Boss, come!','Customer!'],hawk:['Fresh fish!','Pure water!','Crayfish!'],conductor:['Okaka! Enter!','Delta Coast Bay! Hawa!'],
     nsRoads:['Ox-Bow Road','Azikoro Road','Okutukutu Road','Onopa Road','Airport Road','Yenegoa Ring Road','Mbiama Road'],ewRoads:['Akenfa Road','Opolo Road','Biogbolo Road','Amassoma Road','Ekeki Road','Tombia Road','Igbogene Road'],
@@ -954,7 +916,7 @@ const NEWC={
   hillcrestdistrict:{name:'Hillcrest',tag:'Capital: Hillcrest',lon:9.34,lat:11.76,seed:367,sky:0xF0D4A6,ground:'#3B3428',slab:'#D4BD96',
     paint:['#E5CDA2','#D2B486','#EBD9B2','#BF9A69','#DCC08C','#B4A07A'],market:3,palm:.3,tree:.6,leaf:'#6f8e3c',dirt:'#c79a66',
     fleet:[['police',.5],['threewheeler',5],['motorbike',3],['sedan',2],['truck',2],['shuttle',1]],styles:[['banco',.45],['flat',.3],['zinc',.25]],lm:[['mosque',-35,35],['mosque',35,105]],
-    shopKinds:[['shop',3],['kiosk',2],['diner',2],['container',1],['vulc',1]],oka:4,pud:0,
+    shopKinds:[['shop',3],['kiosk',2],['diner',2],['container',1],['repair',1]],oka:4,pud:0,
     more:[['HILLCREST GRAIN HOUSE','#E4572E','#ffffff'],['HILLCREST TEXTILES','#7a3b8f','#ffffff'],['KAZAURE TEA','#7a4a2e','#ffffff'],['HILLCREST POS','#0B7A43','#ffffff']],
     barks:['Hello!','Hello!','Boss, come!','Customer!'],barksEn:['Hello!','How are you?','Boss, come!','Customer!'],hawk:['Hello! Hello!','Kunu!','Groundnuts!'],conductor:['Hillcrest! Hawa!','Hello! Hawa!'],
     nsRoads:['Solara City Road','Hadejia Road','Gumel Road','Hillcrest Road','Ringim Road','Airport Road','Birnin Kudu Road'],ewRoads:['Kofar Arewa Road','Sabon Gari Road','Ahmadu Bello Road','Kazaure Road','Kafin Hausa Road','Kiyawa Road','Ringim Lane'],
@@ -962,7 +924,7 @@ const NEWC={
   bridgewaterdistrict:{name:'Bridgewater',tag:'Capital: Bridgewater',lon:4.2,lat:12.45,seed:373,sky:0xF2D1A0,ground:'#3A3228',slab:'#D0B992',
     paint:['#E6CCA0','#CFB185','#EDD9B2','#BE9868','#D9BE8C','#AFA27A'],market:3,palm:.3,tree:.6,leaf:'#66883a',dirt:'#c2935e',
     fleet:[['police',.5],['threewheeler',5],['motorbike',3],['sedan',2],['truck',2],['shuttle',1]],styles:[['banco',.45],['flat',.3],['zinc',.25]],lm:[['mosque',-35,35],['church',35,105]],
-    shopKinds:[['shop',3],['kiosk',2],['diner',2],['container',1],['vulc',1]],oka:4,pud:0,
+    shopKinds:[['shop',3],['kiosk',2],['diner',2],['container',1],['repair',1]],oka:4,pud:0,
     more:[['BRIDGEWATER RICE','#E4572E','#ffffff'],['ZURU TEXTILES','#7a3b8f','#ffffff'],['BRIDGEWATER PHARMACY','#0B7A43','#ffffff'],['BRIDGEWATER POS','#F6B21A','#1B1C20']],
     barks:['Hello!','Hello!','Boss, come!','Customer!'],barksEn:['Hello!','How are you?','Boss, come!','Customer!'],hawk:['Hello! Hello!','Rice cakes!','Suya, grill!'],conductor:['Bridgewater! Hawa!','Zuru! Hawa!'],
     nsRoads:['Kamba Road','Argungu Road','Zuru Road','Airport Road','Sunvale Road','Yauri Road','Jega Road'],ewRoads:['Kanya Road','Maiyama Road','Gwadangaji Road','Dakingari Road','Kalgo Road','Bagudo Road','Shanga Road'],
@@ -970,7 +932,7 @@ const NEWC={
   riverbenddistrict:{name:'Riverbend',tag:'Capital: Riverbend',lon:6.74,lat:7.8,seed:383,sky:0xC8D2C0,ground:'#2F3029',slab:'#B8BAA5',
     paint:['#C9C4A0','#B5B98E','#D8D0AB','#A5AFA0','#C8AE86','#B3C1A1'],market:4,palm:.6,tree:.8,leaf:'#2f7a3c',dirt:'#8c5e3c',bridges:[[0,-52]],
     fleet:[['police',.4],['threewheeler',3],['sedan',3],['shuttle',2],['motorbike',3],['truck',3]],styles:[['flat',.4],['zinc',.3],['admin',.2],['banco',.1]],lm:[['church',-35,35],['church',35,105]],
-    shopKinds:[['shop',3],['kiosk',3],['container',2],['diner',2],['vulc',2]],oka:4,pud:10,
+    shopKinds:[['shop',3],['kiosk',3],['container',2],['diner',2],['repair',2]],oka:4,pud:10,
     more:[['CONFLUENCE STORES','#2D6FB3','#ffffff'],['RIVERBEND RIVERSIDE HOTEL','#0B7A43','#ffffff'],['RIVERBEND TEXTILES','#C7457E','#ffffff'],['RIVERBEND POS','#F6B21A','#1B1C20']],
     barks:['Kedu?','Boss, come!','How's it going?','Customer!'],barksEn:['How are you?','Boss, come!','How's it going?','Customer!'],hawk:['Pure water!','Fresh fish!','Akara!'],conductor:['Riverbend! Hawa!','Confluence! Enter!'],
     nsRoads:['Riverbend-Meridian City Road','Ganaja Road','Confluence Road','Okene Road','Airport Road','Felele Road','Adankolo Road'],ewRoads:['Felele Road','Ganaja Road','Adankolo Road','Lokongoma Road','Ahmadu Bello Road','Ajaokuta Road','Kabawa Road'],
@@ -978,7 +940,7 @@ const NEWC={
   northfielddistrict:{name:'Northfield',tag:'Capital: Northfield',lon:8.52,lat:8.49,seed:389,sky:0xD8CCAC,ground:'#33312B',slab:'#C6BC9F',
     paint:['#D9C7A0','#C6B085','#E4D5B0','#B39A6E','#CDB990','#AFBC9B'],market:3,palm:.4,tree:.8,leaf:'#4b8032',dirt:'#9a6c42',
     fleet:[['police',.4],['threewheeler',4],['motorbike',3],['sedan',3],['shuttle',2],['truck',2]],styles:[['flat',.35],['zinc',.3],['banco',.2],['admin',.15]],lm:[['church',-35,35],['mosque',35,105]],
-    shopKinds:[['shop',3],['kiosk',2],['diner',3],['container',1],['vulc',1]],oka:3,pud:6,
+    shopKinds:[['shop',3],['kiosk',2],['diner',3],['container',1],['repair',1]],oka:3,pud:6,
     more:[['NORTHFIELD DAM STORES','#2D6FB3','#ffffff'],['NORTHFIELD FABRICS','#C7457E','#ffffff'],['KARU BUKA','#E4572E','#ffffff'],['NORTHFIELD POS','#0B7A43','#ffffff']],
     barks:['Good day!','How's it going?','Boss, come!','Customer!'],barksEn:['Good day!','How's it going?','Boss, come!','Customer!'],hawk:['Pure water!','Fresh tomatoes!','Suya!'],conductor:['Northfield! Hawa!','Akwanga Road! Enter!'],
     nsRoads:['Meadowfield Road','Akwanga Road','Keffi Road','Highland Road','Obi Road','Airport Road','Doma Road'],ewRoads:['Bukan Sidi Road','Ahmadu Bello Road','Shabu Road','Keffi Road East','Kofar Road','Mararaba Road','Hillcrest Road'],
@@ -986,7 +948,7 @@ const NEWC={
   lakesidedistrict:{name:'Lakeside',tag:'Capital: Lakeside',lon:4.56,lat:7.77,seed:397,sky:0xE7CBA0,ground:'#35302B',slab:'#CDB99C',
     paint:['#D7BD97','#C2A37A','#E5D0AC','#B39169','#D1B287','#A9B39A'],market:4,palm:.5,tree:.8,leaf:'#3a7d3a',dirt:'#9a6a40',
     fleet:[['police',.4],['threewheeler',4],['motorbike',3],['sedan',3],['shuttle',2],['truck',1]],styles:[['flat',.4],['zinc',.3],['admin',.15],['banco',.15]],lm:[['church',-35,35],['mosque',35,105]],
-    shopKinds:[['shop',3],['kiosk',3],['diner',2],['container',2],['vulc',1]],oka:4,pud:6,
+    shopKinds:[['shop',3],['kiosk',3],['diner',2],['container',2],['repair',1]],oka:4,pud:6,
     more:[['LAKESIDE SHRINE CRAFTS','#7a3b8f','#ffffff'],['OLAIYA STORES','#E4572E','#ffffff'],['LAKESIDE FABRICS','#F6B21A','#1B1C20'],['LAKESIDE POS','#0B7A43','#ffffff']],
     barks:['Hello!','Hello!','Boss, come!','Customer!'],barksEn:['Good morning!','How are you?','Boss, come!','Customer!'],hawk:['Pure water!','Oranges!','Akara!'],conductor:['Lakeside! Hawa!','Oke Fia! Enter!'],
     nsRoads:['Oakridge Road','Ede Road','Ilesa Road','Iwo Road','Oke-Fia Road','Gbongan Road','Airport Road'],ewRoads:['Olaiya Road','Ogbona Road','Ataoja Road','Oke Baale Road','Gbongan Road East','Ilesha Road Lane','Oke Fia Lane'],
@@ -994,7 +956,7 @@ const NEWC={
   pinevaledistrict:{name:'Pinevale',tag:'Capital: Pinevale',lon:11.36,lat:8.9,seed:401,sky:0xDAD3A8,ground:'#2E3228',slab:'#BDBE9E',
     paint:['#C7C69C','#B0B88A','#D8D4AE','#A1AE8E','#C0AA84','#B1BD9C'],market:3,palm:.4,tree:.9,leaf:'#3a7c36',dirt:'#8c6442',
     fleet:[['police',.4],['threewheeler',4],['motorbike',3],['sedan',2],['truck',2],['shuttle',2]],styles:[['flat',.35],['zinc',.3],['banco',.25],['admin',.1]],lm:[['church',-35,35],['church',35,105]],
-    shopKinds:[['shop',3],['kiosk',2],['diner',2],['container',1],['vulc',1]],oka:3,pud:8,
+    shopKinds:[['shop',3],['kiosk',2],['diner',2],['container',1],['repair',1]],oka:3,pud:8,
     more:[['PINEVALE COCOA STORES','#7a4a2e','#ffffff'],['MAMBILLA TEA','#0B7A43','#ffffff'],['PINEVALE CRAFTS','#E4572E','#ffffff'],['PINEVALE POS','#F6B21A','#1B1C20']],
     barks:['Good day!','How's it going?','Boss, come!','Customer!'],barksEn:['Good day!','How's it going?','Boss, come!','Customer!'],hawk:['Pure water!','Cocoa drink!','Roasted corn!'],conductor:['Pinevale! Hawa!','Lamido Road! Enter!'],
     nsRoads:['Hospital Road','Ibi Road','Gassol Road','Wukari Road','Mayo Ranewo Road','Lamido Road','Airport Road'],ewRoads:['Mutai Road','Pinevale Ring Road','Barade Road','Kona Road','Mararaba Road','Gaidam Road','Westhaven Road'],
@@ -1002,7 +964,7 @@ const NEWC={
   dusthavendistrict:{name:'Dusthaven',tag:'Capital: Dusthaven',lon:11.96,lat:11.75,seed:409,sky:0xF3CF9C,ground:'#3C352C',slab:'#D3BA90',
     paint:['#E4C799','#CDAE7F','#EBD6AE','#BB9866','#D9BD8A','#B09874'],market:3,palm:.25,tree:.5,leaf:'#6f8d3d',dirt:'#c9a070',
     fleet:[['police',.5],['threewheeler',5],['motorbike',3],['sedan',2],['truck',2],['shuttle',1]],styles:[['banco',.45],['flat',.3],['zinc',.25]],lm:[['mosque',-35,35]],
-    shopKinds:[['shop',3],['kiosk',2],['diner',2],['container',1],['vulc',1]],oka:4,pud:0,
+    shopKinds:[['shop',3],['kiosk',2],['diner',2],['container',1],['repair',1]],oka:4,pud:0,
     more:[['DUSTHAVEN SOLAR HOUSE','#E4572E','#ffffff'],['DUSTHAVEN DATES','#7a4a2e','#ffffff'],['DUSTHAVEN TEXTILES','#7a3b8f','#ffffff'],['DUSTHAVEN POS','#0B7A43','#ffffff']],
     barks:['Hello!','Hello!','Boss, come!','Customer!'],barksEn:['Hello!','How are you?','Boss, come!','Customer!'],hawk:['Hello! Hello!','Dates! Sweet dates!','Kunu!'],conductor:['Dusthaven! Hawa!','Sunspire Road! Hawa!'],
     nsRoads:['Sunspire Road','Potiskum Road','Gujba Road','Airport Road','Gashua Road','Buni Yadi Road','Dusthaven Ring Road'],ewRoads:['Kofar Kwaya Road','Sabon Gari Road','Gwange Road','Pompomari Road','Kasuwan Lane','Hillcrest Road','Tudun Wada Road'],
@@ -1010,7 +972,7 @@ const NEWC={
   ashforddistrict:{name:'Ashford',tag:'Capital: Ashford',lon:6.66,lat:12.17,seed:419,sky:0xEFD0A2,ground:'#3A3328',slab:'#D0B88E',
     paint:['#E3C69A','#CDAE7E','#EAD4AA','#BA9566','#D9BB88','#AEA076'],market:3,palm:.25,tree:.6,leaf:'#66893a',dirt:'#c2905c',
     fleet:[['police',.5],['threewheeler',4],['motorbike',3],['sedan',2],['truck',3],['shuttle',1]],styles:[['banco',.4],['flat',.35],['zinc',.25]],lm:[['mosque',-35,35],['church',35,105]],
-    shopKinds:[['shop',3],['kiosk',2],['diner',2],['container',2],['vulc',1]],oka:4,pud:0,
+    shopKinds:[['shop',3],['kiosk',2],['diner',2],['container',2],['repair',1]],oka:4,pud:0,
     more:[['ASHFORD LIVESTOCK','#E4572E','#ffffff'],['MAIGORO FABRICS','#7a3b8f','#ffffff'],['ASHFORD PHARMACY','#0B7A43','#ffffff'],['ASHFORD POS','#F6B21A','#1B1C20']],
     barks:['Hello!','Hello!','Boss, come!','Customer!'],barksEn:['Hello!','How are you?','Boss, come!','Customer!'],hawk:['Hello! Hello!','Suya, grill!','Kunu!'],conductor:['Ashford! Hawa!','Hello! Hawa!'],
     nsRoads:['Sunvale Road','Kaura Namoda Road','Talata Mafara Road','Airport Road','Maru Road','Tsafe Road','Bakura Road'],ewRoads:['Kofar Kaura Road','Sabon Gari Road','Ashford Ring Road','Mada Road','Dan Yaro Road','Kasuwan Shanu Road','Tudun Wada Road'],
@@ -1787,7 +1749,7 @@ function addShop(pt,side,C){
     for(const a of [-2.2,-.6,1.0,2.4]) chair(a,fs*1.0,pk(['#C8402A','#ffffff','#2D6FB3']));
     const pot=new THREE.Mesh(new THREE.CylinderGeometry(.8,.7,1,10),M('#111214')); pot.position.set(-1.4,1.6,-fs*.3); g.add(pot);
     sgn(4.6,1.1,4.9,['MAMA PUT BUKA','#E4572E','#ffffff'],1.7);
-  } else if(kind==='vulc'){
+  } else if(kind==='repair'){
     bx(3.6,3,2.6,'#6b6f78',-1.6,1.5,0); bx(4,.25,3,'#333',-1.6,3.1,0);
     for(let i=0;i<7;i++){ const t=new THREE.Mesh(TYREG,M('#161719')); t.position.set(1.8,.25+(i%4)*.5,fs*(i<4?1.0:.2)); g.add(t); }
     for(let i=0;i<3;i++){ const t=new THREE.Mesh(TYREG,M('#161719')); t.position.set(2.9,.25+i*.5,fs*-.4); g.add(t); }
@@ -2667,9 +2629,9 @@ function updateHUD(){
 /* =====================  missions  ===================== */
 const NPC=(name,role,color,look,stall,sign)=>({name,role,color,look,stall,sign});
 const MAMA=NPC('Softstorm','KitCity wallet kiosk','#0897A8',LK.softstorm,{body:'#0897A8',a:'#ffffff',b:BRAND,sub:'KitCity wallet'});
-const SUYA=NPC('IamAbdul','Best grill on the street',EMBER,LK.abdul,{body:'#8E2F1B',a:'#ffffff',b:EMBER,grill:true});
+const GRILL_VENDOR=NPC('IamAbdul','Best grill on the street',EMBER,LK.abdul,{body:'#8E2F1B',a:'#ffffff',b:EMBER,grill:true});
 const GUY=NPC('Joseph Nnadi','Says he is your friend','#6a3fb5',LK.josephNnadi,null,'Free USDC giveaway!'); GUY.signBg='#6a3fb5'; GUY.signFg='#ffffff';
-const ALHAJA=NPC('Larai','Bureau de Change','#2D6FB3',LK.larai,{body:'#2D6FB3',a:'#ffffff',b:'#2D6FB3',sub:'Bureau de Change'});
+const ALHAJA=NPC('Larai','Exchange Counter','#2D6FB3',LK.larai,{body:'#2D6FB3',a:'#ffffff',b:'#2D6FB3',sub:'Exchange Counter'});
 const CLERK=NPC('Unique','Swap counter','#1f4f82',LK.unique,{body:'#1f4f82',a:'#ffffff',b:YELLOW,sub:'Swap counter'});
 const BRIGHT=NPC('Smrt huntr','Shows you a text message','#6a3fb5',LK.smrtHuntr,null,'Check this text'); BRIGHT.signBg='#6a3fb5'; BRIGHT.signFg='#ffffff';
 const HASSAN=NPC('Goodness','Messaged you online','#C7457E',LK.goodness,null,'New DM'); HASSAN.signBg='#C7457E'; HASSAN.signFg='#ffffff';
@@ -2836,9 +2798,9 @@ const MISSIONS=[
       {t:'I’ll ask IamAbdul',f:finishStep}
     ]);
   }},
-  {label:'Ask IamAbdul what he heard',spot:'story',npc:SUYA,run(){
-    talk(SUYA,'<p>That symbol? I saw it on an old meetup poster. Same mark, different place.</p><p>Softstorm thinks it connects people learning, building, and finding opportunities. Neither of us knows how the pieces fit.</p>',[
-      {t:'Where was the poster?',f:()=>talk(SUYA,'<p>Near the noticeboard down the street. Check the poster, then look for the same mark elsewhere. Bring what you find back to Softstorm.</p><p class="note">You have a lead. Now prove the clues connect.</p>',[{t:'Start investigating',f:finishStep}])}
+  {label:'Ask IamAbdul what he heard',spot:'story',npc:GRILL_VENDOR,run(){
+    talk(GRILL_VENDOR,'<p>That symbol? I saw it on an old meetup poster. Same mark, different place.</p><p>Softstorm thinks it connects people learning, building, and finding opportunities. Neither of us knows how the pieces fit.</p>',[
+      {t:'Where was the poster?',f:()=>talk(GRILL_VENDOR,'<p>Near the noticeboard down the street. Check the poster, then look for the same mark elsewhere. Bring what you find back to Softstorm.</p><p class="note">You have a lead. Now prove the clues connect.</p>',[{t:'Start investigating',f:finishStep}])}
     ]);
   }},
   {kind:'clue',label:'Inspect the old meetup poster',spot:'b',title:'Old meetup poster',sign:'OLD MEETUP POSTER',run(){
@@ -2858,7 +2820,7 @@ const MISSIONS=[
     ]);
   }}
  ],
- extras:[{id:'iamabdul-story',spot:resolveMissionSpot('story'),npc:SUYA,run(){talk(SUYA,'<p>You heard us talking about T3Kit? I only know the name keeps turning up. Ask me after you speak with Softstorm.</p>',[{t:'I’ll come back',f:closeSheet}]);}}]
+ extras:[{id:'iamabdul-story',spot:resolveMissionSpot('story'),npc:GRILL_VENDOR,run(){talk(GRILL_VENDOR,'<p>You heard us talking about T3Kit? I only know the name keeps turning up. Ask me after you speak with Softstorm.</p>',[{t:'I’ll come back',f:closeSheet}]);}}]
 },
 {id:'m1',n:2,city:'novacity',title:'Your first wallet',goal:'Create a wallet, receive USDC and make your first payment.',
  steps:[
@@ -2871,20 +2833,20 @@ const MISSIONS=[
       [{t:'Create my wallet',f:createWallet},{t:'Not now',g:1,f:closeSheet}]);
   }},
   STEP_OXNIGHT,
-  {label:'Pay IamAbdul 1 USDC',spot:'j',npc:SUYA,run(){
+  {label:'Pay IamAbdul 1 USDC',spot:'j',npc:GRILL_VENDOR,run(){
     needFunds(1);
-    confirmTx(SUYA,{title:'Pay for grill',rows:[['Pay to',short(SUYA_ADDR),1],['Amount','1.00 USDC'],['Network fee',FEE0]],note:'Payments on a blockchain cannot be undone. Always check the address before you pay.',btn:'Pay 1 USDC',
+    confirmTx(GRILL_VENDOR,{title:'Pay for grill',rows:[['Pay to',short(SUYA_ADDR),1],['Amount','1.00 USDC'],['Network fee',FEE0]],note:'Payments on a blockchain cannot be undone. Always check the address before you pay.',btn:'Pay 1 USDC',
       after:h=>{ P.usdc=Math.max(0,P.usdc-1); save(); updateHUD();
-        talk(SUYA,'<h3>Payment confirmed</h3><div class="kv"><span>Receipt</span><b class="mono">'+short(h)+'</b></div><div class="kv"><span>Balance</span><b>'+P.usdc.toFixed(2)+' USDC</b></div><p>IamAbdul hands you a hot stick. Your receipt is permanent and public, so anyone can check that you paid.</p>',[{t:'Continue',f:finishStep}]); }});
+        talk(GRILL_VENDOR,'<h3>Payment confirmed</h3><div class="kv"><span>Receipt</span><b class="mono">'+short(h)+'</b></div><div class="kv"><span>Balance</span><b>'+P.usdc.toFixed(2)+' USDC</b></div><p>IamAbdul hands you a hot stick. Your receipt is permanent and public, so anyone can check that you paid.</p>',[{t:'Continue',f:finishStep}]); }});
   }}
  ],
  extras:[{id:'guy',spot:resolveMissionSpot('x1'),npc:GUY,run:giveawayGuy}]
 },
-{id:'m2',n:3,city:'novacity',title:'Bureau de Change',goal:'Learn rates, fees and slippage by swapping USDC for a naira token.',
+{id:'m2',n:3,city:'novacity',title:'Exchange Counter',goal:'Learn rates, fees and slippage by swapping USDC for practice credits.',
  steps:[
   {label:'Ask Larai for today\u2019s rate',spot:'e',npc:ALHAJA,run(){
-    talk(ALHAJA,'<p>A Bureau de Change swaps one money for another. On KitCity you can swap USDC for a naira token. Three words to know:</p><ul class="pts"><li><b>Rate:</b> how many naira you get for 1 USDC. It moves through the day.</li><li><b>Fee:</b> the part the service keeps.</li><li><b>Slippage:</b> how far the price can move before your swap is cancelled.</li></ul>',
-      [{t:'Show me today\u2019s rate',f:()=>talk(ALHAJA,'<h3>Today\u2019s rate</h3><div class="kv"><span>1 USDC</span><b>'+fmtN(RATE)+'</b></div><div class="kv"><span>Fee</span><b>0.5%</b></div><p class="note">Sample rate for this prototype. Real rates change all day, so always check the quote before you confirm.</p>',[{t:'Got it',f:finishStep}])}]);
+    talk(ALHAJA,'<p>A Exchange Counter swaps one money for another. On KitCity you can swap USDC for a practice credits token. Three words to know:</p><ul class="pts"><li><b>Rate:</b> how many practice credits you get for 1 USDC. It moves through the day.</li><li><b>Fee:</b> the part the service keeps.</li><li><b>Slippage:</b> how far the price can move before your swap is cancelled.</li></ul>',
+      [{t:'Show me today\u2019s rate',f:()=>talk(ALHAJA,'<h3>Today\u2019s rate</h3><div class="kv"><span>1 USDC</span><b>'+fmtCredits(RATE)+'</b></div><div class="kv"><span>Fee</span><b>0.5%</b></div><p class="note">Sample rate for this prototype. Real rates change all day, so always check the quote before you confirm.</p>',[{t:'Got it',f:finishStep}])}]);
   }},
   STEP_MOON,
   {label:'Swap 2 USDC at the counter',spot:'i',npc:CLERK,run(){
@@ -2896,9 +2858,9 @@ const MISSIONS=[
     function doSwap(slip){
       G.slip=slip; settleAnswer(slip<=0.005);
       const gross=2*RATE,fee=gross*0.005,recv=gross-fee,min=recv*(1-slip);
-      confirmTx(CLERK,{title:'Confirm your swap',rows:[['You pay','2.00 USDC'],['Rate','1 USDC = '+fmtN(RATE)],['Fee (0.5%)',fmtN(fee)],['Slippage limit',(slip*100).toFixed(1)+'%'],['You receive at least',fmtN(min)],['Network fee',FEE0]],btn:'Swap now',
-        after:()=>{ P.usdc=Math.max(0,P.usdc-2); P.ngn+=recv;  save(); updateHUD();
-          talk(CLERK,'<h3>Swap complete</h3><div class="kv"><span>Received</span><b>'+fmtN(recv)+' token</b></div><p>'+(slip<=0.005?'Smart. A tight limit protects you from a bad price.':'This worked, but a wide limit lets the price move against you. Keep slippage low unless you have a reason.')+'</p>',[{t:'Continue',f:finishStep}]); }});
+      confirmTx(CLERK,{title:'Confirm your swap',rows:[['You pay','2.00 USDC'],['Rate','1 USDC = '+fmtCredits(RATE)],['Fee (0.5%)',fmtCredits(fee)],['Slippage limit',(slip*100).toFixed(1)+'%'],['You receive at least',fmtCredits(min)],['Network fee',FEE0]],btn:'Swap now',
+        after:()=>{ P.usdc=Math.max(0,P.usdc-2); P.credits+=recv;  save(); updateHUD();
+          talk(CLERK,'<h3>Swap complete</h3><div class="kv"><span>Received</span><b>'+fmtCredits(recv)+' token</b></div><p>'+(slip<=0.005?'Smart. A tight limit protects you from a bad price.':'This worked, but a wide limit lets the price move against you. Keep slippage low unless you have a reason.')+'</p>',[{t:'Continue',f:finishStep}]); }});
     }
   }}
  ]
@@ -3025,10 +2987,10 @@ const MISSIONS=[
   }}
  ]
 },
-{id:'m8',n:9,city:'harbor',title:'Cash out safely',goal:'Sell USDC for naira with a peer, and never release before you are paid.',
+{id:'m8',n:9,city:'harbor',title:'Cash out safely',goal:'Sell USDC for practice credits with a peer, and never release before you are paid.',
  steps:[
   {label:'Post your sell offer',spot:'l',npc:ADA,run(){
-    talk(ADA,'<p>Peer-to-peer means you trade with another person. The platform holds your USDC in escrow while they pay your payment account. You release only after you see the money.</p><div class="kv"><span>You sell</span><b>1.00 USDC</b></div><div class="kv"><span>Price</span><b>'+fmtN(1480)+'</b></div>',[
+    talk(ADA,'<p>Peer-to-peer means you trade with another person. The platform holds your USDC in escrow while they pay your payment account. You release only after you see the money.</p><div class="kv"><span>You sell</span><b>1.00 USDC</b></div><div class="kv"><span>Price</span><b>'+fmtCredits(1480)+'</b></div>',[
       {t:'Post my offer',f:()=>busy(ADA,'Finding a buyer\u2026',1400,()=>talk(ADA,'<h3>Buyer found</h3><p>Chidi accepted your offer. Your USDC is locked in escrow. He has 15 minutes to pay your payment account account.</p>',[{t:'Continue',f:finishStep}]))}
     ]);
   }},
@@ -3036,14 +2998,14 @@ const MISSIONS=[
   {label:'Check your payment account before you release',spot:'c',npc:TOLA,run(){
     needFunds(1);
     function bank(){
-      talk(TOLA,'<h3>Your payment app</h3><div class="msg"><small>Credit alert</small>'+fmtN(1480)+' received from ALEX MORGAN. Balance updated.</div><p>The money is in your own account and the sender name matches your buyer. Now it is safe to release.</p>',[
+      talk(TOLA,'<h3>Your payment app</h3><div class="msg"><small>Credit alert</small>'+fmtCredits(1480)+' received from ALEX MORGAN. Balance updated.</div><p>The money is in your own account and the sender name matches your buyer. Now it is safe to release.</p>',[
         {t:'Release 1 USDC',f:()=>busy(TOLA,'Releasing from escrow\u2026',1300,()=>{
           P.usdc=Math.max(0,P.usdc-1); save(); updateHUD();
-          talk(TOLA,'<h3>Trade complete</h3><div class="kv"><span>Sold</span><b>1.00 USDC</b></div><div class="kv"><span>Received</span><b>'+fmtN(1480)+'</b></div><p>You cashed out safely. Rule one: your own payment app is the only proof of payment.</p>',[{t:'Continue',f:finishStep}]);
+          talk(TOLA,'<h3>Trade complete</h3><div class="kv"><span>Sold</span><b>1.00 USDC</b></div><div class="kv"><span>Received</span><b>'+fmtCredits(1480)+'</b></div><p>You cashed out safely. Rule one: your own payment app is the only proof of payment.</p>',[{t:'Continue',f:finishStep}]);
         })}
       ]);
     }
-    talk(TOLA,'<div class="msg"><small>Alex says</small>I have paid! See my receipt. Please release the USDC now, I am in a hurry.</div><div class="msg"><small>Receipt screenshot</small>Transfer successful. '+fmtN(1480)+' sent.</div><p>What do you do?</p>',[
+    talk(TOLA,'<div class="msg"><small>Alex says</small>I have paid! See my receipt. Please release the USDC now, I am in a hurry.</div><div class="msg"><small>Receipt screenshot</small>Transfer successful. '+fmtCredits(1480)+' sent.</div><p>What do you do?</p>',[
       {t:'Release the USDC now',f:()=>{ settleAnswer(false); talk(TOLA,'<h3>Stop, this is a trap</h3><p>Fake receipts are the most common cash-out scam. A screenshot proves nothing. If you release first, the buyer keeps your USDC and your payment account shows no money.</p>',[{t:'Check my payment app',f:bank}]); }},
       {t:'Check my own payment app first',g:1,f:()=>{ settleAnswer(true); bank(); }}
     ]);
@@ -3099,7 +3061,7 @@ const MISSIONS=[
     wrong:'Send on the network the exchange lists. Funds on the wrong network can be lost.',
     tx:{title:'Deposit to exchange',amt:2,btn:'Send 2 USDC',done:'Deposit sent',note:'credits is credited after the exchange sees the deposit.',
         rows:x=>[['To','Ola Exchange deposit',0],['Amount','2.00 USDC'],['Network',x]]},
-    say:'The exchange credits your naira once the deposit is confirmed.'}),
+    say:'The exchange credits your practice credits once the deposit is confirmed.'}),
   taskStep({label:'Move 1 USDC to savings',spot:'k',npc:mkSign('Cclya','Savings app','#0B7A43',LK.cclya,'Savings'),
     intro:'Your savings wallet is your own address. Choose where the 1 USDC goes.',q:'Which address do you send to?',
     opts:[['My own savings address',1],['An address a stranger sent you on social media',0]],
@@ -3331,9 +3293,9 @@ const MISSIONS=[
 {id:'m23',n:24,city:'ridgeport',title:'Price your shop in USDC',goal:'Put a USDC price on your shelf card, restock on Base, and accept a payment only once it lands in your wallet.',
  steps:[
   taskStep({label:'Set the shelf price with Obi',spot:'a',npc:mkSign('Toza','Phone and gadget shop','#0B7A43',LK.man,'Shop prices'),
-    intro:'Overseas customers want to pay in USDC. Your shelf card only shows naira.',q:'What goes on the card?',
-    opts:[['Naira and USDC prices, with the rate and the date it was set',1],['Naira only',0]],
-    wrong:'Customers paying from abroad cannot read a naira-only card. Add the USDC price and the date.',
+    intro:'Overseas customers want to pay in USDC. Your shelf card only shows practice credits.',q:'What goes on the card?',
+    opts:[['practice credits and USDC prices, with the rate and the date it was set',1],['practice credits only',0]],
+    wrong:'Customers paying from abroad cannot read a practice credits-only card. Add the USDC price and the date.',
     say:'The card now shows both prices. Customers can see exactly what to pay.'}),
   taskStep({label:'Restock with Chibuike',spot:'c',npc:mkSign('Duke David','Wholesale supplier','#2D6FB3',LK.man,'Wholesale'),
     intro:'Your supplier takes USDC. Pick the network before you pay.',q:'Which network?',
@@ -3392,7 +3354,7 @@ const MISSIONS=[
  steps:[
   taskStep({label:'Set the fee with Prof. Nnamdi',spot:'g',npc:mkSign('Prof. Nnamdi','Community educator','#0B7A43',LK.man,'Workshop'),
     intro:'Your workshop is three hours for twenty people.',q:'How do you set the fee?',
-    opts:[['A fair fee in USDC and naira, refunded if cancelled',1],['A fee nobody can afford',0]],
+    opts:[['A fair fee in USDC and practice credits, refunded if cancelled',1],['A fee nobody can afford',0]],
     wrong:'A fee nobody can afford fills no seats. Set a fair fee with a refund rule.',
     say:'Your listing shows the fee and the refund rule.'}),
   taskStep({label:'Book the hall',spot:'j',npc:mkSign('K','Community hall','#2D6FB3',LK.clerk,'Venue'),
