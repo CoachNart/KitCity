@@ -256,7 +256,7 @@ const YT=(function(){
         try{ loadQueue(); if(wantOn) play(); }catch(e){}
       }
     },
-    currentLabel(){ return (parseId(P.pl)?'Custom YouTube playlist':(MUSIC_QUEUES[currentKey]||MUSIC_QUEUES.afrobeat).label); },
+    currentLabel(){ return parseId(P.pl)?'Custom YouTube playlist':(MUSIC_QUEUES[currentKey]||MUSIC_QUEUES.ambient).label; },
     setList(v){
       const id=parseId(v);
       P.pl=id===DEFAULT_PLAYLIST?'':(id?String(v).trim():''); save();
