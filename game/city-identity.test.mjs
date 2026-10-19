@@ -85,3 +85,14 @@ test('transport and fabric implementation use neutral internal names', () => {
   assert.ok(source.includes('function buildMotorbike('), 'motorbike transport uses a neutral name');
   assert.ok(source.includes('function patternedFabricMat('), 'fabric patterns use a neutral name');
 });
+
+test('ambient soundtrack fallback cannot dereference a missing queue', () => {
+  assert.ok(
+    source.includes("MUSIC_QUEUES[currentKey]||MUSIC_QUEUES.ambient"),
+    'currentLabel falls back to the always-defined ambient queue'
+  );
+  assert.ok(
+    !source.includes("MUSIC_QUEUES[currentKey]||MUSIC_QUEUES.afrobeat"),
+    'currentLabel does not fall back to a removed queue'
+  );
+});
