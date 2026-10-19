@@ -57,3 +57,12 @@ test('city-specific architecture details exist beyond palette changes', () => {
   assert.ok(source.includes('const ventColor='), 'port and rail roof details exist');
   assert.ok(source.includes('const parapet='), 'historic parapets exist');
 });
+
+
+test('fictional world branding stays neutral', async () => {
+  const layout = await readFile(new URL('../app/layout.tsx', import.meta.url), 'utf8');
+  const manifest = await readFile(new URL('../public/manifest.webmanifest', import.meta.url), 'utf8');
+  assert.match(layout, /fictional open world/i);
+  assert.match(manifest, /fictional open world/i);
+  assert.doesNotMatch(layout + manifest, /Nigeria|Nigerian|Naija/i);
+});
