@@ -4668,8 +4668,9 @@ function completeMission(){
   clearGroup(missionGroup);colliders.length=cityCols;smoke=[];ents=[];goal=null;beacon.visible=false;
   hubCity=m.storyFinale?m.city:(next?next.city:m.city);
   const btns=[];
-  if(cityComplete)btns.push({t:'Collect city badge',f:()=>showCityBadge(m.city,()=>next?startMission(next.id):exitToHub())});
-  if(next&&!m.storyFinale)btns.push({t:next.city!==m.city?'Continue to '+CITIES[next.city].name:'Next: '+next.title,f:()=>startMission(next.id)});
+  const continueAfterBadge=()=>next&&!m.storyFinale&&next.city!==m.city?startCarPickupJourney(m.city,next):next?startMission(next.id):exitToHub();
+  if(cityComplete)btns.push({t:next&&!m.storyFinale&&next.city!==m.city?'Collect badge & travel':'Collect city badge',f:()=>showCityBadge(m.city,continueAfterBadge)});
+  if(next&&!m.storyFinale)btns.push({t:next.city!==m.city?'Continue to '+CITIES[next.city].name:'Next: '+next.title,f:()=>next.city!==m.city?startCarPickupJourney(m.city,next):startMission(next.id)});
   btns.push({t:m.storyFinale?'Return to the KitCity map':'Back to hub',g:1,f:exitToHub});
   openSheet('<div class="who"><span class="av" style="background:'+INK+'">'+m.n+'</span><div><h3 style="margin:0">Mission '+m.n+' complete</h3><small>'+CITIES[m.city].name+' · '+personalize(m.title,null)+'</small></div></div>'+
     (first?'<div class="kv"><span>Mission reward</span><b>+'+missionReward.toFixed(2)+' USDC</b></div><p class="note">'+(wrong===0?'Clean run reward collected.':'Completed with '+wrong+' wrong answer'+(wrong===1?'':'s')+'. Correct answers and mistakes have already adjusted your USDC balance.')+'</p>':'<p class="note">Replay complete. The first-clear reward has already been collected.</p>')+
@@ -4683,6 +4684,261 @@ function showCityBadge(city,after){
  const name=CITIES[city]?.name||city;
  openSheet('<div class="badge">'+badgeSVG('★',true,96)+'<div><h3 style="margin-top:0">'+name+' Pathfinder</h3><small>City journey completed</small></div></div><p>You completed both missions and earned the '+name+' city badge.</p>',[{t:'Continue journey',f:()=>{closeSheet();if(after)after();}}]);
 }
+let journeyState=null,journeyCar=null,journeySign=null,journeyLot=null,journeyRoad=null,journeyTrafficGroup=null,journeyBusStop=null;
+const journeyTraffic=[];
+const journeyRoadPeople=[];
+const JOURNEY_ARRIVAL={x:8,z:-178};
+const JOURNEY_DISTANCE=1500;
+function journeyHUD(title,subtitle,progress){
+  let el=document.getElementById('kitcityJourneyHUD');
+  if(!el){
+    el=document.createElement('div');el.id='kitcityJourneyHUD';
+    el.style.cssText='position:fixed;top:calc(env(safe-area-inset-top,0px) + 10px);left:50%;transform:translateX(-50%);z-index:9998;width:min(90vw,360px);box-sizing:border-box;padding:8px 12px;border:1px solid rgba(16,200,220,.7);border-radius:12px;background:rgba(8,17,25,.78);color:#fff;font:700 11px/1.3 system-ui,sans-serif;box-shadow:0 5px 18px #0005;pointer-events:none;display:none;backdrop-filter:blur(8px)';
+    document.body.appendChild(el);
+  }
+  el.style.display='block';
+  el.innerHTML='<div style="font-size:9px;color:#10C8DC;letter-spacing:.14em;margin-bottom:2px">KITCITY ROAD JOURNEY</div><div data-journey-title style="font-size:13px;font-weight:900">'+title+'</div><div data-journey-subtitle style="opacity:.84;margin-top:2px">'+subtitle+'</div><div style="height:3px;border-radius:9px;background:#ffffff20;margin-top:6px;overflow:hidden"><div data-journey-progress style="height:100%;width:'+Math.max(0,Math.min(100,progress*100))+'%;background:#10C8DC;border-radius:9px"></div></div>';
+}
+function bindJourneyControls(){
+  const el=document.getElementById('carControls');
+  if(!el||el.dataset.bound)return;
+  el.dataset.bound='1';
+  const setHold=(name,on)=>{
+    if(!journeyState)return;
+    if(name==='left'||name==='right'){
+      const value=on?(name==='left'?-1:1):0;
+      if(on)journeyState.steerTarget=value;
+      else if(journeyState.steerTarget=== (name==='left'?-1:1))journeyState.steerTarget=0;
+    }
+    if(name==='accelerator')journeyState.throttle=on;
+    if(name==='brake')journeyState.braking=on;
+  };
+  const surface=el.querySelector('[data-car-control="steer-surface"]');
+  let swipeId=null,swipeStartX=0;
+  if(surface){
+    surface.addEventListener('pointerdown',e=>{if(e.target.closest('button'))return;swipeId=e.pointerId;swipeStartX=e.clientX;try{surface.setPointerCapture(e.pointerId);}catch(_){}e.preventDefault();});
+    surface.addEventListener('pointermove',e=>{if(e.pointerId!==swipeId||!journeyState)return;journeyState.steerTarget=Math.max(-1,Math.min(1,(e.clientX-swipeStartX)/58));e.preventDefault();});
+    const endSwipe=e=>{if(e.pointerId!==swipeId)return;swipeId=null;if(journeyState)journeyState.steerTarget=0;};
+    surface.addEventListener('pointerup',endSwipe);surface.addEventListener('pointercancel',endSwipe);surface.addEventListener('lostpointercapture',endSwipe);
+  }
+  el.addEventListener('pointerdown',e=>{
+    const b=e.target.closest('button[data-car-control]');if(!b)return;const action=b.dataset.carControl;
+    if(action==='horn'){e.preventDefault();honkCar();return;}
+    if(['left','right','accelerator','brake'].includes(action)){e.preventDefault();b.classList.add('is-held');setHold(action,true);try{b.setPointerCapture(e.pointerId);}catch(_){}}
+  });
+  const release=e=>{
+    const b=e&&e.target&&e.target.closest?e.target.closest('button[data-car-control]'):null;
+    if(b){b.classList.remove('is-held');setHold(b.dataset.carControl,false);}
+  };
+  ['pointerup','pointercancel','lostpointercapture'].forEach(ev=>el.addEventListener(ev,e=>{
+    if(ev==='pointerup')release(e);
+    else if(journeyState){journeyState.steerTarget=0;journeyState.throttle=false;journeyState.braking=false;}
+  }));
+  el.addEventListener('click',e=>{if(e.detail===0&&e.target.closest('[data-car-control="horn"]'))honkCar();});
+}
+function setCarControls(active){
+  const el=document.getElementById('carControls'),hud=document.getElementById('hud');
+  if(el)el.classList.toggle('hidden',!active);
+  if(hud)hud.classList.toggle('car-driving',!!active);
+  if(!active&&journeyState){journeyState.steer=0;journeyState.throttle=false;journeyState.braking=false;}
+  if(active)bindJourneyControls();
+}
+let carHornContext=null;
+function honkCar(){
+  try{
+    const Audio=window.AudioContext||window.webkitAudioContext;if(!Audio)return;
+    if(!carHornContext)carHornContext=new Audio();
+    const c=carHornContext;if(c.state==='suspended')void c.resume();
+    const master=c.createGain(),filter=c.createBiquadFilter();filter.type='lowpass';filter.frequency.value=1250;filter.Q.value=.7;
+    master.gain.setValueAtTime(.0001,c.currentTime);master.gain.exponentialRampToValueAtTime(.22,c.currentTime+.025);master.gain.setValueAtTime(.18,c.currentTime+.12);master.gain.exponentialRampToValueAtTime(.0001,c.currentTime+.62);
+    filter.connect(master);master.connect(c.destination);
+    [[350,'sawtooth',.55],[440,'triangle',.7],[700,'sine',.08]].forEach(([hz,type,level])=>{
+      const osc=c.createOscillator(),gain=c.createGain();osc.type=type;osc.frequency.setValueAtTime(hz,c.currentTime);gain.gain.value=level;
+      osc.connect(gain);gain.connect(filter);osc.start(c.currentTime);osc.stop(c.currentTime+.68);osc.onended=()=>{try{gain.disconnect();}catch(_){}};
+    });
+    setTimeout(()=>{try{master.disconnect();filter.disconnect();}catch(_){}},900);
+  }catch(e){console.warn('Car horn audio unavailable',e);}
+}
+function removeJourneyLot(){
+  if(journeyLot){scene.remove(journeyLot);journeyLot.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material){if(Array.isArray(o.material))o.material.forEach(m=>m.dispose());else o.material.dispose();}});journeyLot=null;}
+}
+function makeJourneyLot(x,z){
+  removeJourneyLot();journeyLot=new THREE.Group();journeyLot.position.set(x,0,z);
+  const asphalt=new THREE.Mesh(new THREE.PlaneGeometry(24,20),new THREE.MeshStandardMaterial({color:0x30383c,roughness:.94}));
+  asphalt.rotation.x=-Math.PI/2;asphalt.position.y=.035;journeyLot.add(asphalt);
+  const paint=new THREE.MeshBasicMaterial({color:0xf5c84c});
+  const white=new THREE.MeshBasicMaterial({color:0xe8edf0});
+  const line=(w,h,px,pz,mat)=>{const m=new THREE.Mesh(new THREE.PlaneGeometry(w,h),mat);m.rotation.x=-Math.PI/2;m.position.set(px,.055,pz);journeyLot.add(m);};
+  line(22,.22,0,-9.7,paint);line(22,.22,0,9.7,paint);
+  for(const xLine of [-8,-2,4,10])line(.14,13,xLine,0,white);
+  scene.add(journeyLot);
+}
+function clearJourneyTraffic(){
+  if(journeyTrafficGroup){scene.remove(journeyTrafficGroup);journeyTrafficGroup=null;}
+  journeyTraffic.length=0;
+  journeyRoadPeople.length=0;
+  journeyBusStop=null;
+}
+function makeJourneyRoad(startX,startZ,C){
+  if(journeyRoad){scene.remove(journeyRoad);journeyRoad.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material)o.material.dispose();});}
+  clearJourneyTraffic();
+  journeyRoad=new THREE.Group();
+  const asphalt=new THREE.Mesh(new THREE.PlaneGeometry(28,JOURNEY_DISTANCE+80),new THREE.MeshStandardMaterial({color:0x303638,roughness:1}));
+  asphalt.rotation.x=-Math.PI/2;asphalt.position.set(startX,.025,startZ-JOURNEY_DISTANCE/2);journeyRoad.add(asphalt);
+  const shoulderMat=new THREE.MeshBasicMaterial({color:0xd2b38a}),edgeMat=new THREE.MeshBasicMaterial({color:0xe8e8df}),dashMatLocal=new THREE.MeshBasicMaterial({color:0xf3d65a});
+  for(const x of [-14,14]){const m=new THREE.Mesh(new THREE.PlaneGeometry(.45,JOURNEY_DISTANCE+80),shoulderMat);m.rotation.x=-Math.PI/2;m.position.set(startX+x,.045,startZ-JOURNEY_DISTANCE/2);journeyRoad.add(m);}
+  for(const x of [-5.5,5.5]){const m=new THREE.Mesh(new THREE.PlaneGeometry(.16,JOURNEY_DISTANCE+80),edgeMat);m.rotation.x=-Math.PI/2;m.position.set(startX+x,.047,startZ-JOURNEY_DISTANCE/2);journeyRoad.add(m);}
+  for(let d=12;d<JOURNEY_DISTANCE;d+=24){const m=new THREE.Mesh(new THREE.PlaneGeometry(.32,10),dashMatLocal);m.rotation.x=-Math.PI/2;m.position.set(startX,.05,startZ-d);journeyRoad.add(m);}
+  // Roadside scenery: green verges, Nigerian shops, homes, palms, stalls and hawkers.
+  const greenMat=new THREE.MeshStandardMaterial({color:0x477345,roughness:1}),earthMat=new THREE.MeshStandardMaterial({color:0x8d7955,roughness:1});
+  const wallMats=[0xd8b98a,0xe0c9a0,0xb8c8b2,0xc9a18b,0xd4d0b5,0xa9b6b5].map(color=>new THREE.MeshStandardMaterial({color,roughness:.92}));
+  const roofMats=[0x8c4030,0x565d62,0x7b3429,0x9a6a32].map(color=>new THREE.MeshStandardMaterial({color,roughness:.9}));
+  const windowMat=new THREE.MeshStandardMaterial({color:0x426a78,roughness:.45,metalness:.1}),woodMat=new THREE.MeshStandardMaterial({color:0x704b2c,roughness:1});
+  const canopyMats=[0x16844a,0xd7a52b,0xc64e32,0x2476a5].map(color=>new THREE.MeshStandardMaterial({color,roughness:.9}));
+  const roadsideBox=(w,h,d,mat,x,y,z)=>{const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);m.position.set(x,y,z);journeyRoad.add(m);return m;};
+  for(const side of [-1,1]){
+    const verge=new THREE.Mesh(new THREE.PlaneGeometry(7,JOURNEY_DISTANCE+80),greenMat);verge.rotation.x=-Math.PI/2;verge.position.set(startX+side*17.7,-.005,startZ-JOURNEY_DISTANCE/2);journeyRoad.add(verge);
+    const shoulder=new THREE.Mesh(new THREE.PlaneGeometry(2.2,JOURNEY_DISTANCE+80),earthMat);shoulder.rotation.x=-Math.PI/2;shoulder.position.set(startX+side*15.3,.008,startZ-JOURNEY_DISTANCE/2);journeyRoad.add(shoulder);
+    for(let d=55,idx=0;d<JOURNEY_DISTANCE-40;d+=rr(72,112),idx++){
+      const z=startZ-d,x=startX+side*rr(20,25),shop=idx%3!==1,w=shop?rr(6,10):rr(4,6),h=shop?rr(3.5,6):rr(2.5,4),depth=shop?rr(5,8):rr(4,6);
+      roadsideBox(w,h,depth,wallMats[(idx+(side>0?2:0))%wallMats.length],x,h/2,z);
+      roadsideBox(w+.6,.35,depth+.5,roofMats[(idx+1)%roofMats.length],x,h+.12,z);
+      roadsideBox(w*.17,h*.34,.12,windowMat,x-w*.25,h*.56,z+depth*.36);roadsideBox(w*.17,h*.34,.12,windowMat,x+w*.25,h*.56,z+depth*.36);
+      if(shop){roadsideBox(w*.76,.9,.18,canopyMats[idx%canopyMats.length],x,.95,z+depth*.42);roadsideBox(.14,1.3,.14,woodMat,x-w*.4,.65,z+depth*.43);roadsideBox(.14,1.3,.14,woodMat,x+w*.4,.65,z+depth*.43);}
+      if(idx%2===0){
+        const tx=startX+side*rr(16.5,19.2),tz=z-rr(12,24),trunk=new THREE.Mesh(new THREE.CylinderGeometry(.16,.25,3.6,6),woodMat);trunk.position.set(tx,1.8,tz);journeyRoad.add(trunk);
+        for(let leaf=0;leaf<5;leaf++){const crown=new THREE.Mesh(new THREE.ConeGeometry(1.25,2.5,5),greenMat);crown.position.set(tx+Math.cos(leaf*Math.PI*2/5)*.55,4,tz+Math.sin(leaf*Math.PI*2/5)*.55);crown.rotation.z=Math.cos(leaf*Math.PI*2/5)*.4;crown.rotation.x=Math.sin(leaf*Math.PI*2/5)*.4;journeyRoad.add(crown);}
+      }
+      if(idx%3===0){
+        const sx=startX+side*rr(16.8,19),sz=z-rr(18,30);
+        roadsideBox(2.7,.18,2.1,woodMat,sx,1.2,sz);roadsideBox(.14,2.2,.14,woodMat,sx-1.1,1.1,sz-.75);roadsideBox(.14,2.2,.14,woodMat,sx+1.1,1.1,sz-.75);
+        const canopy=new THREE.Mesh(new THREE.ConeGeometry(1.9,.65,8),canopyMats[(idx+side+8)%canopyMats.length]);canopy.position.set(sx,2.55,sz);canopy.rotation.y=.2;journeyRoad.add(canopy);
+        const personX=sx-side*1.9,personZ=sz+1.3;roadsideBox(.48,.9,.3,canopyMats[(idx+1)%canopyMats.length],personX,1.05,personZ);
+        const head=new THREE.Mesh(new THREE.SphereGeometry(.24,8,6),new THREE.MeshStandardMaterial({color:0x7c5038,roughness:.95}));head.position.set(personX,1.72,personZ);journeyRoad.add(head);
+        roadsideBox(.16,.75,.17,woodMat,personX-.18,.4,personZ);roadsideBox(.16,.75,.17,woodMat,personX+.18,.4,personZ);
+      }
+      // Passing pedestrians walking beside the highway, safely beyond the shoulder.
+      if(idx%2===0){
+        const walker=new THREE.Group(),wx=startX+side*rr(18,21),wz=z-rr(25,48),cloth=canopyMats[(idx+side+12)%canopyMats.length];
+        const torso=new THREE.Mesh(new THREE.BoxGeometry(.52,1,.32),cloth);torso.position.y=1.05;walker.add(torso);
+        const skin=new THREE.MeshStandardMaterial({color:0x80533b,roughness:.95});
+        const headMesh=new THREE.Mesh(new THREE.SphereGeometry(.23,8,6),skin);headMesh.position.y=1.72;walker.add(headMesh);
+        const legMat=new THREE.MeshStandardMaterial({color:0x343b43,roughness:1});
+        for(const lx of [-.16,.16]){const leg=new THREE.Mesh(new THREE.BoxGeometry(.15,.72,.17),legMat);leg.position.set(lx,.36,0);walker.add(leg);}
+        walker.position.set(wx,0,wz);journeyRoad.add(walker);
+        journeyRoadPeople.push({group:walker,z:wz,homeZ:wz,speed:rr(.8,1.5),phase:rr(0,Math.PI*2),side});
+      }
+    }
+  }
+  // A visible shoulder bay gives the player a clear place to pull over before arrival.
+  const stopZ=startZ-JOURNEY_DISTANCE+95,stopX=startX+8.5;
+  const bay=new THREE.Mesh(new THREE.PlaneGeometry(5.8,26),new THREE.MeshBasicMaterial({color:0x244d43,transparent:true,opacity:.88}));
+  bay.rotation.x=-Math.PI/2;bay.position.set(stopX,.055,stopZ);journeyRoad.add(bay);
+  for(const z of [stopZ-13,stopZ+13]){
+    const line=new THREE.Mesh(new THREE.PlaneGeometry(5.8,.22),new THREE.MeshBasicMaterial({color:0xf4d35e}));
+    line.rotation.x=-Math.PI/2;line.position.set(stopX,.07,z);journeyRoad.add(line);
+  }
+  const ring=new THREE.Mesh(new THREE.RingGeometry(2.2,2.65,32),new THREE.MeshBasicMaterial({color:0xf4d35e,side:THREE.DoubleSide,transparent:true,opacity:.95}));
+  ring.rotation.x=-Math.PI/2;ring.position.set(stopX,.09,stopZ);journeyRoad.add(ring);
+  const pole=new THREE.Mesh(new THREE.CylinderGeometry(.12,.12,5,8),new THREE.MeshBasicMaterial({color:0xf4d35e}));
+  pole.position.set(stopX,2.5,stopZ-5);journeyRoad.add(pole);
+  const marker=bannerSprite('BUS STOP','BRAKE AND PULL INTO BAY');
+  marker.position.set(stopX,6,stopZ-5);marker.scale.set(12,3,1);journeyRoad.add(marker);
+  journeyBusStop={x:stopX,z:stopZ};
+  scene.add(journeyRoad);
+  // Dense mixed traffic in both directions with stable lane assignments.
+  journeyTrafficGroup=new THREE.Group();scene.add(journeyTrafficGroup);
+  const palette=C||CITIES.lagos;
+  const trafficKinds=['danfo','sedan','suv','truck','keke','danfo','sedan','okada','suv','truck','danfo','sedan','police','bicycle','danfo','sedan','keke','suv','truck','okada','danfo','police','sedan','suv'];
+  for(let i=0;i<trafficKinds.length;i++){
+    const kind=trafficKinds[i],v=makeVehicle(kind,palette),oncoming=i%2===0,slot=Math.floor(i/2);
+    const z=startZ-rr(95+slot*112,185+slot*112),lane=startX+(oncoming?-3.35:3.35);
+    const car={m:v.m,z,speed:rr(oncoming?12:9,oncoming?23:17),dir:oncoming?1:-1,lane,hl:v.hl,hw:v.hw,kind};
+    car.m.position.set(lane,.04,z);car.m.rotation.y=oncoming?-Math.PI/2:Math.PI/2;
+    journeyTrafficGroup.add(car.m);journeyTraffic.push(car);
+  }
+  // A destination terminal makes the stopping point unmistakable from a distance.
+  const stopXLocal=stopX+7.1;
+  const terminal=new THREE.Group();terminal.position.set(stopXLocal,0,stopZ);journeyRoad.add(terminal);
+  const terminalBox=(w,h,d,color,x,y,z)=>{
+    const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),new THREE.MeshStandardMaterial({color,roughness:.78}));
+    mesh.position.set(x,y,z);terminal.add(mesh);return mesh;
+  };
+  terminalBox(9.2,.35,5.8,0x123744,0,4.15,0);
+  terminalBox(9.8,.2,6.4,0x11b9c8,0,4.42,0);
+  for(const x of [-4,4])for(const z of [-2.4,2.4])terminalBox(.22,4,.22,0xd4dce0,x,2,z);
+  terminalBox(6.4,.22,1.1,0xf4c34d,0,1.25,-2.55);
+  terminalBox(6.8,.18,.18,0xf4c34d,0,2.9,-2.6);
+  const terminalSign=bannerSprite((C&&C.name?C.name:'CITY').toUpperCase()+' TRANSIT','INTER-STATE BUS TERMINAL');
+  terminalSign.position.set(0,5.45,-2.95);terminalSign.scale.set(7.6,1.8,1);terminal.add(terminalSign);
+  terminalBox(2.8,.28,1.1,0x7e9da4,-1.7,.75,.15);
+  terminalBox(2.8,.28,1.1,0x7e9da4,1.7,.75,.15);
+}
+let journeySwipeStart=null;
+function hideJourneyHUD(){const el=document.getElementById('kitcityJourneyHUD');if(el)el.style.display='none';}
+function startCarPickupJourney(fromCity,nextMission){
+  if(!nextMission){exitToHub();return;}
+  if(journeyCar){scene.remove(journeyCar);journeyCar=null;}if(journeySign){scene.remove(journeySign);journeySign=null;}
+  if(journeyRoad){scene.remove(journeyRoad);journeyRoad=null;}clearJourneyTraffic();removeJourneyLot();
+  const C=CITIES[fromCity]||CITIES.lagos,v=makeVehicle('suv',C);
+  const px=player.position.x,pz=player.position.z,carX=px+9,carZ=pz;
+  makeJourneyLot(carX,carZ);
+  journeyCar=v.m;journeyCar.position.set(carX,0.06,carZ);journeyCar.rotation.y=Math.PI/2;scene.add(journeyCar);
+  player.visible=true;player.position.set(carX-5,.05,carZ+1.5);faceTo(player,carX,carZ);
+  journeyState={fromCity,toCity:nextMission.city,nextMission,phase:'pickup',elapsed:0,x:carX,routeX:carX,steerOffset:0,steer:0,steerTarget:0,z:carZ-3,startZ:carZ-3,speed:0,progress:0,throttle:false,braking:false,busStopX:carX+5.1,busStopZ:carZ-3-JOURNEY_DISTANCE+95};setCarControls(false);
+  S.phase='pickup';S.modal=false;Snd.setMode('play');
+  const target=CITIES[nextMission.city]||{name:nextMission.city};
+  journeyHUD('YOUR RIDE IS READY','Next stop: '+(nextMission.state||target.name)+' · '+target.name,0);
+  openSheet('<section class="mission-brief-card mission-brief-compact"><div class="mission-brief-top"><span>CITY BADGE SECURED</span><span>ROAD TRIP</span></div><h3>Your ride is waiting in a marked parking bay.</h3><p class="mission-brief-summary">Walk up to your car, enter it, and drive yourself to <b>'+(nextMission.state||target.name)+' · '+target.name+'</b>. No auto-driving: you control acceleration, braking, steering and horn.</p><div class="mission-brief-next"><small>NEXT STOP</small><b>'+target.name+'</b></div></section>',[{t:'Enter car',f:beginCarDrive}]);
+}
+function beginCarDrive(){
+  if(!journeyState||!journeyCar)return;
+  closeSheet();journeyState.phase='entering';journeyState.elapsed=0;journeyState.steer=0;journeyState.throttle=false;journeyState.braking=false;
+  faceTo(player,journeyCar.position.x,journeyCar.position.z);S.phase='pickup';S.modal=false;
+  journeyHUD('GETTING IN','You are entering the driver seat…',0);
+}
+function cinematicFadeSwap(onMidpoint){
+  let overlay=document.getElementById('kitcityTravelFade');
+  if(!overlay){
+    overlay=document.createElement('div');overlay.id='kitcityTravelFade';
+    overlay.style.cssText='position:fixed;inset:0;z-index:100000;background:#05090d;opacity:0;pointer-events:none;transition:opacity .48s ease';
+    document.body.appendChild(overlay);
+  }
+  overlay.style.transition='none';overlay.style.opacity='0';void overlay.offsetWidth;
+  overlay.style.transition='opacity .48s ease';overlay.style.opacity='1';
+  setTimeout(()=>{
+    try{onMidpoint();}finally{
+      setTimeout(()=>{overlay.style.opacity='0';setTimeout(()=>{if(overlay.parentNode)overlay.parentNode.removeChild(overlay);},520);},180);
+    }
+  },500);
+}
+function finishCarJourney(){
+  if(!journeyState||!journeyState.nextMission||journeyState.phase==='transitioning')return;
+  setCarControls(false);
+  journeyState.phase='transitioning';S.phase='arrival-transition';S.modal=false;
+  const target=journeyState.nextMission,C=CITIES[target.city]||{name:target.city};
+  journeyHUD('ARRIVING IN '+C.name.toUpperCase(),'Pulling into the state transit terminal…',1);
+  cinematicFadeSwap(()=>{
+    if(journeyRoad){scene.remove(journeyRoad);journeyRoad.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material){if(Array.isArray(o.material))o.material.forEach(m=>m.dispose());else o.material.dispose();}});journeyRoad=null;}
+    clearJourneyTraffic();
+    buildCity(target.city);
+    removeJourneyLot();
+    if(journeyCar){journeyCar.position.set(JOURNEY_ARRIVAL.x-5,.06,JOURNEY_ARRIVAL.z);journeyCar.rotation.y=Math.PI/2;}
+    makeJourneyLot(JOURNEY_ARRIVAL.x-5,JOURNEY_ARRIVAL.z);
+    player.visible=true;player.position.set(JOURNEY_ARRIVAL.x-10,.05,JOURNEY_ARRIVAL.z+1.5);faceTo(player,JOURNEY_ARRIVAL.x-5,JOURNEY_ARRIVAL.z);
+    journeySign=bannerSprite((target.state||C.name)+' STATE','WELCOME TO '+C.name.toUpperCase());journeySign.position.set(0,7,-204);scene.add(journeySign);
+    journeyState.phase='exiting';journeyState.elapsed=0;S.phase='arrival';S.modal=false;
+    journeyHUD('ARRIVED IN '+C.name.toUpperCase(),'Parking at the entrance · stepping out of the car…',1);
+  });
+}
+function leaveCityEntrance(){
+  setCarControls(false);
+  if(journeyCar){scene.remove(journeyCar);journeyCar=null;}if(journeySign){scene.remove(journeySign);journeySign=null;}
+  removeJourneyLot();
+  const next=journeyState&&journeyState.nextMission;journeyState=null;hideJourneyHUD();
+  if(next)startMission(next.id,{spawnAtEntrance:true});else exitToHub();
+}
+
 function certificate(){
   const totalMissions=MISSIONS.length-1;
   const msg=encodeURIComponent(L('I finished all '+totalMissions+' KitCity missions and learned how to use a crypto wallet safely. Can you explore KitCity with your wallet?','I completed all '+totalMissions+' KitCity missions and learned to use a crypto wallet safely. Can you explore KitCity with your wallet?'));
