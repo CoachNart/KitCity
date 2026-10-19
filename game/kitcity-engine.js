@@ -2632,7 +2632,7 @@ function updateHUD(){
     health.innerHTML=[0,1,2].map(i=>'<span class="heart'+(i<hearts?' full':' empty')+'" aria-hidden="true">♥</span>').join('');
     health.classList.toggle('critical',hearts===1);
   }
-  $('#wallet').innerHTML=P.wallet?('<b>'+P.usdc.toFixed(2)+' USDC</b>'+(P.credits>0?fmtCredits(P.credits)+' token':short(P.wallet))):tr('No wallet yet');
+  $('#wallet').innerHTML=P.wallet?('<b>'+P.usdc.toFixed(2)+' USDC</b>'+(P.credits>0?fmtCredits(P.credits)+' credits':short(P.wallet))):tr('No wallet yet');
 }
 
 /* =====================  missions  ===================== */
@@ -2854,7 +2854,7 @@ const MISSIONS=[
 {id:'m2',n:3,city:'novacity',title:'Exchange Counter',goal:'Learn rates, fees and slippage by swapping USDC for practice credits.',
  steps:[
   {label:'Ask Larai for today\u2019s rate',spot:'e',npc:ALHAJA,run(){
-    talk(ALHAJA,'<p>An exchange counter swaps one money for another. On KitCity you can swap USDC for practice credits. Three words to know:</p><ul class="pts"><li><b>Rate:</b> how many practice credits you get for 1 USDC. It moves through the day.</li><li><b>Fee:</b> the part the service keeps.</li><li><b>Slippage:</b> how far the price can move before your swap is cancelled.</li></ul>',
+    talk(ALHAJA,'<p>An exchange converts one asset into another. On KitCity, you can swap USDC for practice credits. Three words to know:</p><ul class="pts"><li><b>Rate:</b> how many credits you receive for 1 USDC. It moves through the day.</li><li><b>Fee:</b> the part the service keeps.</li><li><b>Slippage:</b> how far the price can move before your swap is cancelled.</li></ul>',
       [{t:'Show me today\u2019s rate',f:()=>talk(ALHAJA,'<h3>Today\u2019s rate</h3><div class="kv"><span>1 USDC</span><b>'+fmtCredits(RATE)+'</b></div><div class="kv"><span>Fee</span><b>0.5%</b></div><p class="note">Sample rate for this prototype. Real rates change all day, so always check the quote before you confirm.</p>',[{t:'Got it',f:finishStep}])}]);
   }},
   STEP_MOON,
@@ -2996,7 +2996,7 @@ const MISSIONS=[
   }}
  ]
 },
-{id:'m8',n:9,city:'harbor',title:'Cash out safely',goal:'Sell USDC for practice credits with a peer, and never release before you are paid.',
+{id:'m8',n:9,city:'harbor',title:'Peer-to-Peer Exchange',goal:'Learn how peer-to-peer swaps work and verify payment before releasing funds.',
  steps:[
   {label:'Post your sell offer',spot:'l',npc:ADA,run(){
     talk(ADA,'<p>Peer-to-peer means you trade with another person. The platform holds your USDC in escrow while they pay your payment account. You release only after you see the money.</p><div class="kv"><span>You sell</span><b>1.00 USDC</b></div><div class="kv"><span>Price</span><b>'+fmtCredits(1480)+'</b></div>',[
@@ -3070,7 +3070,7 @@ const MISSIONS=[
     wrong:'Send on the network the exchange lists. Funds on the wrong network can be lost.',
     tx:{title:'Deposit to exchange',amt:2,btn:'Send 2 USDC',done:'Deposit sent',note:'credits is credited after the exchange sees the deposit.',
         rows:x=>[['To','Ola Exchange deposit',0],['Amount','2.00 USDC'],['Network',x]]},
-    say:'The exchange credits your practice credits once the deposit is confirmed.'}),
+    say:'Your practice balance updates after the exchange confirms the deposit.'}),
   taskStep({label:'Move 1 USDC to savings',spot:'k',npc:mkSign('Cclya','Savings app','#0B7A43',LK.cclya,'Savings'),
     intro:'Your savings wallet is your own address. Choose where the 1 USDC goes.',q:'Which address do you send to?',
     opts:[['My own savings address',1],['An address a stranger sent you on social media',0]],
@@ -3303,8 +3303,8 @@ const MISSIONS=[
  steps:[
   taskStep({label:'Set the shelf price with Obi',spot:'a',npc:mkSign('Toza','Phone and gadget shop','#0B7A43',LK.man,'Shop prices'),
     intro:'Overseas customers want to pay in USDC. Your shelf card only shows practice credits.',q:'What goes on the card?',
-    opts:[['practice credits and USDC prices, with the rate and the date it was set',1],['practice credits only',0]],
-    wrong:'Customers paying from abroad cannot read a practice credits-only card. Add the USDC price and the date.',
+    opts:[['credits and USDC prices, with the rate and the date it was set',1],['credits only',0]],
+    wrong:'Customers paying from abroad cannot read a credits-only card. Add the USDC price and the date.',
     say:'The card now shows both prices. Customers can see exactly what to pay.'}),
   taskStep({label:'Restock with Chibuike',spot:'c',npc:mkSign('Duke David','Wholesale supplier','#2D6FB3',LK.man,'Wholesale'),
     intro:'Your supplier takes USDC. Pick the network before you pay.',q:'Which network?',
