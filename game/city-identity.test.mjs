@@ -66,3 +66,14 @@ test('fictional world branding stays neutral', async () => {
   assert.match(manifest, /fictional open world/i);
   assert.doesNotMatch(layout + manifest, /Nigeria|Nigerian|Naija/i);
 });
+
+
+test('fictional world uses abstract map coordinates and neutral street data', () => {
+  assert.ok(source.includes('const WORLD_SHAPE='), 'the map uses a fictional landmass');
+  assert.ok(source.includes('Map positions are fictional world coordinates'), 'real-world map coordinates are not used at runtime');
+  assert.ok(source.includes('const FICTIONAL_ROADS='), 'street names are neutralized');
+  assert.ok(source.includes('const FICTIONAL_DISTRICTS='), 'district names are neutralized');
+  assert.ok(source.includes("const KEY='kitcity_world_v2'"), 'new saves use the fictional-world namespace');
+  assert.ok(source.includes('LEGACY_CURRENCY_FIELD'), 'legacy balances have a migration path');
+  assert.doesNotMatch(source, /CITIES\\.(?:lagos|abuja|kano|ibadan|enugu|kaduna|maiduguri|owerri|calabar|jos)\\b/i);
+});
