@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "test:city-identity": "node --test game/city-identity.test.mjs"
+    "test:city-identity": "node --test game/city-identity.test.mjs",
+    "prebuild": "npm run test:city-identity"
   },
   "dependencies": {
     "next": "16.3.8",
