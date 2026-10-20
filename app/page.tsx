@@ -66,7 +66,7 @@ export default function KitCityPage() {
         if (boot) boot.classList.add('hidden');
         if (message) message.textContent = 'The city could not start. Check your connection and reload.';
         if (errorPanel) {
-          const detail = error instanceof Error ? ` Details: ${error.name}: ${error.message}` : '';
+          const detail = error instanceof Error ? ` Details: ${error.name}: ${error.message}${error.stack ? `\n${error.stack.split('\n').slice(0, 5).join('\n')}` : ''}` : '';
           errorPanel.textContent = 'KitCity could not load its game engine. Check your connection and tap Reload.' + detail;
           errorPanel.classList.remove('hidden');
         }
