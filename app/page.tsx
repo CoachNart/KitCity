@@ -31,7 +31,7 @@ export default function KitCityPage() {
       }
     }, 18000);
 
-    import('../game/kitcity-engine.ts')
+    import('../game/kitcity-engine.js')
       .then(({ default: initKitCity }) => {
         if (cancelled) return;
         window.clearTimeout(bootTimer);
