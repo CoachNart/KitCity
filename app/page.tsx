@@ -31,7 +31,26 @@ export default function KitCityPage() {
       }
     }, 18000);
 
-    import('../game/kitcity-engine.js')
+    // Remove stale offline workers/caches left by earlier KitCity builds before
+    // requesting the dynamically loaded engine. A stale cached chunk can keep
+    // the old broken engine alive even after a successful production deploy.
+    const clearStaleGameCache = async () => {
+      try {
+        if ('serviceWorker' in navigator) {
+          const registrations = await navigator.serviceWorker.getRegistrations();
+          await Promise.all(registrations.map((registration) => registration.unregister()));
+        }
+        if ('caches' in window) {
+          const keys = await caches.keys();
+          await Promise.all(keys.filter((key) => key.startsWith('kitcity-')).map((key) => caches.delete(key)));
+        }
+      } catch (cacheError) {
+        console.warn('[KitCity] Could not clear an old offline cache:', cacheError);
+      }
+    };
+
+    clearStaleGameCache()
+      .then(() => import('../game/kitcity-engine.js'))
       .then(({ default: initKitCity }) => {
         if (cancelled) return;
         window.clearTimeout(bootTimer);
@@ -47,7 +66,8 @@ export default function KitCityPage() {
         if (boot) boot.classList.add('hidden');
         if (message) message.textContent = 'The city could not start. Check your connection and reload.';
         if (errorPanel) {
-          errorPanel.textContent = 'KitCity could not load its game engine. Check your connection and tap Reload.';
+          const detail = error instanceof Error ? ` Details: ${error.name}: ${error.message}` : '';
+          errorPanel.textContent = 'KitCity could not load its game engine. Check your connection and tap Reload.' + detail;
           errorPanel.classList.remove('hidden');
         }
       });
