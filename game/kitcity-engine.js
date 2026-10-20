@@ -336,6 +336,18 @@ window.addEventListener('pointerdown',()=>Snd.unlock());
 const L=(en)=>en;
 function tr(t){ return t; }
 function tx(html){ return html; }
+/* =====================  renderer / scene  ===================== */
+const renderer=new THREE.WebGLRenderer({canvas:$('#gl'),antialias:true,powerPreference:'high-performance'});
+function setPR(){ renderer.setPixelRatio(P.low?1:Math.min(window.devicePixelRatio||1,1.75)); }
+setPR();
+const scene=new THREE.Scene();
+const camera=new THREE.PerspectiveCamera(50,1,0.5,700);
+function resize(){
+  const w=window.innerWidth,h=window.innerHeight;
+  renderer.setSize(w,h,false);
+  camera.aspect=w/h; camera.fov=(w/h<0.8)?64:50; camera.updateProjectionMatrix();
+  onResizeHook();
+}
 window.addEventListener('resize',resize); resize();
 renderer.toneMapping=THREE.NoToneMapping;
 const hemi=new THREE.HemisphereLight(0xFFF1D6,0x4A3A2A,0.8); scene.add(hemi);
